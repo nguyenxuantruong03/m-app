@@ -8,6 +8,6 @@ interface usechoosestoreModalInterface{
 
 export const usechoosestoreModal= create<usechoosestoreModalInterface>((set)=>({
     isOpen: false,
-    onClose:() => set({isOpen: true}),
-    onOpen: () => set({isOpen: false})
+    onClose:() => set({isOpen: false}),
+    onOpen: () => set({isOpen: true})
 }))

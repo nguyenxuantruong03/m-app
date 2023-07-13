@@ -49,12 +49,12 @@ export const ChoosestoreModal = () => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>Tên cửa hàng</FormLabel>
                   <FormControl>
-                    <Input placeholder="shadcn" {...field} />
+                    <Input placeholder="Vui lòng tên cửa hàng" {...field} />
                   </FormControl>
                   <FormDescription>
-                    This is your public display name.
+                    Đây là tên hiển thị công khai.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
