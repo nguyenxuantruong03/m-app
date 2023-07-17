@@ -15,12 +15,18 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { useState } from "react";
+import {toast} from "react-hot-toast"
+import axios from "axios";
+
+
 const formSchema = z.object({
   name: z.string().min(6),
 });
 
 export const ChoosestoreModal = () => {
   const storeModal = usechoosestoreModal();
+  const [loading, setLoading] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -29,9 +35,16 @@ export const ChoosestoreModal = () => {
     },
   });
 
-  const onSubmit = async (value: z.infer<typeof formSchema>) => {
-    console.log(value);
-    //TODO: Create Store
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log(values);
+    try {
+      setLoading(true);
+      const response =  await axios.post('/api/stores' ,values)
+    } catch (error) {
+      toast.error("Somthing went wrong")
+    }finally{
+      setLoading(false);
+    }
   };
 
   return (
@@ -51,7 +64,7 @@ export const ChoosestoreModal = () => {
                 <FormItem>
                   <FormLabel>Tên cửa hàng</FormLabel>
                   <FormControl>
-                    <Input placeholder="Vui lòng tên cửa hàng" {...field} />
+                    <Input disabled={loading} placeholder="Vui lòng tên cửa hàng" {...field} />
                   </FormControl>
                   <FormDescription>
                     Đây là tên hiển thị công khai.
@@ -61,11 +74,11 @@ export const ChoosestoreModal = () => {
               )}
             />
             <div className="pt-6 space-x-2 flex -items-center justify-end w-full">
-              <Button variant="outline" onClick={storeModal.onClose}>
+              <Button disabled={loading} variant="outline" onClick={storeModal.onClose}>
                 Cancel
               </Button>
 
-              <Button type="submit">Continute</Button>
+              <Button disabled={loading} type="submit">Continute</Button>
             </div>
           </form>
         </Form>
