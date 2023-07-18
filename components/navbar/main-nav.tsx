@@ -10,14 +10,34 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
 
   const routes = [
     {
-      href: `${params.storeId}`,
-      label: "Overview",
-      active: pathname === `${params.storeId}`,
+      href: `/${params.storeId}`,
+      label: "Tổng quan",
+      active: pathname === `/${params.storeId}`,
     },
     {
-      href: `${params.storeId}/settings`,
-      label: "Settings",
-      active: pathname === `${params.storeId}/settings`,
+      href: `/${params.storeId}/billboards`,
+      label: "Ảnh quảng cáo",
+      active: pathname === `/${params.storeId}/billboards`,
+    },
+    {
+      href: `/${params.storeId}/billboardmini`,
+      label: "Ảnh quảng cáo nhỏ",
+      active: pathname === `/${params.storeId}/billboardmini`,
+    },
+    {
+      href: `/${params.storeId}/billboarddelivery`,
+      label: "Ảnh quảng cáo giao hàng",
+      active: pathname === `/${params.storeId}/billboarddelivery`,
+    },
+    {
+      href: `/${params.storeId}/billboardsale`,
+      label: "Ảnh quảng cáo giảm giá",
+      active: pathname === `/${params.storeId}/billboardsale`,
+    },
+    {
+      href: `/${params.storeId}/settings`,
+      label: "Cài đặt",
+      active: pathname === `/${params.storeId}/settings`,
     },
   ];
   return (
