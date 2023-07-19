@@ -12,15 +12,15 @@ datasource db {
 }
 
 model Store {
-  id        String      @id @default(uuid())
-  name      String
-  userId    String
-  billboard Billboard[] @relation("StoreToBillboard")
-  billboardmini BillboardMini[] @relation("StoreToBillboardMini")
-  billboarddelivery BillboardDelivery[] @relation("StoreToBillboardDelivery")
-  billboardsale BillboardSale[] @relation("StoreToBillboardSale")
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  id                String              @id @default(uuid())
+  name              String
+  userId            String
+  billboard         Billboard[]         @relation("StoreToBillboard")
+  billboardmini     Billboardmini[]     @relation("StoreToBillboardMini")
+  billboarddelivery Billboarddelivery[] @relation("StoreToBillboardDelivery")
+  billboardsale     Billboardsale[]     @relation("StoreToBillboardSale")
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
 }
 
 model Billboard {
@@ -35,10 +35,11 @@ model Billboard {
   @@index([storeId])
 }
 
-model BillboardMini {
+model Billboardmini {
   id        String   @id @default(uuid())
   storeId   String
   store     Store    @relation("StoreToBillboardMini", fields: [storeId], references: [id])
+  label     String
   imageUrl  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -46,10 +47,11 @@ model BillboardMini {
   @@index([storeId])
 }
 
-model BillboardDelivery {
+model Billboarddelivery {
   id        String   @id @default(uuid())
   storeId   String
   store     Store    @relation("StoreToBillboardDelivery", fields: [storeId], references: [id])
+  label     String
   imageUrl  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -57,10 +59,11 @@ model BillboardDelivery {
   @@index([storeId])
 }
 
-model BillboardSale {
+model Billboardsale {
   id        String   @id @default(uuid())
   storeId   String
   store     Store    @relation("StoreToBillboardSale", fields: [storeId], references: [id])
+  label     String
   imageUrl  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -20,19 +20,19 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
       active: pathname === `/${params.storeId}/billboards`,
     },
     {
-      href: `/${params.storeId}/billboardmini`,
+      href: `/${params.storeId}/billboardsmini`,
       label: "Ảnh quảng cáo nhỏ",
-      active: pathname === `/${params.storeId}/billboardmini`,
+      active: pathname === `/${params.storeId}/billboardsmini`,
     },
     {
-      href: `/${params.storeId}/billboarddelivery`,
+      href: `/${params.storeId}/billboardsdelivery`,
       label: "Ảnh quảng cáo giao hàng",
-      active: pathname === `/${params.storeId}/billboarddelivery`,
+      active: pathname === `/${params.storeId}/billboardsdelivery`,
     },
     {
-      href: `/${params.storeId}/billboardsale`,
+      href: `/${params.storeId}/billboardssale`,
       label: "Ảnh quảng cáo giảm giá",
-      active: pathname === `/${params.storeId}/billboardsale`,
+      active: pathname === `/${params.storeId}/billboardssale`,
     },
     {
       href: `/${params.storeId}/settings`,
