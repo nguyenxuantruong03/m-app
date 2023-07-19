@@ -45,6 +45,11 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
       active: pathname === `/${params.storeId}/size`,
     },
     {
+      href: `/${params.storeId}/color`,
+      label: "Màu sắc",
+      active: pathname === `/${params.storeId}/color`,
+    },
+    {
       href: `/${params.storeId}/settings`,
       label: "Cài đặt",
       active: pathname === `/${params.storeId}/settings`,
