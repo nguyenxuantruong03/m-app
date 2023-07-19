@@ -25,21 +25,21 @@ const BillboardClient:React.FC<BillboardClientProps> = ({data}) => {
         <>
         <div className="flex items-center justify-between">
             <Heading 
-            title ={`Billboards (${data.length})`}
-            description="Manage billboards for your store"
+            title ={`Category (${data.length})`}
+            description="Manage categories for your store"
             />
-            <Button onClick={() => router.push(`/${params.storeId}/billboardsdelivery/new`)}>
+            <Button onClick={() => router.push(`/${params.storeId}/categories/new`)}>
                 <Plus className="mr-2 h-4 w-4" />
                 Add New
             </Button>
         </div>
         <Separator />
-        <DataTable searchKey="label" columns={columns} data={data} />
+        <DataTable searchKey="name" columns={columns} data={data} />
         <Heading title="Api" description="API calls for Billboards" />
         <Separator />
         <ApiList 
-        entityIdName="billboarddeliveryId"
-        entityName="billboardsdelivery"
+        entityIdName="categoryId"
+        entityName="categories"
         />
         </>
      );

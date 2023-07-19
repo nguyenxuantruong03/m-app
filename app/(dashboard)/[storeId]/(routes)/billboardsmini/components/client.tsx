@@ -38,8 +38,8 @@ const BillboardClient:React.FC<BillboardClientProps> = ({data}) => {
         <Heading title="Api" description="API calls for Billboards" />
         <Separator />
         <ApiList 
-        entityIdName="billboardId"
-        entityName="billboards"
+        entityIdName="billboardminiId"
+        entityName="billboardsmini"
         />
         </>
      );
