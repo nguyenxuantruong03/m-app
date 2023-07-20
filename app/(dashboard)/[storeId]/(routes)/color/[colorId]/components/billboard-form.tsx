@@ -26,7 +26,9 @@ import { AlertModal } from "@/components/modals/alert-modal";
 
 const formSchema = z.object({
   name: z.string().min(1),
-  value: z.string().min(1),
+  value: z.string().min(1).regex(/^#/,{
+    message: 'String must be a valid hex code'
+  }),
 });
 
 type BillboardFormValues = z.infer<typeof formSchema>;

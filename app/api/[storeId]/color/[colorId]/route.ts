@@ -12,13 +12,13 @@ export async function GET(
       return new NextResponse("Billboard id is required", { status: 400 });
     }
 
-    const category = await prismadb.color.findUnique({
+    const color = await prismadb.color.findUnique({
       where: {
         id: params.colorId
       }
     });
   
-    return NextResponse.json(category);
+    return NextResponse.json(color);
   } catch (error) {
     console.log('[BILLBOARD_GET]', error);
     return new NextResponse("Internal error", { status: 500 });
