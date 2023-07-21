@@ -10,15 +10,15 @@ import { useRouter } from "next/navigation";
 
 import { Plus } from "lucide-react";
 
-import { BillboardColumn, columns } from "./columns";
+import { ProductColumn, columns } from "./columns";
 
 import { ApiList } from "@/components/ui/api-list";
 
-interface BillboardClientProps{
-    data: BillboardColumn[]
+interface ProductClientProps{
+    data: ProductColumn[]
 }
 
-const BillboardClient:React.FC<BillboardClientProps> = ({data}) => {
+const ProductClient:React.FC<ProductClientProps> = ({data}) => {
     const router = useRouter()
     const params = useParams()
     return ( 
@@ -45,4 +45,4 @@ const BillboardClient:React.FC<BillboardClientProps> = ({data}) => {
      );
 }
  
-export default BillboardClient;
+export default ProductClient;

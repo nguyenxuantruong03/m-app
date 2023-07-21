@@ -1,10 +1,10 @@
 import prismadb from "@/lib/prismadb";
-import BillboardClient from "./components/client";
-import { BillboardColumn } from "./components/columns";
+import OrderClient from "./components/client";
+import { OrderColumn } from "./components/columns";
 import { format } from "date-fns";
 import { formatter } from "@/lib/utils";
 
-const CategoriesPage = async ({ params }: { params: { storeId: string } }) => {
+const OrderPage = async ({ params }: { params: { storeId: string } }) => {
   const order = await prismadb.order.findMany({
     where: {
       storeId: params.storeId,
@@ -21,7 +21,7 @@ const CategoriesPage = async ({ params }: { params: { storeId: string } }) => {
     },
   });
 
-  const formattedBillboards: BillboardColumn[] = order.map((item) => ({
+  const formattedOrder: OrderColumn[] = order.map((item) => ({
     id: item.id,
     phone: item.phone,
     address: item.phone,
@@ -35,10 +35,10 @@ const CategoriesPage = async ({ params }: { params: { storeId: string } }) => {
   return (
     <div className="flex-col">
       <div className="flex-1 space-y-4 p-8 pt-6">
-        <BillboardClient data={formattedBillboards} />
+        <OrderClient data={formattedOrder} />
       </div>
     </div>
   );
 };
 
-export default CategoriesPage;
+export default OrderPage;

@@ -10,15 +10,15 @@ import { useRouter } from "next/navigation";
 
 import { Plus } from "lucide-react";
 
-import { BillboardColumn, columns } from "./columns";
+import { SpecificationColumn, columns } from "./columns";
 
 import { ApiList } from "@/components/ui/api-list";
 
-interface BillboardClientProps{
-    data: BillboardColumn[]
+interface SpecificationClientProps{
+    data: SpecificationColumn[]
 }
 
-const BillboardClient:React.FC<BillboardClientProps> = ({data}) => {
+const SpecificationClient:React.FC<SpecificationClientProps> = ({data}) => {
     const router = useRouter()
     const params = useParams()
     return ( 
@@ -26,7 +26,7 @@ const BillboardClient:React.FC<BillboardClientProps> = ({data}) => {
         <div className="flex items-center justify-between">
             <Heading 
             title ={`Specifications (${data.length})`}
-            description="Manage categories for your store"
+            description="Manage specification for your store"
             />
             <Button onClick={() => router.push(`/${params.storeId}/specifications/new`)}>
                 <Plus className="mr-2 h-4 w-4" />
@@ -45,4 +45,4 @@ const BillboardClient:React.FC<BillboardClientProps> = ({data}) => {
      );
 }
  
-export default BillboardClient;
+export default SpecificationClient;

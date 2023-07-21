@@ -9,7 +9,7 @@ export async function GET(
 ) {
   try {
     if (!params.salientfeaturesId) {
-      return new NextResponse("Billboard id is required", { status: 400 });
+      return new NextResponse("Salientfeatures id is required", { status: 400 });
     }
 
     const salientfeatures = await prismadb.salientfeatures.findUnique({
@@ -23,7 +23,7 @@ export async function GET(
   
     return NextResponse.json(salientfeatures);
   } catch (error) {
-    console.log('[PRODUCT_GET]', error);
+    console.log('[SALIENTFEATURES_GET]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
@@ -40,7 +40,7 @@ export async function DELETE(
     }
 
     if (!params.salientfeaturesId) {
-      return new NextResponse("Billboard id is required", { status: 400 });
+      return new NextResponse("Salientfeatures id is required", { status: 400 });
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -62,7 +62,7 @@ export async function DELETE(
   
     return NextResponse.json(salientfeatures);
   } catch (error) {
-    console.log('[PRODUCT_DELETE]', error);
+    console.log('[SALIENTFEATURES_DELETE]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
@@ -87,26 +87,26 @@ export async function PATCH(
       return new NextResponse("Name is required", { status: 400 });
     }
     if (!description) {
-      return new NextResponse("Name is required", { status: 400 });
+      return new NextResponse("Description is required", { status: 400 });
     }
     if (!description2) {
-      return new NextResponse("Name is required", { status: 400 });
+      return new NextResponse("Description 2 is required", { status: 400 });
     }
     if (!description3) {
-      return new NextResponse("Name is required", { status: 400 });
+      return new NextResponse("Description 3 is required", { status: 400 });
     }
     if (!description4) {
-      return new NextResponse("Name is required", { status: 400 });
+      return new NextResponse("Description 4 is required", { status: 400 });
     }
     if (!content) {
-      return new NextResponse("Name is required", { status: 400 });
+      return new NextResponse("Content is required", { status: 400 });
     }
     if (!imagesalientfeatures || !imagesalientfeatures.length) {
       return new NextResponse("Imagesalient Features is required", { status: 400 });
     }
 
     if (!params.salientfeaturesId) {
-      return new NextResponse("Product id is required", { status: 400 });
+      return new NextResponse("Salientfeatures id is required", { status: 400 });
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -137,7 +137,7 @@ export async function PATCH(
   
     return NextResponse.json(salientfeatures);
   } catch (error) {
-    console.log('[PRODUCT_PATCH]', error);
+    console.log('[SALIENTFEATURES_PATCH]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };

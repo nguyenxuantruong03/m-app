@@ -1,7 +1,7 @@
 import prismadb from "@/lib/prismadb";
-import { BillboardForm } from "./components/billboard-form";
+import { ColorForm } from "./components/color-form";
 
-const BillboardPage = async ({params}:{params: {storeId: string,colorId: string}}) => {
+const ColorPage = async ({params}:{params: {storeId: string,colorId: string}}) => {
     const color = await prismadb.color.findUnique({
         where:{
             id: params.colorId
@@ -11,7 +11,7 @@ const BillboardPage = async ({params}:{params: {storeId: string,colorId: string}
     return ( 
         <div className="flex-col">
             <div className="flex-1 space-y-4 p-8 pt-6">
-                <BillboardForm 
+                <ColorForm 
                 initialData={color} 
                 />
             </div>
@@ -19,4 +19,4 @@ const BillboardPage = async ({params}:{params: {storeId: string,colorId: string}
      );
 }
  
-export default BillboardPage;
+export default ColorPage;

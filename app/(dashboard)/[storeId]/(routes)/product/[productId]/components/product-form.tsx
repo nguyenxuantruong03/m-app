@@ -55,9 +55,9 @@ const formSchema = z.object({
   salientfeaturesId: z.string().min(1),
 });
 
-type BillboardFormValues = z.infer<typeof formSchema>
+type ProductFormValues = z.infer<typeof formSchema>
 
-interface BillboardFormProps {
+interface ProductFormProps {
   initialData: Product & {
     images: Image[]} | null;
 
@@ -68,7 +68,7 @@ interface BillboardFormProps {
   salientfeatures: Salientfeatures[]
 };
 
-export const BillboardForm: React.FC<BillboardFormProps> = ({
+export const ProductForm: React.FC<ProductFormProps> = ({
   initialData,categories, sizes,colors,specifications,salientfeatures
 }) => {
   const params = useParams();
@@ -77,12 +77,12 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const title = initialData ? 'Edit billboard' : 'Create billboard';
-  const description = initialData ? 'Edit a billboard.' : 'Add a new billboard';
-  const toastMessage = initialData ? 'Billboard updated.' : 'Billboard created.';
+  const title = initialData ? 'Edit product' : 'Create product';
+  const description = initialData ? 'Edit a product.' : 'Add a new product';
+  const toastMessage = initialData ? 'Product updated.' : 'Product created.';
   const action = initialData ? 'Save changes' : 'Create';
 
-  const form = useForm<BillboardFormValues>({
+  const form = useForm<ProductFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData ? {
      ...initialData,
@@ -118,7 +118,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
   });
 
 
-  const onSubmit = async (data: BillboardFormValues) => {
+  const onSubmit = async (data: ProductFormValues) => {
     try {
       setLoading(true);
       //inittialData có nghĩa là khi dữ diệu ban đầu có nó sẽ đổi nut button thành save change 
@@ -145,9 +145,9 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
       await axios.delete(`/api/${params.storeId}/product/${params.productId}`);
       router.refresh();
       router.push(`/${params.storeId}/product`);
-      toast.success('Billboard deleted.');
+      toast.success('Product deleted.');
     } catch (error: any) {
-      toast.error('Make sure you removed all product using this billboard first.');
+      toast.error('Make sure you removed all product using this product first.');
     } finally {
       setLoading(false);
       setOpen(false);
@@ -209,7 +209,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Category label" {...field} />
+                    <Input disabled={loading} placeholder="Name ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -223,7 +223,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Heading</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Category label" {...field} />
+                    <Input disabled={loading} placeholder="Heading ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -235,9 +235,9 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Heading</FormLabel>
+                  <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Category label" {...field} />
+                    <Input disabled={loading} placeholder="Description ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -291,9 +291,9 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               name="headingrecommend"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>heading Recommend</FormLabel>
+                  <FormLabel>Heading Recommend</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Category label" {...field} />
+                    <Input disabled={loading} placeholder="Heading recommend ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -305,9 +305,9 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               name="infomationrecommend"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>infomation Recommend</FormLabel>
+                  <FormLabel>Infomation recommend</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Category label" {...field} />
+                    <Input disabled={loading} placeholder="Infomation recommend ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -319,9 +319,9 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               name="warrantyrecommend"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>warranty Recommend</FormLabel>
+                  <FormLabel>Warranty recommend</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Category label" {...field} />
+                    <Input disabled={loading} placeholder="Warranty recommend ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -333,9 +333,9 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               name="vatrecommend"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>VAT Recommend</FormLabel>
+                  <FormLabel>VAT recommend</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Category label" {...field} />
+                    <Input disabled={loading} placeholder="VAT recommend ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -347,9 +347,9 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               name="promotionheading"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>promotion Heading</FormLabel>
+                  <FormLabel>Promotion heading</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Category label" {...field} />
+                    <Input disabled={loading} placeholder="Promotion heading ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -361,9 +361,9 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               name="promotiondescription"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>promotion Description</FormLabel>
+                  <FormLabel>Promotion description</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Category label" {...field} />
+                    <Input disabled={loading} placeholder="Promotion description ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -375,9 +375,9 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               name="guaranteeheading"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>guarantee Heading</FormLabel>
+                  <FormLabel>Guarantee heading</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Category label" {...field} />
+                    <Input disabled={loading} placeholder="Guarantee heading ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -389,9 +389,9 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               name="guaranteedescription"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>guarantee Description</FormLabel>
+                  <FormLabel>Guarantee description</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Category label" {...field} />
+                    <Input disabled={loading} placeholder="Guarantee description ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -403,9 +403,9 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               name="guaranteeinfomation"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>guarantee Infomation</FormLabel>
+                  <FormLabel>Guarantee infomation</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Category label" {...field} />
+                    <Input disabled={loading} placeholder="Guarantee infomation ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -417,9 +417,9 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               name="guaranteeprice"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>guarantee Price</FormLabel>
+                  <FormLabel>Guarantee price</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Category label" {...field} />
+                    <Input disabled={loading} placeholder="Guarantee price ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -547,7 +547,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                         <SelectTrigger>
                           <SelectValue
                           defaultValue={field.value}
-                          placeholder="Select a specifications ..."
+                          placeholder="Select a specifications"
                           />
                         </SelectTrigger>
                       </FormControl>
@@ -582,7 +582,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                         <SelectTrigger>
                           <SelectValue
                           defaultValue={field.value}
-                          placeholder="Select a salientfeatures ..."
+                          placeholder="Select a salientfeatures"
                           />
                         </SelectTrigger>
                       </FormControl>

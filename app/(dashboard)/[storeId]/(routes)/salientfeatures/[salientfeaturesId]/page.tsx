@@ -1,7 +1,7 @@
 import prismadb from "@/lib/prismadb";
-import { BillboardForm } from "./components/billboard-form";
+import { SalientFeatureForm } from "./components/salientfeature-form";
 
-const BillboardPage = async ({params}:{params: {storeId: string,salientfeaturesId: string}}) => {
+const  SalientFeaturePage = async ({params}:{params: {storeId: string,salientfeaturesId: string}}) => {
     const salientfeatures = await prismadb.salientfeatures.findUnique({
         where:{
             id: params.salientfeaturesId
@@ -14,7 +14,7 @@ const BillboardPage = async ({params}:{params: {storeId: string,salientfeaturesI
     return ( 
         <div className="flex-col">
             <div className="flex-1 space-y-4 p-8 pt-6">
-                <BillboardForm 
+                <SalientFeatureForm 
                 initialData={salientfeatures} 
                 />
             </div>
@@ -22,4 +22,4 @@ const BillboardPage = async ({params}:{params: {storeId: string,salientfeaturesI
      );
 }
  
-export default BillboardPage;
+export default SalientFeaturePage;

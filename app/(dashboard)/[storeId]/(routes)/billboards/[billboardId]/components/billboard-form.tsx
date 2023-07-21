@@ -149,7 +149,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Label</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Billboard label" {...field} />
+                    <Input disabled={loading} placeholder="Billboard label ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

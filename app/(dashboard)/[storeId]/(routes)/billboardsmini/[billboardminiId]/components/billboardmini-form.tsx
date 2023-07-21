@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { Trash } from "lucide-react"
-import { Billboardsale } from "@prisma/client"
+import { Billboard, Billboardmini } from "@prisma/client"
 import { useParams, useRouter } from "next/navigation"
 
 import { Input } from "@/components/ui/input"
@@ -30,13 +30,13 @@ const formSchema = z.object({
   imageUrl: z.string().min(1),
 });
 
-type BillboardFormValues = z.infer<typeof formSchema>
+type BillboardMiniFormValues = z.infer<typeof formSchema>
 
-interface BillboardFormProps {
-  initialData: Billboardsale | null;
+interface BillboardMiniFormProps {
+  initialData: Billboardmini | null;
 };
 
-export const BillboardForm: React.FC<BillboardFormProps> = ({
+export const BillboardMiniForm: React.FC<BillboardMiniFormProps> = ({
   initialData
 }) => {
   const params = useParams();
@@ -45,12 +45,12 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const title = initialData ? 'Edit billboard' : 'Create billboard';
-  const description = initialData ? 'Edit a billboard.' : 'Add a new billboard';
-  const toastMessage = initialData ? 'Billboard updated.' : 'Billboard created.';
+  const title = initialData ? 'Edit billboard mini' : 'Create billboard mini';
+  const description = initialData ? 'Edit a billboard mini' : 'Add a new billboard mini';
+  const toastMessage = initialData ? 'Billboard mini updated.' : 'Billboard mini created.';
   const action = initialData ? 'Save changes' : 'Create';
 
-  const form = useForm<BillboardFormValues>({
+  const form = useForm<BillboardMiniFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
       label: '',
@@ -58,19 +58,19 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
     }
   });
 
-  const onSubmit = async (data: BillboardFormValues) => {
+  const onSubmit = async (data: BillboardMiniFormValues) => {
     try {
       setLoading(true);
       //inittialData có nghĩa là khi dữ diệu ban đầu có nó sẽ đổi nut button thành save change 
      /* Khối mã chịu trách nhiệm thực hiện yêu cầu HTTP để cập nhật bảng quảng cáo hiện có
       hoặc tạo bảng quảng cáo mới dựa trên giá trị của `initialData`. */
       if (initialData) {
-        await axios.patch(`/api/${params.storeId}/billboardssale/${params.billboardsaleId}`, data);
+        await axios.patch(`/api/${params.storeId}/billboardsmini/${params.billboardminiId}`, data);
       } else {
-        await axios.post(`/api/${params.storeId}/billboardssale`, data);
+        await axios.post(`/api/${params.storeId}/billboardsmini`, data);
       }
       router.refresh();
-      router.push(`/${params.storeId}/billboardssale`);
+      router.push(`/${params.storeId}/billboardsmini`);
       toast.success(toastMessage);
     } catch (error: any) {
       toast.error('Something went wrong.');
@@ -82,12 +82,12 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/billboardssale/${params.billboardsaleId}`);
+      await axios.delete(`/api/${params.storeId}/billboardsmini/${params.billboardminiId}`);
       router.refresh();
-      router.push(`/${params.storeId}/billboardssale`);
-      toast.success('Billboard deleted.');
+      router.push(`/${params.storeId}/billboardsmini`);
+      toast.success('Billboard mini deleted.');
     } catch (error: any) {
-      toast.error('Make sure you removed all categories using this billboard first.');
+      toast.error('Make sure you removed all categories using this billboard mini first.');
     } finally {
       setLoading(false);
       setOpen(false);
@@ -149,7 +149,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Label</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Billboard label" {...field} />
+                    <Input disabled={loading} placeholder="Billboard mini label..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

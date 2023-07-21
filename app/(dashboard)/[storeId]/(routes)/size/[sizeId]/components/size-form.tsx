@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { Trash } from "lucide-react";
-import { Color } from "@prisma/client";
+import { Size } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
 
 import { Input } from "@/components/ui/input";
@@ -26,18 +26,16 @@ import { AlertModal } from "@/components/modals/alert-modal";
 
 const formSchema = z.object({
   name: z.string().min(1),
-  value: z.string().min(1).regex(/^#/,{
-    message: 'String must be a valid hex code'
-  }),
+  value: z.string().min(1),
 });
 
-type BillboardFormValues = z.infer<typeof formSchema>;
+type SizeFormValues = z.infer<typeof formSchema>;
 
-interface BillboardFormProps {
-  initialData: Color | null;
+interface SizeFormProps {
+  initialData: Size | null;
 }
 
-export const BillboardForm: React.FC<BillboardFormProps> = ({
+export const SizeForm: React.FC<SizeFormProps> = ({
   initialData,
 }) => {
   const params = useParams();
@@ -46,14 +44,12 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const title = initialData ? "Edit billboard" : "Create billboard";
-  const description = initialData ? "Edit a billboard." : "Add a new billboard";
-  const toastMessage = initialData
-    ? "Billboard updated."
-    : "Billboard created.";
+  const title = initialData ? "Edit size" : "Create size";
+  const description = initialData ? "Edit a size." : "Add a new size";
+  const toastMessage = initialData? "Size updated.": "Size created.";
   const action = initialData ? "Save changes" : "Create";
 
-  const form = useForm<BillboardFormValues>({
+  const form = useForm<SizeFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
       name: "",
@@ -61,7 +57,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
     },
   });
 
-  const onSubmit = async (data: BillboardFormValues) => {
+  const onSubmit = async (data: SizeFormValues) => {
     try {
       setLoading(true);
       //inittialData có nghĩa là khi dữ diệu ban đầu có nó sẽ đổi nut button thành save change
@@ -69,14 +65,14 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
       hoặc tạo bảng quảng cáo mới dựa trên giá trị của `initialData`. */
       if (initialData) {
         await axios.patch(
-          `/api/${params.storeId}/color/${params.colorId}`,
+          `/api/${params.storeId}/size/${params.sizeId}`,
           data
         );
       } else {
-        await axios.post(`/api/${params.storeId}/color`, data);
+        await axios.post(`/api/${params.storeId}/size`, data);
       }
       router.refresh();
-      router.push(`/${params.storeId}/color`);
+      router.push(`/${params.storeId}/size`);
       toast.success(toastMessage);
     } catch (error: any) {
       toast.error("Something went wrong.");
@@ -89,14 +85,14 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
     try {
       setLoading(true);
       await axios.delete(
-        `/api/${params.storeId}/color/${params.colorId}`
+        `/api/${params.storeId}/size/${params.sizeId}`
       );
       router.refresh();
-      router.push(`/${params.storeId}/color`);
-      toast.success("Billboard deleted.");
+      router.push(`/${params.storeId}/size`);
+      toast.success("Size deleted.");
     } catch (error: any) {
       toast.error(
-        "Make sure you removed all color using this billboard first."
+        "Make sure you removed all size using this size first."
       );
     } finally {
       setLoading(false);
@@ -144,7 +140,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Size name"
+                      placeholder="Name ..."
                       {...field}
                     />
                   </FormControl>
@@ -160,17 +156,11 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Value</FormLabel>
                   <FormControl>
-                    <div className="flex items-center gap-x-4">
                     <Input
                       disabled={loading}
-                      placeholder="Size value"
+                      placeholder="Value ..."
                       {...field}
                     />
-                    <div 
-                    className="border p-4 rounded-full"
-                    style={{backgroundColor: field.value}}
-                    />
-                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

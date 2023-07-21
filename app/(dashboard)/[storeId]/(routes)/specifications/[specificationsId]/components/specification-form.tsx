@@ -48,13 +48,13 @@ const formSchema = z.object({
   value10: z.string().min(1),
 });
 
-type BillboardFormValues = z.infer<typeof formSchema>
+type  SpecificationFormValues = z.infer<typeof formSchema>
 
-interface BillboardFormProps {
+interface  SpecificationFormProps {
   initialData: Specifications | null;
 };
 
-export const BillboardForm: React.FC<BillboardFormProps> = ({
+export const  SpecificationForm: React.FC< SpecificationFormProps> = ({
   initialData
 }) => {
   const params = useParams();
@@ -63,12 +63,12 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const title = initialData ? 'Edit billboard' : 'Create billboard';
-  const description = initialData ? 'Edit a billboard.' : 'Add a new billboard';
-  const toastMessage = initialData ? 'Billboard updated.' : 'Billboard created.';
+  const title = initialData ? 'Edit specification' : 'Create specification';
+  const description = initialData ? 'Edit a specification.' : 'Add a new specification';
+  const toastMessage = initialData ? 'Specification updated.' : 'Specification created.';
   const action = initialData ? 'Save changes' : 'Create';
 
-  const form = useForm<BillboardFormValues>({
+  const form = useForm< SpecificationFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
       name: '',
@@ -95,7 +95,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
     }
   });
 
-  const onSubmit = async (data: BillboardFormValues) => {
+  const onSubmit = async (data:  SpecificationFormValues) => {
     try {
       setLoading(true);
       //inittialData có nghĩa là khi dữ diệu ban đầu có nó sẽ đổi nut button thành save change 
@@ -122,9 +122,9 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
       await axios.delete(`/api/${params.storeId}/specifications/${params.specificationsId}`);
       router.refresh();
       router.push(`/${params.storeId}/specifications`);
-      toast.success('Billboard deleted.');
+      toast.success('Specification deleted.');
     } catch (error: any) {
-      toast.error('Make sure you removed all specifications using this billboard first.');
+      toast.error('Make sure you removed all specifications using this specification first.');
     } finally {
       setLoading(false);
       setOpen(false);
@@ -167,7 +167,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Specifications ..." {...field} />
+                    <Input disabled={loading} placeholder="Name ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -180,7 +180,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Specifications ..." {...field} />
+                    <Input disabled={loading} placeholder="Description ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -191,9 +191,9 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               name="value"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>value</FormLabel>
+                  <FormLabel>Value</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Specifications ..." {...field} />
+                    <Input disabled={loading} placeholder="Value ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -206,7 +206,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Description2</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Specifications ..." {...field} />
+                    <Input disabled={loading} placeholder="Description2 ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -219,7 +219,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Value 2</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Specifications ..." {...field} />
+                    <Input disabled={loading} placeholder="Value 2 ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -232,7 +232,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Description 3</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Specifications ..." {...field} />
+                    <Input disabled={loading} placeholder="Description 3 ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -245,7 +245,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Value 3</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Specifications ..." {...field} />
+                    <Input disabled={loading} placeholder="Value 3 ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -258,7 +258,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Description 4</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Specifications ..." {...field} />
+                    <Input disabled={loading} placeholder="Description 4 ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -271,7 +271,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Value 4</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Specifications ..." {...field} />
+                    <Input disabled={loading} placeholder="Value 4 ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -284,7 +284,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Description 5</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Specifications ..." {...field} />
+                    <Input disabled={loading} placeholder="Description 5 ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -297,7 +297,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Value 5</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Specifications ..." {...field} />
+                    <Input disabled={loading} placeholder="Value 5 ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -310,7 +310,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Description 6</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Specifications ..." {...field} />
+                    <Input disabled={loading} placeholder="Description 6 ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -323,7 +323,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Value 6</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Specifications ..." {...field} />
+                    <Input disabled={loading} placeholder="Value 6 ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -336,7 +336,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Description 7</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Specifications ..." {...field} />
+                    <Input disabled={loading} placeholder="Description 7 ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -349,7 +349,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Value 7</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Specifications ..." {...field} />
+                    <Input disabled={loading} placeholder="Value 7 ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -362,7 +362,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Description 8</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Specifications ..." {...field} />
+                    <Input disabled={loading} placeholder="Description 8 ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -375,7 +375,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Value 8</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Specifications ..." {...field} />
+                    <Input disabled={loading} placeholder="Value 8 ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -388,7 +388,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Description 9</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Specifications ..." {...field} />
+                    <Input disabled={loading} placeholder="Description 9 ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -401,7 +401,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Value 9</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Specifications ..." {...field} />
+                    <Input disabled={loading} placeholder="Value 9 ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -414,7 +414,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Description 10</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Specifications ..." {...field} />
+                    <Input disabled={loading} placeholder="Description 10 ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -427,7 +427,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Value 10</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Specifications ..." {...field} />
+                    <Input disabled={loading} placeholder="Value 10 ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

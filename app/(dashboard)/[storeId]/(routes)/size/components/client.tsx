@@ -10,15 +10,15 @@ import { useRouter } from "next/navigation";
 
 import { Plus } from "lucide-react";
 
-import { BillboardColumn, columns } from "./columns";
+import { SizeColumn, columns } from "./columns";
 
 import { ApiList } from "@/components/ui/api-list";
 
-interface BillboardClientProps{
-    data: BillboardColumn[]
+interface SizeClientProps{
+    data: SizeColumn[]
 }
 
-const BillboardClient:React.FC<BillboardClientProps> = ({data}) => {
+const SizeClient:React.FC<SizeClientProps> = ({data}) => {
     const router = useRouter()
     const params = useParams()
     return ( 
@@ -26,7 +26,7 @@ const BillboardClient:React.FC<BillboardClientProps> = ({data}) => {
         <div className="flex items-center justify-between">
             <Heading 
             title ={`Size (${data.length})`}
-            description="Manage categories for your store"
+            description="Manage size for your store"
             />
             <Button onClick={() => router.push(`/${params.storeId}/size/new`)}>
                 <Plus className="mr-2 h-4 w-4" />
@@ -35,7 +35,7 @@ const BillboardClient:React.FC<BillboardClientProps> = ({data}) => {
         </div>
         <Separator />
         <DataTable searchKey="name" columns={columns} data={data} />
-        <Heading title="Api" description="API calls for Billboards" />
+        <Heading title="Api" description="API calls for Size" />
         <Separator />
         <ApiList 
         entityIdName="sizeId"
@@ -45,4 +45,4 @@ const BillboardClient:React.FC<BillboardClientProps> = ({data}) => {
      );
 }
  
-export default BillboardClient;
+export default SizeClient;

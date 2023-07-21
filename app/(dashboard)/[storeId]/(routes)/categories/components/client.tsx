@@ -10,15 +10,15 @@ import { useRouter } from "next/navigation";
 
 import { Plus } from "lucide-react";
 
-import { BillboardColumn, columns } from "./columns";
+import { CategoriesColumn, columns } from "./columns";
 
 import { ApiList } from "@/components/ui/api-list";
 
-interface BillboardClientProps{
-    data: BillboardColumn[]
+interface CategoriesClientProps{
+    data: CategoriesColumn[]
 }
 
-const BillboardClient:React.FC<BillboardClientProps> = ({data}) => {
+const CategoriesClient:React.FC<CategoriesClientProps> = ({data}) => {
     const router = useRouter()
     const params = useParams()
     return ( 
@@ -35,7 +35,7 @@ const BillboardClient:React.FC<BillboardClientProps> = ({data}) => {
         </div>
         <Separator />
         <DataTable searchKey="name" columns={columns} data={data} />
-        <Heading title="Api" description="API calls for Billboards" />
+        <Heading title="Api" description="API calls for Category" />
         <Separator />
         <ApiList 
         entityIdName="categoryId"
@@ -45,4 +45,4 @@ const BillboardClient:React.FC<BillboardClientProps> = ({data}) => {
      );
 }
  
-export default BillboardClient;
+export default CategoriesClient;

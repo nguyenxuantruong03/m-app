@@ -9,7 +9,7 @@ export async function GET(
 ) {
   try {
     if (!params.billboardminiId) {
-      return new NextResponse("Billboard id is required", { status: 400 });
+      return new NextResponse("Billboard mini id is required", { status: 400 });
     }
 
     const billboard = await prismadb.billboardmini.findUnique({
@@ -20,7 +20,7 @@ export async function GET(
   
     return NextResponse.json(billboard);
   } catch (error) {
-    console.log('[BILLBOARD_GET]', error);
+    console.log('[BILLBOARDMINI_GET]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
@@ -37,7 +37,7 @@ export async function DELETE(
     }
 
     if (!params.billboardminiId) {
-      return new NextResponse("Billboard id is required", { status: 400 });
+      return new NextResponse("Billboard mini id is required", { status: 400 });
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -59,7 +59,7 @@ export async function DELETE(
   
     return NextResponse.json(billboard);
   } catch (error) {
-    console.log('[BILLBOARD_DELETE]', error);
+    console.log('[BILLBOARDMINI_DELETE]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
@@ -89,7 +89,7 @@ export async function PATCH(
     }
 
     if (!params.billboardminiId) {
-      return new NextResponse("Billboard id is required", { status: 400 });
+      return new NextResponse("Billboard mini id is required", { status: 400 });
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -115,7 +115,7 @@ export async function PATCH(
   
     return NextResponse.json(billboard);
   } catch (error) {
-    console.log('[BILLBOARD_PATCH]', error);
+    console.log('[BILLBOARDMINI_PATCH]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };

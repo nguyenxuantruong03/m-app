@@ -22,19 +22,19 @@ export async function POST(
       return new NextResponse("Name is required", { status: 400 });
     }
     if (!description) {
-      return new NextResponse("Name is required", { status: 400 });
+      return new NextResponse("Description is required", { status: 400 });
     }
     if (!description2) {
-      return new NextResponse("Name is required", { status: 400 });
+      return new NextResponse("Description 2 is required", { status: 400 });
     }
     if (!description3) {
-      return new NextResponse("Name is required", { status: 400 });
+      return new NextResponse("Description 3 is required", { status: 400 });
     }
     if (!description4) {
-      return new NextResponse("Name is required", { status: 400 });
+      return new NextResponse("Description 4 is required", { status: 400 });
     }
     if (!content) {
-      return new NextResponse("Name is required", { status: 400 });
+      return new NextResponse("Content is required", { status: 400 });
     }
     if (!imagesalientfeatures || !imagesalientfeatures.length) {
       return new NextResponse("Imagesalient Features is required", { status: 400 });
@@ -75,7 +75,7 @@ export async function POST(
   
     return NextResponse.json(salientfeatures);
   } catch (error) {
-    console.log('[PRODUCT_POST]', error);
+    console.log('[SALIENTFEATURES_POST]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
@@ -105,7 +105,7 @@ export async function GET(
   
     return NextResponse.json(salientfeatures);
   } catch (error) {
-    console.log('[PRODUCT_GET]', error);
+    console.log('[SALIENTFEATURES_GET]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };

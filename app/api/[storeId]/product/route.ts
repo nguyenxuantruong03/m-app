@@ -25,67 +25,67 @@ export async function POST(
       return new NextResponse("Name is required", { status: 400 });
     }
     if (!heading) {
-      return new NextResponse("heading is required", { status: 400 });
+      return new NextResponse("Heading is required", { status: 400 });
     }
     if (!description) {
-      return new NextResponse("description is required", { status: 400 });
+      return new NextResponse("Description is required", { status: 400 });
     }
     if (!categoryId) {
-      return new NextResponse("categoryId is required", { status: 400 });
+      return new NextResponse("CategoryId is required", { status: 400 });
     }
     if (!headingrecommend) {
-      return new NextResponse("headingrecommend is required", { status: 400 });
+      return new NextResponse("Headingrecommend is required", { status: 400 });
     }
     if (!infomationrecommend) {
-      return new NextResponse("infomationrecommend is required", { status: 400 });
+      return new NextResponse("Infomationrecommend is required", { status: 400 });
     }
     if (!warrantyrecommend) {
-      return new NextResponse("warrantyrecommend is required", { status: 400 });
+      return new NextResponse("Warrantyrecommend is required", { status: 400 });
     }
     if (!vatrecommend) {
-      return new NextResponse("vatrecommend is required", { status: 400 });
+      return new NextResponse("Vatrecommend is required", { status: 400 });
     }
     if (!promotionheading) {
-      return new NextResponse("promotionheading is required", { status: 400 });
+      return new NextResponse("Promotionheading is required", { status: 400 });
     }
     if (!promotiondescription) {
-      return new NextResponse("promotiondescription is required", { status: 400 });
+      return new NextResponse("Promotiondescription is required", { status: 400 });
     }
     if (!guaranteeheading) {
-      return new NextResponse("guaranteeheading is required", { status: 400 });
+      return new NextResponse("Guaranteeheading is required", { status: 400 });
     }
     if (!guaranteedescription) {
-      return new NextResponse("guaranteedescription is required", { status: 400 });
+      return new NextResponse("Guaranteedescription is required", { status: 400 });
     }
     if (!guaranteeinfomation) {
-      return new NextResponse("guaranteeinfomation is required", { status: 400 });
+      return new NextResponse("Guaranteeinfomation is required", { status: 400 });
     }
     if (!guaranteeprice) {
-      return new NextResponse("guaranteeprice is required", { status: 400 });
+      return new NextResponse("Guaranteeprice is required", { status: 400 });
     }
     if (!price) {
-      return new NextResponse("price is required", { status: 400 });
+      return new NextResponse("Price is required", { status: 400 });
     }
     if (!priceold) {
-      return new NextResponse("priceold is required", { status: 400 });
+      return new NextResponse("Priceold is required", { status: 400 });
     }
     if (!percentpromotion) {
-      return new NextResponse("percentpromotion is required", { status: 400 });
+      return new NextResponse("Percentpromotion is required", { status: 400 });
     }
     if (!sizeId) {
-      return new NextResponse("sizeId is required", { status: 400 });
+      return new NextResponse("SizeId is required", { status: 400 });
     }
     if (!colorId) {
-      return new NextResponse("colorId is required", { status: 400 });
+      return new NextResponse("ColorId is required", { status: 400 });
     }
     if (!specificationsId) {
-      return new NextResponse("specificationsId", { status: 403 });
+      return new NextResponse("SpecificationsId", { status: 403 });
     }
     if (!salientfeaturesId) {
-      return new NextResponse("salientfeaturesId is required", { status: 400 });
+      return new NextResponse("SalientfeaturesId is required", { status: 400 });
     }
     if (!images || !images.length) {
-      return new NextResponse("images is required", { status: 400 });
+      return new NextResponse("Images is required", { status: 400 });
     }
 
     if (!params.storeId) {

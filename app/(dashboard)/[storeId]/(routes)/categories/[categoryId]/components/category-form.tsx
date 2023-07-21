@@ -30,14 +30,14 @@ const formSchema = z.object({
   billboardId: z.string().min(1),
 });
 
-type BillboardFormValues = z.infer<typeof formSchema>
+type CategoryFormValues = z.infer<typeof formSchema>
 
-interface BillboardFormProps {
+interface CategoryFormProps {
   initialData: Category | null;
   billboards: Billboard[];
 };
 
-export const BillboardForm: React.FC<BillboardFormProps> = ({
+export const CategoryForm: React.FC<CategoryFormProps> = ({
   initialData,billboards,
 }) => {
   const params = useParams();
@@ -46,12 +46,12 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const title = initialData ? 'Edit billboard' : 'Create billboard';
-  const description = initialData ? 'Edit a billboard.' : 'Add a new billboard';
-  const toastMessage = initialData ? 'Billboard updated.' : 'Billboard created.';
+  const title = initialData ? 'Edit category' : 'Create category';
+  const description = initialData ? 'Edit a category.' : 'Add a new category';
+  const toastMessage = initialData ? 'Category updated.' : 'Category created.';
   const action = initialData ? 'Save changes' : 'Create';
 
-  const form = useForm<BillboardFormValues>({
+  const form = useForm<CategoryFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
       name: '',
@@ -59,7 +59,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
     }
   });
 
-  const onSubmit = async (data: BillboardFormValues) => {
+  const onSubmit = async (data: CategoryFormValues) => {
     try {
       setLoading(true);
       //inittialData có nghĩa là khi dữ diệu ban đầu có nó sẽ đổi nut button thành save change 
@@ -86,9 +86,9 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
       await axios.delete(`/api/${params.storeId}/categories/${params.categoryId}`);
       router.refresh();
       router.push(`/${params.storeId}/categories`);
-      toast.success('Billboard deleted.');
+      toast.success('Category deleted.');
     } catch (error: any) {
-      toast.error('Make sure you removed all categories using this billboard first.');
+      toast.error('Make sure you removed all categories using this Category first.');
     } finally {
       setLoading(false);
       setOpen(false);
@@ -131,7 +131,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Category label" {...field} />
+                    <Input disabled={loading} placeholder="Category label ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

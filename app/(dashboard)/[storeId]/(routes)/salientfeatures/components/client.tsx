@@ -10,15 +10,15 @@ import { useRouter } from "next/navigation";
 
 import { Plus } from "lucide-react";
 
-import { BillboardColumn, columns } from "./columns";
+import { SalientFeaturesColumn, columns } from "./columns";
 
 import { ApiList } from "@/components/ui/api-list";
 
-interface BillboardClientProps{
-    data: BillboardColumn[]
+interface  SalientFeatureClientProps{
+    data: SalientFeaturesColumn[]
 }
 
-const BillboardClient:React.FC<BillboardClientProps> = ({data}) => {
+const  SalientFeatureClient:React.FC< SalientFeatureClientProps> = ({data}) => {
     const router = useRouter()
     const params = useParams()
     return ( 
@@ -26,7 +26,7 @@ const BillboardClient:React.FC<BillboardClientProps> = ({data}) => {
         <div className="flex items-center justify-between">
             <Heading 
             title ={`Salientfeatures (${data.length})`}
-            description="Manage product for your store"
+            description="Manage salientFeature for your store"
             />
             <Button onClick={() => router.push(`/${params.storeId}/salientfeatures/new`)}>
                 <Plus className="mr-2 h-4 w-4" />
@@ -35,7 +35,7 @@ const BillboardClient:React.FC<BillboardClientProps> = ({data}) => {
         </div>
         <Separator />
         <DataTable searchKey="name" columns={columns} data={data} />
-        <Heading title="Api" description="API calls for Product" />
+        <Heading title="Api" description="API calls for  SalientFeature" />
         <Separator />
         <ApiList 
         entityIdName="salientfeaturesId"
@@ -45,4 +45,4 @@ const BillboardClient:React.FC<BillboardClientProps> = ({data}) => {
      );
 }
  
-export default BillboardClient;
+export default  SalientFeatureClient;

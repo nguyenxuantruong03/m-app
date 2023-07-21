@@ -41,7 +41,7 @@ export async function POST(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    const category = await prismadb.size.create({
+    const size = await prismadb.size.create({
       data: {
         name,
         value,
@@ -49,9 +49,9 @@ export async function POST(
       }
     });
   
-    return NextResponse.json(category);
+    return NextResponse.json(size);
   } catch (error) {
-    console.log('[BILLBOARDS_POST]', error);
+    console.log('[SIZE_POST]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
@@ -65,15 +65,15 @@ export async function GET(
       return new NextResponse("Store id is required", { status: 400 });
     }
 
-    const category = await prismadb.size.findMany({
+    const size = await prismadb.size.findMany({
       where: {
         storeId: params.storeId
       }
     });
   
-    return NextResponse.json(category);
+    return NextResponse.json(size);
   } catch (error) {
-    console.log('[BILLBOARDS_GET]', error);
+    console.log('[SIZE_GET]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };

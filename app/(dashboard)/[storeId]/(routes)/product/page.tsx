@@ -1,10 +1,10 @@
 import prismadb from "@/lib/prismadb";
-import BillboardClient from "./components/client";
-import { BillboardColumn } from "./components/columns";
+import ProductClient from "./components/client";
+import { ProductColumn } from "./components/columns";
 import { format } from "date-fns";
 import { formatter } from "@/lib/utils";
 
-const CategoriesPage = async ({ params }: { params: { storeId: string } }) => {
+const ProductPage = async ({ params }: { params: { storeId: string } }) => {
   const product = await prismadb.product.findMany({
     where: {
       storeId: params.storeId,
@@ -21,7 +21,7 @@ const CategoriesPage = async ({ params }: { params: { storeId: string } }) => {
     },
   });
 
-  const formattedBillboards: BillboardColumn[] = product.map((item) => ({
+  const formattedProduct: ProductColumn[] = product.map((item) => ({
     id: item.id,
     name: item.name,
     heading: item.heading,
@@ -54,10 +54,10 @@ const CategoriesPage = async ({ params }: { params: { storeId: string } }) => {
   return (
     <div className="flex-col">
       <div className="flex-1 space-y-4 p-8 pt-6">
-        <BillboardClient data={formattedBillboards} />
+        <ProductClient data={formattedProduct} />
       </div>
     </div>
   );
 };
 
-export default CategoriesPage;
+export default ProductPage;

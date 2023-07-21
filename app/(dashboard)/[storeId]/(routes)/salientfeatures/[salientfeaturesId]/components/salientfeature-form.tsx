@@ -36,15 +36,15 @@ const formSchema = z.object({
   imagesalientfeatures: z.object({url: z.string()}).array(),
 });
 
-type BillboardFormValues = z.infer<typeof formSchema>
+type SalientFeatureFormValues = z.infer<typeof formSchema>
 
-interface BillboardFormProps {
+interface SalientFeatureFormProps {
   initialData: Salientfeatures &{
     imagesalientfeatures: Imagesalientfeatures[]
   } | null;
 };
 
-export const BillboardForm: React.FC<BillboardFormProps> = ({
+export const SalientFeatureForm: React.FC<SalientFeatureFormProps> = ({
   initialData
 }) => {
   const params = useParams();
@@ -53,12 +53,12 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const title = initialData ? 'Edit billboard' : 'Create billboard';
-  const description = initialData ? 'Edit a billboard.' : 'Add a new billboard';
-  const toastMessage = initialData ? 'Billboard updated.' : 'Billboard created.';
+  const title = initialData ? 'Edit salientFeature' : 'Create salientFeature';
+  const description = initialData ? 'Edit a salientFeature.' : 'Add a new salientFeature';
+  const toastMessage = initialData ? 'SalientFeature updated.' : 'SalientFeature created.';
   const action = initialData ? 'Save changes' : 'Create';
 
-  const form = useForm<BillboardFormValues>({
+  const form = useForm<SalientFeatureFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
       name: '',
@@ -72,7 +72,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
   });
 
 
-  const onSubmit = async (data: BillboardFormValues) => {
+  const onSubmit = async (data: SalientFeatureFormValues) => {
     try {
       setLoading(true);
       //inittialData có nghĩa là khi dữ diệu ban đầu có nó sẽ đổi nut button thành save change 
@@ -99,9 +99,9 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
       await axios.delete(`/api/${params.storeId}/salientfeatures/${params.salientfeaturesId}`);
       router.refresh();
       router.push(`/${params.storeId}/salientfeatures`);
-      toast.success('Billboard deleted.');
+      toast.success('Salient Feature deleted.');
     } catch (error: any) {
-      toast.error('Make sure you removed all salientfeatures using this billboard first.');
+      toast.error('Make sure you removed all salientfeatures using this salientFeature first.');
     } finally {
       setLoading(false);
       setOpen(false);
@@ -163,7 +163,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Category label" {...field} />
+                    <Input disabled={loading} placeholder="Name ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -176,7 +176,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Category label" {...field} />
+                    <Input disabled={loading} placeholder="Description ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -189,7 +189,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Description 2</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Category label" {...field} />
+                    <Input disabled={loading} placeholder="Description 2 ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -202,7 +202,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Description 3</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Category label" {...field} />
+                    <Input disabled={loading} placeholder="Description 3 ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -215,7 +215,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Description 4</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Category label" {...field} />
+                    <Input disabled={loading} placeholder="Description 4 ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -228,7 +228,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Content</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Category label" {...field} />
+                    <Input disabled={loading} placeholder="Content ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

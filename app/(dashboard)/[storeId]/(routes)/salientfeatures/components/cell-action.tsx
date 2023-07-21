@@ -15,11 +15,11 @@ import { useParams, useRouter } from "next/navigation";
 import {useState} from "react"
 import axios from "axios"
 
-import { BillboardColumn } from "./columns";
+import { SalientFeaturesColumn } from "./columns";
 import { AlertModal } from "@/components/modals/alert-modal";
 
 interface CellActionProps{
-    data: BillboardColumn;
+    data: SalientFeaturesColumn;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({data}) => {
@@ -31,7 +31,7 @@ export const CellAction: React.FC<CellActionProps> = ({data}) => {
 
     const onCopy = (id: string) =>{
         navigator.clipboard.writeText(id)
-        toast.success("Billboard Id copied to the clipboard.")
+        toast.success(" SalientFeature Id copied to the clipboard.")
     }
 
     const onDelete = async () => {
@@ -41,7 +41,7 @@ export const CellAction: React.FC<CellActionProps> = ({data}) => {
           router.refresh();
           toast.success('Billboard deleted.');
         } catch (error: any) {
-          toast.error('Make sure you removed all categories using this billboard first.');
+          toast.error('Make sure you removed all categories using this  salientFeature first.');
         } finally {
           setLoading(false);
           setOpen(false);

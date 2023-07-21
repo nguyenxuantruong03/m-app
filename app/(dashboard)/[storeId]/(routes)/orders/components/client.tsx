@@ -1,26 +1,17 @@
 "use client"
 
-import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { DataTable } from "@/components/ui/data-table";
 
-import { useParams } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { OrderColumn, columns } from "./columns";
 
-import { Plus } from "lucide-react";
 
-import { BillboardColumn, columns } from "./columns";
-
-import { ApiList } from "@/components/ui/api-list";
-
-interface BillboardClientProps{
-    data: BillboardColumn[]
+interface OrderProps{
+    data: OrderColumn[]
 }
 
-const BillboardClient:React.FC<BillboardClientProps> = ({data}) => {
-    const router = useRouter()
-    const params = useParams()
+const OrderClient:React.FC<OrderProps> = ({data}) => {
     return ( 
         <>
             <Heading 
@@ -34,4 +25,4 @@ const BillboardClient:React.FC<BillboardClientProps> = ({data}) => {
      );
 }
  
-export default BillboardClient;
+export default OrderClient;

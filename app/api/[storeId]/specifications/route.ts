@@ -128,7 +128,7 @@ export async function POST(
   
     return NextResponse.json(specifications);
   } catch (error) {
-    console.log('[specifications_POST]', error);
+    console.log('[SPECIFICATIONS_POST]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
@@ -150,7 +150,7 @@ export async function GET(
   
     return NextResponse.json(specifications);
   } catch (error) {
-    console.log('[BILLBOARDS_GET]', error);
+    console.log('[SPECIFICATIONS_GET]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };

@@ -1,10 +1,9 @@
 import prismadb from "@/lib/prismadb";
-import BillboardClient from "./components/client";
-import { BillboardColumn } from "./components/columns";
+import SalientFeaturesClient from "./components/client";
+import { SalientFeaturesColumn } from "./components/columns";
 import { format } from "date-fns";
-import { formatter } from "@/lib/utils";
 
-const CategoriesPage = async ({ params }: { params: { storeId: string } }) => {
+const SalientFeaturePage = async ({ params }: { params: { storeId: string } }) => {
   const salientfeatures = await prismadb.salientfeatures.findMany({
     where: {
       storeId: params.storeId,
@@ -14,7 +13,7 @@ const CategoriesPage = async ({ params }: { params: { storeId: string } }) => {
     },
   });
 
-  const formattedBillboards: BillboardColumn[] = salientfeatures.map((item) => ({
+  const formattedSalientFeatures: SalientFeaturesColumn[] = salientfeatures.map((item) => ({
     id: item.id,
     name: item.name,
     description: item.description,
@@ -27,10 +26,10 @@ const CategoriesPage = async ({ params }: { params: { storeId: string } }) => {
   return (
     <div className="flex-col">
       <div className="flex-1 space-y-4 p-8 pt-6">
-        <BillboardClient data={formattedBillboards} />
+        <SalientFeaturesClient data={formattedSalientFeatures} />
       </div>
     </div>
   );
 };
 
-export default CategoriesPage;
+export default SalientFeaturePage;

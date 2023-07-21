@@ -15,11 +15,11 @@ import { useParams, useRouter } from "next/navigation";
 import {useState} from "react"
 import axios from "axios"
 
-import { BillboardColumn } from "./columns";
+import { SizeColumn } from "./columns";
 import { AlertModal } from "@/components/modals/alert-modal";
 
 interface CellActionProps{
-    data: BillboardColumn;
+    data: SizeColumn;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({data}) => {
@@ -31,7 +31,7 @@ export const CellAction: React.FC<CellActionProps> = ({data}) => {
 
     const onCopy = (id: string) =>{
         navigator.clipboard.writeText(id)
-        toast.success("Billboard Id copied to the clipboard.")
+        toast.success("Size Id copied to the clipboard.")
     }
 
     const onDelete = async () => {
@@ -39,9 +39,9 @@ export const CellAction: React.FC<CellActionProps> = ({data}) => {
           setLoading(true);
           await axios.delete(`/api/${params.storeId}/size/${data.id}`);
           router.refresh();
-          toast.success('Billboard deleted.');
+          toast.success('Size deleted.');
         } catch (error: any) {
-          toast.error('Make sure you removed all categories using this billboard first.');
+          toast.error('Make sure you removed all categories using this size first.');
         } finally {
           setLoading(false);
           setOpen(false);
