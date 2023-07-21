@@ -21,6 +21,8 @@ export async function GET(
         category: true,
         size: true,
         color: true,
+        specifications: true,
+        salientfeatures: true,
       }
     });
   
@@ -83,7 +85,7 @@ export async function PATCH(
     const { name,heading,description,categoryId,headingrecommend,
       infomationrecommend,warrantyrecommend,vatrecommend,promotionheading,
       promotiondescription,guaranteeheading,guaranteedescription,guaranteeinfomation,
-      guaranteeprice,price,priceold,percentpromotion,isFeatured,isArchived,sizeId,colorId,images} = body;
+      guaranteeprice,price,priceold,percentpromotion,isFeatured,isArchived,sizeId,colorId,specificationsId,salientfeaturesId,images} = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -140,17 +142,18 @@ export async function PATCH(
     if (!percentpromotion) {
       return new NextResponse("percentpromotion is required", { status: 400 });
     }
-    if (!isFeatured) {
-      return new NextResponse("isFeatured is required", { status: 400 });
-    }
-    if (!isArchived) {
-      return new NextResponse("isArchived is required", { status: 400 });
-    }
     if (!sizeId) {
       return new NextResponse("sizeId is required", { status: 400 });
     }
     if (!colorId) {
       return new NextResponse("colorId is required", { status: 400 });
+    }
+    if (!specificationsId) {
+      return new NextResponse("specificationsId", { status: 403 });
+    }
+
+    if (!salientfeaturesId) {
+      return new NextResponse("salientfeaturesId is required", { status: 400 });
     }
     if (!images || !images.length) {
       return new NextResponse("images is required", { status: 400 });
@@ -170,6 +173,23 @@ export async function PATCH(
     if (!storeByUserId) {
       return new NextResponse("Unauthorized", { status: 405 });
     }
+
+    await prismadb.product.update({
+      where:{
+        id: params.productId,
+      },
+      data:{
+        name,heading,description,categoryId,headingrecommend,
+        infomationrecommend,warrantyrecommend,vatrecommend,promotionheading,
+        promotiondescription,guaranteeheading,guaranteedescription,guaranteeinfomation,
+        guaranteeprice,price,priceold,percentpromotion,sizeId,colorId,specificationsId,salientfeaturesId,
+        images:{
+          deleteMany:{}
+        },
+        isFeatured,
+        isArchived,
+      }
+    })
 
     const product = await prismadb.product.update({
       where: {

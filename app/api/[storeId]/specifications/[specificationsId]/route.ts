@@ -5,16 +5,16 @@ import prismadb from "@/lib/prismadb";
 
 export async function GET(
   req: Request,
-  { params }: { params: { colorId: string } }
+  { params }: { params: { specificationsId: string } }
 ) {
   try {
-    if (!params.colorId) {
+    if (!params.specificationsId) {
       return new NextResponse("Billboard id is required", { status: 400 });
     }
 
     const specifications = await prismadb.specifications.findUnique({
       where: {
-        id: params.colorId
+        id: params.specificationsId
       }
     });
   
@@ -27,7 +27,7 @@ export async function GET(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { colorId: string, storeId: string } }
+  { params }: { params: { specificationsId: string, storeId: string } }
 ) {
   try {
     const { userId } = auth();
@@ -36,7 +36,7 @@ export async function DELETE(
       return new NextResponse("Unauthenticated", { status: 403 });
     }
 
-    if (!params.colorId) {
+    if (!params.specificationsId) {
       return new NextResponse("Billboard id is required", { status: 400 });
     }
 
@@ -53,7 +53,7 @@ export async function DELETE(
 
     const specifications = await prismadb.specifications.delete({
       where: {
-        id: params.colorId,
+        id: params.specificationsId,
       }
     });
   
@@ -67,14 +67,14 @@ export async function DELETE(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { colorId: string, storeId: string } }
+  { params }: { params: { specificationsId: string, storeId: string } }
 ) {
   try {   
     const { userId } = auth();
 
     const body = await req.json();
     
-    const { 
+    const { name,
       description, value,description2, value2,
       description3, value3,description4, value4,
       description5, value5,description6, value6,
@@ -85,6 +85,10 @@ export async function PATCH(
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
     }
+    if (!name) {
+      return new NextResponse("Description is required", { status: 400 });
+    }
+
     if (!description) {
       return new NextResponse("Description is required", { status: 400 });
     }
@@ -156,7 +160,7 @@ export async function PATCH(
       return new NextResponse("Value is required", { status: 400 });
     }
 
-    if (!params.colorId) {
+    if (!params.specificationsId) {
       return new NextResponse("Billboard id is required", { status: 400 });
     }
 
@@ -173,9 +177,9 @@ export async function PATCH(
 
     const category = await prismadb.specifications.update({
       where: {
-        id: params.colorId,
+        id: params.specificationsId,
       },
-      data: {
+      data: { name,
         description, value,description2, value2,
         description3, value3,description4, value4,
         description5, value5,description6, value6,

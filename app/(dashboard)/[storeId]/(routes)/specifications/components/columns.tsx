@@ -7,6 +7,7 @@ import { CellAction } from "./cell-action"
 // You can use a Zod schema here if you want.
 export type BillboardColumn = {
   id: string
+  name: string
   description:string
   value:string
   description2:string
@@ -31,6 +32,10 @@ export type BillboardColumn = {
 }
 
 export const columns: ColumnDef<BillboardColumn>[] = [
+  {
+    accessorKey: "name",
+    header: "Name",
+  },
   {
     accessorKey: "description",
     header: "Description 1",

@@ -13,6 +13,8 @@ const CategoriesPage = async ({ params }: { params: { storeId: string } }) => {
       category: true,
       size: true,
       color: true,
+      specifications: true,
+      salientfeatures: true,
     },
     orderBy: {
       createdAt: "desc",
@@ -44,6 +46,9 @@ const CategoriesPage = async ({ params }: { params: { storeId: string } }) => {
     isArchived: item.isArchived,
     size: item.size.name,
     color: item.color.value,
+    category: item.category.name,
+    specifications: item.specifications.name,
+      salientfeatures: item.salientfeatures.name,
     createdAt: format(item.createdAt, "MM/dd/yyyy"),
   }));
   return (

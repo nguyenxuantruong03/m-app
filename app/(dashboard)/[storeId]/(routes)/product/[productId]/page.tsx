@@ -27,6 +27,18 @@ const BillboardPage = async ({params}:{params: {storeId: string,productId: strin
             storeId: params.storeId
         }
     })
+
+    const specifications = await prismadb.specifications.findMany({
+        where:{
+            storeId: params.storeId
+        }
+    })
+
+    const salientfeatures = await prismadb.salientfeatures.findMany({
+        where:{
+            storeId: params.storeId
+        }
+    })
     
     return ( 
         <div className="flex-col">
@@ -36,6 +48,8 @@ const BillboardPage = async ({params}:{params: {storeId: string,productId: strin
                 categories={categories}
                 sizes={sizes}
                 colors={colors}
+                specifications={specifications}
+                salientfeatures={salientfeatures}
                 />
             </div>
         </div>

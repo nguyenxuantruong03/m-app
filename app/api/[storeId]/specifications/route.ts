@@ -12,7 +12,7 @@ export async function POST(
 
     const body = await req.json();
 
-    const { 
+    const { name,
       description, value,description2, value2,
       description3, value3,description4, value4,
       description5, value5,description6, value6,
@@ -23,6 +23,10 @@ export async function POST(
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
+    }
+
+    if (!name) {
+      return new NextResponse("Name is required", { status: 400 });
     }
 
     if (!description) {
@@ -112,7 +116,7 @@ export async function POST(
     }
 
     const specifications = await prismadb.specifications.create({
-      data: {
+      data: { name,
         description, value,description2, value2,
       description3, value3,description4, value4,
       description5, value5,description6, value6,

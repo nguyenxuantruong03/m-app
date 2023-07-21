@@ -23,9 +23,9 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { Heading } from "@/components/ui/heading"
 import { AlertModal } from "@/components/modals/alert-modal"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const formSchema = z.object({
+  name: z.string().min(1),
   description: z.string().min(1),
   value: z.string().min(1),
   description2: z.string().min(1),
@@ -71,6 +71,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
   const form = useForm<BillboardFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
+      name: '',
       description: '',
       value: '',
       description2: '',
@@ -159,6 +160,19 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
 
           <div className="md:grid md:grid-cols-4 gap-8">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input disabled={loading} placeholder="Specifications ..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="description"

@@ -15,7 +15,7 @@ export async function POST(
     const { name,heading,description,categoryId,headingrecommend,
       infomationrecommend,warrantyrecommend,vatrecommend,promotionheading,
       promotiondescription,guaranteeheading,guaranteedescription,guaranteeinfomation,
-      guaranteeprice,price,priceold,percentpromotion,isFeatured,isArchived,sizeId,colorId,images} = body;
+      guaranteeprice,price,priceold,percentpromotion,isFeatured,isArchived,sizeId,colorId,specificationsId,salientfeaturesId,images} = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -72,17 +72,17 @@ export async function POST(
     if (!percentpromotion) {
       return new NextResponse("percentpromotion is required", { status: 400 });
     }
-    if (!isFeatured) {
-      return new NextResponse("isFeatured is required", { status: 400 });
-    }
-    if (!isArchived) {
-      return new NextResponse("isArchived is required", { status: 400 });
-    }
     if (!sizeId) {
       return new NextResponse("sizeId is required", { status: 400 });
     }
     if (!colorId) {
       return new NextResponse("colorId is required", { status: 400 });
+    }
+    if (!specificationsId) {
+      return new NextResponse("specificationsId", { status: 403 });
+    }
+    if (!salientfeaturesId) {
+      return new NextResponse("salientfeaturesId is required", { status: 400 });
     }
     if (!images || !images.length) {
       return new NextResponse("images is required", { status: 400 });
@@ -108,7 +108,7 @@ export async function POST(
         name,heading,description,categoryId,headingrecommend,
       infomationrecommend,warrantyrecommend,vatrecommend,promotionheading,
       promotiondescription,guaranteeheading,guaranteedescription,guaranteeinfomation,
-      guaranteeprice,price,priceold,percentpromotion,isFeatured,isArchived,sizeId,colorId,
+      guaranteeprice,price,priceold,percentpromotion,isFeatured,isArchived,sizeId,colorId,specificationsId,salientfeaturesId,
       images:{
         createMany:{
           data: [
@@ -137,6 +137,8 @@ export async function GET(
     const categoryId = searchParams.get('categoryId') || undefined;
     const colorId = searchParams.get('colorId') || undefined;
     const sizeId = searchParams.get('sizeId') || undefined;
+    const specificationsId = searchParams.get('specificationsId') || undefined;
+    const salientfeaturesId = searchParams.get('salientfeaturesId') || undefined;
     const isFeatured = searchParams.get('isFeatured');
     
     if (!params.storeId) {
@@ -149,14 +151,18 @@ export async function GET(
         categoryId,
         colorId,
         sizeId,
+        specificationsId,
+        salientfeaturesId,
         isFeatured: isFeatured ? true : undefined,
-        isArchived: false,
+        isArchived: false ,
       },
       include:{
         images: true,
         category: true,
         color: true,
-        size: true
+        size: true,
+        specifications: true,
+        salientfeatures: true,
       },
       orderBy:{
         createdAt: 'desc'

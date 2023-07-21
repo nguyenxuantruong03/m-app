@@ -126,29 +126,30 @@ model Specifications {
   storeId String
   store   Store  @relation("StoreToSpecifications", fields: [storeId], references: [id])
 
-  description   String @db.VarChar(400)
-  value         String @db.VarChar(400)
-  description2  String @db.VarChar(400)
-  value2        String @db.VarChar(400)
-  description3  String @db.VarChar(400)
-  value3        String @db.VarChar(400)
-  description4  String @db.VarChar(400)
-  value4        String @db.VarChar(400)
-  description5  String @db.VarChar(400)
-  value5        String @db.VarChar(400)
-  description6  String @db.VarChar(400)
-  value6        String @db.VarChar(400)
-  description7  String @db.VarChar(400)
-  value7        String @db.VarChar(400)
-  description8  String @db.VarChar(400)
-  value8        String @db.VarChar(400)
-  description9  String @db.VarChar(400)
-  value9        String @db.VarChar(400)
-  description10 String @db.VarChar(400)
-  value10       String @db.VarChar(400)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  name          String
+  description   String    @db.VarChar(400)
+  value         String    @db.VarChar(400)
+  description2  String    @db.VarChar(400)
+  value2        String    @db.VarChar(400)
+  description3  String    @db.VarChar(400)
+  value3        String    @db.VarChar(400)
+  description4  String    @db.VarChar(400)
+  value4        String    @db.VarChar(400)
+  description5  String    @db.VarChar(400)
+  value5        String    @db.VarChar(400)
+  description6  String    @db.VarChar(400)
+  value6        String    @db.VarChar(400)
+  description7  String    @db.VarChar(400)
+  value7        String    @db.VarChar(400)
+  description8  String    @db.VarChar(400)
+  value8        String    @db.VarChar(400)
+  description9  String    @db.VarChar(400)
+  value9        String    @db.VarChar(400)
+  description10 String    @db.VarChar(400)
+  value10       String    @db.VarChar(400)
+  products      Product[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   @@index([storeId])
 }
@@ -158,15 +159,16 @@ model Salientfeatures {
   storeId String
   store   Store  @relation("StoreToSalientfeatures", fields: [storeId], references: [id])
 
+  name                 String
   description          String                 @db.VarChar(400)
   description2         String                 @db.VarChar(400)
   description3         String                 @db.VarChar(400)
   description4         String                 @db.VarChar(400)
   content              String                 @db.VarChar(400)
   imagesalientfeatures Imagesalientfeatures[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  products             Product[]
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
 
   @@index([storeId])
 }
@@ -183,11 +185,11 @@ model Imagesalientfeatures {
 }
 
 model Product {
-  id                   String      @id @default(uuid())
+  id                   String          @id @default(uuid())
   storeId              String
-  store                Store       @relation("StoreToProduct", fields: [storeId], references: [id])
+  store                Store           @relation("StoreToProduct", fields: [storeId], references: [id])
   categoryId           String
-  category             Category    @relation("CategoryProduct", fields: [categoryId], references: [id])
+  category             Category        @relation("CategoryProduct", fields: [categoryId], references: [id])
   name                 String
   heading              String
   description          String
@@ -197,28 +199,34 @@ model Product {
   warrantyrecommend    String
   vatrecommend         String
   // Khuyến mãi
-  promotionheading     String      @db.VarChar(400)
-  promotiondescription String      @db.VarChar(400)
+  promotionheading     String          @db.VarChar(400)
+  promotiondescription String          @db.VarChar(400)
   //Bảo hành
-  guaranteeheading     String      @db.VarChar(400)
-  guaranteedescription String      @db.VarChar(400)
-  guaranteeinfomation  String      @db.VarChar(400)
-  guaranteeprice       String      @db.VarChar(400)
+  guaranteeheading     String          @db.VarChar(400)
+  guaranteedescription String          @db.VarChar(400)
+  guaranteeinfomation  String          @db.VarChar(400)
+  guaranteeprice       String          @db.VarChar(400)
   //Giá sản phẩm main
   price                Decimal
   priceold             Decimal
   percentpromotion     Decimal
-  isFeatured           Boolean     @default(false)
-  isArchived           Boolean     @default(false)
+  isFeatured           Boolean         @default(false)
+  isArchived           Boolean         @default(false)
   sizeId               String
-  size                 Size        @relation(fields: [sizeId], references: [id])
+  size                 Size            @relation(fields: [sizeId], references: [id])
   colorId              String
-  color                Color       @relation(fields: [colorId], references: [id])
+  color                Color           @relation(fields: [colorId], references: [id])
   images               Image[]
+  specificationsId     String
+  specifications       Specifications  @relation(fields: [specificationsId], references: [id])
+  salientfeaturesId    String
+  salientfeatures      Salientfeatures @relation(fields: [salientfeaturesId], references: [id])
   orderItems           OrderItem[]
-  createdAt            DateTime    @default(now())
-  updatedAt            DateTime    @updatedAt
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
 
+  @@index([specificationsId])
+  @@index([salientfeaturesId])
   @@index([storeId])
   @@index([categoryId])
   @@index([sizeId])

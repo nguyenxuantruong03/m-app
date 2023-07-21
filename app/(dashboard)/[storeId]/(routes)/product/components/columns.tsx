@@ -27,6 +27,9 @@ export type BillboardColumn = {
   isArchived:boolean
   size: string
   color: string
+  category: string
+  specifications: string
+  salientfeatures: string
   createdAt: string
 }
 
@@ -97,15 +100,27 @@ export const columns: ColumnDef<BillboardColumn>[] = [
   },
   {
     accessorKey: "isFeatured",
-    header: "isFeatured",
+    header: "Featured",
   },
   {
     accessorKey: "isArchived",
-    header: "isArchived",
+    header: "Archived",
   },
   {
     accessorKey: "size",
     header: "size",
+  },
+  {
+    accessorKey: "category",
+    header: "Category",
+  },
+  {
+    accessorKey: "specifications",
+    header: "Ppecifications",
+  },
+  {
+    accessorKey: "salientfeatures",
+    header: "Salient Features",
   },
   {
     accessorKey: "color",

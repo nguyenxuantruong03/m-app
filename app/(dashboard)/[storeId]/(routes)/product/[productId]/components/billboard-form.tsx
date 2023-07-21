@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { Trash } from "lucide-react"
-import { Category, Product, Image, Size, Color } from "@prisma/client"
+import { Category, Product, Image, Size, Color, Specifications,Salientfeatures } from "@prisma/client"
 import { useParams, useRouter } from "next/navigation"
 
 import { Input } from "@/components/ui/input"
@@ -46,26 +46,30 @@ const formSchema = z.object({
   guaranteedescription: z.string().min(1),
   guaranteeinfomation: z.string().min(1),
   guaranteeprice: z.string().min(1),
-  isFeatured:  z.boolean().default(false).optional(),
-  isArchived:  z.boolean().default(false).optional(),
+  isFeatured: z.boolean().default(false).optional(),
+  isArchived: z.boolean().default(false).optional(),
   sizeId: z.string().min(1),
   colorId: z.string().min(1),
   categoryId: z.string().min(1),
+  specificationsId: z.string().min(1),
+  salientfeaturesId: z.string().min(1),
 });
 
 type BillboardFormValues = z.infer<typeof formSchema>
 
 interface BillboardFormProps {
-  initialData: Product &{
-    images: Image[]
-  } | null;
+  initialData: Product & {
+    images: Image[]} | null;
+
   categories: Category[];
   sizes: Size[];
   colors: Color[]
+  specifications: Specifications[];
+  salientfeatures: Salientfeatures[]
 };
 
 export const BillboardForm: React.FC<BillboardFormProps> = ({
-  initialData,categories, sizes,colors
+  initialData,categories, sizes,colors,specifications,salientfeatures
 }) => {
   const params = useParams();
   const router = useRouter();
@@ -108,6 +112,8 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
   sizeId: '',
   colorId: '',
   categoryId: '',
+  specificationsId: '',
+  salientfeaturesId:'',
     }
   });
 
@@ -517,6 +523,76 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                           value={categorie.id}
                           >
                             {categorie.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+                />
+
+<FormField 
+                control ={form.control}
+                name="specificationsId"
+                render={({field})=>(
+                  <FormItem>
+                    <FormLabel>Specifications</FormLabel>
+                    <Select
+                    disabled={loading}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue
+                          defaultValue={field.value}
+                          placeholder="Select a specifications ..."
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {specifications.map((specification)=>(
+                          <SelectItem
+                          key={specification.id}
+                          value={specification.id}
+                          >
+                            {specification.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+                />
+
+                <FormField 
+                control ={form.control}
+                name="salientfeaturesId"
+                render={({field})=>(
+                  <FormItem>
+                    <FormLabel>Salient Features</FormLabel>
+                    <Select
+                    disabled={loading}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue
+                          defaultValue={field.value}
+                          placeholder="Select a salientfeatures ..."
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {salientfeatures.map((salientfeature)=>(
+                          <SelectItem
+                          key={salientfeature.id}
+                          value={salientfeature.id}
+                          >
+                            {salientfeature.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
