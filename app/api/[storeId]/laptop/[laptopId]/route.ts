@@ -5,19 +5,19 @@ import prismadb from "@/lib/prismadb";
 
 export async function GET(
   req: Request,
-  { params }: { params: { ipadId: string } }
+  { params }: { params: { laptopId: string } }
 ) {
   try {
-    if (!params.ipadId) {
-      return new NextResponse("Ipad id is required", { status: 400 });
+    if (!params.laptopId) {
+      return new NextResponse("Laptop id is required", { status: 400 });
     }
 
-    const ipads = await prismadb.ipad.findUnique({
+    const ipads = await prismadb.laptop.findUnique({
       where: {
-        id: params.ipadId
+        id: params.laptopId
       },
       include:{
-        imagesipad: true,
+        imageslaptop: true,
         category: true,
         size: true,
         color: true,
@@ -28,14 +28,14 @@ export async function GET(
   
     return NextResponse.json(ipads);
   } catch (error) {
-    console.log('[IPAD_GET]', error);
+    console.log('[LAPTOP_GET]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { ipadId: string, storeId: string } }
+  { params }: { params: { laptopId: string, storeId: string } }
 ) {
   try {
     const { userId } = auth();
@@ -44,8 +44,8 @@ export async function DELETE(
       return new NextResponse("Unauthenticated", { status: 403 });
     }
 
-    if (!params.ipadId) {
-      return new NextResponse("Ipad id is required", { status: 400 });
+    if (!params.laptopId) {
+      return new NextResponse("Laptop id is required", { status: 400 });
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -59,15 +59,15 @@ export async function DELETE(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    const product = await prismadb.ipad.delete({
+    const product = await prismadb.laptop.delete({
       where: {
-        id: params.ipadId,
+        id: params.laptopId,
       }
     });
   
     return NextResponse.json(product);
   } catch (error) {
-    console.log('[IPAD_DELETE]', error);
+    console.log('[LAPTOP_DELETE]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
@@ -75,7 +75,7 @@ export async function DELETE(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { ipadId: string, storeId: string } }
+  { params }: { params: { laptopId: string, storeId: string } }
 ) {
   try {   
     const { userId } = auth();
@@ -85,7 +85,7 @@ export async function PATCH(
     const { name,heading,description,categoryId,headingrecommend,
       infomationrecommend,warrantyrecommend,vatrecommend,promotionheading,
       promotiondescription,guaranteeheading,guaranteedescription,guaranteeinfomation,
-      guaranteeprice,price,priceold,percentpromotion,isFeatured,isArchived,sizeId,colorId,specificationsId,salientfeaturesId,imagesipad} = body;
+      guaranteeprice,price,priceold,percentpromotion,isFeatured,isArchived,sizeId,colorId,specificationsId,salientfeaturesId,imageslaptop} = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -154,12 +154,12 @@ export async function PATCH(
     if (!salientfeaturesId) {
       return new NextResponse("SalientfeaturesId", { status: 403 });
     }
-    if (!imagesipad || !imagesipad.length) {
+    if (!imageslaptop || !imageslaptop.length) {
       return new NextResponse("Images is required", { status: 400 });
     }
 
-    if (!params.ipadId) {
-      return new NextResponse("Ipad id is required", { status: 400 });
+    if (!params.laptopId) {
+      return new NextResponse("Laptop id is required", { status: 400 });
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -173,16 +173,16 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    await prismadb.ipad.update({
+    await prismadb.laptop.update({
       where:{
-        id: params.ipadId,
+        id: params.laptopId,
       },
       data:{
         name,heading,description,categoryId,headingrecommend,
         infomationrecommend,warrantyrecommend,vatrecommend,promotionheading,
         promotiondescription,guaranteeheading,guaranteedescription,guaranteeinfomation,
         guaranteeprice,price,priceold,percentpromotion,sizeId,colorId,specificationsId,salientfeaturesId,
-        imagesipad:{
+        imageslaptop:{
           deleteMany:{}
         },
         isFeatured,
@@ -190,15 +190,15 @@ export async function PATCH(
       }
     })
 
-    const product = await prismadb.ipad.update({
+    const product = await prismadb.laptop.update({
       where: {
-        id: params.ipadId,
+        id: params.laptopId,
       },
       data: {
-        imagesipad:{
+        imageslaptop:{
           createMany:{
             data:[
-              ...imagesipad.map((image:{url: string})=> image)
+              ...imageslaptop.map((image:{url: string})=> image)
             ]
           }
         }
@@ -207,7 +207,7 @@ export async function PATCH(
   
     return NextResponse.json(product);
   } catch (error) {
-    console.log('[IPAD_PATCH]', error);
+    console.log('[LAPTOP_PATCH]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };

@@ -1,13 +1,13 @@
 import prismadb from "@/lib/prismadb";
-import { ProductForm } from "./components/ipad-form";
+import { ProductForm } from "./components/watch-form";
 
-const ProductPage = async ({params}:{params: {storeId: string,ipadId: string}}) => {
-    const ipads = await prismadb.ipad.findUnique({
+const ProductPage = async ({params}:{params: {storeId: string,watchId: string}}) => {
+    const watch = await prismadb.watch.findUnique({
         where:{
-            id: params.ipadId
+            id: params.watchId
         },
         include:{
-            imagesipad: true
+            imageswatch: true
         }
     })
     const categories = await prismadb.category.findMany({
@@ -44,7 +44,7 @@ const ProductPage = async ({params}:{params: {storeId: string,ipadId: string}}) 
         <div className="flex-col">
             <div className="flex-1 space-y-4 p-8 pt-6">
                 <ProductForm 
-                initialData={ipads} 
+                initialData={watch} 
                 categories={categories}
                 sizes={sizes}
                 colors={colors}

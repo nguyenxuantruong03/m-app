@@ -25,21 +25,21 @@ const ProductClient:React.FC<ProductClientProps> = ({data}) => {
         <>
         <div className="flex items-center justify-between">
             <Heading 
-            title ={`Ipad (${data.length})`}
-            description="Manage ipad for your store"
+            title ={`Headphone (${data.length})`}
+            description="Manage headphones for your store"
             />
-            <Button onClick={() => router.push(`/${params.storeId}/ipad/new`)}>
+            <Button onClick={() => router.push(`/${params.storeId}/headphone/new`)}>
                 <Plus className="mr-2 h-4 w-4" />
                 Add New
             </Button>
         </div>
         <Separator />
         <DataTable searchKey="name" columns={columns} data={data} />
-        <Heading title="Api" description="API calls for Ipad" />
+        <Heading title="Api" description="API calls for Headphone" />
         <Separator />
         <ApiList 
-        entityIdName="ipadId"
-        entityName="ipad"
+        entityIdName="headphoneId"
+        entityName="headphone"
         />
         </>
      );

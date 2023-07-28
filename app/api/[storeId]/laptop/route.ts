@@ -1,91 +1,21 @@
-import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs";
+import { NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs';
 
-import prismadb from "@/lib/prismadb";
-
-export async function GET(
+import prismadb from '@/lib/prismadb';
+ 
+export async function POST(
   req: Request,
-  { params }: { params: { ipadId: string } }
+  { params }: { params: { storeId: string } }
 ) {
   try {
-    if (!params.ipadId) {
-      return new NextResponse("Ipad id is required", { status: 400 });
-    }
-
-    const ipads = await prismadb.ipad.findUnique({
-      where: {
-        id: params.ipadId
-      },
-      include:{
-        imagesipad: true,
-        category: true,
-        size: true,
-        color: true,
-        specifications: true,
-        salientfeatures: true
-      }
-    });
-  
-    return NextResponse.json(ipads);
-  } catch (error) {
-    console.log('[IPAD_GET]', error);
-    return new NextResponse("Internal error", { status: 500 });
-  }
-};
-
-export async function DELETE(
-  req: Request,
-  { params }: { params: { ipadId: string, storeId: string } }
-) {
-  try {
-    const { userId } = auth();
-
-    if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
-    }
-
-    if (!params.ipadId) {
-      return new NextResponse("Ipad id is required", { status: 400 });
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-        userId,
-      }
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
-    }
-
-    const product = await prismadb.ipad.delete({
-      where: {
-        id: params.ipadId,
-      }
-    });
-  
-    return NextResponse.json(product);
-  } catch (error) {
-    console.log('[IPAD_DELETE]', error);
-    return new NextResponse("Internal error", { status: 500 });
-  }
-};
-
-
-export async function PATCH(
-  req: Request,
-  { params }: { params: { ipadId: string, storeId: string } }
-) {
-  try {   
     const { userId } = auth();
 
     const body = await req.json();
-    
+
     const { name,heading,description,categoryId,headingrecommend,
       infomationrecommend,warrantyrecommend,vatrecommend,promotionheading,
       promotiondescription,guaranteeheading,guaranteedescription,guaranteeinfomation,
-      guaranteeprice,price,priceold,percentpromotion,isFeatured,isArchived,sizeId,colorId,specificationsId,salientfeaturesId,imagesipad} = body;
+      guaranteeprice,price,priceold,percentpromotion,isFeatured,isArchived,sizeId,colorId,specificationsId,salientfeaturesId,imageslaptop} = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -154,12 +84,12 @@ export async function PATCH(
     if (!salientfeaturesId) {
       return new NextResponse("SalientfeaturesId", { status: 403 });
     }
-    if (!imagesipad || !imagesipad.length) {
+    if (!imageslaptop || !imageslaptop.length) {
       return new NextResponse("Images is required", { status: 400 });
     }
 
-    if (!params.ipadId) {
-      return new NextResponse("Ipad id is required", { status: 400 });
+    if (!params.storeId) {
+      return new NextResponse("Store id is required", { status: 400 });
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -173,41 +103,75 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    await prismadb.ipad.update({
-      where:{
-        id: params.ipadId,
-      },
-      data:{
-        name,heading,description,categoryId,headingrecommend,
-        infomationrecommend,warrantyrecommend,vatrecommend,promotionheading,
-        promotiondescription,guaranteeheading,guaranteedescription,guaranteeinfomation,
-        guaranteeprice,price,priceold,percentpromotion,sizeId,colorId,specificationsId,salientfeaturesId,
-        imagesipad:{
-          deleteMany:{}
-        },
-        isFeatured,
-        isArchived,
-      }
-    })
-
-    const product = await prismadb.ipad.update({
-      where: {
-        id: params.ipadId,
-      },
+    const ipads = await prismadb.laptop.create({
       data: {
-        imagesipad:{
-          createMany:{
-            data:[
-              ...imagesipad.map((image:{url: string})=> image)
-            ]
-          }
-        }
+        name,heading,description,categoryId,headingrecommend,
+      infomationrecommend,warrantyrecommend,vatrecommend,promotionheading,
+      promotiondescription,guaranteeheading,guaranteedescription,guaranteeinfomation,
+      guaranteeprice,price,priceold,percentpromotion,isFeatured,isArchived,sizeId,colorId,specificationsId,salientfeaturesId,
+      imageslaptop:{
+        createMany:{
+          data: [
+            ...imageslaptop.map((image:{url: string}) => image)
+          ]
+        },
+      },
+
+        storeId: params.storeId,
       }
     });
   
-    return NextResponse.json(product);
+    return NextResponse.json(ipads);
   } catch (error) {
-    console.log('[IPAD_PATCH]', error);
+    console.log('[LAPTOP_POST]', error);
+    return new NextResponse("Internal error", { status: 500 });
+  }
+};
+
+export async function GET(
+  req: Request,
+  { params }: { params: { storeId: string } }
+) {
+  try {
+    const { searchParams } = new URL(req.url)
+    const categoryId = searchParams.get('categoryId') || undefined;
+    const colorId = searchParams.get('colorId') || undefined;
+    const sizeId = searchParams.get('sizeId') || undefined;
+    const specificationsId = searchParams.get('specificationsId') || undefined;
+    const salientfeaturesId = searchParams.get('salientfeaturesId') || undefined;
+    const isFeatured = searchParams.get('isFeatured');
+    
+    if (!params.storeId) {
+      return new NextResponse("Store id is required", { status: 400 });
+    }
+
+    const ipads = await prismadb.laptop.findMany({
+      where: {
+        storeId: params.storeId,
+        categoryId,
+        colorId,
+        sizeId,
+        specificationsId,
+        salientfeaturesId,
+        isFeatured: isFeatured ? true : undefined,
+        isArchived: false ,
+      },
+      include:{
+        imageslaptop: true,
+        category: true,
+        color: true,
+        size: true,
+        specifications: true,
+        salientfeatures: true,
+      },
+      orderBy:{
+        createdAt: 'desc'
+      }
+    });
+  
+    return NextResponse.json(ipads);
+  } catch (error) {
+    console.log('[LAPTOP_GET]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };

@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { Trash } from "lucide-react"
-import { Category, Product, Image, Size, Color, Specifications,Salientfeatures, Ipad, ImageIpad } from "@prisma/client"
+import { Category, Product, Image, Size, Color, Specifications,Salientfeatures, Ipad, ImageIpad, Watch, ImageWatch } from "@prisma/client"
 import { useParams, useRouter } from "next/navigation"
 
 import { Input } from "@/components/ui/input"
@@ -32,7 +32,7 @@ const formSchema = z.object({
   name: z.string().min(1),
   heading: z.string().min(1),
   description: z.string().min(1),
-  imagesipad: z.object({url: z.string()}).array(),
+  imageswatch: z.object({url: z.string()}).array(),
   price: z.coerce.number().min(1),
   priceold: z.coerce.number().min(1),
   percentpromotion: z.coerce.number().min(1),
@@ -58,8 +58,8 @@ const formSchema = z.object({
 type ProductFormValues = z.infer<typeof formSchema>
 
 interface ProductFormProps {
-  initialData: Ipad & {
-    imagesipad: ImageIpad[]} | null;
+  initialData: Watch & {
+    imageswatch: ImageWatch[]} | null;
 
   categories: Category[];
   sizes: Size[];
@@ -77,9 +77,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const title = initialData ? 'Edit product' : 'Create product';
-  const description = initialData ? 'Edit a product.' : 'Add a new product';
-  const toastMessage = initialData ? 'Product updated.' : 'Product created.';
+  const title = initialData ? 'Edit watch' : 'Create watch';
+  const description = initialData ? 'Edit a watch.' : 'Add a new watch';
+  const toastMessage = initialData ? 'Watch updated.' : 'Watch created.';
   const action = initialData ? 'Save changes' : 'Create';
 
   const form = useForm<ProductFormValues>({
@@ -91,7 +91,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
      percentpromotion: parseFloat(String(initialData?.percentpromotion))
     }:{
       name: '',
-      imagesipad: [],
+      imageswatch: [],
       heading: '',
   description: '',
   price: 0,
@@ -125,12 +125,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
      /* Khối mã chịu trách nhiệm thực hiện yêu cầu HTTP để cập nhật bảng quảng cáo hiện có
       hoặc tạo bảng quảng cáo mới dựa trên giá trị của `initialData`. */
       if (initialData) {
-        await axios.patch(`/api/${params.storeId}/ipad/${params.ipadId}`, data);
+        await axios.patch(`/api/${params.storeId}/watch/${params.watchId}`, data);
       } else {
-        await axios.post(`/api/${params.storeId}/ipad`, data);
+        await axios.post(`/api/${params.storeId}/watch`, data);
       }
       router.refresh();
-      router.push(`/${params.storeId}/ipad`);
+      router.push(`/${params.storeId}/watch`);
       toast.success(toastMessage);
     } catch (error: any) {
       toast.error('Something went wrong.');
@@ -142,12 +142,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/ipad/${params.ipadId}`);
+      await axios.delete(`/api/${params.storeId}/watch/${params.watchId}`);
       router.refresh();
-      router.push(`/${params.storeId}/ipad`);
-      toast.success('Product deleted.');
+      router.push(`/${params.storeId}/watch`);
+      toast.success('Watch deleted.');
     } catch (error: any) {
-      toast.error('Make sure you removed all product using this product first.');
+      toast.error('Make sure you removed all watch using this product first.');
     } finally {
       setLoading(false);
       setOpen(false);
@@ -184,7 +184,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
           <FormField
               control={form.control}
-              name="imagesipad"
+              name="imageswatch"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Images</FormLabel>

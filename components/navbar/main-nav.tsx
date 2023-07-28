@@ -86,7 +86,7 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
     },
     {
       href: `/${params.storeId}/laptop`,
-      label: "laptop",
+      label: "Laptop",
       active: pathname === `/${params.storeId}/laptop`,
     },
     {

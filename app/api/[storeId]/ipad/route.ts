@@ -171,7 +171,7 @@ export async function GET(
   
     return NextResponse.json(ipads);
   } catch (error) {
-    console.log('[PRODUCT_GET]', error);
+    console.log('[IPAD_GET]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
