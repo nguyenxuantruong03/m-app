@@ -22,7 +22,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from 'react-hot-toast';
 import  axios  from 'axios';
 import { ApiAlert } from "@/components/ui/api-alert";
-import useOrigin from "@/app/hooks/use-origin";
+import { useOrigin } from "@/app/hooks/use-origin";
 
 interface SettingFormProps {
     initialData: Store;

@@ -50,11 +50,6 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
       active: pathname === `/${params.storeId}/color`,
     },
     {
-      href: `/${params.storeId}/product`,
-      label: "Sản phẩm",
-      active: pathname === `/${params.storeId}/product`,
-    },
-    {
       href: `/${params.storeId}/specifications`,
       label: "Thông số kỹ thuật",
       active: pathname === `/${params.storeId}/specifications`,
@@ -63,6 +58,36 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
       href: `/${params.storeId}/salientfeatures`,
       label: "Tính năng nổi bật",
       active: pathname === `/${params.storeId}/salientfeatures`,
+    },
+    {
+      href: `/${params.storeId}/product`,
+      label: "Sản phẩm",
+      active: pathname === `/${params.storeId}/product`,
+    },
+    {
+      href: `/${params.storeId}/tivi`,
+      label: "Tivi",
+      active: pathname === `/${params.storeId}/tivi`,
+    },
+    {
+      href: `/${params.storeId}/watch`,
+      label: "Đồng hồ thông minh",
+      active: pathname === `/${params.storeId}/watch`,
+    },
+    {
+      href: `/${params.storeId}/headphone`,
+      label: "Tai nghe",
+      active: pathname === `/${params.storeId}/headphone`,
+    },
+    {
+      href: `/${params.storeId}/ipad`,
+      label: "Ipad",
+      active: pathname === `/${params.storeId}/ipad`,
+    },
+    {
+      href: `/${params.storeId}/laptop`,
+      label: "laptop",
+      active: pathname === `/${params.storeId}/laptop`,
     },
     {
       href: `/${params.storeId}/orders`,
