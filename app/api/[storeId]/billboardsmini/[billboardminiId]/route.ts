@@ -9,18 +9,21 @@ export async function GET(
 ) {
   try {
     if (!params.billboardminiId) {
-      return new NextResponse("Billboard mini id is required", { status: 400 });
+      return new NextResponse("Billboard id is required", { status: 400 });
     }
 
     const billboard = await prismadb.billboardmini.findUnique({
       where: {
         id: params.billboardminiId
+      },
+      include:{
+        imagebillboardmini:true
       }
     });
   
     return NextResponse.json(billboard);
   } catch (error) {
-    console.log('[BILLBOARDMINI_GET]', error);
+    console.log('[BILLBOARD_GET]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
@@ -37,7 +40,7 @@ export async function DELETE(
     }
 
     if (!params.billboardminiId) {
-      return new NextResponse("Billboard mini id is required", { status: 400 });
+      return new NextResponse("Billboard id is required", { status: 400 });
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -59,7 +62,7 @@ export async function DELETE(
   
     return NextResponse.json(billboard);
   } catch (error) {
-    console.log('[BILLBOARDMINI_DELETE]', error);
+    console.log('[BILLBOARD_DELETE]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
@@ -74,7 +77,7 @@ export async function PATCH(
 
     const body = await req.json();
     
-    const { label, imageUrl } = body;
+    const { label, imagebillboardmini } = body;
     
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -84,12 +87,12 @@ export async function PATCH(
       return new NextResponse("Label is required", { status: 400 });
     }
 
-    if (!imageUrl) {
-      return new NextResponse("Image URL is required", { status: 400 });
+    if (!imagebillboardmini || !imagebillboardmini.length) {
+      return new NextResponse("Image billboad  is required", { status: 400 });
     }
 
     if (!params.billboardminiId) {
-      return new NextResponse("Billboard mini id is required", { status: 400 });
+      return new NextResponse("Billboard id is required", { status: 400 });
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -103,19 +106,35 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    const billboard = await prismadb.billboardmini.update({
+    await prismadb.billboardmini.update({
       where: {
         id: params.billboardminiId,
       },
       data: {
         label,
-        imageUrl
+        imagebillboardmini:{
+          deleteMany:{}
+        }
       }
     });
+    const billboard = await prismadb.billboardmini.update({
+      where:{
+        id: params.billboardminiId
+      },
+      data:{
+        imagebillboardmini:{
+          createMany:{
+            data:[
+              ...imagebillboardmini.map((image:{url: string}) => image)
+            ]
+          }
+        }
+      }
+    })
   
     return NextResponse.json(billboard);
   } catch (error) {
-    console.log('[BILLBOARDMINI_PATCH]', error);
+    console.log('[BILLBOARD_PATCH]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };

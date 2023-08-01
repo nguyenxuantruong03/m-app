@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { Trash } from "lucide-react"
-import { Billboard, Billboardmini } from "@prisma/client"
+import { Category1,Billboard } from "@prisma/client"
 import { useParams, useRouter } from "next/navigation"
 
 import { Input } from "@/components/ui/input"
@@ -23,21 +23,22 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { Heading } from "@/components/ui/heading"
 import { AlertModal } from "@/components/modals/alert-modal"
-import ImageUpload from "@/components/ui/image-upload"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const formSchema = z.object({
-  label: z.string().min(1),
-  imageUrl: z.string().min(1),
+  name: z.string().min(1),
+  billboardId: z.string().min(1),
 });
 
-type BillboardMiniFormValues = z.infer<typeof formSchema>
+type CategoryFormValues = z.infer<typeof formSchema>
 
-interface BillboardMiniFormProps {
-  initialData: Billboardmini | null;
+interface CategoryFormProps {
+  initialData: Category1 | null;
+  billboards: Billboard[];
 };
 
-export const BillboardMiniForm: React.FC<BillboardMiniFormProps> = ({
-  initialData
+export const CategoryForm: React.FC<CategoryFormProps> = ({
+  initialData,billboards,
 }) => {
   const params = useParams();
   const router = useRouter();
@@ -45,32 +46,32 @@ export const BillboardMiniForm: React.FC<BillboardMiniFormProps> = ({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const title = initialData ? 'Edit billboard mini' : 'Create billboard mini';
-  const description = initialData ? 'Edit a billboard mini' : 'Add a new billboard mini';
-  const toastMessage = initialData ? 'Billboard mini updated.' : 'Billboard mini created.';
+  const title = initialData ? 'Edit category' : 'Create category';
+  const description = initialData ? 'Edit a category.' : 'Add a new category';
+  const toastMessage = initialData ? 'Category updated.' : 'Category created.';
   const action = initialData ? 'Save changes' : 'Create';
 
-  const form = useForm<BillboardMiniFormValues>({
+  const form = useForm<CategoryFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
-      label: '',
-      imageUrl: ''
+      name: '',
+      billboardId: ''
     }
   });
 
-  const onSubmit = async (data: BillboardMiniFormValues) => {
+  const onSubmit = async (data: CategoryFormValues) => {
     try {
       setLoading(true);
       //inittialData có nghĩa là khi dữ diệu ban đầu có nó sẽ đổi nut button thành save change 
      /* Khối mã chịu trách nhiệm thực hiện yêu cầu HTTP để cập nhật bảng quảng cáo hiện có
       hoặc tạo bảng quảng cáo mới dựa trên giá trị của `initialData`. */
       if (initialData) {
-        await axios.patch(`/api/${params.storeId}/billboardsmini/${params.billboardminiId}`, data);
+        await axios.patch(`/api/${params.storeId}/categories1/${params.category1Id}`, data);
       } else {
-        await axios.post(`/api/${params.storeId}/billboardsmini`, data);
+        await axios.post(`/api/${params.storeId}/categories1`, data);
       }
       router.refresh();
-      router.push(`/${params.storeId}/billboardsmini`);
+      router.push(`/${params.storeId}/categories1`);
       toast.success(toastMessage);
     } catch (error: any) {
       toast.error('Something went wrong.');
@@ -82,12 +83,12 @@ export const BillboardMiniForm: React.FC<BillboardMiniFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/billboardsmini/${params.billboardminiId}`);
+      await axios.delete(`/api/${params.storeId}/categories1/${params.category1Id}`);
       router.refresh();
-      router.push(`/${params.storeId}/billboardsmini`);
-      toast.success('Billboard mini deleted.');
+      router.push(`/${params.storeId}/categories1`);
+      toast.success('Category deleted.');
     } catch (error: any) {
-      toast.error('Make sure you removed all categories using this billboard mini first.');
+      toast.error('Make sure you removed all categories using this Category first.');
     } finally {
       setLoading(false);
       setOpen(false);
@@ -118,50 +119,65 @@ export const BillboardMiniForm: React.FC<BillboardMiniFormProps> = ({
       </div>
 
       <Separator />
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
 
-          <FormField
+      <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
+
+          <div className="md:grid md:grid-cols-3 gap-8">
+            <FormField
               control={form.control}
-              name="imageUrl"
+              name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Background image</FormLabel>
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <ImageUpload 
-                      value={field.value ? [field.value] : []} 
-                      disabled={loading} 
-                      onChange={(url) => field.onChange(url)}
-                      onRemove={() => field.onChange('')}
-                    />
-                    
+                    <Input disabled={loading} placeholder="Category label ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-          <div className="md:grid md:grid-cols-3 gap-8">
-            <FormField
-              control={form.control}
-              name="label"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Label</FormLabel>
+            <FormField 
+            control={form.control}
+            name="billboardId"
+            render={({field})=>(
+              <FormItem>
+                <FormLabel>Billboard</FormLabel>
+                <Select
+                disabled={loading}
+                onValueChange={field.onChange}
+                value={field.value}
+                defaultValue={field.value}
+                >
                   <FormControl>
-                    <Input disabled={loading} placeholder="Billboard mini label..." {...field} />
+                    <SelectTrigger>
+                      <SelectValue
+                      defaultValue={field.value}
+                      placeholder="Select a billboard"
+                      />
+                    </SelectTrigger>
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+                  <SelectContent>
+                    {billboards.map((billboard)=>(
+                      <SelectItem
+                      key={billboard.id}
+                      value={billboard.id}
+                      >
+                        {billboard.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormItem>
+            )}
             />
           </div>
 
           <Button disabled={loading} className="ml-auto" type="submit">
             {action}
           </Button>
-
-        </form>
+          </form>
       </Form>
     </>
   );

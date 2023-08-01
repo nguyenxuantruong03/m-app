@@ -15,11 +15,11 @@ import { useParams, useRouter } from "next/navigation";
 import {useState} from "react"
 import axios from "axios"
 
-import { BillboardColumn } from "./columns";
+import { CategoriesColumn } from "./columns";
 import { AlertModal } from "@/components/modals/alert-modal";
 
 interface CellActionProps{
-    data: BillboardColumn;
+    data: CategoriesColumn;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({data}) => {
@@ -31,17 +31,17 @@ export const CellAction: React.FC<CellActionProps> = ({data}) => {
 
     const onCopy = (id: string) =>{
         navigator.clipboard.writeText(id)
-        toast.success("Billboard Mini Id copied to the clipboard.")
+        toast.success("Categories Id copied to the clipboard.")
     }
 
     const onDelete = async () => {
         try {
           setLoading(true);
-          await axios.delete(`/api/${params.storeId}/billboardsmini/${data.id}`);
+          await axios.delete(`/api/${params.storeId}/categories1/${data.id}`);
           router.refresh();
-          toast.success('Billboard mini deleted.');
+          toast.success('Categories deleted.');
         } catch (error: any) {
-          toast.error('Make sure you removed all categories using this billboard first.');
+          toast.error('Make sure you removed all categories using this categories first.');
         } finally {
           setLoading(false);
           setOpen(false);
@@ -71,7 +71,7 @@ export const CellAction: React.FC<CellActionProps> = ({data}) => {
                     <Copy className="h-4 w-4 mr-2"/>
                     CopyId
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={()=> router.push(`/${params.storeId}/billboardsmini/${data.id}`)}>
+                <DropdownMenuItem onClick={()=> router.push(`/${params.storeId}/categories1/${data.id}`)}>
                     <Edit className="h-4 w-4 mr-2"/>
                     Update
                 </DropdownMenuItem>

@@ -10,39 +10,39 @@ import { useRouter } from "next/navigation";
 
 import { Plus } from "lucide-react";
 
-import { BillboardColumn, columns } from "./columns";
+import { ProductColumn, columns } from "./columns";
 
 import { ApiList } from "@/components/ui/api-list";
 
-interface BillboardClientProps{
-    data: BillboardColumn[]
+interface ProductClientProps{
+    data: ProductColumn[]
 }
 
-const BillboardClient:React.FC<BillboardClientProps> = ({data}) => {
+const ProductClient:React.FC<ProductClientProps> = ({data}) => {
     const router = useRouter()
     const params = useParams()
     return ( 
         <>
         <div className="flex items-center justify-between">
             <Heading 
-            title ={`Billboard Mini (${data.length})`}
-            description="Manage billboards for your store"
+            title ={`Product (${data.length})`}
+            description="Manage product for your store"
             />
-            <Button onClick={() => router.push(`/${params.storeId}/billboardsmini/new`)}>
+            <Button onClick={() => router.push(`/${params.storeId}/product1/new`)}>
                 <Plus className="mr-2 h-4 w-4" />
                 Add New
             </Button>
         </div>
         <Separator />
-        <DataTable searchKey="label" columns={columns} data={data} />
-        <Heading title="Api" description="API calls for Billboards Mini" />
+        <DataTable searchKey="name" columns={columns} data={data} />
+        <Heading title="Api" description="API calls for Product" />
         <Separator />
         <ApiList 
-        entityIdName="billboardminiId"
-        entityName="billboardsmini"
+        entityIdName="product1Id"
+        entityName="product1"
         />
         </>
      );
 }
  
-export default BillboardClient;
+export default ProductClient;

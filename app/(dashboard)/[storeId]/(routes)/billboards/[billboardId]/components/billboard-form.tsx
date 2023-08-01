@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { Trash } from "lucide-react"
-import { Billboard } from "@prisma/client"
+import { Billboard, ImageBillboard } from "@prisma/client"
 import { useParams, useRouter } from "next/navigation"
 
 import { Input } from "@/components/ui/input"
@@ -27,13 +27,15 @@ import ImageUpload from "@/components/ui/image-upload"
 
 const formSchema = z.object({
   label: z.string().min(1),
-  imageUrl: z.string().min(1),
+  imagebillboard: z.object({url: z.string()}).array(),
 });
 
 type BillboardFormValues = z.infer<typeof formSchema>
 
 interface BillboardFormProps {
-  initialData: Billboard | null;
+  initialData: Billboard &{
+    imagebillboard: ImageBillboard[]
+  } | null
 };
 
 export const BillboardForm: React.FC<BillboardFormProps> = ({
@@ -54,7 +56,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
       label: '',
-      imageUrl: ''
+      imagebillboard: []
     }
   });
 
@@ -121,25 +123,25 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
 
-          <FormField
+        <FormField
               control={form.control}
-              name="imageUrl"
+              name="imagebillboard"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Background image</FormLabel>
+                  <FormLabel>Images</FormLabel>
                   <FormControl>
                     <ImageUpload 
-                      value={field.value ? [field.value] : []} 
+                      value={field.value.map((image) =>image.url)} 
                       disabled={loading} 
-                      onChange={(url) => field.onChange(url)}
-                      onRemove={() => field.onChange('')}
+                      onChange={(url) => field.onChange([...field.value , {url}])}
+                      onRemove={(url) => field.onChange([...field.value.filter((current)=> current.url !== url)])}
                     />
-                    
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
 
           <div className="md:grid md:grid-cols-3 gap-8">
             <FormField

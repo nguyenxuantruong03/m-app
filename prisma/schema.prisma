@@ -17,12 +17,13 @@ model Store {
   userId            String
   billboard         Billboard[]         @relation("StoreToBillboard")
   billboardmini     Billboardmini[]     @relation("StoreToBillboardMini")
-  billboarddelivery Billboarddelivery[] @relation("StoreToBillboardDelivery")
   billboardsale     Billboardsale[]     @relation("StoreToBillboardSale")
   categories        Category[]          @relation("StoreToCategory")
+  categories1        Category1[]          @relation("StoreToCategory1")
   sizes             Size[]              @relation("StoreToSize")
   colors            Color[]             @relation("StoreToColor")
   product           Product[]           @relation("StoreToProduct")
+  product1           Product1[]           @relation("StoreToProduct1")
   ipad              Ipad[]              @relation("StoreToIpad")
   headphone         Headphone[]         @relation("StoreToHeadphone")
   laptop            Laptop[]            @relation("StoreToLaptop")
@@ -40,12 +41,26 @@ model Billboard {
   storeId    String
   store      Store      @relation("StoreToBillboard", fields: [storeId], references: [id])
   label      String
-  imageUrl   String
+  imagebillboard ImageBillboard[]
   categories Category[]
+  categories1 Category1[]
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
 
   @@index([storeId])
+}
+
+model ImageBillboard {
+  id String @id @default(uuid())
+
+  billboardId String
+  billboard   Billboard @relation(fields: [billboardId], references: [id], onDelete: Cascade)
+
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([billboardId])
 }
 
 model Billboardmini {
@@ -53,23 +68,24 @@ model Billboardmini {
   storeId   String
   store     Store    @relation("StoreToBillboardMini", fields: [storeId], references: [id])
   label     String
-  imageUrl  String
+  imagebillboardmini ImageBillboardmini[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([storeId])
 }
 
-model Billboarddelivery {
-  id        String   @id @default(uuid())
-  storeId   String
-  store     Store    @relation("StoreToBillboardDelivery", fields: [storeId], references: [id])
-  label     String
-  imageUrl  String
+model ImageBillboardmini {
+  id String @id @default(uuid())
+
+  billboardminiId String
+  billboardmini   Billboardmini @relation(fields: [billboardminiId], references: [id], onDelete: Cascade)
+
+  url       String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([storeId])
+  @@index([billboardminiId])
 }
 
 model Billboardsale {
@@ -104,6 +120,22 @@ model Category {
   @@index([billboardId])
 }
 
+model Category1 {
+  id          String      @id @default(uuid())
+  storeId     String
+  billboardId String
+
+  billboard   Billboard   @relation(fields: [billboardId], references: [id])
+  store       Store       @relation("StoreToCategory1", fields: [storeId], references: [id])
+  product     Product1[]   @relation("CategoryProduct1")
+  name        String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([storeId])
+  @@index([billboardId])
+}
+
 model Size {
   id        String      @id @default(uuid())
   storeId   String
@@ -111,6 +143,7 @@ model Size {
   name      String
   value     String
   product   Product[]
+  product1   Product1[]
   ipad      Ipad[]
   laptop    Laptop[]
   tivi      Tivi[]
@@ -130,6 +163,7 @@ model Color {
   name      String
   value     String
   product   Product[]
+  product1   Product1[]
   ipad      Ipad[]
   laptop    Laptop[]
   tivi      Tivi[]
@@ -168,6 +202,7 @@ model Specifications {
   description10 String      @db.VarChar(400)
   value10       String      @db.VarChar(400)
   products      Product[]
+  products1      Product1[]
   ipads         Ipad[]
   laptops       Laptop[]
   headphones    Headphone[]
@@ -197,6 +232,7 @@ model Salientfeatures {
   imagesalientfeaturesTivi      ImagesalientfeaturesTivi[]
   imagesalientfeaturesWatch     ImagesalientfeaturesWatch[]
   products                      Product[]
+  products1                      Product1[]
   ipads                         Ipad[]
   headphones                    Headphone[]
   laptops                       Laptop[]
@@ -307,6 +343,55 @@ model Product {
   colorId              String
   color                Color           @relation(fields: [colorId], references: [id])
   images               Image[]
+  specificationsId     String
+  specifications       Specifications  @relation(fields: [specificationsId], references: [id])
+  salientfeaturesId    String
+  salientfeatures      Salientfeatures @relation(fields: [salientfeaturesId], references: [id])
+  orderItems           OrderItem[]
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+
+  @@index([specificationsId])
+  @@index([salientfeaturesId])
+  @@index([storeId])
+  @@index([categoryId])
+  @@index([sizeId])
+  @@index([colorId])
+}
+
+model Product1 {
+  id                   String          @id @default(uuid())
+  storeId              String
+  store                Store           @relation("StoreToProduct1", fields: [storeId], references: [id])
+  categoryId           String
+  category             Category1        @relation("CategoryProduct1", fields: [categoryId], references: [id])
+  name                 String
+  heading              String
+  description          String
+  // Thông tin sản phẩm bảo hanh vat ...
+  headingrecommend     String
+  infomationrecommend  String
+  warrantyrecommend    String
+  vatrecommend         String
+  // Khuyến mãi
+  promotionheading     String          @db.VarChar(400)
+  promotiondescription String          @db.VarChar(400)
+  //Bảo hành
+  guaranteeheading     String          @db.VarChar(400)
+  guaranteedescription String          @db.VarChar(400)
+  guaranteeinfomation  String          @db.VarChar(400)
+  guaranteeprice       String          @db.VarChar(400)
+  //Giá sản phẩm main
+  price                Decimal
+  priceold             Decimal
+  percentpromotion     Decimal
+  isFeatured           Boolean         @default(false)
+  isArchived           Boolean         @default(false)
+  sizeId               String
+  size                 Size            @relation(fields: [sizeId], references: [id])
+  colorId              String
+  color                Color           @relation(fields: [colorId], references: [id])
+  images               Image1[]
   specificationsId     String
   specifications       Specifications  @relation(fields: [specificationsId], references: [id])
   salientfeaturesId    String
@@ -580,6 +665,18 @@ model Image {
   @@index([productId])
 }
 
+model Image1 {
+  id        String  @id @default(uuid())
+  product1Id String
+  product1   Product1 @relation(fields: [product1Id], references: [id], onDelete: Cascade)
+
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([product1Id])
+}
+
 model ImageIpad {
   id String @id @default(uuid())
 
@@ -666,6 +763,9 @@ model OrderItem {
   productId String
   product   Product @relation(fields: [productId], references: [id])
 
+   product1Id String
+  product1   Product1 @relation(fields: [product1Id], references: [id])
+
   ipadId String
   Ipad   Ipad   @relation(fields: [ipadId], references: [id])
 
@@ -688,4 +788,5 @@ model OrderItem {
   @@index([tiviId])
   @@index([watchId])
   @@index([productId])
+  @@index([product1Id])
 }

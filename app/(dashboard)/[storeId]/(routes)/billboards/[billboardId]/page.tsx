@@ -5,6 +5,9 @@ const BillboardPage = async ({params}:{params: {billboardId: string}}) => {
     const billboard = await prismadb.billboard.findUnique({
         where:{
             id: params.billboardId
+        },
+        include:{
+            imagebillboard: true
         }
     })
     return ( 

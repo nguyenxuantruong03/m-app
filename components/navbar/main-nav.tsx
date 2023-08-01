@@ -25,11 +25,6 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
       active: pathname === `/${params.storeId}/billboardsmini`,
     },
     {
-      href: `/${params.storeId}/billboardsdelivery`,
-      label: "Ảnh quảng cáo giao hàng",
-      active: pathname === `/${params.storeId}/billboardsdelivery`,
-    },
-    {
       href: `/${params.storeId}/billboardssale`,
       label: "Ảnh quảng cáo giảm giá",
       active: pathname === `/${params.storeId}/billboardssale`,
@@ -38,6 +33,11 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
       href: `/${params.storeId}/categories`,
       label: "Phân loại",
       active: pathname === `/${params.storeId}/categories`,
+    },
+    {
+      href: `/${params.storeId}/categories1`,
+      label: "Phân loại 1",
+      active: pathname === `/${params.storeId}/categories1`,
     },
     {
       href: `/${params.storeId}/size`,
@@ -63,6 +63,11 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
       href: `/${params.storeId}/product`,
       label: "Sản phẩm",
       active: pathname === `/${params.storeId}/product`,
+    },
+    {
+      href: `/${params.storeId}/product1`,
+      label: "Sản phẩm1",
+      active: pathname === `/${params.storeId}/product1`,
     },
     {
       href: `/${params.storeId}/tivi`,

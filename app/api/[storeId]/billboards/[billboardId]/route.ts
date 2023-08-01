@@ -15,6 +15,9 @@ export async function GET(
     const billboard = await prismadb.billboard.findUnique({
       where: {
         id: params.billboardId
+      },
+      include:{
+        imagebillboard:true
       }
     });
   
@@ -74,7 +77,7 @@ export async function PATCH(
 
     const body = await req.json();
     
-    const { label, imageUrl } = body;
+    const { label, imagebillboard } = body;
     
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -84,8 +87,8 @@ export async function PATCH(
       return new NextResponse("Label is required", { status: 400 });
     }
 
-    if (!imageUrl) {
-      return new NextResponse("Image URL is required", { status: 400 });
+    if (!imagebillboard || !imagebillboard.length) {
+      return new NextResponse("Image billboad  is required", { status: 400 });
     }
 
     if (!params.billboardId) {
@@ -103,15 +106,31 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    const billboard = await prismadb.billboard.update({
+    await prismadb.billboard.update({
       where: {
         id: params.billboardId,
       },
       data: {
         label,
-        imageUrl
+        imagebillboard:{
+          deleteMany:{}
+        }
       }
     });
+    const billboard = await prismadb.billboard.update({
+      where:{
+        id: params.billboardId
+      },
+      data:{
+        imagebillboard:{
+          createMany:{
+            data:[
+              ...imagebillboard.map((image:{url: string}) => image)
+            ]
+          }
+        }
+      }
+    })
   
     return NextResponse.json(billboard);
   } catch (error) {

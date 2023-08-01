@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { Trash } from "lucide-react"
-import { Billboarddelivery } from "@prisma/client"
+import { Billboardmini,ImageBillboardmini} from "@prisma/client"
 import { useParams, useRouter } from "next/navigation"
 
 import { Input } from "@/components/ui/input"
@@ -27,16 +27,18 @@ import ImageUpload from "@/components/ui/image-upload"
 
 const formSchema = z.object({
   label: z.string().min(1),
-  imageUrl: z.string().min(1),
+  imagebillboardmini: z.object({url: z.string()}).array(),
 });
 
-type BillboardDeliveryFormValues = z.infer<typeof formSchema>
+type BillboardFormValues = z.infer<typeof formSchema>
 
-interface BillboardDeliveryFormProps {
-  initialData: Billboarddelivery | null;
+interface BillboardFormProps {
+  initialData: Billboardmini &{
+    imagebillboardmini: ImageBillboardmini[]
+  } | null
 };
 
-export const BillboardDelivryForm: React.FC<BillboardDeliveryFormProps> = ({
+export const BillboardForm: React.FC<BillboardFormProps> = ({
   initialData
 }) => {
   const params = useParams();
@@ -45,32 +47,32 @@ export const BillboardDelivryForm: React.FC<BillboardDeliveryFormProps> = ({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const title = initialData ? 'Edit billboard delivery' : 'Create billboard delivery';
-  const description = initialData ? 'Edit a billboard delivery' : 'Add a new billboard delivery';
-  const toastMessage = initialData ? 'Billboard delivery updated.' : 'Billboard delivery created.';
+  const title = initialData ? 'Edit billboard mini' : 'Create billboard mini';
+  const description = initialData ? 'Edit a billboard mini.' : 'Add a new billboard mini';
+  const toastMessage = initialData ? 'Billboard mini updated.' : 'Billboard mini created.';
   const action = initialData ? 'Save changes' : 'Create';
 
-  const form = useForm<BillboardDeliveryFormValues>({
+  const form = useForm<BillboardFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
       label: '',
-      imageUrl: ''
+      imagebillboardmini: []
     }
   });
 
-  const onSubmit = async (data: BillboardDeliveryFormValues) => {
+  const onSubmit = async (data: BillboardFormValues) => {
     try {
       setLoading(true);
       //inittialData có nghĩa là khi dữ diệu ban đầu có nó sẽ đổi nut button thành save change 
      /* Khối mã chịu trách nhiệm thực hiện yêu cầu HTTP để cập nhật bảng quảng cáo hiện có
       hoặc tạo bảng quảng cáo mới dựa trên giá trị của `initialData`. */
       if (initialData) {
-        await axios.patch(`/api/${params.storeId}/billboardsdelivery/${params.billboarddeliveryId}`, data);
+        await axios.patch(`/api/${params.storeId}/billboardsmini/${params.billboardId}`, data);
       } else {
-        await axios.post(`/api/${params.storeId}/billboardsdelivery`, data);
+        await axios.post(`/api/${params.storeId}/billboardsmini`, data);
       }
       router.refresh();
-      router.push(`/${params.storeId}/billboardsdelivery`);
+      router.push(`/${params.storeId}/billboardsmini`);
       toast.success(toastMessage);
     } catch (error: any) {
       toast.error('Something went wrong.');
@@ -82,12 +84,12 @@ export const BillboardDelivryForm: React.FC<BillboardDeliveryFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/billboardsdelivery/${params.billboarddeliveryId}`);
+      await axios.delete(`/api/${params.storeId}/billboardsmini/${params.billboardId}`);
       router.refresh();
-      router.push(`/${params.storeId}/billboardsdelivery`);
-      toast.success('Billboard delivery deleted.');
+      router.push(`/${params.storeId}/billboardsmini`);
+      toast.success('Billboard deleted.');
     } catch (error: any) {
-      toast.error('Make sure you removed all categories using this billboard delivery first.');
+      toast.error('Make sure you removed all categories using this billboard first.');
     } finally {
       setLoading(false);
       setOpen(false);
@@ -121,25 +123,25 @@ export const BillboardDelivryForm: React.FC<BillboardDeliveryFormProps> = ({
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
 
-          <FormField
+        <FormField
               control={form.control}
-              name="imageUrl"
+              name="imagebillboardmini"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Background image</FormLabel>
+                  <FormLabel>Images</FormLabel>
                   <FormControl>
                     <ImageUpload 
-                      value={field.value ? [field.value] : []} 
+                      value={field.value.map((image) =>image.url)} 
                       disabled={loading} 
-                      onChange={(url) => field.onChange(url)}
-                      onRemove={() => field.onChange('')}
+                      onChange={(url) => field.onChange([...field.value , {url}])}
+                      onRemove={(url) => field.onChange([...field.value.filter((current)=> current.url !== url)])}
                     />
-                    
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
 
           <div className="md:grid md:grid-cols-3 gap-8">
             <FormField
@@ -149,7 +151,7 @@ export const BillboardDelivryForm: React.FC<BillboardDeliveryFormProps> = ({
                 <FormItem>
                   <FormLabel>Label</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Billboard delivery label ..." {...field} />
+                    <Input disabled={loading} placeholder="Billboard label ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

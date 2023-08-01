@@ -1,19 +1,22 @@
 import prismadb from "@/lib/prismadb";
-import { BillboardMiniForm } from "./components/billboardmini-form";
+import { BillboardForm } from "./components/billboard-form";
 
-const BillboardMiniPage = async ({params}:{params: {billboardminiId: string}}) => {
-    const billboardMini = await prismadb.billboardmini.findUnique({
+const BillboardPage = async ({params}:{params: {billboardminiId: string}}) => {
+    const billboardmini = await prismadb.billboardmini.findUnique({
         where:{
             id: params.billboardminiId
+        },
+        include:{
+            imagebillboardmini: true
         }
     })
     return ( 
         <div className="flex-col">
             <div className="flex-1 space-y-4 p-8 pt-6">
-                <BillboardMiniForm initialData={billboardMini} />
+                <BillboardForm initialData={billboardmini} />
             </div>
         </div>
      );
 }
  
-export default BillboardMiniPage;
+export default BillboardPage;
