@@ -65,6 +65,21 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
       active: pathname === `/${params.storeId}/categories6`,
     },
     {
+      href: `/${params.storeId}/categories7`,
+      label: "Phân loại 7",
+      active: pathname === `/${params.storeId}/categories7`,
+    },
+    {
+      href: `/${params.storeId}/categories8`,
+      label: "Phân loại 8",
+      active: pathname === `/${params.storeId}/categories8`,
+    },
+    {
+      href: `/${params.storeId}/categories9`,
+      label: "Phân loại 9",
+      active: pathname === `/${params.storeId}/categories9`,
+    },
+    {
       href: `/${params.storeId}/size`,
       label: "Kích thước",
       active: pathname === `/${params.storeId}/size`,
@@ -118,6 +133,21 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
       href: `/${params.storeId}/product6`,
       label: "Sản phẩm6",
       active: pathname === `/${params.storeId}/product6`,
+    },
+    {
+      href: `/${params.storeId}/product7`,
+      label: "Sản phẩm7",
+      active: pathname === `/${params.storeId}/product7`,
+    },
+    {
+      href: `/${params.storeId}/product8`,
+      label: "Sản phẩm8",
+      active: pathname === `/${params.storeId}/product8`,
+    },
+    {
+      href: `/${params.storeId}/product9`,
+      label: "Sản phẩm9",
+      active: pathname === `/${params.storeId}/product9`,
     },
     {
       href: `/${params.storeId}/tivi`,
