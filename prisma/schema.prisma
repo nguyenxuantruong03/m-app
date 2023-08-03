@@ -20,10 +20,12 @@ model Store {
   billboardsale     Billboardsale[]     @relation("StoreToBillboardSale")
   categories        Category[]          @relation("StoreToCategory")
   categories1        Category1[]          @relation("StoreToCategory1")
+  categories2        Category2[]          @relation("StoreToCategory2")
   sizes             Size[]              @relation("StoreToSize")
   colors            Color[]             @relation("StoreToColor")
   product           Product[]           @relation("StoreToProduct")
   product1           Product1[]           @relation("StoreToProduct1")
+  product2           Product2[]           @relation("StoreToProduct2")
   ipad              Ipad[]              @relation("StoreToIpad")
   headphone         Headphone[]         @relation("StoreToHeadphone")
   laptop            Laptop[]            @relation("StoreToLaptop")
@@ -44,6 +46,7 @@ model Billboard {
   imagebillboard ImageBillboard[]
   categories Category[]
   categories1 Category1[]
+  categories2 Category2[]
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
 
@@ -55,7 +58,7 @@ model ImageBillboard {
 
   billboardId String
   billboard   Billboard @relation(fields: [billboardId], references: [id], onDelete: Cascade)
-
+  
   url       String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -136,6 +139,22 @@ model Category1 {
   @@index([billboardId])
 }
 
+model Category2 {
+  id          String      @id @default(uuid())
+  storeId     String
+  billboardId String
+
+  billboard   Billboard   @relation(fields: [billboardId], references: [id])
+  store       Store       @relation("StoreToCategory2", fields: [storeId], references: [id])
+  product     Product2[]   @relation("CategoryProduct2")
+  name        String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([storeId])
+  @@index([billboardId])
+}
+
 model Size {
   id        String      @id @default(uuid())
   storeId   String
@@ -144,6 +163,7 @@ model Size {
   value     String
   product   Product[]
   product1   Product1[]
+  product2   Product2[]
   ipad      Ipad[]
   laptop    Laptop[]
   tivi      Tivi[]
@@ -164,6 +184,7 @@ model Color {
   value     String
   product   Product[]
   product1   Product1[]
+  product2   Product2[]
   ipad      Ipad[]
   laptop    Laptop[]
   tivi      Tivi[]
@@ -203,6 +224,7 @@ model Specifications {
   value10       String      @db.VarChar(400)
   products      Product[]
   products1      Product1[]
+  products2      Product2[]
   ipads         Ipad[]
   laptops       Laptop[]
   headphones    Headphone[]
@@ -233,6 +255,7 @@ model Salientfeatures {
   imagesalientfeaturesWatch     ImagesalientfeaturesWatch[]
   products                      Product[]
   products1                      Product1[]
+  products2                      Product2[]
   ipads                         Ipad[]
   headphones                    Headphone[]
   laptops                       Laptop[]
@@ -392,6 +415,55 @@ model Product1 {
   colorId              String
   color                Color           @relation(fields: [colorId], references: [id])
   images               Image1[]
+  specificationsId     String
+  specifications       Specifications  @relation(fields: [specificationsId], references: [id])
+  salientfeaturesId    String
+  salientfeatures      Salientfeatures @relation(fields: [salientfeaturesId], references: [id])
+  orderItems           OrderItem[]
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+
+  @@index([specificationsId])
+  @@index([salientfeaturesId])
+  @@index([storeId])
+  @@index([categoryId])
+  @@index([sizeId])
+  @@index([colorId])
+}
+
+model Product2 {
+  id                   String          @id @default(uuid())
+  storeId              String
+  store                Store           @relation("StoreToProduct2", fields: [storeId], references: [id])
+  categoryId           String
+  category             Category2        @relation("CategoryProduct2", fields: [categoryId], references: [id])
+  name                 String
+  heading              String
+  description          String
+  // Thông tin sản phẩm bảo hanh vat ...
+  headingrecommend     String
+  infomationrecommend  String
+  warrantyrecommend    String
+  vatrecommend         String
+  // Khuyến mãi
+  promotionheading     String          @db.VarChar(400)
+  promotiondescription String          @db.VarChar(400)
+  //Bảo hành
+  guaranteeheading     String          @db.VarChar(400)
+  guaranteedescription String          @db.VarChar(400)
+  guaranteeinfomation  String          @db.VarChar(400)
+  guaranteeprice       String          @db.VarChar(400)
+  //Giá sản phẩm main
+  price                Decimal
+  priceold             Decimal
+  percentpromotion     Decimal
+  isFeatured           Boolean         @default(false)
+  isArchived           Boolean         @default(false)
+  sizeId               String
+  size                 Size            @relation(fields: [sizeId], references: [id])
+  colorId              String
+  color                Color           @relation(fields: [colorId], references: [id])
+  images               Image2[]
   specificationsId     String
   specifications       Specifications  @relation(fields: [specificationsId], references: [id])
   salientfeaturesId    String
@@ -677,6 +749,18 @@ model Image1 {
   @@index([product1Id])
 }
 
+model Image2 {
+  id        String  @id @default(uuid())
+  product2Id String
+  product2   Product2 @relation(fields: [product2Id], references: [id], onDelete: Cascade)
+
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([product2Id])
+}
+
 model ImageIpad {
   id String @id @default(uuid())
 
@@ -763,8 +847,11 @@ model OrderItem {
   productId String
   product   Product @relation(fields: [productId], references: [id])
 
-   product1Id String
+  product1Id String
   product1   Product1 @relation(fields: [product1Id], references: [id])
+
+  product2Id String
+  product2   Product2 @relation(fields: [product2Id], references: [id])
 
   ipadId String
   Ipad   Ipad   @relation(fields: [ipadId], references: [id])
@@ -789,4 +876,5 @@ model OrderItem {
   @@index([watchId])
   @@index([productId])
   @@index([product1Id])
+  @@index([product2Id])
 }

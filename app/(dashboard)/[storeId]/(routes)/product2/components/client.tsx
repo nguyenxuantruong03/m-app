@@ -10,39 +10,39 @@ import { useRouter } from "next/navigation";
 
 import { Plus } from "lucide-react";
 
-import { CategoriesColumn, columns } from "./columns";
+import { ProductColumn, columns } from "./columns";
 
 import { ApiList } from "@/components/ui/api-list";
 
-interface CategoriesClientProps{
-    data: CategoriesColumn[]
+interface ProductClientProps{
+    data: ProductColumn[]
 }
 
-const CategoriesClient:React.FC<CategoriesClientProps> = ({data}) => {
+const ProductClient:React.FC<ProductClientProps> = ({data}) => {
     const router = useRouter()
     const params = useParams()
     return ( 
         <>
         <div className="flex items-center justify-between">
             <Heading 
-            title ={`Category (${data.length})`}
-            description="Manage categories for your store"
+            title ={`Product (${data.length})`}
+            description="Manage product for your store"
             />
-            <Button onClick={() => router.push(`/${params.storeId}/categories1/new`)}>
+            <Button onClick={() => router.push(`/${params.storeId}/product2/new`)}>
                 <Plus className="mr-2 h-4 w-4" />
                 Add New
             </Button>
         </div>
         <Separator />
         <DataTable searchKey="name" columns={columns} data={data} />
-        <Heading title="Api" description="API calls for Category" />
+        <Heading title="Api" description="API calls for Product" />
         <Separator />
         <ApiList 
-        entityIdName="category1Id"
-        entityName="categories1"
+        entityIdName="product2Id"
+        entityName="product2"
         />
         </>
      );
 }
  
-export default CategoriesClient;
+export default ProductClient;

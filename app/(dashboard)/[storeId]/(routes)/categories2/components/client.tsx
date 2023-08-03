@@ -28,7 +28,7 @@ const CategoriesClient:React.FC<CategoriesClientProps> = ({data}) => {
             title ={`Category (${data.length})`}
             description="Manage categories for your store"
             />
-            <Button onClick={() => router.push(`/${params.storeId}/categories1/new`)}>
+            <Button onClick={() => router.push(`/${params.storeId}/categories2/new`)}>
                 <Plus className="mr-2 h-4 w-4" />
                 Add New
             </Button>
@@ -38,8 +38,8 @@ const CategoriesClient:React.FC<CategoriesClientProps> = ({data}) => {
         <Heading title="Api" description="API calls for Category" />
         <Separator />
         <ApiList 
-        entityIdName="category1Id"
-        entityName="categories1"
+        entityIdName="category2Id"
+        entityName="categories2"
         />
         </>
      );

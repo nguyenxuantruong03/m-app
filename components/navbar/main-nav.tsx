@@ -40,6 +40,11 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
       active: pathname === `/${params.storeId}/categories1`,
     },
     {
+      href: `/${params.storeId}/categories2`,
+      label: "Phân loại 2",
+      active: pathname === `/${params.storeId}/categories2`,
+    },
+    {
       href: `/${params.storeId}/size`,
       label: "Kích thước",
       active: pathname === `/${params.storeId}/size`,
@@ -68,6 +73,11 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
       href: `/${params.storeId}/product1`,
       label: "Sản phẩm1",
       active: pathname === `/${params.storeId}/product1`,
+    },
+    {
+      href: `/${params.storeId}/product2`,
+      label: "Sản phẩm2",
+      active: pathname === `/${params.storeId}/product2`,
     },
     {
       href: `/${params.storeId}/tivi`,
