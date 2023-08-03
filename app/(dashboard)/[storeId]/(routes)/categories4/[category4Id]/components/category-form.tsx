@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { Trash } from "lucide-react"
-import { Category3,Billboard } from "@prisma/client"
+import { Category4,Billboard } from "@prisma/client"
 import { useParams, useRouter } from "next/navigation"
 
 import { Input } from "@/components/ui/input"
@@ -33,7 +33,7 @@ const formSchema = z.object({
 type CategoryFormValues = z.infer<typeof formSchema>
 
 interface CategoryFormProps {
-  initialData: Category3 | null;
+  initialData: Category4 | null;
   billboards: Billboard[];
 };
 
@@ -66,12 +66,12 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
      /* Khối mã chịu trách nhiệm thực hiện yêu cầu HTTP để cập nhật bảng quảng cáo hiện có
       hoặc tạo bảng quảng cáo mới dựa trên giá trị của `initialData`. */
       if (initialData) {
-        await axios.patch(`/api/${params.storeId}/categories3/${params.category3Id}`, data);
+        await axios.patch(`/api/${params.storeId}/categories4/${params.category4Id}`, data);
       } else {
-        await axios.post(`/api/${params.storeId}/categories3`, data);
+        await axios.post(`/api/${params.storeId}/categories4`, data);
       }
       router.refresh();
-      router.push(`/${params.storeId}/categories3`);
+      router.push(`/${params.storeId}/categories4`);
       toast.success(toastMessage);
     } catch (error: any) {
       toast.error('Something went wrong.');
@@ -83,9 +83,9 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/categories3/${params.category3Id}`);
+      await axios.delete(`/api/${params.storeId}/categories4/${params.category4Id}`);
       router.refresh();
-      router.push(`/${params.storeId}/categories3`);
+      router.push(`/${params.storeId}/categories4`);
       toast.success('Category deleted.');
     } catch (error: any) {
       toast.error('Make sure you removed all categories using this Category first.');

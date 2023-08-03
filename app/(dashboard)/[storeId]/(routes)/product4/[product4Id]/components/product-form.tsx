@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { Trash } from "lucide-react"
-import { Category3, Product3, Image3, Size, Color, Specifications,Salientfeatures } from "@prisma/client"
+import { Category4, Product4, Image4, Size, Color, Specifications,Salientfeatures } from "@prisma/client"
 import { useParams, useRouter } from "next/navigation"
 
 import { Input } from "@/components/ui/input"
@@ -58,10 +58,10 @@ const formSchema = z.object({
 type ProductFormValues = z.infer<typeof formSchema>
 
 interface ProductFormProps {
-  initialData: Product3 & {
-    images: Image3[]} | null;
+  initialData: Product4 & {
+    images: Image4[]} | null;
 
-  categories: Category3[];
+  categories: Category4[];
   sizes: Size[];
   colors: Color[]
   specifications: Specifications[];
@@ -125,12 +125,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
      /* Khối mã chịu trách nhiệm thực hiện yêu cầu HTTP để cập nhật bảng quảng cáo hiện có
       hoặc tạo bảng quảng cáo mới dựa trên giá trị của `initialData`. */
       if (initialData) {
-        await axios.patch(`/api/${params.storeId}/product3/${params.product3Id}`, data);
+        await axios.patch(`/api/${params.storeId}/product4/${params.product4Id}`, data);
       } else {
-        await axios.post(`/api/${params.storeId}/product3`, data);
+        await axios.post(`/api/${params.storeId}/product4`, data);
       }
       router.refresh();
-      router.push(`/${params.storeId}/product3`);
+      router.push(`/${params.storeId}/product4`);
       toast.success(toastMessage);
     } catch (error: any) {
       toast.error('Something went wrong.');
@@ -142,9 +142,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/product3/${params.product3Id}`);
+      await axios.delete(`/api/${params.storeId}/product4/${params.product4Id}`);
       router.refresh();
-      router.push(`/${params.storeId}/product3`);
+      router.push(`/${params.storeId}/product4`);
       toast.success('Product deleted.');
     } catch (error: any) {
       toast.error('Make sure you removed all product using this product first.');

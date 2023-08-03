@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { Trash } from "lucide-react"
-import { Category1, Product2, Image2, Size, Color, Specifications,Salientfeatures } from "@prisma/client"
+import { Category2, Product2, Image2, Size, Color, Specifications,Salientfeatures } from "@prisma/client"
 import { useParams, useRouter } from "next/navigation"
 
 import { Input } from "@/components/ui/input"
@@ -61,7 +61,7 @@ interface ProductFormProps {
   initialData: Product2 & {
     images: Image2[]} | null;
 
-  categories: Category1[];
+  categories: Category2[];
   sizes: Size[];
   colors: Color[]
   specifications: Specifications[];
