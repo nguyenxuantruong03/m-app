@@ -13,10 +13,6 @@ export type ProductColumn = {
   price: string
   priceold: string
   percentpromotion: string
-  headingrecommend: string
-  infomationrecommend: string
-  warrantyrecommend: string
-  vatrecommend: string
   promotionheading: string
   promotiondescription: string
   guaranteeheading: string

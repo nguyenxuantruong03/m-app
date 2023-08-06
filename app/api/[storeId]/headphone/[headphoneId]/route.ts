@@ -82,8 +82,7 @@ export async function PATCH(
 
     const body = await req.json();
     
-    const { name,heading,description,categoryId,headingrecommend,
-      infomationrecommend,warrantyrecommend,vatrecommend,promotionheading,
+    const { name,heading,description,categoryId,promotionheading,
       promotiondescription,guaranteeheading,guaranteedescription,guaranteeinfomation,
       guaranteeprice,price,priceold,percentpromotion,isFeatured,isArchived,sizeId,colorId,specificationsId,salientfeaturesId,imagesheadphone} = body;
 
@@ -102,18 +101,6 @@ export async function PATCH(
     }
     if (!categoryId) {
       return new NextResponse("CategoryId is required", { status: 400 });
-    }
-    if (!headingrecommend) {
-      return new NextResponse("Headingrecommend is required", { status: 400 });
-    }
-    if (!infomationrecommend) {
-      return new NextResponse("Infomationrecommend is required", { status: 400 });
-    }
-    if (!warrantyrecommend) {
-      return new NextResponse("Warrantyrecommend is required", { status: 400 });
-    }
-    if (!vatrecommend) {
-      return new NextResponse("Vatrecommend is required", { status: 400 });
     }
     if (!promotionheading) {
       return new NextResponse("Promotionheading is required", { status: 400 });
@@ -178,8 +165,7 @@ export async function PATCH(
         id: params.headphoneId,
       },
       data:{
-        name,heading,description,categoryId,headingrecommend,
-        infomationrecommend,warrantyrecommend,vatrecommend,promotionheading,
+        name,heading,description,categoryId,promotionheading,
         promotiondescription,guaranteeheading,guaranteedescription,guaranteeinfomation,
         guaranteeprice,price,priceold,percentpromotion,sizeId,colorId,specificationsId,salientfeaturesId,
         imagesheadphone:{

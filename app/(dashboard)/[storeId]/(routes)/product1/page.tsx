@@ -29,11 +29,6 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
     price: formatter.format(item.price.toNumber()),
     priceold: formatter.format(item.priceold.toNumber()),
     percentpromotion:  formatter.format(item.percentpromotion.toNumber()),
-    // Thông tin sản phẩm bảo hanh vat ..
-    headingrecommend: item.headingrecommend,
-    infomationrecommend: item.infomationrecommend,
-    warrantyrecommend: item.warrantyrecommend,
-    vatrecommend: item.vatrecommend,
     // Khuyến mãi
     promotionheading: item.promotionheading,
     promotiondescription: item.promotiondescription,

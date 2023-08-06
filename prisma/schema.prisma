@@ -502,11 +502,6 @@ model Product {
   name                 String
   heading              String
   description          String
-  // Thông tin sản phẩm bảo hanh vat ...
-  headingrecommend     String
-  infomationrecommend  String
-  warrantyrecommend    String
-  vatrecommend         String
   // Khuyến mãi
   promotionheading     String          @db.VarChar(400)
   promotiondescription String          @db.VarChar(400)
@@ -551,11 +546,6 @@ model Product1 {
   name                 String
   heading              String
   description          String
-  // Thông tin sản phẩm bảo hanh vat ...
-  headingrecommend     String
-  infomationrecommend  String
-  warrantyrecommend    String
-  vatrecommend         String
   // Khuyến mãi
   promotionheading     String          @db.VarChar(400)
   promotiondescription String          @db.VarChar(400)
@@ -600,11 +590,6 @@ model Product2 {
   name                 String
   heading              String
   description          String
-  // Thông tin sản phẩm bảo hanh vat ...
-  headingrecommend     String
-  infomationrecommend  String
-  warrantyrecommend    String
-  vatrecommend         String
   // Khuyến mãi
   promotionheading     String          @db.VarChar(400)
   promotiondescription String          @db.VarChar(400)
@@ -649,11 +634,6 @@ model Product3 {
   name                 String
   heading              String
   description          String
-  // Thông tin sản phẩm bảo hanh vat ...
-  headingrecommend     String
-  infomationrecommend  String
-  warrantyrecommend    String
-  vatrecommend         String
   // Khuyến mãi
   promotionheading     String          @db.VarChar(400)
   promotiondescription String          @db.VarChar(400)
@@ -698,11 +678,6 @@ model Product4 {
   name                 String
   heading              String
   description          String
-  // Thông tin sản phẩm bảo hanh vat ...
-  headingrecommend     String
-  infomationrecommend  String
-  warrantyrecommend    String
-  vatrecommend         String
   // Khuyến mãi
   promotionheading     String          @db.VarChar(400)
   promotiondescription String          @db.VarChar(400)
@@ -747,11 +722,6 @@ model Product5 {
   name                 String
   heading              String
   description          String
-  // Thông tin sản phẩm bảo hanh vat ...
-  headingrecommend     String
-  infomationrecommend  String
-  warrantyrecommend    String
-  vatrecommend         String
   // Khuyến mãi
   promotionheading     String          @db.VarChar(400)
   promotiondescription String          @db.VarChar(400)
@@ -796,11 +766,6 @@ model Product6 {
   name                 String
   heading              String
   description          String
-  // Thông tin sản phẩm bảo hanh vat ...
-  headingrecommend     String
-  infomationrecommend  String
-  warrantyrecommend    String
-  vatrecommend         String
   // Khuyến mãi
   promotionheading     String          @db.VarChar(400)
   promotiondescription String          @db.VarChar(400)
@@ -845,11 +810,6 @@ model Product7 {
   name                 String
   heading              String
   description          String
-  // Thông tin sản phẩm bảo hanh vat ...
-  headingrecommend     String
-  infomationrecommend  String
-  warrantyrecommend    String
-  vatrecommend         String
   // Khuyến mãi
   promotionheading     String          @db.VarChar(400)
   promotiondescription String          @db.VarChar(400)
@@ -894,11 +854,6 @@ model Product8 {
   name                 String
   heading              String
   description          String
-  // Thông tin sản phẩm bảo hanh vat ...
-  headingrecommend     String
-  infomationrecommend  String
-  warrantyrecommend    String
-  vatrecommend         String
   // Khuyến mãi
   promotionheading     String          @db.VarChar(400)
   promotiondescription String          @db.VarChar(400)
@@ -943,11 +898,6 @@ model Product9 {
   name                 String
   heading              String
   description          String
-  // Thông tin sản phẩm bảo hanh vat ...
-  headingrecommend     String
-  infomationrecommend  String
-  warrantyrecommend    String
-  vatrecommend         String
   // Khuyến mãi
   promotionheading     String          @db.VarChar(400)
   promotiondescription String          @db.VarChar(400)
@@ -992,11 +942,6 @@ model Ipad {
   name                 String
   heading              String
   description          String
-  // Thông tin sản phẩm bảo hanh vat ...
-  headingrecommend     String
-  infomationrecommend  String
-  warrantyrecommend    String
-  vatrecommend         String
   // Khuyến mãi
   promotionheading     String          @db.VarChar(400)
   promotiondescription String          @db.VarChar(400)
@@ -1041,11 +986,6 @@ model Laptop {
   name                 String
   heading              String
   description          String
-  // Thông tin sản phẩm bảo hanh vat ...
-  headingrecommend     String
-  infomationrecommend  String
-  warrantyrecommend    String
-  vatrecommend         String
   // Khuyến mãi
   promotionheading     String          @db.VarChar(400)
   promotiondescription String          @db.VarChar(400)
@@ -1090,11 +1030,6 @@ model Headphone {
   name                 String
   heading              String
   description          String
-  // Thông tin sản phẩm bảo hanh vat ...
-  headingrecommend     String
-  infomationrecommend  String
-  warrantyrecommend    String
-  vatrecommend         String
   // Khuyến mãi
   promotionheading     String           @db.VarChar(400)
   promotiondescription String           @db.VarChar(400)
@@ -1139,11 +1074,6 @@ model Tivi {
   name                 String
   heading              String
   description          String
-  // Thông tin sản phẩm bảo hanh vat ...
-  headingrecommend     String
-  infomationrecommend  String
-  warrantyrecommend    String
-  vatrecommend         String
   // Khuyến mãi
   promotionheading     String          @db.VarChar(400)
   promotiondescription String          @db.VarChar(400)
@@ -1188,11 +1118,6 @@ model Watch {
   name                 String
   heading              String
   description          String
-  // Thông tin sản phẩm bảo hanh vat ...
-  headingrecommend     String
-  infomationrecommend  String
-  warrantyrecommend    String
-  vatrecommend         String
   // Khuyến mãi
   promotionheading     String          @db.VarChar(400)
   promotiondescription String          @db.VarChar(400)

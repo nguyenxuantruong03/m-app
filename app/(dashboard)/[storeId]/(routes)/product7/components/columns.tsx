@@ -13,10 +13,6 @@ export type ProductColumn = {
   price: string
   priceold: string
   percentpromotion: string
-  headingrecommend: string
-  infomationrecommend: string
-  warrantyrecommend: string
-  vatrecommend: string
   promotionheading: string
   promotiondescription: string
   guaranteeheading: string
@@ -57,22 +53,6 @@ export const columns: ColumnDef<ProductColumn>[] = [
   {
     accessorKey: "percentpromotion",
     header: "percentpromotion",
-  },
-  {
-    accessorKey: "headingrecommend",
-    header: "headingrecommend",
-  },
-  {
-    accessorKey: "infomationrecommend",
-    header: "infomationrecommend",
-  },
-  {
-    accessorKey: "warrantyrecommend",
-    header: "warrantyrecommend",
-  },
-  {
-    accessorKey: "vatrecommend",
-    header: "vatrecommend",
   },
   {
     accessorKey: "promotionheading",
