@@ -14,28 +14,27 @@ export async function GET(
 
     const ipads = await prismadb.watch.findUnique({
       where: {
-        id: params.watchId
+        id: params.watchId,
       },
-      include:{
-        imageswatch: true,
-        category: true,
+      include: {
+        images: true,
+        imagesalientfeatureswatch: true,
+        categorywatch: true,
         size: true,
         color: true,
-        specifications: true,
-        salientfeatures: true
-      }
+      },
     });
-  
+
     return NextResponse.json(ipads);
   } catch (error) {
-    console.log('[WATCH_GET]', error);
+    console.log("[WATCH_GET]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
-};
+}
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { watchId: string, storeId: string } }
+  { params }: { params: { watchId: string; storeId: string } }
 ) {
   try {
     const { userId } = auth();
@@ -52,7 +51,7 @@ export async function DELETE(
       where: {
         id: params.storeId,
         userId,
-      }
+      },
     });
 
     if (!storeByUserId) {
@@ -62,29 +61,79 @@ export async function DELETE(
     const product = await prismadb.watch.delete({
       where: {
         id: params.watchId,
-      }
+      },
     });
-  
+
     return NextResponse.json(product);
   } catch (error) {
-    console.log('[WATCH_DELETE]', error);
+    console.log("[WATCH_DELETE]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
-};
-
+}
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { watchId: string, storeId: string } }
+  { params }: { params: { watchId: string; storeId: string } }
 ) {
-  try {   
+  try {
     const { userId } = auth();
 
     const body = await req.json();
-    
-    const { name,heading,description,categoryId,promotionheading,
-      promotiondescription,guaranteeheading,guaranteedescription,guaranteeinfomation,
-      guaranteeprice,price,priceold,percentpromotion,isFeatured,isArchived,sizeId,colorId,specificationsId,salientfeaturesId,imageswatch} = body;
+
+    const {
+      name,
+      heading,
+      description,
+      categorywatchId,
+      promotionheading,
+      promotiondescription,
+      guaranteeheading,
+      guaranteedescription,
+      guaranteeinfomation,
+      guaranteeprice,
+      price,
+      priceold,
+      percentpromotion,
+      isFeatured,
+      isArchived,
+      sizeId,
+      colorId,
+      images,
+      descriptionspecifications,
+      valuespecifications,
+      description2specifications,
+      value2specifications,
+      description3specifications,
+      value3specifications,
+      description4specifications,
+      value4specifications,
+      description5specifications,
+      value5specifications,
+      description6specifications,
+      value6specifications,
+      description7specifications,
+      value7specifications,
+      description8specifications,
+      value8specifications,
+      description9specifications,
+      value9specifications,
+      description10specifications,
+      value10specifications,
+      description11specifications,
+      value11specifications,
+      description12specifications,
+      value12specifications,
+      description13specifications,
+      value13specifications,
+      description14specifications,
+      value14specifications,
+      descriptionsalientfeatures,
+      description2salientfeatures,
+      description3salientfeatures,
+      description4salientfeatures,
+      contentsalientfeatures,
+      imagesalientfeatureswatch,
+    } = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -99,23 +148,29 @@ export async function PATCH(
     if (!description) {
       return new NextResponse("Description is required", { status: 400 });
     }
-    if (!categoryId) {
+    if (!categorywatchId) {
       return new NextResponse("CategoryId is required", { status: 400 });
     }
     if (!promotionheading) {
       return new NextResponse("Promotionheading is required", { status: 400 });
     }
     if (!promotiondescription) {
-      return new NextResponse("Promotiondescription is required", { status: 400 });
+      return new NextResponse("Promotiondescription is required", {
+        status: 400,
+      });
     }
     if (!guaranteeheading) {
       return new NextResponse("Guaranteeheading is required", { status: 400 });
     }
     if (!guaranteedescription) {
-      return new NextResponse("Guaranteedescription is required", { status: 400 });
+      return new NextResponse("Guaranteedescription is required", {
+        status: 400,
+      });
     }
     if (!guaranteeinfomation) {
-      return new NextResponse("Guaranteeinfomation is required", { status: 400 });
+      return new NextResponse("Guaranteeinfomation is required", {
+        status: 400,
+      });
     }
     if (!guaranteeprice) {
       return new NextResponse("Guaranteeprice is required", { status: 400 });
@@ -135,13 +190,177 @@ export async function PATCH(
     if (!colorId) {
       return new NextResponse("ColorId is required", { status: 400 });
     }
-    if (!specificationsId) {
-      return new NextResponse("SpecificationsId", { status: 403 });
+    if (!descriptionspecifications) {
+      return new NextResponse("Descriptionspecifications is required", {
+        status: 400,
+      });
     }
-    if (!salientfeaturesId) {
-      return new NextResponse("SalientfeaturesId", { status: 403 });
+    if (!valuespecifications) {
+      return new NextResponse("Valuespecifications is required", {
+        status: 400,
+      });
     }
-    if (!imageswatch || !imageswatch.length) {
+    if (!description2specifications) {
+      return new NextResponse("Description2specifications is required", {
+        status: 400,
+      });
+    }
+    if (!value2specifications) {
+      return new NextResponse("Value2specifications is required", {
+        status: 400,
+      });
+    }
+    if (!description3specifications) {
+      return new NextResponse("Description3specifications is required", {
+        status: 400,
+      });
+    }
+    if (!value3specifications) {
+      return new NextResponse("Value3specifications is required", {
+        status: 400,
+      });
+    }
+    if (!description4specifications) {
+      return new NextResponse("Description4specifications is required", {
+        status: 400,
+      });
+    }
+    if (!value4specifications) {
+      return new NextResponse("Value4specifications is required", {
+        status: 400,
+      });
+    }
+    if (!description5specifications) {
+      return new NextResponse("Description5specifications is required", {
+        status: 400,
+      });
+    }
+    if (!value5specifications) {
+      return new NextResponse("Value5specifications is required", {
+        status: 400,
+      });
+    }
+    if (!description6specifications) {
+      return new NextResponse("Description6specifications is required", {
+        status: 400,
+      });
+    }
+    if (!value6specifications) {
+      return new NextResponse("Value6specifications is required", {
+        status: 400,
+      });
+    }
+    if (!description7specifications) {
+      return new NextResponse("Description7specifications is required", {
+        status: 400,
+      });
+    }
+    if (!value7specifications) {
+      return new NextResponse("Value7specifications is required", {
+        status: 400,
+      });
+    }
+    if (!description8specifications) {
+      return new NextResponse("Description8specifications is required", {
+        status: 400,
+      });
+    }
+    if (!value8specifications) {
+      return new NextResponse("Value8specifications is required", {
+        status: 400,
+      });
+    }
+    if (!description9specifications) {
+      return new NextResponse("Description9specifications is required", {
+        status: 400,
+      });
+    }
+    if (!value9specifications) {
+      return new NextResponse("Value9specifications is required", {
+        status: 400,
+      });
+    }
+    if (!description10specifications) {
+      return new NextResponse("Description10specifications is required", {
+        status: 400,
+      });
+    }
+    if (!value10specifications) {
+      return new NextResponse("Value10specifications is required", {
+        status: 400,
+      });
+    }
+    if (!description11specifications) {
+      return new NextResponse("Description11specifications is required", {
+        status: 400,
+      });
+    }
+    if (!value11specifications) {
+      return new NextResponse("Value11specifications is required", {
+        status: 400,
+      });
+    }
+    if (!description12specifications) {
+      return new NextResponse("Description12specifications is required", {
+        status: 400,
+      });
+    }
+    if (!value12specifications) {
+      return new NextResponse("Value12specifications is required", {
+        status: 400,
+      });
+    }
+    if (!description13specifications) {
+      return new NextResponse("Description13specifications is required", {
+        status: 400,
+      });
+    }
+    if (!value13specifications) {
+      return new NextResponse("Value13specifications is required", {
+        status: 400,
+      });
+    }
+    if (!description14specifications) {
+      return new NextResponse("Description14specifications is required", {
+        status: 400,
+      });
+    }
+    if (!value14specifications) {
+      return new NextResponse("Value14specifications is required", {
+        status: 400,
+      });
+    }
+    if (!descriptionsalientfeatures) {
+      return new NextResponse("Descriptionsalientfeatures is required", {
+        status: 400,
+      });
+    }
+    if (!description2salientfeatures) {
+      return new NextResponse("Description2salientfeatures is required", {
+        status: 400,
+      });
+    }
+    if (!description3salientfeatures) {
+      return new NextResponse("Description3salientfeatures is required", {
+        status: 400,
+      });
+    }
+    if (!description4salientfeatures) {
+      return new NextResponse("Description4salientfeatures is required", {
+        status: 400,
+      });
+    }
+    if (!contentsalientfeatures) {
+      return new NextResponse("Contentsalientfeatures is required", {
+        status: 400,
+      });
+    }
+    if (!imagesalientfeatureswatch || !imagesalientfeatureswatch.length) {
+      return new NextResponse("Imagesalientfeatures watch is required", {
+        status: 400,
+      });
+    }
+    if (!images || !images.length) {
       return new NextResponse("Images is required", { status: 400 });
     }
 
@@ -153,7 +372,7 @@ export async function PATCH(
       where: {
         id: params.storeId,
         userId,
-      }
+      },
     });
 
     if (!storeByUserId) {
@@ -161,39 +380,94 @@ export async function PATCH(
     }
 
     await prismadb.watch.update({
-      where:{
+      where: {
         id: params.watchId,
       },
-      data:{
-        name,heading,description,categoryId,promotionheading,
-        promotiondescription,guaranteeheading,guaranteedescription,guaranteeinfomation,
-        guaranteeprice,price,priceold,percentpromotion,sizeId,colorId,specificationsId,salientfeaturesId,
-        imageswatch:{
-          deleteMany:{}
+      data: {
+        name,
+        heading,
+        description,
+        categorywatchId,
+        promotionheading,
+        promotiondescription,
+        guaranteeheading,
+        guaranteedescription,
+        guaranteeinfomation,
+        guaranteeprice,
+        price,
+        priceold,
+        percentpromotion,
+        sizeId,
+        colorId,
+        descriptionspecifications,
+        valuespecifications,
+        description2specifications,
+        value2specifications,
+        description3specifications,
+        value3specifications,
+        description4specifications,
+        value4specifications,
+        description5specifications,
+        value5specifications,
+        description6specifications,
+        value6specifications,
+        description7specifications,
+        value7specifications,
+        description8specifications,
+        value8specifications,
+        description9specifications,
+        value9specifications,
+        description10specifications,
+        value10specifications,
+        description11specifications,
+        value11specifications,
+        description12specifications,
+        value12specifications,
+        description13specifications,
+        value13specifications,
+        description14specifications,
+        value14specifications,
+        descriptionsalientfeatures,
+        description2salientfeatures,
+        description3salientfeatures,
+        description4salientfeatures,
+        contentsalientfeatures,
+        images: {
+          deleteMany: {},
+        },
+        imagesalientfeatureswatch: {
+          deleteMany: {},
         },
         isFeatured,
         isArchived,
-      }
-    })
+      },
+    });
 
     const product = await prismadb.watch.update({
       where: {
         id: params.watchId,
       },
       data: {
-        imageswatch:{
-          createMany:{
-            data:[
-              ...imageswatch.map((image:{url: string})=> image)
-            ]
-          }
-        }
-      }
+        images: {
+          createMany: {
+            data: [...images.map((image: { url: string }) => image)],
+          },
+        },
+        imagesalientfeatureswatch: {
+          createMany: {
+            data: [
+              ...imagesalientfeatureswatch.map(
+                (image: { url: string }) => image
+              ),
+            ],
+          },
+        },
+      },
     });
-  
+
     return NextResponse.json(product);
   } catch (error) {
-    console.log('[WATCH_PATCH]', error);
+    console.log("[WATCH_PATCH]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
-};
+}

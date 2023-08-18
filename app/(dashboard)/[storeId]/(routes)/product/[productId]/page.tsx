@@ -7,7 +7,8 @@ const ProductPage = async ({params}:{params: {storeId: string,productId: string}
             id: params.productId
         },
         include:{
-            images: true
+            images: true,
+            imagesalientfeatures: true
         }
     })
     const categories = await prismadb.category.findMany({
@@ -28,17 +29,6 @@ const ProductPage = async ({params}:{params: {storeId: string,productId: string}
         }
     })
 
-    const specifications = await prismadb.specifications.findMany({
-        where:{
-            storeId: params.storeId
-        }
-    })
-
-    const salientfeatures = await prismadb.salientfeatures.findMany({
-        where:{
-            storeId: params.storeId
-        }
-    })
     
     return ( 
         <div className="flex-col">
@@ -48,8 +38,6 @@ const ProductPage = async ({params}:{params: {storeId: string,productId: string}
                 categories={categories}
                 sizes={sizes}
                 colors={colors}
-                specifications={specifications}
-                salientfeatures={salientfeatures}
                 />
             </div>
         </div>

@@ -5,11 +5,8 @@ const CategoryPage = async ({params}:{params: {storeId: string,categoryId: strin
     const categorys = await prismadb.category.findUnique({
         where:{
             id: params.categoryId
-        }
-    })
-    const billboards = await prismadb.billboard.findMany({
-        where:{
-            storeId: params.storeId
+        },
+        include:{
         }
     })
     return ( 
@@ -17,7 +14,6 @@ const CategoryPage = async ({params}:{params: {storeId: string,categoryId: strin
             <div className="flex-1 space-y-4 p-8 pt-6">
                 <CategoryForm 
                 initialData={categorys} 
-                billboards={billboards}
                 />
             </div>
         </div>

@@ -78,53 +78,63 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
   const categorys =[
     {
       href: `/${params.storeId}/categories`,
-      label: "Phân loại",
+      label: "Điện thoại",
       active: pathname === `/${params.storeId}/categories`,
     },
     {
       href: `/${params.storeId}/categories1`,
-      label: "Phân loại 1",
+      label: "Âm thanh",
       active: pathname === `/${params.storeId}/categories1`,
     },
     {
       href: `/${params.storeId}/categories2`,
-      label: "Phân loại 2",
+      label: "Đồng hồ , máy ảnh",
       active: pathname === `/${params.storeId}/categories2`,
     },
     {
       href: `/${params.storeId}/categories3`,
-      label: "Phân loại 3",
+      label: "Gia dụng,Smarthome",
       active: pathname === `/${params.storeId}/categories3`,
     },
     {
       href: `/${params.storeId}/categories4`,
-      label: "Phân loại 4",
+      label: "Phụ kiện ",
       active: pathname === `/${params.storeId}/categories4`,
     },
     {
       href: `/${params.storeId}/categories5`,
-      label: "Phân loại 5",
+      label: "PC,màn hình",
       active: pathname === `/${params.storeId}/categories5`,
     },
     {
       href: `/${params.storeId}/categories6`,
-      label: "Phân loại 6",
+      label: "Tivi",
       active: pathname === `/${params.storeId}/categories6`,
     },
     {
       href: `/${params.storeId}/categories7`,
-      label: "Phân loại 7",
+      label: "Ốp lưng",
       active: pathname === `/${params.storeId}/categories7`,
     },
     {
       href: `/${params.storeId}/categories8`,
-      label: "Phân loại 8",
+      label: "Chuột, bàn phím",
       active: pathname === `/${params.storeId}/categories8`,
     },
     {
       href: `/${params.storeId}/categories9`,
-      label: "Phân loại 9",
+      label: "Sim",
       active: pathname === `/${params.storeId}/categories9`,
+    },
+    {
+      href: `/${params.storeId}/categories10`,
+      label: "Laptop",
+      active: pathname === `/${params.storeId}/categorieslaptop`,
+    },
+    {
+      href: `/${params.storeId}/categories11`,
+      label: "Hàng cũ",
+      active: pathname === `/${params.storeId}/categories11`,
     },
   ]
 
@@ -139,68 +149,68 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
       label: "Màu sắc",
       active: pathname === `/${params.storeId}/color`,
     },
-    {
-      href: `/${params.storeId}/specifications`,
-      label: "Thông số kỹ thuật",
-      active: pathname === `/${params.storeId}/specifications`,
-    },
-    {
-      href: `/${params.storeId}/salientfeatures`,
-      label: "Tính năng nổi bật",
-      active: pathname === `/${params.storeId}/salientfeatures`,
-    },
   ]
 
   const products = [
     {
         href: `/${params.storeId}/product`,
-        label: "Sản phẩm",
+        label: "Điện thoại",
         active: pathname === `/${params.storeId}/product`,
       },
       {
         href: `/${params.storeId}/product1`,
-        label: "Sản phẩm1",
+        label: "Âm thanh",
         active: pathname === `/${params.storeId}/product1`,
       },
       {
         href: `/${params.storeId}/product2`,
-        label: "Sản phẩm2",
+        label: "Đồng hồ,máy ảnh",
         active: pathname === `/${params.storeId}/product2`,
       },
       {
         href: `/${params.storeId}/product3`,
-        label: "Sản phẩm3",
+        label: "Gia dụng,Smarthome",
         active: pathname === `/${params.storeId}/product3`,
       },
       {
         href: `/${params.storeId}/product4`,
-        label: "Sản phẩm4",
+        label: "Phụ kiện",
         active: pathname === `/${params.storeId}/product4`,
       },
       {
         href: `/${params.storeId}/product5`,
-        label: "Sản phẩm5",
+        label: "PC, màn hình",
         active: pathname === `/${params.storeId}/product5`,
       },
       {
         href: `/${params.storeId}/product6`,
-        label: "Sản phẩm6",
+        label: "Tivi",
         active: pathname === `/${params.storeId}/product6`,
       },
       {
         href: `/${params.storeId}/product7`,
-        label: "Sản phẩm7",
+        label: "Ốp lưng",
         active: pathname === `/${params.storeId}/product7`,
       },
       {
         href: `/${params.storeId}/product8`,
-        label: "Sản phẩm8",
+        label: "Chuột, bàn phím",
         active: pathname === `/${params.storeId}/product8`,
       },
       {
         href: `/${params.storeId}/product9`,
-        label: "Sản phẩm9",
+        label: "Sim",
         active: pathname === `/${params.storeId}/product9`,
+      },
+      {
+        href: `/${params.storeId}/product10`,
+        label: "Laptop",
+        active: pathname === `/${params.storeId}/product10`,
+      },
+      {
+        href: `/${params.storeId}/product11`,
+        label: "Hàng cũ",
+        active: pathname === `/${params.storeId}/product11`,
       },
   ]
   const productmainpages=[
@@ -228,6 +238,11 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
       href: `/${params.storeId}/laptop`,
       label: "Laptop",
       active: pathname === `/${params.storeId}/laptop`,
+    },
+    {
+      href: `/${params.storeId}/mouse`,
+      label: "Mouse",
+      active: pathname === `/${params.storeId}/mouse`,
     },
   ]
 

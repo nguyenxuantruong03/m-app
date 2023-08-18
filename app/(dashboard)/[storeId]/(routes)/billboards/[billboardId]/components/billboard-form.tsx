@@ -128,7 +128,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               name="imagebillboard"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Images</FormLabel>
+                  <FormLabel>Images(Please add only 10 images)</FormLabel>
                   <FormControl>
                     <ImageUpload 
                       value={field.value.map((image) =>image.url)} 
