@@ -544,7 +544,6 @@ model Product {
   guaranteeprice              Decimal
   //Giá sản phẩm main
   price                       Decimal
-  priceold                    Decimal
   percentpromotion            Decimal
   isFeatured                  Boolean                @default(false)
   isArchived                  Boolean                @default(false)
@@ -618,7 +617,6 @@ model Product1 {
   guaranteeprice               Decimal
   //Giá sản phẩm main
   price                        Decimal
-  priceold                     Decimal
   percentpromotion             Decimal
   isFeatured                   Boolean                        @default(false)
   isArchived                   Boolean                        @default(false)
@@ -692,7 +690,6 @@ model Product2 {
   guaranteeprice               Decimal
   //Giá sản phẩm main
   price                        Decimal
-  priceold                     Decimal
   percentpromotion             Decimal
   isFeatured                   Boolean                        @default(false)
   isArchived                   Boolean                        @default(false)
@@ -766,7 +763,6 @@ model Product3 {
   guaranteeprice               Decimal
   //Giá sản phẩm main
   price                        Decimal
-  priceold                     Decimal
   percentpromotion             Decimal
   isFeatured                   Boolean                        @default(false)
   isArchived                   Boolean                        @default(false)
@@ -840,7 +836,6 @@ model Product4 {
   guaranteeprice               Decimal
   //Giá sản phẩm main
   price                        Decimal
-  priceold                     Decimal
   percentpromotion             Decimal
   isFeatured                   Boolean                        @default(false)
   isArchived                   Boolean                        @default(false)
@@ -914,7 +909,6 @@ model Product5 {
   guaranteeprice               Decimal
   //Giá sản phẩm main
   price                        Decimal
-  priceold                     Decimal
   percentpromotion             Decimal
   isFeatured                   Boolean                        @default(false)
   isArchived                   Boolean                        @default(false)
@@ -988,7 +982,6 @@ model Product6 {
   guaranteeprice               Decimal
   //Giá sản phẩm main
   price                        Decimal
-  priceold                     Decimal
   percentpromotion             Decimal
   isFeatured                   Boolean                        @default(false)
   isArchived                   Boolean                        @default(false)
@@ -1062,7 +1055,6 @@ model Product7 {
   guaranteeprice               Decimal
   //Giá sản phẩm main
   price                        Decimal
-  priceold                     Decimal
   percentpromotion             Decimal
   isFeatured                   Boolean                        @default(false)
   isArchived                   Boolean                        @default(false)
@@ -1136,7 +1128,6 @@ model Product8 {
   guaranteeprice               Decimal
   //Giá sản phẩm main
   price                        Decimal
-  priceold                     Decimal
   percentpromotion             Decimal
   isFeatured                   Boolean                        @default(false)
   isArchived                   Boolean                        @default(false)
@@ -1210,7 +1201,6 @@ model Product9 {
   guaranteeprice               Decimal
   //Giá sản phẩm main
   price                        Decimal
-  priceold                     Decimal
   percentpromotion             Decimal
   isFeatured                   Boolean                        @default(false)
   isArchived                   Boolean                        @default(false)
@@ -1284,7 +1274,6 @@ model Product10 {
   guaranteeprice               Decimal
   //Giá sản phẩm main
   price                        Decimal
-  priceold                     Decimal
   percentpromotion             Decimal
   isFeatured                   Boolean                        @default(false)
   isArchived                   Boolean                        @default(false)
@@ -1359,7 +1348,6 @@ model Product11 {
   guaranteeprice               Decimal
   //Giá sản phẩm main
   price                        Decimal
-  priceold                     Decimal
   percentpromotion             Decimal
   isFeatured                   Boolean                        @default(false)
   isArchived                   Boolean                        @default(false)
@@ -1433,7 +1421,6 @@ model Ipad {
   guaranteeprice              Decimal
   //Giá sản phẩm main
   price                       Decimal
-  priceold                    Decimal
   percentpromotion            Decimal
   isFeatured                  Boolean                    @default(false)
   isArchived                  Boolean                    @default(false)
@@ -1507,7 +1494,6 @@ model Laptop {
   guaranteeprice              Decimal
   //Giá sản phẩm main
   price                       Decimal
-  priceold                    Decimal
   percentpromotion            Decimal
   isFeatured                  Boolean                      @default(false)
   isArchived                  Boolean                      @default(false)
@@ -1581,7 +1567,6 @@ model Headphone {
   guaranteeprice                Decimal
   //Giá sản phẩm main
   price                         Decimal
-  priceold                      Decimal
   percentpromotion              Decimal
   isFeatured                    Boolean                         @default(false)
   isArchived                    Boolean                         @default(false)
@@ -1655,7 +1640,6 @@ model Tivi {
   guaranteeprice              Decimal
   //Giá sản phẩm main
   price                       Decimal
-  priceold                    Decimal
   percentpromotion            Decimal
   isFeatured                  Boolean                    @default(false)
   isArchived                  Boolean                    @default(false)
@@ -1729,7 +1713,6 @@ model Watch {
   guaranteeprice              Decimal
   //Giá sản phẩm main
   price                       Decimal
-  priceold                    Decimal
   percentpromotion            Decimal
   isFeatured                  Boolean                     @default(false)
   isArchived                  Boolean                     @default(false)
@@ -1804,7 +1787,6 @@ model Mouse {
   guaranteeprice              Decimal
   //Giá sản phẩm main
   price                       Decimal
-  priceold                    Decimal
   percentpromotion            Decimal
   isFeatured                  Boolean                    @default(false)
   isArchived                  Boolean                    @default(false)

@@ -11,7 +11,6 @@ export type ProductColumn = {
   heading: string
   description: string
   price: string
-  priceold: string
   percentpromotion: string
   promotionheading: string
   promotiondescription: string

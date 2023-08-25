@@ -19,7 +19,7 @@ export async function GET(
       include: {
         images: true,
         imagesalientfeatures: true,
-        categorylaptop: true,
+        category: true,
         size: true,
         color: true,
       },
@@ -84,7 +84,7 @@ export async function PATCH(
       name,
       heading,
       description,
-      categorylaptopId,
+      categoryId,
       promotionheading,
       promotiondescription,
       guaranteeheading,
@@ -92,7 +92,6 @@ export async function PATCH(
       guaranteeinfomation,
       guaranteeprice,
       price,
-      priceold,
       percentpromotion,
       isFeatured,
       isArchived,
@@ -148,7 +147,7 @@ export async function PATCH(
     if (!description) {
       return new NextResponse("Description is required", { status: 400 });
     }
-    if (!categorylaptopId) {
+    if (!categoryId) {
       return new NextResponse("CategoryId is required", { status: 400 });
     }
     if (!promotionheading) {
@@ -177,9 +176,6 @@ export async function PATCH(
     }
     if (!price) {
       return new NextResponse("Price is required", { status: 400 });
-    }
-    if (!priceold) {
-      return new NextResponse("Priceold is required", { status: 400 });
     }
     if (!percentpromotion) {
       return new NextResponse("Percentpromotion is required", { status: 400 });
@@ -387,7 +383,7 @@ export async function PATCH(
         name,
         heading,
         description,
-        categorylaptopId,
+        categoryId,
         promotionheading,
         promotiondescription,
         guaranteeheading,
@@ -395,7 +391,6 @@ export async function PATCH(
         guaranteeinfomation,
         guaranteeprice,
         price,
-        priceold,
         percentpromotion,
         sizeId,
         colorId,

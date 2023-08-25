@@ -11,7 +11,6 @@ export type ProductColumn = {
   heading: string;
   description: string;
   price: string;
-  priceold: string;
   percentpromotion: string;
   promotionheading: string;
   promotiondescription: string;
@@ -78,10 +77,6 @@ export const columns: ColumnDef<ProductColumn>[] = [
   {
     accessorKey: "price",
     header: "price",
-  },
-  {
-    accessorKey: "priceold",
-    header: "priceold",
   },
   {
     accessorKey: "percentpromotion",

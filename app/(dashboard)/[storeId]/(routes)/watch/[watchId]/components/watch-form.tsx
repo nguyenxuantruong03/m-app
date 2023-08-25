@@ -47,7 +47,6 @@ const formSchema = z.object({
   description: z.string().min(1),
   images: z.object({ url: z.string() }).array(),
   price: z.coerce.number().min(1),
-  priceold: z.coerce.number().min(1),
   percentpromotion: z.coerce.number().min(1),
   headingrecommend: z.string().min(1),
   infomationrecommend: z.string().min(1),
@@ -139,7 +138,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       ? {
           ...initialData,
           price: parseFloat(String(initialData?.price)),
-          priceold: parseFloat(String(initialData?.priceold)),
           percentpromotion: parseFloat(String(initialData?.percentpromotion)),
           guaranteeheading: parseFloat(String(initialData?.guaranteeheading)),
           guaranteedescription: parseFloat(
@@ -156,7 +154,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           heading: "",
           description: "",
           price: 0,
-          priceold: 0,
           percentpromotion: 0,
           headingrecommend: "",
           infomationrecommend: "",
@@ -396,25 +393,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       type="number"
                       disabled={loading}
                       placeholder="10.000VND"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="priceold"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Price Old</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      disabled={loading}
-                      placeholder="50.000VND"
                       {...field}
                     />
                   </FormControl>

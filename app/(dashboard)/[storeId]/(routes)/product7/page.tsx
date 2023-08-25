@@ -25,7 +25,6 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
     heading: item.heading,
     description: item.description,
     price: formatter.format(item.price.toNumber()),
-    priceold: formatter.format(item.priceold.toNumber()),
     percentpromotion:  formatter.format(item.percentpromotion.toNumber()),
     // Khuyến mãi
     promotionheading: item.promotionheading,

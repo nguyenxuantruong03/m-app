@@ -92,7 +92,6 @@ export async function PATCH(
       guaranteeinfomation,
       guaranteeprice,
       price,
-      priceold,
       percentpromotion,
       isFeatured,
       isArchived,
@@ -178,9 +177,6 @@ export async function PATCH(
     }
     if (!price) {
       return new NextResponse("Price is required", { status: 400 });
-    }
-    if (!priceold) {
-      return new NextResponse("Priceold is required", { status: 400 });
     }
     if (!percentpromotion) {
       return new NextResponse("Percentpromotion is required", { status: 400 });
@@ -407,7 +403,6 @@ export async function PATCH(
         guaranteeinfomation,
         guaranteeprice,
         price,
-        priceold,
         percentpromotion,
         sizeId,
         colorId,
