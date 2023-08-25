@@ -64,7 +64,7 @@ export async function POST(
       description3salientfeatures,
       description4salientfeatures,
       contentsalientfeatures,
-      imagesalientfeaturesproduct3,
+      imagesalientfeatures,
     } = body;
 
     if (!userId) {
@@ -287,7 +287,7 @@ export async function POST(
         status: 400,
       });
     }
-    if (!imagesalientfeaturesproduct3 || !imagesalientfeaturesproduct3.length) {
+    if (!imagesalientfeatures || !imagesalientfeatures.length) {
       return new NextResponse("Imagesalientfeatures product3 is required", {
         status: 400,
       });
@@ -369,10 +369,10 @@ export async function POST(
             data: [...images.map((image: { url: string }) => image)],
           },
         },
-        imagesalientfeaturesproduct3: {
+        imagesalientfeatures: {
           createMany: {
             data: [
-              ...imagesalientfeaturesproduct3.map(
+              ...imagesalientfeatures.map(
                 (image: { url: string }) => image
               ),
             ],
@@ -416,7 +416,7 @@ export async function GET(
       },
       include: {
         images: true,
-        imagesalientfeaturesproduct3: true,
+        imagesalientfeatures: true,
         category: true,
         color: true,
         size: true,

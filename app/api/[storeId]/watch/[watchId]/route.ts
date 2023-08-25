@@ -18,8 +18,8 @@ export async function GET(
       },
       include: {
         images: true,
-        imagesalientfeatureswatch: true,
-        categorywatch: true,
+        imagesalientfeatures: true,
+        category: true,
         size: true,
         color: true,
       },
@@ -84,7 +84,7 @@ export async function PATCH(
       name,
       heading,
       description,
-      categorywatchId,
+      categoryId,
       promotionheading,
       promotiondescription,
       guaranteeheading,
@@ -132,7 +132,7 @@ export async function PATCH(
       description3salientfeatures,
       description4salientfeatures,
       contentsalientfeatures,
-      imagesalientfeatureswatch,
+      imagesalientfeatures,
     } = body;
 
     if (!userId) {
@@ -148,7 +148,7 @@ export async function PATCH(
     if (!description) {
       return new NextResponse("Description is required", { status: 400 });
     }
-    if (!categorywatchId) {
+    if (!categoryId) {
       return new NextResponse("CategoryId is required", { status: 400 });
     }
     if (!promotionheading) {
@@ -355,7 +355,7 @@ export async function PATCH(
         status: 400,
       });
     }
-    if (!imagesalientfeatureswatch || !imagesalientfeatureswatch.length) {
+    if (!imagesalientfeatures || !imagesalientfeatures.length) {
       return new NextResponse("Imagesalientfeatures watch is required", {
         status: 400,
       });
@@ -387,7 +387,7 @@ export async function PATCH(
         name,
         heading,
         description,
-        categorywatchId,
+        categoryId,
         promotionheading,
         promotiondescription,
         guaranteeheading,
@@ -435,7 +435,7 @@ export async function PATCH(
         images: {
           deleteMany: {},
         },
-        imagesalientfeatureswatch: {
+        imagesalientfeatures: {
           deleteMany: {},
         },
         isFeatured,
@@ -453,10 +453,10 @@ export async function PATCH(
             data: [...images.map((image: { url: string }) => image)],
           },
         },
-        imagesalientfeatureswatch: {
+        imagesalientfeatures: {
           createMany: {
             data: [
-              ...imagesalientfeatureswatch.map(
+              ...imagesalientfeatures.map(
                 (image: { url: string }) => image
               ),
             ],

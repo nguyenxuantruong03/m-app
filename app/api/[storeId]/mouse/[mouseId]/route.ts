@@ -18,7 +18,7 @@ export async function GET(
       },
       include: {
         images: true,
-        imagesalientfeaturesmouse: true,
+        imagesalientfeatures: true,
         category: true,
         size: true,
         color: true,
@@ -132,7 +132,7 @@ export async function PATCH(
       description3salientfeatures,
       description4salientfeatures,
       contentsalientfeatures,
-      imagesalientfeaturesmouse,
+      imagesalientfeatures,
     } = body;
 
     if (!userId) {
@@ -340,7 +340,7 @@ export async function PATCH(
         status: 400,
       });
     }
-    if (!imagesalientfeaturesmouse || !imagesalientfeaturesmouse.length) {
+    if (!imagesalientfeatures || !imagesalientfeatures.length) {
       return new NextResponse("Imagesalientfeatures mouse is required", {
         status: 400,
       });
@@ -435,7 +435,7 @@ export async function PATCH(
         images: {
           deleteMany: {},
         },
-        imagesalientfeaturesmouse: {
+        imagesalientfeatures: {
           deleteMany: {},
         },
         isFeatured,
@@ -453,10 +453,10 @@ export async function PATCH(
             data: [...images.map((image: { url: string }) => image)],
           },
         },
-        imagesalientfeaturesmouse: {
+        imagesalientfeatures: {
           createMany: {
             data: [
-              ...imagesalientfeaturesmouse.map(
+              ...imagesalientfeatures.map(
                 (image: { url: string }) => image
               ),
             ],

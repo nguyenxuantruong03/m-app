@@ -18,8 +18,8 @@ export async function GET(
       },
       include: {
         images: true,
-        imagesalientfeaturestivi: true,
-        categorytivi: true,
+        imagesalientfeatures: true,
+        category: true,
         size: true,
         color: true,
       },
@@ -84,7 +84,7 @@ export async function PATCH(
       name,
       heading,
       description,
-      categorytiviId,
+      categoryId,
       promotionheading,
       promotiondescription,
       guaranteeheading,
@@ -132,7 +132,7 @@ export async function PATCH(
       description3salientfeatures,
       description4salientfeatures,
       contentsalientfeatures,
-      imagesalientfeaturestivi,
+      imagesalientfeatures,
     } = body;
 
     if (!userId) {
@@ -148,7 +148,7 @@ export async function PATCH(
     if (!description) {
       return new NextResponse("Description is required", { status: 400 });
     }
-    if (!categorytiviId) {
+    if (!categoryId) {
       return new NextResponse("CategoryId is required", { status: 400 });
     }
     if (!promotionheading) {
@@ -355,7 +355,7 @@ export async function PATCH(
         status: 400,
       });
     }
-    if (!imagesalientfeaturestivi || !imagesalientfeaturestivi.length) {
+    if (!imagesalientfeatures || !imagesalientfeatures.length) {
       return new NextResponse("Imagesalientfeatures tivi is required", {
         status: 400,
       });
@@ -387,7 +387,7 @@ export async function PATCH(
         name,
         heading,
         description,
-        categorytiviId,
+        categoryId,
         promotionheading,
         promotiondescription,
         guaranteeheading,
@@ -435,7 +435,7 @@ export async function PATCH(
         images: {
           deleteMany: {},
         },
-        imagesalientfeaturestivi: {
+        imagesalientfeatures: {
           deleteMany: {},
         },
         isFeatured,
@@ -453,10 +453,10 @@ export async function PATCH(
             data: [...images.map((image: { url: string }) => image)],
           },
         },
-        imagesalientfeaturestivi: {
+        imagesalientfeatures: {
           createMany: {
             data: [
-              ...imagesalientfeaturestivi.map(
+              ...imagesalientfeatures.map(
                 (image: { url: string }) => image
               ),
             ],

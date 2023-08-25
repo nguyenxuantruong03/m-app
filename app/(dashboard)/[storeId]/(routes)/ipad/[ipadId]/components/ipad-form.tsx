@@ -89,12 +89,12 @@ const formSchema = z.object({
   description3salientfeatures: z.string().min(1),
   description4salientfeatures: z.string().min(1),
   contentsalientfeatures: z.string().min(1),
-  imagesalientfeaturesipad: z.object({ url: z.string() }).array(),
+  imagesalientfeatures: z.object({ url: z.string() }).array(),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
   sizeId: z.string().min(1),
   colorId: z.string().min(1),
-  categoryipadId: z.string().min(1),
+  categoryId: z.string().min(1),
 });
 
 type ProductFormValues = z.infer<typeof formSchema>;
@@ -103,7 +103,7 @@ interface ProductFormProps {
   initialData:
     | (Ipad & {
       images: ImageIpad[];
-        imagesalientfeaturesipad: ImagesalientfeaturesIpad[];
+      imagesalientfeatures: ImagesalientfeaturesIpad[];
       })
     | null;
 
@@ -195,12 +195,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           description3salientfeatures: "",
           description4salientfeatures: "",
           contentsalientfeatures: "",
-          imagesalientfeaturesipad: [],
+          imagesalientfeatures: [],
           isFeatured: false,
           isArchived: false,
           sizeId: "",
           colorId: "",
-          categoryipadId: "",
+          categoryId: "",
         },
   });
 
@@ -297,7 +297,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
           <FormField
             control={form.control}
-            name="imagesalientfeaturesipad"
+            name="imagesalientfeatures"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Images Salientfeatures headphone (Please add only 2 images)</FormLabel>
@@ -1204,7 +1204,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
             <FormField
               control={form.control}
-              name="categoryipadId"
+              name="categoryId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Category</FormLabel>

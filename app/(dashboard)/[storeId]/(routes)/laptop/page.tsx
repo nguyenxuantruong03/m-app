@@ -12,7 +12,7 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
     include: {
       size: true,
       color: true,
-      categorylaptop: true,
+      category: true,
     },
     orderBy: {
       createdAt: "desc",
@@ -75,7 +75,7 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
     isArchived: item.isArchived,
     size: item.size.name,
     color: item.color.value,
-    category: item.categorylaptop.name,
+    category: item.category.name,
 
     createdAt: format(item.createdAt, "MM/dd/yyyy"),
   }));

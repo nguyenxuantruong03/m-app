@@ -93,7 +93,7 @@ const formSchema = z.object({
   description3salientfeatures: z.string().min(1),
   description4salientfeatures: z.string().min(1),
   contentsalientfeatures: z.string().min(1),
-  imagesalientfeaturesproduct9: z.object({ url: z.string() }).array(),
+  imagesalientfeatures: z.object({ url: z.string() }).array(),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
   sizeId: z.string().min(1),
@@ -107,7 +107,7 @@ interface ProductFormProps {
   initialData:
     | (Product9 & {
         images: Image9[];
-        imagesalientfeaturesproduct9: ImagesalientfeaturesProduct9[];
+        imagesalientfeatures: ImagesalientfeaturesProduct9[];
       })
     | null;
 
@@ -202,7 +202,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           description3salientfeatures: "",
           description4salientfeatures: "",
           contentsalientfeatures: "",
-          imagesalientfeaturesproduct9: [],
+          imagesalientfeatures: [],
           isFeatured: false,
           isArchived: false,
           sizeId: "",
@@ -311,7 +311,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
           <FormField
             control={form.control}
-            name="imagesalientfeaturesproduct9"
+            name="imagesalientfeatures"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Images salientfeatures product 9(Please add only 2 images)</FormLabel>

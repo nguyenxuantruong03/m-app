@@ -18,8 +18,8 @@ export async function GET(
       },
       include: {
         images: true,
-        imagesalientfeaturesheadphone: true,
-        categoryheadphone: true,
+        imagesalientfeatures: true,
+        category: true,
         size: true,
         color: true,
       },
@@ -84,7 +84,7 @@ export async function PATCH(
       name,
       heading,
       description,
-      categoryheadphoneId,
+      categoryId,
       promotionheading,
       promotiondescription,
       guaranteeheading,
@@ -134,13 +134,12 @@ export async function PATCH(
       description3salientfeatures,
       description4salientfeatures,
       contentsalientfeatures,
-      imagesalientfeaturesheadphone,
+      imagesalientfeatures,
     } = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
     }
-
     if (!name) {
       return new NextResponse("Name is required", { status: 400 });
     }
@@ -150,7 +149,7 @@ export async function PATCH(
     if (!description) {
       return new NextResponse("Description is required", { status: 400 });
     }
-    if (!categoryheadphoneId) {
+    if (!categoryId) {
       return new NextResponse("CategoryId is required", { status: 400 });
     }
     if (!promotionheading) {
@@ -354,10 +353,10 @@ export async function PATCH(
     }
     // ----
     if (
-      !imagesalientfeaturesheadphone ||
-      !imagesalientfeaturesheadphone.length
+      !imagesalientfeatures ||
+      !imagesalientfeatures.length
     ) {
-      return new NextResponse("Imagesalientfeaturesheadphone is required", {
+      return new NextResponse("imagesalientfeatures is required", {
         status: 400,
       });
     }
@@ -400,7 +399,7 @@ export async function PATCH(
         name,
         heading,
         description,
-        categoryheadphoneId,
+        categoryId,
         promotionheading,
         promotiondescription,
         guaranteeheading,
@@ -448,7 +447,7 @@ export async function PATCH(
         images: {
           deleteMany: {},
         },
-        imagesalientfeaturesheadphone: {
+        imagesalientfeatures: {
           deleteMany: {},
         },
         isFeatured,
@@ -466,10 +465,10 @@ export async function PATCH(
             data: [...images.map((image: { url: string }) => image)],
           },
         },
-        imagesalientfeaturesheadphone: {
+        imagesalientfeatures: {
           createMany: {
             data: [
-              ...imagesalientfeaturesheadphone.map(
+              ...imagesalientfeatures.map(
                 (image: { url: string }) => image
               ),
             ],

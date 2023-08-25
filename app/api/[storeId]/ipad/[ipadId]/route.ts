@@ -18,8 +18,8 @@ export async function GET(
       },
       include: {
         images: true,
-        imagesalientfeaturesipad: true,
-        categoryipad: true,
+        imagesalientfeatures: true,
+        category: true,
         size: true,
         color: true,
       },
@@ -84,7 +84,7 @@ export async function PATCH(
       name,
       heading,
       description,
-      categoryipadId,
+      categoryId,
       promotionheading,
       promotiondescription,
       guaranteeheading,
@@ -132,7 +132,7 @@ export async function PATCH(
       description3salientfeatures,
       description4salientfeatures,
       contentsalientfeatures,
-      imagesalientfeaturesipad,
+      imagesalientfeatures,
     } = body;
 
     if (!userId) {
@@ -148,7 +148,7 @@ export async function PATCH(
     if (!description) {
       return new NextResponse("Description is required", { status: 400 });
     }
-    if (!categoryipadId) {
+    if (!categoryId) {
       return new NextResponse("CategoryId is required", { status: 400 });
     }
     if (!promotionheading) {
@@ -340,7 +340,7 @@ export async function PATCH(
         status: 400,
       });
     }
-    if (!imagesalientfeaturesipad || !imagesalientfeaturesipad.length) {
+    if (!imagesalientfeatures || !imagesalientfeatures.length) {
       return new NextResponse("Imagesalientfeatures Ipad is required", {
         status: 400,
       });
@@ -387,7 +387,7 @@ export async function PATCH(
         name,
         heading,
         description,
-        categoryipadId,
+        categoryId,
         promotionheading,
         promotiondescription,
         guaranteeheading,
@@ -435,7 +435,7 @@ export async function PATCH(
         images: {
           deleteMany: {},
         },
-        imagesalientfeaturesipad: {
+        imagesalientfeatures: {
           deleteMany: {},
         },
         isFeatured,
@@ -453,10 +453,10 @@ export async function PATCH(
             data: [...images.map((image: { url: string }) => image)],
           },
         },
-        imagesalientfeaturesipad: {
+        imagesalientfeatures: {
           createMany: {
             data: [
-              ...imagesalientfeaturesipad.map(
+              ...imagesalientfeatures.map(
                 (image: { url: string }) => image
               ),
             ],

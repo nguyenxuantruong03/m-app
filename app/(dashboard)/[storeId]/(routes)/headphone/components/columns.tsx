@@ -260,6 +260,14 @@ export const columns: ColumnDef<ProductColumn>[] = [
     header: "contentsalientfeatures",
   },
   {
+    accessorKey: "isFeatured",
+    header: "Featured",
+  },
+  {
+    accessorKey: "isArchived",
+    header: "Archived",
+  },
+  {
     accessorKey: "color",
     header: "color",
     cell: ({ row }) => (

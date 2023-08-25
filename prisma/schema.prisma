@@ -662,7 +662,7 @@ model Product1 {
   description3salientfeatures  String                         @db.VarChar(400)
   description4salientfeatures  String                         @db.VarChar(400)
   contentsalientfeatures       String                         @db.VarChar(400)
-  imagesalientfeaturesproduct1 ImagesalientfeaturesProduct1[]
+  imagesalientfeatures ImagesalientfeaturesProduct1[]
   orderItems                   OrderItem[]
   createdAt                    DateTime                       @default(now())
   updatedAt                    DateTime                       @updatedAt
@@ -736,7 +736,7 @@ model Product2 {
   description3salientfeatures  String                         @db.VarChar(400)
   description4salientfeatures  String                         @db.VarChar(400)
   contentsalientfeatures       String                         @db.VarChar(400)
-  imagesalientfeaturesproduct2 ImagesalientfeaturesProduct2[]
+  imagesalientfeatures ImagesalientfeaturesProduct2[]
   orderItems                   OrderItem[]
   createdAt                    DateTime                       @default(now())
   updatedAt                    DateTime                       @updatedAt
@@ -810,7 +810,7 @@ model Product3 {
   description3salientfeatures  String                         @db.VarChar(400)
   description4salientfeatures  String                         @db.VarChar(400)
   contentsalientfeatures       String                         @db.VarChar(400)
-  imagesalientfeaturesproduct3 ImagesalientfeaturesProduct3[]
+  imagesalientfeatures ImagesalientfeaturesProduct3[]
   orderItems                   OrderItem[]
   createdAt                    DateTime                       @default(now())
   updatedAt                    DateTime                       @updatedAt
@@ -884,7 +884,7 @@ model Product4 {
   description3salientfeatures  String                         @db.VarChar(400)
   description4salientfeatures  String                         @db.VarChar(400)
   contentsalientfeatures       String                         @db.VarChar(400)
-  imagesalientfeaturesproduct4 ImagesalientfeaturesProduct4[]
+  imagesalientfeatures ImagesalientfeaturesProduct4[]
   orderItems                   OrderItem[]
   createdAt                    DateTime                       @default(now())
   updatedAt                    DateTime                       @updatedAt
@@ -958,7 +958,7 @@ model Product5 {
   description3salientfeatures  String                         @db.VarChar(400)
   description4salientfeatures  String                         @db.VarChar(400)
   contentsalientfeatures       String                         @db.VarChar(400)
-  imagesalientfeaturesproduct5 ImagesalientfeaturesProduct5[]
+  imagesalientfeatures ImagesalientfeaturesProduct5[]
   orderItems                   OrderItem[]
   createdAt                    DateTime                       @default(now())
   updatedAt                    DateTime                       @updatedAt
@@ -1032,7 +1032,7 @@ model Product6 {
   description3salientfeatures  String                         @db.VarChar(400)
   description4salientfeatures  String                         @db.VarChar(400)
   contentsalientfeatures       String                         @db.VarChar(400)
-  imagesalientfeaturesproduct6 ImagesalientfeaturesProduct6[]
+  imagesalientfeatures ImagesalientfeaturesProduct6[]
   orderItems                   OrderItem[]
   createdAt                    DateTime                       @default(now())
   updatedAt                    DateTime                       @updatedAt
@@ -1106,7 +1106,7 @@ model Product7 {
   description3salientfeatures  String                         @db.VarChar(400)
   description4salientfeatures  String                         @db.VarChar(400)
   contentsalientfeatures       String                         @db.VarChar(400)
-  imagesalientfeaturesproduct7 ImagesalientfeaturesProduct7[]
+  imagesalientfeatures ImagesalientfeaturesProduct7[]
   orderItems                   OrderItem[]
   createdAt                    DateTime                       @default(now())
   updatedAt                    DateTime                       @updatedAt
@@ -1180,7 +1180,7 @@ model Product8 {
   description3salientfeatures  String                         @db.VarChar(400)
   description4salientfeatures  String                         @db.VarChar(400)
   contentsalientfeatures       String                         @db.VarChar(400)
-  imagesalientfeaturesproduct8 ImagesalientfeaturesProduct8[]
+  imagesalientfeatures ImagesalientfeaturesProduct8[]
   orderItems                   OrderItem[]
   createdAt                    DateTime                       @default(now())
   updatedAt                    DateTime                       @updatedAt
@@ -1254,7 +1254,7 @@ model Product9 {
   description3salientfeatures  String                         @db.VarChar(400)
   description4salientfeatures  String                         @db.VarChar(400)
   contentsalientfeatures       String                         @db.VarChar(400)
-  imagesalientfeaturesproduct9 ImagesalientfeaturesProduct9[]
+  imagesalientfeatures ImagesalientfeaturesProduct9[]
   orderItems                   OrderItem[]
   createdAt                    DateTime                       @default(now())
   updatedAt                    DateTime                       @updatedAt
@@ -1328,7 +1328,7 @@ model Product10 {
   description3salientfeatures  String                         @db.VarChar(400)
   description4salientfeatures  String                         @db.VarChar(400)
   contentsalientfeatures       String                         @db.VarChar(400)
-  imagesalientfeaturesproduct10 ImagesalientfeaturesProduct10[]
+  imagesalientfeatures ImagesalientfeaturesProduct10[]
   orderItems                   OrderItem[]
   createdAt                    DateTime                       @default(now())
   updatedAt                    DateTime                       @updatedAt
@@ -1403,7 +1403,7 @@ model Product11 {
   description3salientfeatures  String                         @db.VarChar(400)
   description4salientfeatures  String                         @db.VarChar(400)
   contentsalientfeatures       String                         @db.VarChar(400)
-  imagesalientfeaturesproduct11 ImagesalientfeaturesProduct11[]
+  imagesalientfeatures ImagesalientfeaturesProduct11[]
   orderItems                   OrderItem[]
   createdAt                    DateTime                       @default(now())
   updatedAt                    DateTime                       @updatedAt
@@ -1418,8 +1418,8 @@ model Ipad {
   id                          String                     @id @default(uuid())
   storeId                     String
   store                       Store                      @relation("StoreToIpad", fields: [storeId], references: [id])
-  categoryipadId              String
-  categoryipad                Category1                  @relation("CategoryIpad", fields: [categoryipadId], references: [id])
+  categoryId              String
+  category                Category1                  @relation("CategoryIpad", fields: [categoryId], references: [id])
   name                        String
   heading                     String
   description                 String
@@ -1477,13 +1477,13 @@ model Ipad {
   description3salientfeatures String                     @db.VarChar(400)
   description4salientfeatures String                     @db.VarChar(400)
   contentsalientfeatures      String                     @db.VarChar(400)
-  imagesalientfeaturesipad    ImagesalientfeaturesIpad[]
+  imagesalientfeatures    ImagesalientfeaturesIpad[]
   orderItems                  OrderItem[]
   createdAt                   DateTime                   @default(now())
   updatedAt                   DateTime                   @updatedAt
 
   @@index([storeId])
-  @@index([categoryipadId])
+  @@index([categoryId])
   @@index([sizeId])
   @@index([colorId])
 }
@@ -1492,8 +1492,8 @@ model Laptop {
   id                          String                       @id @default(uuid())
   storeId                     String
   store                       Store                        @relation("StoreToLaptop", fields: [storeId], references: [id])
-  categorylaptopId            String
-  categorylaptop              Category10                   @relation("CategoryLaptop", fields: [categorylaptopId], references: [id])
+  categoryId            String
+  category              Category10                   @relation("CategoryLaptop", fields: [categoryId], references: [id])
   name                        String
   heading                     String
   description                 String
@@ -1551,13 +1551,13 @@ model Laptop {
   description3salientfeatures String                       @db.VarChar(400)
   description4salientfeatures String                       @db.VarChar(400)
   contentsalientfeatures      String                       @db.VarChar(400)
-  imagesalientfeatureslaptop  ImagesalientfeaturesLaptop[]
+  imagesalientfeatures  ImagesalientfeaturesLaptop[]
   orderItems                  OrderItem[]
   createdAt                   DateTime                     @default(now())
   updatedAt                   DateTime                     @updatedAt
 
   @@index([storeId])
-  @@index([categorylaptopId])
+  @@index([categoryId])
   @@index([sizeId])
   @@index([colorId])
 }
@@ -1566,8 +1566,8 @@ model Headphone {
   id                            String                          @id @default(uuid())
   storeId                       String
   store                         Store                           @relation("StoreToHeadphone", fields: [storeId], references: [id])
-  categoryheadphoneId           String
-  categoryheadphone             Category2                       @relation("CategoryHeadphone2", fields: [categoryheadphoneId], references: [id])
+  categoryId           String
+  category             Category2                       @relation("CategoryHeadphone2", fields: [categoryId], references: [id])
   name                          String
   heading                       String
   description                   String
@@ -1625,13 +1625,13 @@ model Headphone {
   description3salientfeatures   String                          @db.VarChar(400)
   description4salientfeatures   String                          @db.VarChar(400)
   contentsalientfeatures        String                          @db.VarChar(400)
-  imagesalientfeaturesheadphone ImagesalientfeaturesHeadphone[]
+  imagesalientfeatures ImagesalientfeaturesHeadphone[]
   orderItems                    OrderItem[]
   createdAt                     DateTime                        @default(now())
   updatedAt                     DateTime                        @updatedAt
 
   @@index([storeId])
-  @@index([categoryheadphoneId])
+  @@index([categoryId])
   @@index([sizeId])
   @@index([colorId])
 }
@@ -1640,8 +1640,8 @@ model Tivi {
   id                          String                     @id @default(uuid())
   storeId                     String
   store                       Store                      @relation("StoreToTivi", fields: [storeId], references: [id])
-  categorytiviId              String
-  categorytivi                Category7                  @relation("CategoryTivi", fields: [categorytiviId], references: [id])
+  categoryId              String
+  category                Category7                  @relation("CategoryTivi", fields: [categoryId], references: [id])
   name                        String
   heading                     String
   description                 String
@@ -1699,13 +1699,13 @@ model Tivi {
   description3salientfeatures String                     @db.VarChar(400)
   description4salientfeatures String                     @db.VarChar(400)
   contentsalientfeatures      String                     @db.VarChar(400)
-  imagesalientfeaturestivi    ImagesalientfeaturesTivi[]
+  imagesalientfeatures    ImagesalientfeaturesTivi[]
   orderItems                  OrderItem[]
   createdAt                   DateTime                   @default(now())
   updatedAt                   DateTime                   @updatedAt
 
   @@index([storeId])
-  @@index([categorytiviId])
+  @@index([categoryId])
   @@index([sizeId])
   @@index([colorId])
 }
@@ -1714,8 +1714,8 @@ model Watch {
   id                          String                      @id @default(uuid())
   storeId                     String
   store                       Store                       @relation("StoreToWatch", fields: [storeId], references: [id])
-  categorywatchId             String
-  categorywatch               Category3                   @relation("CategoryWatch", fields: [categorywatchId], references: [id])
+  categoryId             String
+  category               Category3                   @relation("CategoryWatch", fields: [categoryId], references: [id])
   name                        String
   heading                     String
   description                 String
@@ -1773,13 +1773,13 @@ model Watch {
   description3salientfeatures String                      @db.VarChar(400)
   description4salientfeatures String                      @db.VarChar(400)
   contentsalientfeatures      String                      @db.VarChar(400)
-  imagesalientfeatureswatch   ImagesalientfeaturesWatch[]
+  imagesalientfeatures   ImagesalientfeaturesWatch[]
   orderItems                  OrderItem[]
   createdAt                   DateTime                    @default(now())
   updatedAt                   DateTime                    @updatedAt
 
   @@index([storeId])
-  @@index([categorywatchId])
+  @@index([categoryId])
   @@index([sizeId])
   @@index([colorId])
 }
@@ -1848,7 +1848,7 @@ model Mouse {
   description3salientfeatures String                     @db.VarChar(400)
   description4salientfeatures String                     @db.VarChar(400)
   contentsalientfeatures      String                     @db.VarChar(400)
-  imagesalientfeaturesmouse    ImagesalientfeaturesMouse[]
+  imagesalientfeatures    ImagesalientfeaturesMouse[]
   orderItems                  OrderItem[]
   createdAt                   DateTime                   @default(now())
   updatedAt                   DateTime                   @updatedAt

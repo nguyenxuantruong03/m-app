@@ -89,12 +89,12 @@ const formSchema = z.object({
   description3salientfeatures: z.string().min(1),
   description4salientfeatures: z.string().min(1),
   contentsalientfeatures: z.string().min(1),
-  imagesalientfeaturesheadphone: z.object({ url: z.string() }).array(),
+  imagesalientfeatures: z.object({ url: z.string() }).array(),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
   sizeId: z.string().min(1),
   colorId: z.string().min(1),
-  categoryheadphoneId: z.string().min(1),
+  categoryId: z.string().min(1),
 });
 
 type ProductFormValues = z.infer<typeof formSchema>;
@@ -103,7 +103,7 @@ interface ProductFormProps {
   initialData:
     | (Headphone & {
       images: ImageHeadphone[];
-        imagesalientfeaturesheadphone: ImagesalientfeaturesHeadphone[];
+      imagesalientfeatures: ImagesalientfeaturesHeadphone[];
       })
     | null;
 
@@ -199,12 +199,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           description3salientfeatures: "",
           description4salientfeatures: "",
           contentsalientfeatures: "",
-          imagesalientfeaturesheadphone: [],
+          imagesalientfeatures: [],
           isFeatured: false,
           isArchived: false,
           sizeId: "",
           colorId: "",
-          categoryheadphoneId: "",
+          categoryId: "",
         },
   });
 
@@ -308,7 +308,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
           <FormField
             control={form.control}
-            name="imagesalientfeaturesheadphone"
+            name="imagesalientfeatures"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Image Headphone Salientfeatures (Please add only 2 images) </FormLabel>
@@ -1215,7 +1215,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
             <FormField
               control={form.control}
-              name="categoryheadphoneId"
+              name="categoryId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Category</FormLabel>

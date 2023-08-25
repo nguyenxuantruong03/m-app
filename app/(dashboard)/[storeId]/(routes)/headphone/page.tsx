@@ -10,7 +10,7 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
       storeId: params.storeId,
     },
     include: {
-      categoryheadphone: true,
+      category: true,
       size: true,
       color: true,
     },
@@ -40,7 +40,7 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
     isArchived: item.isArchived,
     size: item.size.name,
     color: item.color.value,
-    category: item.categoryheadphone.name,
+    category: item.category.name,
       // Specification
       descriptionspecifications   :      item.descriptionspecifications,
       valuespecifications         :      item.valuespecifications,

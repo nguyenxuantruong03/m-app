@@ -18,7 +18,7 @@ export async function GET(
       },
       include: {
         images: true,
-        imagesalientfeatureslaptop: true,
+        imagesalientfeatures: true,
         categorylaptop: true,
         size: true,
         color: true,
@@ -132,7 +132,7 @@ export async function PATCH(
       description3salientfeatures,
       description4salientfeatures,
       contentsalientfeatures,
-      imagesalientfeatureslaptop,
+      imagesalientfeatures,
     } = body;
 
     if (!userId) {
@@ -355,7 +355,7 @@ export async function PATCH(
         status: 400,
       });
     }
-    if (!imagesalientfeatureslaptop || !imagesalientfeatureslaptop.length) {
+    if (!imagesalientfeatures || !imagesalientfeatures.length) {
       return new NextResponse("Imagesalientfeaturesheadphone is required", {
         status: 400,
       });
@@ -435,7 +435,7 @@ export async function PATCH(
         images: {
           deleteMany: {},
         },
-        imagesalientfeatureslaptop: {
+        imagesalientfeatures: {
           deleteMany: {},
         },
         isFeatured,
@@ -453,10 +453,10 @@ export async function PATCH(
             data: [...images.map((image: { url: string }) => image)],
           },
         },
-        imagesalientfeatureslaptop: {
+        imagesalientfeatures: {
           createMany: {
             data: [
-              ...imagesalientfeatureslaptop.map(
+              ...imagesalientfeatures.map(
                 (image: { url: string }) => image
               ),
             ],

@@ -16,7 +16,7 @@ export async function POST(
       name,
       heading,
       description,
-      categoryipadId,
+      categoryId,
       promotionheading,
       promotiondescription,
       guaranteeheading,
@@ -64,7 +64,7 @@ export async function POST(
       description3salientfeatures,
       description4salientfeatures,
       contentsalientfeatures,
-      imagesalientfeaturesipad,
+      imagesalientfeatures,
     } = body;
 
     if (!userId) {
@@ -80,7 +80,7 @@ export async function POST(
     if (!description) {
       return new NextResponse("Description is required", { status: 400 });
     }
-    if (!categoryipadId) {
+    if (!categoryId) {
       return new NextResponse("CategoryId is required", { status: 400 });
     }
     if (!promotionheading) {
@@ -281,7 +281,7 @@ export async function POST(
         status: 400,
       });
     }
-    if (!imagesalientfeaturesipad || !imagesalientfeaturesipad.length) {
+    if (!imagesalientfeatures || !imagesalientfeatures.length) {
       return new NextResponse("Imagesalientfeatures Ipad is required", {
         status: 400,
       });
@@ -316,7 +316,7 @@ export async function POST(
         name,
         heading,
         description,
-        categoryipadId,
+        categoryId,
         promotionheading,
         promotiondescription,
         guaranteeheading,
@@ -368,7 +368,7 @@ export async function POST(
             data: [...images.map((image: { url: string }) => image)],
           },
         },
-        imagesalientfeaturesipad: {
+        imagesalientfeatures: {
           createMany: {
             data: [
               ...images.map(
@@ -395,7 +395,7 @@ export async function GET(
 ) {
   try {
     const { searchParams } = new URL(req.url);
-    const categoryipadId = searchParams.get("categoryipadId") || undefined;
+    const categoryId = searchParams.get("categoryId") || undefined;
     const colorId = searchParams.get("colorId") || undefined;
     const sizeId = searchParams.get("sizeId") || undefined;
     const isFeatured = searchParams.get("isFeatured");
@@ -407,7 +407,7 @@ export async function GET(
     const ipads = await prismadb.ipad.findMany({
       where: {
         storeId: params.storeId,
-        categoryipadId,
+        categoryId,
         colorId,
         sizeId,
         isFeatured: isFeatured ? true : undefined,
@@ -415,8 +415,8 @@ export async function GET(
       },
       include: {
         images: true,
-        imagesalientfeaturesipad: true,
-        categoryipad: true,
+        imagesalientfeatures: true,
+        category: true,
         color: true,
         size: true,
       },

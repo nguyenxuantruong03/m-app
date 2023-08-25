@@ -93,12 +93,12 @@ const formSchema = z.object({
   description3salientfeatures: z.string().min(1),
   description4salientfeatures: z.string().min(1),
   contentsalientfeatures: z.string().min(1),
-  imagesalientfeatureslaptop: z.object({ url: z.string() }).array(),
+  imagesalientfeatures: z.object({ url: z.string() }).array(),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
   sizeId: z.string().min(1),
   colorId: z.string().min(1),
-  categorylaptopId: z.string().min(1),
+  categoryId: z.string().min(1),
 });
 
 type ProductFormValues = z.infer<typeof formSchema>;
@@ -107,7 +107,7 @@ interface ProductFormProps {
   initialData:
     | (Laptop & {
       images: ImageLaptop[];
-        imagesalientfeatureslaptop: ImagesalientfeaturesLaptop[];
+      imagesalientfeatures: ImagesalientfeaturesLaptop[];
       })
     | null;
 
@@ -168,7 +168,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           isArchived: false,
           sizeId: "",
           colorId: "",
-          categorylaptopId: "",
+          categoryId: "",
           descriptionspecifications: "",
           valuespecifications: "",
           description2specifications: "",
@@ -203,7 +203,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           description3salientfeatures: "",
           description4salientfeatures: "",
           contentsalientfeatures: "",
-          imagesalientfeatureslaptop: [],
+          imagesalientfeatures: [],
         },
   });
 
@@ -305,7 +305,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
           <FormField
             control={form.control}
-            name="imagesalientfeatureslaptop"
+            name="imagesalientfeatures"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Images Salientfeatures Laptop (Please add only 2 images)</FormLabel>
@@ -1282,7 +1282,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
             <FormField
               control={form.control}
-              name="categorylaptopId"
+              name="categoryId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Category</FormLabel>

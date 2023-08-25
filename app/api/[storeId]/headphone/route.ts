@@ -16,7 +16,7 @@ export async function POST(
       name,
       heading,
       description,
-      categoryheadphoneId,
+      categoryId,
       promotionheading,
       promotiondescription,
       guaranteeheading,
@@ -64,7 +64,7 @@ export async function POST(
       description3salientfeatures,
       description4salientfeatures,
       contentsalientfeatures,
-      imagesalientfeaturesheadphone,
+      imagesalientfeatures,
     } = body;
 
     if (!userId) {
@@ -80,7 +80,7 @@ export async function POST(
     if (!description) {
       return new NextResponse("Description is required", { status: 400 });
     }
-    if (!categoryheadphoneId) {
+    if (!categoryId) {
       return new NextResponse("CategoryId is required", { status: 400 });
     }
     if (!promotionheading) {
@@ -290,10 +290,10 @@ export async function POST(
     }
     // ----
     if (
-      !imagesalientfeaturesheadphone ||
-      !imagesalientfeaturesheadphone.length
+      !imagesalientfeatures ||
+      !imagesalientfeatures.length
     ) {
-      return new NextResponse("Imagesalientfeaturesheadphone is required", {
+      return new NextResponse("imagesalientfeatures is required", {
         status: 400,
       });
     }
@@ -321,7 +321,7 @@ export async function POST(
         name,
         heading,
         description,
-        categoryheadphoneId,
+        categoryId,
         promotionheading,
         promotiondescription,
         guaranteeheading,
@@ -373,10 +373,10 @@ export async function POST(
             data: [...images.map((image: { url: string }) => image)],
           },
         },
-        imagesalientfeaturesheadphone: {
+        imagesalientfeatures: {
           createMany: {
             data: [
-              ...imagesalientfeaturesheadphone.map(
+              ...imagesalientfeatures.map(
                 (image: { url: string }) => image
               ),
             ],
@@ -399,7 +399,7 @@ export async function GET(
 ) {
   try {
     const { searchParams } = new URL(req.url);
-    const categoryheadphoneId = searchParams.get("categoryheadphoneId") || undefined;
+    const categoryId = searchParams.get("categoryId") || undefined;
     const colorId = searchParams.get("colorId") || undefined;
     const sizeId = searchParams.get("sizeId") || undefined;
     const isFeatured = searchParams.get("isFeatured");
@@ -411,7 +411,7 @@ export async function GET(
     const headphone = await prismadb.headphone.findMany({
       where: {
         storeId: params.storeId,
-        categoryheadphoneId,
+        categoryId,
         colorId,
         sizeId,
         isFeatured: isFeatured ? true : undefined,
@@ -419,8 +419,8 @@ export async function GET(
       },
       include: {
         images: true,
-        imagesalientfeaturesheadphone: true,
-        categoryheadphone: true,
+        imagesalientfeatures: true,
+        category: true,
         color: true,
         size: true,
       },

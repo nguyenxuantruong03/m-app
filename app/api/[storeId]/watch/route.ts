@@ -16,7 +16,7 @@ export async function POST(
       name,
       heading,
       description,
-      categorywatchId,
+      categoryId,
       promotionheading,
       promotiondescription,
       guaranteeheading,
@@ -64,7 +64,7 @@ export async function POST(
       description3salientfeatures,
       description4salientfeatures,
       contentsalientfeatures,
-      imagesalientfeatureswatch,
+      imagesalientfeatures,
     } = body;
 
     if (!userId) {
@@ -80,7 +80,7 @@ export async function POST(
     if (!description) {
       return new NextResponse("Description is required", { status: 400 });
     }
-    if (!categorywatchId) {
+    if (!categoryId) {
       return new NextResponse("CategoryId is required", { status: 400 });
     }
     if (!promotionheading) {
@@ -287,7 +287,7 @@ export async function POST(
         status: 400,
       });
     }
-    if (!imagesalientfeatureswatch || !imagesalientfeatureswatch.length) {
+    if (!imagesalientfeatures || !imagesalientfeatures.length) {
       return new NextResponse("Imagesalientfeatures watch is required", {
         status: 400,
       });
@@ -317,7 +317,7 @@ export async function POST(
         name,
         heading,
         description,
-        categorywatchId,
+        categoryId,
         promotionheading,
         promotiondescription,
         guaranteeheading,
@@ -370,10 +370,10 @@ export async function POST(
             data: [...images.map((image: { url: string }) => image)],
           },
         },
-        imagesalientfeatureswatch: {
+        imagesalientfeatures: {
           createMany: {
             data: [
-              ...imagesalientfeatureswatch.map(
+              ...imagesalientfeatures.map(
                 (image: { url: string }) => image
               ),
             ],
@@ -397,7 +397,7 @@ export async function GET(
 ) {
   try {
     const { searchParams } = new URL(req.url);
-    const categorywatchId = searchParams.get("categorywatchId") || undefined;
+    const categoryId = searchParams.get("categoryId") || undefined;
     const colorId = searchParams.get("colorId") || undefined;
     const sizeId = searchParams.get("sizeId") || undefined;
     const isFeatured = searchParams.get("isFeatured");
@@ -409,7 +409,7 @@ export async function GET(
     const watch = await prismadb.watch.findMany({
       where: {
         storeId: params.storeId,
-        categorywatchId,
+        categoryId,
         colorId,
         sizeId,
         isFeatured: isFeatured ? true : undefined,
@@ -417,8 +417,8 @@ export async function GET(
       },
       include: {
         images: true,
-        imagesalientfeatureswatch: true,
-        categorywatch: true,
+        imagesalientfeatures: true,
+        category: true,
         color: true,
         size: true,
       },

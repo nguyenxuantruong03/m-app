@@ -8,7 +8,7 @@ const ProductPage = async ({params}:{params: {storeId: string,ipadId: string}}) 
         },
         include:{
             images: true,
-            imagesalientfeaturesipad: true
+            imagesalientfeatures: true
         }
     })
     const categories = await prismadb.category1.findMany({

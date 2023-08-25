@@ -16,7 +16,7 @@ export async function POST(
       name,
       heading,
       description,
-      categorytiviId,
+      categoryId,
       promotionheading,
       promotiondescription,
       guaranteeheading,
@@ -64,7 +64,7 @@ export async function POST(
       description3salientfeatures,
       description4salientfeatures,
       contentsalientfeatures,
-      imagesalientfeaturestivi,
+      imagesalientfeatures,
     } = body;
 
     if (!userId) {
@@ -80,7 +80,7 @@ export async function POST(
     if (!description) {
       return new NextResponse("Description is required", { status: 400 });
     }
-    if (!categorytiviId) {
+    if (!categoryId) {
       return new NextResponse("CategoryId is required", { status: 400 });
     }
     if (!promotionheading) {
@@ -287,7 +287,7 @@ export async function POST(
         status: 400,
       });
     }
-    if (!imagesalientfeaturestivi || !imagesalientfeaturestivi.length) {
+    if (!imagesalientfeatures || !imagesalientfeatures.length) {
       return new NextResponse("Imagesalientfeatures tivi is required", {
         status: 400,
       });
@@ -316,7 +316,7 @@ export async function POST(
         name,
         heading,
         description,
-        categorytiviId,
+        categoryId,
         promotionheading,
         promotiondescription,
         guaranteeheading,
@@ -368,10 +368,10 @@ export async function POST(
             data: [...images.map((image: { url: string }) => image)],
           },
         },
-        imagesalientfeaturestivi: {
+        imagesalientfeatures: {
           createMany: {
             data: [
-              ...imagesalientfeaturestivi.map(
+              ...imagesalientfeatures.map(
                 (image: { url: string }) => image
               ),
             ],
@@ -395,7 +395,7 @@ export async function GET(
 ) {
   try {
     const { searchParams } = new URL(req.url);
-    const categorytiviId = searchParams.get("categorytiviId") || undefined;
+    const categoryId = searchParams.get("categoryId") || undefined;
     const colorId = searchParams.get("colorId") || undefined;
     const sizeId = searchParams.get("sizeId") || undefined;
     const isFeatured = searchParams.get("isFeatured");
@@ -407,7 +407,7 @@ export async function GET(
     const tivi = await prismadb.tivi.findMany({
       where: {
         storeId: params.storeId,
-        categorytiviId,
+        categoryId,
         colorId,
         sizeId,
         isFeatured: isFeatured ? true : undefined,
@@ -415,8 +415,8 @@ export async function GET(
       },
       include: {
         images: true,
-        imagesalientfeaturestivi: true,
-        categorytivi: true,
+        imagesalientfeatures: true,
+        category: true,
         color: true,
         size: true,
       },
