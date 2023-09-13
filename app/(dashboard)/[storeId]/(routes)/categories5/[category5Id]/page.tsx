@@ -1,10 +1,13 @@
 import prismadb from "@/lib/prismadb";
 import { CategoryForm } from "./components/category-form";
+import { CategoryType } from "@prisma/client";
 
 const CategoryPage = async ({params}:{params: {storeId: string,category5Id: string}}) => {
-    const categorys = await prismadb.category5.findUnique({
+    const categoryType = CategoryType.CATEGORY5;
+    const categorys = await prismadb.category.findUnique({
         where:{
-            id: params.category5Id
+            id: params.category5Id,
+            categoryType:categoryType
         }
     })
     

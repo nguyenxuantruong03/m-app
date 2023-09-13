@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { Trash } from "lucide-react"
-import { Category7,Billboard } from "@prisma/client"
+import { Category } from "@prisma/client"
 import { useParams, useRouter } from "next/navigation"
 
 import { Input } from "@/components/ui/input"
@@ -23,7 +23,6 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { Heading } from "@/components/ui/heading"
 import { AlertModal } from "@/components/modals/alert-modal"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -32,7 +31,7 @@ const formSchema = z.object({
 type CategoryFormValues = z.infer<typeof formSchema>
 
 interface CategoryFormProps {
-  initialData: Category7 | null;
+  initialData: Category | null;
 };
 
 export const CategoryForm: React.FC<CategoryFormProps> = ({

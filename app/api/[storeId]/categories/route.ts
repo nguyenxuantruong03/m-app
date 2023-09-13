@@ -2,12 +2,15 @@ import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs';
 
 import prismadb from '@/lib/prismadb';
- 
+import { CategoryType } from '@prisma/client';
+
 export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
-) {
+  ) {
+  const categoryType = CategoryType.CATEGORY;
   try {
+
     const { userId } = auth();
 
     const body = await req.json();
@@ -40,6 +43,7 @@ export async function POST(
     const category = await prismadb.category.create({
       data: {
         name,
+        categoryType:categoryType,
         storeId: params.storeId,
       }
     });
@@ -55,6 +59,7 @@ export async function GET(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const categoryType = CategoryType.CATEGORY;
   try {
     if (!params.storeId) {
       return new NextResponse("Store id is required", { status: 400 });
@@ -62,7 +67,8 @@ export async function GET(
 
     const category = await prismadb.category.findMany({
       where: {
-        storeId: params.storeId
+        storeId: params.storeId,
+        categoryType:categoryType
       }
     });
   

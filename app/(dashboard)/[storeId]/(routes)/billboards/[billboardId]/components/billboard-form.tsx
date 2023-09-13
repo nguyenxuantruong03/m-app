@@ -67,6 +67,10 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
      /* Khối mã chịu trách nhiệm thực hiện yêu cầu HTTP để cập nhật bảng quảng cáo hiện có
       hoặc tạo bảng quảng cáo mới dựa trên giá trị của `initialData`. */
       if (initialData) {
+       /* Mã `đang chờ axios.patch(`/api/${params.storeId}/billboards/${params.billboardId}`,
+         data);` đang gửi yêu cầu PATCH đến điểm cuối API được chỉ định cùng với dữ liệu được cung cấp. Nó
+         đang cập nhật một bảng quảng cáo hiện có với `billboardId` đã cho trong đối tượng `params`. Các
+         Đối tượng `data` chứa các giá trị được cập nhật cho bảng quảng cáo. */
         await axios.patch(`/api/${params.storeId}/billboards/${params.billboardId}`, data);
       } else {
         await axios.post(`/api/${params.storeId}/billboards`, data);

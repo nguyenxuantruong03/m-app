@@ -2,19 +2,22 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs";
 
 import prismadb from "@/lib/prismadb";
+import { ProductType } from "@prisma/client";
 
 export async function GET(
   req: Request,
   { params }: { params: { product9Id: string } }
 ) {
+  const productType = ProductType.PRODUCT9;
   try {
     if (!params.product9Id) {
       return new NextResponse("Product id is required", { status: 400 });
     }
 
-    const product = await prismadb.product9.findUnique({
+    const product = await prismadb.product.findUnique({
       where: {
         id: params.product9Id,
+        productType:productType
       },
       include: {
         images: true,
@@ -36,6 +39,7 @@ export async function DELETE(
   req: Request,
   { params }: { params: { product9Id: string; storeId: string } }
 ) {
+  const productType = ProductType.PRODUCT9;
   try {
     const { userId } = auth();
 
@@ -58,9 +62,10 @@ export async function DELETE(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    const product = await prismadb.product9.delete({
+    const product = await prismadb.product.delete({
       where: {
         id: params.product9Id,
+        productType:productType
       },
     });
 
@@ -375,10 +380,11 @@ export async function PATCH(
     if (!storeByUserId) {
       return new NextResponse("Unauthorized", { status: 405 });
     }
-
-    await prismadb.product9.update({
+    const productType = ProductType.PRODUCT9;
+    await prismadb.product.update({
       where: {
         id: params.product9Id,
+        productType:productType,
       },
       data: {
         name,
@@ -439,9 +445,10 @@ export async function PATCH(
       },
     });
 
-    const product = await prismadb.product9.update({
+    const product = await prismadb.product.update({
       where: {
         id: params.product9Id,
+        productType:productType,
       },
       data: {
         images: {

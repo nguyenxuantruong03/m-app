@@ -1,19 +1,24 @@
 import prismadb from "@/lib/prismadb";
 import { ProductForm } from "./components/product-form";
+import { CategoryType, ProductType } from "@prisma/client";
 
 const ProductPage = async ({params}:{params: {storeId: string,product3Id: string}}) => {
-    const product = await prismadb.product3.findUnique({
+    const productType = ProductType.PRODUCT3;
+    const categoryType = CategoryType.CATEGORY3
+    const product = await prismadb.product.findUnique({
         where:{
-            id: params.product3Id
+            id: params.product3Id,
+            productType:productType
         },
         include:{
             images: true,
             imagesalientfeatures:true,
         }
     })
-    const categories = await prismadb.category3.findMany({
+    const categories = await prismadb.category.findMany({
         where:{
-            storeId: params.storeId
+            storeId: params.storeId,
+            categoryType:categoryType
         }
     })
 

@@ -2,11 +2,13 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs";
 
 import prismadb from "@/lib/prismadb";
+import { CategoryType } from "@prisma/client";
 
 export async function GET(
   req: Request,
   { params }: { params: { categoryId: string } }
 ) {
+  const categoryType = CategoryType.CATEGORY;
   try {
     if (!params.categoryId) {
       return new NextResponse("Category id is required", { status: 400 });
@@ -14,7 +16,8 @@ export async function GET(
 
     const category = await prismadb.category.findUnique({
       where: {
-        id: params.categoryId
+        id: params.categoryId,
+        categoryType:categoryType
       },
     });
   
@@ -29,6 +32,7 @@ export async function DELETE(
   req: Request,
   { params }: { params: { categoryId: string, storeId: string } }
 ) {
+  const categoryType = CategoryType.CATEGORY;
   try {
     const { userId } = auth();
 
@@ -54,6 +58,7 @@ export async function DELETE(
     const category = await prismadb.category.delete({
       where: {
         id: params.categoryId,
+        categoryType:categoryType
       }
     });
   
@@ -69,6 +74,7 @@ export async function PATCH(
   req: Request,
   { params }: { params: { categoryId: string, storeId: string } }
 ) {
+  const categoryType = CategoryType.CATEGORY;
   try {   
     const { userId } = auth();
 
@@ -102,6 +108,7 @@ export async function PATCH(
     const category = await prismadb.category.update({
       where: {
         id: params.categoryId,
+        categoryType:categoryType
       },
       data: {
         name,

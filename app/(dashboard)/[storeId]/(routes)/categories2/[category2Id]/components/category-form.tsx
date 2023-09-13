@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { Trash } from "lucide-react"
-import { Category2,Billboard } from "@prisma/client"
+import { Category } from "@prisma/client"
 import { useParams, useRouter } from "next/navigation"
 
 import { Input } from "@/components/ui/input"
@@ -32,7 +32,7 @@ const formSchema = z.object({
 type CategoryFormValues = z.infer<typeof formSchema>
 
 interface CategoryFormProps {
-  initialData: Category2 | null;
+  initialData: Category | null;
 };
 
 export const CategoryForm: React.FC<CategoryFormProps> = ({

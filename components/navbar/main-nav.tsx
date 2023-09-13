@@ -12,7 +12,6 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
   const [isShown1, setIsShown1] = useState(false);
   const [isShown2, setIsShown2] = useState(false);
   const [isShown3, setIsShown3] = useState(false);
-  const [isShown4, setIsShown4] = useState(false);
   
   const handleMouseOver = () => {
     setIsShown(true);
@@ -42,13 +41,6 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
 
   const handleMouseOut3 = () => {
     setIsShown3(false);
-  };
-  const handleMouseOver4 = () => {
-    setIsShown4(true);
-  };
-
-  const handleMouseOut4 = () => {
-    setIsShown4(false);
   };
   const routes = [
     {
@@ -212,38 +204,6 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
         label: "Hàng cũ",
         active: pathname === `/${params.storeId}/product11`,
       },
-  ]
-  const productmainpages=[
-    {
-      href: `/${params.storeId}/tivi`,
-      label: "Tivi",
-      active: pathname === `/${params.storeId}/tivi`,
-    },
-    {
-      href: `/${params.storeId}/watch`,
-      label: "Đồng hồ thông minh",
-      active: pathname === `/${params.storeId}/watch`,
-    },
-    {
-      href: `/${params.storeId}/headphone`,
-      label: "Tai nghe",
-      active: pathname === `/${params.storeId}/headphone`,
-    },
-    {
-      href: `/${params.storeId}/ipad`,
-      label: "Ipad",
-      active: pathname === `/${params.storeId}/ipad`,
-    },
-    {
-      href: `/${params.storeId}/laptop`,
-      label: "Laptop",
-      active: pathname === `/${params.storeId}/laptop`,
-    },
-    {
-      href: `/${params.storeId}/mouse`,
-      label: "Mouse",
-      active: pathname === `/${params.storeId}/mouse`,
-    },
   ]
 
   const orders= [
@@ -434,47 +394,6 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
         )}
         >
         {product.label}
-        </Link>
-    ))}
-      </div>
-      )}
-    </div>
-
-    </nav>
-    {/* Product main page */}
-    <nav className={cn("flex items-center space-x-4 lg:space-x-6",className)}
-    onMouseOver={handleMouseOver4} 
-    onMouseOut={handleMouseOut4}
-    >
-      <div className="relative cursor-pointer rounded-sm px-2 py-1 hover:bg-slate-200">
-      <p className="hover:text-red-500 font-medium">Product Main Page </p>
-      <p >
-            <ChevronDown className="absolute left-14 w-12 " />
-      </p>
-      </div>
-    <div className="relative z-30 top-9 right-48">
-      {isShown4 && (
-      <div className="
-      px-5
-      py-5
-      grid 
-      grid-cols-1
-      absolute 
-      w-[200px] 
-      h-[170px] 
-      shadow-xl 
-      bg-white 
-      rounded-md 
-      ">
-    {productmainpages.map((productmainpage)=>(
-        <Link
-        key={productmainpage.href}
-        href={productmainpage.href}
-        className={cn("text-sm font-medium transition-colors hover:text-primary",
-        productmainpage.active ? 'text-black dark:text-white' : 'text-muted-foreground'
-        )}
-        >
-        {productmainpage.label}
         </Link>
     ))}
       </div>

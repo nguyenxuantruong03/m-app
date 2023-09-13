@@ -2,11 +2,13 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs";
 
 import prismadb from "@/lib/prismadb";
+import { ProductType } from "@prisma/client";
 
 export async function GET(
   req: Request,
   { params }: { params: { productId: string } }
 ) {
+  const productType = ProductType.PRODUCT;
   try {
     if (!params.productId) {
       return new NextResponse("Product id is required", { status: 400 });
@@ -15,13 +17,14 @@ export async function GET(
     const product = await prismadb.product.findUnique({
       where: {
         id: params.productId,
+        productType:productType
       },
       include: {
         images: true,
+        imagesalientfeatures: true,
         category: true,
         size: true,
         color: true,
-        imagesalientfeatures: true,
       },
     });
 
@@ -36,6 +39,7 @@ export async function DELETE(
   req: Request,
   { params }: { params: { productId: string; storeId: string } }
 ) {
+  const productType = ProductType.PRODUCT;
   try {
     const { userId } = auth();
 
@@ -61,6 +65,7 @@ export async function DELETE(
     const product = await prismadb.product.delete({
       where: {
         id: params.productId,
+        productType:productType
       },
     });
 
@@ -97,8 +102,6 @@ export async function PATCH(
       isArchived,
       sizeId,
       colorId,
-      specificationsId,
-      salientfeaturesId,
       images,
       descriptionspecifications,
       valuespecifications,
@@ -355,12 +358,6 @@ export async function PATCH(
     if (!colorId) {
       return new NextResponse("ColorId is required", { status: 400 });
     }
-    if (!specificationsId) {
-      return new NextResponse("SpecificationsId", { status: 403 });
-    }
-    if (!salientfeaturesId) {
-      return new NextResponse("SalientfeaturesId is required", { status: 400 });
-    }
     if (!images || !images.length) {
       return new NextResponse("Images is required", { status: 400 });
     }
@@ -384,10 +381,11 @@ export async function PATCH(
     if (!storeByUserId) {
       return new NextResponse("Unauthorized", { status: 405 });
     }
-
+    const productType = ProductType.PRODUCT;
     await prismadb.product.update({
       where: {
         id: params.productId,
+        productType:productType
       },
       data: {
         name,
@@ -451,6 +449,7 @@ export async function PATCH(
     const product = await prismadb.product.update({
       where: {
         id: params.productId,
+        productType:productType
       },
       data: {
         images: {

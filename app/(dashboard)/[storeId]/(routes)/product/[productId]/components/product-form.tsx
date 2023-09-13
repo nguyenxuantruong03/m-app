@@ -48,10 +48,6 @@ const formSchema = z.object({
   images: z.object({ url: z.string() }).array(),
   price: z.coerce.number().min(1),
   percentpromotion: z.coerce.number().min(1),
-  headingrecommend: z.string().min(1),
-  infomationrecommend: z.string().min(1),
-  warrantyrecommend: z.string().min(1),
-  vatrecommend: z.string().min(1),
   promotionheading: z.string().min(1),
   promotiondescription: z.string().min(1),
   guaranteeheading: z.coerce.number().min(1),
@@ -156,10 +152,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           description: "",
           price: 0,
           percentpromotion: 0,
-          headingrecommend: "",
-          infomationrecommend: "",
-          warrantyrecommend: "",
-          vatrecommend: "",
           promotionheading: "",
           promotiondescription: "",
           guaranteeheading: 0,
@@ -416,78 +408,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       type="number"
                       disabled={loading}
                       placeholder="%"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="headingrecommend"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Heading Recommend</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Heading recommend ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="infomationrecommend"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Infomation recommend</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Infomation recommend ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="warrantyrecommend"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Warranty recommend</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Warranty recommend ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="vatrecommend"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>VAT recommend</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="VAT recommend ..."
                       {...field}
                     />
                   </FormControl>

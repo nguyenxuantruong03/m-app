@@ -82,22 +82,6 @@ export const columns: ColumnDef<ProductColumn>[] = [
     header: "percentpromotion",
   },
   {
-    accessorKey: "headingrecommend",
-    header: "headingrecommend",
-  },
-  {
-    accessorKey: "infomationrecommend",
-    header: "infomationrecommend",
-  },
-  {
-    accessorKey: "warrantyrecommend",
-    header: "warrantyrecommend",
-  },
-  {
-    accessorKey: "vatrecommend",
-    header: "vatrecommend",
-  },
-  {
     accessorKey: "promotionheading",
     header: "promotionheading",
   },

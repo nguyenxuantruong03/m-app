@@ -41,7 +41,6 @@ try {
 export async function DELETE(req: Request,{params}:{params:{storeId:string}}){
     try {
         const {userId} = auth()
-        const body = await req.json()
     
         if(!userId) {
             return new NextResponse("Unauthenticated" , {status: 401})

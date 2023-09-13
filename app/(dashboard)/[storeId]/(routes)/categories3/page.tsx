@@ -2,11 +2,14 @@ import prismadb from "@/lib/prismadb";
 import CategoriesClient from "./components/client";
 import { CategoriesColumn } from "./components/columns";
 import { format } from "date-fns";
+import { CategoryType } from "@prisma/client";
 
 const CategoriesPage = async ({params}:{params:{storeId:string}}) => {
-    const categories = await prismadb.category3.findMany({
+    const categoryType = CategoryType.CATEGORY3;
+    const categories = await prismadb.category.findMany({
         where:{
-            storeId:params.storeId
+            storeId:params.storeId,
+            categoryType:categoryType
         },
         orderBy:{
             createdAt: 'desc'

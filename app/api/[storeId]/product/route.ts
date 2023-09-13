@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs";
 
 import prismadb from "@/lib/prismadb";
+import { ProductType } from "@prisma/client";
 
 export async function POST(
   req: Request,
@@ -310,13 +311,14 @@ export async function POST(
     if (!storeByUserId) {
       return new NextResponse("Unauthorized", { status: 405 });
     }
-
+    const productType = ProductType.PRODUCT;
     const product = await prismadb.product.create({
       data: {
         name,
         heading,
         description,
         categoryId,
+        productType:productType,
         promotionheading,
         promotiondescription,
         guaranteeheading,
@@ -396,7 +398,7 @@ export async function GET(
     const colorId = searchParams.get("colorId") || undefined;
     const sizeId = searchParams.get("sizeId") || undefined;
     const isFeatured = searchParams.get("isFeatured");
-
+    const productType = ProductType.PRODUCT;
     if (!params.storeId) {
       return new NextResponse("Store id is required", { status: 400 });
     }
@@ -409,6 +411,7 @@ export async function GET(
         sizeId,
         isFeatured: isFeatured ? true : undefined,
         isArchived: false,
+        productType:productType
       },
       include: {
         images: true,
