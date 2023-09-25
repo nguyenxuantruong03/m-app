@@ -16,7 +16,7 @@ export async function GET(
 
     const product = await prismadb.product.findUnique({
       where: {
-        id: params.product2Id,
+        name: params.product2Id,
         productType:productType
       },
       include: {
@@ -382,7 +382,7 @@ export async function PATCH(
     const productType = ProductType.PRODUCT2;
     await prismadb.product.update({
       where: {
-        id: params.product2Id,
+        name: params.product2Id,
         productType:productType
       },
       data: {
@@ -400,6 +400,39 @@ export async function PATCH(
         percentpromotion,
         sizeId,
         colorId,
+        descriptionspecifications,
+        valuespecifications,
+        description2specifications,
+        value2specifications,
+        description3specifications,
+        value3specifications,
+        description4specifications,
+        value4specifications,
+        description5specifications,
+        value5specifications,
+        description6specifications,
+        value6specifications,
+        description7specifications,
+        value7specifications,
+        description8specifications,
+        value8specifications,
+        description9specifications,
+        value9specifications,
+        description10specifications,
+        value10specifications,
+        description11specifications,
+        value11specifications,
+        description12specifications,
+        value12specifications,
+        description13specifications,
+        value13specifications,
+        description14specifications,
+        value14specifications,
+        descriptionsalientfeatures,
+        description2salientfeatures,
+        description3salientfeatures,
+        description4salientfeatures,
+        contentsalientfeatures,
         images: {
           deleteMany: {},
         },
@@ -413,7 +446,7 @@ export async function PATCH(
 
     const product = await prismadb.product.update({
       where: {
-        id: params.product2Id,
+        name: params.product2Id,
         productType:productType,
       },
       data: {

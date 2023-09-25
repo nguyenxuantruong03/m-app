@@ -6,7 +6,7 @@ const CategoryPage = async ({params}:{params: {storeId: string,category3Id: stri
     const categoryType = CategoryType.CATEGORY3;
     const categorys = await prismadb.category.findUnique({
         where:{
-            id: params.category3Id,
+            name: params.category3Id,
             categoryType:categoryType
         }
     })

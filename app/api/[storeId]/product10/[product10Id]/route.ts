@@ -16,7 +16,7 @@ export async function GET(
 
     const product = await prismadb.product.findUnique({
       where: {
-        id: params.product10Id,
+        name: params.product10Id,
         productType:productType
       },
       include: {
@@ -383,7 +383,7 @@ export async function PATCH(
     const productType = ProductType.PRODUCT10;
     await prismadb.product.update({
       where: {
-        id: params.product10Id,
+        name: params.product10Id,
         productType:productType,
       },
       data: {
@@ -447,7 +447,7 @@ export async function PATCH(
 
     const product = await prismadb.product.update({
       where: {
-        id: params.product10Id,
+        name: params.product10Id,
         productType:productType,
       },
       data: {

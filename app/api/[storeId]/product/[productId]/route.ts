@@ -16,8 +16,8 @@ export async function GET(
 
     const product = await prismadb.product.findUnique({
       where: {
-        id: params.productId,
-        productType:productType
+        name: params.productId,
+        productType: productType,
       },
       include: {
         images: true,
@@ -65,7 +65,7 @@ export async function DELETE(
     const product = await prismadb.product.delete({
       where: {
         id: params.productId,
-        productType:productType
+        productType: productType,
       },
     });
 
@@ -366,7 +366,6 @@ export async function PATCH(
         status: 400,
       });
     }
-
     if (!params.productId) {
       return new NextResponse("Product id is required", { status: 400 });
     }
@@ -384,8 +383,8 @@ export async function PATCH(
     const productType = ProductType.PRODUCT;
     await prismadb.product.update({
       where: {
-        id: params.productId,
-        productType:productType
+        name: params.productId,
+        productType: productType,
       },
       data: {
         name,
@@ -448,8 +447,8 @@ export async function PATCH(
 
     const product = await prismadb.product.update({
       where: {
-        id: params.productId,
-        productType:productType
+        name: params.productId,
+        productType: productType,
       },
       data: {
         images: {

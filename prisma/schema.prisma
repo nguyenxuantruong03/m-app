@@ -96,7 +96,7 @@ model Category {
   store     Store     @relation("StoreToCategory", fields: [storeId], references: [id])
   categoryType     CategoryType  
   product   Product[] @relation("CategoryProduct")
-  name      String
+  name      String       @unique
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
@@ -167,12 +167,6 @@ enum ProductType {
   PRODUCT9
   PRODUCT10
   PRODUCT11
-  IPAD
-  LAPTOP
-  MOUSE
-  HEADPHONE
-  TIVI
-  WATCH
 }
 
 model Product {
@@ -182,7 +176,7 @@ model Product {
   categoryId       String
   category         Category               @relation("CategoryProduct", fields: [categoryId], references: [id])
   productType      ProductType            // Add this field to distinguish product type (Product1 or Product2)
-  name             String
+  name             String                 @unique
   heading          String
   description      String
   // Khuyến mãi
@@ -242,7 +236,6 @@ model Product {
   orderItems                  OrderItem[]
   createdAt                   DateTime   @default(now())
   updatedAt                   DateTime   @updatedAt
-
   @@index([storeId])
   @@index([categoryId])
   @@index([sizeId])
@@ -253,7 +246,6 @@ model Image {
   id        String  @id @default(uuid())
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
   url       String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -280,6 +272,9 @@ model OrderItem {
   orderId   String
   order     Order   @relation(fields: [orderId], references: [id])
   productId String
+  quantity        String
+  pricesales                    Decimal
+
   product   Product @relation(fields: [productId], references: [id])
   @@index([orderId])
   @@index([productId])
