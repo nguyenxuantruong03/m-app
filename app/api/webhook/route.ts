@@ -27,7 +27,8 @@ export async function POST(req:Request){
         address?.country,
     ]
 
-const addressString = addressComponents.filter((c)=> c !== null).join('')
+    const nonNullAddressComponents = addressComponents.filter((c) => c !== null && c !== undefined);
+    const addressString = nonNullAddressComponents.join(', ');
 
 if(event.type ==="checkout.session.completed"){
     const order = await prismadb.order.update({
@@ -53,7 +54,7 @@ if(event.type ==="checkout.session.completed"){
             }
         },
         data:{
-            isArchived: true,
+            isArchived: false,
         }
     })
 }

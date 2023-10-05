@@ -4,6 +4,7 @@ import { UserButton, auth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import StoreSwitcher from "./store-switcher";
 import MainNav from "./main-nav";
+import { ThemeToggleDrakorLight } from "../ui/theme-toggle";
 
 const Navbar = async () => {
     const {userId} = auth()
@@ -19,10 +20,11 @@ const Navbar = async () => {
     })
     return ( 
         <div className="border-b">
-            <div className="flex h-16 items-center px-4">
+            <div className="items-center px-4 my-4">
                 <StoreSwitcher items={store} />
                         <MainNav className="mx-6"/>
-                <div className="ml-auto flex itms-center space-x-4">
+                <div className="ml-16 flex items-center space-x-4 mt-2">
+                    <ThemeToggleDrakorLight />
                     <UserButton afterSignOutUrl="/" />
                 </div>
             </div>

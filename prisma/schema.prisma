@@ -261,6 +261,7 @@ model Order {
   isPaid    Boolean     @default(false)
   phone     String      @default("")
   address   String      @default("")
+  
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
 
@@ -272,9 +273,10 @@ model OrderItem {
   orderId   String
   order     Order   @relation(fields: [orderId], references: [id])
   productId String
-  quantity        String
-  pricesales                    Decimal
-
+  quantity  String     
+  pricesales  Int
+  warranty    Int
+  priceold    Int
   product   Product @relation(fields: [productId], references: [id])
   @@index([orderId])
   @@index([productId])

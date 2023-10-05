@@ -18,7 +18,7 @@ export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
-  const { productIds,pricesales,quantity } = await req.json();
+  const { productIds,pricesales,quantity,priceold,warranty } = await req.json();
 
   if (!productIds || productIds.length === 0) {
     return new NextResponse("Product ids are required", { status: 400 });
@@ -35,7 +35,6 @@ export async function POST(
   const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
   const productNames: string[] = [];
   const productQuantities: string[] = [];
-
   // Assume products is an array of product objects
   products.forEach((product, index) => {
     if (!productNames.includes(product.name)) {
@@ -49,10 +48,10 @@ export async function POST(
     price_data: {
       currency: 'VND',
       product_data: {
-        name: productQuantities.join(', ') // Join product names with a comma if multiple products
+        name: productQuantities.join(', ')
       },
-      unit_amount: pricesales
-    }
+      unit_amount: pricesales,
+    },
   });
   const order = await prismadb.order.create({
     data: {
@@ -67,6 +66,8 @@ export async function POST(
           },
           pricesales:pricesales,
           quantity:productQuantities.join(', '),
+          priceold:priceold,
+          warranty:warranty,
         }))
       }
     }

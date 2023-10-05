@@ -5,43 +5,15 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
   const pathname = usePathname();
   const params = useParams();
-  const [isShown, setIsShown] = useState(false);
-  const [isShown1, setIsShown1] = useState(false);
-  const [isShown2, setIsShown2] = useState(false);
-  const [isShown3, setIsShown3] = useState(false);
-  
-  const handleMouseOver = () => {
-    setIsShown(true);
-  };
-
-  const handleMouseOut = () => {
-    setIsShown(false);
-  };
-
-  const handleMouseOver1 = () => {
-    setIsShown1(true);
-  };
-
-  const handleMouseOut1 = () => {
-    setIsShown1(false);
-  };
-  const handleMouseOver2 = () => {
-    setIsShown2(true);
-  };
-
-  const handleMouseOut2 = () => {
-    setIsShown2(false);
-  };
-  const handleMouseOver3 = () => {
-    setIsShown3(true);
-  };
-
-  const handleMouseOut3 = () => {
-    setIsShown3(false);
-  };
   const routes = [
     {
       href: `/${params.storeId}`,
@@ -209,7 +181,7 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
   const orders= [
     {
       href: `/${params.storeId}/orders`,
-      label: "Khác",
+      label: "Đơn hàng",
       active: pathname === `/${params.storeId}/orders`,
     },
     
@@ -224,210 +196,151 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
   return (
     <>
     {/* Overview */}
-    <nav className={cn("flex items-center space-x-4 lg:space-x-6",className)}>
-    {routes.map((route)=>(
-<Link
+    <nav className={cn("flex items-center space-x-4 lg:space-x-6 space-y-4",className)}>
+    <Accordion type="single" collapsible className="w-full">
+      <AccordionItem value="item-1">
+        <AccordionTrigger>Tổng quan</AccordionTrigger>
+        <AccordionContent>
+        {routes.map((route)=>(
+            <Link
         key={route.href}
         href={route.href}
-        className={cn("text-md font-medium transition-colors hover:text-primary",
+        className={cn("text-md font-medium transition-colors hover:text-primary grid grid-rows-1",
         route.active ? 'text-black dark:text-white' : 'text-muted-foreground'
         )}
         >
         {route.label}
-        </Link>
-    ))}
+              </Link>
+        ))}
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
     </nav>
     {/* Billboard */}
-    <nav className={cn("flex items-center space-x-4 lg:space-x-6",className)}
-    onMouseOver={handleMouseOver} 
-    onMouseOut={handleMouseOut}
-    >
-      <div className="relative cursor-pointer rounded-sm px-2 py-1 hover:bg-slate-200">
-      <p className="hover:text-red-500 font-medium">Billboard </p>
-      <p >
-            <ChevronDown className="absolute left-4 w-12 " />
-      </p>
-      </div>
-    <div className="relative z-30 top-9 right-44">
-      {isShown && (
-      <div className="
-      px-5
-      py-5
-      grid 
-      grid-cols-1
-      absolute 
-      w-[200px] 
-      h-[150px] 
-      shadow-xl 
-      bg-white 
-      rounded-md 
-      ">
-    {billboards.map((billboard)=>(
+    <nav className={cn("flex items-center space-x-4 lg:space-x-6",className)}>
+    <Accordion type="single" collapsible className="w-full">
+      <AccordionItem value="item-1">
+        <AccordionTrigger>Billboard</AccordionTrigger>
+        <AccordionContent>
+        {billboards.map((billboard)=>(
         <Link
         key={billboard.href}
         href={billboard.href}
-        className={cn("text-sm font-medium transition-colors hover:text-primary",
+        className={cn("text-sm font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
         billboard.active ? 'text-black dark:text-white' : 'text-muted-foreground'
         )}
         >
         {billboard.label}
         </Link>
     ))}
-      </div>
-      )}
-    </div>
-
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
     </nav>
     {/* Category */}
-    <nav className={cn("flex items-center space-x-4 lg:space-x-6",className)}
-    onMouseOver={handleMouseOver1} 
-    onMouseOut={handleMouseOut1}
-    >
-      <div className="relative cursor-pointer rounded-sm px-2 py-1 hover:bg-slate-200">
-      <p className="hover:text-red-500 font-medium">Category </p>
-      <p >
-            <ChevronDown className="absolute left-4 w-12 " />
-      </p>
-      </div>
-    <div className="relative z-30 top-9 right-44">
-      {isShown1 && (
-      <div className="
-      px-5
-      py-5
-      grid 
-      grid-cols-1
-      absolute 
-      w-[200px] 
-      h-[370px] 
-      shadow-xl 
-      bg-white 
-      rounded-md 
-      ">
-    {categorys.map((category)=>(
+    <nav className={cn("flex items-center space-x-4 lg:space-x-6",className)}>
+    <Accordion type="single" collapsible className="w-full">
+      <AccordionItem value="item-1">
+        <AccordionTrigger>Category</AccordionTrigger>
+        <AccordionContent>
+        {categorys.map((category)=>(
         <Link
         key={category.href}
         href={category.href}
-        className={cn("text-sm font-medium transition-colors hover:text-primary",
+        className={cn("text-sm font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
         category.active ? 'text-black dark:text-white' : 'text-muted-foreground'
         )}
         >
         {category.label}
         </Link>
     ))}
-      </div>
-      )}
-    </div>
-
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
     </nav>
     {/* Parameter */}
-    <nav className={cn("flex items-center space-x-4 lg:space-x-6",className)}
-    onMouseOver={handleMouseOver2} 
-    onMouseOut={handleMouseOut2}
-    >
-      <div className="relative cursor-pointer rounded-sm px-2 py-1 hover:bg-slate-200">
-      <p className="hover:text-red-500 font-medium">Parameter </p>
-      <p >
-            <ChevronDown className="absolute left-5 w-12 " />
-      </p>
-      </div>
-    <div className="relative z-30 top-9 right-44">
-      {isShown2 && (
-      <div className="
-      px-5
-      py-5
-      grid 
-      grid-cols-1
-      absolute 
-      w-[200px] 
-      h-[150px] 
-      shadow-xl 
-      bg-white 
-      rounded-md 
-      ">
-    {parameters.map((parameter)=>(
+    <nav className={cn("flex items-center space-x-4 lg:space-x-6",className)}>
+    <Accordion type="single" collapsible className="w-full">
+      <AccordionItem value="item-1">
+        <AccordionTrigger>Parameter</AccordionTrigger>
+        <AccordionContent>
+        {parameters.map((parameter)=>(
         <Link
         key={parameter.href}
         href={parameter.href}
-        className={cn("text-sm font-medium transition-colors hover:text-primary",
+        className={cn("text-sm font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
         parameter.active ? 'text-black dark:text-white' : 'text-muted-foreground'
         )}
         >
         {parameter.label}
         </Link>
     ))}
-      </div>
-      )}
-    </div>
-
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
     </nav>
     {/* Product */}
-    <nav className={cn("flex items-center space-x-4 lg:space-x-6",className)}
-    onMouseOver={handleMouseOver3} 
-    onMouseOut={handleMouseOut3}
-    >
-      <div className="relative cursor-pointer rounded-sm px-2 py-1 hover:bg-slate-200">
-      <p className="hover:text-red-500 font-medium">Product </p>
-      <p >
-            <ChevronDown className="absolute left-4 w-12 " />
-      </p>
-      </div>
-    <div className="relative z-30 top-9 right-40">
-      {isShown3 && (
-      <div className="
-      px-5
-      py-5
-      grid 
-      grid-cols-1
-      absolute 
-      w-[200px] 
-      h-[370px] 
-      shadow-xl 
-      bg-white 
-      rounded-md 
-      ">
-    {products.map((product)=>(
+    <nav className={cn("flex items-center space-x-4 lg:space-x-6",className)}>
+    <Accordion type="single" collapsible className="w-full">
+      <AccordionItem value="item-1">
+        <AccordionTrigger>Product</AccordionTrigger>
+        <AccordionContent>
+        {products.map((product)=>(
         <Link
         key={product.href}
         href={product.href}
-        className={cn("text-sm font-medium transition-colors hover:text-primary",
+        className={cn("text-sm font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
         product.active ? 'text-black dark:text-white' : 'text-muted-foreground'
         )}
         >
         {product.label}
         </Link>
     ))}
-      </div>
-      )}
-    </div>
-
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
     </nav>
     {/* Order */}
     <nav className={cn("flex items-center space-x-4 lg:space-x-6",className)}>
-    {orders.map((order)=>(
-<Link
-        key={order.href}
-        href={order.href}
-        className={cn("text-md font-medium transition-colors hover:text-primary",
-        order.active ? 'text-black dark:text-white' : 'text-muted-foreground'
-        )}
-        >
+    <Accordion type="single" collapsible className="w-full">
+      <AccordionItem value="item-1">
+        <AccordionTrigger>Đơn hàng</AccordionTrigger>
+        <AccordionContent>
+        {orders.map((order)=>(
+          <Link
+              key={order.href}
+              href={order.href}
+              className={cn("text-md font-medium transition-colors hover:text-primary grid grid-rows-1",
+              order.active ? 'text-black dark:text-white' : 'text-muted-foreground'
+              )}
+          >
         {order.label}
-        </Link>
-    ))}
+          </Link>
+        ))}
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
     </nav>
      {/* Setting */}
     <nav className={cn("flex items-center space-x-4 lg:space-x-6",className)}>
-     {settings.map((setting)=>(
- <Link
+     <Accordion type="single" collapsible className="w-full">
+      <AccordionItem value="item-1">
+        <AccordionTrigger>Cài đặt</AccordionTrigger>
+        <AccordionContent>
+        {settings.map((setting)=>(
+            <Link
          key={setting.href}
          href={setting.href}
-         className={cn("text-md font-medium transition-colors hover:text-primary",
+         className={cn("text-md font-medium transition-colors hover:text-primary grid grid-rows-1",
          setting.active ? 'text-black dark:text-white' : 'text-muted-foreground'
          )}
          >
          {setting.label}
-         </Link>
-     ))}
+          </Link>
+        ))}
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
     </nav>
     </>
   )

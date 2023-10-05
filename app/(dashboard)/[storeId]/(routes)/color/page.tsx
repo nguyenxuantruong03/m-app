@@ -20,7 +20,7 @@ const ColorPage = async ({params}:{params:{storeId:string}}) => {
         createdAt:format(item.createdAt, 'MM/dd/yyyy')
     }))
     return ( 
-        <div className="flex-col">
+        <div className="w-full">
             <div className="flex-1 space-y-4 p-8 pt-6">
                 <ColorClient data={formattedColor} />
             </div>
