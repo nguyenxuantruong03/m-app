@@ -25,7 +25,7 @@ export const AlertModal: React.FC<AlertModalProps> = ({isOpen,onClose,onConfirm,
     return(
         <Modal
         title="Bạn có chắc chắn ?"
-        description = "Đây là một hành động có thể chưa xong !"
+        description = "Hành động này sẽ xóa đi vĩnh viễn!"
         isOpen = {isOpen}
         onClose={onClose}
         >

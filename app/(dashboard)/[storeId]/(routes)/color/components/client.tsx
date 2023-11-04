@@ -25,12 +25,12 @@ const ColorClient:React.FC<ColorClientProps> = ({data}) => {
         <>
         <div className="flex items-center justify-between">
             <Heading 
-            title ={`Color (${data.length})`}
-            description="Manage color for your store"
+            title ={`Màu (${data.length})`}
+            description="Quản lý màu cửa hàng"
             />
             <Button onClick={() => router.push(`/${params.storeId}/color/new`)}>
                 <Plus className="mr-2 h-4 w-4" />
-                Add New
+                Thêm mới
             </Button>
         </div>
         <Separator />

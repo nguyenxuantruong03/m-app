@@ -15,8 +15,8 @@ const OrderClient:React.FC<OrderProps> = ({data}) => {
     return ( 
         <>
             <Heading 
-            title ={`Order (${data.length})`}
-            description="Manage order for your store"
+            title ={`Đơn hàng (${data.length})`}
+            description="Quản lý đơn hàng sản phẩm"
             />
 
         <Separator />

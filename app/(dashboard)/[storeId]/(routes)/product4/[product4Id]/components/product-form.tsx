@@ -1,5 +1,4 @@
 "use client";
-
 import * as z from "zod";
 import axios from "axios";
 import { useState } from "react";
@@ -8,12 +7,12 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { Trash } from "lucide-react";
 import {
-  Category4,
-  Product4,
-  Image4,
+  Category,
+  Product,
+  Image,
   Size,
   Color,
-  ImagesalientfeaturesProduct4,
+  Imagesalientfeatures,
 } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
 
@@ -54,6 +53,7 @@ const formSchema = z.object({
   guaranteedescription: z.coerce.number().min(1),
   guaranteeinfomation: z.coerce.number().min(1),
   guaranteeprice: z.coerce.number().min(1),
+  // Specification
   descriptionspecifications: z.string().min(1),
   valuespecifications: z.string().min(1),
   description2specifications: z.string().min(1),
@@ -100,13 +100,13 @@ type ProductFormValues = z.infer<typeof formSchema>;
 
 interface ProductFormProps {
   initialData:
-    | (Product4 & {
-        images: Image4[];
-        imagesalientfeatures: ImagesalientfeaturesProduct4[];
+    | (Product & {
+        images: Image[];
+        imagesalientfeatures: Imagesalientfeatures[];
       })
     | null;
 
-  categories: Category4[];
+  categories: Category[];
   sizes: Size[];
   colors: Color[];
 }
@@ -151,46 +151,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           description: "",
           price: 0,
           percentpromotion: 0,
-          promotionheading: "",
-          promotiondescription: "",
           guaranteeheading: 0,
           guaranteedescription: 0,
           guaranteeinfomation: 0,
           guaranteeprice: 0,
-          descriptionspecifications: "",
-          valuespecifications: "",
-          description2specifications: "",
-          value2specifications: "",
-          description3specifications: "",
-          value3specifications: "",
-          description4specifications: "",
-          value4specifications: "",
-          description5specifications: "",
-          value5specifications: "",
-          description6specifications: "",
-          value6specifications: "",
-          description7specifications: "",
-          value7specifications: "",
-          description8specifications: "",
-          value8specifications: "",
-          description9specifications: "",
-          value9specifications: "",
-          description10specifications: "",
-          value10specifications: "",
-          description11specifications: "",
-          value11specifications: "",
-          description12specifications: "",
-          value12specifications: "",
-          description13specifications: "",
-          value13specifications: "",
-          description14specifications: "",
-          value14specifications: "",
-          // salientfeatures:
-          descriptionsalientfeatures: "",
-          description2salientfeatures: "",
-          description3salientfeatures: "",
-          description4salientfeatures: "",
-          contentsalientfeatures: "",
           imagesalientfeatures: [],
           isFeatured: false,
           isArchived: false,
@@ -278,7 +242,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             name="images"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Images</FormLabel>
+                <FormLabel>Hình ảnh sản phẩm</FormLabel>
                 <FormControl>
                   <ImageUpload
                     value={field.value.map((image) => image.url)}
@@ -303,7 +267,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             name="imagesalientfeatures"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Images Salientfeatures product 4(Please add only 2 images)</FormLabel>
+                <FormLabel>Hình ảnh mô tả sản phẩm (Chỉ thêm 2 ảnh)</FormLabel>
                 <FormControl>
                   <ImageUpload
                     value={field.value.map((image) => image.url)}
@@ -323,17 +287,17 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             )}
           />
 
-          <div className="md:grid md:grid-cols-5 gap-8 overflow-y-auto">
+          <div className="md:grid md:grid-cols-4 gap-6 overflow-y-auto">
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Tên(URL)không ghi hoa hoặc cách</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Name ..."
+                      placeholder="Nhập tên URL ..."
                       {...field}
                     />
                   </FormControl>
@@ -347,11 +311,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               name="heading"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Heading</FormLabel>
+                  <FormLabel>Tên sản phẩm</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Heading ..."
+                      placeholder="Nhập tên sản phẩm ..."
                       {...field}
                     />
                   </FormControl>
@@ -365,11 +329,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>Mô tả</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Description ..."
+                      placeholder="Nhập tên mô tả ..."
                       {...field}
                     />
                   </FormControl>
@@ -383,12 +347,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               name="price"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Price</FormLabel>
+                  <FormLabel>Giá tiền</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="10.000VND"
+                      placeholder="Nhập giá tiền ..."
                       {...field}
                     />
                   </FormControl>
@@ -402,29 +366,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               name="percentpromotion"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Percentpromotion </FormLabel>
+                  <FormLabel>Phần trăm khuyến mãi </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="%"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="promotionheading"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Promotion heading</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Promotion heading ..."
+                      placeholder="Nhập phần trăm khuyến mãi ..."
                       {...field}
                     />
                   </FormControl>
@@ -434,15 +381,31 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
-              name="promotiondescription"
+              name="promotionheading"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Promotion description</FormLabel>
+                  <FormLabel>Khuyến mãi sỉ</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Promotion description ..."
+                      placeholder="Nhập khuyến mãi sỉ ..."
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              name="promotiondescription"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Khuyến mãi thầu</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      placeholder="Nhập khuyến mãi thầu ..."
                       {...field}
                     />
                   </FormControl>
@@ -456,12 +419,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               name="guaranteeheading"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Guarantee heading</FormLabel>
+                  <FormLabel>Giá tiền bảo hành</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Guarantee heading ..."
+                      placeholder="Nhập giá tiền bảo hành ..."
                       {...field}
                     />
                   </FormControl>
@@ -475,12 +438,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               name="guaranteedescription"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Guarantee description</FormLabel>
+                  <FormLabel>Giá tiền bảo hành</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Guarantee description ..."
+                      placeholder="Nhập giá tiền bảo hành ..."
                       {...field}
                     />
                   </FormControl>
@@ -494,12 +457,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               name="guaranteeinfomation"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Guarantee infomation</FormLabel>
+                  <FormLabel>Giá tiền bảo hành</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Guarantee infomation ..."
+                      placeholder="Nhập giá tiền bảo hành ..."
                       {...field}
                     />
                   </FormControl>
@@ -513,12 +476,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               name="guaranteeprice"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Guarantee price</FormLabel>
+                  <FormLabel>Giá tiền bảo hành</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Guarantee price ..."
+                      placeholder="Nhập giá tiền bảo hành ..."
                       {...field}
                     />
                   </FormControl>
@@ -526,16 +489,16 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 </FormItem>
               )}
             />
+
             <FormField
-              control={form.control}
               name="descriptionspecifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description Specifications</FormLabel>
+                  <FormLabel>Thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Description Specifications ..."
+                      placeholder="Nhập thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -545,15 +508,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="valuespecifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Value Specifications</FormLabel>
+                  <FormLabel>Nội dung thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Value Specifications ..."
+                      placeholder="Nhập nội dung thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -563,15 +525,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="description2specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description 2 Specifications</FormLabel>
+                  <FormLabel>Thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Description 2 Specifications ..."
+                      placeholder="Nhập thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -581,15 +542,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="value2specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Value 2 Specifications</FormLabel>
+                  <FormLabel>Nội dung thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Value 2 Specifications ..."
+                      placeholder="Nhập nội dung thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -599,15 +559,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="description3specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description 3 Specifications</FormLabel>
+                  <FormLabel>Thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Description 3 Specifications ..."
+                      placeholder="Nhập thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -617,15 +576,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="value3specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Value 3 Specifications</FormLabel>
+                  <FormLabel>Nội dung thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Value 3 Specifications ..."
+                      placeholder="Nhập nội dung thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -635,15 +593,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="description4specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description 4 Specifications</FormLabel>
+                  <FormLabel>Thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Description 4 Specifications ..."
+                      placeholder="Nhập thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -653,15 +610,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="value4specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Value 4 Specifications</FormLabel>
+                  <FormLabel>Nội dung thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Value 4 Specifications ..."
+                      placeholder="Nhập nội dung thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -671,15 +627,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="description5specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description 5 Specifications</FormLabel>
+                  <FormLabel>Thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Description 5 Specifications ..."
+                      placeholder="Nhập thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -689,15 +644,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="value5specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Value 5 Specifications</FormLabel>
+                  <FormLabel>Nội dung thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Value 5 Specifications ..."
+                      placeholder="Nhập nội dung thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -707,15 +661,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="description6specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description 6 Specifications</FormLabel>
+                  <FormLabel>Thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Description 6 Specifications ..."
+                      placeholder="Nhập thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -725,15 +678,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="value6specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Value 6 Specifications </FormLabel>
+                  <FormLabel>Nội dung thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Value 6 Specifications ..."
+                      placeholder="Nhập nội dung thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -743,15 +695,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="description7specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description 7 Specifications</FormLabel>
+                  <FormLabel>Thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Description 7 Specifications ..."
+                      placeholder="Nhập thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -761,15 +712,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="value7specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Value 7 Specifications</FormLabel>
+                  <FormLabel>Nội dung thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Value 7 Specifications ..."
+                      placeholder="Nhập nội dung thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -779,15 +729,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="description8specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description 8 Specifications</FormLabel>
+                  <FormLabel>Thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Description 8 Specifications ..."
+                      placeholder="Nhập thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -797,15 +746,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="value8specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Value 8 Specifications</FormLabel>
+                  <FormLabel>Nội dung thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Value 8 Specifications ..."
+                      placeholder="Nhập nội dung thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -815,15 +763,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="description9specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description 9 Specifications</FormLabel>
+                  <FormLabel>Thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Description 9 Specifications ..."
+                      placeholder="Nhập thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -833,15 +780,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="value9specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Value 9 Specifications</FormLabel>
+                  <FormLabel>Nội dung thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Value 9 Specifications ..."
+                      placeholder="Nhập nội dung thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -851,15 +797,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="description10specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description 9 Specifications</FormLabel>
+                  <FormLabel>Thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Description 9 Specifications ..."
+                      placeholder="Nhập thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -869,15 +814,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="value10specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Value 10 Specifications</FormLabel>
+                  <FormLabel>Nội dung thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Value 10 Specifications ..."
+                      placeholder="Nhập nội dung thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -887,15 +831,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="description11specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description 11 Specifications</FormLabel>
+                  <FormLabel>Thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Description 11 Specifications ..."
+                      placeholder="Nhập thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -905,15 +848,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="value11specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Value 11 Specifications</FormLabel>
+                  <FormLabel>Nội dung thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Value 11 Specifications ..."
+                      placeholder="Nhập nội dung thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -923,15 +865,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="description12specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description 12 Specifications</FormLabel>
+                  <FormLabel>Thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Description 12 Specifications ..."
+                      placeholder="Nhập thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -941,15 +882,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="value12specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Promotion 12 description</FormLabel>
+                  <FormLabel>Nội dung thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Value 12 Specifications ..."
+                      placeholder="Nhập nội dung thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -959,15 +899,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="description13specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description Specifications</FormLabel>
+                  <FormLabel>Thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Description 12 Specifications ..."
+                      placeholder="Nhập thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -977,15 +916,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="value13specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Value 13 Specifications </FormLabel>
+                  <FormLabel>Nội dung thông số </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Value 13 Specifications ..."
+                      placeholder="Nhập nội dung thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -995,15 +933,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="description14specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description 14 Specifications</FormLabel>
+                  <FormLabel>Thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Description 14 Specifications ..."
+                      placeholder="Nhập thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -1013,15 +950,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="value14specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Value 14 Specifications</FormLabel>
+                  <FormLabel>Nội dung thông số</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Value 14 Specifications ..."
+                      placeholder="Nhập nội dung thông số ..."
                       {...field}
                     />
                   </FormControl>
@@ -1031,15 +967,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="descriptionsalientfeatures"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description Salientfeatures</FormLabel>
+                  <FormLabel>Mô tả tính năng nổi bật</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Description Salientfeatures ..."
+                      placeholder="Nhập mô tả tính năng nổi bật ..."
                       {...field}
                     />
                   </FormControl>
@@ -1049,15 +984,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="description2salientfeatures"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description 2 Salientfeatures</FormLabel>
+                  <FormLabel>Mô tả tính năng nổi bật</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Description 2 Salientfeatures ..."
+                      placeholder="Nhập mô tả tính năng nổi bật ..."
                       {...field}
                     />
                   </FormControl>
@@ -1067,15 +1001,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="description3salientfeatures"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description 3 Salientfeatures</FormLabel>
+                  <FormLabel>Mô tả tính năng nổi bật</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Description 3 Salientfeatures ..."
+                      placeholder="Nhập mô tả tính năng nổi bật ..."
                       {...field}
                     />
                   </FormControl>
@@ -1085,15 +1018,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="description4salientfeatures"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description 4 Salientfeatures</FormLabel>
+                  <FormLabel>Mô tả tính năng nổi bật</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Description 4 Salientfeatures ..."
+                      placeholder="Nhập mô tả tính năng nổi bật ..."
                       {...field}
                     />
                   </FormControl>
@@ -1103,15 +1035,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              control={form.control}
               name="contentsalientfeatures"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Content Salientfeatures</FormLabel>
+                  <FormLabel>Nội dung tính năng nổi bật</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Content Salientfeatures ..."
+                      placeholder="Nhập nội dung tính năng nổi bật ..."
                       {...field}
                     />
                   </FormControl>
@@ -1125,7 +1056,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               name="colorId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Color</FormLabel>
+                  <FormLabel>Màu</FormLabel>
                   <Select
                     disabled={loading}
                     onValueChange={field.onChange}
@@ -1157,7 +1088,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               name="sizeId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Size</FormLabel>
+                  <FormLabel>Kích cỡ</FormLabel>
                   <Select
                     disabled={loading}
                     onValueChange={field.onChange}
@@ -1189,7 +1120,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               name="categoryId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Category</FormLabel>
+                  <FormLabel>Loại</FormLabel>
                   <Select
                     disabled={loading}
                     onValueChange={field.onChange}
@@ -1229,9 +1160,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel>Featured</FormLabel>
+                    <FormLabel>Hiển thị trang chủ</FormLabel>
                     <FormDescription>
-                      This product will appear on the home page
+                    Sản phẩm này sẽ xuất hiện trên trang chủ
                     </FormDescription>
                   </div>
                 </FormItem>
@@ -1251,9 +1182,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel>Archived</FormLabel>
+                    <FormLabel>Hết hàng</FormLabel>
                     <FormDescription>
-                      This product will appear on the home page
+                        Sản phẩm sẽ bị ẩn 
                     </FormDescription>
                   </div>
                 </FormItem>

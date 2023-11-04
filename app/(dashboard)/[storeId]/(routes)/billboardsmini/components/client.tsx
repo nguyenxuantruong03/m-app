@@ -25,12 +25,12 @@ const BillboardClient:React.FC<BillboardClientProps> = ({data}) => {
         <>
         <div className="flex items-center justify-between">
             <Heading 
-            title ={`Billboard Mini (${data.length})`}
-            description="Manage billboards for your store"
+            title ={`Ảnh quảng cáo nhỏ(${data.length})`}
+            description="Quản lý ảnh quảng cáo nhỏ cửa hàng"
             />
             <Button onClick={() => router.push(`/${params.storeId}/billboardsmini/new`)}>
                 <Plus className="mr-2 h-4 w-4" />
-                Add New
+                Thêm mới
             </Button>
         </div>
         <Separator />

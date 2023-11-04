@@ -3,8 +3,6 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { useState } from "react";
-import { ChevronDown } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -42,62 +40,62 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
   const categorys =[
     {
       href: `/${params.storeId}/categories`,
-      label: "Điện thoại",
+      label: "Pin",
       active: pathname === `/${params.storeId}/categories`,
     },
     {
       href: `/${params.storeId}/categories1`,
-      label: "Âm thanh",
+      label: "Quạt",
       active: pathname === `/${params.storeId}/categories1`,
     },
     {
       href: `/${params.storeId}/categories2`,
-      label: "Đồng hồ , máy ảnh",
+      label: "Ống nhựa , Ống lưới xanh",
       active: pathname === `/${params.storeId}/categories2`,
     },
     {
       href: `/${params.storeId}/categories3`,
-      label: "Gia dụng,Smarthome",
+      label: "Dây điện",
       active: pathname === `/${params.storeId}/categories3`,
     },
     {
       href: `/${params.storeId}/categories4`,
-      label: "Phụ kiện ",
+      label: "Đá cắt",
       active: pathname === `/${params.storeId}/categories4`,
     },
     {
       href: `/${params.storeId}/categories5`,
-      label: "PC,màn hình",
+      label: "Ổ khóa",
       active: pathname === `/${params.storeId}/categories5`,
     },
     {
       href: `/${params.storeId}/categories6`,
-      label: "Tivi",
+      label: "Keo",
       active: pathname === `/${params.storeId}/categories6`,
     },
     {
       href: `/${params.storeId}/categories7`,
-      label: "Ốp lưng",
+      label: "Ổ cắm, mặt ổ cắm",
       active: pathname === `/${params.storeId}/categories7`,
     },
     {
       href: `/${params.storeId}/categories8`,
-      label: "Chuột, bàn phím",
+      label: "Sơn",
       active: pathname === `/${params.storeId}/categories8`,
     },
     {
       href: `/${params.storeId}/categories9`,
-      label: "Sim",
+      label: "Vật liệu nhà tắm",
       active: pathname === `/${params.storeId}/categories9`,
     },
     {
       href: `/${params.storeId}/categories10`,
-      label: "Laptop",
+      label: "Bóng đèn",
       active: pathname === `/${params.storeId}/categories10`,
     },
     {
       href: `/${params.storeId}/categories11`,
-      label: "Hàng cũ",
+      label: "Đồ thường dùng",
       active: pathname === `/${params.storeId}/categories11`,
     },
   ]
@@ -118,62 +116,62 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
   const products = [
     {
         href: `/${params.storeId}/product`,
-        label: "Điện thoại",
+        label: "Pin",
         active: pathname === `/${params.storeId}/product`,
       },
       {
         href: `/${params.storeId}/product1`,
-        label: "Âm thanh",
+        label: "Quạt",
         active: pathname === `/${params.storeId}/product1`,
       },
       {
         href: `/${params.storeId}/product2`,
-        label: "Đồng hồ,máy ảnh",
+        label: "Ống nhựa, Ống lưới xanh",
         active: pathname === `/${params.storeId}/product2`,
       },
       {
         href: `/${params.storeId}/product3`,
-        label: "Gia dụng,Smarthome",
+        label: "Dây điện",
         active: pathname === `/${params.storeId}/product3`,
       },
       {
         href: `/${params.storeId}/product4`,
-        label: "Phụ kiện",
+        label: "Đá cắt",
         active: pathname === `/${params.storeId}/product4`,
       },
       {
         href: `/${params.storeId}/product5`,
-        label: "PC, màn hình",
+        label: "Ổ khóa",
         active: pathname === `/${params.storeId}/product5`,
       },
       {
         href: `/${params.storeId}/product6`,
-        label: "Tivi",
+        label: "Keo",
         active: pathname === `/${params.storeId}/product6`,
       },
       {
         href: `/${params.storeId}/product7`,
-        label: "Ốp lưng",
+        label: "Ổ cắm, mặt ổ cắm",
         active: pathname === `/${params.storeId}/product7`,
       },
       {
         href: `/${params.storeId}/product8`,
-        label: "Chuột, bàn phím",
+        label: "Sơn",
         active: pathname === `/${params.storeId}/product8`,
       },
       {
         href: `/${params.storeId}/product9`,
-        label: "Sim",
+        label: "Vật liệu nhà tắm",
         active: pathname === `/${params.storeId}/product9`,
       },
       {
         href: `/${params.storeId}/product10`,
-        label: "Laptop",
+        label: "Bóng đèn",
         active: pathname === `/${params.storeId}/product10`,
       },
       {
         href: `/${params.storeId}/product11`,
-        label: "Hàng cũ",
+        label: "Đồ thường dùng",
         active: pathname === `/${params.storeId}/product11`,
       },
   ]
@@ -220,7 +218,7 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
     <nav className={cn("flex items-center space-x-4 lg:space-x-6",className)}>
     <Accordion type="single" collapsible className="w-full">
       <AccordionItem value="item-1">
-        <AccordionTrigger>Billboard</AccordionTrigger>
+        <AccordionTrigger>Ảnh quảng cáo</AccordionTrigger>
         <AccordionContent>
         {billboards.map((billboard)=>(
         <Link
@@ -241,7 +239,7 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
     <nav className={cn("flex items-center space-x-4 lg:space-x-6",className)}>
     <Accordion type="single" collapsible className="w-full">
       <AccordionItem value="item-1">
-        <AccordionTrigger>Category</AccordionTrigger>
+        <AccordionTrigger>Loại hàng</AccordionTrigger>
         <AccordionContent>
         {categorys.map((category)=>(
         <Link
@@ -262,7 +260,7 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
     <nav className={cn("flex items-center space-x-4 lg:space-x-6",className)}>
     <Accordion type="single" collapsible className="w-full">
       <AccordionItem value="item-1">
-        <AccordionTrigger>Parameter</AccordionTrigger>
+        <AccordionTrigger>Thông số</AccordionTrigger>
         <AccordionContent>
         {parameters.map((parameter)=>(
         <Link
@@ -283,7 +281,7 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
     <nav className={cn("flex items-center space-x-4 lg:space-x-6",className)}>
     <Accordion type="single" collapsible className="w-full">
       <AccordionItem value="item-1">
-        <AccordionTrigger>Product</AccordionTrigger>
+        <AccordionTrigger>Sản phẩm</AccordionTrigger>
         <AccordionContent>
         {products.map((product)=>(
         <Link

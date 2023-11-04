@@ -177,11 +177,11 @@ model Product {
   category         Category               @relation("CategoryProduct", fields: [categoryId], references: [id])
   productType      ProductType            // Add this field to distinguish product type (Product1 or Product2)
   name             String                 @unique
-  heading          String
-  description      String
+  heading          String                 
+  description      String                 @db.Text
   // Khuyến mãi
-  promotionheading String                 @db.VarChar(400)
-  promotiondescription String              @db.VarChar(400)
+  promotionheading String                 @db.Text
+  promotiondescription String              @db.Text
   //Bảo hành
   guaranteeheading Decimal
   guaranteedescription Decimal
@@ -198,40 +198,40 @@ model Product {
   color            Color                  @relation(fields: [colorId], references: [id])
   images           Image[]
   // Specification
-  descriptionspecifications String       @db.VarChar(400)
-  valuespecifications       String       @db.VarChar(400)
-  description2specifications String       @db.VarChar(400)
-  value2specifications      String       @db.VarChar(400)
-  description3specifications String       @db.VarChar(400)
-  value3specifications      String       @db.VarChar(400)
-  description4specifications String       @db.VarChar(400)
-  value4specifications      String       @db.VarChar(400)
-  description5specifications String       @db.VarChar(400)
-  value5specifications      String       @db.VarChar(400)
-  description6specifications String       @db.VarChar(400)
-  value6specifications      String       @db.VarChar(400)
-  description7specifications String       @db.VarChar(400)
-  value7specifications      String       @db.VarChar(400)
-  description8specifications String       @db.VarChar(400)
-  value8specifications      String       @db.VarChar(400)
-  description9specifications String       @db.VarChar(400)
-  value9specifications      String       @db.VarChar(400)
-  description10specifications String     @db.VarChar(400)
-  value10specifications       String     @db.VarChar(400)
-  description11specifications String     @db.VarChar(400)
-  value11specifications       String     @db.VarChar(400)
-  description12specifications String     @db.VarChar(400)
-  value12specifications       String     @db.VarChar(400)
-  description13specifications String     @db.VarChar(400)
-  value13specifications       String     @db.VarChar(400)
-  description14specifications String     @db.VarChar(400)
-  value14specifications       String     @db.VarChar(400)
+  descriptionspecifications String       @db.Text
+  valuespecifications       String       @db.Text
+  description2specifications String       @db.Text
+  value2specifications      String       @db.Text
+  description3specifications String       @db.Text
+  value3specifications      String       @db.Text
+  description4specifications String       @db.Text
+  value4specifications      String       @db.Text
+  description5specifications String       @db.Text
+  value5specifications      String       @db.Text
+  description6specifications String       @db.Text
+  value6specifications      String       @db.Text
+  description7specifications String       @db.Text
+  value7specifications      String       @db.Text
+  description8specifications String       @db.Text
+  value8specifications      String       @db.Text
+  description9specifications String       @db.Text
+  value9specifications      String       @db.Text
+  description10specifications String     @db.Text
+  value10specifications       String     @db.Text
+  description11specifications String     @db.Text
+  value11specifications       String     @db.Text
+  description12specifications String     @db.Text
+  value12specifications       String     @db.Text
+  description13specifications String     @db.Text
+  value13specifications       String     @db.Text
+  description14specifications String     @db.Text
+  value14specifications       String     @db.Text
   // salientfeatures
-  descriptionsalientfeatures String      @db.VarChar(400)
-  description2salientfeatures String     @db.VarChar(400)
-  description3salientfeatures String     @db.VarChar(400)
-  description4salientfeatures String     @db.VarChar(400)
-  contentsalientfeatures      String     @db.VarChar(400)
+  descriptionsalientfeatures String      @db.Text
+  description2salientfeatures String     @db.Text
+  description3salientfeatures String     @db.Text
+  description4salientfeatures String     @db.Text
+  contentsalientfeatures      String     @db.Text
   imagesalientfeatures        Imagesalientfeatures[]
   orderItems                  OrderItem[]
   createdAt                   DateTime   @default(now())
@@ -261,7 +261,6 @@ model Order {
   isPaid    Boolean     @default(false)
   phone     String      @default("")
   address   String      @default("")
-  
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
 

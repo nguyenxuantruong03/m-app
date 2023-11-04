@@ -25,12 +25,12 @@ const BillboardSaleClient:React.FC<BillboardSaleClientProps> = ({data}) => {
         <>
         <div className="flex items-center justify-between">
             <Heading 
-            title ={`Billboard Sale (${data.length})`}
-            description="Manage billboard sale for your store"
+            title ={`Ảnh quảng cáo giảm giá (${data.length})`}
+            description="Quản lý ảnh quảng cáo giảm giá cửa hàng"
             />
             <Button onClick={() => router.push(`/${params.storeId}/billboardssale/new`)}>
                 <Plus className="mr-2 h-4 w-4" />
-                Add New
+                Thêm mới
             </Button>
         </div>
         <Separator />

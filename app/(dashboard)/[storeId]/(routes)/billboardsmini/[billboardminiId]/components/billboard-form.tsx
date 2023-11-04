@@ -67,7 +67,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
      /* Khối mã chịu trách nhiệm thực hiện yêu cầu HTTP để cập nhật bảng quảng cáo hiện có
       hoặc tạo bảng quảng cáo mới dựa trên giá trị của `initialData`. */
       if (initialData) {
-        await axios.patch(`/api/${params.storeId}/billboardsmini/${params.billboardId}`, data);
+        await axios.patch(`/api/${params.storeId}/billboardsmini/${params.billboardminiId}`, data);
       } else {
         await axios.post(`/api/${params.storeId}/billboardsmini`, data);
       }
@@ -84,7 +84,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/billboardsmini/${params.billboardId}`);
+      await axios.delete(`/api/${params.storeId}/billboardsmini/${params.billboardminiId}`);
       router.refresh();
       router.push(`/${params.storeId}/billboardsmini`);
       toast.success('Billboard deleted.');
@@ -128,7 +128,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               name="imagebillboardmini"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Images (Please add only 5 images)</FormLabel>
+                  <FormLabel>Hình ảnh (Chỉ thêm 5 ảnh)</FormLabel>
                   <FormControl>
                     <ImageUpload 
                       value={field.value.map((image) =>image.url)} 
@@ -149,7 +149,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               name="label"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Label</FormLabel>
+                  <FormLabel>Nhãn</FormLabel>
                   <FormControl>
                     <Input disabled={loading} placeholder="Billboard label ..." {...field} />
                   </FormControl>

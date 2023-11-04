@@ -5,7 +5,7 @@ import { BadgePercent, CreditCard, DollarSign, Package, ShieldCheck } from "luci
 import { formatter } from "@/lib/utils";
 import { getTotalRevenue } from "@/actions/get-total-revenue";
 import { getCount } from "@/actions/get-count";
-import { getStockCount } from "@/actions/get-stock-count";
+import { getStockCount,getStockCount2 } from "@/actions/get-stock-count";
 import { Overview } from "@/components/ui/overview";
 import { getGraphRevenue } from "@/actions/get-graph-revenue";
 import { ComposedChartPage } from "@/components/ui/composedChart";
@@ -25,15 +25,16 @@ const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
   const totalWarrantyRevenue = await getTotalWarrantyRevenue(params.storeId);
   const salesCount = await getCount(params.storeId)
   const stockCount = await getStockCount(params.storeId)
+  const stockCount2 = await getStockCount2(params.storeId)
   const graphRevenue = await getGraphRevenue(params.storeId)
   const composedChart = await getComposedChart(params.storeId)
   const lineChart = await getLineChart(params.storeId)
   return (
     <div className="flex-col">
       <div className="flex-1 space-y-4 p-8 pt-6">
-        <Heading title="Dashboard" description="Overview of your store" />
+        <Heading title="Bảng điều khiển" description="Tổng quan cửa hàng" />
         <Separator />
-        <div className="grid gap-4 grid-cols-5">
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 ">
                 <CardTitle className="text-xs font-medium"> 
@@ -89,13 +90,26 @@ const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 ">
                 <CardTitle className="text-xs font-medium"> 
-                Sản phẩm hết hàng
+                Tổng sản phẩm còn
                 </CardTitle>
             <Package className="w-4 h-4 text-muted-foreground"/>
             </CardHeader>
             <CardContent>
                 <div className="text-2xl font-bold">
                     {stockCount}
+                </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 ">
+                <CardTitle className="text-xs font-medium"> 
+                Sản phẩm hết hàng
+                </CardTitle>
+            <Package className="w-4 h-4 text-muted-foreground"/>
+            </CardHeader>
+            <CardContent>
+                <div className="text-2xl font-bold">
+                    {stockCount2}
                 </div>
             </CardContent>
           </Card>

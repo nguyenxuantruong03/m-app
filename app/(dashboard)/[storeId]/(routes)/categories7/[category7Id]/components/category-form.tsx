@@ -125,7 +125,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Tên</FormLabel>
                   <FormControl>
                     <Input disabled={loading} placeholder="Category label ..." {...field} />
                   </FormControl>
@@ -135,7 +135,6 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
             />
 
           </div>
-
           <Button disabled={loading} className="ml-auto" type="submit">
             {action}
           </Button>

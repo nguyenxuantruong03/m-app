@@ -9,3 +9,15 @@ export const getStockCount = async(storeId:string) =>{
         })
         return paidOrders
 }
+
+
+export const getStockCount2 = async(storeId:string) =>{
+    const paidOrders = await prismadb.product.count({
+            where:{
+                storeId,
+                isArchived: true
+            },
+        })
+        return paidOrders
+}
+

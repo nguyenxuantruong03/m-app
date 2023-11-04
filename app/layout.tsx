@@ -9,7 +9,7 @@ import { ThemeProvider } from "@/providers/theme-provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Admin ban hang",
+  title: "Dashboard Xuân Trường",
   description: "Ban hang admin",
 };
 

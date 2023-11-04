@@ -25,8 +25,8 @@ const SizeClient:React.FC<SizeClientProps> = ({data}) => {
         <>
         <div className="flex items-center justify-between">
             <Heading 
-            title ={`Size (${data.length})`}
-            description="Manage size for your store"
+            title ={`Kích cỡ (${data.length})`}
+            description="Quản lý kích cỡ cửa hàng"
             />
             <Button onClick={() => router.push(`/${params.storeId}/size/new`)}>
                 <Plus className="mr-2 h-4 w-4" />

@@ -11,20 +11,14 @@ export async function POST(
   const categoryType = CategoryType.CATEGORY7;
   try {
     const { userId } = auth();
-
     const body = await req.json();
-
     const { name,  } = body;
-
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
     }
-
     if (!name) {
       return new NextResponse("Name is required", { status: 400 });
     }
-
-
     if (!params.storeId) {
       return new NextResponse("Store id is required", { status: 400 });
     }
