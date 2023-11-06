@@ -96,7 +96,7 @@ model Category {
   store     Store     @relation("StoreToCategory", fields: [storeId], references: [id])
   categoryType     CategoryType  
   product   Product[] @relation("CategoryProduct")
-  name      String       @unique
+  name      String       
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 

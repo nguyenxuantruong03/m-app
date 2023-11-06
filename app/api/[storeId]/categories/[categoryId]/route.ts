@@ -16,7 +16,7 @@ export async function GET(
 
     const category = await prismadb.category.findUnique({
       where: {
-        name: params.categoryId,
+        id: params.categoryId,
         categoryType:categoryType
       },
     });
@@ -107,7 +107,7 @@ export async function PATCH(
 
     const category = await prismadb.category.update({
       where: {
-        name: params.categoryId,
+        id: params.categoryId,
         categoryType:categoryType
       },
       data: {
