@@ -38,7 +38,6 @@ export async function POST(
   // Assume products is an array of product objects
   products.forEach((product, index) => {
     if (!productNames.includes(product.name)) {
-      productNames.push(product.name);
       productQuantities.push(`Sản phẩm:${product.name} - số lượng:${quantity[index]}`);
     }
   });
