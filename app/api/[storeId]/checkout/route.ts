@@ -33,12 +33,6 @@ export async function POST(
   });
   // productIds.length
   const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
-  const productQuantities: string[] = [];
-
-  // Assume products is an array of product objects
-  products.forEach((product, index) => {
-      productQuantities.push(`Sản phẩm:${product.name} - số lượng:${quantity[index]}`);
-  });
   // Add a single line item with the aggregated product name and unit amount
   products.forEach((product, index) => {
   line_items.push({
@@ -64,7 +58,7 @@ export async function POST(
             },
           },
           pricesales:pricesales,
-          quantity:quantity[index],
+          quantity:quantity[index].toString(),
           priceold:priceold,
           warranty:warranty,
         }))
