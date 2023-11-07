@@ -35,23 +35,30 @@ export async function POST(
   const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
   const productNames: string[] = [];
   const productQuantities: string[] = [];
+  const productQuantitiess: number[] = [];
+
   // Assume products is an array of product objects
-  products.map((product, index) => {
+  products.forEach((product, index) => {
     if (!productNames.includes(product.name)) {
+      productNames.push(product.name);
       productQuantities.push(`Sản phẩm:${product.name} - số lượng:${quantity[index]}`);
+      productQuantitiess.push(parseFloat(quantity[index]));
+
     }
   });
   // Add a single line item with the aggregated product name and unit amount
+  products.forEach((product, index) => {
   line_items.push({
-    quantity: 1,
+    quantity: productQuantitiess[index],
     price_data: {
       currency: 'VND',
       product_data: {
-        name: productQuantities.join(', ')
+        name: `Sản phẩm:${product.name} - số lượng:${quantity[index]}`
       },
       unit_amount: pricesales,
-    },
+  },
   });
+});
   const order = await prismadb.order.create({
     data: {
       storeId: params.storeId,
