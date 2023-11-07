@@ -33,23 +33,16 @@ export async function POST(
   });
   // productIds.length
   const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
-  const productNames: string[] = [];
   const productQuantities: string[] = [];
-  const productQuantitiess: number[] = [];
 
   // Assume products is an array of product objects
   products.forEach((product, index) => {
-    if (!productNames.includes(product.name)) {
-      productNames.push(product.name);
       productQuantities.push(`Sản phẩm:${product.name} - số lượng:${quantity[index]}`);
-      productQuantitiess.push(parseFloat(quantity[index]));
-
-    }
   });
   // Add a single line item with the aggregated product name and unit amount
   products.forEach((product, index) => {
   line_items.push({
-    quantity: productQuantitiess[index],
+    quantity: quantity[index],
     price_data: {
       currency: 'VND',
       product_data: {
@@ -64,14 +57,14 @@ export async function POST(
       storeId: params.storeId,
       isPaid: false,
       orderItem: {
-        create: productIds.map((productId: string) => ({
+        create: productIds.map((productId: string,index:any) => ({
           product: {
             connect: {
               id: productId,
             },
           },
           pricesales:pricesales,
-          quantity:productQuantities.join(', '),
+          quantity:quantity[index],
           priceold:priceold,
           warranty:warranty,
         }))
