@@ -36,7 +36,7 @@ export async function POST(
   const productNames: string[] = [];
   const productQuantities: string[] = [];
   // Assume products is an array of product objects
-  products.forEach((product, index) => {
+  products.map((product, index) => {
     if (!productNames.includes(product.name)) {
       productQuantities.push(`Sản phẩm:${product.name} - số lượng:${quantity[index]}`);
     }
