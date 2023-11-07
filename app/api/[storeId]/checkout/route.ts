@@ -42,7 +42,6 @@ export async function POST(
       product_data: {
         name: `Sản phẩm:${product.name} - số lượng:${quantity[index]}`
       },
-      unit_amount: pricesales,
   },
   });
 });
