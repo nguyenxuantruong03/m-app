@@ -25,8 +25,8 @@ const OrderPage = async ({ params }: { params: { storeId: string } }) => {
     id: item.id,
     phone: item.phone.split(',').join(', '),
     address: item.address.split(',').join(', '),
-    products: item.orderItem.map((orderItem) => {
-      return `${orderItem.quantity} ${orderItem.product.name}`;
+    products: item.orderItem.map((orderItem:any) => {
+      return `Số lượng: ${orderItem.quantity} - Sản phẩm: ${orderItem.product.heading}`;
     }).join(', '),
     totalPrice: formatter.format(item.orderItem.reduce((_,item)=> {
       return 0 + Number(item.pricesales)

@@ -32,19 +32,16 @@ export async function POST(
     }
   });
   // productIds.length
-  const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
-  // Add a single line item with the aggregated product name and unit amount
-  products.forEach((product, index) => {
-  line_items.push({
-    quantity: quantity[index],
+  const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = productIds.map((productId: string, index: any) => ({
+    quantity: 1,
     price_data: {
       currency: 'VND',
       product_data: {
-        name: `Sản phẩm:${product.name} - số lượng:${quantity[index]}`
+        name: `Sản phẩm:${products[index].heading} - số lượng:${quantity[index]}`
       },
-  },
-  });
-});
+      unit_amount: pricesales / 2,
+    },
+  }));
   const order = await prismadb.order.create({
     data: {
       storeId: params.storeId,
