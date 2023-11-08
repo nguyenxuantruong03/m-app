@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 import { stripe } from "@/lib/stripe";
 import prismadb from "@/lib/prismadb";
+import { formatter } from "@/lib/utils";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -32,16 +33,24 @@ export async function POST(
     }
   });
   // productIds.length
-  const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = productIds.map((productId: string, index: any) => ({
+  const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
+  const productQuantities: string[] = [];
+  // Assume products is an array of product objects
+  products.map((product) => {
+      productQuantities.push(`Sản phẩm:${product.heading}`);
+  });
+  line_items.push({
     quantity: 1,
     price_data: {
       currency: 'VND',
       product_data: {
-        name: `Sản phẩm:${products[index].heading} - số lượng:${quantity[index]}`
+        name: productQuantities.toString(),
+        description: `Số tiền bảo hiểm là : ${formatter.format(warranty)}, Số tiền chưa sale là : ${formatter.format(priceold)}`,
+
       },
-      unit_amount: pricesales / 2,
+      unit_amount: pricesales,
     },
-  }));
+  });
   const order = await prismadb.order.create({
     data: {
       storeId: params.storeId,

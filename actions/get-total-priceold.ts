@@ -14,11 +14,15 @@ export const getTotalPriceOldRevenue = async(storeId:string) =>{
                 }
             }
         })
-        const totalRevenue = paidOrders.reduce((total,order)=>{
-                const orderTotal = order.orderItem.reduce((orderSum,item)=>{
-                    return orderSum + Number(item.priceold)
-                },0)
-                return total + orderTotal
-        },0)
+        const totalRevenue = paidOrders.reduce((total, order) => {
+            const firstItem = order.orderItem[0];
+        
+            if (firstItem) {
+                const orderTotal = Number(firstItem.priceold);
+                return total + orderTotal;
+            }
+        
+            return total;
+        }, 0);
         return totalRevenue
 }

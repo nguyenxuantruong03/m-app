@@ -22,13 +22,15 @@ export const getLineChart = async (storeId: string)=>{
    
     const monthlyRevenue: {[key:number]:number}={};
 
-    for (const order of paidOrders){
+    for (const order of paidOrders) {
         const date = order.createdAt.getDate();
         let revenueForOrder = 0;
-        for(const item of order.orderItem){
-            revenueForOrder += Number(item.pricesales)
+        // Chỉ lấy giá đầu tiên từ mảng orderItem
+        const firstItem = order.orderItem[0];
+        if (firstItem) {
+            revenueForOrder = Number(firstItem.pricesales);
         }
-        monthlyRevenue[date] = (monthlyRevenue[date] || 0) + revenueForOrder
+        monthlyRevenue[date] = (monthlyRevenue[date] || 0) + revenueForOrder;
     }
 
     const graphData: GraphData[] =[

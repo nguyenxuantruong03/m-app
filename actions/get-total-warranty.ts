@@ -14,11 +14,15 @@ export const getTotalWarrantyRevenue = async(storeId:string) =>{
                 }
             }
         })
-        const totalRevenue = paidOrders.reduce((total,order)=>{
-                const orderTotal = order.orderItem.reduce((orderSum,item)=>{
-                    return orderSum + Number(item.warranty)
-                },0)
-                return total + orderTotal
-        },0)
+        const totalRevenue = paidOrders.reduce((total, order) => {
+            const firstItem = order.orderItem[0];
+        
+            if (firstItem) {
+                const orderTotal = Number(firstItem.warranty);
+                return total + orderTotal;
+            }
+        
+            return total;
+        }, 0);
         return totalRevenue
 }

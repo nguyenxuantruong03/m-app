@@ -22,14 +22,17 @@ export const getGraphRevenue = async (storeId: string)=>{
    
     const monthlyRevenue: {[key:number]:number}={};
 
-    for (const order of paidOrders){
+    for (const order of paidOrders) {
         const month = order.createdAt.getMonth();
         let revenueForOrder = 0;
-        for(const item of order.orderItem){
-            revenueForOrder += Number(item.pricesales)
+        for (const item of order.orderItem) {
+          if (item.pricesales) {
+            revenueForOrder += Number(item.pricesales);
+            break; 
+          }
         }
-        monthlyRevenue[month] = (monthlyRevenue[month] || 0) + revenueForOrder
-    }
+        monthlyRevenue[month] = (monthlyRevenue[month] || 0) + revenueForOrder;
+      }
 
     const graphData: GraphData[] =[
         {name: "Tháng 1",total: 0},
