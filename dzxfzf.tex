@@ -2432,3 +2432,45 @@ model OrderItem {
   @@index([product11Id])
 }
 
+
+
+
+
+
+model Checkoutcash {
+  id               String             @id @default(uuid())
+  storeId          String
+  store            Store              @relation("StoreToCheckoutcash", fields: [storeId], references: [id])
+  gender           String
+  fullName         String
+  phoneNumber      String
+  deliveryOption   String
+  selectedProvince String
+  selectedDistrict String
+  selectedWard     String
+  address          String
+  note             String
+  email            String
+  isPaid           Boolean            @default(false)
+  checkoutItem     CheckoutcashItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([storeId])
+}
+
+model CheckoutcashItem {
+  id           String       @id @default(uuid())
+  orderId      String
+  checkoutcash Checkoutcash @relation(fields: [orderId], references: [id])
+  productId    String
+  quantity     String
+  pricesales   Int
+  warranty     Int
+  priceold     Int
+  product      Product      @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+}

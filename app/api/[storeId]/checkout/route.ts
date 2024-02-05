@@ -79,8 +79,10 @@ export async function POST(
       enabled: true,
     },
     allow_promotion_codes: true,
-    success_url: `${process.env.FRONTEND_STORE_URL}/cart?success=1`,
-    cancel_url: `${process.env.FRONTEND_STORE_URL}/cart?canceled=1`,
+    // success_url: `${process.env.FRONTEND_STORE_URL}/cart?success=1`,
+    // cancel_url: `${process.env.FRONTEND_STORE_URL}/cart?canceled=1`,
+    success_url: `${process.env.FRONTEND_STORE_URL}/payment-success`,
+    cancel_url: `${process.env.FRONTEND_STORE_URL}/payment-fail`,
     metadata: {
       orderId: order.id
     },
