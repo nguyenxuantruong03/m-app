@@ -1,10 +1,11 @@
+import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
-import { auth } from "@clerk/nextjs";
+import { UserRole } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function PATCH(req: Request,{params}:{params:{storeId:string}}){
 try {
-    const {userId} = auth()
+    const userId = await currentUser();
     const body = await req.json()
 
     const {name} = body
@@ -24,7 +25,9 @@ try {
     const store = await prismadb.store.updateMany({
         where:{
             id: params.storeId,
-            userId
+            userId: {
+                equals: UserRole.USER,
+              },
         },
         data:{
             name
@@ -40,7 +43,7 @@ try {
 
 export async function DELETE(req: Request,{params}:{params:{storeId:string}}){
     try {
-        const {userId} = auth()
+        const userId = await currentUser();
     
         if(!userId) {
             return new NextResponse("Unauthenticated" , {status: 401})
@@ -53,7 +56,9 @@ export async function DELETE(req: Request,{params}:{params:{storeId:string}}){
         const store = await prismadb.store.deleteMany({
             where:{
                 id: params.storeId,
-                userId
+                userId: {
+                    equals: UserRole.USER,
+                  },
             }
         })
         return NextResponse.json(store)

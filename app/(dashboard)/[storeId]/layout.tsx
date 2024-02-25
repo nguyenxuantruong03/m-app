@@ -1,7 +1,9 @@
 import Navbar from "@/components/navbar/navbar";
 import prismadb from "@/lib/prismadb";
-import { auth } from "@clerk/nextjs";
+
 import { redirect } from "next/navigation";
+import { currentUser } from "@/lib/auth";
+import { UserRole } from "@prisma/client";
 
 export default async function SetupLayout({
   children,
@@ -10,18 +12,21 @@ export default async function SetupLayout({
   children: React.ReactNode;
   params: { storeId: string };
 }) {
-  const { userId } = auth();
+  const userId = await currentUser();
 
   if (!userId) {
-    redirect("/sign-in");
+    redirect("/auth/login");
   }
 
   const store = await prismadb.store.findFirst({
     where: {
       id: params.storeId,
-      userId,
+      userId: {
+        equals: UserRole.USER,
+      },
     },
   });
+  
 
   if (!store) {
     redirect("/");

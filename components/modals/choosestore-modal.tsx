@@ -1,7 +1,7 @@
 "use client";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { usechoosestoreModal } from "@/app/hooks/usechoosestoreModal";
+import { usechoosestoreModal } from "@/hooks/usechoosestoreModal";
 import Modal from "../ui/modal";
 import { useForm } from "react-hook-form";
 import {
@@ -16,9 +16,8 @@ import {
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useState } from "react";
-import {toast} from "react-hot-toast"
+import { toast } from "react-hot-toast";
 import axios from "axios";
-
 
 const formSchema = z.object({
   name: z.string().min(6),
@@ -26,7 +25,7 @@ const formSchema = z.object({
 
 export const ChoosestoreModal = () => {
   const storeModal = usechoosestoreModal();
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -38,11 +37,11 @@ export const ChoosestoreModal = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoading(true);
-      const response =  await axios.post('/api/stores' ,values)
-      window.location.assign(`/${response.data.id}`)
+      const response = await axios.post("/api/stores", values);
+      window.location.assign(`/${response.data.id}`);
     } catch (error) {
-      toast.error("Somthing went wrong")
-    }finally{
+      toast.error("Somthing went wrong");
+    } finally {
       setLoading(false);
     }
   };
@@ -64,7 +63,11 @@ export const ChoosestoreModal = () => {
                 <FormItem>
                   <FormLabel>Tên cửa hàng</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Vui lòng tên cửa hàng" {...field} />
+                    <Input
+                      disabled={loading}
+                      placeholder="Vui lòng tên cửa hàng"
+                      {...field}
+                    />
                   </FormControl>
                   <FormDescription>
                     Đây là tên hiển thị công khai.
@@ -74,11 +77,17 @@ export const ChoosestoreModal = () => {
               )}
             />
             <div className="pt-6 space-x-2 flex -items-center justify-end w-full">
-              <Button disabled={loading} variant="outline" onClick={storeModal.onClose}>
+              <Button
+                disabled={loading}
+                variant="outline"
+                onClick={storeModal.onClose}
+              >
                 Cancel
               </Button>
 
-              <Button disabled={loading} type="submit">Continute</Button>
+              <Button disabled={loading} type="submit">
+                Continute
+              </Button>
             </div>
           </form>
         </Form>

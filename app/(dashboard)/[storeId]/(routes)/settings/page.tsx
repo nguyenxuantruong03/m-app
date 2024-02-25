@@ -1,7 +1,8 @@
 import prismadb from "@/lib/prismadb"
-import { auth } from "@clerk/nextjs"
 import { redirect } from "next/navigation"
 import { SettingsForm } from "./components/setting-form"
+import { currentUser } from "@/lib/auth"
+import { UserRole } from "@prisma/client"
 
 interface SettingProps{
     params: {
@@ -10,8 +11,7 @@ interface SettingProps{
 }
 
 const SettingsPage:React.FC<SettingProps> = async ({params})=>{
-    const {userId} = auth()
-
+    const userId = await currentUser();
     if(!userId) {
         redirect("sign-in")
     }
@@ -19,7 +19,9 @@ const SettingsPage:React.FC<SettingProps> = async ({params})=>{
     const store = await prismadb.store.findFirst({
         where:{
             id: params.storeId,
-            userId
+            userId: {
+                equals: UserRole.USER,
+              },
         }
     })
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { usechoosestoreModal } from "@/app/hooks/usechoosestoreModal";
+import { usechoosestoreModal } from "@/hooks/usechoosestoreModal";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
@@ -18,7 +18,7 @@ import {
   CommandList,
 } from "../ui/command";
 
-type PopoverTrigger = React.ComponentPropsWithoutRef<typeof PopoverTrigger>
+type PopoverTrigger = React.ComponentPropsWithoutRef<typeof PopoverTrigger>;
 
 interface StoreSwitcherProps extends PopoverTrigger {
   /* `items: Record <string , any>[]` đang định nghĩa một chỗ dựa có tên `items` cho thành phần `StoreSwitcher. */
@@ -71,36 +71,38 @@ export default function StoreSwitcher({
             <CommandInput placeholder="Tìm kiếm cửa hàng" />
             <CommandEmpty>Không tìm thấy cửa hàng</CommandEmpty>
             <CommandGroup heading="Stores">
-                {fomattedItems.map((store)=>(
-                    <CommandItem 
-                    key={store.value}
-                    onSelect={() =>onStoreSelect(store)}
-                    className="text-sm"
-                    >
-                        <Store className="mr-2 h-4 w-4"/>
-                        {store.label}
-                        <Check 
-                        className={cn("ml-auto h-4 w-4",currentStore?.value === store.value 
+              {fomattedItems.map((store) => (
+                <CommandItem
+                  key={store.value}
+                  onSelect={() => onStoreSelect(store)}
+                  className="text-sm"
+                >
+                  <Store className="mr-2 h-4 w-4" />
+                  {store.label}
+                  <Check
+                    className={cn(
+                      "ml-auto h-4 w-4",
+                      currentStore?.value === store.value
                         ? "opacity-100"
                         : "opacity-0"
-                        )}
-                        />
-                    </CommandItem>
-                ))}
-                
-                <CommandList>
-                    <CommandGroup>
-                        <CommandItem
-                        onSelect={() =>{
-                            setOpen(false) 
-                            chooseModal.onOpen()
-                        }}
-                        >
-                            <PlusCircle  className="mr-2 h-5 w-5"/>
-                            Tạo cửa hàng
-                        </CommandItem>
-                    </CommandGroup>
-                </CommandList>
+                    )}
+                  />
+                </CommandItem>
+              ))}
+
+              <CommandList>
+                <CommandGroup>
+                  <CommandItem
+                    onSelect={() => {
+                      setOpen(false);
+                      chooseModal.onOpen();
+                    }}
+                  >
+                    <PlusCircle className="mr-2 h-5 w-5" />
+                    Tạo cửa hàng
+                  </CommandItem>
+                </CommandGroup>
+              </CommandList>
             </CommandGroup>
           </CommandList>
         </Command>

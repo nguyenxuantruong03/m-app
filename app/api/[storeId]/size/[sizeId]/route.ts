@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs";
 
 import prismadb from "@/lib/prismadb";
+import { currentUser } from "@/lib/auth";
+import { UserRole } from "@prisma/client";
 
 export async function GET(
   req: Request,
@@ -30,7 +31,7 @@ export async function DELETE(
   { params }: { params: { sizeId: string, storeId: string } }
 ) {
   try {
-    const { userId } = auth();
+    const userId = await currentUser();
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -43,7 +44,9 @@ export async function DELETE(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId,
+        userId: {
+          equals: UserRole.USER,
+        },
       }
     });
 
@@ -70,7 +73,7 @@ export async function PATCH(
   { params }: { params: { sizeId: string, storeId: string } }
 ) {
   try {   
-    const { userId } = auth();
+    const userId = await currentUser();
 
     const body = await req.json();
     
@@ -95,7 +98,9 @@ export async function PATCH(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId,
+        userId: {
+          equals: UserRole.USER,
+        },
       }
     });
 

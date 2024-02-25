@@ -1,6 +1,6 @@
 "use client";
 import { useEffect } from "react";
-import { usechoosestoreModal } from "../../hooks/usechoosestoreModal";
+import { usechoosestoreModal } from "../../../hooks/usechoosestoreModal";
 
 export default function SetupPage() {
   const onOpen = usechoosestoreModal((state) => state.onOpen);
@@ -11,5 +11,5 @@ export default function SetupPage() {
       onOpen();
     }
   }, [isOpen, onOpen]);
-  return null
+  return null;
 }

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Store } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
@@ -19,13 +19,13 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from 'react-hot-toast';
-import  axios  from 'axios';
+import { toast } from "react-hot-toast";
+import axios from "axios";
 import { ApiAlert } from "@/components/ui/api-alert";
-import { useOrigin } from "@/app/hooks/use-origin";
+import { useOrigin } from "@/hooks/use-origin";
 
 interface SettingFormProps {
-    initialData: Store;
+  initialData: Store;
 }
 
 const formSchema = z.object({
@@ -34,10 +34,10 @@ const formSchema = z.object({
 
 type SettingFormValues = z.infer<typeof formSchema>;
 
-export const SettingsForm:React.FC<SettingFormProps> = ({ initialData }) => {
+export const SettingsForm: React.FC<SettingFormProps> = ({ initialData }) => {
   const params = useParams();
   const router = useRouter();
-  const origin = useOrigin()
+  const origin = useOrigin();
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -51,29 +51,29 @@ export const SettingsForm:React.FC<SettingFormProps> = ({ initialData }) => {
 
   const onSubmit = async (data: SettingFormValues) => {
     try {
-        setLoading(true);
-        await axios.patch(`/api/stores/${params.storeId}`,data)
-        router.refresh()
-        toast.success("Store updated")
+      setLoading(true);
+      await axios.patch(`/api/stores/${params.storeId}`, data);
+      router.refresh();
+      toast.success("Store updated");
     } catch (error) {
-        toast.error("Something went wrong")
-    }finally{
-        setLoading(false)
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
   const onDelete = async () => {
     try {
-        setLoading(true)
-        await axios.delete(`api/stores/${params.storeId}`)
-        router.refresh()
-        router.push('/')
-        toast.success("store deleted")
+      setLoading(true);
+      await axios.delete(`api/stores/${params.storeId}`);
+      router.refresh();
+      router.push("/");
+      toast.success("store deleted");
     } catch (error) {
-        toast.error("Something went wrong")
-    }finally{
-        setLoading(false)
-        setOpen(false)
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
+      setOpen(false);
     }
   };
 
@@ -110,21 +110,25 @@ export const SettingsForm:React.FC<SettingFormProps> = ({ initialData }) => {
                 <FormItem>
                   <FormLabel>Tên</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Tên cửa hàng" {...field} />
+                    <Input
+                      disabled={loading}
+                      placeholder="Tên cửa hàng"
+                      {...field}
+                    />
                   </FormControl>
                 </FormItem>
               )}
             />
           </div>
-            <Button disabled={loading} className="ml-auto" type="submit">
-                Lưu thay đổi
-            </Button>
+          <Button disabled={loading} className="ml-auto" type="submit">
+            Lưu thay đổi
+          </Button>
         </form>
       </Form>
       <Separator />
-      <ApiAlert 
-      title="NEXT_PUBLIC_API_URL"
-      description={`${origin}/api/${params.storeId}`}
+      <ApiAlert
+        title="NEXT_PUBLIC_API_URL"
+        description={`${origin}/api/${params.storeId}`}
         variant="public"
       />
     </>

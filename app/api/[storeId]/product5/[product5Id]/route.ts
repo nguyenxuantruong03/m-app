@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs";
 
 import prismadb from "@/lib/prismadb";
-import { ProductType } from "@prisma/client";
+import { ProductType, UserRole } from "@prisma/client";
+import { currentUser } from "@/lib/auth";
 
 export async function GET(
   req: Request,
@@ -41,7 +41,7 @@ export async function DELETE(
 ) {
   const productType = ProductType.PRODUCT5;
   try {
-    const { userId } = auth();
+    const userId = await currentUser();
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -54,7 +54,9 @@ export async function DELETE(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId,
+        userId: {
+          equals: UserRole.USER,
+        },
       },
     });
 
@@ -81,7 +83,7 @@ export async function PATCH(
   { params }: { params: { product5Id: string; storeId: string } }
 ) {
   try {
-    const { userId } = auth();
+    const userId = await currentUser();
 
     const body = await req.json();
 
@@ -373,7 +375,9 @@ export async function PATCH(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId,
+        userId: {
+          equals: UserRole.USER,
+        },
       },
     });
 

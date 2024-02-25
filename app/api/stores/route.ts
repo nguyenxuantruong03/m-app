@@ -1,9 +1,10 @@
 import {NextResponse} from "next/server"
-import {auth} from "@clerk/nextjs"
 import prismadb from "@/lib/prismadb"
+import { currentUser } from "@/lib/auth";
+import { UserRole } from "@prisma/client";
 export async function POST(req: Request){
 try {
-    const {userId} = auth()
+    const userId = await currentUser();
     const body = await req.json()
 
     const {name} = body
@@ -18,7 +19,7 @@ try {
     const store = await prismadb.store.create({
         data:{
             name,
-            userId
+            userId: userId.role as UserRole
         }
     })
     return NextResponse.json(store)

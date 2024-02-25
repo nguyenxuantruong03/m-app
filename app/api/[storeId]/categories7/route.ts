@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs';
 
 import prismadb from '@/lib/prismadb';
-import { CategoryType } from '@prisma/client';
+import { CategoryType, UserRole } from '@prisma/client';
+import { currentUser } from '@/lib/auth';
  
 export async function POST(
   req: Request,
@@ -10,7 +10,7 @@ export async function POST(
 ) {
   const categoryType = CategoryType.CATEGORY7;
   try {
-    const { userId } = auth();
+    const userId = await currentUser();
     const body = await req.json();
     const { name,  } = body;
     if (!userId) {
@@ -26,7 +26,9 @@ export async function POST(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId,
+        userId: {
+          equals: UserRole.USER,
+        },
       }
     });
 
