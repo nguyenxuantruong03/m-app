@@ -3,14 +3,20 @@ import ProductClient from "./components/client";
 import { ProductColumn } from "./components/columns";
 import { format } from "date-fns";
 import { formatter } from "@/lib/utils";
-import { ProductType } from "@prisma/client";
+import { ProductType, UserRole } from "@prisma/client";
+import { RoleGate } from "@/components/auth/role-gate";
+import FormSuccess from "@/components/form-success";
+import { currentRole } from "@/lib/auth";
 
 const ProductPage = async ({ params }: { params: { storeId: string } }) => {
+  const role = await currentRole();
+  const isRole = role === UserRole.ADMIN || role === UserRole.STAFF;
+  const showProductRole = isRole;
   const productType = ProductType.PRODUCT10;
   const product = await prismadb.product.findMany({
     where: {
       storeId: params.storeId,
-      productType:productType
+      productType: productType,
     },
     include: {
       category: true,
@@ -82,10 +88,13 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
     createdAt: format(item.createdAt, "MM/dd/yyyy"),
   }));
   return (
-    <div className="max-w-[1617px]">
-      <div className=" space-y-4 p-8 pt-6">
-        <ProductClient data={formattedProduct} />
+    <div className=" max-w-[1617px] ">
+      <div className={`space-y-4 p-8 pt-6 ${showProductRole}`}>
+        {showProductRole && <ProductClient data={formattedProduct} />}
       </div>
+      <RoleGate allowedRole={UserRole.ADMIN || UserRole.STAFF}>
+        <FormSuccess message="Bạn có thể xem được nội dung này!" />
+      </RoleGate>
     </div>
   );
 };
