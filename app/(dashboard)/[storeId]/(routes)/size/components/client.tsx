@@ -13,6 +13,8 @@ import { Plus } from "lucide-react";
 import { SizeColumn, columns } from "./columns";
 
 import { ApiList } from "@/components/ui/api-list";
+import { UserRole } from "@prisma/client";
+import { useCurrentRole } from "@/hooks/use-current-role";
 
 interface SizeClientProps{
     data: SizeColumn[]
@@ -21,6 +23,9 @@ interface SizeClientProps{
 const SizeClient:React.FC<SizeClientProps> = ({data}) => {
     const router = useRouter()
     const params = useParams()
+    const role = useCurrentRole();
+    const isRole = role === UserRole.ADMIN;
+    const showAPIRole = isRole;
     return ( 
         <>
         <div className="flex items-center justify-between">
@@ -35,7 +40,9 @@ const SizeClient:React.FC<SizeClientProps> = ({data}) => {
         </div>
         <Separator />
         <DataTable searchKey="name" columns={columns} data={data} />
+        {showAPIRole && (
         <Heading title="Api" description="API calls for Size" />
+        )}
         <Separator />
         <ApiList 
         entityIdName="sizeId"

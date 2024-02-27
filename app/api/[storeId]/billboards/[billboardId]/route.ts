@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
-import { currentUser } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
 
 export async function GET(
@@ -15,26 +15,27 @@ export async function GET(
 
     const billboard = await prismadb.billboard.findUnique({
       where: {
-        id: params.billboardId
+        id: params.billboardId,
       },
-      include:{
-        imagebillboard:true
-      }
+      include: {
+        imagebillboard: true,
+      },
     });
-  
+
     return NextResponse.json(billboard);
   } catch (error) {
-    console.log('[BILLBOARD_GET]', error);
+    console.log("[BILLBOARD_GET]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
-};
+}
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { billboardId: string, storeId: string } }
+  { params }: { params: { billboardId: string; storeId: string } }
 ) {
   try {
     const userId = await currentUser();
+    const role = await currentRole();
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -50,38 +51,40 @@ export async function DELETE(
         userId: {
           equals: UserRole.USER,
         },
-      }
+      },
     });
 
     if (!storeByUserId) {
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
+    if (role !== UserRole.ADMIN) {
+      return new NextResponse("Access denied. Only Admins can perform this action.", { status: 403 });
+    }
+
     const billboard = await prismadb.billboard.delete({
       where: {
         id: params.billboardId,
-      }
+      },
     });
-  
-    return NextResponse.json(billboard);
+      return NextResponse.json(billboard);
   } catch (error) {
-    console.log('[BILLBOARD_DELETE]', error);
+    console.log("[BILLBOARD_DELETE]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
-};
-
+}
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { billboardId: string, storeId: string } }
+  { params }: { params: { billboardId: string; storeId: string } }
 ) {
-  try {   
+  try {
     const userId = await currentUser();
 
     const body = await req.json();
-    
+
     const { label, imagebillboard } = body;
-    
+
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
     }
@@ -104,7 +107,7 @@ export async function PATCH(
         userId: {
           equals: UserRole.USER,
         },
-      }
+      },
     });
 
     if (!storeByUserId) {
@@ -117,29 +120,27 @@ export async function PATCH(
       },
       data: {
         label,
-        imagebillboard:{
-          deleteMany:{}
-        }
-      }
+        imagebillboard: {
+          deleteMany: {},
+        },
+      },
     });
     const billboard = await prismadb.billboard.update({
-      where:{
-        id: params.billboardId
+      where: {
+        id: params.billboardId,
       },
-      data:{
-        imagebillboard:{
-          createMany:{
-            data:[
-              ...imagebillboard.map((image:{url: string}) => image)
-            ]
-          }
-        }
-      }
-    })
-  
+      data: {
+        imagebillboard: {
+          createMany: {
+            data: [...imagebillboard.map((image: { url: string }) => image)],
+          },
+        },
+      },
+    });
+
     return NextResponse.json(billboard);
   } catch (error) {
-    console.log('[BILLBOARD_PATCH]', error);
+    console.log("[BILLBOARD_PATCH]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
-};
+}

@@ -13,6 +13,8 @@ import { Plus } from "lucide-react";
 import { BillboardSaleColumn, columns } from "./columns";
 
 import { ApiList } from "@/components/ui/api-list";
+import { useCurrentRole } from "@/hooks/use-current-role";
+import { UserRole } from "@prisma/client";
 
 interface BillboardSaleClientProps{
     data: BillboardSaleColumn[]
@@ -21,6 +23,9 @@ interface BillboardSaleClientProps{
 const BillboardSaleClient:React.FC<BillboardSaleClientProps> = ({data}) => {
     const router = useRouter()
     const params = useParams()
+    const role = useCurrentRole();
+    const isRole = role === UserRole.ADMIN;
+    const showAPIRole = isRole;
     return ( 
         <>
         <div className="flex items-center justify-between">
@@ -35,7 +40,9 @@ const BillboardSaleClient:React.FC<BillboardSaleClientProps> = ({data}) => {
         </div>
         <Separator />
         <DataTable searchKey="label" columns={columns} data={data} />
+        {showAPIRole && (
         <Heading title="Api" description="API calls for Billboard Sale" />
+        )}
         <Separator />
         <ApiList 
         entityIdName="billboardsaleId"

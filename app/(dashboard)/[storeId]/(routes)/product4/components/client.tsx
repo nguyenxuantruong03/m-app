@@ -13,6 +13,8 @@ import { Plus } from "lucide-react";
 import { ProductColumn, columns } from "./columns";
 
 import { ApiList } from "@/components/ui/api-list";
+import { UserRole } from "@prisma/client";
+import { useCurrentRole } from "@/hooks/use-current-role";
 
 interface ProductClientProps{
     data: ProductColumn[]
@@ -21,6 +23,9 @@ interface ProductClientProps{
 const ProductClient:React.FC<ProductClientProps> = ({data}) => {
     const router = useRouter()
     const params = useParams()
+    const role = useCurrentRole();
+    const isRole = role === UserRole.ADMIN;
+    const showAPIRole = isRole;
     return ( 
         <>
         <div className="flex items-center justify-between">
@@ -35,7 +40,9 @@ const ProductClient:React.FC<ProductClientProps> = ({data}) => {
         </div>
         <Separator />
         <DataTable searchKey="name" columns={columns} data={data} />
+        {showAPIRole && (
         <Heading title="Api" description="API calls for Product" />
+        )}
         <Separator />
         <ApiList 
         entityIdName="product4Id"

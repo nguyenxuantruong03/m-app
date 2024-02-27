@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
 import { ProductType, UserRole } from "@prisma/client";
-import { currentUser } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 
 export async function GET(
   req: Request,
@@ -42,6 +42,7 @@ export async function DELETE(
   const productType = ProductType.PRODUCT6;
   try {
     const userId = await currentUser();
+    const role = await currentRole();
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -62,6 +63,10 @@ export async function DELETE(
 
     if (!storeByUserId) {
       return new NextResponse("Unauthorized", { status: 405 });
+    }
+
+    if (role !== UserRole.ADMIN) {
+      return new NextResponse("Access denied. Only Admins can perform this action.", { status: 403 });
     }
 
     const product = await prismadb.product.delete({

@@ -56,7 +56,7 @@ const ProductPage = async ({
           />
         )}
       </div>
-      <RoleGate allowedRole={UserRole.ADMIN || UserRole.STAFF}>
+      <RoleGate allowedRole={UserRole.ADMIN && UserRole.STAFF}>
         <FormSuccess message="Bạn có thể xem được nội dung này!" />
       </RoleGate>
     </div>

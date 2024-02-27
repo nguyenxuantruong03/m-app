@@ -13,6 +13,8 @@ import { Plus } from "lucide-react";
 import { CategoriesColumn, columns } from "./columns";
 
 import { ApiList } from "@/components/ui/api-list";
+import { useCurrentRole } from "@/hooks/use-current-role";
+import { UserRole } from "@prisma/client";
 
 interface CategoriesClientProps{
     data: CategoriesColumn[]
@@ -21,6 +23,9 @@ interface CategoriesClientProps{
 const CategoriesClient:React.FC<CategoriesClientProps> = ({data}) => {
     const router = useRouter()
     const params = useParams()
+    const role = useCurrentRole();
+    const isRole = role === UserRole.ADMIN;
+    const showAPIRole = isRole;
     return ( 
         <>
         <div className="flex items-center justify-between">
@@ -35,7 +40,9 @@ const CategoriesClient:React.FC<CategoriesClientProps> = ({data}) => {
         </div>
         <Separator />
         <DataTable searchKey="name" columns={columns} data={data} />
+        {showAPIRole && (
         <Heading title="Api" description="API calls for Category" />
+        )}
         <Separator />
         <ApiList 
         entityIdName="category2Id"

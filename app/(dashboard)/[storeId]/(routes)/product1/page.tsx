@@ -91,7 +91,7 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
       <div className={`space-y-4 p-8 pt-6 ${showProductRole}`}>
         {showProductRole && <ProductClient data={formattedProduct} />}
       </div>
-      <RoleGate allowedRole={UserRole.ADMIN || UserRole.STAFF}>
+      <RoleGate allowedRole={UserRole.ADMIN && UserRole.STAFF}>
         <FormSuccess message="Bạn có thể xem được nội dung này!" />
       </RoleGate>
     </div>

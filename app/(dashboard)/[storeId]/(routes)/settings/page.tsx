@@ -14,7 +14,7 @@ interface SettingProps {
 
 const SettingsPage: React.FC<SettingProps> = async ({ params }) => {
   const role = await currentRole();
-  const isRole = role === UserRole.ADMIN || role === UserRole.STAFF;
+  const isRole = role === UserRole.ADMIN
   const showSettingRole = isRole;
   const userId = await currentUser();
   if (!userId) {
@@ -39,7 +39,7 @@ const SettingsPage: React.FC<SettingProps> = async ({ params }) => {
       <div className={`space-y-4 p-8 pt-6 ${showSettingRole}`}>
         {showSettingRole && <SettingsForm initialData={store} />}
       </div>
-      <RoleGate allowedRole={UserRole.ADMIN || UserRole.STAFF}>
+      <RoleGate allowedRole={UserRole.ADMIN}>
         <FormSuccess message="Bạn có thể xem được nội dung này!" />
       </RoleGate>
     </div>
