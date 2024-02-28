@@ -182,8 +182,16 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
       label: "Đơn hàng",
       active: pathname === `/${params.storeId}/orders`,
     },
-    
   ]
+
+  const user =[
+    {
+      href: `/${params.storeId}/settingusers`,
+      label: "Người dùng",
+      active: pathname === `/${params.storeId}/settingusers`,
+    },
+  ]
+
   const settings =[
     {
       href: `/${params.storeId}/settings`,
@@ -305,6 +313,27 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
         <AccordionTrigger>Đơn hàng</AccordionTrigger>
         <AccordionContent>
         {orders.map((order)=>(
+          <Link
+              key={order.href}
+              href={order.href}
+              className={cn("text-md font-medium transition-colors hover:text-primary grid grid-rows-1",
+              order.active ? 'text-black dark:text-white' : 'text-muted-foreground'
+              )}
+          >
+        {order.label}
+          </Link>
+        ))}
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
+    </nav>
+    {/* Người dùng */}
+    <nav className={cn("flex items-center space-x-4 lg:space-x-6",className)}>
+    <Accordion type="single" collapsible className="w-full">
+      <AccordionItem value="item-1">
+        <AccordionTrigger>Người dùng</AccordionTrigger>
+        <AccordionContent>
+        {user.map((order)=>(
           <Link
               key={order.href}
               href={order.href}

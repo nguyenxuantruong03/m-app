@@ -14,7 +14,7 @@ datasource db {
 model Store {
   id            String          @id @default(uuid())
   name          String
-  userId        UserRole               @default(USER)
+  userId        String
   billboard     Billboard[]     @relation("StoreToBillboard")
   billboardmini Billboardmini[] @relation("StoreToBillboardMini")
   billboardsale Billboardsale[] @relation("StoreToBillboardSale")
@@ -306,11 +306,14 @@ model User {
   // Xác thực 2 yếu tố
   isTwoFactorEnabled    Boolean                @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 }
 
 model Account {
   id                String  @id @default(cuid())
   userId            String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   type              String
   provider          String
   providerAccountId String
@@ -322,7 +325,6 @@ model Account {
   id_token          String? @db.Text
   session_state     String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
@@ -357,10 +359,10 @@ model TwoFactorToken {
 
 model TwoFactorConfirmation {
   id     String @id @default(cuid())
-  
+
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  
   @@unique([userId])
   @@index([userId])
 }
