@@ -27,7 +27,7 @@ const BillboardsMiniPage = async ({
   const formattedBillboards: BillboardColumn[] = billboardminis.map((item) => ({
     id: item.id,
     label: item.label,
-    createdAt: format(item.createdAt, "MM/dd/yyyy"),
+    createdAt: format(item.createdAt, "dd/MM/yyyy"),
   }));
   return (
     <div className="w-full">

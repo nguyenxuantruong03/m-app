@@ -31,7 +31,7 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
     name: item.name,
     email: item.email,
     emailVerified: item.emailVerified
-      ? format(item.emailVerified, "MM/dd/yyyy")
+      ? format(item.emailVerified, "dd/MM/yyyy")
       : null,
     image: item.image,
     imageCredential: item.imageCredential
@@ -58,12 +58,12 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
     })),
     isTwoFactorEnabled: item.isTwoFactorEnabled,
     twoFactorConfirmation: item.twoFactorConfirmation,
-    createdAt: format(item.createdAt, "MM/dd/yyyy"),
+    createdAt: format(item.createdAt, "dd/MM/yyyy"),
     ban: item.ban,
     banExpires: item.banExpires
-      ? format(item.banExpires, "MM/dd/yyyy")
+      ? format(item.banExpires, "dd/MM/yyyy")
       : null,
-    updatedAt: format(item.updatedAt, "MM/dd/yyyy"),
+    updatedAt: format(item.updatedAt, "dd/MM/yyyy"),
   }));
 
 

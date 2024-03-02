@@ -24,7 +24,7 @@ const SizePage = async ({ params }: { params: { storeId: string } }) => {
     id: item.id,
     name: item.name,
     value: item.value,
-    createdAt: format(item.createdAt, "MM/dd/yyyy"),
+    createdAt: format(item.createdAt, "dd/MM/yyyy"),
   }));
   return (
     <div className="w-full">

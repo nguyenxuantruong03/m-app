@@ -4,7 +4,6 @@ import prismadb from "@/lib/prismadb";
 import { redirect } from "next/navigation";
 import { currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
-import {toast} from "react-hot-toast";
 
 export default async function SetupLayout({
   children,

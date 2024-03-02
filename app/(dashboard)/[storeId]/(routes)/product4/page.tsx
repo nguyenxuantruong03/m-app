@@ -84,7 +84,7 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
     size: item.size.name,
     color: item.color.value,
     category: item.category.name,
-    createdAt: format(item.createdAt, "MM/dd/yyyy"),
+    createdAt: format(item.createdAt, "dd/MM/yyyy"),
   }));
   return (
     <div className=" max-w-[1617px] ">

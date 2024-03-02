@@ -25,7 +25,7 @@ const CategoriesPage = async ({ params }: { params: { storeId: string } }) => {
   const formattedCategories: CategoriesColumn[] = categories.map((item) => ({
     id: item.id,
     name: item.name,
-    createdAt: format(item.createdAt, "MM/dd/yyyy"),
+    createdAt: format(item.createdAt, "dd/MM/yyyy"),
   }));
   return (
     <div className="w-full">

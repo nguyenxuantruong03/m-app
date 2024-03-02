@@ -12,7 +12,7 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ daysLeft }) => {
     // Use toast.success inside useEffect to ensure it's triggered after component mount
     if (daysLeft > 0) {
       alert(
-        `Tài khoản của bạn đã bị khóa. Bạn có thể đăng nhập lại sau ${daysLeft} ngày.`
+        `Tài khoản của bạn đã bị khóa. Bạn có thể đăng nhập lại sau ${daysLeft} ngày. Để biết thêm thông tin liên hệ ADMIN.`
       );
     }
   }, [daysLeft]);

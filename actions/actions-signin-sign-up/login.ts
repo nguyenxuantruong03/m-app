@@ -47,7 +47,7 @@ export const login = async (
         (banExpiresAt.getTime() - now.getTime()) / (24 * 60 * 60 * 1000)
       );
       return {
-        error: `Tài khoản của bạn đã bị khóa. Bạn có thể đăng nhập lại sau ${daysLeft} ngày.`,
+        error: `Tài khoản của bạn đã bị khóa. Bạn có thể đăng nhập lại sau ${daysLeft} ngày. Để biết thêm thông tin liên hệ ADMIN.`,
       };
     } else {
       // Ban period has expired, unban the user

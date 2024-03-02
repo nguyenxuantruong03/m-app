@@ -44,7 +44,7 @@ const OrderPage = async ({ params }: { params: { storeId: string } }) => {
       }, 0)
     ),
     isPaid: item.isPaid,
-    createdAt: format(item.createdAt, "MM/dd/yyyy"),
+    createdAt: format(item.createdAt, "dd/MM/yyyy"),
   }));
   return (
     <div className="w-full">

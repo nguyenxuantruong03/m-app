@@ -50,6 +50,17 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   if (!isMounted) {
     return null;
   }
+
+  //Xử lý nếu như ,infouser thì không có bottom-12 còn tất cả page khác thì có
+  let overlayClass = '';
+
+  if (typeof window !== 'undefined') {
+    const isInfoUserPage = window.location.pathname.includes("/infouser");
+    overlayClass = `absolute ${showImageOverlay ? "bg-white" : "hidden"} z-20 rounded-md p-2 ${isInfoUserPage ? "" : "bottom-12"}`;
+  } else {
+    return null;
+  }
+  
   const renderUploadButton = () => {
     return (
       <Button
@@ -100,7 +111,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         />
       )}
 
-      <div className={`absolute ${showImageOverlay ? "bg-white" : "hidden"} z-20 rounded-md p-2 bottom-12`}>
+      <div className={overlayClass}>
         {isImageUploaded && (
           <>
             <div className="flex items-center gap-4 ">
