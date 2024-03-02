@@ -1,7 +1,7 @@
 import prismadb from "@/lib/prismadb";
 import { format } from "date-fns";
 import { RoleGate } from "@/components/auth/role-gate";
-import { currentRole } from "@/lib/auth";
+import { currentRole} from "@/lib/auth";
 import { UserRole } from "@prisma/client";
 import FormSuccess from "@/components/form-success";
 import { SettingUsersColumn } from "./components/column";
@@ -59,7 +59,13 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
     isTwoFactorEnabled: item.isTwoFactorEnabled,
     twoFactorConfirmation: item.twoFactorConfirmation,
     createdAt: format(item.createdAt, "MM/dd/yyyy"),
+    ban: item.ban,
+    banExpires: item.banExpires
+      ? format(item.banExpires, "MM/dd/yyyy")
+      : null,
+    updatedAt: format(item.updatedAt, "MM/dd/yyyy"),
   }));
+
 
   return (
     <div className="max-w-[1617px]">

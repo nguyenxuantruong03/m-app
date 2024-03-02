@@ -18,7 +18,10 @@ import { getTwoFactorTokenByEmail } from "@/data/two-factor-token";
 import { getUserByEmail } from "@/data/user";
 import { getTwoFactorConfirmationbyUserId } from "@/data/two-factor-confirmation";
 
-export const login = async (values: z.infer<typeof LoginSchema>,callbackUrl?: string | null) => {
+export const login = async (
+  values: z.infer<typeof LoginSchema>,
+  callbackUrl?: string | null
+) => {
   //safeParse: Phân tích an toàn
   const validatedFields = LoginSchema.safeParse(values);
   if (!validatedFields.success) {
@@ -31,6 +34,36 @@ export const login = async (values: z.infer<typeof LoginSchema>,callbackUrl?: st
 
   if (!existingUser || !existingUser.email || !existingUser.password) {
     return { error: "Email hoặc password không hợp lệ!" };
+  }
+  
+  //Ban User
+  if (existingUser.ban && existingUser.banExpires) {
+    const now = new Date();
+    const banExpiresAt = new Date(existingUser.banExpires);
+
+    if (banExpiresAt > now) {
+      // User is banned
+      const daysLeft = Math.ceil(
+        (banExpiresAt.getTime() - now.getTime()) / (24 * 60 * 60 * 1000)
+      );
+      return {
+        error: `Tài khoản của bạn đã bị khóa. Bạn có thể đăng nhập lại sau ${daysLeft} ngày.`,
+      };
+    } else {
+      // Ban period has expired, unban the user
+      await prismadb.user.update({
+        where: { id: existingUser.id },
+        data: {
+          ban: false,
+          banExpires: null,
+        },
+      });
+    }
+  }
+
+  // Check ban status again after potential update
+  if (existingUser.ban) {
+    return { error: "Tài khoản của bạn đã bị khóa và không thể đăng nhập." };
   }
 
   if (!existingUser.emailVerified) {
@@ -60,26 +93,28 @@ export const login = async (values: z.infer<typeof LoginSchema>,callbackUrl?: st
 
       const hasExpired = new Date(twoFactorToken.expires) < new Date();
 
-      if(hasExpired){
-        return {error:"Mã xác thực đã hết hạn!" }
+      if (hasExpired) {
+        return { error: "Mã xác thực đã hết hạn!" };
       }
       await prismadb.twoFactorToken.delete({
-        where: {id:twoFactorToken.id }
+        where: { id: twoFactorToken.id },
       });
 
-      const existingConfirmation = await getTwoFactorConfirmationbyUserId(existingUser.id)
+      const existingConfirmation = await getTwoFactorConfirmationbyUserId(
+        existingUser.id
+      );
 
-      if(existingConfirmation){
+      if (existingConfirmation) {
         await prismadb.twoFactorConfirmation.delete({
-          where:{id: existingConfirmation.id}
-        })
+          where: { id: existingConfirmation.id },
+        });
       }
 
       await prismadb.twoFactorConfirmation.create({
-        data:{
-          userId: existingUser.id
-        }
-      })
+        data: {
+          userId: existingUser.id,
+        },
+      });
     } else {
       const twoFactorToken = await genearteTwoFactorToken(existingUser.email);
       await sendTwoFactorTokenEmail(twoFactorToken.email, twoFactorToken.token);

@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "./button";
-import { Cog,Trash2 } from 'lucide-react';
+import { Trash2, Image as Imageicon } from "lucide-react";
 import Image from "next/image";
 import { CldUploadWidget } from "next-cloudinary";
 
 interface ImageUploadProps {
+  classNamesUpload?: string | undefined;
   disabled?: boolean;
   onChange: (value: string) => void;
   onRemove: (value: string) => void;
@@ -18,6 +19,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   onChange,
   onRemove,
   value,
+  classNamesUpload
 }) => {
   const [isMounted, setIsMounted] = useState(false);
   const [isImageUploaded, setIsImageUploaded] = useState(false);
@@ -29,10 +31,10 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     setShowImageOverlay(true);
   };
 
-  const CancleEdit = () =>{
+  const CancleEdit = () => {
     setIsImageUploaded(false);
     setShowImageOverlay(false);
-  }
+  };
 
   useEffect(() => {
     setIsMounted(true);
@@ -81,8 +83,9 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                   disabled={disabled}
                   onClick={onClick}
                   variant="outline"
+                  className={`flex items-center justify-center ${classNamesUpload}`}
                 >
-                  Ảnh nền
+                  <Imageicon className="w-4 h-4 mr-1" /> Ảnh nền
                 </Button>
               </>
             );
@@ -97,11 +100,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         />
       )}
 
-      <div
-        className={`absolute ${
-          showImageOverlay ? "bg-white" : "hidden"
-        } z-20 rounded-md p-2 `}
-      >
+      <div className={`absolute ${showImageOverlay ? "bg-white" : "hidden"} z-20 rounded-md p-2 bottom-12`}>
         {isImageUploaded && (
           <>
             <div className="flex items-center gap-4 ">
@@ -136,16 +135,17 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                 </span>
               </p>
             </div>
+
+            <Button className="mt-2 mr-2" type="submit">
+              Lưu
+            </Button>
+            
             <Button
-              className="mr-2 mt-2"
+              className="mt-2"
               onClick={CancleEdit}
               variant="secondary"
             >
               Hủy bỏ
-            </Button>
-
-            <Button className="mt-2" type="submit">
-              Lưu
             </Button>
           </>
         )}

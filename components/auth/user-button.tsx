@@ -1,33 +1,74 @@
 "use client";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User } from 'lucide-react';
-import { LogOut } from 'lucide-react';
+import { User } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import LogoutButton from "@/components/auth/logout-button";
 import { ForDeleteImage } from "../ui/form-delete-image";
+import { getAccountByUserId } from "@/data/account";
+import { redirect } from "next/navigation";
+import { useEffect, useState } from "react";
+import {toast} from "react-hot-toast";
+
+interface AccountItem {
+  id: string;
+  userId: string;
+  type: string;
+  provider: string;
+  providerAccountId: string;
+  refresh_token: string | null;
+  access_token: string | null;
+  expires_at: number | null;
+  token_type: string | null;
+  scope: string | null;
+  id_token: string | null;
+  session_state: string | null;
+}
 
 export const UserButton = () => {
-  const user = useCurrentUser();
-  const imageCredentials = user?.imageCredential || [];
-// Lấy một số ngẫu nhiên từ 0 đến chiều dài của mảng
-const randomIndex = Math.floor(Math.random() * imageCredentials.length);
-// Lấy phần tử ngẫu nhiên từ mảng
-const randomImage = imageCredentials[randomIndex];
+  const userId = useCurrentUser();
+  const [account, setAccount] = useState<AccountItem | null>(null);
 
-// Sử dụng randomImage trong AvatarImage
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!userId || !userId.id) {
+        redirect("/auth/login");
+      }
+
+      try {
+        const accountData = await getAccountByUserId(userId.id);
+        setAccount(accountData || null);
+      } catch (error) {
+        toast.error("Invalid Error")
+      }
+    };
+
+    fetchData();
+  }, [userId]);
+
+  const imageCredentials = userId?.imageCredential[0] || undefined;
+  const isGitHubOrGoogleUser =
+    account?.provider === "github" || account?.provider === "google";
+  // Use the first image from imageCredential if available, or randomImage if available
+  const avatarImage =
+  imageCredentials ||
+    (imageCredentials ? imageCredentials[0] : null) ||
+    userId?.image;
+  // Sử dụng randomImage trong AvatarImage
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
         <Avatar>
-          {user?.image || randomImage ? (
-            <AvatarImage src={user?.image || randomImage} />
+          {isGitHubOrGoogleUser && avatarImage ? (
+            <AvatarImage src={avatarImage} />
+          ) : avatarImage ? (
+            <AvatarImage src={avatarImage} />
           ) : (
             <AvatarFallback className="bg-sky-500">
               <User className="text-white" />

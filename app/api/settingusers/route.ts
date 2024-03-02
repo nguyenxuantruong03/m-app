@@ -57,3 +57,34 @@ export async function DELETE(req: Request) {
     return new NextResponse("Internal error", { status: 500 });
   }
 }
+
+export async function POST(req: Request, res: Response) {
+  const body = await req.json();
+  const { userId } = body;
+  try {
+    const user = await prismadb.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      return new NextResponse("User not found", { status: 404 });
+    }
+
+    // Kiểm tra nếu người dùng có quyền là ADMIN không thể bị ban
+    if (user?.role === "ADMIN") {
+      return new NextResponse("Cannot ban an ADMIN user.", { status: 400 });
+    }
+
+    const banuser = await prismadb.user.update({
+      where: { id: userId },
+      data: {
+        ban: true,
+        banExpires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      },
+    });
+    return NextResponse.json(banuser);
+  } catch (error) {
+    console.error("Error banning user:", error);
+    return new NextResponse("Internal error", { status: 500 });
+  }
+}

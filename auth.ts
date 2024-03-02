@@ -2,7 +2,7 @@ import authConfig from "@/auth.config";
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { getUserById } from "@/data/user";
-import prismadb from "@/lib/prismadb"
+import prismadb from "@/lib/prismadb";
 import { getTwoFactorConfirmationbyUserId } from "./data/two-factor-confirmation";
 import { getAccountByUserId } from "./data/account";
 import { UserRole } from "@prisma/client";
@@ -27,10 +27,29 @@ export const {
   },
   callbacks: {
     async signIn({ user, account }) {
-      //Cho phép OAuth mà không cần xác minh email
-      if (account?.provider !== "credentials") return true;
-
       const existingUser = await getUserById(user.id);
+      if (account?.provider === "google" || account?.provider === "github") {
+        if (existingUser?.ban === true) {
+          const banExpiresAt = existingUser.banExpires
+            ? new Date(existingUser.banExpires)
+            : null;
+          const now = new Date();
+
+          if (banExpiresAt && banExpiresAt > now) {
+            return false;
+          } else if (banExpiresAt) {
+            // Ban period has expired, unban the user
+            await prismadb.user.update({
+              where: { id: existingUser.id },
+              data: {
+                ban: false,
+                banExpires: null,
+              },
+            });
+          }
+        }
+      }
+
       //Ngăn chặn đăng nhập mà không cần xác minh email
       if (!existingUser?.emailVerified) return false;
       //ADD 2FA check --- 2FA: Có nghĩa là xác thực 2 lớp
@@ -48,6 +67,7 @@ export const {
       }
       return true;
     },
+
     async session({ token, session }) {
       if (token.sub && session.user) {
         session.user.id = token.sub;
@@ -62,7 +82,8 @@ export const {
         session.user.name = token.name;
         session.user.email = token.email as string;
         session.user.isOAuth = token.isOAuth as boolean;
-        session.user.imageCredential =token.imageCredential as string[]
+        session.user.imageCredential = token.imageCredential as string[];
+        session.user.ban = token.ban as boolean;
       }
       return session;
     },
@@ -72,14 +93,15 @@ export const {
       const existingUser = await getUserById(token.sub);
       if (!existingUser) return token;
 
-      const existingAccount = await getAccountByUserId(existingUser.id)
+      const existingAccount = await getAccountByUserId(existingUser.id);
 
-      token.isOAuth = !!existingAccount 
+      token.isOAuth = !!existingAccount;
       token.name = existingUser.name;
       token.email = existingUser.email;
       token.role = existingUser.role;
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
-      token.imageCredential = existingUser.imageCredential
+      token.imageCredential = existingUser.imageCredential;
+      token.ban = existingUser.ban;
       return token;
     },
   },

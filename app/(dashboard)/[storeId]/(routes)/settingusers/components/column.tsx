@@ -8,7 +8,7 @@ import { UserRole } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
+import {toast} from "react-hot-toast";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -24,10 +24,13 @@ export type SettingUsersColumn = {
   accounts: {
     type: string;
     provider: string;
-    expires_at: number | null;
+    token_type: string;
   }[];
   isTwoFactorEnabled: boolean;
   createdAt: string;
+  updatedAt: string;
+  ban: boolean | null;
+  banExpires: string | null;
 };
 
 const RoleCell = ({ row }: any) => {
@@ -52,6 +55,7 @@ const RoleCell = ({ row }: any) => {
       setOriginalRole(selectedRole);
       setEditable(false);
       setLoading(true);
+      toast.success("Thay đổi thành công!")
       router.refresh();
     } catch (error) {
       toast.error("Không phù hợp, Hãy thử lại!");
@@ -104,14 +108,40 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
   {
     accessorKey: "name",
     header: "Name",
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      return (
+        <div className={isBanned ? "line-through text-gray-400" : ""}>
+          {row.original.name}
+        </div>
+      );
+    },
   },
+
   {
     accessorKey: "email",
     header: "Email",
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      return (
+        <div className={isBanned ? "line-through text-gray-400" : ""}>
+          {row.original.email}
+        </div>
+      );
+    },
   },
+
   {
     accessorKey: "emailVerified",
     header: "EmailVerified",
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      return (
+        <div className={isBanned ? "line-through text-gray-400" : ""}>
+          {row.original.emailVerified}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "image",
@@ -136,7 +166,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
   },
   {
     accessorKey: "imageCredential",
-    header: "ImageCredential",
+    header: "ImageApp",
     cell: ({ row }) => {
       const imageCredentialUrl = row.original.imageCredential;
       // Check if the image URL is available
@@ -160,29 +190,93 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
     cell: RoleCell,
   },
   {
-    accessorKey: "accounts",
-    header: "Account",
-  },
-  {
     accessorKey: "accounts.type",
     header: "Account Type",
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      return (
+        <div className={isBanned ? "line-through text-gray-400" : ""}>
+          {row.original.accounts[0]?.type || ""}
+        </div>
+      );
+    },
   },
+
   {
     accessorKey: "accounts.provider",
     header: "Provider",
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      return (
+        <div className={isBanned ? "line-through text-gray-400" : ""}>
+          {row.original.accounts[0]?.provider || ""}
+        </div>
+      );
+    },
   },
+
   {
-    accessorKey: "accounts.expires_at",
-    header: "Expires At",
+    accessorKey: "accounts.token_type",
+    header: "Token Type",
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      return (
+        <div className={isBanned ? "line-through text-gray-400" : ""}>
+          {row.original.accounts[0]?.token_type || ""}
+        </div>
+      );
+    },
   },
+
   {
     accessorKey: "isTwoFactorEnabled",
     header: "IsTwoFactorEnabled",
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      return (
+        <div className={isBanned ? "line-through text-gray-400" : ""}>
+          {String(row.original.isTwoFactorEnabled)}
+        </div>
+      );
+    },
   },
+
+  {
+    accessorKey: "ban",
+    header: "Ban",
+  },
+
+  {
+    accessorKey: "banExpires",
+    header: "Ban Expires",
+  },
+
   {
     accessorKey: "createdAt",
     header: "Thành lập",
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      return (
+        <div className={isBanned ? "line-through text-gray-400" : ""}>
+          {row.original.createdAt}
+        </div>
+      );
+    },
   },
+
+  {
+    accessorKey: "updatedAt",
+    header: "Cập nhật",
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      return (
+        <div className={isBanned ? "line-through text-gray-400" : ""}>
+          {row.original.updatedAt}
+        </div>
+      );
+    },
+  },
+
   {
     id: "actions",
     cell: ({ row }) => <CellAction data={row.original} />,

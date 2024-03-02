@@ -16,9 +16,10 @@ const SettingsPage: React.FC<SettingProps> = async ({ params }) => {
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN
   const showSettingRole = isRole;
-  const userId = await currentUser();
-  if (!userId) {
-    redirect("sign-in");
+  const user = await currentUser();
+  const userId = await prismadb.user.findFirst({ where: { id: user?.id } });
+  if (!userId || !user) {
+    redirect("/auth/login");
   }
 
   const store = await prismadb.store.findFirst({

@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { UpdateImageSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { toast } from "sonner";
 import {
   Form,
   FormControl,
@@ -15,6 +14,7 @@ import {
 import { deleteimage } from "@/actions/actions-signin-sign-up/deleteimage";
 import { Trash2 } from 'lucide-react';
 import { useRouter } from "next/navigation";
+import {toast} from "react-hot-toast";
 
 export const ForDeleteImage = () => {
   const form = useForm<z.infer<typeof UpdateImageSchema>>({
