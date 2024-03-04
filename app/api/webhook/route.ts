@@ -68,33 +68,33 @@ export async function POST(req: Request) {
     });
 
     // Resend email
-      try {
-        const resend = new Resend(process.env.RESEND_EMAIL_API_KEY);
+    try {
+      const resend = new Resend(process.env.RESEND_EMAIL_API_KEY);
 
-        await resend.emails.send({
-          from: "nxt159753@gmail.com",
-          to: [session?.customer_details?.email || ""],
-          subject: "Order Completed",
-          text: "Thank you for your order! Your order has been completed.",
-        });
-      } catch (error) {
-        console.error("Error sending email:", error);
-      }
-    
+      await resend.emails.send({
+        from: "mail@vlxdxuantruong.email",
+        to: [session?.customer_details?.email || ""],
+        subject: "Order Completed",
+        text: "Thank you for your order! Your order has been completed.",
+      });
+    } catch (error) {
+      console.error("Error sending email:", error);
+    }
+
     // Send SMS
     const accountSid = process.env.TWILIO_ACCOUNT_SID;
     const authToken = process.env.TWILIO_AUTH_TOKEN;
-    const messagefrom = process.env.TWILIO_PHONE_NUMBER
+    const messagefrom = process.env.TWILIO_PHONE_NUMBER;
     const client = twilio(accountSid, authToken);
-        try {
-        await client.messages.create({
-            body: "Đơn hàng đặt thành công. Quý khách sẽ nhận hàng sau 1-2h nếu xa sẽ lâu hơn. Nếu có thắc mắc gọi đến 0352261103.",
-            from: messagefrom,
-            to: session?.customer_details?.phone || "",
-          });
-        } catch (error) {
-          console.error("Error sending SMS:", error);
-        }
+    try {
+      await client.messages.create({
+        body: "Đơn hàng đặt thành công. Quý khách sẽ nhận hàng sau 1-2h nếu xa sẽ lâu hơn. Nếu có thắc mắc gọi đến 0352261103.",
+        from: messagefrom,
+        to: session?.customer_details?.phone || "",
+      });
+    } catch (error) {
+      console.error("Error sending SMS:", error);
     }
+  }
   return new NextResponse(null, { status: 200 });
 }

@@ -12,20 +12,23 @@ datasource db {
 }
 
 model Store {
-  id            String          @id @default(uuid())
-  name          String
-  userId        String
-  billboard     Billboard[]     @relation("StoreToBillboard")
-  billboardmini Billboardmini[] @relation("StoreToBillboardMini")
-  billboardsale Billboardsale[] @relation("StoreToBillboardSale")
-  categories    Category[]      @relation("StoreToCategory")
-  sizes         Size[]          @relation("StoreToSize")
-  colors        Color[]         @relation("StoreToColor")
-  product       Product[]       @relation("StoreToProduct")
-  orders        Order[]         @relation("StoreToOrder")
+  id                   String                 @id @default(uuid())
+  name                 String
+  userId               String
+  billboard            Billboard[]            @relation("StoreToBillboard")
+  // billboardmini Billboardmini[] @relation("StoreToBillboardMini")
+  // billboardsale Billboardsale[] @relation("StoreToBillboardSale")
+  categories           Category[]             @relation("StoreToCategory")
+  sizes                Size[]                 @relation("StoreToSize")
+  colors               Color[]                @relation("StoreToColor")
+  product              Product[]              @relation("StoreToProduct")
+  orders               Order[]                @relation("StoreToOrder")
   // checkoutcash  Checkoutcash[]  @relation("StoreToCheckoutcash")
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  specification        Specification[]        @relation("StoreToSpecification")
+  salientfeatures      Salientfeatures[]      @relation("StoreToSalientfeatures")
+  promotionandWarranty PromotionandWarranty[] @relation("StoreToPromotionandWarranty")
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
 }
 
 model Billboard {
@@ -53,42 +56,42 @@ model ImageBillboard {
   @@index([billboardId])
 }
 
-model Billboardmini {
-  id                 String               @id @default(uuid())
-  storeId            String
-  store              Store                @relation("StoreToBillboardMini", fields: [storeId], references: [id])
-  label              String
-  imagebillboardmini ImageBillboardmini[]
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @updatedAt
+// model Billboardmini {
+//   id                 String               @id @default(uuid())
+//   storeId            String
+//   store              Store                @relation("StoreToBillboardMini", fields: [storeId], references: [id])
+//   label              String
+//   imagebillboardmini ImageBillboardmini[]
+//   createdAt          DateTime             @default(now())
+//   updatedAt          DateTime             @updatedAt
 
-  @@index([storeId])
-}
+//   @@index([storeId])
+// }
 
-model ImageBillboardmini {
-  id String @id @default(uuid())
+// model ImageBillboardmini {
+//   id String @id @default(uuid())
 
-  billboardminiId String
-  billboardmini   Billboardmini @relation(fields: [billboardminiId], references: [id], onDelete: Cascade)
+//   billboardminiId String
+//   billboardmini   Billboardmini @relation(fields: [billboardminiId], references: [id], onDelete: Cascade)
 
-  url       String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+//   url       String
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
 
-  @@index([billboardminiId])
-}
+//   @@index([billboardminiId])
+// }
 
-model Billboardsale {
-  id        String   @id @default(uuid())
-  storeId   String
-  store     Store    @relation("StoreToBillboardSale", fields: [storeId], references: [id])
-  label     String
-  imageUrl  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// model Billboardsale {
+//   id        String   @id @default(uuid())
+//   storeId   String
+//   store     Store    @relation("StoreToBillboardSale", fields: [storeId], references: [id])
+//   label     String
+//   imageUrl  String
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
 
-  @@index([storeId])
-}
+//   @@index([storeId])
+// }
 
 model Category {
   id           String       @id @default(uuid())
@@ -170,77 +173,165 @@ enum ProductType {
   PRODUCT11
 }
 
-model Product {
-  id                          String                 @id @default(uuid())
+//Chi tiết sản phẩm
+model Specification {
+  id                          String    @id @default(uuid())
   storeId                     String
-  store                       Store                  @relation("StoreToProduct", fields: [storeId], references: [id])
-  categoryId                  String
-  category                    Category               @relation("CategoryProduct", fields: [categoryId], references: [id])
-  productType                 ProductType // Add this field to distinguish product type (Product1 or Product2)
-  name                        String                 @unique
-  heading                     String
-  description                 String                 @db.Text
+  store                       Store     @relation("StoreToSpecification", fields: [storeId], references: [id])
+  descriptionspecifications   String    @db.Text
+  valuespecifications         String    @db.Text
+  description2specifications  String    @db.Text
+  value2specifications        String    @db.Text
+  description3specifications  String    @db.Text
+  value3specifications        String    @db.Text
+  description4specifications  String    @db.Text
+  value4specifications        String    @db.Text
+  description5specifications  String    @db.Text
+  value5specifications        String    @db.Text
+  description6specifications  String    @db.Text
+  value6specifications        String    @db.Text
+  description7specifications  String    @db.Text
+  value7specifications        String    @db.Text
+  description8specifications  String    @db.Text
+  value8specifications        String    @db.Text
+  description9specifications  String    @db.Text
+  value9specifications        String    @db.Text
+  description10specifications String    @db.Text
+  value10specifications       String    @db.Text
+  description11specifications String    @db.Text
+  value11specifications       String    @db.Text
+  description12specifications String    @db.Text
+  value12specifications       String    @db.Text
+  description13specifications String    @db.Text
+  value13specifications       String    @db.Text
+  description14specifications String    @db.Text
+  value14specifications       String    @db.Text
+  product                     Product[] @relation("SpecificationToProduct")
+  createdAt                   DateTime  @default(now())
+  updatedAt                   DateTime  @updatedAt
+
+  @@index([storeId])
+}
+
+// Tính năng nổi bật
+model Salientfeatures {
+  id String @id @default(uuid())
+
+  storeId                     String
+  store                       Store     @relation("StoreToSalientfeatures", fields: [storeId], references: [id])
+  descriptionsalientfeatures  String    @db.Text
+  description2salientfeatures String    @db.Text
+  description3salientfeatures String    @db.Text
+  description4salientfeatures String    @db.Text
+  contentsalientfeatures      String    @db.Text
+  product                     Product[] @relation("SalientfeaturesToProduct")
+  createdAt                   DateTime  @default(now())
+  updatedAt                   DateTime  @updatedAt
+
+  @@index([storeId])
+}
+
+//Khuyến mãi và bảo hành
+model PromotionandWarranty {
+  id String @id @default(uuid())
+
+  storeId              String
+  store                Store     @relation("StoreToPromotionandWarranty", fields: [storeId], references: [id])
+  product              Product[] @relation("PromotionandWarrantyToProduct")
   // Khuyến mãi
-  promotionheading            String                 @db.Text
-  promotiondescription        String                 @db.Text
+  promotionheading     String    @db.Text
+  promotiondescription String    @db.Text
   //Bảo hành
-  guaranteeheading            Decimal
-  guaranteedescription        Decimal
-  guaranteeinfomation         Decimal
-  guaranteeprice              Decimal
+  guaranteeheading     Decimal
+  guaranteedescription Decimal
+  guaranteeinfomation  Decimal
+  guaranteeprice       Decimal
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@index([storeId])
+}
+
+model Product {
+  id                     String                 @id @default(uuid())
+  storeId                String
+  store                  Store                  @relation("StoreToProduct", fields: [storeId], references: [id])
+  categoryId             String
+  category               Category               @relation("CategoryProduct", fields: [categoryId], references: [id])
+  specificationId        String
+  specification          Specification          @relation("SpecificationToProduct", fields: [specificationId], references: [id])
+  salientfeaturesId      String
+  salientfeatures        Salientfeatures        @relation("SalientfeaturesToProduct", fields: [salientfeaturesId], references: [id])
+  promotionandWarrantyId String
+  promotionandWarranty   PromotionandWarranty   @relation("PromotionandWarrantyToProduct", fields: [promotionandWarrantyId], references: [id])
+  sizeId                 String
+  size                   Size                   @relation(fields: [sizeId], references: [id])
+  colorId                String
+  color                  Color                  @relation(fields: [colorId], references: [id])
+  productType            ProductType // Add this field to distinguish product type (Product1 or Product2)
+  name                   String                 @unique
+  heading                String
+  description            String                 @db.Text
+  // // Khuyến mãi
+  // promotionheading     String                 @db.Text
+  // promotiondescription String                 @db.Text
+  // //Bảo hành
+  // guaranteeheading     Decimal
+  // guaranteedescription Decimal
+  // guaranteeinfomation  Decimal
+  // guaranteeprice       Decimal
   //Giá sản phẩm main
-  price                       Decimal
-  percentpromotion            Decimal
-  isFeatured                  Boolean                @default(false)
-  isArchived                  Boolean                @default(false)
-  sizeId                      String
-  size                        Size                   @relation(fields: [sizeId], references: [id])
-  colorId                     String
-  color                       Color                  @relation(fields: [colorId], references: [id])
-  images                      Image[]
+  price                  Decimal
+  percentpromotion       Decimal
+  isFeatured             Boolean                @default(false)
+  isArchived             Boolean                @default(false)
+  images                 Image[]
   // Specification
-  descriptionspecifications   String                 @db.Text
-  valuespecifications         String                 @db.Text
-  description2specifications  String                 @db.Text
-  value2specifications        String                 @db.Text
-  description3specifications  String                 @db.Text
-  value3specifications        String                 @db.Text
-  description4specifications  String                 @db.Text
-  value4specifications        String                 @db.Text
-  description5specifications  String                 @db.Text
-  value5specifications        String                 @db.Text
-  description6specifications  String                 @db.Text
-  value6specifications        String                 @db.Text
-  description7specifications  String                 @db.Text
-  value7specifications        String                 @db.Text
-  description8specifications  String                 @db.Text
-  value8specifications        String                 @db.Text
-  description9specifications  String                 @db.Text
-  value9specifications        String                 @db.Text
-  description10specifications String                 @db.Text
-  value10specifications       String                 @db.Text
-  description11specifications String                 @db.Text
-  value11specifications       String                 @db.Text
-  description12specifications String                 @db.Text
-  value12specifications       String                 @db.Text
-  description13specifications String                 @db.Text
-  value13specifications       String                 @db.Text
-  description14specifications String                 @db.Text
-  value14specifications       String                 @db.Text
+  // descriptionspecifications   String                 @db.Text
+  // valuespecifications         String                 @db.Text
+  // description2specifications  String                 @db.Text
+  // value2specifications        String                 @db.Text
+  // description3specifications  String                 @db.Text
+  // value3specifications        String                 @db.Text
+  // description4specifications  String                 @db.Text
+  // value4specifications        String                 @db.Text
+  // description5specifications  String                 @db.Text
+  // value5specifications        String                 @db.Text
+  // description6specifications  String                 @db.Text
+  // value6specifications        String                 @db.Text
+  // description7specifications  String                 @db.Text
+  // value7specifications        String                 @db.Text
+  // description8specifications  String                 @db.Text
+  // value8specifications        String                 @db.Text
+  // description9specifications  String                 @db.Text
+  // value9specifications        String                 @db.Text
+  // description10specifications String                 @db.Text
+  // value10specifications       String                 @db.Text
+  // description11specifications String                 @db.Text
+  // value11specifications       String                 @db.Text
+  // description12specifications String                 @db.Text
+  // value12specifications       String                 @db.Text
+  // description13specifications String                 @db.Text
+  // value13specifications       String                 @db.Text
+  // description14specifications String                 @db.Text
+  // value14specifications       String                 @db.Text
   // salientfeatures
-  descriptionsalientfeatures  String                 @db.Text
-  description2salientfeatures String                 @db.Text
-  description3salientfeatures String                 @db.Text
-  description4salientfeatures String                 @db.Text
-  contentsalientfeatures      String                 @db.Text
-  imagesalientfeatures        Imagesalientfeatures[]
-  orderItems                  OrderItem[]
+  // descriptionsalientfeatures  String                 @db.Text
+  // description2salientfeatures String                 @db.Text
+  // description3salientfeatures String                 @db.Text
+  // description4salientfeatures String                 @db.Text
+  // contentsalientfeatures      String                 @db.Text
+  imagesalientfeatures   Imagesalientfeatures[]
+  orderItems             OrderItem[]
   // CheckoutCashItem            CheckoutcashItem[]
-  createdAt                   DateTime               @default(now())
-  updatedAt                   DateTime               @updatedAt
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @updatedAt
 
   @@index([storeId])
   @@index([categoryId])
+  @@index([specificationId])
+  @@index([salientfeaturesId])
+  @@index([promotionandWarrantyId])
   @@index([sizeId])
   @@index([colorId])
 }
