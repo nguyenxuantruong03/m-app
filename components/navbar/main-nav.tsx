@@ -25,16 +25,6 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
       label: "Ảnh quảng cáo",
       active: pathname === `/${params.storeId}/billboards`,
     },
-    {
-      href: `/${params.storeId}/billboardsmini`,
-      label: "Ảnh quảng cáo nhỏ",
-      active: pathname === `/${params.storeId}/billboardsmini`,
-    },
-    {
-      href: `/${params.storeId}/billboardssale`,
-      label: "Ảnh quảng cáo giảm giá",
-      active: pathname === `/${params.storeId}/billboardssale`,
-    },
   ]
 
   const categorys =[
@@ -110,6 +100,11 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
       href: `/${params.storeId}/color`,
       label: "Màu sắc",
       active: pathname === `/${params.storeId}/color`,
+    },
+    {
+      href: `/${params.storeId}/productdetail`,
+      label: "Chi tiết sản phẩm",
+      active: pathname === `/${params.storeId}/productdetail`,
     },
   ]
 

@@ -31,7 +31,7 @@ const BillboardsPage = async ({ params }: { params: { storeId: string } }) => {
       <div className={`flex-1 space-y-4 p-8 pt-6 ${showBillboardRole}`}>
         {showBillboardRole && <BillboardClient data={formattedBillboards} />}
       </div>
-      <RoleGate allowedRole={UserRole.ADMIN && UserRole.STAFF}>
+      <RoleGate allowedRole={UserRole.ADMIN || UserRole.STAFF}>
         <FormSuccess message="Bạn có thể xem được nội dung này!" />
       </RoleGate>
     </div>

@@ -10,17 +10,9 @@ export type ProductColumn = {
   description: string;
   price: string;
   percentpromotion: string;
-  promotionheading: string;
-  promotiondescription: string;
-  guaranteeheading: string;
-  guaranteedescription: string;
-  guaranteeinfomation: string;
-  guaranteeprice: string;
+  productdetail: string;
   isFeatured: boolean;
   isArchived: boolean;
-  size: string;
-  color: string;
-  category: string;
   createdAt: string;
 };
 
@@ -42,57 +34,12 @@ export const columns: ColumnDef<ProductColumn>[] = [
     header: "Giảm %",
   },
   {
-    accessorKey: "promotionheading",
-    header: "Quà tặng sỉ",
-  },
-  {
-    accessorKey: "promotiondescription",
-    header: "Quà tặng thầu",
-  },
-  {
-    accessorKey: "guaranteeheading",
-    header: "Tiền bảo hiểm",
-  },
-  {
-    accessorKey: "guaranteedescription",
-    header: "Tiền bảo hiểm ",
-  },
-  {
-    accessorKey: "guaranteeinfomation",
-    header: "Tiền bảo hiểm",
-  },
-  {
-    accessorKey: "guaranteeprice",
-    header: "Tiền bảo hiểm",
-  },
-  {
     accessorKey: "isFeatured",
     header: "Hiển thị trang chính",
   },
   {
-    accessorKey: "isArchived",
-    header: "Hết hàng",
-  },
-  {
-    accessorKey: "size",
-    header: "Kích cỡ",
-  },
-  {
-    accessorKey: "category",
-    header: "Loại",
-  },
-  {
-    accessorKey: "color",
-    header: "Màu",
-    cell: ({ row }) => (
-      <div className="flex items-center gap-x-2">
-        {row.original.color}
-        <div
-          className="h-6 w-6 rounded-full border"
-          style={{ backgroundColor: row.original.color }}
-        />
-      </div>
-    ),
+    accessorKey: "productdetail",
+    header: "Sản phẩm chi tiết",
   },
   {
     accessorKey: "createdAt",

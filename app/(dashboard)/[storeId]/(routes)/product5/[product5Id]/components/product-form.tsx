@@ -1,4 +1,5 @@
 "use client";
+
 import * as z from "zod";
 import axios from "axios";
 import { useState } from "react";
@@ -7,12 +8,10 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { Trash } from "lucide-react";
 import {
-  Category,
   Product,
   Image,
-  Size,
-  Color,
   Imagesalientfeatures,
+  ProductDetail,
 } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
 
@@ -47,53 +46,10 @@ const formSchema = z.object({
   images: z.object({ url: z.string() }).array(),
   price: z.coerce.number().min(1),
   percentpromotion: z.coerce.number().min(1),
-  promotionheading: z.string().min(1),
-  promotiondescription: z.string().min(1),
-  guaranteeheading: z.coerce.number().min(1),
-  guaranteedescription: z.coerce.number().min(1),
-  guaranteeinfomation: z.coerce.number().min(1),
-  guaranteeprice: z.coerce.number().min(1),
-  // Specification
-  descriptionspecifications: z.string().min(1),
-  valuespecifications: z.string().min(1),
-  description2specifications: z.string().min(1),
-  value2specifications: z.string().min(1),
-  description3specifications: z.string().min(1),
-  value3specifications: z.string().min(1),
-  description4specifications: z.string().min(1),
-  value4specifications: z.string().min(1),
-  description5specifications: z.string().min(1),
-  value5specifications: z.string().min(1),
-  description6specifications: z.string().min(1),
-  value6specifications: z.string().min(1),
-  description7specifications: z.string().min(1),
-  value7specifications: z.string().min(1),
-  description8specifications: z.string().min(1),
-  value8specifications: z.string().min(1),
-  description9specifications: z.string().min(1),
-  value9specifications: z.string().min(1),
-  description10specifications: z.string().min(1),
-  value10specifications: z.string().min(1),
-  description11specifications: z.string().min(1),
-  value11specifications: z.string().min(1),
-  description12specifications: z.string().min(1),
-  value12specifications: z.string().min(1),
-  description13specifications: z.string().min(1),
-  value13specifications: z.string().min(1),
-  description14specifications: z.string().min(1),
-  value14specifications: z.string().min(1),
-  // salientfeatures:
-  descriptionsalientfeatures: z.string().min(1),
-  description2salientfeatures: z.string().min(1),
-  description3salientfeatures: z.string().min(1),
-  description4salientfeatures: z.string().min(1),
-  contentsalientfeatures: z.string().min(1),
   imagesalientfeatures: z.object({ url: z.string() }).array(),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
-  sizeId: z.string().min(1),
-  colorId: z.string().min(1),
-  categoryId: z.string().min(1),
+  productdetailId: z.string().min(1),
 });
 
 type ProductFormValues = z.infer<typeof formSchema>;
@@ -106,16 +62,12 @@ interface ProductFormProps {
       })
     | null;
 
-  categories: Category[];
-  sizes: Size[];
-  colors: Color[];
+  productDetail: ProductDetail[];
 }
 
 export const ProductForm: React.FC<ProductFormProps> = ({
   initialData,
-  categories,
-  sizes,
-  colors,
+  productDetail,
 }) => {
   const params = useParams();
   const router = useRouter();
@@ -135,14 +87,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           ...initialData,
           price: parseFloat(String(initialData?.price)),
           percentpromotion: parseFloat(String(initialData?.percentpromotion)),
-          guaranteeheading: parseFloat(String(initialData?.guaranteeheading)),
-          guaranteedescription: parseFloat(
-            String(initialData?.guaranteedescription)
-          ),
-          guaranteeinfomation: parseFloat(
-            String(initialData?.guaranteeinfomation)
-          ),
-          guaranteeprice: parseFloat(String(initialData?.guaranteeprice)),
         }
       : {
           name: "",
@@ -151,16 +95,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           description: "",
           price: 0,
           percentpromotion: 0,
-          guaranteeheading: 0,
-          guaranteedescription: 0,
-          guaranteeinfomation: 0,
-          guaranteeprice: 0,
           imagesalientfeatures: [],
           isFeatured: false,
           isArchived: false,
-          sizeId: "",
-          colorId: "",
-          categoryId: "",
+          productdetailId: "",
         },
   });
 
@@ -191,9 +129,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(
-        `/api/${params.storeId}/product5/${params.product5Id}`
-      );
+      await axios.delete(`/api/${params.storeId}/product5/${params.product5Id}`);
       router.refresh();
       router.push(`/${params.storeId}/product5`);
       toast.success("Product deleted.");
@@ -381,682 +317,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             />
 
             <FormField
-              name="promotionheading"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Khuyến mãi sỉ</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập khuyến mãi sỉ ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="promotiondescription"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Khuyến mãi thầu</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập khuyến mãi thầu ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
               control={form.control}
-              name="guaranteeheading"
+              name="productdetailId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giá tiền bảo hành</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      disabled={loading}
-                      placeholder="Nhập giá tiền bảo hành ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="guaranteedescription"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Giá tiền bảo hành</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      disabled={loading}
-                      placeholder="Nhập giá tiền bảo hành ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="guaranteeinfomation"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Giá tiền bảo hành</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      disabled={loading}
-                      placeholder="Nhập giá tiền bảo hành ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="guaranteeprice"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Giá tiền bảo hành</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      disabled={loading}
-                      placeholder="Nhập giá tiền bảo hành ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="descriptionspecifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="valuespecifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="description2specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="value2specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="description3specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="value3specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="description4specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="value4specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="description5specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="value5specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="description6specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="value6specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="description7specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="value7specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="description8specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="value8specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="description9specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="value9specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="description10specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="value10specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="description11specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="value11specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="description12specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="value12specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="description13specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="value13specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số </FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="description14specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="value14specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="descriptionsalientfeatures"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Mô tả tính năng nổi bật</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập mô tả tính năng nổi bật ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="description2salientfeatures"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Mô tả tính năng nổi bật</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập mô tả tính năng nổi bật ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="description3salientfeatures"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Mô tả tính năng nổi bật</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập mô tả tính năng nổi bật ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="description4salientfeatures"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Mô tả tính năng nổi bật</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập mô tả tính năng nổi bật ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="contentsalientfeatures"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung tính năng nổi bật</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung tính năng nổi bật ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="colorId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Màu</FormLabel>
+                  <FormLabel>Chi tiết sản phẩm</FormLabel>
                   <Select
                     disabled={loading}
                     onValueChange={field.onChange}
@@ -1067,78 +332,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       <SelectTrigger>
                         <SelectValue
                           defaultValue={field.value}
-                          placeholder="Select a color"
+                          placeholder="Select Product Detail"
                         />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {colors.map((color) => (
-                        <SelectItem key={color.id} value={color.id}>
-                          {color.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="sizeId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Kích cỡ</FormLabel>
-                  <Select
-                    disabled={loading}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          defaultValue={field.value}
-                          placeholder="Select a size"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {sizes.map((size) => (
-                        <SelectItem key={size.id} value={size.id}>
-                          {size.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="categoryId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Loại</FormLabel>
-                  <Select
-                    disabled={loading}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          defaultValue={field.value}
-                          placeholder="Select a category"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {categories.map((categorie) => (
-                        <SelectItem key={categorie.id} value={categorie.id}>
-                          {categorie.name}
+                      {productDetail.map((item) => (
+                        <SelectItem key={item.id} value={item.id}>
+                          {item.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -1162,7 +363,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   <div className="space-y-1 leading-none">
                     <FormLabel>Hiển thị trang chủ</FormLabel>
                     <FormDescription>
-                    Sản phẩm này sẽ xuất hiện trên trang chủ
+                      Sản phẩm này sẽ xuất hiện trên trang chủ
                     </FormDescription>
                   </div>
                 </FormItem>
@@ -1183,9 +384,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel>Hết hàng</FormLabel>
-                    <FormDescription>
-                        Sản phẩm sẽ bị ẩn 
-                    </FormDescription>
+                    <FormDescription>Sản phẩm sẽ bị ẩn</FormDescription>
                   </div>
                 </FormItem>
               )}

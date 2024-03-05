@@ -58,7 +58,7 @@ const OrderPage = async ({
       <div className={` ${showOrderRole}`}>
         {showOrderRole && <OrderForm data={formattedOrder} />}
       </div>
-      <RoleGate allowedRole={UserRole.ADMIN && UserRole.STAFF}>
+      <RoleGate allowedRole={UserRole.ADMIN || UserRole.STAFF}>
         <FormSuccess message="Bạn có thể xem được nội dung này!" />
       </RoleGate>
     </>

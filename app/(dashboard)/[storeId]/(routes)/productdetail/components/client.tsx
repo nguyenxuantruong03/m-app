@@ -10,17 +10,17 @@ import { useRouter } from "next/navigation";
 
 import { Plus } from "lucide-react";
 
-import { BillboardColumn, columns } from "./columns";
+import { ProductDetailColumn, columns } from "./columns";
 
 import { ApiList } from "@/components/ui/api-list";
-import { useCurrentRole } from "@/hooks/use-current-role";
 import { UserRole } from "@prisma/client";
+import { useCurrentRole } from "@/hooks/use-current-role";
 
-interface BillboardClientProps{
-    data: BillboardColumn[]
+interface ProductDetailClientProps{
+    data: ProductDetailColumn[]
 }
 
-const BillboardClient:React.FC<BillboardClientProps> = ({data}) => {
+const ProductDetailClient:React.FC<ProductDetailClientProps> = ({data}) => {
     const router = useRouter()
     const params = useParams()
     const role = useCurrentRole();
@@ -30,26 +30,26 @@ const BillboardClient:React.FC<BillboardClientProps> = ({data}) => {
         <>
         <div className="flex items-center justify-between">
             <Heading 
-            title ={`Ảnh quảng cáo nhỏ(${data.length})`}
-            description="Quản lý ảnh quảng cáo nhỏ cửa hàng"
+            title ={`Chi tiết sản phẩm (${data.length})`}
+            description="Quản lý màu cửa hàng"
             />
-            <Button onClick={() => router.push(`/${params.storeId}/billboardsmini/new`)}>
+            <Button onClick={() => router.push(`/${params.storeId}/productdetail/new`)}>
                 <Plus className="mr-2 h-4 w-4" />
                 Thêm mới
             </Button>
         </div>
         <Separator />
-        <DataTable searchKey="label" columns={columns} data={data} />
+        <DataTable searchKey="name" columns={columns} data={data} />
         {showAPIRole && (
-        <Heading title="Api" description="API calls for Billboards Mini" />
+        <Heading title="Api" description="API calls for ProductDetail" />
         )}
         <Separator />
         <ApiList 
-        entityIdName="billboardminiId"
-        entityName="billboardsmini"
+        entityIdName="productdetailId"
+        entityName="productdetail"
         />
         </>
      );
 }
  
-export default BillboardClient;
+export default ProductDetailClient;
