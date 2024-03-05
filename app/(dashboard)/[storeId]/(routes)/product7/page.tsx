@@ -19,7 +19,7 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
       productType: productType,
     },
     include: {
-    productdetail: true
+      productdetail: true,
     },
     orderBy: {
       createdAt: "desc",
@@ -39,7 +39,7 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
     createdAt: format(item.createdAt, "dd/MM/yyyy"),
   }));
   return (
-    <div className=" max-w-[1617px] ">
+    <div className="w-full">
       <div className={`space-y-4 p-8 pt-6 ${showProductRole}`}>
         {showProductRole && <ProductClient data={formattedProduct} />}
       </div>

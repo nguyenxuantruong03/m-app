@@ -80,7 +80,7 @@ const ProductDetailPage = async ({ params }: { params: { storeId: string } }) =>
     createdAt: format(item.createdAt, "dd/MM/yyyy"),
   }));
   return (
-    <div className=" max-w-[1617px] ">
+    <div className="w-full">
       <div className={`space-y-4 p-8 pt-6 ${showProductDetailRole}`}>
       {showProductDetailRole && <ProductDetailClient data={formattedProductDetail} />}
       </div>
