@@ -149,10 +149,10 @@ export async function PATCH(
     if (!storeByUserId) {
       return new NextResponse("Unauthorized", { status: 405 });
     }
-    const productType = ProductType.PRODUCT;
+    const productType = ProductType.PRODUCT11;
     await prismadb.product.update({
       where: {
-        name: params.product11Id,
+        id: params.product11Id,
         productType: productType,
       },
       data: {
@@ -175,7 +175,7 @@ export async function PATCH(
 
     const product = await prismadb.product.update({
       where: {
-        name: params.product11Id,
+        id: params.product11Id,
         productType: productType,
       },
       data: {

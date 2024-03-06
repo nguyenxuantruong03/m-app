@@ -152,7 +152,7 @@ export async function PATCH(
     const productType = ProductType.PRODUCT;
     await prismadb.product.update({
       where: {
-        name: params.productId,
+        id: params.productId,
         productType: productType,
       },
       data: {
@@ -175,7 +175,7 @@ export async function PATCH(
 
     const product = await prismadb.product.update({
       where: {
-        name: params.productId,
+        id: params.productId,
         productType: productType,
       },
       data: {

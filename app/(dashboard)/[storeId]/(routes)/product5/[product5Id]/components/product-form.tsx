@@ -38,6 +38,12 @@ import {
 } from "@/components/ui/select";
 import ImageUpload from "@/components/ui/image-upload";
 import { Checkbox } from "@/components/ui/checkbox";
+import unorm from "unorm";
+
+//Loại bỏ dấu
+const removeDiacritics = (str: String) => {
+  return unorm.nfd(str).replace(/[\u0300-\u036f]/g, "");
+};
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -102,6 +108,16 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         },
   });
 
+  // Event handler to update the 'name' field based on the 'heading' field
+  const updateNameFromHeading = (heading: string) => {
+    const formattedName = removeDiacritics(heading)
+      .toLowerCase()
+      .replace(/\s+/g, "_")
+      .replace(/[^a-z0-9_]/g, "");
+
+    form.setValue("name", formattedName);
+  };
+
   const onSubmit = async (data: ProductFormValues) => {
     try {
       setLoading(true);
@@ -129,7 +145,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/product5/${params.product5Id}`);
+      await axios.delete(
+        `/api/${params.storeId}/product5/${params.product5Id}`
+      );
       router.refresh();
       router.push(`/${params.storeId}/product5`);
       toast.success("Product deleted.");
@@ -226,24 +244,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           <div className="md:grid md:grid-cols-4 gap-6 overflow-y-auto">
             <FormField
               control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tên(URL)không ghi hoa hoặc cách</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập tên URL ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
               name="heading"
               render={({ field }) => (
                 <FormItem>
@@ -253,6 +253,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       disabled={loading}
                       placeholder="Nhập tên sản phẩm ..."
                       {...field}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        updateNameFromHeading(e.target.value);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

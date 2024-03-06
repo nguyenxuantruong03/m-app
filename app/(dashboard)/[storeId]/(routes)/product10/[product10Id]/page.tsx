@@ -16,7 +16,7 @@ const ProductPage = async ({
   const productType = ProductType.PRODUCT10;
   const product = await prismadb.product.findUnique({
     where: {
-      name: params.product10Id,
+      id: params.product10Id,
       productType: productType,
     },
     include: {
