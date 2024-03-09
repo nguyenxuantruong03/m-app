@@ -1,7 +1,6 @@
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_EMAIL_API_KEY);
-
 const domain = process.env.NEXT_PUBLIC_URL
 
 export const sendTwoFactorTokenEmail = async ( email:string, token:string) =>{
@@ -34,3 +33,15 @@ export const sendVerificationEmail = async (email:string, token:string) =>{
         html: `<p>Click <a href="${confirmLink}">hear</a> to confirm email.</p>`
     })
 }
+
+export const sendVerifyAccountisCitizen = async (email: string | null = "") => {
+    const toEmail = email ? [email] : [];
+    await resend.emails.send({
+        from: "mail@vlxdxuantruong.email",
+        to: toEmail,
+        subject: "Verify your email",
+        html: `<p>Tài khoản của bạn đã được xác thực.</p>`
+    });
+}
+
+

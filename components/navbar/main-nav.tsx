@@ -185,6 +185,11 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
       label: "Người dùng",
       active: pathname === `/${params.storeId}/settingusers`,
     },
+    {
+      href: `/${params.storeId}/managestaff`,
+      label: "Nhân viên",
+      active: pathname === `/${params.storeId}/managestaff`,
+    },
   ]
 
   const settings =[
@@ -332,7 +337,7 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
           <Link
               key={order.href}
               href={order.href}
-              className={cn("text-md font-medium transition-colors hover:text-primary grid grid-rows-1",
+              className={cn("text-md font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
               order.active ? 'text-black dark:text-white' : 'text-muted-foreground'
               )}
           >

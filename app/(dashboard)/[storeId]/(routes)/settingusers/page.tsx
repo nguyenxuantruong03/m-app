@@ -57,6 +57,7 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
       session_state: accountItem.session_state,
     })),
     isTwoFactorEnabled: item.isTwoFactorEnabled,
+    isCitizen: item.isCitizen,
     twoFactorConfirmation: item.twoFactorConfirmation,
     createdAt: format(item.createdAt, "dd/MM/yyyy"),
     ban: item.ban,

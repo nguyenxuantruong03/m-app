@@ -12,19 +12,19 @@ datasource db {
 }
 
 model Store {
-  id             String          @id @default(uuid())
-  name           String
-  userId         String
-  billboard      Billboard[]     @relation("StoreToBillboard")
-  categories     Category[]      @relation("StoreToCategory")
-  sizes          Size[]          @relation("StoreToSize")
-  colors         Color[]         @relation("StoreToColor")
-  product        Product[]       @relation("StoreToProduct")
-  orders         Order[]         @relation("StoreToOrder")
+  id            String          @id @default(uuid())
+  name          String
+  userId        String
+  billboard     Billboard[]     @relation("StoreToBillboard")
+  categories    Category[]      @relation("StoreToCategory")
+  sizes         Size[]          @relation("StoreToSize")
+  colors        Color[]         @relation("StoreToColor")
+  product       Product[]       @relation("StoreToProduct")
+  orders        Order[]         @relation("StoreToOrder")
   // checkoutcash  Checkoutcash[]  @relation("StoreToCheckoutcash")
   productdetail ProductDetail[] @relation("StoreToDetailProductDetail")
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
 }
 
 model Billboard {
@@ -190,7 +190,7 @@ model ProductDetail {
   categoryId String
   category   Category @relation("CategoryProductDetail", fields: [categoryId], references: [id])
   sizeId     String
-  size       Size    @relation("SizeProductDetail", fields: [sizeId], references: [id])
+  size       Size     @relation("SizeProductDetail", fields: [sizeId], references: [id])
   colorId    String
   color      Color    @relation("ColorProductDetail", fields: [colorId], references: [id])
 
@@ -220,7 +220,7 @@ model Product {
   createdAt            DateTime               @default(now())
   updatedAt            DateTime               @updatedAt
   productdetailId      String
-  productdetail        ProductDetail        @relation("ProductDetailToProduct", fields: [productdetailId], references: [id])
+  productdetail        ProductDetail          @relation("ProductDetailToProduct", fields: [productdetailId], references: [id])
 
   @@index([storeId])
   @@index([productdetailId])
@@ -267,10 +267,51 @@ model OrderItem {
   @@index([productId])
 }
 
+
 enum UserRole {
   ADMIN
   USER
   STAFF
+}
+
+enum Gender {
+  Male
+  Female
+}
+
+//Bằng cấp
+enum Degree {
+  //Tiểu học
+  Elementary
+  //Trung học
+  JuniorHighSchool
+  //Trung học phổ thông
+  HighSchool
+  //Cao đẳng
+  JuniorColleges
+  //Đại học
+  University
+  //Thạc sĩ
+  MastersDegree
+}
+
+enum MaritalStatus {
+  //Cô đơn
+  Single
+  // Kết hôn
+  Married
+  // Ly hôn
+  Separated
+  // Tái hôn
+  Remarried
+}
+
+enum WorkingTime {
+ Parttime4h
+ Parttime8h
+ Fulltime
+ //Thời vụ
+ SeasonalJob
 }
 
 model User {
@@ -289,6 +330,25 @@ model User {
   // Xác thực 2 yếu tố
   isTwoFactorEnabled    Boolean                @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
+  //Xác thực User có câp nhật chứng minh nhân dân chưa 
+  isCitizen             Boolean?               @default(false)
+  //Sô chúng minh nhân dân 
+  numberCCCD            String?
+  dateRange             DateTime?
+  issued                String?
+  gender                Gender?
+  //Bằng cấp
+  degree                Degree?
+  //Tình trạng hôn nhân 
+  maritalStatus         MaritalStatus?
+  // Số điện thoại
+  phonenumber           String?
+  //Thời gian làm việc 
+  workingTime           WorkingTime?
+  //Ngày sinh
+  dateofbirth           DateTime?
+  //Veiryfi email đã gửi chưa
+  sentVeirifi           Boolean?               @default(false)
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
 }

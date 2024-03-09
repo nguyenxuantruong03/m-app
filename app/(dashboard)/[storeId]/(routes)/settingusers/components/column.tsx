@@ -6,9 +6,11 @@ import Image from "next/image";
 import { useState } from "react";
 import { UserRole } from "@prisma/client";
 import { Button } from "@/components/ui/button";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { useRouter } from "next/navigation";
-import {toast} from "react-hot-toast";
+import { toast } from "react-hot-toast";
+import { Ban, Shield, ShieldOff, ShieldCheck } from "lucide-react";
+import { Lock, Unlock } from "lucide-react";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -26,6 +28,7 @@ export type SettingUsersColumn = {
     provider: string;
     token_type: string;
   }[];
+  isCitizen: boolean | null;
   isTwoFactorEnabled: boolean;
   createdAt: string;
   updatedAt: string;
@@ -55,7 +58,7 @@ const RoleCell = ({ row }: any) => {
       setOriginalRole(selectedRole);
       setEditable(false);
       setLoading(true);
-      toast.success("Thay đổi thành công!")
+      toast.success("Thay đổi thành công!");
       router.refresh();
     } catch (error) {
       toast.error("Không phù hợp, Hãy thử lại!");
@@ -189,18 +192,6 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
     header: "Role",
     cell: RoleCell,
   },
-  {
-    accessorKey: "accounts.type",
-    header: "Account Type",
-    cell: ({ row }) => {
-      const isBanned = row.original.ban === true;
-      return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
-          {row.original.accounts[0]?.type || ""}
-        </div>
-      );
-    },
-  },
 
   {
     accessorKey: "accounts.provider",
@@ -227,7 +218,22 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
       );
     },
   },
-
+  {
+    accessorKey: "isCitizen",
+    header: "Định danh",
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      return (
+        <div className={isBanned ? "line-through text-gray-400" : ""}>
+          {row.original.isCitizen ? (
+            <ShieldCheck className="text-green-600" />
+          ) : (
+            <ShieldOff className="text-red-600" />
+          )}
+        </div>
+      );
+    },
+  },
   {
     accessorKey: "isTwoFactorEnabled",
     header: "IsTwoFactorEnabled",
@@ -235,7 +241,11 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
       const isBanned = row.original.ban === true;
       return (
         <div className={isBanned ? "line-through text-gray-400" : ""}>
-          {String(row.original.isTwoFactorEnabled)}
+          {row.original.isTwoFactorEnabled ? (
+            <Lock className="text-red-600" />
+          ) : (
+            <Unlock className="text-green-600" />
+          )}
         </div>
       );
     },
@@ -244,6 +254,18 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
   {
     accessorKey: "ban",
     header: "Ban",
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      return (
+        <div>
+          {isBanned ? (
+            <Ban className="text-red-600" />
+          ) : (
+            <Shield className="text-green-600" />
+          )}
+        </div>
+      );
+    },
   },
 
   {
