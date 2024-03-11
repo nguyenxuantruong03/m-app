@@ -6,15 +6,14 @@ import interactionPlugin, {
   DropArg,
 } from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { EventSourceInput } from "@fullcalendar/core/index.js";
-import { ShieldAlert, Check } from "lucide-react";
+import { ShieldAlert } from "lucide-react";
 import multiMonthPlugin from "@fullcalendar/multimonth";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useParams } from "next/navigation";
-import { format } from "date-fns";
 
 interface Event {
   title: string;
@@ -24,7 +23,7 @@ interface Event {
 }
 
 export default function Home() {
-  const params = useParams()
+  const params = useParams();
   const [events, setEvents] = useState([
     { title: "Sinh nhật", id: "1" },
     { title: "Tăng ca", id: "2" },
@@ -44,36 +43,45 @@ export default function Home() {
     id: 0,
   });
 
+  // Use a ref to track whether draggable setup has been done
+  const draggableSetupRef = useRef(false);
+
   useEffect(() => {
-    let draggableEl = document.getElementById("draggable-el");
-    if (draggableEl) {
-      new Draggable(draggableEl, {
-        itemSelector: ".fc-event",
-        eventData: function (eventEl) {
-          let title = eventEl.getAttribute("title");
-          let id = eventEl.getAttribute("data");
-          let start = eventEl.getAttribute("start");
-          return { title, id, start };
-        },
-      });
+    // Perform draggable setup only if it hasn't been done before
+    if (!draggableSetupRef.current) {
+      let draggableEl = document.getElementById("draggable-el");
+      if (draggableEl) {
+        new Draggable(draggableEl, {
+          itemSelector: ".fc-event",
+          eventData: function (eventEl) {
+            let title = eventEl.getAttribute("title");
+            let id = eventEl.getAttribute("data");
+            let start = eventEl.getAttribute("start");
+            return { title, id, start };
+          },
+        });
+        // Update ref to indicate that draggable setup has been done
+        draggableSetupRef.current = true;
+        console.log("addEvent function attached");
+      }
     }
   }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`/api/${params.storeId}/eventcalendar`);
-        console.log('Data received:', response.data);
+        const response = await axios.get(
+          `/api/${params.storeId}/eventcalendar`
+        );
+        console.log("Data received:", response.data);
         // Update state with the received events
         setAllEvents(response.data);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       }
     };
     fetchData(); // Call the asynchronous function
   }, [params.storeId]);
-  
-  
 
   // Thêm state mới
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -86,26 +94,29 @@ export default function Home() {
         today.getDate() === selectedDate.getDate() &&
         today.getMonth() === selectedDate.getMonth() &&
         today.getFullYear() === selectedDate.getFullYear();
-  
+
       if (isToday) {
         try {
           const formattedDate = selectedDate.toISOString();
-          const response = await axios.post(`/api/${params.storeId}/eventcalendar`, {
-            title: '✅',
-            start: formattedDate,
-            allDay: true,
-          });
+          const response = await axios.post(
+            `/api/${params.storeId}/eventcalendar`,
+            {
+              title: "✅",
+              start: formattedDate,
+              allDay: true,
+            }
+          );
           // Update state with the new event from the response
           setAllEvents((prevEvents) => [...prevEvents, response.data]);
           setShowCheckButton(false);
         } catch (error) {
           // Handle request error
-          console.error('Error adding event:', error);
-          toast.error('Đã xảy ra lỗi khi thêm sự kiện.');
+          console.error("Error adding event:", error);
+          toast.error("Đã xảy ra lỗi khi thêm sự kiện.");
         }
       } else {
         // Show a message or handle the case where it's not today
-        toast.error('Không thể điểm danh cho ngày khác!');
+        toast.error("Không thể điểm danh cho ngày khác!");
       }
     }
   };
@@ -118,56 +129,81 @@ export default function Home() {
   };
 
   function addEvent(data: DropArg) {
-    const dateKey = data.date.toISOString().split('T')[0]; // Get the date in "YYYY-MM-DD" format
-  
-    // Check if an event with the same title already exists for the selected day
-    const isDuplicateEvent = allEvents.some(event => {
-      const eventDateKey = new Date(event.start).toISOString().split('T')[0];
-      return eventDateKey === dateKey && event.title === newEvent.title;
-    });
-  
-    // If a duplicate event is found, reject the drop
-    if (isDuplicateEvent) {
-      // Display an error message or perform other actions
-      console.warn(`Duplicate event not allowed for ${dateKey}.`);
-      return;
-    }
-  
-    // Check the number of existing events for the selected day
-    const eventsForDay = allEvents.filter(event => {
-      const eventDateKey = new Date(event.start).toISOString().split('T')[0];
-      return eventDateKey === dateKey;
-    });
-  
-    // Check if the limit for events on that day is reached
-    const eventLimit = 2;
-  
-    if (eventsForDay.length >= eventLimit) {
-      // If the limit is reached and the new event is not a duplicate, remove the earliest event to make room for the new one
-      if (!isDuplicateEvent) {
-        const earliestEvent = eventsForDay.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())[0];
-        const updatedEvents = allEvents.filter(event => event.id !== earliestEvent.id);
-        setAllEvents([...updatedEvents, { ...newEvent, start: data.date.toISOString(), title: data.draggedEl.innerText, allDay: data.allDay, id: new Date().getTime() }]);
+    // Check if the event is being dropped (not clicked)
+    if (data.date) {
+      const event = {
+        ...newEvent,
+        start: data.date.toISOString(),
+        title: data.draggedEl.innerText,
+        allDay: data.allDay,
+        id: new Date().getTime(),
+      };
+
+      // Check if the event already exists
+      const eventExists = allEvents.some(
+        (existingEvent) =>
+          existingEvent.title === event.title &&
+          existingEvent.start === event.start
+      );
+
+      if (!eventExists) {
+        // Assuming you have a storeId variable available
+        const storeId = params.storeId;
+
+        // Make a POST request to add the event to the database
+        axios
+          .post(`/api/${storeId}/eventcalendar`, event)
+          .then((response) => {
+            // Update state with the new event from the response
+            setAllEvents((prevEvents) => [...prevEvents, response.data]);
+          })
+          .catch((error) => {
+            // Handle request error
+            console.error("Error adding event:", error);
+            toast.error("Đã xảy ra lỗi khi thêm sự kiện.");
+          });
       }
-    } else {
-      // If the limit is not reached and no duplicate event, add the new event
-      setAllEvents([...allEvents, { ...newEvent, start: data.date.toISOString(), title: data.draggedEl.innerText, allDay: data.allDay, id: new Date().getTime() }]);
     }
   }
-  
 
   function handleDeleteModal(data: { event: { id: string } }) {
+    console.log("Event ID:", data.event.id);
     setShowDeleteModal(true);
     setIdToDelete(Number(data.event.id));
   }
+  
 
   function handleDelete() {
-    setAllEvents(
-      allEvents.filter((event) => Number(event.id) !== Number(idToDelete))
-    );
-    setShowDeleteModal(false);
-    setIdToDelete(null);
+    if (idToDelete !== null) {
+      // Assuming you have a storeId variable available
+      const storeId = params.storeId;
+  
+      // Convert idToDelete to a string before making the DELETE request
+      const eventIdToDelete = idToDelete
+      console.log("Deleting Event with ID:", eventIdToDelete);
+      // Make a DELETE request to delete the event from the database
+      axios
+        .delete(`/api/${storeId}/eventcalendar`, { data: { eventId: eventIdToDelete } })
+        .then(() => {
+          // Update state to remove the deleted event
+          setAllEvents((prevEvents) =>
+            prevEvents.filter((event) => Number(event.id) !== Number(idToDelete))
+          );
+          setShowDeleteModal(false);
+          setIdToDelete(null);
+        })
+        .catch((error) => {
+          // Handle request error
+          console.error("Error deleting event:", error);
+          toast.error("Đã xảy ra lỗi khi xóa sự kiện.");
+        });
+    } else {
+      // Handle the case where idToDelete is null
+      console.error("Invalid idToDelete:", idToDelete);
+    }
   }
+  
+  
 
   function handleCloseModal() {
     setShowModal(false);

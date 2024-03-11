@@ -4,15 +4,14 @@ import { UserRole } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
-    try {
-      const eventCalendar = await prismadb.eventCalendar.findMany();
-      return NextResponse.json(eventCalendar);
-    } catch (error) {
-      console.error("[EVENTCALENDAR_GET] Error:", error);
-      return new NextResponse("Internal error", { status: 500 });
-    }
+  try {
+    const eventCalendar = await prismadb.eventCalendar.findMany();
+    return NextResponse.json(eventCalendar);
+  } catch (error) {
+    console.error("[EVENTCALENDAR_GET] Error:", error);
+    return new NextResponse("Internal error", { status: 500 });
   }
-  
+}
 
 export async function POST(
   req: Request,
@@ -36,8 +35,8 @@ export async function POST(
       where: {
         id: params.storeId,
         userId: {
-            equals: UserRole.USER,
-          }
+          equals: UserRole.USER,
+        },
       },
     });
 
@@ -56,6 +55,50 @@ export async function POST(
     return NextResponse.json(eventCalendar);
   } catch (error) {
     console.log("[EVENTCALENDAR_POST]", error);
+    return new NextResponse("Internal error", { status: 500 });
+  }
+}
+
+// Import necessary dependencies and modules
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: { storeId: string } }
+) {
+  try {
+    const userId = await currentUser();
+
+    // Extract event ID from the request body
+    const { eventId } = await req.json();
+
+    if (!eventId || !params.storeId) {
+      return new NextResponse("Invalid Error!", { status: 403 });
+    }
+
+    // Check if the user has access to the specified store
+    const storeByUserId = await prismadb.store.findFirst({
+      where: {
+        id: params.storeId,
+        userId: {
+          equals: UserRole.USER,
+        },
+      },
+    });
+
+    if (!storeByUserId) {
+      return new NextResponse("Unauthorized", { status: 405 });
+    }
+
+    // Delete the event with the specified ID
+    const deletedEvent = await prismadb.eventCalendar.delete({
+      where: {
+        id: (eventId),
+      },
+    });
+
+    return NextResponse.json(deletedEvent);
+  } catch (error) {
+    console.log("[EVENTCALENDAR_DELETE]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }
