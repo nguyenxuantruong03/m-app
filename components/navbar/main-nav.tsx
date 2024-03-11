@@ -190,6 +190,11 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
       label: "Nhân viên",
       active: pathname === `/${params.storeId}/managestaff`,
     },
+    {
+      href: `/${params.storeId}/attendancestaff`,
+      label: "Điểm danh",
+      active: pathname === `/${params.storeId}/attendancestaff`
+    },
   ]
 
   const settings =[

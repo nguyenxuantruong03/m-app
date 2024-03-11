@@ -23,6 +23,7 @@ model Store {
   orders        Order[]         @relation("StoreToOrder")
   // checkoutcash  Checkoutcash[]  @relation("StoreToCheckoutcash")
   productdetail ProductDetail[] @relation("StoreToDetailProductDetail")
+  eventcalendar EventCalendar[] @relation("StoreToEventCalendar")
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 }
@@ -267,7 +268,6 @@ model OrderItem {
   @@index([productId])
 }
 
-
 enum UserRole {
   ADMIN
   USER
@@ -307,11 +307,11 @@ enum MaritalStatus {
 }
 
 enum WorkingTime {
- Parttime4h
- Parttime8h
- Fulltime
- //Thời vụ
- SeasonalJob
+  Parttime4h
+  Parttime8h
+  Fulltime
+  //Thời vụ
+  SeasonalJob
 }
 
 model User {
@@ -351,6 +351,7 @@ model User {
   sentVeirifi           Boolean?               @default(false)
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
+  salary                Decimal?
 }
 
 model Account {
@@ -407,4 +408,15 @@ model TwoFactorConfirmation {
 
   @@unique([userId])
   @@index([userId])
+}
+
+model EventCalendar {
+  id      String   @id @default(cuid())
+  storeId String
+  store   Store    @relation("StoreToEventCalendar", fields: [storeId], references: [id])
+  title   String
+  start   DateTime
+  allDay  Boolean
+
+  @@index([storeId])
 }
