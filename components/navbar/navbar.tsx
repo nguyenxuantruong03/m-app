@@ -22,9 +22,10 @@ const Navbar = async () => {
   }
 
   const account = await getAccountByUserId(userId.id);
-  const imageCredentials = userId?.imageCredential[0] || undefined;
+  const imageCredentials = userId?.imageCredential[0];
   const isGitHubOrGoogleUser =
     account?.provider === "github" || account?.provider === "google";
+    const avatarImage =imageCredentials ||(imageCredentials ? imageCredentials[0] : null) ||userId?.image;
   const store = await prismadb.store.findMany({
     where: {
       userId: {
@@ -54,11 +55,11 @@ const Navbar = async () => {
         <div className="flex items-center space-x-4 mt-2 justify-center">
           <div className="group relative">
       {/* Ảnh đại diện */}
-            <Avatar>
-              {isGitHubOrGoogleUser && imageCredentials ? (
-                <AvatarImage src={imageCredentials} />
-              ) : userId?.image ? (
-                <AvatarImage src={userId.image} />
+          <Avatar>
+              {isGitHubOrGoogleUser && avatarImage ? (
+                <AvatarImage src={avatarImage} />
+              ) : avatarImage ? (
+                <AvatarImage src={avatarImage} />
               ) : (
                 <AvatarFallback className="bg-sky-500">
                   <User className="text-white" />

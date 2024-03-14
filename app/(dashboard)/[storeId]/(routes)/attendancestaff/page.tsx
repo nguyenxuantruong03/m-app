@@ -303,7 +303,7 @@ export default function Home() {
             });
         } else {
           // Notify the user that the limit is reached
-          toast.error("Đã quá số lần sự kiện trong 1 ngày. Không thể thêm :" + event.title);
+          toast.error("Đã quá số lần sự kiện trong 1 ngày. Không thể thêm: " + event.title);
           setIsAddingEvent(false);
         }
       }
