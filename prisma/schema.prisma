@@ -324,6 +324,7 @@ model User {
   password              String?
   role                  UserRole               @default(USER)
   accounts              Account[]
+  eventcalendar         EventCalendar[]
   //Ban user
   ban                   Boolean?
   banExpires            DateTime?
@@ -414,9 +415,16 @@ model EventCalendar {
   id      String   @id @default(cuid())
   storeId String
   store   Store    @relation("StoreToEventCalendar", fields: [storeId], references: [id])
-  title   String
-  start   DateTime
-  allDay  Boolean
+  userId            String
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attendancestart   String?
+  attendanceend     String?
+  title   String?
+  start   DateTime?
+  end     DateTime?
+  allDay  Boolean?
+  currentselectedDate DateTime? 
 
   @@index([storeId])
+  @@index([userId])
 }

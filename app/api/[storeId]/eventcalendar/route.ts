@@ -1,6 +1,6 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
-import { UserRole } from "@prisma/client";
+import { UserRole, WorkingTime } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -22,9 +22,16 @@ export async function POST(
 
     const body = await req.json();
 
-    const { title, start, allDay } = body;
+    const {
+      title,
+      start,
+      allDay,
+      currentselectedDate,
+      attendancestart,
+      attendanceend,
+    } = body;
 
-    if (!title || !start || !allDay) {
+    if (!start) {
       return new NextResponse("Invalid Error!", { status: 403 });
     }
     if (!params.storeId) {
@@ -43,12 +50,42 @@ export async function POST(
     if (!storeByUserId) {
       return new NextResponse("Unauthorized", { status: 405 });
     }
+
+    const user = await prismadb.user.findUnique({
+      where: { id: userId?.id },
+    });
+
+    // Calculate end based on working time
+    let endTime;
+    switch (user?.workingTime) {
+      case WorkingTime.Parttime4h:
+        endTime = new Date(start);
+        endTime.setHours(endTime.getHours() + 4);
+        break;
+      case WorkingTime.Parttime8h:
+      case WorkingTime.SeasonalJob:
+        endTime = new Date(start);
+        endTime.setHours(endTime.getHours() + 8);
+        break;
+      case WorkingTime.Fulltime:
+        endTime = new Date(start);
+        endTime.setHours(endTime.getHours() + 12);
+        break;
+      default:
+        return new NextResponse("Invalid working time", { status: 400 });
+    }
+
     const eventCalendar = await prismadb.eventCalendar.create({
       data: {
         title,
         start,
+        end: endTime,
         allDay,
         storeId: params.storeId,
+        currentselectedDate,
+        attendancestart,
+        attendanceend,
+        userId: user.id,
       },
     });
 
@@ -59,7 +96,6 @@ export async function POST(
   }
 }
 
-// Import necessary dependencies and modules
 
 export async function DELETE(
   req: Request,
@@ -92,7 +128,7 @@ export async function DELETE(
     // Delete the event with the specified ID
     const deletedEvent = await prismadb.eventCalendar.delete({
       where: {
-        id: (eventId),
+        id: eventId,
       },
     });
 

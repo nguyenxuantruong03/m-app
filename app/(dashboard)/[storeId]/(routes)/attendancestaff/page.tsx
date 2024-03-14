@@ -14,12 +14,16 @@ import multiMonthPlugin from "@fullcalendar/multimonth";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useParams } from "next/navigation";
-
+import { format, addHours, addMinutes, addSeconds } from "date-fns";
+import { utcToZonedTime } from "date-fns-tz";
+import { Button } from "@/components/ui/button";
 interface Event {
   title: string;
   start: Date | string;
   allDay: boolean;
   id: number;
+  attendancestart?: string;
+  attendanceend?: string;
 }
 
 export default function Home() {
@@ -35,13 +39,18 @@ export default function Home() {
   const [allEvents, setAllEvents] = useState<Event[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [idToDelete, setIdToDelete] = useState<number | null>(null);
+  const [idToDelete, setIdToDelete] = useState<string | null>(null);
   const [newEvent, setNewEvent] = useState<Event>({
     title: "",
     start: "",
     allDay: false,
     id: 0,
   });
+  const [isCheckingAttendanceStart, setIsCheckingAttendanceStart] =
+    useState(false);
+  const [isCheckingAttendanceEnd, setIsCheckingAttendanceEnd] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isAddingEvent, setIsAddingEvent] = useState(false);
 
   // Use a ref to track whether draggable setup has been done
   const draggableSetupRef = useRef(false);
@@ -62,7 +71,6 @@ export default function Home() {
         });
         // Update ref to indicate that draggable setup has been done
         draggableSetupRef.current = true;
-        console.log("addEvent function attached");
       }
     }
   }, []);
@@ -73,7 +81,6 @@ export default function Home() {
         const response = await axios.get(
           `/api/${params.storeId}/eventcalendar`
         );
-        console.log("Data received:", response.data);
         // Update state with the received events
         setAllEvents(response.data);
       } catch (error) {
@@ -85,38 +92,154 @@ export default function Home() {
 
   // Thêm state mới
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [showCheckButton, setShowCheckButton] = useState(false);
 
-  const handleCheckButtonClick = async () => {
+  const handleCheckAttendanceStart = async () => {
     if (selectedDate) {
+      setIsCheckingAttendanceStart(true);
+      setIsCheckingAttendanceEnd(true);
       const today = new Date();
       const isToday =
         today.getDate() === selectedDate.getDate() &&
         today.getMonth() === selectedDate.getMonth() &&
         today.getFullYear() === selectedDate.getFullYear();
 
-      if (isToday) {
-        try {
-          const formattedDate = selectedDate.toISOString();
+      if (!isToday) {
+        // Show a message or handle the case where it's not today
+        toast.error("Không thể điểm danh cho ngày khác!");
+        setIsCheckingAttendanceStart(false);
+        setIsCheckingAttendanceEnd(false);
+        return;
+      }
+
+      try {
+        const existingEvent = allEvents.find((event) => {
+          const eventDate = new Date(event.start);
+          return (
+            event.attendancestart === "❎" &&
+            eventDate.getDate() === selectedDate.getDate() &&
+            eventDate.getMonth() === selectedDate.getMonth() &&
+            eventDate.getFullYear() === selectedDate.getFullYear()
+          );
+        });
+
+        if (existingEvent) {
+          // If attendance record already exists for the day, show a message
+          toast.error("Đã điểm danh cho ngày này!");
+        } else {
+          const now = new Date();
+          const currentDateTime = addSeconds(
+            addMinutes(
+              addHours(now, selectedDate.getHours()),
+              selectedDate.getMinutes()
+            ),
+            selectedDate.getSeconds()
+          );
+          const vnTimeZone = "Asia/Ho_Chi_Minh";
+          const zonedDateTime = utcToZonedTime(currentDateTime, vnTimeZone);
+          const formattedDate = format(
+            zonedDateTime,
+            "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"
+          );
+
           const response = await axios.post(
             `/api/${params.storeId}/eventcalendar`,
             {
-              title: "✅",
+              attendancestart: "❎",
+              title: "❎",
               start: formattedDate,
-              allDay: true,
             }
           );
+
           // Update state with the new event from the response
           setAllEvents((prevEvents) => [...prevEvents, response.data]);
-          setShowCheckButton(false);
-        } catch (error) {
-          // Handle request error
-          console.error("Error adding event:", error);
-          toast.error("Đã xảy ra lỗi khi thêm sự kiện.");
+          toast.success("Điểm danh thành công.");
+          console.log("Check", response.data);
         }
-      } else {
+        setIsCheckingAttendanceStart(false);
+        setIsCheckingAttendanceEnd(false);
+      } catch (error) {
+        // Handle request error
+        setIsCheckingAttendanceStart(false);
+        setIsCheckingAttendanceEnd(false);
+        console.error("Error adding event:", error);
+        toast.error("Đã xảy ra lỗi khi thêm sự kiện.");
+      }
+    }
+  };
+
+  const handleCheckAttendanceEnd = async () => {
+    if (selectedDate) {
+      setIsCheckingAttendanceEnd(true);
+      setIsCheckingAttendanceStart(true);
+      const today = new Date();
+      const isToday =
+        today.getDate() === selectedDate.getDate() &&
+        today.getMonth() === selectedDate.getMonth() &&
+        today.getFullYear() === selectedDate.getFullYear();
+
+      if (!isToday) {
         // Show a message or handle the case where it's not today
-        toast.error("Không thể điểm danh cho ngày khác!");
+        toast.error("Không thể kết thúc cho ngày khác!");
+        setIsCheckingAttendanceEnd(false);
+        setIsCheckingAttendanceStart(false);
+        return;
+      }
+
+      try {
+        // First, make a GET request to check if an attendance record already exists
+        await axios.get(`/api/${params.storeId}/eventcalendarend`);
+
+        const existingEvent = allEvents.find((event) => {
+          const eventDate = new Date(event.start);
+          return (
+            event.attendanceend === "✅" &&
+            eventDate.getDate() === selectedDate.getDate() &&
+            eventDate.getMonth() === selectedDate.getMonth() &&
+            eventDate.getFullYear() === selectedDate.getFullYear()
+          );
+        });
+
+        if (existingEvent) {
+          // If attendance record already exists for the day, show a message
+          toast.error("Đã kết thúc cho ngày này!");
+        } else {
+          // Continue with the POST request if no existing event is found
+          const now = new Date();
+          const currentDateTime = addSeconds(
+            addMinutes(
+              addHours(now, selectedDate.getHours()),
+              selectedDate.getMinutes()
+            ),
+            selectedDate.getSeconds()
+          );
+          const vnTimeZone = "Asia/Ho_Chi_Minh";
+          const zonedDateTime = utcToZonedTime(currentDateTime, vnTimeZone);
+          const formattedDate = format(
+            zonedDateTime,
+            "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"
+          );
+
+          const postResponse = await axios.post(
+            `/api/${params.storeId}/eventcalendarend`,
+            {
+              attendanceend: "✅",
+              title: "✅",
+              start: formattedDate,
+            }
+          );
+
+          // Update state with the new event from the response
+          setAllEvents((prevEvents) => [...prevEvents, postResponse.data]);
+          toast.success("Điểm danh thành công.");
+        }
+        setIsCheckingAttendanceEnd(false);
+        setIsCheckingAttendanceStart(false);
+      } catch (error) {
+        // Handle request error
+        console.error("Error checking or adding event:", error);
+        toast.error("Chưa đến lúc để kêt thúc!");
+        setIsCheckingAttendanceEnd(false);
+        setIsCheckingAttendanceStart(false);
       }
     }
   };
@@ -124,19 +247,22 @@ export default function Home() {
   // Hàm xử lý khi ngày được chọn trên lịch
   const handleDateClick = (arg: { date: Date; allDay: boolean }) => {
     setSelectedDate(arg.date);
-    setShowCheckButton(true);
     // Hiển thị modal hoặc thực hiện hành động khác nếu cần
   };
 
   function addEvent(data: DropArg) {
     // Check if the event is being dropped (not clicked)
     if (data.date) {
+      const draggedDate = data.draggedEl.getAttribute("data-date");
+      const eventDate = draggedDate ? new Date(draggedDate) : data.date;
+      const currentTime = new Date();
       const event = {
         ...newEvent,
-        start: data.date.toISOString(),
+        start: eventDate.toISOString(),
         title: data.draggedEl.innerText,
         allDay: data.allDay,
         id: new Date().getTime(),
+        currentselectedDate: currentTime,
       };
 
       // Check if the event already exists
@@ -150,62 +276,88 @@ export default function Home() {
         // Assuming you have a storeId variable available
         const storeId = params.storeId;
 
-        // Make a POST request to add the event to the database
-        axios
-          .post(`/api/${storeId}/eventcalendar`, event)
-          .then((response) => {
-            // Update state with the new event from the response
-            setAllEvents((prevEvents) => [...prevEvents, response.data]);
-          })
-          .catch((error) => {
-            // Handle request error
-            console.error("Error adding event:", error);
-            toast.error("Đã xảy ra lỗi khi thêm sự kiện.");
-          });
+        // Check the number of events for the current date
+        const eventsCountForCurrentDate = allEvents.reduce(
+          (count, existingEvent) =>
+            new Date(existingEvent.start).toDateString() ===
+            eventDate.toDateString()
+              ? count + 1
+              : count,
+          0
+        );
+        setIsAddingEvent(true); // Bắt đầu xử lý POST request
+        if (eventsCountForCurrentDate < 3) {
+          // Make a POST request to add the event to the database
+          axios
+            .post(`/api/${storeId}/eventcalendar`, event)
+            .then((response) => {
+              toast.success("Thêm thành công: " + event.title);
+              setAllEvents((prevEvents) => [...prevEvents, response.data]);
+              setIsAddingEvent(false);
+            })
+            .catch((error) => {
+              // Handle request error
+              console.error("Error adding event:", error);
+              toast.error("Đã xảy ra lỗi khi thêm sự kiện.");
+              setIsAddingEvent(false);
+            });
+        } else {
+          // Notify the user that the limit is reached
+          toast.error("Đã quá số lần sự kiện trong 1 ngày. Không thể thêm :" + event.title);
+          setIsAddingEvent(false);
+        }
       }
     }
   }
 
   function handleDeleteModal(data: { event: { id: string } }) {
-    console.log("Event ID:", data.event.id);
+    // Set the idToDelete as a string
     setShowDeleteModal(true);
-    setIdToDelete(Number(data.event.id));
+    setIdToDelete(data.event.id);
   }
-  
 
   function handleDelete() {
     if (idToDelete !== null) {
+      setIsDeleting(true);
       // Assuming you have a storeId variable available
       const storeId = params.storeId;
-  
+
       // Convert idToDelete to a string before making the DELETE request
-      const eventIdToDelete = idToDelete
-      console.log("Deleting Event with ID:", eventIdToDelete);
+      const eventIdToDelete = idToDelete;
       // Make a DELETE request to delete the event from the database
       axios
-        .delete(`/api/${storeId}/eventcalendar`, { data: { eventId: eventIdToDelete } })
+        .delete(`/api/${storeId}/eventcalendar`, {
+          data: { eventId: eventIdToDelete },
+        })
         .then(() => {
           // Update state to remove the deleted event
-          setAllEvents((prevEvents) =>
-            prevEvents.filter((event) => Number(event.id) !== Number(idToDelete))
+          setAllEvents(
+            allEvents.filter((event) => String(event.id) !== String(idToDelete))
           );
           setShowDeleteModal(false);
           setIdToDelete(null);
+          toast.success("Xóa sự kiện thành công.");
         })
         .catch((error) => {
           // Handle request error
           console.error("Error deleting event:", error);
           toast.error("Đã xảy ra lỗi khi xóa sự kiện.");
+        })
+        .finally(() => {
+          setIsDeleting(false); // Set loading state back to false
         });
     } else {
       // Handle the case where idToDelete is null
       console.error("Invalid idToDelete:", idToDelete);
     }
   }
-  
-  
 
   function handleCloseModal() {
+    // Check if deletion is in progress, disable cancel button if true
+    if (isDeleting) {
+      return;
+    }
+
     setShowModal(false);
     setNewEvent({
       title: "",
@@ -234,7 +386,7 @@ export default function Home() {
               headerToolbar={{
                 left: "prev,next today",
                 center: "title",
-                right: "dayGrid,timeGridWeek,dayGridMonth,multiMonthYear",
+                right: "timeGridWeek,dayGridMonth,multiMonthYear",
               }}
               events={allEvents as EventSourceInput}
               nowIndicator={true}
@@ -254,7 +406,9 @@ export default function Home() {
             <h1 className="font-bold text-lg text-center">Drag Event</h1>
             {events.map((event) => (
               <div
-                className="fc-event border-2 p-1 m-2 w-full rounded-md ml-auto text-center bg-white"
+                className={`fc-event border-2 p-1 m-2 w-full rounded-md ml-auto text-center bg-white cursor-pointer ${
+                  isAddingEvent ? "pointer-events-none opacity-50" : "" // Disable khi đang xử lý
+                }`}
                 title={event.title}
                 key={event.id}
               >
@@ -324,22 +478,41 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                      <button
-                        type="button"
-                        className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm 
-                      font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+                      <Button
+                        className={`inline-flex w-full justify-center rounded-md 
+                        ${
+                          isDeleting
+                            ? "bg-red-500 cursor-not-allowed"
+                            : "bg-red-600"
+                        }
+                        px-3 py-2 text-sm font-semibold text-white shadow-sm 
+                        ${isDeleting ? "opacity-50" : "hover:bg-red-500"}
+                        sm:ml-3 sm:w-auto`}
                         onClick={handleDelete}
+                        disabled={isDeleting}
                       >
-                        Delete
-                      </button>
-                      <button
-                        type="button"
-                        className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 
-                      shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                        {isDeleting ? "Deleting..." : "Delete"}
+                      </Button>
+                      <Button
+                        className={`mt-3 inline-flex w-full justify-center rounded-md 
+                        ${
+                          isDeleting
+                            ? "bg-white cursor-not-allowed"
+                            : "bg-gray-900"
+                        }
+                        px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 
+                        ring-inset ring-gray-300 
+                        ${
+                          isDeleting
+                            ? "opacity-50 text-black"
+                            : "hover:bg-gray-800"
+                        }
+                        sm:mt-0 sm:w-auto`}
                         onClick={handleCloseModal}
+                        disabled={isDeleting}
                       >
                         Cancel
-                      </button>
+                      </Button>
                     </div>
                   </Dialog.Panel>
                 </Transition.Child>
@@ -347,16 +520,25 @@ export default function Home() {
             </div>
           </Dialog>
         </Transition.Root>
-        {showCheckButton && (
-          <div className="fixed bottom-4 right-4">
-            <button
-              onClick={handleCheckButtonClick}
-              className="bg-violet-600 text-white px-4 py-2 rounded-md"
-            >
-              Điểm danh
-            </button>
-          </div>
-        )}
+        <div className="fixed bottom-4 right-32">
+          <Button
+            onClick={handleCheckAttendanceStart}
+            className="px-4 py-2 rounded-md"
+            disabled={isCheckingAttendanceStart}
+          >
+            Điểm danh
+          </Button>
+        </div>
+
+        <div className="fixed bottom-4 right-4">
+          <Button
+            onClick={handleCheckAttendanceEnd}
+            className="px-4 py-2 rounded-md"
+            disabled={isCheckingAttendanceEnd}
+          >
+            Kết thúc
+          </Button>
+        </div>
       </main>
     </>
   );

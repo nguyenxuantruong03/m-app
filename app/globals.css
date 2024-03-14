@@ -84,17 +84,16 @@ body,
 }
 
 .fc-daygrid-event {
-  background-color: transparent;
+  background-color: rgba(0, 0, 0, 0.1);
   border: none;
 }
 .fc-h-event .fc-event-title-container {
   text-align: center;
 }
 .fc .fc-daygrid-day-events {
-  margin-top: 25px;
+  margin-top: 15px;
 }
 .fc-h-event .fc-event-title {
   font-size: 25px;
   color: #333;
 }
-

@@ -12,7 +12,6 @@
   "dependencies": {
     "@auth/prisma-adapter": "^1.4.0",
     "@fullcalendar/core": "^6.1.11",
-    "@fullcalendar/daygrid": "^6.1.11",
     "@fullcalendar/interaction": "^6.1.11",
     "@fullcalendar/multimonth": "^6.1.11",
     "@fullcalendar/react": "^6.1.11",
@@ -43,6 +42,7 @@
     "clsx": "^1.2.1",
     "cmdk": "^0.2.0",
     "date-fns": "^2.30.0",
+    "date-fns-tz": "^2.0.1",
     "eslint": "8.44.0",
     "eslint-config-next": "^14.1.0",
     "leaflet": "^1.9.4",
