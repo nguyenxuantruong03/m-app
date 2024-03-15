@@ -10,17 +10,17 @@ import { useRouter } from "next/navigation";
 
 import { Plus } from "lucide-react";
 
-import { CouponColumn, columns } from "./columns";
+import { TaxRateColumn, columns } from "./columns";
 
 import { ApiList } from "@/components/ui/api-list";
 import { UserRole } from "@prisma/client";
 import { useCurrentRole } from "@/hooks/use-current-role";
 
-interface CouponClientProps{
-    data: CouponColumn[]
+interface TaxRateClientProps{
+    data: TaxRateColumn[]
 }
 
-const CouponClient:React.FC<CouponClientProps> = ({data}) => {
+const TaxRateClient:React.FC<TaxRateClientProps> = ({data}) => {
     const router = useRouter()
     const params = useParams()
     const role = useCurrentRole();
@@ -31,9 +31,9 @@ const CouponClient:React.FC<CouponClientProps> = ({data}) => {
         <div className="flex items-center justify-between">
             <Heading 
             title ={`Sản phẩm (${data.length})`}
-            description="Quản lý mã giảm giá"
+            description="Quản lý thuế"
             />
-            <Button onClick={() => router.push(`/${params.storeId}/coupon/new`)}>
+            <Button onClick={() => router.push(`/${params.storeId}/taxrate/new`)}>
                 <Plus className="mr-2 h-4 w-4" />
                 Thêm mới 
             </Button>
@@ -41,15 +41,15 @@ const CouponClient:React.FC<CouponClientProps> = ({data}) => {
         <Separator />
         <DataTable searchKey="name" columns={columns} data={data} />
         {showAPIRole && (
-        <Heading title="Api" description="API calls for Coupon" />
+        <Heading title="Api" description="API calls for Taxrate" />
         )}
         <Separator />
         <ApiList 
-        entityIdName="couponId"
-        entityName="coupon"
+        entityIdName="taxrateId"
+        entityName="taxrate"
         />
         </>
      );
 }
  
-export default CouponClient;
+export default TaxRateClient;

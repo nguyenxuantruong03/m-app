@@ -200,6 +200,11 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
       label: "Mã giảm giá",
       active: pathname === `/${params.storeId}/coupon`
     },
+    {
+      href: `/${params.storeId}/taxrate`,
+      label: "Thuế",
+      active: pathname === `/${params.storeId}/taxrate`
+    },
   ]
 
   const settings =[

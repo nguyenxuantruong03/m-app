@@ -22,6 +22,7 @@ model Store {
   product       Product[]       @relation("StoreToProduct")
   orders        Order[]         @relation("StoreToOrder")
   coupon        Coupon[]        @relation("StoreToCoupon")
+  taxrate       TaxRate[]       @relation("StoreToTaxRate")
   // checkoutcash  Checkoutcash[]  @relation("StoreToCheckoutcash")
   productdetail ProductDetail[] @relation("StoreToDetailProductDetail")
   eventcalendar EventCalendar[] @relation("StoreToEventCalendar")
@@ -304,6 +305,27 @@ model ImageCoupon {
   updatedAt DateTime @updatedAt
 
   @@index([couponId])
+}
+
+enum TaxType {
+  vat
+  sales_tax
+}
+
+model TaxRate {
+  id          String   @id @default(uuid())
+  storeId     String
+  store       Store    @relation("StoreToTaxRate", fields: [storeId], references: [id])
+  name        String
+  description String
+  percentage  Int
+  inclusive   Boolean
+  active      Boolean
+  taxtype     TaxType?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([storeId])
 }
 
 enum UserRole {
