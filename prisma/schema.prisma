@@ -21,6 +21,7 @@ model Store {
   colors        Color[]         @relation("StoreToColor")
   product       Product[]       @relation("StoreToProduct")
   orders        Order[]         @relation("StoreToOrder")
+  coupon        Coupon[]        @relation("StoreToCoupon")
   // checkoutcash  Checkoutcash[]  @relation("StoreToCheckoutcash")
   productdetail ProductDetail[] @relation("StoreToDetailProductDetail")
   eventcalendar EventCalendar[] @relation("StoreToEventCalendar")
@@ -268,6 +269,43 @@ model OrderItem {
   @@index([productId])
 }
 
+enum Duration {
+  forever
+  once
+  repeating
+}
+
+model Coupon {
+  id             String        @id @default(uuid())
+  storeId        String
+  store          Store         @relation("StoreToCoupon", fields: [storeId], references: [id])
+  name           String?
+  description    String?
+  duration       Duration?
+  durationinmoth Int?
+  percent        Int?
+  imagecoupon    ImageCoupon[]
+  maxredemptions Int?
+  redeemby       DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([storeId])
+}
+
+model ImageCoupon {
+  id String @id @default(uuid())
+
+  couponId String
+  coupon   Coupon @relation(fields: [couponId], references: [id], onDelete: Cascade)
+
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([couponId])
+}
+
 enum UserRole {
   ADMIN
   USER
@@ -412,18 +450,18 @@ model TwoFactorConfirmation {
 }
 
 model EventCalendar {
-  id      String   @id @default(cuid())
-  storeId String
-  store   Store    @relation("StoreToEventCalendar", fields: [storeId], references: [id])
-  userId            String
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  attendancestart   String?
-  attendanceend     String?
-  title   String?
-  start   DateTime?
-  end     DateTime?
-  allDay  Boolean?
-  currentselectedDate DateTime? 
+  id                  String    @id @default(cuid())
+  storeId             String
+  store               Store     @relation("StoreToEventCalendar", fields: [storeId], references: [id])
+  userId              String
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attendancestart     String?
+  attendanceend       String?
+  title               String?
+  start               DateTime?
+  end                 DateTime?
+  allDay              Boolean?
+  currentselectedDate DateTime?
 
   @@index([storeId])
   @@index([userId])

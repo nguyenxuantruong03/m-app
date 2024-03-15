@@ -55,8 +55,8 @@ const formSchema = z.object({
   maritalStatus: z.string().min(1),
   workingTime: z.string().min(1),
   isCitizen: z.boolean().default(false).optional(),
-  dateRange: z.string(),
-  dateofbirth: z.string(),
+  dateRange: z.date().nullable(),
+  dateofbirth: z.union([z.date().nullable(), z.string().nullable()]),
 });
 
 type ManageStaffFormValues = z.infer<typeof formSchema>;
@@ -72,6 +72,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const isEditing = !!initialData;
 
   const title = "Edit";
   const description = "Edit";
@@ -91,8 +92,12 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
       maritalStatus: "",
       workingTime: "",
       isCitizen: false,
-      dateRange: "",
-      dateofbirth: "",
+      dateRange: initialData.dateRange
+      ? new Date(initialData.dateRange)
+      : null,
+      dateofbirth: initialData.dateofbirth
+      ? new Date(initialData.dateofbirth)
+      : null
     },
   });
 
@@ -254,12 +259,17 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                     <Input
                       type="date"
                       disabled={loading}
-                      value={format(new Date(field.value), "yyyy-MM-dd")}
+                      value={
+                        field.value // Kiểm tra nếu field.value không phải là null
+                          ? isEditing
+                            ? field.value instanceof Date
+                              ? field.value.toISOString().split("T")[0] // Cho patch
+                              : field.value // Nếu không phải Date, trả về giá trị hiện tại
+                            : format(new Date(field.value), "yyyy-MM-dd") // Cho post
+                          : "" // Giá trị mặc định nếu field.value là null
+                      }
                       onChange={(e) => {
-                        const isoFormattedDate = new Date(
-                          e.target.value
-                        ).toISOString();
-                        field.onChange(isoFormattedDate);
+                        field.onChange(e.target.value);
                       }}
                     />
                   </FormControl>
@@ -295,12 +305,17 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                     <Input
                       type="date"
                       disabled={loading}
-                      value={format(new Date(field.value), "yyyy-MM-dd")}
+                      value={
+                        field.value // Kiểm tra nếu field.value không phải là null
+                          ? isEditing
+                            ? field.value instanceof Date
+                              ? field.value.toISOString().split("T")[0] // Cho patch
+                              : field.value // Nếu không phải Date, trả về giá trị hiện tại
+                            : format(new Date(field.value), "yyyy-MM-dd") // Cho post
+                          : "" // Giá trị mặc định nếu field.value là null
+                      }
                       onChange={(e) => {
-                        const isoFormattedDate = new Date(
-                          e.target.value
-                        ).toISOString();
-                        field.onChange(isoFormattedDate);
+                        field.onChange(e.target.value);
                       }}
                     />
                   </FormControl>

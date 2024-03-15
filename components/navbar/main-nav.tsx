@@ -195,6 +195,11 @@ const MainNav = ({className,...props}:React.HTMLAttributes<HTMLElement>) => {
       label: "Điểm danh",
       active: pathname === `/${params.storeId}/attendancestaff`
     },
+    {
+      href: `/${params.storeId}/coupon`,
+      label: "Mã giảm giá",
+      active: pathname === `/${params.storeId}/coupon`
+    },
   ]
 
   const settings =[
