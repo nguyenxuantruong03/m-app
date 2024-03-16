@@ -22,6 +22,13 @@ const MainNav = ({
       active: pathname === `/${params.storeId}`,
     },
   ];
+  const datastatistics = [
+    {
+      href: `/${params.storeId}/datastatistics`,
+      label: "Thống kê dữ liệu",
+      active: pathname === `/${params.storeId}/datastatistics`,
+    },
+  ];
   const billboards = [
     {
       href: `/${params.storeId}/billboards`,
@@ -239,6 +246,35 @@ const MainNav = ({
             <AccordionTrigger>Tổng quan</AccordionTrigger>
             <AccordionContent>
               {routes.map((route) => (
+                <Link
+                  key={route.href}
+                  href={route.href}
+                  className={cn(
+                    "text-md font-medium transition-colors hover:text-primary grid grid-rows-1",
+                    route.active
+                      ? "text-black dark:text-white"
+                      : "text-muted-foreground"
+                  )}
+                >
+                  {route.label}
+                </Link>
+              ))}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </nav>
+      {/* Data statistics */}
+      <nav
+        className={cn(
+          "flex items-center space-x-4 lg:space-x-6 space-y-4",
+          className
+        )}
+      >
+        <Accordion type="single" collapsible className="w-full">
+          <AccordionItem value="item-1">
+            <AccordionTrigger>Thống kê dữ liệu</AccordionTrigger>
+            <AccordionContent>
+              {datastatistics.map((route) => (
                 <Link
                   key={route.href}
                   href={route.href}
