@@ -23,6 +23,7 @@ model Store {
   orders        Order[]         @relation("StoreToOrder")
   coupon        Coupon[]        @relation("StoreToCoupon")
   taxrate       TaxRate[]       @relation("StoreToTaxRate")
+  shippingrates ShippingRates[] @relation("StoreToShippingRates")
   // checkoutcash  Checkoutcash[]  @relation("StoreToCheckoutcash")
   productdetail ProductDetail[] @relation("StoreToDetailProductDetail")
   eventcalendar EventCalendar[] @relation("StoreToEventCalendar")
@@ -324,6 +325,45 @@ model TaxRate {
   taxtype     TaxType?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([storeId])
+}
+
+enum TaxBehavior {
+  exclusive
+  inclusive
+  unspecified
+}
+
+enum Unit {
+  hour
+  day
+  business_day
+  week
+  month
+}
+
+enum ShippingTaxcode {
+ txcd_00000000
+ txcd_92010001
+}
+
+
+model ShippingRates {
+  id          String      @id @default(uuid())
+  storeId     String
+  store       Store       @relation("StoreToShippingRates", fields: [storeId], references: [id])
+  name        String
+  taxcode     ShippingTaxcode?
+  taxbehavior TaxBehavior
+  amount      Int
+  unitmin     Unit
+  valuemin    Int
+  unitmax     Unit
+  valuemax    Int
+  active      Boolean?    @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
   @@index([storeId])
 }

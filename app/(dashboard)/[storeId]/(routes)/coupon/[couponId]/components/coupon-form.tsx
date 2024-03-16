@@ -62,7 +62,7 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
   const isEditing = !!initialData;
 
   const title = initialData ? "Edit coupon" : "Create coupon";
-  const description = initialData ? "Edit a coupon." : "Add a new coupon";
+  const description = initialData ? "Edit a coupon" : "Add a new coupon";
   const toastMessage = initialData ? "Coupon updated." : "Coupon created.";
   const action = initialData ? "Save changes" : "Create";
 

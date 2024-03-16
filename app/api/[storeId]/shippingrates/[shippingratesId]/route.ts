@@ -7,42 +7,51 @@ import { stripe } from "@/lib/stripe";
 
 export async function GET(
   req: Request,
-  { params }: { params: { taxrateId: string } }
+  { params }: { params: { shippingratesId: string } }
 ) {
   try {
-    if (!params.taxrateId) {
-      return new NextResponse("TexRate id is required", { status: 400 });
+    if (!params.shippingratesId) {
+      return new NextResponse("shipping Rates id is required", { status: 400 });
     }
 
-    const taxRate = await prismadb.taxRate.findUnique({
+    const shippingRates = await prismadb.shippingRates.findUnique({
       where: {
-        id: params.taxrateId,
+        id: params.shippingratesId,
       },
     });
 
-    return NextResponse.json(taxRate);
+    return NextResponse.json(shippingRates);
   } catch (error) {
-    console.log("[TAXRATE_GET]", error);
+    console.log("[SHIPPINGRATES_GET]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { taxrateId: string; storeId: string } }
+  { params }: { params: { shippingratesId: string; storeId: string } }
 ) {
   try {
     const userId = await currentUser();
 
     const body = await req.json();
 
-    const { name, description, percentage, inclusive, active, taxtype } = body;
+    const {
+      name,
+      taxbehavior,
+      amount,
+      unitmin,
+      unitmax,
+      valuemax,
+      valuemin,
+      active,
+    } = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
     }
 
-    if (!name || !params.storeId) {
+    if (!params.storeId) {
       return new NextResponse("Invalid parameters", { status: 400 });
     }
 
@@ -60,30 +69,30 @@ export async function PATCH(
     }
 
     // Cập nhật thông tin tương ứng trên Stripe
-    await stripe.taxRates.update(params.taxrateId, {
-      display_name: name,
-      description: description,
-      tax_type: taxtype,
+    await stripe.shippingRates.update(params.shippingratesId, {
       active: active,
+      tax_behavior: taxbehavior,
     });
 
-    const taxRateupdate = await prismadb.taxRate.update({
+    const shippingRateupdate = await prismadb.shippingRates.update({
       where: {
-        id: params.taxrateId,
+        id: params.shippingratesId,
       },
       data: {
         name,
-        inclusive,
+        taxbehavior,
+        amount,
+        unitmin,
+        unitmax,
+        valuemax,
+        valuemin,
         active,
-        percentage,
-        taxtype,
-        description,
       },
     });
 
-    return NextResponse.json(taxRateupdate);
+    return NextResponse.json(shippingRateupdate);
   } catch (error) {
-    console.log("[TAXRATE_PATCH]", error);
+    console.log("[SHIPPINGRATES_PATCH]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }

@@ -6,7 +6,6 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
-import { Trash } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 
 import { Input } from "@/components/ui/input";
@@ -54,7 +53,7 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
   const isEditing = !!initialData;
 
   const title = initialData ? "Edit tax rate" : "Create tax rate";
-  const description = initialData ? "Edit a tax rate." : "Add a new tax rate";
+  const description = initialData ? "Edit a tax rate" : "Add a new tax rate";
   const toastMessage = initialData ? "Tax rate updated." : "Tax rate created.";
   const action = initialData ? "Save changes" : "Create";
 
@@ -177,7 +176,7 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
                       <SelectTrigger>
                         <SelectValue
                           defaultValue={field.value}
-                          placeholder="Select Duration"
+                          placeholder="Select TaxType"
                         />
                       </SelectTrigger>
                     </FormControl>

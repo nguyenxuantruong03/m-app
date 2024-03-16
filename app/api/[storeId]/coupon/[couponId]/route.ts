@@ -14,7 +14,7 @@ export async function GET(
       return new NextResponse("Coupon id is required", { status: 400 });
     }
 
-    const product = await prismadb.coupon.findUnique({
+    const coupon = await prismadb.coupon.findUnique({
       where: {
         id: params.couponId,
       },
@@ -23,7 +23,7 @@ export async function GET(
       },
     });
 
-    return NextResponse.json(product);
+    return NextResponse.json(coupon);
   } catch (error) {
     console.log("[COUPON_GET]", error);
     return new NextResponse("Internal error", { status: 500 });
