@@ -92,12 +92,10 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
       maritalStatus: "",
       workingTime: "",
       isCitizen: false,
-      dateRange: initialData.dateRange
-      ? new Date(initialData.dateRange)
-      : null,
+      dateRange: initialData.dateRange ? new Date(initialData.dateRange) : null,
       dateofbirth: initialData.dateofbirth
-      ? new Date(initialData.dateofbirth)
-      : null
+        ? new Date(initialData.dateofbirth)
+        : null,
     },
   });
 
@@ -260,16 +258,18 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                       type="date"
                       disabled={loading}
                       value={
-                        field.value // Kiểm tra nếu field.value không phải là null
-                          ? isEditing
-                            ? field.value instanceof Date
-                              ? field.value.toISOString().split("T")[0] // Cho patch
-                              : field.value // Nếu không phải Date, trả về giá trị hiện tại
-                            : format(new Date(field.value), "yyyy-MM-dd") // Cho post
-                          : "" // Giá trị mặc định nếu field.value là null
+                        field.value
+                          ? field.value instanceof Date
+                            ? field.value.toISOString().split("T")[0]
+                            : field.value
+                          : ""
                       }
                       onChange={(e) => {
-                        field.onChange(e.target.value);
+                        const dateValue = e.target.value;
+                        const parsedDate = Date.parse(dateValue);
+                        field.onChange(
+                          isNaN(parsedDate) ? dateValue : new Date(parsedDate)
+                        );
                       }}
                     />
                   </FormControl>
@@ -277,6 +277,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="issued"
@@ -306,16 +307,18 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                       type="date"
                       disabled={loading}
                       value={
-                        field.value // Kiểm tra nếu field.value không phải là null
-                          ? isEditing
-                            ? field.value instanceof Date
-                              ? field.value.toISOString().split("T")[0] // Cho patch
-                              : field.value // Nếu không phải Date, trả về giá trị hiện tại
-                            : format(new Date(field.value), "yyyy-MM-dd") // Cho post
-                          : "" // Giá trị mặc định nếu field.value là null
+                        field.value
+                          ? field.value instanceof Date
+                            ? field.value.toISOString().split("T")[0]
+                            : field.value
+                          : ""
                       }
                       onChange={(e) => {
-                        field.onChange(e.target.value);
+                        const dateValue = e.target.value;
+                        const parsedDate = Date.parse(dateValue);
+                        field.onChange(
+                          isNaN(parsedDate) ? dateValue : new Date(parsedDate)
+                        );
                       }}
                     />
                   </FormControl>
