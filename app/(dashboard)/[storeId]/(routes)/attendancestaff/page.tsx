@@ -51,6 +51,7 @@ export default function Home() {
   const [isCheckingAttendanceEnd, setIsCheckingAttendanceEnd] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isAddingEvent, setIsAddingEvent] = useState(false);
+  const [isAttendanceStartCalled, setIsAttendanceStartCalled] = useState(false);
 
   // Use a ref to track whether draggable setup has been done
   const draggableSetupRef = useRef(false);
@@ -74,6 +75,24 @@ export default function Home() {
       }
     }
   }, []);
+
+  useEffect(() => {
+    const today = new Date();
+    const todayEvents = allEvents.filter((event) => {
+      const eventDate = new Date(event.start);
+      return (
+        event.attendancestart === "❎" &&
+        eventDate.getDate() === today.getDate() &&
+        eventDate.getMonth() === today.getMonth() &&
+        eventDate.getFullYear() === today.getFullYear()
+      );
+    });
+
+    // Nếu có sự kiện, đặt state để chỉ định rằng đã gọi cho ngày hiện tại
+    if (todayEvents.length > 0) {
+      setIsAttendanceStartCalled(true);
+    }
+  }, [allEvents]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -303,7 +322,9 @@ export default function Home() {
             });
         } else {
           // Notify the user that the limit is reached
-          toast.error("Đã quá số lần sự kiện trong 1 ngày. Không thể thêm: " + event.title);
+          toast.error(
+            "Đã quá số lần sự kiện trong 1 ngày. Không thể thêm: " + event.title
+          );
           setIsAddingEvent(false);
         }
       }
@@ -334,6 +355,15 @@ export default function Home() {
           setAllEvents(
             allEvents.filter((event) => String(event.id) !== String(idToDelete))
           );
+          // Check if the deleted event was the last attendance start event
+          const isStartEventDeleted = allEvents.some(
+            (event) =>
+              event.attendancestart === "❎" &&
+              String(event.id) !== String(idToDelete)
+          );
+          if (isStartEventDeleted) {
+            setIsAttendanceStartCalled(false); // Reset isAttendanceStartCalled if start event is deleted
+          }
           setShowDeleteModal(false);
           setIdToDelete(null);
           toast.success("Xóa sự kiện thành công.");
@@ -397,6 +427,7 @@ export default function Home() {
               dateClick={handleDateClick}
               drop={(data) => addEvent(data)}
               eventClick={(data) => handleDeleteModal(data)}
+              timeZone="Asia/Ho_Chi_Minh"
             />
           </div>
           <div
@@ -534,7 +565,7 @@ export default function Home() {
           <Button
             onClick={handleCheckAttendanceEnd}
             className="px-4 py-2 rounded-md"
-            disabled={isCheckingAttendanceEnd}
+            disabled={!isAttendanceStartCalled || isCheckingAttendanceEnd}
           >
             Kết thúc
           </Button>

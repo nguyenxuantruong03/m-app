@@ -1,6 +1,8 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
+import { format } from "date-fns";
+import { utcToZonedTime } from "date-fns-tz";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -27,37 +29,41 @@ export async function GET(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    // Use findFirst to get the latest event based on storeId
-    const latestEvent = await prismadb.eventCalendar.findFirst({
+    // Find all events of the store, ordered by end time descending
+    const allEvents = await prismadb.eventCalendar.findMany({
       where: {
         storeId: params.storeId,
       },
       orderBy: {
-        end: 'desc' // Sắp xếp theo thời gian giảm dần (tức là end mới nhất sẽ ở đầu)
-      }
+        end: "desc",
+      },
     });
+
+    // Find the latest event with non-null end time
+    let latestEvent = null;
+    for (const event of allEvents) {
+      if (event.end !== null) {
+        latestEvent = event;
+        break;
+      }
+    }
 
     const currentTime = new Date();
     if (latestEvent) {
       // Nếu có sự kiện mới nhất
-      if (latestEvent.end !== null && currentTime >= new Date(latestEvent.end)) {
-        console.log("Current time is greater than or equal to latest event's end");
+      const latestEventEnd = new Date(latestEvent.end!);
+      if (currentTime >= latestEventEnd) {
         return NextResponse.json(latestEvent);
       } else {
-        console.log("Current time is less than latest event's end or latest event's end is null");
         return new NextResponse("Event has not ended yet", { status: 400 });
       }
     } else {
-      // Nếu không có sự kiện nào
-      console.log("No events found for the store");
-      return new NextResponse("No events found for the store", { status: 404 });
+      return new NextResponse("Event has not ended yet", { status: 400 });
     }
   } catch (error) {
-    console.log("[EVENTCALENDAR_PATCH]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }
-
 
 export async function POST(
   req: Request,
@@ -102,11 +108,19 @@ export async function POST(
       where: { id: userId?.id },
     });
 
+    // Chuyển đổi start và end sang múi giờ của Việt Nam
+    const vnTimeZone = "Asia/Ho_Chi_Minh";
+    const zonedStart = utcToZonedTime(new Date(start), vnTimeZone);
+    const formattedStart = format(zonedStart, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
+
+    const zonedEnd = utcToZonedTime(new Date(end), vnTimeZone);
+    const formattedEnd = format(zonedEnd, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
+
     const eventCalendar = await prismadb.eventCalendar.create({
       data: {
         title,
-        start,
-        end,
+        start: formattedStart,
+        end: formattedEnd,
         allDay,
         storeId: params.storeId,
         currentselectedDate,

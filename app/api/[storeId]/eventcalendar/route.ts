@@ -1,6 +1,7 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
 import { UserRole, WorkingTime } from "@prisma/client";
+import { utcToZonedTime } from "date-fns-tz";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -75,11 +76,16 @@ export async function POST(
         return new NextResponse("Invalid working time", { status: 400 });
     }
 
+    //Chuyển sang giờ VIỆT NAM
+    const vnTimeZone = "Asia/Ho_Chi_Minh";
+    const zonedStartTime = utcToZonedTime(new Date(start), vnTimeZone);
+    const zonedEndTime = utcToZonedTime(endTime, vnTimeZone);
+
     const eventCalendar = await prismadb.eventCalendar.create({
       data: {
         title,
-        start,
-        end: endTime,
+        start: zonedStartTime,
+        end: zonedEndTime,
         allDay,
         storeId: params.storeId,
         currentselectedDate,
@@ -95,7 +101,6 @@ export async function POST(
     return new NextResponse("Internal error", { status: 500 });
   }
 }
-
 
 export async function DELETE(
   req: Request,
