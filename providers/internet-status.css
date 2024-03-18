@@ -1,0 +1,15 @@
+.main-internetstatus {
+    bottom: 20px;
+    z-index: 9999;
+    left: 40px;
+    width: 340px;
+}
+.main-internetstatus-close{
+    background-color: #CCCCCC;
+    cursor: pointer;
+}
+
+.main-internetstatus-close:hover {
+    background-color: #999999;
+    cursor: pointer;
+}
