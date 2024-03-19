@@ -44,4 +44,12 @@ export const sendVerifyAccountisCitizen = async (email: string | null = "") => {
     });
 }
 
+export const sendSpamEmail = async (email: any,subject:string,description:string) => {
+    await resend.emails.send({
+        from: "mail@vlxdxuantruong.email",
+        to: email,
+        subject: subject,
+        html: description
+    });
+}
 

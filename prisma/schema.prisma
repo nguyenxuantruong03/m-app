@@ -29,6 +29,7 @@ model Store {
   eventcalendar EventCalendar[] @relation("StoreToEventCalendar")
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
+  sentEmailUser SentEmailUser[] @relation("StoreToSentEmailUser")
 }
 
 model Billboard {
@@ -344,15 +345,14 @@ enum Unit {
 }
 
 enum ShippingTaxcode {
- txcd_00000000
- txcd_92010001
+  txcd_00000000
+  txcd_92010001
 }
 
-
 model ShippingRates {
-  id          String      @id @default(uuid())
+  id          String           @id @default(uuid())
   storeId     String
-  store       Store       @relation("StoreToShippingRates", fields: [storeId], references: [id])
+  store       Store            @relation("StoreToShippingRates", fields: [storeId], references: [id])
   name        String
   taxcode     ShippingTaxcode?
   taxbehavior TaxBehavior
@@ -361,9 +361,9 @@ model ShippingRates {
   valuemin    Int
   unitmax     Unit
   valuemax    Int
-  active      Boolean?    @default(true)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  active      Boolean?         @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 
   @@index([storeId])
 }
@@ -425,6 +425,7 @@ model User {
   role                  UserRole               @default(USER)
   accounts              Account[]
   eventcalendar         EventCalendar[]
+  sentEmailUser         SentEmailUser[]
   //Ban user
   ban                   Boolean?
   banExpires            DateTime?
@@ -450,9 +451,9 @@ model User {
   dateofbirth           DateTime?
   //Veiryfi email đã gửi chưa
   sentVeirifi           Boolean?               @default(false)
+  salary                Decimal?
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
-  salary                Decimal?
 }
 
 model Account {
@@ -512,17 +513,33 @@ model TwoFactorConfirmation {
 }
 
 model EventCalendar {
-  id                  String    @id @default(cuid())
-  storeId             String
-  store               Store     @relation("StoreToEventCalendar", fields: [storeId], references: [id])
-  userId              String
-  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  attendancestart     String?
-  attendanceend       String?
-  title               String?
-  start               DateTime?
-  end                 DateTime?
-  allDay              Boolean?
+  id              String    @id @default(cuid())
+  storeId         String
+  store           Store     @relation("StoreToEventCalendar", fields: [storeId], references: [id])
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attendancestart String?
+  attendanceend   String?
+  title           String?
+  start           DateTime?
+  end             DateTime?
+  allDay          Boolean?
+
+  @@index([storeId])
+  @@index([userId])
+}
+
+model SentEmailUser {
+  id          String   @id @default(cuid())
+  storeId     String
+  store       Store    @relation("StoreToSentEmailUser", fields: [storeId], references: [id])
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject     String
+  description String
+  isSent      Boolean? @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@index([storeId])
   @@index([userId])

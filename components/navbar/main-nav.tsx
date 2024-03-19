@@ -35,6 +35,11 @@ const MainNav = ({
       label: "Nhân viên điểm danh",
       active: pathname === `/${params.storeId}/attendancestaff`,
     },
+    {
+      href: `/${params.storeId}/sentmailuser`,
+      label: "Gửi Mail",
+      active: pathname === `/${params.storeId}/sentmailuser`,
+    },
   ];
   const billboards = [
     {
