@@ -29,6 +29,13 @@ const MainNav = ({
       active: pathname === `/${params.storeId}/datastatistics`,
     },
   ];
+  const staff = [
+    {
+      href: `/${params.storeId}/attendancestaff`,
+      label: "Nhân viên điểm danh",
+      active: pathname === `/${params.storeId}/attendancestaff`,
+    },
+  ];
   const billboards = [
     {
       href: `/${params.storeId}/billboards`,
@@ -201,9 +208,9 @@ const MainNav = ({
       active: pathname === `/${params.storeId}/managestaff`,
     },
     {
-      href: `/${params.storeId}/attendancestaff`,
+      href: `/${params.storeId}/manageattendance`,
       label: "Điểm danh",
-      active: pathname === `/${params.storeId}/attendancestaff`,
+      active: pathname === `/${params.storeId}/manageattendance`,
     },
   ];
 
@@ -275,6 +282,35 @@ const MainNav = ({
             <AccordionTrigger>Thống kê dữ liệu</AccordionTrigger>
             <AccordionContent>
               {datastatistics.map((route) => (
+                <Link
+                  key={route.href}
+                  href={route.href}
+                  className={cn(
+                    "text-md font-medium transition-colors hover:text-primary grid grid-rows-1",
+                    route.active
+                      ? "text-black dark:text-white"
+                      : "text-muted-foreground"
+                  )}
+                >
+                  {route.label}
+                </Link>
+              ))}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </nav>
+      {/* Staff Attendance */}
+      <nav
+        className={cn(
+          "flex items-center space-x-4 lg:space-x-6 space-y-4",
+          className
+        )}
+      >
+        <Accordion type="single" collapsible className="w-full">
+          <AccordionItem value="item-1">
+            <AccordionTrigger>Nhân viên</AccordionTrigger>
+            <AccordionContent>
+              {staff.map((route) => (
                 <Link
                   key={route.href}
                   href={route.href}

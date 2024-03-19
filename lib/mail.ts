@@ -40,7 +40,7 @@ export const sendVerifyAccountisCitizen = async (email: string | null = "") => {
         from: "mail@vlxdxuantruong.email",
         to: toEmail,
         subject: "Verify your email",
-        html: `<p>Tài khoản của bạn đã được xác thực.</p>`
+        html: `<p>Tài khoản của bạn đã được xác thực để trở thành nhân viên.</p>`
     });
 }
 

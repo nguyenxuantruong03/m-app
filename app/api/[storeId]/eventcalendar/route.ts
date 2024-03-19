@@ -23,14 +23,7 @@ export async function POST(
 
     const body = await req.json();
 
-    const {
-      title,
-      start,
-      allDay,
-      currentselectedDate,
-      attendancestart,
-      attendanceend,
-    } = body;
+    const { title, start, allDay, attendancestart, attendanceend } = body;
 
     if (!start) {
       return new NextResponse("Invalid Error!", { status: 403 });
@@ -88,16 +81,69 @@ export async function POST(
         end: zonedEndTime,
         allDay,
         storeId: params.storeId,
-        currentselectedDate,
         attendancestart,
         attendanceend,
-        userId: user.id,
+        userId: userId?.id || "",
       },
     });
 
     return NextResponse.json(eventCalendar);
   } catch (error) {
     console.log("[EVENTCALENDAR_POST]", error);
+    return new NextResponse("Internal error", { status: 500 });
+  }
+}
+
+export async function PATCH(
+  req: Request,
+  { params }: { params: { storeId: string } }
+) {
+  try {
+    const userId = await currentUser();
+
+    const body = await req.json();
+
+    const { title, start, allDay, end, attendancestart, attendanceend } = body;
+
+    if (!start) {
+      return new NextResponse("Invalid Error!", { status: 403 });
+    }
+    if (!params.storeId) {
+      return new NextResponse("Store id is required", { status: 400 });
+    }
+
+    const storeByUserId = await prismadb.store.findFirst({
+      where: {
+        id: params.storeId,
+        userId: {
+          equals: UserRole.USER,
+        },
+      },
+    });
+
+    if (!storeByUserId) {
+      return new NextResponse("Unauthorized", { status: 405 });
+    }
+
+    //Chuyển sang giờ VIỆT NAM
+    const vnTimeZone = "Asia/Ho_Chi_Minh";
+    const zonedStartTime = utcToZonedTime(new Date(start), vnTimeZone);
+    const eventCalendar = await prismadb.eventCalendar.create({
+      data: {
+        title,
+        start: zonedStartTime,
+        allDay,
+        end: null,
+        storeId: params.storeId,
+        attendancestart,
+        attendanceend,
+        userId: userId?.id || "",
+      },
+    });
+
+    return NextResponse.json(eventCalendar);
+  } catch (error) {
+    console.log("[EVENTCALENDAR_PATCH]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }
@@ -134,6 +180,7 @@ export async function DELETE(
     const deletedEvent = await prismadb.eventCalendar.delete({
       where: {
         id: eventId,
+        userId: userId?.id,
       },
     });
 

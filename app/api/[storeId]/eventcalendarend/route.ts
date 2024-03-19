@@ -33,6 +33,7 @@ export async function GET(
     const allEvents = await prismadb.eventCalendar.findMany({
       where: {
         storeId: params.storeId,
+        userId: userId?.id || "",
       },
       orderBy: {
         end: "desc",
@@ -48,20 +49,24 @@ export async function GET(
       }
     }
 
-    const currentTime = new Date();
+    //Hiện tại không thể dùng cách utcToZonedTime để change sang giờ VN nên tôi + 7 tiếng để chuyển giờ quốc tế sang giờ VN
+    const currentTimeVN = new Date();
+    currentTimeVN.setHours(currentTimeVN.getHours() + 7);
+
     if (latestEvent) {
-      // Nếu có sự kiện mới nhất
       const latestEventEnd = new Date(latestEvent.end!);
-      if (currentTime >= latestEventEnd) {
+      const vnTimeZone = "Asia/Ho_Chi_Minh";
+      const latestEventEndVN = utcToZonedTime(latestEventEnd, vnTimeZone);
+      if (currentTimeVN >= latestEventEndVN) {
         return NextResponse.json(latestEvent);
       } else {
-        return new NextResponse("Event has not ended yet", { status: 400 });
+        return new NextResponse("Sự kiện chưa kết thúc", { status: 400 });
       }
     } else {
-      return new NextResponse("Event has not ended yet", { status: 400 });
+      return new NextResponse("Không có sự kiện nào diễn ra", { status: 400 });
     }
   } catch (error) {
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse("Lỗi nội bộ", { status: 500 });
   }
 }
 
@@ -78,10 +83,8 @@ export async function POST(
       title,
       start,
       allDay,
-      currentselectedDate,
       attendancestart,
       attendanceend,
-      end,
     } = body;
 
     if (!start) {
@@ -113,20 +116,16 @@ export async function POST(
     const zonedStart = utcToZonedTime(new Date(start), vnTimeZone);
     const formattedStart = format(zonedStart, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
 
-    const zonedEnd = utcToZonedTime(new Date(end), vnTimeZone);
-    const formattedEnd = format(zonedEnd, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
-
     const eventCalendar = await prismadb.eventCalendar.create({
       data: {
         title,
         start: formattedStart,
-        end: formattedEnd,
+        end:null,
         allDay,
         storeId: params.storeId,
-        currentselectedDate,
         attendancestart,
         attendanceend,
-        userId: user?.id || "",
+        userId: userId?.id || "",
       },
     });
 

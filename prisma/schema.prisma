@@ -523,7 +523,6 @@ model EventCalendar {
   start               DateTime?
   end                 DateTime?
   allDay              Boolean?
-  currentselectedDate DateTime?
 
   @@index([storeId])
   @@index([userId])

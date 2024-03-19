@@ -17,6 +17,7 @@ import { useParams } from "next/navigation";
 import { format, addHours, addMinutes, addSeconds } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import { Button } from "@/components/ui/button";
+import { useCurrentUser } from "@/hooks/use-current-user";
 interface Event {
   title: string;
   start: Date | string;
@@ -28,6 +29,7 @@ interface Event {
 
 export default function Home() {
   const params = useParams();
+  const userId = useCurrentUser();
   const [events, setEvents] = useState([
     { title: "Sinh nhật", id: "1" },
     { title: "Tăng ca", id: "2" },
@@ -52,6 +54,7 @@ export default function Home() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isAddingEvent, setIsAddingEvent] = useState(false);
   const [isAttendanceStartCalled, setIsAttendanceStartCalled] = useState(false);
+  const [isEventEnded, setIsEventEnded] = useState(false);
 
   // Use a ref to track whether draggable setup has been done
   const draggableSetupRef = useRef(false);
@@ -80,11 +83,13 @@ export default function Home() {
     const today = new Date();
     const todayEvents = allEvents.filter((event) => {
       const eventDate = new Date(event.start);
+      const vnTimeZone = "Asia/Ho_Chi_Minh";
+      const zonedDateTimeVN = utcToZonedTime(eventDate, vnTimeZone);
       return (
         event.attendancestart === "❎" &&
-        eventDate.getDate() === today.getDate() &&
-        eventDate.getMonth() === today.getMonth() &&
-        eventDate.getFullYear() === today.getFullYear()
+        zonedDateTimeVN.getDate() === today.getDate() &&
+        zonedDateTimeVN.getMonth() === today.getMonth() &&
+        zonedDateTimeVN.getFullYear() === today.getFullYear()
       );
     });
 
@@ -92,6 +97,25 @@ export default function Home() {
     if (todayEvents.length > 0) {
       setIsAttendanceStartCalled(true);
     }
+  }, [allEvents]);
+
+  useEffect(() => {
+    const hasEventEnded = allEvents.some((event) => {
+      const eventDate = new Date(event.start);
+      const today = new Date();
+      today.setHours(today.getHours() + 7);
+      const vnTimeZone = "Asia/Ho_Chi_Minh";
+      const zonedDateTimeVN = utcToZonedTime(eventDate, vnTimeZone);
+      return (
+        event.title === "✅" &&
+        zonedDateTimeVN.getDate() === today.getDate() &&
+        zonedDateTimeVN.getMonth() === today.getMonth() &&
+        zonedDateTimeVN.getFullYear() === today.getFullYear()
+      );
+    });
+
+    // Cập nhật trạng thái isEventEnded
+    setIsEventEnded(hasEventEnded);
   }, [allEvents]);
 
   useEffect(() => {
@@ -131,7 +155,7 @@ export default function Home() {
       }
 
       try {
-        const existingEvent = allEvents.find((event) => {
+        const existingEventToday = allEvents.find((event) => {
           const eventDate = new Date(event.start);
           return (
             event.attendancestart === "❎" &&
@@ -141,7 +165,19 @@ export default function Home() {
           );
         });
 
-        if (existingEvent) {
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+        const existingEventTomorrow = allEvents.find((event) => {
+          const eventDate = new Date(event.start);
+          return (
+            event.attendancestart === "❎" &&
+            eventDate.getDate() === tomorrow.getDate() &&
+            eventDate.getMonth() === tomorrow.getMonth() &&
+            eventDate.getFullYear() === tomorrow.getFullYear()
+          );
+        });
+
+        if (existingEventToday || existingEventTomorrow) {
           // If attendance record already exists for the day, show a message
           toast.error("Đã điểm danh cho ngày này!");
         } else {
@@ -172,7 +208,6 @@ export default function Home() {
           // Update state with the new event from the response
           setAllEvents((prevEvents) => [...prevEvents, response.data]);
           toast.success("Điểm danh thành công.");
-          console.log("Check", response.data);
         }
         setIsCheckingAttendanceStart(false);
         setIsCheckingAttendanceEnd(false);
@@ -203,26 +238,10 @@ export default function Home() {
         setIsCheckingAttendanceStart(false);
         return;
       }
-
       try {
-        // First, make a GET request to check if an attendance record already exists
-        await axios.get(`/api/${params.storeId}/eventcalendarend`);
-
-        const existingEvent = allEvents.find((event) => {
-          const eventDate = new Date(event.start);
-          return (
-            event.attendanceend === "✅" &&
-            eventDate.getDate() === selectedDate.getDate() &&
-            eventDate.getMonth() === selectedDate.getMonth() &&
-            eventDate.getFullYear() === selectedDate.getFullYear()
-          );
-        });
-
-        if (existingEvent) {
-          // If attendance record already exists for the day, show a message
+        if (isEventEnded) {
           toast.error("Đã kết thúc cho ngày này!");
         } else {
-          // Continue with the POST request if no existing event is found
           const now = new Date();
           const currentDateTime = addSeconds(
             addMinutes(
@@ -238,18 +257,20 @@ export default function Home() {
             "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"
           );
 
+          await axios.get(`/api/${params.storeId}/eventcalendarend`);
           const postResponse = await axios.post(
             `/api/${params.storeId}/eventcalendarend`,
             {
               attendanceend: "✅",
               title: "✅",
               start: formattedDate,
+              end: null,
             }
           );
 
           // Update state with the new event from the response
           setAllEvents((prevEvents) => [...prevEvents, postResponse.data]);
-          toast.success("Điểm danh thành công.");
+          toast.success("Kết thúc thành công.");
         }
         setIsCheckingAttendanceEnd(false);
         setIsCheckingAttendanceStart(false);
@@ -274,14 +295,29 @@ export default function Home() {
     if (data.date) {
       const draggedDate = data.draggedEl.getAttribute("data-date");
       const eventDate = draggedDate ? new Date(draggedDate) : data.date;
-      const currentTime = new Date();
+      const currentTimeVN = new Date();
+      // Thêm 7 giờ vào currentTimeVN
+      currentTimeVN.setHours(currentTimeVN.getHours() + 7);
+      const eventDateTimeVN = new Date(
+        eventDate.getFullYear(),
+        eventDate.getMonth(),
+        eventDate.getDate(),
+        currentTimeVN.getHours(),
+        currentTimeVN.getMinutes(),
+        currentTimeVN.getSeconds()
+      );
+      const vnTimeZone = "Asia/Ho_Chi_Minh";
+      const zonedDateTime = utcToZonedTime(eventDateTimeVN, vnTimeZone);
+      const formattedDate = format(
+        zonedDateTime,
+        "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"
+      );
       const event = {
         ...newEvent,
-        start: eventDate.toISOString(),
+        start: formattedDate,
         title: data.draggedEl.innerText,
         allDay: data.allDay,
         id: new Date().getTime(),
-        currentselectedDate: currentTime,
       };
 
       // Check if the event already exists
@@ -308,7 +344,7 @@ export default function Home() {
         if (eventsCountForCurrentDate < 3) {
           // Make a POST request to add the event to the database
           axios
-            .post(`/api/${storeId}/eventcalendar`, event)
+            .patch(`/api/${storeId}/eventcalendar`, event)
             .then((response) => {
               toast.success("Thêm thành công: " + event.title);
               setAllEvents((prevEvents) => [...prevEvents, response.data]);
@@ -348,7 +384,7 @@ export default function Home() {
       // Make a DELETE request to delete the event from the database
       axios
         .delete(`/api/${storeId}/eventcalendar`, {
-          data: { eventId: eventIdToDelete },
+          data: { eventId: eventIdToDelete, userId: userId?.id },
         })
         .then(() => {
           // Update state to remove the deleted event
