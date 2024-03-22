@@ -295,8 +295,6 @@ export default function Home() {
       const draggedDate = data.draggedEl.getAttribute("data-date");
       const eventDate = draggedDate ? new Date(draggedDate) : data.date;
       const currentTimeVN = new Date();
-      // Thêm 7 giờ vào currentTimeVN
-      currentTimeVN.setHours(currentTimeVN.getHours() + 7);
       const eventDateTimeVN = new Date(
         eventDate.getFullYear(),
         eventDate.getMonth(),

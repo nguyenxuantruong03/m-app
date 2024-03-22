@@ -23,11 +23,15 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Heading } from "@/components/ui/heading";
 import { AlertModal } from "@/components/modals/alert-modal";
-import Tiptap from "./tiptap";
+import Tiptap from "@/components/tiptap/tiptap";
 
 const formSchema = z.object({
-  subject: z.string(),
-  description: z.string(),
+  subject: z.string().min(1 ,{
+    message: "Chưa nhập Subject!",
+  }),
+  description: z.string().min(1,{
+    message: "Chưa nhập Description!",
+  }),
 });
 
 type SentEmailUserFormValues = z.infer<typeof formSchema>;
@@ -137,7 +141,7 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-8 w-full"
         >
-          <div className="max-w-xl space-y-6 overflow-y-auto">
+          <div className="space-y-6 overflow-y-auto">
             <FormField
               control={form.control}
               name="subject"
@@ -166,7 +170,7 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
                 <FormItem>
                   <FormLabel>Mô tả</FormLabel>
                   <FormControl>
-                    <Tiptap value={field.value} onChange={field.onChange} />
+                    <Tiptap disabled={loading} value={field.value} onChange={field.onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
