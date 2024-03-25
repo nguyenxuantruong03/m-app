@@ -40,6 +40,16 @@ const MainNav = ({
       label: "Gửi Mail",
       active: pathname === `/${params.storeId}/sentmailuser`,
     },
+    {
+      href: `/${params.storeId}/manageattendance`,
+      label: "Quản lý điểm danh",
+      active: pathname === `/${params.storeId}/manageattendance`,
+    },
+    {
+      href: `/${params.storeId}/salarystaff`,
+      label: "Quản lý lương nhân viên",
+      active: pathname === `/${params.storeId}/salarystaff`,
+    },
   ];
   const billboards = [
     {
@@ -211,11 +221,6 @@ const MainNav = ({
       href: `/${params.storeId}/managestaff`,
       label: "Nhân viên",
       active: pathname === `/${params.storeId}/managestaff`,
-    },
-    {
-      href: `/${params.storeId}/manageattendance`,
-      label: "Điểm danh",
-      active: pathname === `/${params.storeId}/manageattendance`,
     },
   ];
 

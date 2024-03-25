@@ -139,6 +139,8 @@ export default function Home() {
     if (selectedDate) {
       setIsCheckingAttendanceStart(true);
       setIsCheckingAttendanceEnd(true);
+      setIsAddingEvent(true);
+      setIsDeleting(true);
       const today = new Date();
       const isToday =
         today.getDate() === selectedDate.getDate() &&
@@ -150,6 +152,8 @@ export default function Home() {
         toast.error("Không thể điểm danh cho ngày khác!");
         setIsCheckingAttendanceStart(false);
         setIsCheckingAttendanceEnd(false);
+        setIsAddingEvent(false);
+        setIsDeleting(false);
         return;
       }
 
@@ -210,10 +214,14 @@ export default function Home() {
         }
         setIsCheckingAttendanceStart(false);
         setIsCheckingAttendanceEnd(false);
+        setIsAddingEvent(false);
+        setIsDeleting(false);
       } catch (error) {
         // Handle request error
         setIsCheckingAttendanceStart(false);
         setIsCheckingAttendanceEnd(false);
+        setIsAddingEvent(false);
+        setIsDeleting(false);
         console.error("Error adding event:", error);
         toast.error("Đã xảy ra lỗi khi thêm sự kiện.");
       }
@@ -224,6 +232,8 @@ export default function Home() {
     if (selectedDate) {
       setIsCheckingAttendanceEnd(true);
       setIsCheckingAttendanceStart(true);
+      setIsAddingEvent(true);
+      setIsDeleting(true);
       const today = new Date();
       const isToday =
         today.getDate() === selectedDate.getDate() &&
@@ -235,11 +245,13 @@ export default function Home() {
         toast.error("Không thể kết thúc cho ngày khác!");
         setIsCheckingAttendanceEnd(false);
         setIsCheckingAttendanceStart(false);
+        setIsAddingEvent(false);
+        setIsDeleting(false);
         return;
       }
       try {
         if (isEventEnded) {
-          toast.error("Đã kết thúc cho ngày này!");
+          toast.error("Không thể kết thúc!");
         } else {
           const now = new Date();
           const currentDateTime = addSeconds(
@@ -273,12 +285,16 @@ export default function Home() {
         }
         setIsCheckingAttendanceEnd(false);
         setIsCheckingAttendanceStart(false);
+        setIsAddingEvent(false);
+        setIsDeleting(false);
       } catch (error) {
         // Handle request error
         console.error("Error checking or adding event:", error);
         toast.error("Chưa đến lúc để kêt thúc!");
         setIsCheckingAttendanceEnd(false);
         setIsCheckingAttendanceStart(false);
+        setIsAddingEvent(false);
+        setIsDeleting(false); 
       }
     }
   };
@@ -337,7 +353,10 @@ export default function Home() {
               : count,
           0
         );
-        setIsAddingEvent(true); // Bắt đầu xử lý POST request
+        setIsCheckingAttendanceEnd(true);
+        setIsCheckingAttendanceStart(true);
+        setIsAddingEvent(true);
+        setIsDeleting(true); // Bắt đầu xử lý POST request
         if (eventsCountForCurrentDate < 3) {
           // Make a POST request to add the event to the database
           axios
@@ -345,20 +364,29 @@ export default function Home() {
             .then((response) => {
               toast.success("Thêm thành công: " + event.title);
               setAllEvents((prevEvents) => [...prevEvents, response.data]);
+              setIsCheckingAttendanceEnd(false);
+              setIsCheckingAttendanceStart(false);
               setIsAddingEvent(false);
+              setIsDeleting(false);
             })
             .catch((error) => {
               // Handle request error
               console.error("Error adding event:", error);
               toast.error("Đã xảy ra lỗi khi thêm sự kiện.");
+              setIsCheckingAttendanceEnd(false);
+              setIsCheckingAttendanceStart(false);
               setIsAddingEvent(false);
+              setIsDeleting(false);
             });
         } else {
           // Notify the user that the limit is reached
           toast.error(
             "Đã quá số lần sự kiện trong 1 ngày. Không thể thêm: " + event.title
           );
+          setIsCheckingAttendanceEnd(false);
+          setIsCheckingAttendanceStart(false);
           setIsAddingEvent(false);
+          setIsDeleting(false);
         }
       }
     }
@@ -465,7 +493,7 @@ export default function Home() {
           </div>
           <div
             id="draggable-el"
-            className="ml-8 w-full border-2 p-2 rounded-md mt-16 lg:h-1/2 bg-violet-50"
+            className="ml-8 w-full border-2 p-2 rounded-md mt-16 lg:h-[32%] bg-violet-50"
           >
             <h1 className="font-bold text-lg text-center">Drag Event</h1>
             {events.map((event) => (

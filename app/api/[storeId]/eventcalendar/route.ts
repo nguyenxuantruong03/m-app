@@ -1,8 +1,11 @@
 import { currentUser } from "@/lib/auth";
+import { sendAttendanceStart } from "@/lib/mail";
 import prismadb from "@/lib/prismadb";
-import { UserRole, WorkingTime } from "@prisma/client";
+import { Degree, UserRole, WorkingTime } from "@prisma/client";
+import { format, subHours } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import { NextResponse } from "next/server";
+import viLocale from "date-fns/locale/vi";
 
 export async function GET(req: Request) {
   try {
@@ -86,6 +89,29 @@ export async function POST(
         userId: userId?.id || "",
       },
     });
+    const emailtimestart = eventCalendar.start
+      ? format(
+          utcToZonedTime(
+            subHours(new Date(eventCalendar.start), 7),
+            vnTimeZone
+          ),
+          "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+          { locale: viLocale }
+        )
+      : null;
+    const emailTimeend = eventCalendar.end
+      ? format(
+          utcToZonedTime(subHours(new Date(eventCalendar.end), 7), vnTimeZone),
+          "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+          { locale: viLocale }
+        )
+      : null;
+    await sendAttendanceStart(
+      userId?.email,
+      userId?.name,
+      emailtimestart,
+      emailTimeend
+    );
 
     return NextResponse.json(eventCalendar);
   } catch (error) {
@@ -103,7 +129,7 @@ export async function PATCH(
 
     const body = await req.json();
 
-    const { title, start, allDay, end, attendancestart, attendanceend } = body;
+    const { title, start, allDay, attendancestart, attendanceend } = body;
 
     if (!start) {
       return new NextResponse("Invalid Error!", { status: 403 });
@@ -184,6 +210,58 @@ export async function DELETE(
       },
     });
 
+    const eventcalendar = await prismadb.eventCalendar.findUnique({
+      where: { id: userId?.id },
+    });
+
+    let totalPoints = 0; // Khởi tạo tổng điểm
+
+    const user = await prismadb.user.findUnique({
+      where: { id: userId?.id },
+    });
+
+    switch (user?.degree) {
+      case Degree.Elementary:
+      case Degree.JuniorHighSchool:
+        totalPoints -= 250000;
+        break;
+      case Degree.HighSchool:
+      case Degree.JuniorColleges:
+        totalPoints -= 300000;
+        break;
+      case Degree.University:
+      case Degree.MastersDegree:
+        totalPoints -= 400000;
+        break;
+      default:
+        totalPoints -= 0;
+        break;
+    }
+
+    // Tìm và cập nhật bản ghi tồn tại nếu có, nếu không, tạo mới
+    let existingSalary = await prismadb.caculateSalary.findFirst({
+      where: {
+        userId: userId?.id,
+        eventcalendarId: eventcalendar?.id,
+      },
+    });
+
+    if (existingSalary) {
+      // Chuyển đổi giá trị từ Decimal thành number trước khi thêm vào totalPoints
+      const existingSalaryValue = existingSalary.salaryday
+        ? parseFloat(existingSalary.salaryday.toString())
+        : 0;
+      totalPoints += existingSalaryValue;
+      await prismadb.caculateSalary.update({
+        where: { id: existingSalary.id },
+        data: {
+          storeId: params.storeId, // Include the required fields
+          salaryday: totalPoints,
+          eventcalendarId: eventcalendar?.id || "",
+          userId: userId?.id || "",
+        },
+      });
+    }
     return NextResponse.json(deletedEvent);
   } catch (error) {
     console.log("[EVENTCALENDAR_DELETE]", error);

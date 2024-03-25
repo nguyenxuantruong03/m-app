@@ -1,9 +1,11 @@
 import { currentUser } from "@/lib/auth";
+import { sendAttendanceEnd } from "@/lib/mail";
 import prismadb from "@/lib/prismadb";
-import { UserRole } from "@prisma/client";
-import { format } from "date-fns";
+import { Degree, UserRole } from "@prisma/client";
+import { format, subHours } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import { NextResponse } from "next/server";
+import viLocale from "date-fns/locale/vi";
 
 export async function GET(
   req: Request,
@@ -79,17 +81,8 @@ export async function POST(
 
     const body = await req.json();
 
-    const {
-      title,
-      start,
-      allDay,
-      attendancestart,
-      attendanceend,
-    } = body;
+    const { title, start, allDay, attendancestart, attendanceend } = body;
 
-    if (!start) {
-      return new NextResponse("Invalid Error!", { status: 403 });
-    }
     if (!params.storeId) {
       return new NextResponse("Store id is required", { status: 400 });
     }
@@ -107,10 +100,6 @@ export async function POST(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    const user = await prismadb.user.findUnique({
-      where: { id: userId?.id },
-    });
-
     // Chuyển đổi start và end sang múi giờ của Việt Nam
     const vnTimeZone = "Asia/Ho_Chi_Minh";
     const zonedStart = utcToZonedTime(new Date(start), vnTimeZone);
@@ -120,7 +109,7 @@ export async function POST(
       data: {
         title,
         start: formattedStart,
-        end:null,
+        end: null,
         allDay,
         storeId: params.storeId,
         attendancestart,
@@ -128,6 +117,93 @@ export async function POST(
         userId: userId?.id || "",
       },
     });
+
+    const emailTimeStart = eventCalendar.start
+      ? format(
+          utcToZonedTime(
+            subHours(new Date(eventCalendar.start), 7),
+            vnTimeZone
+          ),
+          "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+          { locale: viLocale }
+        )
+      : null;
+    await sendAttendanceEnd(userId?.email, userId?.name, emailTimeStart);
+
+    const eventcalendar = await prismadb.eventCalendar.findUnique({
+      where: { id: userId?.id },
+    });
+
+    let totalPoints = 0; // Khởi tạo tổng điểm
+
+    let checkCount = 0;
+    for (const title of eventcalendar?.title || "") {
+      if (title.includes("✅")) {
+        checkCount++;
+      }
+    }
+
+    // Kiểm tra nếu đủ 26 "✅" thì thêm 500 điểm
+    if (checkCount >= 26) {
+      totalPoints += 500000;
+    }
+
+    const user = await prismadb.user.findUnique({
+      where: { id: userId?.id },
+    });
+
+    switch (user?.degree) {
+      case Degree.Elementary:
+      case Degree.JuniorHighSchool:
+        totalPoints += 250000;
+        break;
+      case Degree.HighSchool:
+      case Degree.JuniorColleges:
+        totalPoints += 300000;
+        break;
+      case Degree.University:
+      case Degree.MastersDegree:
+        totalPoints += 400000;
+        break;
+      default:
+        totalPoints += 0;
+        break;
+    }
+
+    // Tìm và cập nhật bản ghi tồn tại nếu có, nếu không, tạo mới
+    let existingSalary = await prismadb.caculateSalary.findFirst({
+      where: {
+        userId: userId?.id,
+        eventcalendarId: eventcalendar?.id,
+      },
+    });
+
+    if (existingSalary) {
+      // Chuyển đổi giá trị từ Decimal thành number trước khi thêm vào totalPoints
+      const existingSalaryValue = existingSalary.salaryday
+        ? parseFloat(existingSalary.salaryday.toString())
+        : 0;
+      totalPoints += existingSalaryValue;
+      await prismadb.caculateSalary.update({
+        where: { id: existingSalary.id },
+        data: {
+          storeId: params.storeId, // Include the required fields
+          salaryday: totalPoints,
+          eventcalendarId: eventcalendar?.id || "",
+          userId: userId?.id || "",
+        },
+      });
+    } else {
+      // Tạo bản ghi mới nếu không có bản ghi tồn tại
+      await prismadb.caculateSalary.create({
+        data: {
+          storeId: params.storeId, // Include the required fields
+          userId: userId?.id || "",
+          eventcalendarId: eventcalendar?.id || "",
+          salaryday: totalPoints,
+        },
+      });
+    }
 
     return NextResponse.json(eventCalendar);
   } catch (error) {

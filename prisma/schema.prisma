@@ -12,24 +12,25 @@ datasource db {
 }
 
 model Store {
-  id            String          @id @default(uuid())
-  name          String
-  userId        String
-  billboard     Billboard[]     @relation("StoreToBillboard")
-  categories    Category[]      @relation("StoreToCategory")
-  sizes         Size[]          @relation("StoreToSize")
-  colors        Color[]         @relation("StoreToColor")
-  product       Product[]       @relation("StoreToProduct")
-  orders        Order[]         @relation("StoreToOrder")
-  coupon        Coupon[]        @relation("StoreToCoupon")
-  taxrate       TaxRate[]       @relation("StoreToTaxRate")
-  shippingrates ShippingRates[] @relation("StoreToShippingRates")
+  id             String           @id @default(uuid())
+  name           String
+  userId         String
+  billboard      Billboard[]      @relation("StoreToBillboard")
+  categories     Category[]       @relation("StoreToCategory")
+  sizes          Size[]           @relation("StoreToSize")
+  colors         Color[]          @relation("StoreToColor")
+  product        Product[]        @relation("StoreToProduct")
+  orders         Order[]          @relation("StoreToOrder")
+  coupon         Coupon[]         @relation("StoreToCoupon")
+  taxrate        TaxRate[]        @relation("StoreToTaxRate")
+  shippingrates  ShippingRates[]  @relation("StoreToShippingRates")
   // checkoutcash  Checkoutcash[]  @relation("StoreToCheckoutcash")
-  productdetail ProductDetail[] @relation("StoreToDetailProductDetail")
-  eventcalendar EventCalendar[] @relation("StoreToEventCalendar")
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  sentEmailUser SentEmailUser[] @relation("StoreToSentEmailUser")
+  productdetail  ProductDetail[]  @relation("StoreToDetailProductDetail")
+  eventcalendar  EventCalendar[]  @relation("StoreToEventCalendar")
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  sentEmailUser  SentEmailUser[]  @relation("StoreToSentEmailUser")
+  caculateSalary CaculateSalary[] @relation("StoreCaculateSalary")
 }
 
 model Billboard {
@@ -451,7 +452,7 @@ model User {
   dateofbirth           DateTime?
   //Veiryfi email đã gửi chưa
   sentVeirifi           Boolean?               @default(false)
-  salary                Decimal?
+  CaculateSalary        CaculateSalary[]
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
 }
@@ -513,11 +514,12 @@ model TwoFactorConfirmation {
 }
 
 model EventCalendar {
-  id              String    @id @default(cuid())
+  id              String           @id @default(cuid())
   storeId         String
-  store           Store     @relation("StoreToEventCalendar", fields: [storeId], references: [id])
+  store           Store            @relation("StoreToEventCalendar", fields: [storeId], references: [id])
   userId          String
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  CaculateSalary  CaculateSalary[]
   attendancestart String?
   attendanceend   String?
   title           String?
@@ -543,4 +545,25 @@ model SentEmailUser {
 
   @@index([storeId])
   @@index([userId])
+}
+
+model CaculateSalary {
+  id              String        @id @default(uuid())
+  storeId         String
+  store           Store         @relation("StoreCaculateSalary", fields: [storeId], references: [id])
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventcalendarId String?
+  eventcalendar   EventCalendar? @relation(fields: [eventcalendarId], references: [id], onDelete: Cascade)
+  bonus           Int?
+  isSent          Boolean?      @default(false)
+  isPaid          Boolean?      @default(false)
+  salaryday       Decimal?
+  salarytotal     Decimal?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([eventcalendarId])
+  @@index([userId])
+  @@index([storeId])
 }

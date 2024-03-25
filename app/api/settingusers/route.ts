@@ -3,11 +3,11 @@ import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   try {
-    const product = await prismadb.user.findMany();
+    const settinguser = await prismadb.user.findMany();
 
-    return NextResponse.json(product);
+    return NextResponse.json(settinguser);
   } catch (error) {
-    console.log("[PRODUCT_GET]", error);
+    console.log("[SETTINGUSER_GET]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }
