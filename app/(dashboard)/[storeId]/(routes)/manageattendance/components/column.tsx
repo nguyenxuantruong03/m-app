@@ -14,6 +14,8 @@ export type ManageAttendancesColumn = {
   user: string | null;
   wokingTime: string | null;
   email: string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
 };
 
 export const columns: ColumnDef<ManageAttendancesColumn>[] = [
@@ -60,5 +62,13 @@ export const columns: ColumnDef<ManageAttendancesColumn>[] = [
         <Tally5 className="w-5 h-5 text-red-500" />
       );
     },
+  },
+  {
+    accessorKey: "createdAt",
+    header: "createdAt",
+  },
+  {
+    accessorKey: "updatedAt",
+    header: "updatedAt",
   },
 ];

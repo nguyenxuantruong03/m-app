@@ -6,6 +6,9 @@ import { currentRole } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
 import { RoleGate } from "@/components/auth/role-gate";
 import FormSuccess from "@/components/form-success";
+import { utcToZonedTime } from "date-fns-tz";
+import viLocale from "date-fns/locale/vi";
+const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 
 const ColorPage = async ({ params }: { params: { storeId: string } }) => {
   const role = await currentRole();
@@ -24,7 +27,26 @@ const ColorPage = async ({ params }: { params: { storeId: string } }) => {
     id: item.id,
     name: item.name,
     value: item.value,
-    createdAt: format(item.createdAt, "dd/MM/yyyy"),
+    createdAt: item.createdAt
+    ? format(
+        utcToZonedTime(
+          new Date(new Date(item.createdAt)),
+          vietnamTimeZone
+        ),
+        "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+        { locale: viLocale }
+      )
+    : null,
+    updatedAt: item.updatedAt
+    ? format(
+        utcToZonedTime(
+          new Date(new Date(item.updatedAt)),
+          vietnamTimeZone
+        ),
+        "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+        { locale: viLocale }
+      )
+    : null,
   }));
   return (
     <div className="w-full">

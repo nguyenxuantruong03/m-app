@@ -58,6 +58,26 @@ const ManageAttendance = async ({
             { locale: viLocale }
           )
         : null,
+        createdAt: item.createdAt
+        ? format(
+            utcToZonedTime(
+              new Date(new Date(item.createdAt)),
+              vietnamTimeZone
+            ),
+            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+            { locale: viLocale }
+          )
+        : null,
+        updatedAt: item.updatedAt
+        ? format(
+            utcToZonedTime(
+              new Date(new Date(item.updatedAt)),
+              vietnamTimeZone
+            ),
+            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+            { locale: viLocale }
+          )
+        : null,
     })
   );
 

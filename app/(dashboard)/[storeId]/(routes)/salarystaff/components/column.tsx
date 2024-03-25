@@ -15,6 +15,7 @@ export type SalaryStaffsColumn = {
   isPaid: boolean | null;
   degree: string | null;
   createdAt: string | null;
+  updatedAt: string | null;
 };
 
 const degreeMappings = {
@@ -115,7 +116,10 @@ export const columns: ColumnDef<SalaryStaffsColumn>[] = [
     accessorKey: "createdAt",
     header: "CreatedAt",
   },
-
+  {
+    accessorKey: "updatedAt",
+    header: "updatedAt",
+  },
   {
     id: "actions",
     cell: ({ row }) => <CellAction data={row.original} />,

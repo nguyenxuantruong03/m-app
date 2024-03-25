@@ -10,6 +10,9 @@ import { UserRole } from "@prisma/client";
 import { currentRole } from "@/lib/auth";
 import { RoleGate } from "@/components/auth/role-gate";
 import FormSuccess from "@/components/form-success";
+import { utcToZonedTime } from "date-fns-tz";
+import viLocale from "date-fns/locale/vi";
+const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 
 const OrderPage = async ({
   params,
@@ -51,7 +54,26 @@ const OrderPage = async ({
       }, 0)
     ),
     isPaid: item.isPaid,
-    createdAt: format(item.createdAt, "dd/MM/yyyy"),
+    createdAt: item.createdAt
+    ? format(
+        utcToZonedTime(
+          new Date(new Date(item.createdAt)),
+          vietnamTimeZone
+        ),
+        "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+        { locale: viLocale }
+      )
+    : null,
+    updatedAt: item.updatedAt
+        ? format(
+            utcToZonedTime(
+              new Date(new Date(item.updatedAt)),
+              vietnamTimeZone
+            ),
+            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+            { locale: viLocale }
+          )
+        : null,
   }));
   return (
     <>

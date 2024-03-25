@@ -1,14 +1,14 @@
 import prismadb from "@/lib/prismadb";
-import { format, addHours } from "date-fns";
+import { format } from "date-fns";
 import { RoleGate } from "@/components/auth/role-gate";
 import { currentRole } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
 import FormSuccess from "@/components/form-success";
 import { SalaryStaffsColumn } from "./components/column";
 import SalaryStaffClient from "./components/client";
+import { formatter } from "@/lib/utils";
 import { utcToZonedTime } from "date-fns-tz";
 import viLocale from "date-fns/locale/vi";
-import { formatter } from "@/lib/utils";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 
 const SalaryStaff = async () => {
@@ -41,7 +41,17 @@ const SalaryStaff = async () => {
       createdAt: item.createdAt
         ? format(
             utcToZonedTime(
-              new Date(new Date(item.createdAt)), // Thêm 5 giờ (5 * 60 phút * 60 giây * 1000 mili giây)
+              new Date(new Date(item.createdAt)),
+              vietnamTimeZone
+            ),
+            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+            { locale: viLocale }
+          )
+        : null,
+      updatedAt: item.updatedAt
+        ? format(
+            utcToZonedTime(
+              new Date(new Date(item.updatedAt)),
               vietnamTimeZone
             ),
             "E '-' dd/MM/yyyy '-' HH:mm:ss a",

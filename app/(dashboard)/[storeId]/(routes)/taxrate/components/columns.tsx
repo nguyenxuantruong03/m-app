@@ -11,7 +11,8 @@ export type TaxRateColumn = {
   inclusive: boolean;
   active: boolean;
   taxtype: string | null;
-  createdAt: string;
+  createdAt: string | null;
+  updatedAt: string | null;
 };
 
 const taxTypeMapping: Record<string, string> = {
@@ -77,6 +78,10 @@ export const columns: ColumnDef<TaxRateColumn>[] = [
   {
     accessorKey: "createdAt",
     header: "Ngày",
+  },
+  {
+    accessorKey: "updatedAt",
+    header: "updatedAt",
   },
   {
     id: "actions",

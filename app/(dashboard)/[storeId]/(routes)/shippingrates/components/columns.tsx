@@ -14,7 +14,8 @@ export type ShippingRatesColumn = {
   unitmax: string;
   valuemax: number;
   active: boolean | null;
-  createdAt: string;
+  createdAt: string | null;
+  updatedAt: string | null;
 };
 
 const taxBehaviorMapping: Record<string, string> = {
@@ -112,6 +113,10 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
   {
     accessorKey: "createdAt",
     header: "Ngày",
+  },
+  {
+    accessorKey: "updatedAt",
+    header: "updatedAt",
   },
   {
     id: "actions",

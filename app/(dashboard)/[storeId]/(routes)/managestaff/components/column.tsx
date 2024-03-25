@@ -26,8 +26,9 @@ export type ManageStaffsColumn = {
   ban: boolean | null;
   role: string;
   image: string | null;
-  createdAt: string | null;
   email?: string | undefined;
+  createdAt: string | null;
+  updatedAt: string | null;
 };
 
 const degreeMappings = {
@@ -340,6 +341,10 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
         </div>
       );
     },
+  },
+  {
+    accessorKey: "updatedAt",
+    header: "updatedAt",
   },
   {
     id: "actions",

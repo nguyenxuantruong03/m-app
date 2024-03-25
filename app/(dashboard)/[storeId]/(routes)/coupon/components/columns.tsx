@@ -13,7 +13,8 @@ export type CouponColumn = {
   maxredemptions: number | null;
   redeemby: string | null;
   imagecoupon: string | null;
-  createdAt: string;
+  createdAt: string | null;
+  updatedAt: string | null;
 };
 
 const durationMapping: Record<string, string> = {
@@ -95,6 +96,10 @@ export const columns: ColumnDef<CouponColumn>[] = [
   {
     accessorKey: "createdAt",
     header: "Ngày",
+  },
+  {
+    accessorKey: "updatedAt",
+    header: "updatedAt",
   },
   {
     id: "actions",

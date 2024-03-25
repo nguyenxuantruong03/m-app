@@ -30,10 +30,10 @@ export type SettingUsersColumn = {
   }[];
   isCitizen: boolean | null;
   isTwoFactorEnabled: boolean;
-  createdAt: string;
-  updatedAt: string;
   ban: boolean | null;
   banExpires: string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
 };
 
 const RoleCell = ({ row }: any) => {

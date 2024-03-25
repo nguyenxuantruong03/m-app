@@ -13,7 +13,8 @@ export type ProductColumn = {
   productdetail: string;
   isFeatured: boolean;
   isArchived: boolean;
-  createdAt: string;
+  createdAt: string | null;
+  updatedAt: string | null;
 };
 
 export const columns: ColumnDef<ProductColumn>[] = [
@@ -44,6 +45,10 @@ export const columns: ColumnDef<ProductColumn>[] = [
   {
     accessorKey: "createdAt",
     header: "Ngày",
+  },
+  {
+    accessorKey: "updatedAt",
+    header: "updatedAt",
   },
   {
     id: "actions",

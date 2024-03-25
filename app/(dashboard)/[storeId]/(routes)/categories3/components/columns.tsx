@@ -8,7 +8,8 @@ import { CellAction } from "./cell-action"
 export type CategoriesColumn = {
   id: string
   name: string
-  createdAt: string
+  createdAt: string | null
+  updatedAt: string | null
 }
 
 export const columns: ColumnDef<CategoriesColumn>[] = [
@@ -19,6 +20,10 @@ export const columns: ColumnDef<CategoriesColumn>[] = [
   {
     accessorKey: "createdAt",
     header: "Date",
+  },
+  {
+    accessorKey: "updatedAt",
+    header: "updatedAt",
   },
   {
     id: "actions",

@@ -6,6 +6,9 @@ import { UserRole } from "@prisma/client";
 import FormSuccess from "@/components/form-success";
 import { ManageStaffsColumn } from "./components/column";
 import ManageStaffClient from "./components/client";
+import { utcToZonedTime } from "date-fns-tz";
+import viLocale from "date-fns/locale/vi";
+const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 
 const ManageStaff = async ({ params }: { params: { storeId: string } }) => {
   const role = await currentRole();
@@ -51,7 +54,26 @@ const ManageStaff = async ({ params }: { params: { storeId: string } }) => {
     dateofbirth: item.dateofbirth
     ? format(item.dateofbirth, "dd/MM/yyyy")
     : null,
-    createdAt: format(item.createdAt, "dd/MM/yyyy"),
+    createdAt: item.createdAt
+        ? format(
+            utcToZonedTime(
+              new Date(new Date(item.createdAt)),
+              vietnamTimeZone
+            ),
+            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+            { locale: viLocale }
+          )
+        : null,
+    updatedAt: item.updatedAt
+        ? format(
+            utcToZonedTime(
+              new Date(new Date(item.updatedAt)),
+              vietnamTimeZone
+            ),
+            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+            { locale: viLocale }
+          )
+        : null,
   }));
 
 

@@ -6,6 +6,9 @@ import { UserRole } from "@prisma/client";
 import FormSuccess from "@/components/form-success";
 import { SettingUsersColumn } from "./components/column";
 import SettingUserClient from "./components/client";
+import { utcToZonedTime } from "date-fns-tz";
+import viLocale from "date-fns/locale/vi";
+const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 
 const SettingUser = async ({ params }: { params: { storeId: string } }) => {
   const role = await currentRole();
@@ -59,12 +62,30 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
     isTwoFactorEnabled: item.isTwoFactorEnabled,
     isCitizen: item.isCitizen,
     twoFactorConfirmation: item.twoFactorConfirmation,
-    createdAt: format(item.createdAt, "dd/MM/yyyy"),
+    createdAt: item.createdAt
+        ? format(
+            utcToZonedTime(
+              new Date(new Date(item.createdAt)),
+              vietnamTimeZone
+            ),
+            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+            { locale: viLocale }
+          )
+        : null,
     ban: item.ban,
     banExpires: item.banExpires
       ? format(item.banExpires, "dd/MM/yyyy")
       : null,
-    updatedAt: format(item.updatedAt, "dd/MM/yyyy"),
+    updatedAt: item.updatedAt
+    ? format(
+        utcToZonedTime(
+          new Date(new Date(item.createdAt)),
+          vietnamTimeZone
+        ),
+        "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+        { locale: viLocale }
+      )
+    : null,
   }));
 
 
