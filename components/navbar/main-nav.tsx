@@ -57,6 +57,11 @@ const MainNav = ({
       label: "Ảnh quảng cáo",
       active: pathname === `/${params.storeId}/billboards`,
     },
+    {
+      href: `/${params.storeId}/billboardstime`,
+      label: "Thời gian hiển thị",
+      active: pathname === `/${params.storeId}/billboardstime`,
+    },
   ];
 
   const categorys = [
