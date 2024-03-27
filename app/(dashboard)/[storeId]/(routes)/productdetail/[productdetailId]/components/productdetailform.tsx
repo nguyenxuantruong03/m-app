@@ -267,7 +267,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="guaranteeheading"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giá tiền bảo hành</FormLabel>
+                  <FormLabel>Giá tiền bảo hành 1</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -286,7 +286,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="guaranteedescription"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giá tiền bảo hành</FormLabel>
+                  <FormLabel>Giá tiền bảo hành 2</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -305,7 +305,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="guaranteeinfomation"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giá tiền bảo hành</FormLabel>
+                  <FormLabel>Giá tiền bảo hành 3</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -324,7 +324,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="guaranteeprice"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giá tiền bảo hành</FormLabel>
+                  <FormLabel>Giá tiền bảo hành 4</FormLabel>
                   <FormControl>
                     <Input
                       type="number"

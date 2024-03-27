@@ -2,6 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
+import { Decimal } from "@prisma/client/runtime/library";
 
 export type ProductColumn = {
   id: string;
@@ -9,7 +10,7 @@ export type ProductColumn = {
   heading: string;
   description: string;
   price: string;
-  percentpromotion: string;
+  percentpromotion: Decimal;
   productdetail: string;
   isFeatured: boolean;
   isArchived: boolean;
@@ -18,10 +19,6 @@ export type ProductColumn = {
 };
 
 export const columns: ColumnDef<ProductColumn>[] = [
-  {
-    accessorKey: "name",
-    header: "Tên đường dẫn(URL) ghi ko dấu không cách",
-  },
   {
     accessorKey: "heading",
     header: "Tên sản phẩm",
@@ -33,6 +30,13 @@ export const columns: ColumnDef<ProductColumn>[] = [
   {
     accessorKey: "percentpromotion",
     header: "Giảm %",
+    cell: ({ row }) => {
+      const percentpromotion = row.original.percentpromotion;
+      if (percentpromotion != null) {
+        return `${percentpromotion}%`;
+      }
+      return "";
+    },
   },
   {
     accessorKey: "isFeatured",
