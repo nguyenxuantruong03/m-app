@@ -15,7 +15,6 @@ export type ManageAttendancesColumn = {
   wokingTime: string | null;
   email: string | null;
   createdAt: string | null;
-  updatedAt: string | null;
 };
 
 export const columns: ColumnDef<ManageAttendancesColumn>[] = [
@@ -66,9 +65,5 @@ export const columns: ColumnDef<ManageAttendancesColumn>[] = [
   {
     accessorKey: "createdAt",
     header: "createdAt",
-  },
-  {
-    accessorKey: "updatedAt",
-    header: "updatedAt",
   },
 ];

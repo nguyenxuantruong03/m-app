@@ -16,7 +16,6 @@ export type ProductDetailColumn = {
   color: string;
   category: string;
   createdAt: string | null;
-  updatedAt: string | null;
 };
 
 export const columns: ColumnDef<ProductDetailColumn>[] = [
@@ -72,10 +71,6 @@ export const columns: ColumnDef<ProductDetailColumn>[] = [
   {
     accessorKey: "createdAt",
     header: "Ngày",
-  },
-  {
-    accessorKey: "updatedAt",
-    header: "updatedAt",
   },
   {
     id: "actions",

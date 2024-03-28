@@ -22,7 +22,7 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
       productType: productType,
     },
     include: {
-    productdetail: true
+      productdetail: true,
     },
     orderBy: {
       createdAt: "desc",
@@ -35,30 +35,17 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
     heading: item.heading,
     description: item.description,
     price: formatter.format(item.price.toNumber()),
-    percentpromotion: item.percentpromotion,
+    percentpromotion: `${item.percentpromotion}%`,
     isFeatured: item.isFeatured,
     isArchived: item.isArchived,
     productdetail: item.productdetail.name,
     createdAt: item.createdAt
-        ? format(
-            utcToZonedTime(
-              new Date(new Date(item.createdAt)),
-              vietnamTimeZone
-            ),
-            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-            { locale: viLocale }
-          )
-        : null,
-    updatedAt: item.updatedAt
-        ? format(
-            utcToZonedTime(
-              new Date(new Date(item.updatedAt)),
-              vietnamTimeZone
-            ),
-            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-            { locale: viLocale }
-          )
-        : null,
+      ? format(
+          utcToZonedTime(new Date(new Date(item.createdAt)), vietnamTimeZone),
+          "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+          { locale: viLocale }
+        )
+      : null,
   }));
   return (
     <div className="w-full">

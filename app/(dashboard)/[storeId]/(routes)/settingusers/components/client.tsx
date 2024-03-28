@@ -9,6 +9,7 @@ import { ApiList } from "@/components/ui/api-list";
 import { UserRole } from "@prisma/client";
 import { useCurrentRole } from "@/hooks/use-current-role";
 import { SettingUsersColumn,columns } from "./column";
+import Downloadfile from "@/components/file/downloadfilepage";
 
 interface SettingUserClientProps{
     data: SettingUsersColumn[]
@@ -25,6 +26,7 @@ const SettingUserClient:React.FC<SettingUserClientProps> = ({data}) => {
             title ={`Người dùng (${data.length})`}
             description="Quản lý người dùng"
             />
+        <Downloadfile data={data} filename="settinguser" />=
         </div>
         <Separator />
         <DataTable searchKey="name" columns={columns} data={data} />

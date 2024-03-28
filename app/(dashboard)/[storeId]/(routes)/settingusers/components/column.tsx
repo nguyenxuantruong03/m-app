@@ -33,7 +33,6 @@ export type SettingUsersColumn = {
   ban: boolean | null;
   banExpires: string | null;
   createdAt: string | null;
-  updatedAt: string | null;
 };
 
 const RoleCell = ({ row }: any) => {
@@ -281,19 +280,6 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
       return (
         <div className={isBanned ? "line-through text-gray-400" : ""}>
           {row.original.createdAt}
-        </div>
-      );
-    },
-  },
-
-  {
-    accessorKey: "updatedAt",
-    header: "Cập nhật",
-    cell: ({ row }) => {
-      const isBanned = row.original.ban === true;
-      return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
-          {row.original.updatedAt}
         </div>
       );
     },

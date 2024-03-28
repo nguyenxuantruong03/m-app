@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
@@ -15,41 +15,42 @@ import { CouponColumn, columns } from "./columns";
 import { ApiList } from "@/components/ui/api-list";
 import { UserRole } from "@prisma/client";
 import { useCurrentRole } from "@/hooks/use-current-role";
+import Downloadfile from "@/components/file/downloadfilepage";
 
-interface CouponClientProps{
-    data: CouponColumn[]
+interface CouponClientProps {
+  data: CouponColumn[];
 }
 
-const CouponClient:React.FC<CouponClientProps> = ({data}) => {
-    const router = useRouter()
-    const params = useParams()
-    const role = useCurrentRole();
-    const isRole = role === UserRole.ADMIN;
-    const showAPIRole = isRole;
-    return ( 
-        <>
-        <div className="flex items-center justify-between">
-            <Heading 
-            title ={`Sản phẩm (${data.length})`}
-            description="Quản lý mã giảm giá"
-            />
-            <Button onClick={() => router.push(`/${params.storeId}/coupon/new`)}>
-                <Plus className="mr-2 h-4 w-4" />
-                Thêm mới 
-            </Button>
-        </div>
-        <Separator />
-        <DataTable searchKey="name" columns={columns} data={data} />
-        {showAPIRole && (
-        <Heading title="Api" description="API calls for Coupon" />
-        )}
-        <Separator />
-        <ApiList 
-        entityIdName="couponId"
-        entityName="coupon"
+const CouponClient: React.FC<CouponClientProps> = ({ data }) => {
+  const router = useRouter();
+  const params = useParams();
+  const role = useCurrentRole();
+  const isRole = role === UserRole.ADMIN;
+  const showAPIRole = isRole;
+  return (
+    <>
+      <div className="flex items-center justify-between">
+        <Heading
+          title={`Sản phẩm (${data.length})`}
+          description="Quản lý mã giảm giá"
         />
-        </>
-     );
-}
- 
+        <div className="flex space-x-3">
+          <Downloadfile data={data} filename="coupon" />
+          <Button onClick={() => router.push(`/${params.storeId}/coupon/new`)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Thêm mới
+          </Button>
+        </div>
+      </div>
+      <Separator />
+      <DataTable searchKey="name" columns={columns} data={data} />
+      {showAPIRole && (
+        <Heading title="Api" description="API calls for Coupon" />
+      )}
+      <Separator />
+      <ApiList entityIdName="couponId" entityName="coupon" />
+    </>
+  );
+};
+
 export default CouponClient;

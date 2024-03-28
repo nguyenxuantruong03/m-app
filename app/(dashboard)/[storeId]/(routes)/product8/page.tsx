@@ -35,7 +35,7 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
     heading: item.heading,
     description: item.description,
     price: formatter.format(item.price.toNumber()),
-    percentpromotion: item.percentpromotion,
+    percentpromotion: `${item.percentpromotion}%`,
     isFeatured: item.isFeatured,
     isArchived: item.isArchived,
     productdetail: item.productdetail.name,
@@ -49,16 +49,6 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
         { locale: viLocale }
       )
     : null,
-    updatedAt: item.updatedAt
-        ? format(
-            utcToZonedTime(
-              new Date(new Date(item.updatedAt)),
-              vietnamTimeZone
-            ),
-            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-            { locale: viLocale }
-          )
-        : null,
   }));
   return (
     <div className="w-full">

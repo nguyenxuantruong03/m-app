@@ -7,6 +7,7 @@ import { ApiList } from "@/components/ui/api-list";
 import { UserRole } from "@prisma/client";
 import { useCurrentRole } from "@/hooks/use-current-role";
 import { ManageAttendancesColumn, columns } from "./column";
+import Downloadfile from "@/components/file/downloadfilepage";
 
 interface AttendanceClientProps {
   data: ManageAttendancesColumn[];
@@ -23,6 +24,7 @@ const AttendanceClient: React.FC<AttendanceClientProps> = ({ data }) => {
           title={`Điểm danh (${data.length})`}
           description="Quản lý điểm danh"
         />
+        <Downloadfile data={data} filename="manageattendance" />
       </div>
       <Separator />
       <DataTable searchKey="name" columns={columns} data={data} />

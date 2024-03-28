@@ -71,6 +71,8 @@
     "eslint": "8.44.0",
     "eslint-config-next": "^14.1.0",
     "install": "^0.13.0",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.2",
     "leaflet": "^1.9.4",
     "leaflet-routing-machine": "^3.2.12",
     "leaflet.locatecontrol": "^0.79.0",
@@ -99,6 +101,7 @@
     "typescript": "5.1.6",
     "unorm": "^1.6.0",
     "uuid": "^9.0.1",
+    "xlsx": "^0.18.5",
     "zod": "^3.21.4",
     "zustand": "^4.3.9"
   },

@@ -11,7 +11,6 @@ export type SentEmailUserColumn = {
   user: string | null;
   isSent: boolean | null;
   createdAt: string  | null;
-  updatedAt: string  | null;
 };
 
 export const columns: ColumnDef<SentEmailUserColumn>[] = [
@@ -42,10 +41,6 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
   {
     accessorKey: "createdAt",
     header: "Ngày",
-  },
-  {
-    accessorKey: "updatedAt",
-    header: "updatedAt",
   },
   {
     id: "actions",

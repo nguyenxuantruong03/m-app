@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { ReplyAll } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import Downloadfile from "@/components/file/downloadfilepage";
 
 interface SettingUserClientProps {
   data: ManageStaffsColumn[];
@@ -46,13 +47,16 @@ const SettingUserClient: React.FC<SettingUserClientProps> = ({ data }) => {
           title={`Nhân viên (${data.length})`}
           description="Quản lý nhân viên"
         />
-        <Button
-          onClick={onSentVerifyAll}
-          disabled={data.every((item) => item.sentVeirifi)}
-        >
-          <ReplyAll className="mr-2 h-4 w-4" />
-          Sent All
-        </Button>
+        <div className="flex space-x-3">
+          <Downloadfile data={data} filename="managestaff" />
+          <Button
+            onClick={onSentVerifyAll}
+            disabled={data.every((item) => item.sentVeirifi)}
+          >
+            <ReplyAll className="mr-2 h-4 w-4" />
+            Sent All
+          </Button>
+        </div>
       </div>
       <Separator />
       <DataTable searchKey="name" columns={columns} data={data} />

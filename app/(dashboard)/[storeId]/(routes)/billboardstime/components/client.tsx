@@ -15,6 +15,7 @@ import { BillboardTimeColumn, columns } from "./columns";
 import { ApiList } from "@/components/ui/api-list";
 import { useCurrentRole } from "@/hooks/use-current-role";
 import { UserRole } from "@prisma/client";
+import Downloadfile from "@/components/file/downloadfilepage";
 
 interface BillboardTimeClientProps {
   data: BillboardTimeColumn[];
@@ -33,12 +34,15 @@ const BillboardTimeClient: React.FC<BillboardTimeClientProps> = ({ data }) => {
           title={`Ảnh quảng cáo có thời gian (${data.length})`}
           description="Quản lý ảnh quảng cáo có thời gian hiển thị."
         />
-        <Button
-          onClick={() => router.push(`/${params.storeId}/billboardstime/new`)}
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          Thêm mới
-        </Button>
+        <div className="flex space-x-3">
+          <Downloadfile data={data} filename="billboardtime" />
+          <Button
+            onClick={() => router.push(`/${params.storeId}/billboardstime/new`)}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Thêm mới
+          </Button>
+        </div>
       </div>
       <Separator />
       <DataTable searchKey="label" columns={columns} data={data} />

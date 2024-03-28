@@ -15,6 +15,7 @@ import { BillboardColumn, columns } from "./columns";
 import { ApiList } from "@/components/ui/api-list";
 import { useCurrentRole } from "@/hooks/use-current-role";
 import { UserRole } from "@prisma/client";
+import Downloadfile from "@/components/file/downloadfilepage";
 
 interface BillboardClientProps {
   data: BillboardColumn[];
@@ -33,12 +34,15 @@ const BillboardClient: React.FC<BillboardClientProps> = ({ data }) => {
           title={`Ảnh quảng cáo (${data.length})`}
           description="Quản lý ảnh quảng cáo cửa hàng"
         />
-        <Button
-          onClick={() => router.push(`/${params.storeId}/billboards/new`)}
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          Thêm mới
-        </Button>
+        <div className="flex space-x-3">
+          <Downloadfile data={data} filename="billboard" />
+          <Button
+            onClick={() => router.push(`/${params.storeId}/billboards/new`)}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Thêm mới
+          </Button>
+        </div>
       </div>
       <Separator />
       <DataTable searchKey="label" columns={columns} data={data} />

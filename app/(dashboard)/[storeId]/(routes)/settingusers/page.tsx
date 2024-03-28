@@ -76,16 +76,6 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
     banExpires: item.banExpires
       ? format(item.banExpires, "dd/MM/yyyy")
       : null,
-    updatedAt: item.updatedAt
-    ? format(
-        utcToZonedTime(
-          new Date(new Date(item.createdAt)),
-          vietnamTimeZone
-        ),
-        "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-        { locale: viLocale }
-      )
-    : null,
   }));
 
 
