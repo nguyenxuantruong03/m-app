@@ -29,13 +29,6 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Heading } from "@/components/ui/heading";
 import { AlertModal } from "@/components/modals/alert-modal";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import ImageUpload from "@/components/ui/image-upload";
 import { Checkbox } from "@/components/ui/checkbox";
 import unorm from "unorm";
@@ -136,7 +129,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       router.push(`/${params.storeId}/product10`);
       toast.success(toastMessage);
     } catch (error: any) {
-      toast.error("Something went wrong.");
+      if (error.response && error.response.data && error.response.data.error) {
+        // Hiển thị thông báo lỗi cho người dùng
+        toast.error(error.response.data.error);
+      } else {
+        // Hiển thị thông báo lỗi mặc định cho người dùng
+        toast.error("Something went wrong.");
+      }
     } finally {
       setLoading(false);
     }
@@ -326,28 +325,35 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Chi tiết sản phẩm</FormLabel>
-                  <Select
+                  <Input
+                    list="productdetails"
+                    onChange={(e) => {
+                      const enteredValue = e.target.value;
+                      const selectedProductDetail = productDetail.find(
+                        (item) => item.name === enteredValue
+                      );
+                      if (selectedProductDetail) {
+                        // Nếu một màu được chọn từ danh sách, gán giá trị id tương ứng
+                        field.onChange(selectedProductDetail.id);
+                      } else {
+                        // Nếu người dùng đang nhập một giá trị mới, gán giá trị văn bản cho field
+                        field.onChange(enteredValue);
+                      }
+                    }}
+                    value={
+                      field.value
+                        ? productDetail.find((item) => item.id === field.value)
+                            ?.name
+                        : ""
+                    }
                     disabled={loading}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          defaultValue={field.value}
-                          placeholder="Select Product Detail"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {productDetail.map((item) => (
-                        <SelectItem key={item.id} value={item.id}>
-                          {item.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    placeholder="Select a productdetail"
+                  />
+                  <datalist id="productdetails">
+                    {productDetail.map((item) => (
+                      <option key={item.id} value={item.name} />
+                    ))}
+                  </datalist>
                 </FormItem>
               )}
             />

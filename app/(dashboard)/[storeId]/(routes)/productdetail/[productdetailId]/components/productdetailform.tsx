@@ -22,13 +22,6 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Heading } from "@/components/ui/heading";
 import { AlertModal } from "@/components/modals/alert-modal";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
@@ -153,9 +146,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
       router.refresh();
       router.push(`/${params.storeId}/productdetail`);
       toast.success(toastMessage);
-    } catch (error: any) {
-      toast.error("Something went wrong.");
-    } finally {
+    }catch (error: any) {
+      if (error.response && error.response.data && error.response.data.error) {
+        // Hiển thị thông báo lỗi cho người dùng
+        toast.error(error.response.data.error);
+      } else {
+        // Hiển thị thông báo lỗi mặc định cho người dùng
+        toast.error("Something went wrong.");
+      }
+    }finally {
       setLoading(false);
     }
   };
@@ -905,28 +904,37 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Màu</FormLabel>
-                  <Select
+                  <Input
+                    list="colors"
+                    onChange={(e) => {
+                      const enteredValue = e.target.value;
+                      const selectedColor = colors.find(
+                        (color) => color.name === enteredValue
+                      );
+                      if (selectedColor) {
+                        // Nếu một màu được chọn từ danh sách, gán giá trị id tương ứng
+                        field.onChange(selectedColor.id);
+                      } else {
+                        // Nếu người dùng đang nhập một giá trị mới, gán giá trị văn bản cho field
+                        field.onChange(enteredValue);
+                      }
+                    }}
+                    value={
+                      field.value
+                        ? colors.find((color) => color.id === field.value)?.name
+                        : ""
+                    }
                     disabled={loading}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          defaultValue={field.value}
-                          placeholder="Select a color"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {colors.map((color) => (
-                        <SelectItem key={color.id} value={color.id}>
-                          {color.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    placeholder="Select a color"
+                  />
+                  <datalist id="colors">
+                    {colors.map((color) => (
+                      <option
+                        key={color.id}
+                        value={color.name}
+                      />
+                    ))}
+                  </datalist>
                 </FormItem>
               )}
             />
@@ -937,28 +945,37 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Kích cỡ</FormLabel>
-                  <Select
+                  <Input
+                    list="sizes"
+                    onChange={(e) => {
+                      const enteredValue = e.target.value;
+                      const selectedSize = sizes.find(
+                        (size) => size.name === enteredValue
+                      );
+                      if (selectedSize) {
+                        // Nếu một màu được chọn từ danh sách, gán giá trị id tương ứng
+                        field.onChange(selectedSize.id);
+                      } else {
+                        // Nếu người dùng đang nhập một giá trị mới, gán giá trị văn bản cho field
+                        field.onChange(enteredValue);
+                      }
+                    }}
+                    value={
+                      field.value
+                        ? sizes.find((size) => size.id === field.value)?.name
+                        : ""
+                    }
                     disabled={loading}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          defaultValue={field.value}
-                          placeholder="Select a size"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {sizes.map((size) => (
-                        <SelectItem key={size.id} value={size.id}>
-                          {size.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    placeholder="Select a size"
+                  />
+                  <datalist id="sizes">
+                    {sizes.map((size) => (
+                      <option
+                        key={size.id}
+                        value={size.name}
+                      />
+                    ))}
+                  </datalist>
                 </FormItem>
               )}
             />
@@ -969,28 +986,37 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Loại</FormLabel>
-                  <Select
+                  <Input
+                    list="categories"
+                    onChange={(e) => {
+                      const enteredValue = e.target.value;
+                      const selectedCategory = categories.find(
+                        (categorie) => categorie.name === enteredValue
+                      );
+                      if (selectedCategory) {
+                        // Nếu một màu được chọn từ danh sách, gán giá trị id tương ứng
+                        field.onChange(selectedCategory.id);
+                      } else {
+                        // Nếu người dùng đang nhập một giá trị mới, gán giá trị văn bản cho field
+                        field.onChange(enteredValue);
+                      }
+                    }}
+                    value={
+                      field.value
+                        ? categories.find((categorie) => categorie.id === field.value)?.name
+                        : ""
+                    }
                     disabled={loading}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          defaultValue={field.value}
-                          placeholder="Select a category"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {categories.map((categorie) => (
-                        <SelectItem key={categorie.id} value={categorie.id}>
-                          {categorie.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    placeholder="Select a category"
+                  />
+                  <datalist id="categories">
+                    {categories.map((categorie) => (
+                      <option
+                        key={categorie.id}
+                        value={categorie.name}
+                      />
+                    ))}
+                  </datalist>
                 </FormItem>
               )}
             />

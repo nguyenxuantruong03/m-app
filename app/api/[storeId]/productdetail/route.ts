@@ -268,6 +268,40 @@ export async function POST(
       return new NextResponse("Store id is required", { status: 400 });
     }
 
+    // Kiểm tra sizeId truyền vào có tồn tại trong danh sách size không
+    const size = await prismadb.size.findFirst({
+      where: {
+        id: body.sizeId,
+      },
+    });
+
+    // Nếu sizeId không tồn tại, trả về thông báo lỗi
+    if (!size) {
+      return new NextResponse(JSON.stringify({ error: "Hãy chọn lại Size!" }), { status: 404 });
+    }
+
+    const color = await prismadb.color.findFirst({
+      where: {
+        id: body.colorId,
+      },
+    });
+
+    // Nếu sizeId không tồn tại, trả về thông báo lỗi
+    if (!color) {
+      return new NextResponse(JSON.stringify({ error: "Hãy chọn lại Color!" }), { status: 404 });
+    }
+
+    const category = await prismadb.category.findFirst({
+      where: {
+        id: body.categoryId,
+      },
+    });
+
+    // Nếu sizeId không tồn tại, trả về thông báo lỗi
+    if (!category) {
+      return new NextResponse(JSON.stringify({ error: "Hãy chọn lại Category!" }), { status: 404 });
+    }
+
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,

@@ -60,6 +60,17 @@ export async function POST(
     if (!params.storeId) {
       return new NextResponse("Store id is required", { status: 400 });
     }
+    
+    const productDetail = await prismadb.productDetail.findFirst({
+      where: {
+        id: body.productdetailId,
+      },
+    });
+
+    // Nếu productDetail không tồn tại, trả về thông báo lỗi
+    if (!productDetail) {
+      return new NextResponse(JSON.stringify({ error: "Hãy chọn lại ProductDetail!" }), { status: 404 });
+    }
 
     const storeByUserId = await prismadb.store.findFirst({
       where: {
