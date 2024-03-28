@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useEffect, useState } from "react";
+import { myfont } from "./../../times new roman-normal";
 
 interface DownloadfileProps {
   data: any[];
@@ -38,13 +39,40 @@ const Downloadfile: React.FC<DownloadfileProps> = ({ data, filename }) => {
     XLSX.writeFile(workbook, `${filename}.xlsx`);
   };
 
-
   const handlePdfDownload = () => {
     const doc = new jsPDF("landscape", "px", "a4", true);
+
+    doc.addFileToVFS("times new roman-normal.ttf", myfont);
+    doc.addFont("times new roman-normal.ttf", "times new roman", "normal");
+    doc.setFont("times new roman");
+
     autoTable(doc, {
       head: [Object.keys(data[0])],
       body: data.map(Object.values),
+      headStyles: {
+        font: "times new roman",
+        textColor: [0, 0, 0], //Black
+        fontSize: 12,
+      },
+      bodyStyles: { font: "times new roman" },
     });
+    const pages = doc.getNumberOfPages();
+    const pageWidth = doc.internal.pageSize.width; //Optional
+    const pageHeight = doc.internal.pageSize.height; //Optional
+    doc.setFontSize(10); //Optional
+    for (let j = 1; j < pages + 1; j++) {
+      let horizontalPos = pageWidth / 2; //Can be fixed number
+      let verticalPos = pageHeight - 10; //Can be fixed number
+      doc.setPage(j);
+      doc.text(
+        `${j} of ${pages} - by: Nguyen Xuan Truong`,
+        horizontalPos,
+        verticalPos,
+        {
+          align: "center", //Optional text styling});
+        }
+      );
+    }
     doc.save(`${filename}.pdf`);
   };
 
