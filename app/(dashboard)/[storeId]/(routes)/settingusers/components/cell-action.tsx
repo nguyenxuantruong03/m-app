@@ -57,7 +57,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Ban: <span className="font-bold">{data.email} - <span className="font-bold">{data.name}</span></span>.
+              Ban:{" "}
+              <span className="font-bold">
+                {data.email} - <span className="font-bold">{data.name}</span>
+              </span>
+              .
             </p>
           );
         }),
@@ -80,18 +84,27 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           },
         }
       );
-    } catch (error: any) {} 
+    } catch (error: any) {
+    } finally {
+      setLoading(false);
+    }
   };
 
   const UnBanUser = async () => {
     try {
       setLoading(true);
-      const promise = axios.post("/api/settingusers/unban", { userId: data.id });
+      const promise = axios.post("/api/settingusers/unban", {
+        userId: data.id,
+      });
       await toast.promise(
         promise.then(() => {
           return (
             <p>
-              Unban: <span className="font-bold">{data.email} - <span className="font-bold">{data.name}</span></span>.
+              Unban:{" "}
+              <span className="font-bold">
+                {data.email} - <span className="font-bold">{data.name}</span>
+              </span>
+              .
             </p>
           );
         }),
@@ -114,7 +127,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           },
         }
       );
-    } catch (error: any) {} 
+    } catch (error: any) {
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
