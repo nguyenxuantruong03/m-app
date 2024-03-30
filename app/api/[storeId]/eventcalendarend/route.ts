@@ -6,6 +6,7 @@ import { format, subHours } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import { NextResponse } from "next/server";
 import viLocale from "date-fns/locale/vi";
+const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 
 export async function GET(
   req: Request,
@@ -36,7 +37,7 @@ export async function GET(
       },
     });
 
-     if (!storeByUserId) {
+    if (!storeByUserId) {
       return new NextResponse(
         JSON.stringify({ error: "Không tìm thấy store id!" }),
         { status: 405 }
@@ -74,14 +75,27 @@ export async function GET(
       if (currentTimeVN >= latestEventEndVN) {
         return NextResponse.json(latestEvent);
       } else {
-          return new NextResponse(
-            JSON.stringify({ error: "Sự kiện chưa kết thúc!" }),
-            { status: 400 }
-          );
+        return new NextResponse(
+          JSON.stringify({
+            error: `Điểm danh chưa kết thúc! Hãy quay lại vào lúc: ${
+              latestEventEnd
+                ? format(
+                    utcToZonedTime(
+                      subHours(new Date(latestEventEnd), 7),
+                      vietnamTimeZone
+                    ),
+                    "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+                    { locale: viLocale }
+                  )
+                : null
+            }.`,
+          }),
+          { status: 400 }
+        );
       }
     } else {
       return new NextResponse(
-        JSON.stringify({ error: "Không có sự kiện nào diễn ra!" }),
+        JSON.stringify({ error: "Không có điểm danh nào diễn ra!" }),
         { status: 400 }
       );
     }

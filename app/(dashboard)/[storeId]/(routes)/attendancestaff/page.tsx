@@ -11,12 +11,18 @@ import { EventSourceInput } from "@fullcalendar/core/index.js";
 import multiMonthPlugin from "@fullcalendar/multimonth";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { useParams } from "next/navigation";
-import { format, addHours, addMinutes, addSeconds } from "date-fns";
+import { redirect, useParams } from "next/navigation";
+import { format, addHours, addMinutes, addSeconds, subHours } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import { Button } from "@/components/ui/button";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { AlertModal } from "@/components/modals/alert-modal";
+import { Check, User } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getAccountByUserId } from "@/data/account";
+import viLocale from "date-fns/locale/vi";
+const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
+
 interface Event {
   title: string;
   start: Date | string;
@@ -24,6 +30,21 @@ interface Event {
   id: number;
   attendancestart?: string;
   attendanceend?: string;
+}
+
+interface AccountItem {
+  id: string;
+  userId: string;
+  type: string;
+  provider: string;
+  providerAccountId: string;
+  refresh_token: string | null;
+  access_token: string | null;
+  expires_at: number | null;
+  token_type: string | null;
+  scope: string | null;
+  id_token: string | null;
+  session_state: string | null;
 }
 
 export default function Home() {
@@ -54,6 +75,32 @@ export default function Home() {
   const [isAddingEvent, setIsAddingEvent] = useState(false);
   const [isAttendanceStartCalled, setIsAttendanceStartCalled] = useState(false);
   const [isEventEnded, setIsEventEnded] = useState(false);
+  const [account, setAccount] = useState<AccountItem | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!userId || !userId.id) {
+        redirect("/auth/login");
+      }
+
+      try {
+        const accountData = await getAccountByUserId(userId.id);
+        setAccount(accountData || null);
+      } catch (error) {
+        toast.error("Invalid Error");
+      }
+    };
+    fetchData();
+  }, [userId]);
+  const imageCredentials = userId?.imageCredential[0] || undefined;
+  const isGitHubOrGoogleUser =
+    account?.provider === "github" || account?.provider === "google";
+  // Use the first image from imageCredential if available, or randomImage if available
+  const avatarImage =
+    imageCredentials ||
+    (imageCredentials ? imageCredentials[0] : null) ||
+    userId?.image;
+  // Sử dụng randomImage trong AvatarImage
 
   // Use a ref to track whether draggable setup has been done
   const draggableSetupRef = useRef(false);
@@ -207,23 +254,104 @@ export default function Home() {
               start: formattedDate,
             }
           );
-
           // Update state with the new event from the response
           setAllEvents((prevEvents) => [...prevEvents, response.data]);
-          toast.success("Điểm danh thành công.");
+          setIsCheckingAttendanceStart(false);
+          setIsCheckingAttendanceEnd(false);
+          setIsAddingEvent(false);
+          setIsDeleting(false);
+
+          toast.custom((t) => (
+            <div
+              className={`${
+                t.visible ? "animate-enter" : "animate-leave"
+              } border-2 border-green-500 max-w-xl w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+            >
+              <div className="flex-1 w-0 p-4">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 pt-0.5">
+                    <Avatar>
+                      {isGitHubOrGoogleUser && avatarImage ? (
+                        <AvatarImage src={avatarImage} />
+                      ) : avatarImage ? (
+                        <AvatarImage src={avatarImage} />
+                      ) : (
+                        <AvatarFallback className="bg-sky-500">
+                          <User className="text-white" />
+                        </AvatarFallback>
+                      )}
+                    </Avatar>
+                  </div>
+                  <div className="ml-3 flex-1">
+                    <p className="text-green-500 font-bold flex">
+                      <Check className="w-5 h-5 rounded-full bg-green-500 text-white mx-1" />
+                      Điểm danh thành công!
+                    </p>
+                    <p className="mt-1 text-sm text-gray-500">
+                      Người dùng{" "}
+                      <span className="font-bold text-blue-500">
+                        {userId?.name}
+                      </span>{" "}
+                      - <span className="font-bold">{userId?.email}</span>. Bắt
+                      đầu làm vào lúc:{" "}
+                      <span className="font-bold">
+                        {response.data?.start
+                          ? format(
+                              utcToZonedTime(
+                                subHours(new Date(response.data?.start), 7),
+                                vietnamTimeZone
+                              ),
+                              "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+                              { locale: viLocale }
+                            )
+                          : null}
+                      </span>{" "}
+                      và kết thúc vào lúc:{" "}
+                      <span className="font-bold">
+                        {response.data?.end
+                          ? format(
+                              utcToZonedTime(
+                                subHours(new Date(response.data?.end), 7),
+                                vietnamTimeZone
+                              ),
+                              "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+                              { locale: viLocale }
+                            )
+                          : null}
+                      </span>
+                      .
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex border-l border-gray-200">
+                <button
+                  onClick={() => toast.dismiss(t.id)}
+                  className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          ));
         }
-        setIsCheckingAttendanceStart(false);
-        setIsCheckingAttendanceEnd(false);
-        setIsAddingEvent(false);
-        setIsDeleting(false);
-      } catch (error) {
+      } catch (error: any) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
+          // Hiển thị thông báo lỗi cho người dùng
+          toast.error(error.response.data.error);
+        } else {
+          // Hiển thị thông báo lỗi mặc định cho người dùng
+          toast.error("Đã xảy ra lỗi khi thêm sự kiện.");
+        }
         // Handle request error
         setIsCheckingAttendanceStart(false);
         setIsCheckingAttendanceEnd(false);
         setIsAddingEvent(false);
         setIsDeleting(false);
-        console.error("Error adding event:", error);
-        toast.error("Đã xảy ra lỗi khi thêm sự kiện.");
       }
     }
   };
@@ -278,23 +406,90 @@ export default function Home() {
               end: null,
             }
           );
-
           // Update state with the new event from the response
           setAllEvents((prevEvents) => [...prevEvents, postResponse.data]);
-          toast.success("Kết thúc thành công.");
+          setIsCheckingAttendanceEnd(false);
+          setIsCheckingAttendanceStart(false);
+          setIsAddingEvent(false);
+          setIsDeleting(false);
+
+          toast.custom((t) => (
+            <div
+              className={`${
+                t.visible ? "animate-enter" : "animate-leave"
+              } border-2 border-green-500 max-w-xl w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+            >
+              <div className="flex-1 w-0 p-4">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 pt-0.5">
+                    <Avatar>
+                      {isGitHubOrGoogleUser && avatarImage ? (
+                        <AvatarImage src={avatarImage} />
+                      ) : avatarImage ? (
+                        <AvatarImage src={avatarImage} />
+                      ) : (
+                        <AvatarFallback className="bg-sky-500">
+                          <User className="text-white" />
+                        </AvatarFallback>
+                      )}
+                    </Avatar>
+                  </div>
+                  <div className="ml-3 flex-1">
+                    <p className="text-green-500 font-bold flex">
+                      <Check className="w-5 h-5 rounded-full bg-green-500 text-white mx-1" />
+                      Kết thúc thành công!
+                    </p>
+                    <p className="mt-1 text-sm text-gray-500">
+                      Người dùng{" "}
+                      <span className="font-bold text-blue-500">
+                        {userId?.name}
+                      </span>{" "}
+                      - <span className="font-bold">{userId?.email}</span>. Bạn
+                      đã kết thúc vào lúc:{" "}
+                      <span className="font-bold">
+                        {postResponse.data?.start
+                          ? format(
+                              utcToZonedTime(
+                                subHours(new Date(postResponse.data?.start), 7),
+                                vietnamTimeZone
+                              ),
+                              "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+                              { locale: viLocale }
+                            )
+                          : null}
+                      </span>
+                      .
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex border-l border-gray-200">
+                <button
+                  onClick={() => toast.dismiss(t.id)}
+                  className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          ));
+        }
+      } catch (error: any) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
+          // Hiển thị thông báo lỗi cho người dùng
+          toast.error(error.response.data.error);
+        } else {
+          // Hiển thị thông báo lỗi mặc định cho người dùng
+          toast.error("Chưa đến lúc để kêt thúc!");
         }
         setIsCheckingAttendanceEnd(false);
         setIsCheckingAttendanceStart(false);
         setIsAddingEvent(false);
         setIsDeleting(false);
-      } catch (error) {
-        // Handle request error
-        console.error("Error checking or adding event:", error);
-        toast.error("Chưa đến lúc để kêt thúc!");
-        setIsCheckingAttendanceEnd(false);
-        setIsCheckingAttendanceStart(false);
-        setIsAddingEvent(false);
-        setIsDeleting(false); 
       }
     }
   };
@@ -368,11 +563,84 @@ export default function Home() {
               setIsCheckingAttendanceStart(false);
               setIsAddingEvent(false);
               setIsDeleting(false);
+              toast.custom((t) => (
+                <div
+                  className={`${
+                    t.visible ? "animate-enter" : "animate-leave"
+                  } border-2 border-green-500 max-w-xl w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+                >
+                  <div className="flex-1 w-0 p-4">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 pt-0.5">
+                        <Avatar>
+                          {isGitHubOrGoogleUser && avatarImage ? (
+                            <AvatarImage src={avatarImage} />
+                          ) : avatarImage ? (
+                            <AvatarImage src={avatarImage} />
+                          ) : (
+                            <AvatarFallback className="bg-sky-500">
+                              <User className="text-white" />
+                            </AvatarFallback>
+                          )}
+                        </Avatar>
+                      </div>
+                      <div className="ml-3 flex-1">
+                        <p className="text-green-500 font-bold flex">
+                          <Check className="w-5 h-5 rounded-full bg-green-500 text-white mx-1" />
+                          Thêm sự kiện thành công!
+                        </p>
+                        <p className="mt-1 text-sm text-gray-500">
+                          Người dùng{" "}
+                          <span className="font-bold text-blue-500">
+                            {userId?.name}
+                          </span>{" "}
+                          - <span className="font-bold">{userId?.email}</span>.
+                          Bạn thêm sự kiện{" "}
+                          <span className="font-bold text-red-500">
+                            {event.title}
+                          </span>{" "}
+                          vào lúc:{" "}
+                          <span className="font-bold">
+                            {response.data?.start
+                              ? format(
+                                  utcToZonedTime(
+                                    subHours(new Date(response.data?.start), 7),
+                                    vietnamTimeZone
+                                  ),
+                                  "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+                                  { locale: viLocale }
+                                )
+                              : null}
+                          </span>
+                          .
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex border-l border-gray-200">
+                    <button
+                      onClick={() => toast.dismiss(t.id)}
+                      className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              ));
             })
             .catch((error) => {
               // Handle request error
-              console.error("Error adding event:", error);
-              toast.error("Đã xảy ra lỗi khi thêm sự kiện.");
+              if (
+                error.response &&
+                error.response.data &&
+                error.response.data.error
+              ) {
+                // Hiển thị thông báo lỗi cho người dùng
+                toast.error(error.response.data.error);
+              } else {
+                // Hiển thị thông báo lỗi mặc định cho người dùng
+                toast.error("Đã xảy ra lỗi khi thêm sự kiện.");
+              }
               setIsCheckingAttendanceEnd(false);
               setIsCheckingAttendanceStart(false);
               setIsAddingEvent(false);
@@ -411,7 +679,7 @@ export default function Home() {
         .delete(`/api/${storeId}/eventcalendar`, {
           data: { eventId: eventIdToDelete, userId: userId?.id },
         })
-        .then(() => {
+        .then((response) => {
           // Update state to remove the deleted event
           setAllEvents(
             allEvents.filter((event) => String(event.id) !== String(idToDelete))
@@ -427,12 +695,80 @@ export default function Home() {
           }
           setShowDeleteModal(false);
           setIdToDelete(null);
-          toast.success("Xóa sự kiện thành công.");
+
+          toast.custom((t) => (
+            <div
+              className={`${
+                t.visible ? "animate-enter" : "animate-leave"
+              } border-2 border-green-500 max-w-xl w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+            >
+              <div className="flex-1 w-0 p-4">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 pt-0.5">
+                    <Avatar>
+                      {isGitHubOrGoogleUser && avatarImage ? (
+                        <AvatarImage src={avatarImage} />
+                      ) : avatarImage ? (
+                        <AvatarImage src={avatarImage} />
+                      ) : (
+                        <AvatarFallback className="bg-sky-500">
+                          <User className="text-white" />
+                        </AvatarFallback>
+                      )}
+                    </Avatar>
+                  </div>
+                  <div className="ml-3 flex-1">
+                    <p className="text-green-500 font-bold flex">
+                      <Check className="w-5 h-5 rounded-full bg-green-500 text-white mx-1" />
+                      Xóa sự kiện thành công!
+                    </p>
+                    <p className="mt-1 text-sm text-gray-500">
+                      Người dùng{" "}
+                      <span className="font-bold text-blue-500">
+                        {userId?.name}
+                      </span>{" "}
+                      - <span className="font-bold">{userId?.email}</span>. Bạn
+                      đã xóa sự kiện vào lúc:{" "}
+                      <span className="font-bold">
+                        {response.data?.createdAt
+                          ? format(
+                              utcToZonedTime(
+                                subHours(new Date(response.data?.createdAt), 7),
+                                vietnamTimeZone
+                              ),
+                              "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+                              { locale: viLocale }
+                            )
+                          : null}
+                      </span>.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex border-l border-gray-200">
+                <button
+                  onClick={() => toast.dismiss(t.id)}
+                  className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          ));
         })
         .catch((error) => {
           // Handle request error
-          console.error("Error deleting event:", error);
-          toast.error("Đã xảy ra lỗi khi xóa sự kiện.");
+          if (
+            error.response &&
+            error.response.data &&
+            error.response.data.error
+          ) {
+            // Hiển thị thông báo lỗi cho người dùng
+            toast.error(error.response.data.error);
+          } else {
+            // Hiển thị thông báo lỗi mặc định cho người dùng
+            toast.error("Đã xảy ra lỗi khi xóa sự kiện.");
+          }
         })
         .finally(() => {
           setIsDeleting(false); // Set loading state back to false
