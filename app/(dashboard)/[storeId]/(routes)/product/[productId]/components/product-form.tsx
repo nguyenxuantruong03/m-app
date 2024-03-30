@@ -6,7 +6,6 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
-import { Trash } from "lucide-react";
 import {
   Product,
   Image,
@@ -32,6 +31,13 @@ import { AlertModal } from "@/components/modals/alert-modal";
 import ImageUpload from "@/components/ui/image-upload";
 import { Checkbox } from "@/components/ui/checkbox";
 import unorm from "unorm";
+import { Trash } from "lucide-react";
+import { Check } from "lucide-react";
+import { format } from "date-fns";
+import { utcToZonedTime } from "date-fns-tz";
+import viLocale from "date-fns/locale/vi";
+const vietnamTimeZone = "Asia/Ho_Chi_Minh";
+import Imagee from "next/image";
 
 //Loại bỏ dấu
 const removeDiacritics = (str: String) => {
@@ -76,7 +82,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
   const title = initialData ? "Edit product" : "Create product";
   const description = initialData ? "Edit a product." : "Add a new product";
-  const toastMessage = initialData ? "Product updated." : "Product created.";
   const action = initialData ? "Save changes" : "Create";
 
   const form = useForm<ProductFormValues>({
@@ -114,26 +119,137 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const onSubmit = async (data: ProductFormValues) => {
     try {
       setLoading(true);
-      //inittialData có nghĩa là khi dữ diệu ban đầu có nó sẽ đổi nut button thành save change
-      /* Khối mã chịu trách nhiệm thực hiện yêu cầu HTTP để cập nhật bảng quảng cáo hiện có
-      hoặc tạo bảng quảng cáo mới dựa trên giá trị của `initialData`. */
+      let promise;
+
       if (initialData) {
-        await axios.patch(
+        promise = axios.patch(
           `/api/${params.storeId}/product/${params.productId}`,
           data
         );
       } else {
-        await axios.post(`/api/${params.storeId}/product`, data);
+        promise = axios.post(`/api/${params.storeId}/product`, data);
       }
+
+      // Lấy ảnh từ cả images và imagesalientfeatures
+      let allImages: any[] = [];
+      if (data.images) {
+        allImages = allImages.concat(data.images.map((item) => item.url));
+      }
+      if (data.imagesalientfeatures) {
+        allImages = allImages.concat(
+          data.imagesalientfeatures.map((item) => item.url)
+        );
+      }
+
+      const response = await promise;
+
+      let message;
+      if (initialData) {
+        message = (
+          <p>
+            Product <span className="font-bold">{response?.data.heading}</span>{" "}
+            updated.
+          </p>
+        );
+      } else {
+        message = (
+          <p>
+            Product <span className="font-bold">{data.heading}</span> created.
+          </p>
+        );
+      }
+
+      let title;
+      if (initialData) {
+        title = (
+          <div className="flex items-center justify-between text-sm">
+            <p className="text-green-500 font-bold flex">
+              <Check className="w-5 h-5 rounded-full bg-green-500 text-white mx-1" />
+              Product updated!
+            </p>
+            <span className="text-gray-500">
+              {response?.data.createdAt
+                ? format(
+                    utcToZonedTime(
+                      new Date(new Date(response?.data.createdAt)),
+                      vietnamTimeZone
+                    ),
+                    "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+                    { locale: viLocale }
+                  )
+                : null}
+            </span>
+          </div>
+        );
+      } else {
+        title = (
+          <div className="flex items-center justify-between text-sm">
+            <p className="text-green-500 font-bold flex">
+              <Check className="w-4 h-4 rounded-full bg-green-500 text-white mx-1" />
+              Product created!
+            </p>
+            <span className="text-gray-500">
+              {response.data?.createdAt
+                ? format(
+                    utcToZonedTime(
+                      new Date(new Date(response.data?.createdAt)),
+                      vietnamTimeZone
+                    ),
+                    "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+                    { locale: viLocale }
+                  )
+                : null}
+            </span>
+          </div>
+        );
+      }
+
+      toast.custom((t) => (
+        <div
+          className={`${
+            t.visible ? "animate-enter" : "animate-leave"
+          } border-2 border-green-500 max-w-3xl w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+        >
+          <div className="flex-1 w-0 p-2">
+            <div className="flex items-start">
+              <div className="flex-shrink-0 pt-0.5">
+                {allImages.slice(0, 10).map((url: any, index: any) => (
+                  <span
+                    key={index}
+                    className="avatar-overlapping-multiple-image"
+                  >
+                    <Imagee
+                      className="avatar-image-overlapping-multiple-image"
+                      src={url}
+                      alt=""
+                      width={40}
+                      height={40}
+                    />
+                  </span>
+                ))}
+              </div>
+              <div className="ml-3 flex-1">
+                <p>{title}</p>
+                <p className="mt-1 text-sm text-gray-500">{message}</p>
+              </div>
+            </div>
+          </div>
+          <div className="flex border-l border-gray-200">
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      ));
       router.refresh();
       router.push(`/${params.storeId}/product`);
-      toast.success(toastMessage);
     } catch (error: any) {
       if (error.response && error.response.data && error.response.data.error) {
-        // Hiển thị thông báo lỗi cho người dùng
         toast.error(error.response.data.error);
       } else {
-        // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error("Something went wrong.");
       }
     } finally {
@@ -149,9 +265,15 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       router.push(`/${params.storeId}/product`);
       toast.success("Product deleted.");
     } catch (error: any) {
-      toast.error(
-        "Make sure you removed all product using this product first."
-      );
+      if (error.response && error.response.data && error.response.data.error) {
+        // Hiển thị thông báo lỗi cho người dùng
+        toast.error(error.response.data.error);
+      } else {
+        // Hiển thị thông báo lỗi mặc định cho người dùng
+        toast.error(
+          "Make sure you removed all categories using this billboard first."
+        );
+      }
     } finally {
       setLoading(false);
       setOpen(false);
@@ -340,7 +462,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     }}
                     value={
                       field.value
-                        ? productDetail.find((item) => item.id === field.value)?.name
+                        ? productDetail.find((item) => item.id === field.value)
+                            ?.name
                         : ""
                     }
                     disabled={loading}
@@ -365,6 +488,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       checked={field.value}
                       // @ts-ignore
                       onCheckedChange={field.onChange}
+                      disabled={loading}
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
@@ -387,6 +511,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       checked={field.value}
                       // @ts-ignore
                       onCheckedChange={field.onChange}
+                      disabled={loading}
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">

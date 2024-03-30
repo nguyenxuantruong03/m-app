@@ -35,7 +35,7 @@ const ShippingRatesClient: React.FC<ShippingRatesClientProps> = ({ data }) => {
           description="Quản lý giá vận chuyển"
         />
         <div className="flex space-x-3">
-          <Downloadfile data={data} filename="shippingrates" />=
+          <Downloadfile data={data} filename="shippingrates" />
           <Button
             onClick={() => router.push(`/${params.storeId}/shippingrates/new`)}
           >

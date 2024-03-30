@@ -35,9 +35,7 @@ interface SizeFormProps {
   initialData: Size | null;
 }
 
-export const SizeForm: React.FC<SizeFormProps> = ({
-  initialData,
-}) => {
+export const SizeForm: React.FC<SizeFormProps> = ({ initialData }) => {
   const params = useParams();
   const router = useRouter();
 
@@ -46,7 +44,6 @@ export const SizeForm: React.FC<SizeFormProps> = ({
 
   const title = initialData ? "Edit size" : "Create size";
   const description = initialData ? "Edit a size." : "Add a new size";
-  const toastMessage = initialData? "Size updated.": "Size created.";
   const action = initialData ? "Save changes" : "Create";
 
   const form = useForm<SizeFormValues>({
@@ -60,23 +57,56 @@ export const SizeForm: React.FC<SizeFormProps> = ({
   const onSubmit = async (data: SizeFormValues) => {
     try {
       setLoading(true);
-      //inittialData có nghĩa là khi dữ diệu ban đầu có nó sẽ đổi nut button thành save change
-      /* Khối mã chịu trách nhiệm thực hiện yêu cầu HTTP để cập nhật bảng quảng cáo hiện có
-      hoặc tạo bảng quảng cáo mới dựa trên giá trị của `initialData`. */
+      let promise;
+
       if (initialData) {
-        await axios.patch(
+        promise = axios.patch(
           `/api/${params.storeId}/size/${params.sizeId}`,
           data
         );
       } else {
-        await axios.post(`/api/${params.storeId}/size`, data);
+        promise = axios.post(`/api/${params.storeId}/size`, data);
       }
-      router.refresh();
-      router.push(`/${params.storeId}/size`);
-      toast.success(toastMessage);
-    } catch (error: any) {
-      toast.error("Something went wrong.");
-    } finally {
+
+      await toast.promise(
+        promise.then((response) => {
+          if (initialData) {
+            return (
+              <p>
+                Size <span className="font-bold">{response.data?.name}</span>{" "}
+                updated.
+              </p>
+            );
+          } else {
+            return (
+              <p>
+                Size <span className="font-bold">{data.name}</span> created.
+              </p>
+            );
+          }
+        }),
+        {
+          loading: "Updating size...",
+          success: (message) => {
+            router.refresh();
+            router.push(`/${params.storeId}/size`);
+            return message;
+          },
+          error: (error: any) => {
+            if (
+              error.response &&
+              error.response.data &&
+              error.response.data.error
+            ) {
+              return error.response.data.error;
+            } else {
+              return "Something went wrong.";
+            }
+          },
+        }
+      );
+    } catch (error: any) {} 
+      finally {
       setLoading(false);
     }
   };
@@ -84,16 +114,20 @@ export const SizeForm: React.FC<SizeFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(
-        `/api/${params.storeId}/size/${params.sizeId}`
-      );
+      await axios.delete(`/api/${params.storeId}/size/${params.sizeId}`);
       router.refresh();
       router.push(`/${params.storeId}/size`);
       toast.success("Size deleted.");
     } catch (error: any) {
-      toast.error(
-        "Make sure you removed all size using this size first."
-      );
+      if (error.response && error.response.data && error.response.data.error) {
+        // Hiển thị thông báo lỗi cho người dùng
+        toast.error(error.response.data.error);
+      } else {
+        // Hiển thị thông báo lỗi mặc định cho người dùng
+        toast.error(
+          "Make sure you removed all categories using this billboard first."
+        );
+      }
     } finally {
       setLoading(false);
       setOpen(false);

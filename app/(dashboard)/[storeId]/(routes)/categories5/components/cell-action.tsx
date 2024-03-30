@@ -41,8 +41,16 @@ export const CellAction: React.FC<CellActionProps> = ({data}) => {
           router.refresh();
           toast.success('Categories deleted.');
         } catch (error: any) {
-          toast.error('Make sure you removed all categories using this categories first.');
-        } finally {
+            if (error.response && error.response.data && error.response.data.error) {
+              // Hiển thị thông báo lỗi cho người dùng
+              toast.error(error.response.data.error);
+            } else {
+              // Hiển thị thông báo lỗi mặc định cho người dùng
+              toast.error(
+                "Make sure you removed all categories using this billboard first."
+              );
+            }
+          } finally {
           setLoading(false);
           setOpen(false);
         }

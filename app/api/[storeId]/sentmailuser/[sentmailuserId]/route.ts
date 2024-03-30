@@ -11,7 +11,10 @@ export async function GET(
 ) {
   try {
     if (!params.sentmailuserId) {
-      return new NextResponse("Sentmailuser Id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Sentmailuser id is required!" }),
+        { status: 400 }
+      );
     }
 
     const sentEmailUser = await prismadb.sentEmailUser.findUnique({
@@ -25,8 +28,10 @@ export async function GET(
 
     return NextResponse.json(sentEmailUser);
   } catch (error) {
-    console.log("[SENTEMAILUSER_GET]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error get sentmailUser." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -39,11 +44,17 @@ export async function DELETE(
     const role = await currentRole();
 
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
     }
 
     if (!params.sentmailuserId) {
-      return new NextResponse("Sent Email User id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Sentmailuser id is required!" }),
+        { status: 400 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -56,11 +67,17 @@ export async function DELETE(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
     }
 
     if (role !== UserRole.ADMIN) {
-      return new NextResponse("Access denied. Only Admins can perform this action.", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Vai trò hiện tại của bạn không được quyền!" }),
+        { status: 403 }
+      );
     }
 
     const sentEmailUser = await prismadb.sentEmailUser.delete({
@@ -70,8 +87,10 @@ export async function DELETE(
     });
       return NextResponse.json(sentEmailUser);
   } catch (error) {
-    console.log("[SENTEMAILUSER_DELETE]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error delete sentmailUser." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -87,15 +106,31 @@ export async function PATCH(
     const { subject, description } = body;
 
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
     }
 
-    if (!subject || !description) {
-      return new NextResponse("Invalid Error", { status: 400 });
+    if (!subject) {
+      return new NextResponse(
+        JSON.stringify({ error: "Subject is required!" }),
+        { status: 400 }
+      );
+    }
+
+    if (!description) {
+      return new NextResponse(
+        JSON.stringify({ error: "Description is required!" }),
+        { status: 400 }
+      );
     }
 
     if (!params.sentmailuserId) {
-      return new NextResponse("Sentmailuser Id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Sentmailuser id is required!" }),
+        { status: 400 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -108,7 +143,10 @@ export async function PATCH(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
     }
 
     const sentEmailUser = await prismadb.sentEmailUser.update({
@@ -123,8 +161,10 @@ export async function PATCH(
 
     return NextResponse.json(sentEmailUser);
   } catch (error) {
-    console.log("[SENTEMAILUSER_PATCH]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error patch sentmailUser." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -181,7 +221,9 @@ export async function POST(
 
     return NextResponse.json(sentEmailUser);
   } catch (error) {
-    console.log("[SENTEMAILUSER_PATCH]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error patch sentmailUser." }),
+      { status: 500 }
+    );
   }
 }

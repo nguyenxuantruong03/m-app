@@ -10,7 +10,10 @@ export async function GET(
 ) {
   try {
     if (!params.billboardId) {
-      return new NextResponse("Billboard id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Billboard id is required!" }),
+        { status: 400 }
+      );
     }
 
     const billboard = await prismadb.billboard.findUnique({
@@ -24,8 +27,10 @@ export async function GET(
 
     return NextResponse.json(billboard);
   } catch (error) {
-    console.log("[BILLBOARD_GET]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error get billboard." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -38,11 +43,17 @@ export async function DELETE(
     const role = await currentRole();
 
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy userId!" }),
+        { status: 403 }
+      );
     }
 
     if (!params.billboardId) {
-      return new NextResponse("Billboard id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Billboard id is required!" }),
+        { status: 400 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -55,11 +66,17 @@ export async function DELETE(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 400 }
+      );
     }
 
     if (role !== UserRole.ADMIN) {
-      return new NextResponse("Access denied. Only Admins can perform this action.", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Vai trò hiện tại của bạn không được quyền!" }),
+        { status: 403 }
+      );
     }
 
     const billboard = await prismadb.billboard.delete({
@@ -67,10 +84,12 @@ export async function DELETE(
         id: params.billboardId,
       },
     });
-      return NextResponse.json(billboard);
+    return NextResponse.json(billboard);
   } catch (error) {
-    console.log("[BILLBOARD_DELETE]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error delete billboard." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -86,19 +105,31 @@ export async function PATCH(
     const { label, imagebillboard } = body;
 
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
     }
 
     if (!label) {
-      return new NextResponse("Label is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Label is required!" }),
+        { status: 400 }
+      );
     }
 
     if (!imagebillboard || !imagebillboard.length) {
-      return new NextResponse("Image billboad  is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Images billboard is required!" }),
+        { status: 400 }
+      );
     }
 
     if (!params.billboardId) {
-      return new NextResponse("Billboard id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Billboard id is required!" }),
+        { status: 400 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -111,7 +142,10 @@ export async function PATCH(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
     }
 
     await prismadb.billboard.update({
@@ -140,7 +174,9 @@ export async function PATCH(
 
     return NextResponse.json(billboard);
   } catch (error) {
-    console.log("[BILLBOARD_PATCH]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error patch billboard." }),
+      { status: 500 }
+    );
   }
 }

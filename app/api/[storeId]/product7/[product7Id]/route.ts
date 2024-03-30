@@ -11,7 +11,10 @@ export async function GET(
   const productType = ProductType.PRODUCT7;
   try {
     if (!params.product7Id) {
-      return new NextResponse("Product id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Product7 id is required!" }),
+        { status: 400 }
+      );
     }
 
     const product = await prismadb.product.findUnique({
@@ -28,8 +31,10 @@ export async function GET(
 
     return NextResponse.json(product);
   } catch (error) {
-    console.log("[PRODUCT_GET]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error get product7." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -43,11 +48,17 @@ export async function DELETE(
     const role = await currentRole();
 
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
     }
 
     if (!params.product7Id) {
-      return new NextResponse("Product id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Product7 id is required!" }),
+        { status: 400 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -60,11 +71,17 @@ export async function DELETE(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
     }
 
     if (role !== UserRole.ADMIN) {
-      return new NextResponse("Access denied. Only Admins can perform this action.", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Vai trò hiện tại của bạn không được quyền!" }),
+        { status: 403 }
+      );
     }
 
     const product = await prismadb.product.delete({
@@ -76,8 +93,10 @@ export async function DELETE(
 
     return NextResponse.json(product);
   } catch (error) {
-    console.log("[PRODUCT_DELETE]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error delete product7." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -104,37 +123,65 @@ export async function PATCH(
     } = body;
 
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
     }
 
     if (!name) {
-      return new NextResponse("Name is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Name is required!" }),
+        { status: 400 }
+      );
     }
     if (!heading) {
-      return new NextResponse("Heading is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Heading is required!" }),
+        { status: 400 }
+      );
     }
     if (!description) {
-      return new NextResponse("Description is required", { status: 400 });
-    }
-    if (!productdetailId) {
-      return new NextResponse("Product Detail is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Description is required!" }),
+        { status: 400 }
+      );
     }
     if (!price) {
-      return new NextResponse("Price is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Price is required!" }),
+        { status: 400 }
+      );
     }
     if (!percentpromotion) {
-      return new NextResponse("Percentpromotion is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Percentpromotion is required!" }),
+        { status: 400 }
+      );
     }
     if (!images || !images.length) {
-      return new NextResponse("Images is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Images is required!" }),
+        { status: 400 }
+      );
+    }
+    if (!productdetailId) {
+      return new NextResponse(
+        JSON.stringify({ error: "ProductDetail is required!" }),
+        { status: 400 }
+      );
     }
     if (!imagesalientfeatures || !imagesalientfeatures.length) {
-      return new NextResponse("Imagesalientfeatures Product is required", {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: "Imagesalientfeatures is required!" }),
+        { status: 400 }
+      );
     }
     if (!params.product7Id) {
-      return new NextResponse("Product id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Product7 id is required!" }),
+        { status: 405 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -147,8 +194,12 @@ export async function PATCH(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
     }
+    
     const productType = ProductType.PRODUCT7;
     await prismadb.product.update({
       where: {
@@ -196,7 +247,9 @@ export async function PATCH(
 
     return NextResponse.json(product);
   } catch (error) {
-    console.log("[PRODUCT_PATCH]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error patch product7." }),
+      { status: 500 }
+    );
   }
 }

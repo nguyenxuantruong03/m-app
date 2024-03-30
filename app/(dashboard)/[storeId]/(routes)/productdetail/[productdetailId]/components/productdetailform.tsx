@@ -98,9 +98,6 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
   const description = initialData
     ? "Edit a Product Detail."
     : "Add a new Product Detail";
-  const toastMessage = initialData
-    ? "Product Detail updated."
-    : "Product Detail created.";
   const action = initialData ? "Save changes" : "Create";
 
   const form = useForm<ProductDetailFormValues>({
@@ -132,29 +129,58 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
   const onSubmit = async (data: ProductDetailFormValues) => {
     try {
       setLoading(true);
-      //inittialData có nghĩa là khi dữ diệu ban đầu có nó sẽ đổi nut button thành save change
-      /* Khối mã chịu trách nhiệm thực hiện yêu cầu HTTP để cập nhật bảng quảng cáo hiện có
-      hoặc tạo bảng quảng cáo mới dựa trên giá trị của `initialData`. */
+      let promise;
+
       if (initialData) {
-        await axios.patch(
+        promise = axios.patch(
           `/api/${params.storeId}/productdetail/${params.productdetailId}`,
           data
         );
       } else {
-        await axios.post(`/api/${params.storeId}/productdetail`, data);
+        promise = axios.post(`/api/${params.storeId}/productdetail`, data);
       }
-      router.refresh();
-      router.push(`/${params.storeId}/productdetail`);
-      toast.success(toastMessage);
-    }catch (error: any) {
-      if (error.response && error.response.data && error.response.data.error) {
-        // Hiển thị thông báo lỗi cho người dùng
-        toast.error(error.response.data.error);
-      } else {
-        // Hiển thị thông báo lỗi mặc định cho người dùng
-        toast.error("Something went wrong.");
-      }
-    }finally {
+
+      await toast.promise(
+        promise.then((response) => {
+          if (initialData) {
+            return (
+              <p>
+                Product Detail{" "}
+                <span className="font-bold">{response.data?.name}</span>{" "}
+                updated.
+              </p>
+            );
+          } else {
+            return (
+              <p>
+                Product Detail <span className="font-bold">{data.name}</span>{" "}
+                created.
+              </p>
+            );
+          }
+        }),
+        {
+          loading: "Updating product detail...",
+          success: (message) => {
+            router.refresh();
+            router.push(`/${params.storeId}/productdetail`);
+            return message;
+          },
+          error: (error: any) => {
+            if (
+              error.response &&
+              error.response.data &&
+              error.response.data.error
+            ) {
+              return error.response.data.error;
+            } else {
+              return "Something went wrong.";
+            }
+          },
+        }
+      );
+    } catch (error: any) {} 
+      finally {
       setLoading(false);
     }
   };
@@ -169,9 +195,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
       router.push(`/${params.storeId}/productdetail`);
       toast.success("Product deleted.");
     } catch (error: any) {
-      toast.error(
-        "Make sure you removed all product using this product first."
-      );
+      if (error.response && error.response.data && error.response.data.error) {
+        // Hiển thị thông báo lỗi cho người dùng
+        toast.error(error.response.data.error);
+      } else {
+        // Hiển thị thông báo lỗi mặc định cho người dùng
+        toast.error(
+          "Make sure you removed all categories using this billboard first."
+        );
+      }
     } finally {
       setLoading(false);
       setOpen(false);
@@ -929,10 +961,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   />
                   <datalist id="colors">
                     {colors.map((color) => (
-                      <option
-                        key={color.id}
-                        value={color.name}
-                      />
+                      <option key={color.id} value={color.name} />
                     ))}
                   </datalist>
                 </FormItem>
@@ -970,10 +999,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   />
                   <datalist id="sizes">
                     {sizes.map((size) => (
-                      <option
-                        key={size.id}
-                        value={size.name}
-                      />
+                      <option key={size.id} value={size.name} />
                     ))}
                   </datalist>
                 </FormItem>
@@ -1003,7 +1029,9 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                     }}
                     value={
                       field.value
-                        ? categories.find((categorie) => categorie.id === field.value)?.name
+                        ? categories.find(
+                            (categorie) => categorie.id === field.value
+                          )?.name
                         : ""
                     }
                     disabled={loading}
@@ -1011,10 +1039,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   />
                   <datalist id="categories">
                     {categories.map((categorie) => (
-                      <option
-                        key={categorie.id}
-                        value={categorie.name}
-                      />
+                      <option key={categorie.id} value={categorie.name} />
                     ))}
                   </datalist>
                 </FormItem>

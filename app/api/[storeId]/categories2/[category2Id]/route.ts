@@ -11,8 +11,12 @@ export async function GET(
   const categoryType = CategoryType.CATEGORY2;
   try {
     if (!params.category2Id) {
-      return new NextResponse("Category id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Category2 id is required!" }),
+        { status: 400 }
+      );
     }
+
 
     const category = await prismadb.category.findUnique({
       where: {
@@ -23,8 +27,10 @@ export async function GET(
   
     return NextResponse.json(category);
   } catch (error) {
-    console.log('[CATEGORY_GET]', error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error get categories2." }),
+      { status: 500 }
+    );
   }
 };
 
@@ -38,11 +44,17 @@ export async function DELETE(
     const role = await currentRole();
 
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
     }
 
     if (!params.category2Id) {
-      return new NextResponse("Category id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Category2 id is required!" }),
+        { status: 400 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -55,11 +67,17 @@ export async function DELETE(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
     }
 
     if (role !== UserRole.ADMIN) {
-      return new NextResponse("Access denied. Only Admins can perform this action.", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Vai trò hiện tại của bạn không được quyền!" }),
+        { status: 403 }
+      );
     }
 
     const category = await prismadb.category.delete({
@@ -71,8 +89,10 @@ export async function DELETE(
   
     return NextResponse.json(category);
   } catch (error) {
-    console.log('[CATEGORY_DELETE]', error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error delete categories2." }),
+      { status: 500 }
+    );
   }
 };
 
@@ -90,17 +110,24 @@ export async function PATCH(
     const { name,  } = body;
     
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
     }
 
     if (!name) {
-      return new NextResponse("Name is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Name is required!" }),
+        { status: 400 }
+      );
     }
 
-   
-
     if (!params.category2Id) {
-      return new NextResponse("Category id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Category2 id is required!" }),
+        { status: 400 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -113,7 +140,10 @@ export async function PATCH(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
     }
 
     const category = await prismadb.category.update({
@@ -128,7 +158,9 @@ export async function PATCH(
   
     return NextResponse.json(category);
   } catch (error) {
-    console.log('[CATEGORY_PATCH]', error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error patch categories2." }),
+      { status: 500 }
+    );
   }
 };

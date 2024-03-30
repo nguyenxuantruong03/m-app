@@ -10,7 +10,10 @@ export async function GET(
 ) {
   try {
     if (!params.billboardtimesId) {
-      return new NextResponse("Billboard id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Billboard id is required" }),
+        { status: 400 }
+      );
     }
 
     const billboardTime = await prismadb.billboardTime.findUnique({
@@ -24,8 +27,10 @@ export async function GET(
 
     return NextResponse.json(billboardTime);
   } catch (error) {
-    console.log("[BILLBOARDTIME_GET]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error get billboardtime." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -38,11 +43,17 @@ export async function DELETE(
     const role = await currentRole();
 
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Người dùng hiện tại không có id!" }),
+        { status: 403 }
+      );
     }
 
     if (!params.billboardtimesId) {
-      return new NextResponse("Billboard id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Billboardtime id is required" }),
+        { status: 400 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -55,13 +66,16 @@ export async function DELETE(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
     }
 
     if (role !== UserRole.ADMIN) {
       return new NextResponse(
-        "Access denied. Only Admins can perform this action.",
-        { status: 403 }
+        JSON.stringify({ error: "Vai trò của bạn không được quyền !" }),
+        { status: 400 }
       );
     }
 
@@ -72,8 +86,10 @@ export async function DELETE(
     });
     return NextResponse.json(billboardTime);
   } catch (error) {
-    console.log("[BILLBOARDTIME_DELETE]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error delete billboardtime." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -89,20 +105,41 @@ export async function PATCH(
     const { label, imagebillboardtime, timeout } = body;
 
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Người dùng hiện tại không có id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (!label) {
+      return new NextResponse(
+        JSON.stringify({ error: "Label is required!" }),
+        { status: 400 }
+      );
+    }
+
+    if (!timeout) {
+      return new NextResponse(
+        JSON.stringify({ error: "Label is required!" }),
+        { status: 400 }
+      );
     }
 
     if (
       !imagebillboardtime ||
-      !imagebillboardtime.length ||
-      !label ||
-      !timeout
+      !imagebillboardtime.length 
     ) {
-      return new NextResponse("Invalid Error", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Imagebillboardtime is required!" }),
+        { status: 400 }
+      );
     }
 
     if (!params.billboardtimesId) {
-      return new NextResponse("Billboard id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Billboard id is required!" }),
+        { status: 400 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -115,7 +152,10 @@ export async function PATCH(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
     }
 
     await prismadb.billboardTime.update({
@@ -145,8 +185,10 @@ export async function PATCH(
 
     return NextResponse.json(billboardTime);
   } catch (error) {
-    console.log("[BILLBOARD_PATCH]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error patch billboardtime." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -158,8 +200,12 @@ export async function POST(
     const userId = await currentUser();
 
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Người dùng hiện tại không có id!" }),
+        { status: 403 }
+      );
     }
+
     const billboardTime = await prismadb.billboardTime.update({
       where: {
         id: params.billboardtimesId,
@@ -172,7 +218,9 @@ export async function POST(
 
     return NextResponse.json(billboardTime);
   } catch (error) {
-    console.log("[BILLBOARDTIME_PATCH]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error patch billboardtime." }),
+      { status: 500 }
+    );
   }
 }

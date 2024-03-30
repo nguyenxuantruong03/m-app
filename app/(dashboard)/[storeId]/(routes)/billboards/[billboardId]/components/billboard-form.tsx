@@ -1,17 +1,17 @@
-"use client"
+"use client";
 
-import * as z from "zod"
-import axios from "axios"
-import { useState } from "react"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { toast } from "react-hot-toast"
-import { Trash } from "lucide-react"
-import { Billboard, ImageBillboard } from "@prisma/client"
-import { useParams, useRouter } from "next/navigation"
+import * as z from "zod";
+import axios from "axios";
+import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
+import { Check, Trash } from "lucide-react";
+import { Billboard, ImageBillboard } from "@prisma/client";
+import { useParams, useRouter } from "next/navigation";
 
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -19,27 +19,34 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Separator } from "@/components/ui/separator"
-import { Heading } from "@/components/ui/heading"
-import { AlertModal } from "@/components/modals/alert-modal"
-import ImageUpload from "@/components/ui/image-upload"
+} from "@/components/ui/form";
+import { Separator } from "@/components/ui/separator";
+import { Heading } from "@/components/ui/heading";
+import { AlertModal } from "@/components/modals/alert-modal";
+import ImageUpload from "@/components/ui/image-upload";
+import Image from "next/image";
+import { format } from "date-fns";
+import { utcToZonedTime } from "date-fns-tz";
+import viLocale from "date-fns/locale/vi";
+const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 
 const formSchema = z.object({
   label: z.string().min(1),
-  imagebillboard: z.object({url: z.string()}).array(),
+  imagebillboard: z.object({ url: z.string() }).array(),
 });
 
-type BillboardFormValues = z.infer<typeof formSchema>
+type BillboardFormValues = z.infer<typeof formSchema>;
 
 interface BillboardFormProps {
-  initialData: Billboard &{
-    imagebillboard: ImageBillboard[]
-  } | null
-};
+  initialData:
+    | (Billboard & {
+        imagebillboard: ImageBillboard[];
+      })
+    | null;
+}
 
 export const BillboardForm: React.FC<BillboardFormProps> = ({
-  initialData
+  initialData,
 }) => {
   const params = useParams();
   const router = useRouter();
@@ -47,39 +54,141 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const title = initialData ? 'Edit billboard' : 'Create billboard';
-  const description = initialData ? 'Edit a billboard.' : 'Add a new billboard';
-  const toastMessage = initialData ? 'Billboard updated.' : 'Billboard created.';
-  const action = initialData ? 'Save changes' : 'Create';
+  const title = initialData ? "Edit billboard" : "Create billboard";
+  const description = initialData ? "Edit a billboard." : "Add a new billboard";
+  const action = initialData ? "Save changes" : "Create";
 
   const form = useForm<BillboardFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
-      label: '',
-      imagebillboard: []
-    }
+      label: "",
+      imagebillboard: [],
+    },
   });
 
   const onSubmit = async (data: BillboardFormValues) => {
     try {
       setLoading(true);
-      //inittialData có nghĩa là khi dữ diệu ban đầu có nó sẽ đổi nut button thành save change 
-     /* Khối mã chịu trách nhiệm thực hiện yêu cầu HTTP để cập nhật bảng quảng cáo hiện có
-      hoặc tạo bảng quảng cáo mới dựa trên giá trị của `initialData`. */
+      let promise;
+      let imageUrl; // Biến để lưu URL hình ảnh
       if (initialData) {
-       /* Mã `đang chờ axios.patch(`/api/${params.storeId}/billboards/${params.billboardId}`,
-         data);` đang gửi yêu cầu PATCH đến điểm cuối API được chỉ định cùng với dữ liệu được cung cấp. Nó
-         đang cập nhật một bảng quảng cáo hiện có với `billboardId` đã cho trong đối tượng `params`. Các
-         Đối tượng `data` chứa các giá trị được cập nhật cho bảng quảng cáo. */
-        await axios.patch(`/api/${params.storeId}/billboards/${params.billboardId}`, data);
+        promise = axios.patch(`/api/${params.storeId}/billboards/${params.billboardId}`,data);
+        imageUrl = data.imagebillboard?.map((item) => item.url) || []; 
       } else {
-        await axios.post(`/api/${params.storeId}/billboards`, data);
+        promise = axios.post(`/api/${params.storeId}/billboards`, data);
+        imageUrl = data.imagebillboard?.map((item) => item.url) || [];
       }
+
+      const response = await promise;
+
+      let message;
+      if (initialData) {
+        message = (
+          <p>
+            Billboard <span className="font-bold">{response?.data.label}</span> updated.
+          </p>
+        );
+      } else {
+        message = (
+          <p>
+            Billboard <span className="font-bold">{data.label}</span> created.
+          </p>
+        );
+      }
+
+      let title;
+      if (initialData) {
+        title = (
+          <div className="flex items-center justify-between text-sm">
+            <p className="text-green-500 font-bold flex">
+              <Check className="w-5 h-5 rounded-full bg-green-500 text-white mx-1" />
+              Billboard updated!
+            </p>
+            <span className="text-gray-500">
+              {response.data?.createdAt
+                ? format(
+                    utcToZonedTime(
+                      new Date(new Date(response.data?.createdAt)),
+                      vietnamTimeZone
+                    ),
+                    "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+                    { locale: viLocale }
+                  )
+                : null}
+            </span>
+          </div>
+        );
+      } else {
+        title = (
+          <div className="flex items-center justify-between text-sm">
+            <p className="text-green-500 font-bold flex">
+              <Check className="w-4 h-4 rounded-full bg-green-500 text-white mx-1" />
+              Billboard created!
+            </p>
+            <span className="text-gray-500">
+              {response.data?.createdAt
+                ? format(
+                    utcToZonedTime(
+                      new Date(new Date(response.data?.createdAt)),
+                      vietnamTimeZone
+                    ),
+                    "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+                    { locale: viLocale }
+                  )
+                : null}
+            </span>
+          </div>
+        );
+      }
+
+      toast.custom((t) => (
+        <div
+          className={`${
+            t.visible ? "animate-enter" : "animate-leave"
+          } border-2 border-green-500 max-w-3xl w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+        >
+          <div className="flex-1 w-0 p-2">
+            <div className="flex items-start">
+              <div className="flex-shrink-0 pt-0.5">
+                {imageUrl.slice(0, 10).map((url, index) => (
+                  <span
+                    key={index}
+                    className="avatar-overlapping-multiple-image"
+                  >
+                    <Image
+                      className="avatar-image-overlapping-multiple-image"
+                      src={url}
+                      alt=""
+                      width={40}
+                      height={40}
+                    />
+                  </span>
+                ))}
+              </div>
+              <div className="ml-3 flex-1">
+                <p>{title}</p>
+                <p className="mt-1 text-sm text-gray-500">{message}</p>
+              </div>
+            </div>
+          </div>
+          <div className="flex border-l border-gray-200">
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      ));
       router.refresh();
       router.push(`/${params.storeId}/billboards`);
-      toast.success(toastMessage);
     } catch (error: any) {
-      toast.error('Something went wrong.');
+      if (error.response && error.response.data && error.response.data.error) {
+        toast.error(error.response.data.error);
+      } else {
+        toast.error("Something went wrong.");
+      }
     } finally {
       setLoading(false);
     }
@@ -88,28 +197,39 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/billboards/${params.billboardId}`);
+
+      await axios.delete(
+        `/api/${params.storeId}/billboards/${params.billboardId}`
+      );
       router.refresh();
       router.push(`/${params.storeId}/billboards`);
-      toast.success('Billboard deleted.');
+      toast.success(`Billboard deleted.`);
     } catch (error: any) {
-      toast.error('Make sure you removed all categories using this billboard first.');
+      if (error.response && error.response.data && error.response.data.error) {
+        // Hiển thị thông báo lỗi cho người dùng
+        toast.error(error.response.data.error);
+      } else {
+        // Hiển thị thông báo lỗi mặc định cho người dùng
+        toast.error(
+          "Make sure you removed all categories using this billboard first."
+        );
+      }
     } finally {
       setLoading(false);
       setOpen(false);
     }
-  }
+  };
 
   return (
     <>
-    <AlertModal 
-      isOpen={open} 
-      onClose={() => setOpen(false)}
-      onConfirm={onDelete}
-      loading={loading}
-    />
-    {/* update and create */}
-     <div className="flex items-center justify-between">
+      <AlertModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        onConfirm={onDelete}
+        loading={loading}
+      />
+      {/* update and create */}
+      <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
         {initialData && (
           <Button
@@ -125,27 +245,34 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
 
       <Separator />
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
-
-        <FormField
-              control={form.control}
-              name="imagebillboard"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Hình ảnh(Chỉ thêm 10 ảnh)</FormLabel>
-                  <FormControl>
-                    <ImageUpload 
-                      value={field.value.map((image) =>image.url)} 
-                      disabled={loading} 
-                      onChange={(url) => field.onChange([...field.value , {url}])}
-                      onRemove={(url) => field.onChange([...field.value.filter((current)=> current.url !== url)])}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-8 w-full"
+        >
+          <FormField
+            control={form.control}
+            name="imagebillboard"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Hình ảnh(Chỉ thêm 10 ảnh)</FormLabel>
+                <FormControl>
+                  <ImageUpload
+                    value={field.value.map((image) => image.url)}
+                    disabled={loading}
+                    onChange={(url) =>
+                      field.onChange([...field.value, { url }])
+                    }
+                    onRemove={(url) =>
+                      field.onChange([
+                        ...field.value.filter((current) => current.url !== url),
+                      ])
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <div className="md:grid md:grid-cols-3 gap-8">
             <FormField
@@ -155,7 +282,11 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                 <FormItem>
                   <FormLabel>Nhãn</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Billboard label ..." {...field} />
+                    <Input
+                      disabled={loading}
+                      placeholder="Billboard label ..."
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -166,7 +297,6 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
           <Button disabled={loading} className="ml-auto" type="submit">
             {action}
           </Button>
-
         </form>
       </Form>
     </>

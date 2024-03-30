@@ -46,7 +46,6 @@ export const ColorForm: React.FC<ColorFormProps> = ({ initialData }) => {
 
   const title = initialData ? "Edit color" : "Create color";
   const description = initialData ? "Edit a color" : "Add a new color";
-  const toastMessage = initialData ? "Color updated" : "Color created";
   const action = initialData ? "Save changes" : "Create";
 
   const form = useForm<ColorFormValues>({
@@ -60,23 +59,56 @@ export const ColorForm: React.FC<ColorFormProps> = ({ initialData }) => {
   const onSubmit = async (data: ColorFormValues) => {
     try {
       setLoading(true);
-      //inittialData có nghĩa là khi dữ diệu ban đầu có nó sẽ đổi nut button thành save change
-      /* Khối mã chịu trách nhiệm thực hiện yêu cầu HTTP để cập nhật bảng quảng cáo hiện có
-      hoặc tạo bảng quảng cáo mới dựa trên giá trị của `initialData`. */
+      let promise;
+
       if (initialData) {
-        await axios.patch(
+        promise = axios.patch(
           `/api/${params.storeId}/color/${params.colorId}`,
           data
         );
       } else {
-        await axios.post(`/api/${params.storeId}/color`, data);
+        promise = axios.post(`/api/${params.storeId}/color`, data);
       }
-      router.refresh();
-      router.push(`/${params.storeId}/color`);
-      toast.success(toastMessage);
-    } catch (error: any) {
-      toast.error("Something went wrong.");
-    } finally {
+
+      await toast.promise(
+        promise.then((response) => {
+          if (initialData) {
+            return (
+              <p>
+                Color <span className="font-bold">{response.data?.name}</span>{" "}
+                updated.
+              </p>
+            );
+          } else {
+            return (
+              <p>
+                Color <span className="font-bold">{data.name}</span> created.
+              </p>
+            );
+          }
+        }),
+        {
+          loading: "Updating color...",
+          success: (message) => {
+            router.refresh();
+            router.push(`/${params.storeId}/color`);
+            return message;
+          },
+          error: (error: any) => {
+            if (
+              error.response &&
+              error.response.data &&
+              error.response.data.error
+            ) {
+              return error.response.data.error;
+            } else {
+              return "Something went wrong.";
+            }
+          },
+        }
+      );
+    } catch (error: any) {} 
+      finally {
       setLoading(false);
     }
   };
@@ -89,7 +121,15 @@ export const ColorForm: React.FC<ColorFormProps> = ({ initialData }) => {
       router.push(`/${params.storeId}/color`);
       toast.success("Color deleted.");
     } catch (error: any) {
-      toast.error("Make sure you removed all color using this Color first.");
+      if (error.response && error.response.data && error.response.data.error) {
+        // Hiển thị thông báo lỗi cho người dùng
+        toast.error(error.response.data.error);
+      } else {
+        // Hiển thị thông báo lỗi mặc định cho người dùng
+        toast.error(
+          "Make sure you removed all categories using this billboard first."
+        );
+      }
     } finally {
       setLoading(false);
       setOpen(false);

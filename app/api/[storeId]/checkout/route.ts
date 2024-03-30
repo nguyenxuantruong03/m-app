@@ -22,8 +22,12 @@ export async function POST(
   const { productIds,pricesales,quantity,priceold,warranty } = await req.json();
 
   if (!productIds || productIds.length === 0) {
-    return new NextResponse("Product ids are required", { status: 400 });
+    return new NextResponse(
+      JSON.stringify({ error: "Product ids are required" }),
+      { status: 400 }
+    );
   }
+
 
   const products = await prismadb.product.findMany({
     where: {

@@ -35,7 +35,7 @@ const TaxRateClient: React.FC<TaxRateClientProps> = ({ data }) => {
           description="Quản lý thuế"
         />
         <div className="flex space-x-3">
-          <Downloadfile data={data} filename="taxrate" />=
+          <Downloadfile data={data} filename="taxrate" />
           <Button onClick={() => router.push(`/${params.storeId}/taxrate/new`)}>
             <Plus className="mr-2 h-4 w-4" />
             Thêm mới

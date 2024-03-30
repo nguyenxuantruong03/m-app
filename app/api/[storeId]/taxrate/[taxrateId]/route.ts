@@ -11,7 +11,10 @@ export async function GET(
 ) {
   try {
     if (!params.taxrateId) {
-      return new NextResponse("TexRate id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "TaxRate id is required!" }),
+        { status: 400 }
+      );
     }
 
     const taxRate = await prismadb.taxRate.findUnique({
@@ -22,8 +25,10 @@ export async function GET(
 
     return NextResponse.json(taxRate);
   } catch (error) {
-    console.log("[TAXRATE_GET]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error get taxrate." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -39,13 +44,25 @@ export async function PATCH(
     const { name, description, percentage, inclusive, active, taxtype } = body;
 
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
     }
 
-    if (!name || !params.storeId) {
-      return new NextResponse("Invalid parameters", { status: 400 });
+    if (!name) {
+      return new NextResponse(
+        JSON.stringify({ error: "Name is required!" }),
+        { status: 400 }
+      );
     }
 
+    if (!params.taxrateId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Taxrate id is required!" }),
+        { status: 400 }
+      );
+    }
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
@@ -56,7 +73,10 @@ export async function PATCH(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
     }
 
     // Cập nhật thông tin tương ứng trên Stripe
@@ -83,7 +103,9 @@ export async function PATCH(
 
     return NextResponse.json(taxRateupdate);
   } catch (error) {
-    console.log("[TAXRATE_PATCH]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error patch taxrate." }),
+      { status: 500 }
+    );
   }
 }

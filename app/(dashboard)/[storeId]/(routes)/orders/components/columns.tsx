@@ -14,7 +14,6 @@ export type OrderColumn = {
   totalPrice: string
   products: string
   createdAt: string | null
-  updatedAt: string | null
 }
 
 export const columns: ColumnDef<OrderColumn>[] = [
@@ -46,10 +45,6 @@ export const columns: ColumnDef<OrderColumn>[] = [
   {
     accessorKey: "createdAt",
     header: "Date",
-  },
-  {
-    accessorKey: "updatedAt",
-    header: "updatedAt",
   },
   {
     id: "actions",

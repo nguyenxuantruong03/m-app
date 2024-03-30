@@ -18,11 +18,31 @@ export async function POST(
     const { name, description, percentage, inclusive, active, taxtype } = body;
 
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
     }
 
-    if (!name || !percentage || !params.storeId) {
-      return new NextResponse("Invalid parameters", { status: 400 });
+    if (!name) {
+      return new NextResponse(
+        JSON.stringify({ error: "Name is required!" }),
+        { status: 400 }
+      );
+    }
+
+    if ( !percentage) {
+      return new NextResponse(
+        JSON.stringify({ error: "Percentage is required!" }),
+        { status: 400 }
+      );
+    }
+
+    if (!params.storeId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Store id is required!" }),
+        { status: 400 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -35,8 +55,12 @@ export async function POST(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
     }
+    
     // Tạo coupon bằng Stripe
     const taxRate = await stripe.taxRates.create({
       display_name: name,
@@ -64,8 +88,10 @@ export async function POST(
 
     return NextResponse.json(createdCoupon);
   } catch (error) {
-    console.log("[TAXRATE_POST]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error post taxrate." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -77,7 +103,10 @@ export async function GET(
     const { searchParams } = new URL(req.url);
     const active = searchParams.get("active");
     if (!params.storeId) {
-      return new NextResponse("Store id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Store id is required!" }),
+        { status: 400 }
+      );
     }
 
     const gettaxRate = await prismadb.taxRate.findMany({
@@ -93,7 +122,9 @@ export async function GET(
 
     return NextResponse.json(gettaxRate);
   } catch (error) {
-    console.log("[TAXRATE_GET]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error get taxrate." }),
+      { status: 500 }
+    );
   }
 }

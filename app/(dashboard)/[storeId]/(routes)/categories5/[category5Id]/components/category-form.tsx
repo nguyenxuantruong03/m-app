@@ -45,7 +45,6 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
 
   const title = initialData ? 'Edit category' : 'Create category';
   const description = initialData ? 'Edit a category.' : 'Add a new category';
-  const toastMessage = initialData ? 'Category updated.' : 'Category created.';
   const action = initialData ? 'Save changes' : 'Create';
 
   const form = useForm<CategoryFormValues>({
@@ -58,20 +57,52 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
   const onSubmit = async (data: CategoryFormValues) => {
     try {
       setLoading(true);
-      //inittialData có nghĩa là khi dữ diệu ban đầu có nó sẽ đổi nut button thành save change 
-     /* Khối mã chịu trách nhiệm thực hiện yêu cầu HTTP để cập nhật bảng quảng cáo hiện có
-      hoặc tạo bảng quảng cáo mới dựa trên giá trị của `initialData`. */
+      let promise;
+
       if (initialData) {
-        await axios.patch(`/api/${params.storeId}/categories5/${params.category5Id}`, data);
+        promise = axios.patch(`/api/${params.storeId}/categories5/${params.category5Id}`, data);
       } else {
-        await axios.post(`/api/${params.storeId}/categories5`, data);
+        promise = axios.post(`/api/${params.storeId}/categories5`, data);
       }
-      router.refresh();
+
+      await toast.promise(
+        promise.then((response) => {
+          if (initialData) {
+            return (
+              <p>
+                Category <span className="font-bold">{response.data?.name}</span> updated.
+              </p>
+            );
+          } else {
+            return (
+              <p>
+                Category <span className="font-bold">{data.name}</span> created.
+              </p>
+            );
+          }
+        }),
+        {
+          loading: "Updating category5...",
+          success: (message) => {
+            router.refresh();
       router.push(`/${params.storeId}/categories5`);
-      toast.success(toastMessage);
-    } catch (error: any) {
-      toast.error('Something went wrong.');
-    } finally {
+            return message;
+          },
+          error: (error: any) => {
+            if (
+              error.response &&
+              error.response.data &&
+              error.response.data.error
+            ) {
+              return error.response.data.error;
+            } else {
+              return "Something went wrong.";
+            }
+          },
+        }
+      );
+    } catch (error: any) {} 
+      finally {
       setLoading(false);
     }
   };
@@ -83,8 +114,16 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
       router.refresh();
       router.push(`/${params.storeId}/categories5`);
       toast.success('Category deleted.');
-    } catch (error: any) {
-      toast.error('Make sure you removed all categories using this Category first.');
+    }catch (error: any) {
+      if (error.response && error.response.data && error.response.data.error) {
+        // Hiển thị thông báo lỗi cho người dùng
+        toast.error(error.response.data.error);
+      } else {
+        // Hiển thị thông báo lỗi mặc định cho người dùng
+        toast.error(
+          "Make sure you removed all categories using this billboard first."
+        );
+      }
     } finally {
       setLoading(false);
       setOpen(false);

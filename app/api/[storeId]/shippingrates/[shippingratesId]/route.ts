@@ -11,7 +11,10 @@ export async function GET(
 ) {
   try {
     if (!params.shippingratesId) {
-      return new NextResponse("shipping Rates id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Shipping Rates id is required!" }),
+        { status: 400 }
+      );
     }
 
     const shippingRates = await prismadb.shippingRates.findUnique({
@@ -22,8 +25,10 @@ export async function GET(
 
     return NextResponse.json(shippingRates);
   } catch (error) {
-    console.log("[SHIPPINGRATES_GET]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error get shippingrates." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -48,11 +53,17 @@ export async function PATCH(
     } = body;
 
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
     }
 
-    if (!params.storeId) {
-      return new NextResponse("Invalid parameters", { status: 400 });
+    if (!params.shippingratesId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Shipping Rates id is required!" }),
+        { status: 400 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -65,7 +76,10 @@ export async function PATCH(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
     }
 
     // Cập nhật thông tin tương ứng trên Stripe
@@ -92,7 +106,9 @@ export async function PATCH(
 
     return NextResponse.json(shippingRateupdate);
   } catch (error) {
-    console.log("[SHIPPINGRATES_PATCH]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error patch shippingrates." }),
+      { status: 500 }
+    );
   }
 }

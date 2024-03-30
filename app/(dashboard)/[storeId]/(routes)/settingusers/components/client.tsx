@@ -26,7 +26,7 @@ const SettingUserClient:React.FC<SettingUserClientProps> = ({data}) => {
             title ={`Người dùng (${data.length})`}
             description="Quản lý người dùng"
             />
-        <Downloadfile data={data} filename="settinguser" />=
+        <Downloadfile data={data} filename="settinguser" />
         </div>
         <Separator />
         <DataTable searchKey="name" columns={columns} data={data} />

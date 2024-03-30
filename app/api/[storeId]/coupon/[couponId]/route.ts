@@ -11,7 +11,10 @@ export async function GET(
 ) {
   try {
     if (!params.couponId) {
-      return new NextResponse("Coupon id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Coupon id is required!" }),
+        { status: 400 }
+      );
     }
 
     const coupon = await prismadb.coupon.findUnique({
@@ -25,8 +28,10 @@ export async function GET(
 
     return NextResponse.json(coupon);
   } catch (error) {
-    console.log("[COUPON_GET]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error get coupon." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -39,11 +44,17 @@ export async function DELETE(
     const role = await currentRole();
 
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
     }
 
     if (!params.couponId) {
-      return new NextResponse("CouponId id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Coupon id is required!" }),
+        { status: 400 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -56,12 +67,15 @@ export async function DELETE(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
     }
 
     if (role !== UserRole.ADMIN) {
       return new NextResponse(
-        "Access denied. Only Admins can perform this action.",
+        JSON.stringify({ error: "Vai trò hiện tại của bạn không được quyền!" }),
         { status: 403 }
       );
     }
@@ -76,8 +90,10 @@ export async function DELETE(
 
     return NextResponse.json(coupon);
   } catch (error) {
-    console.log("[COUPON_DELETE]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error delete coupon." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -105,14 +121,37 @@ export async function PATCH(
       return new NextResponse("Unauthenticated", { status: 403 });
     }
 
-    if (
-      !name ||
-      !percent ||
-      !imagecoupon ||
-      !imagecoupon.length ||
-      !params.storeId
-    ) {
-      return new NextResponse("Invalid parameters", { status: 400 });
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (!name) {
+      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+        status: 400,
+      });
+    }
+
+    if (!percent) {
+      return new NextResponse(JSON.stringify({ error: "Percent is required!" }), {
+        status: 400,
+      });
+    }
+
+    if (!imagecoupon || !imagecoupon.length) {
+      return new NextResponse(
+        JSON.stringify({ error: "Imagecoupon is required!" }),
+        { status: 400 }
+      );
+    }
+
+    if (!params.couponId) {
+      return new NextResponse(
+        JSON.stringify({ error: "CouponId id is required!" }),
+        { status: 400 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -125,7 +164,10 @@ export async function PATCH(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
     }
 
     // Cập nhật thông tin tương ứng trên Stripe
@@ -166,7 +208,9 @@ export async function PATCH(
 
     return NextResponse.json(couponupdate);
   } catch (error) {
-    console.log("[COUPON_PATCH]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error patch coupon." }),
+      { status: 500 }
+    );
   }
 }

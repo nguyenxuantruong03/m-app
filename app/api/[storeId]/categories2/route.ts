@@ -17,18 +17,25 @@ export async function POST(
     const { name,  } = body;
 
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
     }
 
     if (!name) {
-      return new NextResponse("Name is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Name is required!" }),
+        { status: 400 }
+      );
     }
-
 
     if (!params.storeId) {
-      return new NextResponse("Store id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Store id is required!" }),
+        { status: 400 }
+      );
     }
-
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
@@ -39,7 +46,10 @@ export async function POST(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
     }
 
     const category = await prismadb.category.create({
@@ -52,8 +62,10 @@ export async function POST(
   
     return NextResponse.json(category);
   } catch (error) {
-    console.log('[CATEGORIES_POST]', error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error post categories2." }),
+      { status: 500 }
+    );
   }
 };
 
@@ -63,8 +75,11 @@ export async function GET(
 ) {
   const categoryType = CategoryType.CATEGORY2;
   try {
-    if (!params.storeId) {
-      return new NextResponse("Store id is required", { status: 400 });
+   if (!params.storeId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Store id is required!" }),
+        { status: 400 }
+      );
     }
 
     const category = await prismadb.category.findMany({
@@ -76,7 +91,9 @@ export async function GET(
   
     return NextResponse.json(category);
   } catch (error) {
-    console.log('[CATEGORIES_GET]', error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error get categories2." }),
+      { status: 500 }
+    );
   }
 };

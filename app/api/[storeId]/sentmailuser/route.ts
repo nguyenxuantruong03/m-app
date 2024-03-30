@@ -11,21 +11,36 @@ export async function POST(
   try {
     const userId = await currentUser();
 
-
     const body = await req.json();
 
     const { subject, description,createAt } = body;
 
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
     }
 
-    if (!subject || !description) {
-      return new NextResponse("Invalid Error", { status: 400 });
+    if (!subject) {
+      return new NextResponse(
+        JSON.stringify({ error: "Subject is required!" }),
+        { status: 400 }
+      );
+    }
+
+    if (!description) {
+      return new NextResponse(
+        JSON.stringify({ error: "Description is required!" }),
+        { status: 400 }
+      );
     }
 
     if (!params.storeId) {
-      return new NextResponse("Store id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Store id is required!" }),
+        { status: 400 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -38,7 +53,10 @@ export async function POST(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
     }
 
     const sentEmailUser = await prismadb.sentEmailUser.create({
@@ -52,8 +70,10 @@ export async function POST(
   
     return NextResponse.json(sentEmailUser);
   } catch (error) {
-    console.log('[SENTEMAILUSER_POST]', error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error post sentmailUser." }),
+      { status: 500 }
+    );
   }
 };
 
@@ -63,7 +83,10 @@ export async function GET(
 ) {
   try {
     if (!params.storeId) {
-      return new NextResponse("Store id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Store id is required!" }),
+        { status: 400 }
+      );
     }
 
     const sentEmailUsers = await prismadb.sentEmailUser.findMany({
@@ -81,7 +104,9 @@ export async function GET(
   
     return NextResponse.json(sentEmailUsers);
   } catch (error) {
-    console.log('[SENTEMAILUSER_GET]', error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error get sentmailUser." }),
+      { status: 500 }
+    );
   }
 };

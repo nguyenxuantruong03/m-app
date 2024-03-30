@@ -22,6 +22,7 @@ import axios from "axios";
 import { SalaryStaffsColumn } from "./column";
 import { Input } from "@/components/ui/input";
 import "./styles.css";
+import { formatter } from "@/lib/utils";
 
 interface CellActionProps {
   data: SalaryStaffsColumn;
@@ -65,17 +66,48 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       // Tính toán tổng số tiền thưởng mới
       const updatedBonus = currentBonus + newBonus;
       // Gửi yêu cầu PATCH với giá trị thưởng đã được cập nhật
-      await axios.patch(`/api/${params.storeId}/salarystaff`, {
+      const promise = axios.patch(`/api/${params.storeId}/salarystaff`, {
         bonusAmount: updatedBonus,
         bonus: newBonus,
         bonusTitle: bonusTitle,
       });
 
-      toast.success("Bonus Success!");
-      router.refresh();
-    } catch (error) {
-      toast.error("Bonus Error!");
-    } finally {
+      await toast.promise(
+        promise.then(() => {
+          return (
+            <p>
+              {" "}
+              Đã thêm <span className="font-bold">{bonusTitle}</span>. Số tiền
+              bonus{" "}
+              <span className="font-bold">+{formatter.format(newBonus)}</span>.
+              Tổng bonus còn lại{" "}
+              <span className="font-bold">
+                {formatter.format(updatedBonus)}
+              </span>
+            </p>
+          );
+        }),
+        {
+          loading: "Updating bonus...",
+          success: (message) => {
+            router.refresh();
+            return message;
+          },
+          error: (error: any) => {
+            if (
+              error.response &&
+              error.response.data &&
+              error.response.data.error
+            ) {
+              return error.response.data.error;
+            } else {
+              return "Bonus Error.";
+            }
+          },
+        }
+      );
+    } catch (error: any) {} 
+      finally {
       setLoading(false);
       setOpenBonus(false);
       setBonusAmount(0);
@@ -95,35 +127,92 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       const newBonus = Number(unbonusAmount);
       // Tính toán tổng số tiền thưởng mới
       const updatedBonus = currentBonus - newBonus;
-      // Gửi yêu cầu PATCH với giá trị thưởng đã được cập nhật
-      await axios.post(`/api/${params.storeId}/salarystaff`, {
+      const promise = axios.post(`/api/${params.storeId}/salarystaff`, {
         unbonusAmount: updatedBonus,
         unbonus: newBonus,
         unbonusTitle: unbonusTitle,
       });
-      toast.success("unBonus Success!");
-      router.refresh();
-    } catch (error) {
-      toast.error("unBonus Error!");
-    } finally {
+
+      await toast.promise(
+        promise.then(() => {
+          return (
+            <p>
+              {" "}
+              Đã thêm <span className="font-bold">{bonusTitle}</span>. Số tiền
+              unbonus{" "}
+              <span className="font-bold">-{formatter.format(newBonus)}</span>.
+              Tổng bonus còn lại{" "}
+              <span className="font-bold">
+                {formatter.format(updatedBonus)}
+              </span>
+              .
+            </p>
+          );
+        }),
+        {
+          loading: "Updating unbonus...",
+          success: (message) => {
+            router.refresh();
+            return message;
+          },
+          error: (error: any) => {
+            if (
+              error.response &&
+              error.response.data &&
+              error.response.data.error
+            ) {
+              return error.response.data.error;
+            } else {
+              return "UnBonus Error.";
+            }
+          },
+        }
+      );
+    }catch (error: any) {} 
+     finally {
       setLoading(false);
-      setOpenUnbonus(false);
-      setUnbonusAmount(0);
-      setUnbonusTitle("")
+      setOpenBonus(false);
+      setBonusAmount(0);
+      setbonusTitle("");
     }
   };
 
   const onPaid = async () => {
     try {
       setLoading(true);
-      await axios.patch(`/api/${params.storeId}/salarystaff/${data.id}`);
-      router.refresh();
-      toast.success("Cập nhật thành công");
-    } catch (error: any) {
-      toast.error(
-        "Make sure you removed all categories using this product first."
+      const promise = axios.patch(
+        `/api/${params.storeId}/salarystaff/${data.id}`
       );
-    } finally {
+      await toast.promise(
+        promise.then(() => {
+          return (
+            <p>
+              {" "}
+              Đã trả lương cho <span className="font-bold">{data.name}</span>
+            </p>
+          );
+        }),
+        {
+          loading: "Updating paid...",
+          success: (message) => {
+            router.refresh();
+            return message;
+          },
+          error: (error: any) => {
+            if (
+              error.response &&
+              error.response.data &&
+              error.response.data.error
+            ) {
+              return error.response.data.error;
+            } else {
+              return "Paid Error.";
+            }
+          },
+        }
+      );
+    } catch (error: any) {} 
+      finally {
       setLoading(false);
       setOpen(false);
     }
@@ -132,18 +221,48 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onReset = async () => {
     try {
       setLoading(true);
-      await axios.post(`/api/${params.storeId}/salarystaff/${data.id}`);
-      router.refresh();
-      toast.success("Làm mới thành công");
-    } catch (error: any) {
-      toast.error(
-        "Make sure you removed all categories using this product first."
+      const promise = axios.post(
+        `/api/${params.storeId}/salarystaff/${data.id}`
       );
-    } finally {
+      await toast.promise(
+        promise.then(() => {
+          return (
+            <p>
+              Làm mới thành công! Bonus:{" "}
+              <span className="font-bold">{data.bonus}</span>, Salary Day:{" "}
+              <span className="font-bold">{data.salaryday}</span>, Salary Total:{" "}
+              <span className="font-bold">{data.salarytotal}</span>, Paid:{" "}
+              <span className="font-bold">{data.isPaid}</span>, Sent:{" "}
+              <span className="font-bold">{data.isSent}</span>
+            </p>
+          );
+        }),
+        {
+          loading: "Updating reset data...",
+          success: (message) => {
+            router.refresh();
+            return message;
+          },
+          error: (error: any) => {
+            if (
+              error.response &&
+              error.response.data &&
+              error.response.data.error
+            ) {
+              return error.response.data.error;
+            } else {
+              return "Reset Error.";
+            }
+          },
+        }
+      );
+    } catch (error: any) {} 
+      finally {
       setLoading(false);
       setOpen(false);
     }
   };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

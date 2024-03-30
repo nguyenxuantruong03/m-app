@@ -8,7 +8,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Trash,Lock } from "lucide-react";
+import { MoreHorizontal, Trash, Lock } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -34,7 +34,15 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       router.refresh();
       toast.success("User deleted.");
     } catch (error: any) {
-      toast.error("Delete Error!");
+      if (error.response && error.response.data && error.response.data.error) {
+        // Hiển thị thông báo lỗi cho người dùng
+        toast.error(error.response.data.error);
+      } else {
+        // Hiển thị thông báo lỗi mặc định cho người dùng
+        toast.error(
+          "Make sure you removed all categories using this billboard first."
+        );
+      }
     } finally {
       setLoading(false);
       setOpen(false);
@@ -43,22 +51,70 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   const BanUser = async () => {
     try {
-      await axios.post("/api/settingusers", { userId: data.id });
-      toast.success("Ban Success!");
-      router.refresh();
-    } catch (error) {
-      toast.error("Ban Error!");
-    }
+      setLoading(true);
+      const promise = axios.post("/api/settingusers", { userId: data.id });
+      await toast.promise(
+        promise.then(() => {
+          return (
+            <p>
+              Ban: <span className="font-bold">{data.email} - <span className="font-bold">{data.name}</span></span>.
+            </p>
+          );
+        }),
+        {
+          loading: "Updating ban user...",
+          success: (message) => {
+            router.refresh();
+            return message;
+          },
+          error: (error: any) => {
+            if (
+              error.response &&
+              error.response.data &&
+              error.response.data.error
+            ) {
+              return error.response.data.error;
+            } else {
+              return "Ban user Error.";
+            }
+          },
+        }
+      );
+    } catch (error: any) {} 
   };
 
   const UnBanUser = async () => {
     try {
-      await axios.post("/api/settingusers/unban", { userId: data.id });
-      toast.success("Unban success!");
-      router.refresh();
-    } catch (error) {
-      toast.error("Unban Error!");
-    }
+      setLoading(true);
+      const promise = axios.post("/api/settingusers/unban", { userId: data.id });
+      await toast.promise(
+        promise.then(() => {
+          return (
+            <p>
+              Unban: <span className="font-bold">{data.email} - <span className="font-bold">{data.name}</span></span>.
+            </p>
+          );
+        }),
+        {
+          loading: "Updating unban user...",
+          success: (message) => {
+            router.refresh();
+            return message;
+          },
+          error: (error: any) => {
+            if (
+              error.response &&
+              error.response.data &&
+              error.response.data.error
+            ) {
+              return error.response.data.error;
+            } else {
+              return "Unban user Error.";
+            }
+          },
+        }
+      );
+    } catch (error: any) {} 
   };
 
   return (

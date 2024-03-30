@@ -9,8 +9,10 @@ export async function GET(req: Request) {
 
     return NextResponse.json(managestaff);
   } catch (error) {
-    console.log("[MANAGESTAFF_GET]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error get managestaff." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -41,8 +43,10 @@ export async function PATCH(req: Request) {
       },
     });
   } catch (error) {
-    console.log("[MANAGESTAFF_PATCH]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error patch managestaff." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -77,7 +81,9 @@ export async function POST(req: Request) {
       },
     });
   } catch (error) {
-    console.log("[MANAGESTAFF_POST]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error post managestaff." }),
+      { status: 500 }
+    );
   }
 }

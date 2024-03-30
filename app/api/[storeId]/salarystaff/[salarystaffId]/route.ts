@@ -1,10 +1,8 @@
 import { currentUser } from "@/lib/auth";
 import { sendSalarytotal } from "@/lib/mail";
 import prismadb from "@/lib/prismadb";
-import { format, subHours } from "date-fns";
-import { utcToZonedTime } from "date-fns-tz";
+import { format } from "date-fns";
 import { NextResponse } from "next/server";
-import viLocale from "date-fns/locale/vi";
 import { formatter } from "@/lib/utils";
 
 export async function GET(req: Request) {
@@ -30,7 +28,10 @@ export async function GET(req: Request) {
 
     return NextResponse.json(salarystaff);
   } catch (error) {
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error get salarystaff." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -70,8 +71,10 @@ export async function PATCH(req: Request) {
 
     return NextResponse.json(caculateSalary);
   } catch (error) {
-    console.error("Lỗi", error);
-    return new NextResponse("Lỗi nội bộ", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error patch salarystaff." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -101,7 +104,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json(caculateSalary);
   } catch (error) {
-    console.error("Lỗi", error);
-    return new NextResponse("Lỗi nội bộ", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error post salarystaff." }),
+      { status: 500 }
+    );
   }
 }

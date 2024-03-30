@@ -6,7 +6,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
-import { Trash } from "lucide-react";
+import { Trash, Check } from "lucide-react";
 import { Coupon, Duration, ImageCoupon } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
 
@@ -32,6 +32,10 @@ import { Heading } from "@/components/ui/heading";
 import { AlertModal } from "@/components/modals/alert-modal";
 import ImageUpload from "@/components/ui/image-upload";
 import { format } from "date-fns";
+import { utcToZonedTime } from "date-fns-tz";
+import viLocale from "date-fns/locale/vi";
+const vietnamTimeZone = "Asia/Ho_Chi_Minh";
+import Image from "next/image";
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -63,7 +67,6 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
 
   const title = initialData ? "Edit coupon" : "Create coupon";
   const description = initialData ? "Edit a coupon" : "Add a new coupon";
-  const toastMessage = initialData ? "Coupon updated." : "Coupon created.";
   const action = initialData ? "Save changes" : "Create";
 
   const form = useForm<CouponFormValues>({
@@ -99,22 +102,136 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
   const onSubmit = async (data: CouponFormValues) => {
     try {
       setLoading(true);
-      //inittialData có nghĩa là khi dữ diệu ban đầu có nó sẽ đổi nut button thành save change
-      /* Khối mã chịu trách nhiệm thực hiện yêu cầu HTTP để cập nhật bảng quảng cáo hiện có
-      hoặc tạo bảng quảng cáo mới dựa trên giá trị của `initialData`. */
+      let promise;
+      let imageUrl; // Biến để lưu URL hình ảnh
       if (initialData) {
-        await axios.patch(
+        promise = axios.patch(
           `/api/${params.storeId}/coupon/${params.couponId}`,
           data
         );
+        imageUrl = data.imagecoupon?.map((item) => item.url) || [];
       } else {
-        await axios.post(`/api/${params.storeId}/coupon`, data);
+        promise = axios.post(`/api/${params.storeId}/coupon`, data);
+        imageUrl = data.imagecoupon?.map((item) => item.url) || [];
       }
+
+      const response = await promise;
+
+      let message;
+      if (initialData) {
+        message = (
+          <p>
+            Coupon <span className="font-bold">{response?.data.name}</span>{" "}
+            updated. Phần trăm giảm:{" "}
+            <span className="font-bold">{response?.data.percent}%</span>. Số lượng tối đa: <span className="font-bold">{response?.data.maxredemptions}</span> người. Lặp
+            lại:{" "}
+            <span className="font-bold">{response?.data.durationinmoth}</span>{" "}
+            tháng.
+          </p>
+        );
+      } else {
+        message = (
+          <p>
+            Coupon <span className="font-bold">{data.name}</span> created. Phần
+            trăm giảm: <span className="font-bold">{data.percent}%</span>. Số lượng tối đa: <span className="font-bold">{data.maxredemptions}</span> người. Lặp
+            lại: <span className="font-bold">{data.durationinmoth}</span> tháng.
+          </p>
+        );
+      }
+
+      let title;
+      if (initialData) {
+        title = (
+          <div className="flex items-center justify-between text-sm">
+            <p className="text-green-500 font-bold flex">
+              <Check className="w-5 h-5 rounded-full bg-green-500 text-white mx-1" />
+              Coupon updated!
+            </p>
+            <span className="text-gray-500">
+              {response.data?.createdAt
+                ? format(
+                    utcToZonedTime(
+                      new Date(new Date(response.data?.createdAt)),
+                      vietnamTimeZone
+                    ),
+                    "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+                    { locale: viLocale }
+                  )
+                : null}
+            </span>
+          </div>
+        );
+      } else {
+        title = (
+          <div className="flex items-center justify-between text-sm">
+            <p className="text-green-500 font-bold flex">
+              <Check className="w-4 h-4 rounded-full bg-green-500 text-white mx-1" />
+              Coupon created!
+            </p>
+            <span className="text-gray-500">
+              {response.data?.createdAt
+                ? format(
+                    utcToZonedTime(
+                      new Date(new Date(response.data?.createdAt)),
+                      vietnamTimeZone
+                    ),
+                    "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+                    { locale: viLocale }
+                  )
+                : null}
+            </span>
+          </div>
+        );
+      }
+
+      toast.custom((t) => (
+        <div
+          className={`${
+            t.visible ? "animate-enter" : "animate-leave"
+          } border-2 border-green-500 max-w-3xl w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+        >
+          <div className="flex-1 w-0 p-2">
+            <div className="flex items-start">
+              <div className="flex-shrink-0 pt-0.5">
+                {imageUrl.slice(0, 10).map((url, index) => (
+                  <span
+                    key={index}
+                    className="avatar-overlapping-multiple-image"
+                  >
+                    <Image
+                      className="avatar-image-overlapping-multiple-image"
+                      src={url}
+                      alt=""
+                      width={40}
+                      height={40}
+                    />
+                  </span>
+                ))}
+              </div>
+              <div className="ml-3 flex-1">
+                <p>{title}</p>
+                <p className="mt-1 text-sm text-gray-500">{message}</p>
+              </div>
+            </div>
+          </div>
+          <div className="flex border-l border-gray-200">
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      ));
       router.refresh();
       router.push(`/${params.storeId}/coupon`);
-      toast.success(toastMessage);
     } catch (error: any) {
-      toast.error("Something went wrong.");
+      if (error.response && error.response.data && error.response.data.error) {
+        toast.error(error.response.data.error);
+      } else {
+        toast.error("Something went wrong.");
+      }
     } finally {
       setLoading(false);
     }
@@ -128,7 +245,15 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
       router.push(`/${params.storeId}/coupon`);
       toast.success("Coupon deleted.");
     } catch (error: any) {
-      toast.error("Make sure you removed all coupon using this product first.");
+      if (error.response && error.response.data && error.response.data.error) {
+        // Hiển thị thông báo lỗi cho người dùng
+        toast.error(error.response.data.error);
+      } else {
+        // Hiển thị thông báo lỗi mặc định cho người dùng
+        toast.error(
+          "Make sure you removed all categories using this billboard first."
+        );
+      }
     } finally {
       setLoading(false);
       setOpen(false);

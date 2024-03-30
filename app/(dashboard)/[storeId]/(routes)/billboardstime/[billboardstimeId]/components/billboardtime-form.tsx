@@ -6,10 +6,9 @@ import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
-import { Trash } from "lucide-react";
+import { Check, Trash } from "lucide-react";
 import { BillboardTime, ImageBillboardTime } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,6 +23,11 @@ import { Separator } from "@/components/ui/separator";
 import { Heading } from "@/components/ui/heading";
 import { AlertModal } from "@/components/modals/alert-modal";
 import ImageUpload from "@/components/ui/image-upload";
+import Image from "next/image";
+import { format } from "date-fns";
+import { utcToZonedTime } from "date-fns-tz";
+import viLocale from "date-fns/locale/vi";
+const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 
 const formSchema = z.object({
   label: z.string().min(1),
@@ -36,7 +40,7 @@ type BillboardFormValues = z.infer<typeof formSchema>;
 interface BillboardFormProps {
   initialData:
     | (BillboardTime & {
-      imagebillboardtime: ImageBillboardTime[];
+        imagebillboardtime: ImageBillboardTime[];
       })
     | null;
 }
@@ -52,9 +56,6 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
 
   const title = initialData ? "Edit billboard" : "Create billboard";
   const description = initialData ? "Edit a billboard." : "Add a new billboard";
-  const toastMessage = initialData
-    ? "Billboard updated."
-    : "Billboard created.";
   const action = initialData ? "Save changes" : "Create";
 
   const form = useForm<BillboardFormValues>({
@@ -69,26 +70,130 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
   const onSubmit = async (data: BillboardFormValues) => {
     try {
       setLoading(true);
-      //inittialData có nghĩa là khi dữ diệu ban đầu có nó sẽ đổi nut button thành save change
-      /* Khối mã chịu trách nhiệm thực hiện yêu cầu HTTP để cập nhật bảng quảng cáo hiện có
-      hoặc tạo bảng quảng cáo mới dựa trên giá trị của `initialData`. */
+      let promise;
+      let imageUrl; // Biến để lưu URL hình ảnh
+
       if (initialData) {
-        /* Mã `đang chờ axios.patch(`/api/${params.storeId}/billboards/${params.billboardId}`,
-         data);` đang gửi yêu cầu PATCH đến điểm cuối API được chỉ định cùng với dữ liệu được cung cấp. Nó
-         đang cập nhật một bảng quảng cáo hiện có với `billboardId` đã cho trong đối tượng `params`. Các
-         Đối tượng `data` chứa các giá trị được cập nhật cho bảng quảng cáo. */
-        await axios.patch(
+        promise = axios.patch(
           `/api/${params.storeId}/billboardstime/${params.billboardstimeId}`,
           data
         );
+        imageUrl = data.imagebillboardtime?.map((item) => item.url) || [];
       } else {
-        await axios.post(`/api/${params.storeId}/billboardstime`, data);
+        promise = axios.post(`/api/${params.storeId}/billboardstime`, data);
+        imageUrl = data.imagebillboardtime?.map((item) => item.url) || [];
       }
+
+      const response = await promise;
+
+      let message;
+      if (initialData) {
+        message = (
+          <p>
+            Billboardtime <span className="font-bold">{response?.data.label}</span> updated. Thời gian: <span className="font-bold">{data.timeout}</span>.
+          </p>
+        );
+      } else {
+        message = (
+          <p>
+            Billboardtime <span className="font-bold">{data.label}</span> created. Thời gian: <span className="font-bold">{data.timeout}</span>.
+          </p>
+        );
+      }
+
+      let title;
+      if (initialData) {
+        title = (
+          <div className="flex items-center justify-between text-sm">
+            <p className="text-green-500 font-bold flex">
+              <Check className="w-5 h-5 rounded-full bg-green-500 text-white mx-1" />
+              Billboardtime updated!
+            </p>
+            <span className="text-gray-500">
+              {response?.data.createdAt
+                ? format(
+                    utcToZonedTime(
+                      new Date(new Date(response?.data.createdAt)),
+                      vietnamTimeZone
+                    ),
+                    "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+                    { locale: viLocale }
+                  )
+                : null}
+            </span>
+          </div>
+        );
+      } else {
+        title = (
+          <div className="flex items-center justify-between text-sm">
+            <p className="text-green-500 font-bold flex">
+              <Check className="w-4 h-4 rounded-full bg-green-500 text-white mx-1" />
+              Billboardtime created!
+            </p>
+            <span className="text-gray-500">
+              {response.data?.createdAt
+                ? format(
+                    utcToZonedTime(
+                      new Date(new Date(response.data?.createdAt)),
+                      vietnamTimeZone
+                    ),
+                    "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+                    { locale: viLocale }
+                  )
+                : null}
+            </span>
+          </div>
+        );
+      }
+
+      toast.custom((t) => (
+        <div
+          className={`${
+            t.visible ? "animate-enter" : "animate-leave"
+          } border-2 border-green-500 max-w-3xl w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+        >
+          <div className="flex-1 w-0 p-2">
+            <div className="flex items-start">
+              <div className="flex-shrink-0 pt-0.5">
+                {imageUrl.slice(0, 10).map((url, index) => (
+                  <span
+                    key={index}
+                    className="avatar-overlapping-multiple-image"
+                  >
+                    <Image
+                      className="avatar-image-overlapping-multiple-image"
+                      src={url}
+                      alt=""
+                      width={40}
+                      height={40}
+                    />
+                  </span>
+                ))}
+              </div>
+              <div className="ml-3 flex-1">
+                <p>{title}</p>
+                <p className="mt-1 text-sm text-gray-500">{message}</p>
+              </div>
+            </div>
+          </div>
+          <div className="flex border-l border-gray-200">
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      ));
       router.refresh();
       router.push(`/${params.storeId}/billboardstime`);
-      toast.success(toastMessage);
     } catch (error: any) {
-      toast.error("Something went wrong.");
+      if (error.response && error.response.data && error.response.data.error) {
+        toast.error(error.response.data.error);
+      } else {
+        toast.error("Something went wrong.");
+      }
     } finally {
       setLoading(false);
     }
@@ -104,9 +209,15 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
       router.push(`/${params.storeId}/billboardstime`);
       toast.success("Billboard deleted.");
     } catch (error: any) {
-      toast.error(
-        "Make sure you removed all categories using this billboard first."
-      );
+      if (error.response && error.response.data && error.response.data.error) {
+        // Hiển thị thông báo lỗi cho người dùng
+        toast.error(error.response.data.error);
+      } else {
+        // Hiển thị thông báo lỗi mặc định cho người dùng
+        toast.error(
+          "Make sure you removed all categories using this billboard first."
+        );
+      }
     } finally {
       setLoading(false);
       setOpen(false);

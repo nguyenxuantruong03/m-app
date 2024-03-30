@@ -89,9 +89,6 @@ useEffect(() => {
   const description = initialData
     ? "Edit a shipping rates"
     : "Add a new shipping rates";
-  const toastMessage = initialData
-    ? "Shipping rates updated."
-    : "Shipping rates created.";
   const action = initialData ? "Save changes" : "Create";
 
   const form = useForm<ShippingRatesFormValues>({
@@ -125,23 +122,55 @@ useEffect(() => {
   const onSubmit = async (data: ShippingRatesFormValues) => {
     try {
       setLoading(true);
-      //inittialData có nghĩa là khi dữ diệu ban đầu có nó sẽ đổi nut button thành save change
-      /* Khối mã chịu trách nhiệm thực hiện yêu cầu HTTP để cập nhật bảng quảng cáo hiện có
-      hoặc tạo bảng quảng cáo mới dựa trên giá trị của `initialData`. */
+      let promise;
+
       if (initialData) {
-        await axios.patch(
+        promise = axios.patch(
           `/api/${params.storeId}/shippingrates/${params.shippingratesId}`,
           data
         );
       } else {
-        await axios.post(`/api/${params.storeId}/shippingrates`, data);
+        promise = axios.post(`/api/${params.storeId}/shippingrates`, data);
       }
-      router.refresh();
-      router.push(`/${params.storeId}/shippingrates`);
-      toast.success(toastMessage);
-    } catch (error: any) {
-      toast.error("Something went wrong.");
-    } finally {
+
+      await toast.promise(
+        promise.then((response) => {
+          if (initialData) {
+            return (
+              <p>
+                Shipping rates <span className="font-bold">{response.data?.name}</span> updated.
+              </p>
+            );
+          } else {
+            return (
+              <p>
+                Shipping rates <span className="font-bold">{data.name}</span> created.
+              </p>
+            );
+          }
+        }),
+        {
+          loading: "Updating shipping rates...",
+          success: (message) => {
+            router.refresh();
+            router.push(`/${params.storeId}/shippingrates`);
+            return message;
+          },
+          error: (error: any) => {
+            if (
+              error.response &&
+              error.response.data &&
+              error.response.data.error
+            ) {
+              return error.response.data.error;
+            } else {
+              return "Something went wrong.";
+            }
+          },
+        }
+      );
+    } catch (error: any) {} 
+      finally {
       setLoading(false);
     }
   };

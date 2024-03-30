@@ -54,7 +54,6 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
 
   const title = initialData ? "Edit tax rate" : "Create tax rate";
   const description = initialData ? "Edit a tax rate" : "Add a new tax rate";
-  const toastMessage = initialData ? "Tax rate updated." : "Tax rate created.";
   const action = initialData ? "Save changes" : "Create";
 
   const form = useForm<TaxrateFormValues>({
@@ -82,23 +81,57 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
   const onSubmit = async (data: TaxrateFormValues) => {
     try {
       setLoading(true);
-      //inittialData có nghĩa là khi dữ diệu ban đầu có nó sẽ đổi nut button thành save change
-      /* Khối mã chịu trách nhiệm thực hiện yêu cầu HTTP để cập nhật bảng quảng cáo hiện có
-      hoặc tạo bảng quảng cáo mới dựa trên giá trị của `initialData`. */
+      let promise;
+
       if (initialData) {
-        await axios.patch(
+        promise = axios.patch(
           `/api/${params.storeId}/taxrate/${params.taxrateId}`,
           data
         );
       } else {
-        await axios.post(`/api/${params.storeId}/taxrate`, data);
+        promise = axios.post(`/api/${params.storeId}/taxrate`, data);
       }
-      router.refresh();
-      router.push(`/${params.storeId}/taxrate`);
-      toast.success(toastMessage);
-    } catch (error: any) {
-      toast.error("Something went wrong.");
-    } finally {
+
+      await toast.promise(
+        promise.then((response) => {
+          if (initialData) {
+            return (
+              <p>
+                Tax rate{" "}
+                <span className="font-bold">{response.data?.name}</span>{" "}
+                updated.
+              </p>
+            );
+          } else {
+            return (
+              <p>
+                Tax rate <span className="font-bold">{data.name}</span> created.
+              </p>
+            );
+          }
+        }),
+        {
+          loading: "Updating tax rate...",
+          success: (message) => {
+            router.refresh();
+            router.push(`/${params.storeId}/taxrate`);
+            return message;
+          },
+          error: (error: any) => {
+            if (
+              error.response &&
+              error.response.data &&
+              error.response.data.error
+            ) {
+              return error.response.data.error;
+            } else {
+              return "Something went wrong.";
+            }
+          },
+        }
+      );
+    } catch (error: any) {} 
+      finally {
       setLoading(false);
     }
   };
@@ -207,12 +240,12 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
                 };
                 return (
                   <FormItem>
-                    <FormLabel>Phần trăm khuyến mãi (0-100)</FormLabel>
+                    <FormLabel>Phần trăm thuế (0-100)</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         disabled={loading || isEditing}
-                        placeholder="Nhập phần trăm khuyến mãi ..."
+                        placeholder="Nhập phần trăm thuế ..."
                         {...field}
                         onChange={handleInputChange}
                       />

@@ -27,38 +27,66 @@ export async function POST(
     } = body;
 
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
     }
 
     if (!name) {
-      return new NextResponse("Name is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Name is required!" }),
+        { status: 400 }
+      );
     }
     if (!heading) {
-      return new NextResponse("Heading is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Heading is required!" }),
+        { status: 400 }
+      );
     }
     if (!description) {
-      return new NextResponse("Description is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Description is required!" }),
+        { status: 400 }
+      );
     }
     if (!price) {
-      return new NextResponse("Price is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Price is required!" }),
+        { status: 400 }
+      );
     }
     if (!percentpromotion) {
-      return new NextResponse("Percentpromotion is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Percentpromotion is required!" }),
+        { status: 400 }
+      );
     }
     if (!images || !images.length) {
-      return new NextResponse("Images is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Images is required!" }),
+        { status: 400 }
+      );
     }
     if (!productdetailId) {
-      return new NextResponse("Product detail is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "ProductDetail is required!" }),
+        { status: 400 }
+      );
     }
     if (!imagesalientfeatures || !imagesalientfeatures.length) {
-      return new NextResponse("Imagesalientfeatures Propduct is required", {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: "Imagesalientfeatures is required!" }),
+        { status: 400 }
+      );
     }
 
     if (!params.storeId) {
-      return new NextResponse("Store id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Store id is required!" }),
+        { status: 400 }
+      );
     }
 
     const productDetail = await prismadb.productDetail.findFirst({
@@ -82,8 +110,12 @@ export async function POST(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
     }
+
     const productType = ProductType.PRODUCT9;
     const product = await prismadb.product.create({
       data: {
@@ -114,8 +146,10 @@ export async function POST(
 
     return NextResponse.json(product);
   } catch (error) {
-    console.log("[PRODUCT_POST]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error post product9." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -129,7 +163,10 @@ export async function GET(
     const productdetailId = searchParams.get("productdetailId") || undefined;
     const productType = ProductType.PRODUCT9;
     if (!params.storeId) {
-      return new NextResponse("Store id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Store id is required!" }),
+        { status: 400 }
+      );
     }
 
     const product = await prismadb.product.findMany({
@@ -152,7 +189,9 @@ export async function GET(
 
     return NextResponse.json(product);
   } catch (error) {
-    console.log("[PRODUCT_GET]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error get product9." }),
+      { status: 500 }
+    );
   }
 }

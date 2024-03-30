@@ -1,7 +1,13 @@
-"use client"
+"use client";
 
-import {Toaster} from "react-hot-toast"
+import { Toaster } from "react-hot-toast";
 
-export const ToasterProvider = () =>{
-    return <Toaster />
-}
+export const ToasterProvider = () => {
+  return (
+    <Toaster
+      toastOptions={{
+        duration: 8000,
+      }}
+    />
+  );
+};

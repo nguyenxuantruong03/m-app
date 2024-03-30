@@ -10,7 +10,10 @@ export async function GET(
 ) {
   try {
     if (!params.managestaffId) {
-      return new NextResponse("Product id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Managestaff id is required!" }),
+        { status: 400 }
+      );
     }
 
     const managestaff = await prismadb.user.findUnique({
@@ -21,8 +24,10 @@ export async function GET(
 
     return NextResponse.json(managestaff);
   } catch (error) {
-    console.log("[MANAGESTAFF_GET]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error get managestaff." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -35,11 +40,17 @@ export async function DELETE(
     const role = await currentRole();
 
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
     }
 
     if (!params.managestaffId) {
-      return new NextResponse("Product id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Managestaff id is required!" }),
+        { status: 400 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -52,12 +63,15 @@ export async function DELETE(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
     }
 
     if (role !== UserRole.ADMIN) {
       return new NextResponse(
-        "Access denied. Only Admins can perform this action.",
+        JSON.stringify({ error: "Vai trò hiện tại của bạn không được quyền!" }),
         { status: 403 }
       );
     }
@@ -70,8 +84,10 @@ export async function DELETE(
 
     return NextResponse.json(managestaff);
   } catch (error) {
-    console.log("[MANAGESTAFF_DELETE]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error delete managestaff." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -99,23 +115,81 @@ export async function PATCH(
       dateRange,
     } = body;
 
-    if (
-      !userId ||
-      !name ||
-      !numberCCCD ||
-      !issued ||
-      !gender ||
-      !degree ||
-      !phonenumber ||
-      !workingTime ||
-      !imageCredential ||
-      !maritalStatus
-    ) {
-      return new NextResponse("Invalid Error!", { status: 403 });
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (!name) {
+      return new NextResponse(
+        JSON.stringify({ error: "Name is required!" }),
+        { status: 400 }
+      );
+    }
+
+    if (!numberCCCD) {
+      return new NextResponse(
+        JSON.stringify({ error: "Sô CMND is required!" }),
+        { status: 400 }
+      );
+    }
+
+    if (!issued) {
+      return new NextResponse(
+        JSON.stringify({ error: "Nơi cấp is required!" }),
+        { status: 400 }
+      );
+    }
+
+    if (!gender) {
+      return new NextResponse(
+        JSON.stringify({ error: "Giới tính is required!" }),
+        { status: 400 }
+      );
+    }
+
+    if (!degree) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bằng cấp is required!" }),
+        { status: 400 }
+      );
+    }
+
+    if (!phonenumber) {
+      return new NextResponse(
+        JSON.stringify({ error: "Số diện thoại is required!" }),
+        { status: 400 }
+      );
+    }
+
+    if (!workingTime) {
+      return new NextResponse(
+        JSON.stringify({ error: "Thời gian làm việc is required!" }),
+        { status: 400 }
+      );
+    }
+
+    if (!imageCredential) {
+      return new NextResponse(
+        JSON.stringify({ error: "Hình ảnh cmnd is required!" }),
+        { status: 400 }
+      );
+    }
+
+    if (!maritalStatus) {
+      return new NextResponse(
+        JSON.stringify({ error: "Tính trạng hôn nhân is required!" }),
+        { status: 400 }
+      );
     }
 
     if (!params.managestaffId) {
-      return new NextResponse("Product id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Managestaff id is required!" }),
+        { status: 400 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -126,9 +200,14 @@ export async function PATCH(
         },
       },
     });
+
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
     }
+    
     await prismadb.user.update({
       where: {
         id: params.managestaffId,
@@ -162,7 +241,9 @@ export async function PATCH(
 
     return NextResponse.json(managestaff);
   } catch (error) {
-    console.log("[MANAGESTAFF_PATCH]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error patch managestaff." }),
+      { status: 500 }
+    );
   }
 }

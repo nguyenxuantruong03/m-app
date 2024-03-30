@@ -27,11 +27,24 @@ export async function POST(
     } = body;
 
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
     }
 
-    if (!name || !params.storeId) {
-      return new NextResponse("Invalid parameters", { status: 400 });
+    if (!name) {
+      return new NextResponse(
+        JSON.stringify({ error: "Name is required!" }),
+        { status: 400 }
+      );
+    }
+
+    if (!params.storeId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Store id is required!" }),
+        { status: 400 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -44,8 +57,12 @@ export async function POST(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
     }
+
     // Tạo coupon bằng Stripe
     const shippingRates = await stripe.shippingRates.create({
       display_name: name,
@@ -86,8 +103,10 @@ export async function POST(
 
     return NextResponse.json(createdCoupon);
   } catch (error) {
-    console.log("[SHIPPINGRATES_POST]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error post shippingrates." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -97,7 +116,10 @@ export async function GET(
 ) {
   try {
     if (!params.storeId) {
-      return new NextResponse("Store id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Store id is required!" }),
+        { status: 400 }
+      );
     }
 
     const getshippingRates = await prismadb.shippingRates.findMany({
@@ -111,7 +133,9 @@ export async function GET(
 
     return NextResponse.json(getshippingRates);
   } catch (error) {
-    console.log("[SHIPPINGRATES_GET]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error get shippingrates." }),
+      { status: 500 }
+    );
   }
 }

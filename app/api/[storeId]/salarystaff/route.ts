@@ -10,7 +10,10 @@ export async function GET(req: Request) {
     const salarystaff = await prismadb.caculateSalary.findMany();
     return NextResponse.json(salarystaff);
   } catch (error) {
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error get salarystaff." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -24,6 +27,26 @@ export async function PATCH(
   const { bonusAmount, bonusTitle, bonus } = body;
 
   try {
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if(!bonus){
+      return new NextResponse(
+        JSON.stringify({ error: "Bonus is required." }),
+        { status: 400 }
+      );
+    }
+
+    if(!bonusTitle){
+      return new NextResponse(
+        JSON.stringify({ error: "Bonus title is required." }),
+        { status: 400 }
+      );
+    }
     const formatterbonus = formatter.format(bonus);
     const formattercurrentmoney = formatter.format(bonusAmount);
     const today = new Date();
@@ -56,8 +79,10 @@ export async function PATCH(
 
     return NextResponse.json(caculateSalary);
   } catch (error) {
-    console.error("Lỗi", error);
-    return new NextResponse("Lỗi nội bộ", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error patch salarystaff." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -71,6 +96,26 @@ export async function POST(
   const { unbonusAmount, unbonusTitle, unbonus } = body;
 
   try {
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+    
+    if(!unbonus){
+      return new NextResponse(
+        JSON.stringify({ error: "Unbonus is required." }),
+        { status: 400 }
+      );
+    }
+
+    if(!unbonusTitle){
+      return new NextResponse(
+        JSON.stringify({ error: "Unbonus title is required." }),
+        { status: 400 }
+      );
+    }
     const formatteunbonus = formatter.format(unbonus);
     const formattercurrentmoney = formatter.format(unbonusAmount);
     const today = new Date();
@@ -103,8 +148,10 @@ export async function POST(
 
     return NextResponse.json(caculateSalary);
   } catch (error) {
-    console.error("Lỗi", error);
-    return new NextResponse("Lỗi nội bộ", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error post salarystaff." }),
+      { status: 500 }
+    );
   }
 }
 

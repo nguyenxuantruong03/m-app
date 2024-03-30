@@ -97,3 +97,25 @@ body,
   font-size: 25px;
   color: #333;
 }
+
+
+
+
+.avatar-overlapping-multiple-image {
+  display: inline-block;
+  border-radius: 20%;
+  overflow: hidden;
+  width: 65px;
+}
+
+.avatar-overlapping-multiple-image:not(:first-child) {
+  margin-left: -40px;
+  -webkit-mask:radial-gradient(circle 55px at 5px 50%, 40%,#fff );
+          mask:radial-gradient(circle 55px at 5px 50%, 40%,#fff );
+}
+
+.avatar-image-overlapping-multiple-image {
+  width: 60%;
+  display: block;
+  height: 5%;
+}

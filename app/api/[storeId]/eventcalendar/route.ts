@@ -12,8 +12,10 @@ export async function GET(req: Request) {
     const eventCalendar = await prismadb.eventCalendar.findMany();
     return NextResponse.json(eventCalendar);
   } catch (error) {
-    console.error("[EVENTCALENDAR_GET] Error:", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error get eventcalendar." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -29,10 +31,17 @@ export async function POST(
     const { title, start, allDay, attendancestart, attendanceend } = body;
 
     if (!start) {
-      return new NextResponse("Invalid Error!", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Start is required!" }),
+        { status: 403 }
+      );
     }
+
     if (!params.storeId) {
-      return new NextResponse("Store id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Store id is required!" }),
+        { status: 400 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -45,7 +54,10 @@ export async function POST(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
     }
 
     const user = await prismadb.user.findUnique({
@@ -69,7 +81,10 @@ export async function POST(
         endTime.setHours(endTime.getHours() + 12);
         break;
       default:
-        return new NextResponse("Invalid working time", { status: 400 });
+        return new NextResponse(
+          JSON.stringify({ error: "Invalid working time!" }),
+          { status: 400 }
+        );
     }
 
     //Chuyển sang giờ VIỆT NAM
@@ -115,8 +130,10 @@ export async function POST(
 
     return NextResponse.json(eventCalendar);
   } catch (error) {
-    console.log("[EVENTCALENDAR_POST]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error post eventcalendar." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -132,10 +149,17 @@ export async function PATCH(
     const { title, start, allDay, attendancestart, attendanceend } = body;
 
     if (!start) {
-      return new NextResponse("Invalid Error!", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Start is required!" }),
+        { status: 403 }
+      );
     }
+
     if (!params.storeId) {
-      return new NextResponse("Store id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Store id is required!" }),
+        { status: 400 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -148,7 +172,10 @@ export async function PATCH(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
     }
 
     //Chuyển sang giờ VIỆT NAM
@@ -169,8 +196,10 @@ export async function PATCH(
 
     return NextResponse.json(eventCalendar);
   } catch (error) {
-    console.log("[EVENTCALENDAR_PATCH]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error patch eventcalendar." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -184,8 +213,15 @@ export async function DELETE(
     // Extract event ID from the request body
     const { eventId } = await req.json();
 
-    if (!eventId || !params.storeId) {
-      return new NextResponse("Invalid Error!", { status: 403 });
+    if (!eventId) {
+      return new NextResponse("Event id is required!", { status: 403 });
+    }
+
+    if (!params.storeId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Store id is required!" }),
+        { status: 400 }
+      );
     }
 
     // Check if the user has access to the specified store
@@ -199,9 +235,12 @@ export async function DELETE(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
     }
-
+    
     // Delete the event with the specified ID
     const deletedEvent = await prismadb.eventCalendar.delete({
       where: {
@@ -264,7 +303,9 @@ export async function DELETE(
     }
     return NextResponse.json(deletedEvent);
   } catch (error) {
-    console.log("[EVENTCALENDAR_DELETE]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error delete eventcalendar." }),
+      { status: 500 }
+    );
   }
 }

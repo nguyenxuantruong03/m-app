@@ -41,9 +41,15 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       router.refresh();
       toast.success("STAFF deleted.");
     } catch (error: any) {
-      toast.error(
-        "Make sure you removed all categories using this staff first."
-      );
+      if (error.response && error.response.data && error.response.data.error) {
+        // Hiển thị thông báo lỗi cho người dùng
+        toast.error(error.response.data.error);
+      } else {
+        // Hiển thị thông báo lỗi mặc định cho người dùng
+        toast.error(
+          "Make sure you removed all categories using this billboard first."
+        );
+      }
     } finally {
       setLoading(false);
       setOpen(false);
@@ -53,22 +59,46 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onSentVerify = async () => {
     try {
       setLoading(true);
+      let promise;
+
       if (data.sentVeirifi === true) {
-        return toast.error("Email đã được gửi!");
+        toast.error("Email đã được gửi!");
+        setLoading(false);
+        return;
       } else {
         const updatedData = { ...data, sentVeirifi: true };
-        const response = await axios.patch(
+        promise = axios.patch(
           `/api/${params.storeId}/managestaff`,
           updatedData
         );
-        // Extract user email from the response
-        const userEmail = response.data.userEmail;
-        // Display a success toast with the user's email
-        toast.success(`Verification email sent to: ${userEmail}`);
       }
-    } catch (error: any) {
-      toast.error("Failed to send verification email.");
-    } finally {
+
+      await toast.promise(
+        promise.then((response) => {
+          const userEmail = response.data.userEmail;
+          return `Verification email sent to: ${userEmail}`;
+        }),
+        {
+          loading: "Updating verification email...",
+          success: (message) => {
+            router.refresh();
+            return message;
+          },
+          error: (error) => {
+            if (
+              error.response &&
+              error.response.data &&
+              error.response.data.error
+            ) {
+              return error.response.data.error;
+            } else {
+              return "Failed to send verification email.";
+            }
+          },
+        }
+      );
+    } catch (error: any) {} 
+      finally {
       setLoading(false);
     }
   };

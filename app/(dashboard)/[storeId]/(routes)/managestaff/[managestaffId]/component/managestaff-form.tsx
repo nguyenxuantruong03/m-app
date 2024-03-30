@@ -6,7 +6,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
-import { Trash } from "lucide-react";
+import { Check, Trash } from "lucide-react";
 import {
   Degree,
   Gender,
@@ -38,7 +38,11 @@ import { Heading } from "@/components/ui/heading";
 import { AlertModal } from "@/components/modals/alert-modal";
 import { Checkbox } from "@/components/ui/checkbox";
 import ImageUpload from "@/components/ui/image-upload";
+import Image from "next/image";
 import { format } from "date-fns";
+import { utcToZonedTime } from "date-fns-tz";
+import viLocale from "date-fns/locale/vi";
+const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -57,6 +61,7 @@ const formSchema = z.object({
   isCitizen: z.boolean().default(false).optional(),
   dateRange: z.date().nullable(),
   dateofbirth: z.union([z.date().nullable(), z.string().nullable()]),
+  createdAt: z.date().nullable(),
 });
 
 type ManageStaffFormValues = z.infer<typeof formSchema>;
@@ -72,11 +77,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const isEditing = !!initialData;
 
   const title = "Edit";
   const description = "Edit";
-  const toastMessage = "Updated";
   const action = "Save changes";
 
   const form = useForm<ManageStaffFormValues>({
@@ -85,7 +88,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
       name: "",
       numberCCCD: "",
       issued: "",
-      image: "",
+      imageCredential: "",
       phonenumber: "",
       gender: "",
       degree: "",
@@ -96,26 +99,93 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
       dateofbirth: initialData.dateofbirth
         ? new Date(initialData.dateofbirth)
         : null,
+      createdAt: initialData.createdAt ? new Date(initialData.createdAt) : null,
     },
   });
 
   const onSubmit = async (data: ManageStaffFormValues) => {
     try {
       setLoading(true);
-      //inittialData có nghĩa là khi dữ diệu ban đầu có nó sẽ đổi nut button thành save change
-      /* Khối mã chịu trách nhiệm thực hiện yêu cầu HTTP để cập nhật bảng quảng cáo hiện có
-      hoặc tạo bảng quảng cáo mới dựa trên giá trị của `initialData`. */
       if (initialData) {
         await axios.patch(
           `/api/${params.storeId}/managestaff/${params.managestaffId}`,
           data
         );
       }
+      let message: any;
+      if (initialData) {
+        message = (
+          <p>
+            ManageStaff <span className="font-bold">{data.name}</span> updated.
+          </p>
+        );
+      }
+
+      let title: any;
+      if (initialData) {
+        title = (
+          <div className="flex items-center justify-between text-sm">
+            <p className="text-green-500 font-bold flex">
+              <Check className="w-5 h-5 rounded-full bg-green-500 text-white mx-1" />
+              ManageStaff updated!
+            </p>
+            <span className="text-gray-500">
+              {data?.createdAt
+                ? format(
+                    utcToZonedTime(
+                      new Date(new Date(data?.createdAt)),
+                      vietnamTimeZone
+                    ),
+                    "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+                    { locale: viLocale }
+                  )
+                : null}
+            </span>
+          </div>
+        );
+      }
+
+      toast.custom((t) => (
+        <div
+          className={`${
+            t.visible ? "animate-enter" : "animate-leave"
+          } border-2 border-green-500 max-w-xl w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+        >
+          <div className="flex-1 w-0 p-4">
+            <div className="flex items-start">
+              <div className="flex-shrink-0 pt-0.5">
+                <Image
+                  className="h-10 w-10 rounded-full"
+                  src={data.imageCredential[0]}
+                  alt=""
+                  width={40}
+                  height={40}
+                />
+              </div>
+              <div className="ml-3 flex-1">
+                <p>{title}</p>
+                <p className="mt-1 text-sm text-gray-500">{message}</p>
+              </div>
+            </div>
+          </div>
+          <div className="flex border-l border-gray-200">
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      ));
       router.refresh();
       router.push(`/${params.storeId}/managestaff`);
-      toast.success(toastMessage);
     } catch (error: any) {
-      toast.error("Something went wrong.");
+      if (error.response && error.response.data && error.response.data.error) {
+        toast.error(error.response.data.error);
+      } else {
+        toast.error("Something went wrong.");
+      }
     } finally {
       setLoading(false);
     }
@@ -131,7 +201,15 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
       router.push(`/${params.storeId}/managestaff`);
       toast.success("Color deleted.");
     } catch (error: any) {
-      toast.error("Make sure you removed all color using this Color first.");
+      if (error.response && error.response.data && error.response.data.error) {
+        // Hiển thị thông báo lỗi cho người dùng
+        toast.error(error.response.data.error);
+      } else {
+        // Hiển thị thông báo lỗi mặc định cho người dùng
+        toast.error(
+          "Make sure you removed all categories using this billboard first."
+        );
+      }
     } finally {
       setLoading(false);
       setOpen(false);

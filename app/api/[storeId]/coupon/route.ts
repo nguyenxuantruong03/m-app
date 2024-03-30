@@ -28,17 +28,36 @@ export async function POST(
     } = body;
 
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
     }
 
-    if (
-      !name ||
-      !percent ||
-      !imagecoupon ||
-      !imagecoupon.length ||
-      !params.storeId
-    ) {
-      return new NextResponse("Invalid parameters", { status: 400 });
+    if (!name) {
+      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+        status: 400,
+      });
+    }
+
+    if (!percent) {
+      return new NextResponse(JSON.stringify({ error: "Percent is required!" }), {
+        status: 400,
+      });
+    }
+
+    if (!imagecoupon || !imagecoupon.length) {
+      return new NextResponse(
+        JSON.stringify({ error: "Imagecoupon is required!" }),
+        { status: 400 }
+      );
+    }
+
+    if (!params.storeId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Store id is required!" }),
+        { status: 400 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -51,7 +70,10 @@ export async function POST(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
     }
 
     let duration_in_months = null; // Mặc định là null
@@ -63,10 +85,15 @@ export async function POST(
       if (durationinmoth > 0) {
         duration_in_months = durationinmoth;
       } else {
-        return new NextResponse("Invalid duration_in_months", { status: 400 });
+        return new NextResponse(
+          JSON.stringify({ error: "Invalid duration_in_months!" }),
+          { status: 400 }
+        );
       }
     } else {
-      return new NextResponse("Invalid duration", { status: 400 });
+      return new NextResponse(JSON.stringify({ error: "Invalid duration!" }), {
+        status: 400,
+      });
     }
 
     if (duration_in_months === null || duration_in_months === 0) {
@@ -76,7 +103,9 @@ export async function POST(
       body.duration_in_months = duration_in_months;
     }
 
-    const redeemTimestamp = redeemby? Math.floor(new Date(redeemby).getTime() / 1000) : null; // Chuyển redeemby thành timestamp
+    const redeemTimestamp = redeemby
+      ? Math.floor(new Date(redeemby).getTime() / 1000)
+      : null; // Chuyển redeemby thành timestamp
     // Tạo coupon bằng Stripe
     const coupon = await stripe.coupons.create({
       id: id,
@@ -113,8 +142,10 @@ export async function POST(
 
     return NextResponse.json(createdCoupon);
   } catch (error) {
-    console.log("[COUPON_POST]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error post coupon." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -124,7 +155,10 @@ export async function GET(
 ) {
   try {
     if (!params.storeId) {
-      return new NextResponse("Store id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Store id is required!" }),
+        { status: 400 }
+      );
     }
 
     const getcoupon = await prismadb.coupon.findMany({
@@ -141,7 +175,9 @@ export async function GET(
 
     return NextResponse.json(getcoupon);
   } catch (error) {
-    console.log("[COUPON_GET]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error get coupon." }),
+      { status: 500 }
+    );
   }
 }

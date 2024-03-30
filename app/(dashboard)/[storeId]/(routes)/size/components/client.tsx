@@ -35,7 +35,7 @@ const SizeClient: React.FC<SizeClientProps> = ({ data }) => {
           description="Quản lý kích cỡ cửa hàng"
         />
         <div className="flex space-x-3">
-          <Downloadfile data={data} filename="size" />=
+          <Downloadfile data={data} filename="size" />
           <Button onClick={() => router.push(`/${params.storeId}/size/new`)}>
             <Plus className="mr-2 h-4 w-4" />
             Add New

@@ -16,20 +16,41 @@ export async function POST(
     const { label, imagebillboardtime, timeout } = body;
 
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Người dùng hiện tại không có id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (!label) {
+      return new NextResponse(
+        JSON.stringify({ error: "Label is required!" }),
+        { status: 400 }
+      );
+    }
+
+    if (!timeout) {
+      return new NextResponse(
+        JSON.stringify({ error: "Label is required!" }),
+        { status: 400 }
+      );
     }
 
     if (
       !imagebillboardtime ||
-      !imagebillboardtime.length ||
-      !label ||
-      !timeout
+      !imagebillboardtime.length 
     ) {
-      return new NextResponse("Invalid Error", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Imagebillboardtime is required!" }),
+        { status: 400 }
+      );
     }
 
     if (!params.storeId) {
-      return new NextResponse("Store id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Store id is required!" }),
+        { status: 400 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -42,7 +63,12 @@ export async function POST(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      if (!storeByUserId) {
+        return new NextResponse(
+          JSON.stringify({ error: "Không tìm thấy store id!" }),
+          { status: 405 }
+        );
+      }
     }
 
     const billboard = await prismadb.billboardTime.create({
@@ -60,8 +86,10 @@ export async function POST(
 
     return NextResponse.json(billboard);
   } catch (error) {
-    console.log("[BILLBOARDSTIME_POST]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error post billboardtime." }),
+      { status: 500 }
+    );
   }
 }
 
@@ -71,7 +99,10 @@ export async function GET(
 ) {
   try {
     if (!params.storeId) {
-      return new NextResponse("Store id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Store id is required" }),
+        { status: 400 }
+      );
     }
 
     const billboards = await prismadb.billboardTime.findMany({
@@ -88,7 +119,9 @@ export async function GET(
 
     return NextResponse.json(billboards);
   } catch (error) {
-    console.log("[BILLBOARDSTIME_GET]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error get billboardtime." }),
+      { status: 500 }
+    );
   }
 }
