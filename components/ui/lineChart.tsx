@@ -2,8 +2,12 @@
 
 import {CartesianGrid,Legend,Line,LineChart,ResponsiveContainer,Tooltip,XAxis,YAxis} from "recharts"
 
+interface GraphData {
+    name: string;
+    totaldate: number;
+}
 interface OverViewProps{
-data: any[];
+data: GraphData[];
 }
 
 export const LineChartPage:React.FC<OverViewProps> =({data}) =>{

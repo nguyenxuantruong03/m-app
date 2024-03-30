@@ -16,9 +16,35 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useEffect, useState } from "react";
 import { myfont } from "./../../times new roman-normal";
+import { BillboardColumn } from "@/app/(dashboard)/[storeId]/(routes)/billboards/components/columns";
+import { CategoriesColumn } from "@/app/(dashboard)/[storeId]/(routes)/categories/components/columns";
+import { ProductColumn } from "@/app/(dashboard)/[storeId]/(routes)/product/components/columns";
+import { OrderColumn } from "@/app/(dashboard)/[storeId]/(routes)/orders/components/columns";
+import { ProductDetailColumn } from "@/app/(dashboard)/[storeId]/(routes)/productdetail/components/columns";
+import { SalaryStaffsColumn } from "@/app/(dashboard)/[storeId]/(routes)/salarystaff/components/column";
+import { SentEmailUserColumn } from "@/app/(dashboard)/[storeId]/(routes)/sentmailuser/components/columns";
+import { SettingUsersColumn } from "@/app/(dashboard)/[storeId]/(routes)/settingusers/components/column";
+import { ShippingRatesColumn } from "@/app/(dashboard)/[storeId]/(routes)/shippingrates/components/columns";
+import { TaxRateColumn } from "@/app/(dashboard)/[storeId]/(routes)/taxrate/components/columns";
+import { CouponColumn } from "@/app/(dashboard)/[storeId]/(routes)/coupon/components/columns";
+import { ManageAttendancesColumn } from "@/app/(dashboard)/[storeId]/(routes)/manageattendance/components/column";
+import { ManageStaffsColumn } from "@/app/(dashboard)/[storeId]/(routes)/managestaff/components/column";
 
 interface DownloadfileProps {
-  data: any[];
+  data:
+    | BillboardColumn[]
+    | CategoriesColumn[]
+    | ProductColumn[]
+    | OrderColumn[]
+    | ProductDetailColumn[]
+    | SalaryStaffsColumn[]
+    | SentEmailUserColumn[]
+    | SettingUsersColumn[]
+    | ShippingRatesColumn[]
+    | TaxRateColumn[]
+    | CouponColumn[]
+    | ManageAttendancesColumn[]
+    | ManageStaffsColumn[];
   filename: string;
 }
 

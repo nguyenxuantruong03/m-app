@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import { formatter } from "@/lib/utils";
 import { RoleGate } from "@/components/auth/role-gate";
 import { currentRole } from "@/lib/auth";
-import { UserRole } from "@prisma/client";
+import { OrderItem, UserRole } from "@prisma/client";
 import FormSuccess from "@/components/form-success";
 import LeafletMap from "./datastatistics_form";
 import { OrderColumn } from "../orders/components/columns";
@@ -37,7 +37,7 @@ const DatastatisticsPage = async ({ params }: { params: { storeId: string } }) =
     address: item.address.split(",").join(", "),
     email: item.email.split(",").join(", "),
     products: item.orderItem
-      .map((orderItem: any) => {
+      .map((orderItem) => {
         return `Số lượng: ${orderItem.quantity} - Sản phẩm: ${orderItem.product.heading}`;
       })
       .join(", "),

@@ -131,7 +131,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       }
 
        // Lấy ảnh từ cả images và imagesalientfeatures
-       let allImages: any[] = [];
+       let allImages: string[] = [];
        if (data.images) {
          allImages = allImages.concat(data.images.map((item) => item.url));
        }
@@ -213,7 +213,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           <div className="flex-1 w-0 p-2">
             <div className="flex items-start">
               <div className="flex-shrink-0 pt-0.5">
-                {allImages.slice(0, 10).map((url: any, index: any) => (
+                {allImages.slice(0, 10).map((url: string, index: number) => (
                   <span
                     key={index}
                     className="avatar-overlapping-multiple-image"

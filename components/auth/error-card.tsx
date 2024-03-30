@@ -4,7 +4,7 @@ import CardWrapper from "@/components/auth/card-wrapper";
 import { AlertTriangle } from "lucide-react";
 
 interface ErrorCardProps {
-  daysLeft: any;
+  daysLeft: number;
 }
 
 const ErrorCard: React.FC<ErrorCardProps> = ({ daysLeft }) => {

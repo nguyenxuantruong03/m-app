@@ -33,7 +33,7 @@ const ManageStaff = async ({ params }: { params: { storeId: string } }) => {
     isCitizen: item.isCitizen,
     numberCCCD: item.numberCCCD,
     imageCredential: item.imageCredential
-      .map((orderItem: any) => {
+      .map((orderItem) => {
         return orderItem;
       })
       .join(", "),

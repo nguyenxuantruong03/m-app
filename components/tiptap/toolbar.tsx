@@ -9,16 +9,18 @@ import ExtensionDefaultPage from "./components/extension-default";
 import TablePage from "./components/table";
 import ListItemPage from "./components/listItem";
 import HeadingPage from "./components/heading";
+import { ColorResult } from 'react-color';
+
 type Props = {
   editor: Editor | null;
   disabled: boolean;
 };
 
 const Toolbar: React.FC<Props> = ({ editor,disabled }) => {
-  const [showColorPicker, setShowColorPicker] = useState(false);
-  const [selectedColor, setSelectedColor] = useState("#ffcc00"); // Màu mặc định
+  const [showColorPicker, setShowColorPicker] = useState<boolean>(false);
+  const [selectedColor, setSelectedColor] = useState<string>("#ffcc00"); // Màu mặc định
 
-  const handleHighlightColorChange = (color: any) => {
+  const handleHighlightColorChange = (color: ColorResult) => {
     setSelectedColor(color.hex);
   };
   const handleHighlightColorSelection = () => {
@@ -30,7 +32,7 @@ const Toolbar: React.FC<Props> = ({ editor,disabled }) => {
       editor
         .chain()
         .focus()
-        .unsetMark("highlight", { color: selectedColor } as any)
+        .unsetMark("highlight")
         .run(); // Cast options to 'any'
     } else {
       editor

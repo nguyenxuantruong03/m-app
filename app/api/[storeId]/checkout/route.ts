@@ -60,7 +60,7 @@ export async function POST(
       storeId: params.storeId,
       isPaid: false,
       orderItem: {
-        create: productIds.map((productId: string,index:any) => ({
+        create: productIds.map((productId: string,index:number) => ({
           product: {
             connect: {
               id: productId,

@@ -6,13 +6,13 @@ import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.js";
 import "leaflet.locatecontrol";
 import "leaflet.locatecontrol/dist/L.Control.Locate.min.css";
-// import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
-// import 'leaflet-control-geocoder/dist/Control.Geocoder.js';
+import "leaflet-control-geocoder/dist/Control.Geocoder.css";
+import "leaflet-control-geocoder/dist/Control.Geocoder.js";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { OrderColumn } from "../../components/columns";
-import {toast} from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { EyeOff, Search } from "lucide-react";
 interface OrderProps {
   data: OrderColumn[];
@@ -70,6 +70,11 @@ L.Routing.Localization["vi"] = {
     poweredBy: "Cung cấp bởi",
   },
 };
+
+interface Coordinates {
+  lat: number;
+  lon: number;
+}
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -139,11 +144,14 @@ const OrderForm: React.FC<OrderProps> = ({ data }) => {
           waypoints: waypointsLatLng,
           language: "vi",
         })
-          .on("routesfound", function (e: any) {
+          .on("routesfound", function (e: L.Routing.Control) {
             const routes = e.routes;
             console.log("2", routes);
 
-            e.routes[0].coordinates.forEach(function (coord: any, index: any) {
+            e.routes[0].coordinates.forEach(function (
+              coord: L.Routing.Control,
+              index: number
+            ) {
               setTimeout(function () {
                 motoMarker.setLatLng([coord.lat, coord.lng]);
               }, 500 * index);
@@ -229,8 +237,8 @@ const OrderForm: React.FC<OrderProps> = ({ data }) => {
           ]);
 
           // Remove existing routing control if any
-          map.eachLayer((layer: any) => {
-            if (layer instanceof L.Routing.Control) {
+          map.eachLayer((layer: L.Routing.Control) => {
+            if (layer) {
               map.removeControl(layer);
             }
           });
@@ -240,13 +248,13 @@ const OrderForm: React.FC<OrderProps> = ({ data }) => {
             waypoints: waypointsLatLng,
             language: "vi",
           })
-            .on("routesfound", function (e: any) {
+            .on("routesfound", function (e: L.Routing.Control) {
               const routes = e.routes;
               console.log("2", routes);
 
               e.routes[0].coordinates.forEach(function (
-                coord: any,
-                index: any
+                coord: L.Routing.Control,
+                index: number
               ) {
                 setTimeout(function () {
                   motoMarker.setLatLng([coord.lat, coord.lng]);
@@ -261,21 +269,22 @@ const OrderForm: React.FC<OrderProps> = ({ data }) => {
         toast.error("Địa chỉ không đúng");
       }
     };
-    const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-      if (event.key === "Enter") {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      const target = event.target as HTMLInputElement;
+      if (target instanceof HTMLInputElement && event.key === "Enter") {
         searchBtnClickHandler();
       }
     };
-
+    
     // Attach the onKeyPress event to the input field
     const searchInput = searchInputRef.current;
-    searchInput?.addEventListener("keypress", handleKeyPress as any);
+    searchInput?.addEventListener("keypress", handleKeyPress);
 
     const searchBtn = document.getElementById("search-btn");
     searchBtn?.addEventListener("click", searchBtnClickHandler);
 
     //Xem tọa độ
-    map.on("mousemove", function (e: any) {
+    map.on("mousemove", function (e: L.Routing.Control) {
       document.getElementsByClassName("coordinate")[0].innerHTML =
         "lat: " + e.latlng.lat + "lng: " + e.latlng.lng;
     });
@@ -283,12 +292,12 @@ const OrderForm: React.FC<OrderProps> = ({ data }) => {
     return () => {
       // Clean up event listener when the component is unmounted
       searchBtn?.removeEventListener("click", searchBtnClickHandler);
-      searchInput?.removeEventListener("keypress", handleKeyPress as any);
+      searchInput?.removeEventListener("keypress", handleKeyPress);
       map.remove();
     };
   }, []);
 
-  const geocode = async (location: string | number[]): Promise<any> => {
+  const geocode = async (location: string | number[]): Promise<Coordinates> => {
     try {
       const address = Array.isArray(location)
         ? `${location[0]}, ${location[1]}`

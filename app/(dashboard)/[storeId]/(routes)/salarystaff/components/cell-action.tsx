@@ -49,7 +49,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   };
 
   // Function to prevent closing modal when clicking inside modal content
-  const handleModalClick = (e: any) => {
+  const handleModalClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.stopPropagation();
   };
 

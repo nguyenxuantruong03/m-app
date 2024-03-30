@@ -46,7 +46,7 @@ export const sendVerifyAccountisCitizen = async (email: string | null = "") => {
 };
 
 export const sendSpamEmail = async (
-  email: any,
+  email: string,
   subject: string,
   description: string
 ) => {
@@ -59,7 +59,7 @@ export const sendSpamEmail = async (
 };
 
 export const sendAttendanceStart = async (
-  email: any,
+  email: string,
   nameuser: string | null | undefined,
   start: string | null,
   end: string | null
@@ -73,7 +73,7 @@ export const sendAttendanceStart = async (
 };
 
 export const sendAttendanceEnd = async (
-  email: any,
+  email: string,
   nameuser: string | null | undefined,
   end: string | null
 ) => {
@@ -86,7 +86,7 @@ export const sendAttendanceEnd = async (
 };
 
 export const sendSalarytotal = async (
-  email: any,
+  email: string,
   name: string | null | undefined,
   totalsalary: string | "0",
   today: string | null | undefined
@@ -100,7 +100,7 @@ export const sendSalarytotal = async (
 };
 
 export const sendBonus = async (
-  email: any,
+  email: string,
   name: string | null | undefined,
   bonus: string | "0",
   currenmoney: string | "0",
@@ -116,7 +116,7 @@ export const sendBonus = async (
 };
 
 export const sendunBonus = async (
-  email: any,
+  email: string,
   name: string | null | undefined,
   unbonus: string | "0",
   currenmoney: string | "0",

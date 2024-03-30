@@ -44,7 +44,7 @@ const OrderPage = async ({
     address: item.address.split(",").join(", "),
     email: item.email.split(",").join(", "),
     products: item.orderItem
-      .map((orderItem: any) => {
+      .map((orderItem) => {
         return `Số lượng: ${orderItem.quantity} - Sản phẩm: ${orderItem.product.heading}`;
       })
       .join(", "),

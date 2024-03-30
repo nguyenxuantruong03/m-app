@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import axios from "axios";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -397,7 +397,7 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
               control={form.control}
               name="percent"
               render={({ field }) => {
-                const handleInputChange = (e: any) => {
+                const handleInputChange = (e:ChangeEvent<HTMLInputElement>) => {
                   const newValue = parseInt(e.target.value);
                   if (newValue >= 0 && newValue <= 100) {
                     // Nếu giá trị mới hợp lệ, cập nhật giá trị của field
@@ -429,7 +429,7 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
               name="durationinmoth"
               render={({ field }) => {
                 // Hàm xác định giá trị mặc định là 0 nếu field không tồn tại
-                const handleInputChange = (e: any) => {
+                const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
                   const newValue = parseInt(e.target.value);
 
                   if (newValue >= 0 && newValue <= 12) {

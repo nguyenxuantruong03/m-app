@@ -26,7 +26,7 @@ export type SettingUsersColumn = {
   accounts: {
     type: string;
     provider: string;
-    token_type: string;
+    token_type: string | null;
   }[];
   isCitizen: boolean | null;
   isTwoFactorEnabled: boolean;
@@ -35,15 +35,19 @@ export type SettingUsersColumn = {
   createdAt: string | null;
 };
 
-const RoleCell = ({ row }: any) => {
+interface RoleCellProps<T> {
+  row: { original: T };
+}
+
+const RoleCell = <T extends SettingUsersColumn>({ row }: RoleCellProps<T>) => {
   const router = useRouter();
   const user = row.original;
   const isAdmin = user.role === UserRole.ADMIN;
   const isStaff = user.role === UserRole.STAFF;
   const [editable, setEditable] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<UserRole>(user.role); // Default to ADMIN role
-  const [originalRole, setOriginalRole] = useState<UserRole>(user.role); // Store the original role for cancellation
+  const [selectedRole, setSelectedRole] = useState(user.role as UserRole); // Default to ADMIN role
+  const [originalRole, setOriginalRole] = useState(user.role as UserRole); // Store the original role for cancellation
   const handleRoleChange = async (newRole: UserRole) => {
     setSelectedRole(newRole);
   };

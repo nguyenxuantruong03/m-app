@@ -2,7 +2,7 @@ import prismadb from "@/lib/prismadb";
 import { format } from "date-fns";
 import { RoleGate } from "@/components/auth/role-gate";
 import { currentRole} from "@/lib/auth";
-import { UserRole } from "@prisma/client";
+import { Account, UserRole } from "@prisma/client";
 import FormSuccess from "@/components/form-success";
 import { SettingUsersColumn } from "./components/column";
 import SettingUserClient from "./components/client";
@@ -38,26 +38,16 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
       : null,
     image: item.image,
     imageCredential: item.imageCredential
-      .map((orderItem: any) => {
+      .map((orderItem) => {
         return orderItem;
       })
       .join(", "),
     password: item.password,
     role: item.role,
-    accounts: item.accounts.map((accountItem: any) => ({
-      id: accountItem.id,
-      storeId: accountItem.storeId, // Add storeId property
-      userId: accountItem.userId,
+    accounts: item.accounts.map((accountItem: Account) => ({
       type: accountItem.type,
       provider: accountItem.provider,
-      providerAccountId: accountItem.providerAccountId,
-      refresh_token: accountItem.refresh_token,
-      access_token: accountItem.access_token,
-      expires_at: accountItem.expires_at,
       token_type: accountItem.token_type,
-      scope: accountItem.scope,
-      id_token: accountItem.id_token,
-      session_state: accountItem.session_state,
     })),
     isTwoFactorEnabled: item.isTwoFactorEnabled,
     isCitizen: item.isCitizen,

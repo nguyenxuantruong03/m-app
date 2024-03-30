@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import axios from "axios";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -229,7 +229,7 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
               control={form.control}
               name="percentage"
               render={({ field }) => {
-                const handleInputChange = (e: any) => {
+                const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
                   const newValue = parseInt(e.target.value);
                   if (newValue >= 0 && newValue <= 100) {
                     // Nếu giá trị mới hợp lệ, cập nhật giá trị của field

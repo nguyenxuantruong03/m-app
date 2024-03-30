@@ -67,7 +67,7 @@ const formSchema = z.object({
 type ManageStaffFormValues = z.infer<typeof formSchema>;
 
 interface ManageStaffFormProps {
-  initialData: User | any;
+  initialData: User;
 }
 
 export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
@@ -84,11 +84,12 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
 
   const form = useForm<ManageStaffFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData || {
+    defaultValues: {
+      ...initialData,
       name: "",
       numberCCCD: "",
       issued: "",
-      imageCredential: "",
+      imageCredential:[],
       phonenumber: "",
       gender: "",
       degree: "",
@@ -99,7 +100,6 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
       dateofbirth: initialData.dateofbirth
         ? new Date(initialData.dateofbirth)
         : null,
-      createdAt: initialData.createdAt ? new Date(initialData.createdAt) : null,
     },
   });
 
@@ -112,7 +112,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
           data
         );
       }
-      let message: any;
+      let message: React.ReactNode;
       if (initialData) {
         message = (
           <p>
@@ -121,7 +121,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
         );
       }
 
-      let title: any;
+      let title: React.ReactNode;
       if (initialData) {
         title = (
           <div className="flex items-center justify-between text-sm">

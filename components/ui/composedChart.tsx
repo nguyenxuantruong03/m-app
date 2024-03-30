@@ -2,8 +2,14 @@
 
 import {Area, Bar,CartesianGrid,ComposedChart,Legend,Line,ResponsiveContainer,Tooltip,XAxis,YAxis} from "recharts"
 
+interface GraphData {
+    name: string;
+    totalpricesales: number;
+    totalpriceold: number;
+    totalwarranty: number;
+}
 interface OverViewProps{
-data: any[];
+data: GraphData[];
 }
 
 export const ComposedChartPage:React.FC<OverViewProps> =({data}) =>{

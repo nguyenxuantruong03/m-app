@@ -20,9 +20,13 @@ import {
 
 type PopoverTrigger = React.ComponentPropsWithoutRef<typeof PopoverTrigger>;
 
+interface Item {
+  id: string;
+  name: string;
+}
 interface StoreSwitcherProps extends PopoverTrigger {
   /* `items: Record <string , any>[]` đang định nghĩa một chỗ dựa có tên `items` cho thành phần `StoreSwitcher. */
-  items: Record<string, any>[];
+  items: Item[];
 }
 
 export default function StoreSwitcher({

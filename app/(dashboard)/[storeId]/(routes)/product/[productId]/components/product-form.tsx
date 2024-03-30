@@ -131,7 +131,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       }
 
       // Lấy ảnh từ cả images và imagesalientfeatures
-      let allImages: any[] = [];
+      let allImages: string[] = [];
       if (data.images) {
         allImages = allImages.concat(data.images.map((item) => item.url));
       }
@@ -213,7 +213,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           <div className="flex-1 w-0 p-2">
             <div className="flex items-start">
               <div className="flex-shrink-0 pt-0.5">
-                {allImages.slice(0, 10).map((url: any, index: any) => (
+                {allImages.slice(0, 10).map((url: string, index: number) => (
                   <span
                     key={index}
                     className="avatar-overlapping-multiple-image"
@@ -246,11 +246,17 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       ));
       router.refresh();
       router.push(`/${params.storeId}/product`);
-    } catch (error: any) {
-      if (error.response && error.response.data && error.response.data.error) {
-        toast.error(error.response.data.error);
+    } catch (error: unknown) {
+      if (
+        (error as { response?: { data?: { error?: string } } }).response &&
+        (error as { response: { data?: { error?: string } } }).response.data &&
+        (error as { response: { data: { error?: string } } }).response.data.error
+      ) {
+        // Hiển thị thông báo lỗi cho người dùng
+        toast.error((error as { response: { data: { error: string } } }).response.data.error);
       } else {
-        toast.error("Something went wrong.");
+        // Hiển thị thông báo lỗi mặc định cho người dùng
+        toast.error("Make sure you removed all categories using this billboard first.");
       }
     } finally {
       setLoading(false);
