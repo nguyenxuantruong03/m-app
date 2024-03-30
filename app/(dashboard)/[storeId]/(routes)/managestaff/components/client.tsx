@@ -36,10 +36,21 @@ const SettingUserClient: React.FC<SettingUserClientProps> = ({ data }) => {
       } else {
         toast.success(`Verification emails sent to: ${sentEmails.join(", ")}`);
       }
-    } catch (error: any) {
-      toast.error("Failed to send verification emails.");
+    } catch (error: unknown) {
+      if (
+        (error as { response?: { data?: { error?: string } } }).response &&
+        (error as { response: { data?: { error?: string } } }).response.data &&
+        (error as { response: { data: { error?: string } } }).response.data.error
+      ) {
+        // Hiển thị thông báo lỗi cho người dùng
+        toast.error((error as { response: { data: { error: string } } }).response.data.error);
+      } else {
+        // Hiển thị thông báo lỗi mặc định cho người dùng
+        toast.error("Failed to send verification emails.");
+      }
     }
   };
+  
   return (
     <>
       <div className="flex items-center justify-between">

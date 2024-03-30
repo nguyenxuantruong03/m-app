@@ -33,10 +33,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       await axios.delete("/api/settingusers", { data: { id: data.id } });
       router.refresh();
       toast.success("User deleted.");
-    } catch (error: any) {
-      if (error.response && error.response.data && error.response.data.error) {
+    } catch (error: unknown) {
+      if (
+        (error as { response?: { data?: { error?: string } } }).response &&
+        (error as { response: { data?: { error?: string } } }).response.data &&
+        (error as { response: { data: { error?: string } } }).response.data.error
+      ) {
         // Hiển thị thông báo lỗi cho người dùng
-        toast.error(error.response.data.error);
+        toast.error((error as { response: { data: { error: string } } }).response.data.error);
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
@@ -71,20 +75,20 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             router.refresh();
             return message;
           },
-          error: (error: any) => {
+          error: (error: unknown) => {
             if (
-              error.response &&
-              error.response.data &&
-              error.response.data.error
+              (error as { response?: { data?: { error?: string } } }).response &&
+              (error as { response: { data?: { error?: string } } }).response.data &&
+              (error as { response: { data: { error?: string } } }).response.data.error
             ) {
-              return error.response.data.error;
+              return (error as { response: { data: { error: string } } }).response.data.error
             } else {
               return "Ban user Error.";
             }
           },
         }
       );
-    } catch (error: any) {
+    } catch (error) {
     } finally {
       setLoading(false);
     }
@@ -114,20 +118,20 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             router.refresh();
             return message;
           },
-          error: (error: any) => {
+          error: (error: unknown) => {
             if (
-              error.response &&
-              error.response.data &&
-              error.response.data.error
+              (error as { response?: { data?: { error?: string } } }).response &&
+              (error as { response: { data?: { error?: string } } }).response.data &&
+              (error as { response: { data: { error?: string } } }).response.data.error
             ) {
-              return error.response.data.error;
+              return (error as { response: { data: { error: string } } }).response.data.error
             } else {
               return "Unban user Error.";
             }
           },
         }
       );
-    } catch (error: any) {
+    } catch (error) {
     } finally {
       setLoading(false);
     }

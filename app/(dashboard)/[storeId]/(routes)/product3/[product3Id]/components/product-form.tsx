@@ -246,9 +246,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       ));
       router.refresh();
       router.push(`/${params.storeId}/product3`);
-    } catch (error: any) {
-      if (error.response && error.response.data && error.response.data.error) {
-        toast.error(error.response.data.error);
+    } catch (error: unknown) {
+      if (
+        (error as { response?: { data?: { error?: string } } }).response &&
+        (error as { response: { data?: { error?: string } } }).response.data &&
+        (error as { response: { data: { error?: string } } }).response.data.error
+      ) {
+        // Hiển thị thông báo lỗi cho người dùng
+        toast.error((error as { response: { data: { error: string } } }).response.data.error);
       } else {
         toast.error("Something went wrong.");
       }
@@ -266,10 +271,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       router.refresh();
       router.push(`/${params.storeId}/product3`);
       toast.success("Product deleted.");
-    }catch (error: any) {
-      if (error.response && error.response.data && error.response.data.error) {
+    }catch (error: unknown) {
+      if (
+        (error as { response?: { data?: { error?: string } } }).response &&
+        (error as { response: { data?: { error?: string } } }).response.data &&
+        (error as { response: { data: { error?: string } } }).response.data.error
+      ) {
         // Hiển thị thông báo lỗi cho người dùng
-        toast.error(error.response.data.error);
+        toast.error((error as { response: { data: { error: string } } }).response.data.error);
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error("Something went wrong.");

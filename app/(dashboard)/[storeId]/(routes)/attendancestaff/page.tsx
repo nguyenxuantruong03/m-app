@@ -335,14 +335,14 @@ export default function Home() {
             </div>
           ));
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         if (
-          error.response &&
-          error.response.data &&
-          error.response.data.error
+          (error as { response?: { data?: { error?: string } } }).response &&
+          (error as { response: { data?: { error?: string } } }).response.data &&
+          (error as { response: { data: { error?: string } } }).response.data.error
         ) {
           // Hiển thị thông báo lỗi cho người dùng
-          toast.error(error.response.data.error);
+          toast.error((error as { response: { data: { error: string } } }).response.data.error);
         } else {
           // Hiển thị thông báo lỗi mặc định cho người dùng
           toast.error("Đã xảy ra lỗi khi thêm sự kiện.");
@@ -474,14 +474,14 @@ export default function Home() {
             </div>
           ));
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         if (
-          error.response &&
-          error.response.data &&
-          error.response.data.error
+          (error as { response?: { data?: { error?: string } } }).response &&
+          (error as { response: { data?: { error?: string } } }).response.data &&
+          (error as { response: { data: { error?: string } } }).response.data.error
         ) {
           // Hiển thị thông báo lỗi cho người dùng
-          toast.error(error.response.data.error);
+          toast.error((error as { response: { data: { error: string } } }).response.data.error);
         } else {
           // Hiển thị thông báo lỗi mặc định cho người dùng
           toast.error("Chưa đến lúc để kêt thúc!");

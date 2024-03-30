@@ -117,20 +117,20 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
             router.push(`/${params.storeId}/taxrate`);
             return message;
           },
-          error: (error: any) => {
+          error: (error: unknown) => {
             if (
-              error.response &&
-              error.response.data &&
-              error.response.data.error
+              (error as { response?: { data?: { error?: string } } }).response &&
+              (error as { response: { data?: { error?: string } } }).response.data &&
+              (error as { response: { data: { error?: string } } }).response.data.error
             ) {
-              return error.response.data.error;
+              return (error as { response: { data: { error: string } } }).response.data.error
             } else {
               return "Something went wrong.";
             }
           },
         }
       );
-    } catch (error: any) {} 
+    } catch (error) {} 
       finally {
       setLoading(false);
     }

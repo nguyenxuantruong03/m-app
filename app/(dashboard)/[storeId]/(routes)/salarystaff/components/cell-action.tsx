@@ -93,20 +93,20 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             router.refresh();
             return message;
           },
-          error: (error: any) => {
+          error: (error: unknown) => {
             if (
-              error.response &&
-              error.response.data &&
-              error.response.data.error
+              (error as { response?: { data?: { error?: string } } }).response &&
+              (error as { response: { data?: { error?: string } } }).response.data &&
+              (error as { response: { data: { error?: string } } }).response.data.error
             ) {
-              return error.response.data.error;
+              return (error as { response: { data: { error: string } } }).response.data.error
             } else {
               return "Bonus Error.";
             }
           },
         }
       );
-    } catch (error: any) {} 
+    } catch (error) {} 
       finally {
       setLoading(false);
       setOpenBonus(false);
@@ -155,20 +155,20 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             router.refresh();
             return message;
           },
-          error: (error: any) => {
+          error: (error: unknown) => {
             if (
-              error.response &&
-              error.response.data &&
-              error.response.data.error
+              (error as { response?: { data?: { error?: string } } }).response &&
+              (error as { response: { data?: { error?: string } } }).response.data &&
+              (error as { response: { data: { error?: string } } }).response.data.error
             ) {
-              return error.response.data.error;
+              return (error as { response: { data: { error: string } } }).response.data.error
             } else {
               return "UnBonus Error.";
             }
           },
         }
       );
-    }catch (error: any) {} 
+    }catch (error) {} 
      finally {
       setLoading(false);
       setOpenBonus(false);
@@ -198,20 +198,20 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             router.refresh();
             return message;
           },
-          error: (error: any) => {
+          error: (error: unknown) => {
             if (
-              error.response &&
-              error.response.data &&
-              error.response.data.error
+              (error as { response?: { data?: { error?: string } } }).response &&
+              (error as { response: { data?: { error?: string } } }).response.data &&
+              (error as { response: { data: { error?: string } } }).response.data.error
             ) {
-              return error.response.data.error;
+              return (error as { response: { data: { error: string } } }).response.data.error
             } else {
               return "Paid Error.";
             }
           },
         }
       );
-    } catch (error: any) {} 
+    } catch (error) {} 
       finally {
       setLoading(false);
       setOpen(false);
@@ -243,20 +243,20 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             router.refresh();
             return message;
           },
-          error: (error: any) => {
+          error: (error: unknown) => {
             if (
-              error.response &&
-              error.response.data &&
-              error.response.data.error
+              (error as { response?: { data?: { error?: string } } }).response &&
+              (error as { response: { data?: { error?: string } } }).response.data &&
+              (error as { response: { data: { error?: string } } }).response.data.error
             ) {
-              return error.response.data.error;
+              return (error as { response: { data: { error: string } } }).response.data.error
             } else {
               return "Reset Error.";
             }
           },
         }
       );
-    } catch (error: any) {} 
+    } catch (error) {} 
       finally {
       setLoading(false);
       setOpen(false);

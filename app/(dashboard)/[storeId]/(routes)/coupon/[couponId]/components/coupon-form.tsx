@@ -226,9 +226,14 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
       ));
       router.refresh();
       router.push(`/${params.storeId}/coupon`);
-    } catch (error: any) {
-      if (error.response && error.response.data && error.response.data.error) {
-        toast.error(error.response.data.error);
+    } catch (error: unknown) {
+      if (
+        (error as { response?: { data?: { error?: string } } }).response &&
+        (error as { response: { data?: { error?: string } } }).response.data &&
+        (error as { response: { data: { error?: string } } }).response.data.error
+      ) {
+        // Hiển thị thông báo lỗi cho người dùng
+        toast.error((error as { response: { data: { error: string } } }).response.data.error);
       } else {
         toast.error("Something went wrong.");
       }
@@ -244,10 +249,14 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
       router.refresh();
       router.push(`/${params.storeId}/coupon`);
       toast.success("Coupon deleted.");
-    } catch (error: any) {
-      if (error.response && error.response.data && error.response.data.error) {
+    } catch (error: unknown) {
+      if (
+        (error as { response?: { data?: { error?: string } } }).response &&
+        (error as { response: { data?: { error?: string } } }).response.data &&
+        (error as { response: { data: { error?: string } } }).response.data.error
+      ) {
         // Hiển thị thông báo lỗi cho người dùng
-        toast.error(error.response.data.error);
+        toast.error((error as { response: { data: { error: string } } }).response.data.error);
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(

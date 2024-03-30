@@ -25,7 +25,6 @@ interface Item {
   name: string;
 }
 interface StoreSwitcherProps extends PopoverTrigger {
-  /* `items: Record <string , any>[]` đang định nghĩa một chỗ dựa có tên `items` cho thành phần `StoreSwitcher. */
   items: Item[];
 }
 

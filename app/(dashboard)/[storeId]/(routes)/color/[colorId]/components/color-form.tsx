@@ -94,20 +94,20 @@ export const ColorForm: React.FC<ColorFormProps> = ({ initialData }) => {
             router.push(`/${params.storeId}/color`);
             return message;
           },
-          error: (error: any) => {
+          error: (error: unknown) => {
             if (
-              error.response &&
-              error.response.data &&
-              error.response.data.error
+              (error as { response?: { data?: { error?: string } } }).response &&
+              (error as { response: { data?: { error?: string } } }).response.data &&
+              (error as { response: { data: { error?: string } } }).response.data.error
             ) {
-              return error.response.data.error;
+              return (error as { response: { data: { error: string } } }).response.data.error
             } else {
               return "Something went wrong.";
             }
           },
         }
       );
-    } catch (error: any) {} 
+    } catch (error) {} 
       finally {
       setLoading(false);
     }
@@ -120,10 +120,14 @@ export const ColorForm: React.FC<ColorFormProps> = ({ initialData }) => {
       router.refresh();
       router.push(`/${params.storeId}/color`);
       toast.success("Color deleted.");
-    } catch (error: any) {
-      if (error.response && error.response.data && error.response.data.error) {
+    } catch (error: unknown) {
+      if (
+        (error as { response?: { data?: { error?: string } } }).response &&
+        (error as { response: { data?: { error?: string } } }).response.data &&
+        (error as { response: { data: { error?: string } } }).response.data.error
+      ) {
         // Hiển thị thông báo lỗi cho người dùng
-        toast.error(error.response.data.error);
+        toast.error((error as { response: { data: { error: string } } }).response.data.error);
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(

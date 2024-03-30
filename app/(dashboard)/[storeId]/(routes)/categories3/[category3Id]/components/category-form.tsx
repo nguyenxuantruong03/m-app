@@ -91,20 +91,20 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData }) => {
             router.push(`/${params.storeId}/categories3`);
             return message;
           },
-          error: (error: any) => {
+          error: (error: unknown) => {
             if (
-              error.response &&
-              error.response.data &&
-              error.response.data.error
+              (error as { response?: { data?: { error?: string } } }).response &&
+              (error as { response: { data?: { error?: string } } }).response.data &&
+              (error as { response: { data: { error?: string } } }).response.data.error
             ) {
-              return error.response.data.error;
+              return (error as { response: { data: { error: string } } }).response.data.error
             } else {
               return "Something went wrong.";
             }
           },
         }
       );
-    } catch (error: any) {} 
+    } catch (error) {} 
       finally {
       setLoading(false);
     }
@@ -119,10 +119,14 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData }) => {
       router.refresh();
       router.push(`/${params.storeId}/categories3`);
       toast.success("Category deleted.");
-    } catch (error: any) {
-      if (error.response && error.response.data && error.response.data.error) {
+    } catch (error: unknown) {
+      if (
+        (error as { response?: { data?: { error?: string } } }).response &&
+        (error as { response: { data?: { error?: string } } }).response.data &&
+        (error as { response: { data: { error?: string } } }).response.data.error
+      ) {
         // Hiển thị thông báo lỗi cho người dùng
-        toast.error(error.response.data.error);
+        toast.error((error as { response: { data: { error: string } } }).response.data.error);
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(

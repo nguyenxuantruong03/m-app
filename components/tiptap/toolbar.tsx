@@ -33,7 +33,7 @@ const Toolbar: React.FC<Props> = ({ editor,disabled }) => {
         .chain()
         .focus()
         .unsetMark("highlight")
-        .run(); // Cast options to 'any'
+        .run();
     } else {
       editor
         .chain()
