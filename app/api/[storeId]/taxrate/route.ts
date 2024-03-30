@@ -100,8 +100,6 @@ export async function GET(
   { params }: { params: { storeId: string } }
 ) {
   try {
-    const { searchParams } = new URL(req.url);
-    const active = searchParams.get("active");
     if (!params.storeId) {
       return new NextResponse(
         JSON.stringify({ error: "Store id is required!" }),
@@ -109,16 +107,7 @@ export async function GET(
       );
     }
 
-    const gettaxRate = await prismadb.taxRate.findMany({
-      where: {
-        storeId: params.storeId,
-        active: active ? true : undefined,
-        inclusive: false,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+    const gettaxRate = await prismadb.taxRate.findMany();
 
     return NextResponse.json(gettaxRate);
   } catch (error) {
