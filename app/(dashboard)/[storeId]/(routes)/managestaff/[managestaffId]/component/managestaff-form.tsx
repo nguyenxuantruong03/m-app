@@ -67,7 +67,7 @@ const formSchema = z.object({
 type ManageStaffFormValues = z.infer<typeof formSchema>;
 
 interface ManageStaffFormProps {
-  initialData: User;
+  initialData: User | null;
 }
 
 export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
@@ -89,16 +89,16 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
       name: "",
       numberCCCD: "",
       issued: "",
-      imageCredential:[],
+      imageCredential: [],
       phonenumber: "",
       gender: "",
       degree: "",
       maritalStatus: "",
       workingTime: "",
       isCitizen: false,
-      dateRange: initialData.dateRange ? new Date(initialData.dateRange) : null,
-      dateofbirth: initialData.dateofbirth
-        ? new Date(initialData.dateofbirth)
+      dateRange: initialData?.dateRange ? new Date(initialData?.dateRange) : null,
+      dateofbirth: initialData?.dateofbirth
+        ? new Date(initialData?.dateofbirth)
         : null,
     },
   });
@@ -184,10 +184,14 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
         (error as { response: { data?: { error?: string } } }).response.data &&
-        (error as { response: { data: { error?: string } } }).response.data.error
+        (error as { response: { data: { error?: string } } }).response.data
+          .error
       ) {
         // Hiển thị thông báo lỗi cho người dùng
-        toast.error((error as { response: { data: { error: string } } }).response.data.error);
+        toast.error(
+          (error as { response: { data: { error: string } } }).response.data
+            .error
+        );
       } else {
         toast.error("Something went wrong.");
       }
@@ -209,10 +213,14 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
         (error as { response: { data?: { error?: string } } }).response.data &&
-        (error as { response: { data: { error?: string } } }).response.data.error
+        (error as { response: { data: { error?: string } } }).response.data
+          .error
       ) {
         // Hiển thị thông báo lỗi cho người dùng
-        toast.error((error as { response: { data: { error: string } } }).response.data.error);
+        toast.error(
+          (error as { response: { data: { error: string } } }).response.data
+            .error
+        );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
