@@ -65,7 +65,7 @@ export async function POST(
     });
 
     // Calculate end based on working time
-    let endTime;
+    let endTime: Date | undefined;
     switch (user?.workingTime) {
       case WorkingTime.Parttime4h:
         endTime = new Date(start);

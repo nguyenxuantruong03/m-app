@@ -12,7 +12,7 @@ const AuthErrorPage = async () => {
   const banExpires = banuser?.banExpires;
 
   // Initialize daysLeft outside the if block
-  let daysLeft;
+  let daysLeft: number;
 
   // Display ban message if the user is banned
   if (isBanned && banExpires) {

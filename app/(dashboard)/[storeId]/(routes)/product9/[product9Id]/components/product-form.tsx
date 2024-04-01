@@ -142,7 +142,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
       const response = await promise;
 
-      let message;
+      let message:React.ReactNode;
       if (initialData) {
         message = (
           <p>
@@ -158,7 +158,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         );
       }
 
-      let title;
+      let title:React.ReactNode;
       if (initialData) {
         title = (
           <div className="flex items-center justify-between text-sm">
