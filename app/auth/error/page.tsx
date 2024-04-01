@@ -1,4 +1,5 @@
 import ErrorCard from "@/components/auth/error-card";
+import ErrorCardBan from "@/components/auth/error-card-ban";
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
 
@@ -33,7 +34,11 @@ const AuthErrorPage = async () => {
     daysLeft = 0;
   }
 
-  return <ErrorCard daysLeft={daysLeft} />;
+  return (
+    <>
+       {daysLeft > 0 ? <ErrorCardBan daysLeft={daysLeft} /> : <ErrorCard />}
+    </>
+  );
 };
 
 export default AuthErrorPage;

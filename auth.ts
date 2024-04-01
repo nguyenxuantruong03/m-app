@@ -28,25 +28,24 @@ export const {
   callbacks: {
     async signIn({ user, account }) {
       const existingUser = await getUserById(user.id);
-      if (account?.provider === "google" || account?.provider === "github") {
-        if (existingUser?.ban === true) {
-          const banExpiresAt = existingUser.banExpires
-            ? new Date(existingUser.banExpires)
-            : null;
-          const now = new Date();
-
-          if (banExpiresAt && banExpiresAt > now) {
-            return false;
-          } else if (banExpiresAt) {
-            // Ban period has expired, unban the user
-            await prismadb.user.update({
-              where: { id: existingUser.id },
-              data: {
-                ban: false,
-                banExpires: null,
-              },
-            });
-          }
+      if (account?.provider !== "credentials") return true
+      if (existingUser?.ban === true) {
+        const banExpiresAt = existingUser.banExpires
+          ? new Date(existingUser.banExpires)
+          : null;
+        const now = new Date();
+        now.setHours(now.getHours() + 7);
+        if (banExpiresAt && banExpiresAt > now) {
+          return false;
+        } else if (banExpiresAt) {
+          // Ban period has expired, unban the user
+          await prismadb.user.update({
+            where: { id: existingUser.id },
+            data: {
+              ban: false,
+              banExpires: null,
+            },
+          });
         }
       }
 

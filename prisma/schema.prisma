@@ -32,6 +32,8 @@ model Store {
   updatedAt      DateTime         @updatedAt
   sentEmailUser  SentEmailUser[]  @relation("StoreToSentEmailUser")
   caculateSalary CaculateSalary[] @relation("StoreCaculateSalary")
+  comment        Comment[]        @relation("StoreToComment")
+  wheelspin      WheelSpin[]      @relation("StoreToWheelSpin")
 }
 
 model Billboard {
@@ -60,16 +62,16 @@ model ImageBillboard {
 }
 
 model BillboardTime {
-  id             String           @id @default(uuid())
-  storeId        String
-  store          Store            @relation("StoreToBillboardTime", fields: [storeId], references: [id])
-  label          String
-  isTimeout      Boolean?          @default(false)
-  end            Int?      
-  timeout        Int 
+  id                 String               @id @default(uuid())
+  storeId            String
+  store              Store                @relation("StoreToBillboardTime", fields: [storeId], references: [id])
+  label              String
+  isTimeout          Boolean?             @default(false)
+  end                Int?
+  timeout            Int
   imagebillboardtime ImageBillboardTime[]
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
 
   @@index([storeId])
 }
@@ -78,7 +80,7 @@ model ImageBillboardTime {
   id String @id @default(uuid())
 
   billboardTimeId String
-  billboard   BillboardTime @relation(fields: [billboardTimeId], references: [id], onDelete: Cascade)
+  billboard       BillboardTime @relation(fields: [billboardTimeId], references: [id], onDelete: Cascade)
 
   url       String
   createdAt DateTime @default(now())
@@ -482,6 +484,9 @@ model User {
   //Veiryfi email đã gửi chưa
   sentVeirifi           Boolean?               @default(false)
   CaculateSalary        CaculateSalary[]
+  Comment               Comment[]
+  ResponseComment       ResponseComment[]
+  WheelSpin             WheelSpin[]
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
 }
@@ -555,8 +560,8 @@ model EventCalendar {
   start           DateTime?
   end             DateTime?
   allDay          Boolean?
-  // createdAt     DateTime        @default(now())
-  // updatedAt     DateTime        @updatedAt
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 
   @@index([storeId])
   @@index([userId])
@@ -579,22 +584,72 @@ model SentEmailUser {
 }
 
 model CaculateSalary {
-  id              String        @id @default(uuid())
+  id              String         @id @default(uuid())
   storeId         String
-  store           Store         @relation("StoreCaculateSalary", fields: [storeId], references: [id])
+  store           Store          @relation("StoreCaculateSalary", fields: [storeId], references: [id])
   userId          String
-  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   eventcalendarId String?
   eventcalendar   EventCalendar? @relation(fields: [eventcalendarId], references: [id], onDelete: Cascade)
   bonus           Int?
-  isSent          Boolean?      @default(false)
-  isPaid          Boolean?      @default(false)
+  isSent          Boolean?       @default(false)
+  isPaid          Boolean?       @default(false)
   salaryday       Decimal?
   salarytotal     Decimal?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
 
   @@index([eventcalendarId])
   @@index([userId])
   @@index([storeId])
+}
+
+model Comment {
+  id              String            @id @default(uuid())
+  storeId         String
+  store           Store             @relation("StoreToComment", fields: [storeId], references: [id])
+  userId          String
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rating          Int
+  comment         String
+  commenter       String
+  imageUrl        String
+  nameproduct     String
+  responsecomment ResponseComment[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@index([storeId])
+  @@index([userId])
+}
+
+model ResponseComment {
+  id          String   @id @default(uuid())
+  commentId   String
+  comment     Comment  @relation(fields: [commentId], references: [id])
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  commenter   String
+  imageUrl    String
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([commentId])
+  @@index([userId])
+}
+
+model WheelSpin {
+  id        String   @id @default(uuid())
+  storeId   String
+  store     Store    @relation("StoreToWheelSpin", fields: [storeId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  coin      String
+  rotation  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([storeId])
+  @@index([userId])
 }

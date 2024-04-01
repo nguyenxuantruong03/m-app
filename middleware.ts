@@ -51,10 +51,9 @@ export default auth(
       }
 
       const endcodeedCallbackUrl = encodeURIComponent(callbackUrl);
-
-      return Response.redirect(
-        new URL(`/auth/login?callbackUrl=${endcodeedCallbackUrl}`, nextUrl)
-      );
+      // return Response.redirect(
+      //   new URL(`/auth/login?callbackUrl=${endcodeedCallbackUrl}`, nextUrl)
+      // );
     }
     return;
   }
