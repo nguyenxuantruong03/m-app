@@ -70,7 +70,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
     try {
       setLoading(true);
       let promise;
-      let imageUrl; // Biến để lưu URL hình ảnh
+      let imageUrl: string[] = []; 
       if (initialData) {
         promise = axios.patch(`/api/${params.storeId}/billboards/${params.billboardId}`,data);
         imageUrl = data.imagebillboard?.map((item) => item.url) || []; 

@@ -103,7 +103,7 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
     try {
       setLoading(true);
       let promise;
-      let imageUrl; // Biến để lưu URL hình ảnh
+      let imageUrl: string[] = []; 
       if (initialData) {
         promise = axios.patch(
           `/api/${params.storeId}/coupon/${params.couponId}`,
