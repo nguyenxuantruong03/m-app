@@ -172,8 +172,23 @@ export default function Home() {
         );
         // Update state with the received events
         setAllEvents(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
+      } catch (error: unknown) {
+        if (
+          (error as { response?: { data?: { error?: string } } }).response &&
+          (error as { response: { data?: { error?: string } } }).response
+            .data &&
+          (error as { response: { data: { error?: string } } }).response.data
+            .error
+        ) {
+          // Hiển thị thông báo lỗi cho người dùng
+          toast.error(
+            (error as { response: { data: { error: string } } }).response.data
+              .error
+          );
+        } else {
+          // Hiển thị thông báo lỗi mặc định cho người dùng
+          toast.error("Error fetching data.")
+        }
       }
     };
     fetchData(); // Call the asynchronous function
@@ -230,6 +245,10 @@ export default function Home() {
         if (existingEventToday || existingEventTomorrow) {
           // If attendance record already exists for the day, show a message
           toast.error("Đã điểm danh cho ngày này!");
+          setIsCheckingAttendanceEnd(false);
+          setIsCheckingAttendanceStart(false);
+          setIsAddingEvent(false);
+          setIsDeleting(false);
         } else {
           const now = new Date();
           const currentDateTime = addSeconds(
@@ -338,11 +357,16 @@ export default function Home() {
       } catch (error: unknown) {
         if (
           (error as { response?: { data?: { error?: string } } }).response &&
-          (error as { response: { data?: { error?: string } } }).response.data &&
-          (error as { response: { data: { error?: string } } }).response.data.error
+          (error as { response: { data?: { error?: string } } }).response
+            .data &&
+          (error as { response: { data: { error?: string } } }).response.data
+            .error
         ) {
           // Hiển thị thông báo lỗi cho người dùng
-          toast.error((error as { response: { data: { error: string } } }).response.data.error);
+          toast.error(
+            (error as { response: { data: { error: string } } }).response.data
+              .error
+          );
         } else {
           // Hiển thị thông báo lỗi mặc định cho người dùng
           toast.error("Đã xảy ra lỗi khi thêm sự kiện.");
@@ -380,6 +404,10 @@ export default function Home() {
       try {
         if (isEventEnded) {
           toast.error("Không thể kết thúc!");
+          setIsCheckingAttendanceEnd(false);
+          setIsCheckingAttendanceStart(false);
+          setIsAddingEvent(false);
+          setIsDeleting(false);
         } else {
           const now = new Date();
           const currentDateTime = addSeconds(
@@ -477,11 +505,16 @@ export default function Home() {
       } catch (error: unknown) {
         if (
           (error as { response?: { data?: { error?: string } } }).response &&
-          (error as { response: { data?: { error?: string } } }).response.data &&
-          (error as { response: { data: { error?: string } } }).response.data.error
+          (error as { response: { data?: { error?: string } } }).response
+            .data &&
+          (error as { response: { data: { error?: string } } }).response.data
+            .error
         ) {
           // Hiển thị thông báo lỗi cho người dùng
-          toast.error((error as { response: { data: { error: string } } }).response.data.error);
+          toast.error(
+            (error as { response: { data: { error: string } } }).response.data
+              .error
+          );
         } else {
           // Hiển thị thông báo lỗi mặc định cho người dùng
           toast.error("Chưa đến lúc để kêt thúc!");
@@ -505,24 +538,10 @@ export default function Home() {
     if (data.date) {
       const draggedDate = data.draggedEl.getAttribute("data-date");
       const eventDate = draggedDate ? new Date(draggedDate) : data.date;
-      const currentTimeVN = new Date();
-      const eventDateTimeVN = new Date(
-        eventDate.getFullYear(),
-        eventDate.getMonth(),
-        eventDate.getDate(),
-        currentTimeVN.getHours(),
-        currentTimeVN.getMinutes(),
-        currentTimeVN.getSeconds()
-      );
-      const vnTimeZone = "Asia/Ho_Chi_Minh";
-      const zonedDateTime = utcToZonedTime(eventDateTimeVN, vnTimeZone);
-      const formattedDate = format(
-        zonedDateTime,
-        "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"
-      );
+
       const event = {
         ...newEvent,
-        start: formattedDate,
+        start: data.date,
         title: data.draggedEl.innerText,
         allDay: data.allDay,
         id: new Date().getTime(),
@@ -557,7 +576,6 @@ export default function Home() {
           axios
             .patch(`/api/${storeId}/eventcalendar`, event)
             .then((response) => {
-              toast.success("Thêm thành công: " + event.title);
               setAllEvents((prevEvents) => [...prevEvents, response.data]);
               setIsCheckingAttendanceEnd(false);
               setIsCheckingAttendanceStart(false);

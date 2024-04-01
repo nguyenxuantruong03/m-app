@@ -7,8 +7,8 @@ import { getTwoFactorTokenByEmail } from "@/data/two-factor-token";
 
 export const genearteTwoFactorToken = async (email: string) => {
   const token = crypto.randomInt(100_000, 1_000_000).toString();
-  // Xác thực có hiệu nghiệm trong 15 minutes
-  const expires = new Date(new Date().getTime() + 5 *60 * 1000);
+  // Xác thực có hiệu nghiệm trong 5 minutes
+  const expires = new Date(new Date().getTime() + 2 *60 * 1000);
 
   const exitstingToken = await getTwoFactorTokenByEmail(email);
 
@@ -33,7 +33,7 @@ export const genearteTwoFactorToken = async (email: string) => {
 
 export const generatePasswordResetToken = async (email: string) => {
   const token = uuidv4();
-  const expires = new Date(new Date().getTime() + 3600 * 1000);
+  const expires = new Date(new Date().getTime() + 2 *60 * 1000);
 
   const exitstingToken = await getPasswordResetTokenByEmail(email);
 
@@ -58,7 +58,7 @@ export const generatePasswordResetToken = async (email: string) => {
 
 export const generateVerificationToken = async (email: string) => {
   const token = uuidv4();
-  const expires = new Date(new Date().getTime() + 3600 * 1000);
+  const expires = new Date(new Date().getTime() + 2 *60 * 1000);
 
   const exitstingToken = await getVerificationTokenByEmail(email);
 
