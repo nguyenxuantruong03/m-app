@@ -47,13 +47,17 @@ export default auth(
     if (!isLoggedIn && !isPublicRoute) {
       let callbackUrl = nextUrl.pathname;
       if (nextUrl.search) {
-        callbackUrl += nextUrl.search;
+        const params = new URLSearchParams(nextUrl.search);
+        // Kiểm tra xem tham số callbackUrl đã tồn tại trong URL chưa
+        if (!params.has('callbackUrl')) {
+          callbackUrl += nextUrl.search;
+        }
       }
-
+    
       const endcodeedCallbackUrl = encodeURIComponent(callbackUrl);
-      // return Response.redirect(
-      //   new URL(`/auth/login?callbackUrl=${endcodeedCallbackUrl}`, nextUrl)
-      // );
+      return Response.redirect(
+        new URL(`/auth/login?callbackUrl=${endcodeedCallbackUrl}`, nextUrl)
+      );
     }
     return;
   }
