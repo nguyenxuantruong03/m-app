@@ -79,7 +79,7 @@ const Navbar = async () => {
             </span>
           </div>
       {/* Cài đặt */}
-          <Link href={`${process.env.NEXT_PUBLIC_URL}/infouser`}>
+          <Link href={`/infouser`}>
             <div className="group relative bg-white hover:bg-gray-100 cursor-pointer p-2.5 rounded-lg">
               <Settings className="w-5 h-5" />
               <span className="absolute top-11 left-[-8px] right-[-8px] bg-white rounded-lg p-1 text-sm opacity-0 group-hover:opacity-100 transition-opacity">
