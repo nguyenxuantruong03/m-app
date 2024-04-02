@@ -13,32 +13,32 @@ export const UserInfo = ({ user, label }: UserInfoPorps) => {
         <p className="text-2xl font-semibold text-center">{label}</p>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex flex-row items-center justify-between rouned-lg border p-3 shadow-sm">
+        <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
           <p className="text-sm font-medium">Id</p>
-          <p className="truncate text-cs max-w-[180px] font-mono p-1 bg-slate-100 rouned-md">
+          <p className="truncate text-cs max-w-[180px] font-mono p-1 bg-slate-100 rounded-md dark:text-black">
             {user?.id}
           </p>
         </div>
-        <div className="flex flex-row items-center justify-between rouned-lg border p-3 shadow-sm">
+        <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
           <p className="text-sm font-medium">Name</p>
-          <p className="truncate text-cs max-w-[180px] font-mono p-1 bg-slate-100 rouned-md">
+          <p className="truncate text-cs max-w-[180px] font-mono p-1 bg-slate-100 rounded-md dark:text-black">
             {user?.name}
           </p>
         </div>
-        <div className="flex flex-row items-center justify-between rouned-lg border p-3 shadow-sm">
+        <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
           <p className="text-sm font-medium">Email</p>
-          <p className="truncate text-cs max-w-[180px] font-mono p-1 bg-slate-100 rouned-md">
+          <p className="truncate text-cs max-w-[180px] font-mono p-1 bg-slate-100 rounded-md dark:text-black">
             {user?.email}
           </p>
         </div>
-        <div className="flex flex-row items-center justify-between rouned-lg border p-3 shadow-sm">
+        <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
           <p className="text-sm font-medium">Role</p>
-          <p className="truncate text-cs max-w-[180px] font-mono p-1 bg-slate-100 rouned-md">
+          <p className="truncate text-cs max-w-[180px] font-mono p-1 bg-slate-100 rounded-md dark:text-black">
             {user?.role}
           </p>
         </div>
-        <div className="flex flex-row items-center justify-between rouned-lg border p-3 shadow-sm">
-          <p className="text-sm font-medium">Two Facto Authentication</p>
+        <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+          <p className="text-sm font-medium ">Two Facto Authentication</p>
           <Badge
             variant={user?.isTwoFactorEnabled ? "success" : "destructive"}
           >

@@ -13,6 +13,7 @@ import { User } from "lucide-react";
 import LogoutButton from "../auth/logout-button";
 import { getAccountByUserId } from "@/data/account";
 import { FormUploadImage } from "../ui/form-upload-image-avatar";
+import { Button } from "../ui/button";
 
 const Navbar = async () => {
   const userId = await currentUser();
@@ -54,8 +55,8 @@ const Navbar = async () => {
 
         <div className="flex items-center space-x-4 mt-2 justify-center">
           <div className="group relative">
-      {/* Ảnh đại diện */}
-          <Avatar>
+            {/* Ảnh đại diện */}
+            <Avatar>
               {isGitHubOrGoogleUser && avatarImage ? (
                 <AvatarImage src={avatarImage} />
               ) : avatarImage ? (
@@ -66,35 +67,38 @@ const Navbar = async () => {
                 </AvatarFallback>
               )}
             </Avatar>
-            <FormUploadImage classNamesForm="absolute left-[-15px] top-[-3px]" classNamesUpload="opacity-0"/>
-            <span className="absolute top-11 left-0 bg-white rounded-lg p-1 text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+            <FormUploadImage
+              classNamesForm="absolute left-[-15px] top-[-3px]"
+              classNamesUpload="opacity-0"
+            />
+            <span className="dark:text-black absolute top-11 left-0 bg-white rounded-lg p-1 text-sm opacity-0 group-hover:opacity-100 transition-opacity">
               Ảnh
             </span>
           </div>
-      {/* Chế độ */}
+          {/* Chế độ */}
           <div className="group relative">
             <ThemeToggleDrakorLight />
-            <span className="absolute top-11 left-[-4px] bg-white rounded-lg p-1 text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+            <span className="dark:text-black absolute top-11 left-[-4px] bg-white rounded-lg p-1 text-sm opacity-0 group-hover:opacity-100 transition-opacity">
               Mode
             </span>
           </div>
-      {/* Cài đặt */}
-          <Link href={`/infouser`}>
-            <div className="group relative bg-white hover:bg-gray-100 cursor-pointer p-2.5 rounded-lg">
-              <Settings className="w-5 h-5" />
-              <span className="absolute top-11 left-[-8px] right-[-8px] bg-white rounded-lg p-1 text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+          {/* Cài đặt */}
+          <Button variant="outline" size="icon" className="group relative">
+            <Link href={`/infouser`}>
+              <Settings className="dark:text-white w-5 h-5" />
+              <span className="dark:text-black flex absolute top-11 left-[-10px] right-[-8px] bg-white rounded-lg p-1 text-sm z-[999] opacity-0 group-hover:opacity-100 transition-opacity">
                 Cài đặt
               </span>
-            </div>
-          </Link>
-      {/* Log out */}
+            </Link>
+          </Button>
+          {/* Log out */}
           <LogoutButton>
-            <div className="group relative bg-white cursor-pointer p-2.5 rounded-lg">
-              <LogOut className="w-5 h-5" />
-              <span className="absolute top-11 left-0 bg-white rounded-lg p-1 text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+            <Button variant="outline" size="icon" className="group relative ">
+              <LogOut className="w-5 h-5 dark:text-white" />
+              <span className="dark:text-black absolute top-11 left-[-5px] bg-white rounded-lg p-1 text-sm opacity-0 group-hover:opacity-100 transition-opacity">
                 Thoát
               </span>
-            </div>
+            </Button>
           </LogoutButton>
         </div>
       </div>

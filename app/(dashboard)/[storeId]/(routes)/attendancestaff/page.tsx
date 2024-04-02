@@ -187,7 +187,7 @@ export default function Home() {
           );
         } else {
           // Hiển thị thông báo lỗi mặc định cho người dùng
-          toast.error("Error fetching data.")
+          toast.error("Error fetching data.");
         }
       }
     };
@@ -758,7 +758,8 @@ export default function Home() {
                               { locale: viLocale }
                             )
                           : null}
-                      </span>.
+                      </span>
+                      .
                     </p>
                   </div>
                 </div>
@@ -816,7 +817,9 @@ export default function Home() {
   return (
     <>
       <nav className="flex justify-between mb-12 border-b border-violet-100 p-4">
-        <h1 className="font-bold text-2xl text-gray-700">Calendar</h1>
+        <h1 className="font-bold text-2xl text-gray-700 absolute dark:text-slate-400">
+          Nhân viên điểm danh
+        </h1>
       </nav>
       <main className="flex min-h-screen flex-col items-center justify-between p-24">
         <div className="grid grid-cols-10">
@@ -847,12 +850,14 @@ export default function Home() {
           </div>
           <div
             id="draggable-el"
-            className="ml-8 w-full border-2 p-2 rounded-md mt-16 lg:h-[32%] bg-violet-50"
+            className="ml-8 w-full border-2 p-2 rounded-md mt-16 h-[35%] bg-violet-50 dark:bg-[#2a3e4f]"
           >
-            <h1 className="font-bold text-lg text-center">Drag Event</h1>
+            <h1 className="font-bold text-lg text-center dark:text-black">
+              Drag Event
+            </h1>
             {events.map((event) => (
               <div
-                className={`fc-event border-2 p-1 m-2 w-full rounded-md ml-auto text-center bg-white cursor-pointer ${
+                className={`fc-event border-2 p-1 m-2 w-full rounded-md ml-auto text-center bg-white cursor-pointer dark:text-black ${
                   isAddingEvent ? "pointer-events-none opacity-50" : "" // Disable khi đang xử lý
                 }`}
                 title={event.title}
