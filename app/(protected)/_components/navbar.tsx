@@ -11,7 +11,6 @@ import { Home, Server, Settings, User } from "lucide-react";
 export const Navbar = () => {
   const pathname = usePathname();
   const router = useRouter();
-  const url = process.env.NEXT_PUBLIC_URL;
   return (
     <nav className="bg-secondary flex justify-between items-center p-4 rouned-xl w-[600px] shadow-sm">
       <div className="flex gap-x-1">
@@ -29,7 +28,7 @@ export const Navbar = () => {
           asChild
           variant={pathname === "/client" ? "default" : "outline"}
         >
-          <Link href={`${url}/client`} className="flex items-center justify-center">
+          <Link href="/client" className="flex items-center justify-center">
             <User className="w-4 h-4 mr-1" />
             Client
           </Link>
@@ -38,7 +37,7 @@ export const Navbar = () => {
           asChild
           variant={pathname === "/server" ? "default" : "outline"}
         >
-          <Link href={`${url}/server`} className="flex items-center justify-center">
+          <Link href="/server" className="flex items-center justify-center">
             <Server className="w-4 h-4 mr-1" />
             Server
           </Link>
@@ -47,7 +46,7 @@ export const Navbar = () => {
           asChild
           variant={pathname === "/infouser" ? "default" : "outline"}
         >
-          <Link href={`${url}/infouser`} className="flex items-center justify-center">
+          <Link href="/infouser" className="flex items-center justify-center">
             <Settings className="w-4 h-4 mr-1" />
             Setting
           </Link>
