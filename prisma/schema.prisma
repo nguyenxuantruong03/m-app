@@ -103,40 +103,37 @@ model Category {
 }
 
 model Size {
-  id            String          @id @default(uuid())
-  storeId       String
-  store         Store           @relation("StoreToSize", fields: [storeId], references: [id])
-  name          String
-  value         String
-  ProductDetail ProductDetail[] @relation("SizeProductDetail")
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  id             String          @id @default(uuid())
+  storeId        String
+  store          Store           @relation("StoreToSize", fields: [storeId], references: [id])
+  name           String
+  value          String
+  ProductDetail1 ProductDetail[] @relation("SizeProductDetail1")
+  ProductDetail2 ProductDetail[] @relation("SizeProductDetail2")
+  ProductDetail3 ProductDetail[] @relation("SizeProductDetail3")
+  ProductDetail4 ProductDetail[] @relation("SizeProductDetail4")
+  ProductDetail5 ProductDetail[] @relation("SizeProductDetail5")
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 
   @@index([storeId])
 }
 
 model Color {
-  id            String          @id @default(uuid())
-  storeId       String
-  store         Store           @relation("StoreToColor", fields: [storeId], references: [id])
-  name          String
-  value         String
-  ProductDetail ProductDetail[] @relation("ColorProductDetail")
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  id             String          @id @default(uuid())
+  storeId        String
+  store          Store           @relation("StoreToColor", fields: [storeId], references: [id])
+  name           String
+  value          String
+  ProductDetail1 ProductDetail[] @relation("ColorProductDetail1")
+  ProductDetail2 ProductDetail[] @relation("ColorProductDetail2")
+  ProductDetail3 ProductDetail[] @relation("ColorProductDetail3")
+  ProductDetail4 ProductDetail[] @relation("ColorProductDetail4")
+  ProductDetail5 ProductDetail[] @relation("ColorProductDetail5")
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 
   @@index([storeId])
-}
-
-model Imagesalientfeatures {
-  id        String   @id @default(uuid())
-  productId String
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  url       String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([productId])
 }
 
 enum CategoryType {
@@ -170,20 +167,39 @@ enum ProductType {
 }
 
 model ProductDetail {
-  id      String    @id @default(uuid())
-  storeId String
-  store   Store     @relation("StoreToDetailProductDetail", fields: [storeId], references: [id])
-  product Product[] @relation("ProductDetailToProduct")
-
-  name                 String
+  id                   String    @id @default(uuid())
+  storeId              String
+  store                Store     @relation("StoreToDetailProductDetail", fields: [storeId], references: [id])
+  product              Product[] @relation("ProductDetailToProduct")
+  title                String
+  name1                String
+  name2                String?
+  name3                String?
+  name4                String?
+  name5                String?
+  price1               Decimal
+  price2               Decimal?
+  price3               Decimal?
+  price4               Decimal?
+  price5               Decimal?
+  percentpromotion1    Decimal
+  percentpromotion2    Decimal?
+  percentpromotion3    Decimal?
+  percentpromotion4    Decimal?
+  percentpromotion5    Decimal?
+  quantity1            Int
+  quantity2            Int?
+  quantity3            Int?
+  quantity4            Int?
+  quantity5            Int?
   // Khuyến mãi
-  promotionheading     String  @db.Text
-  promotiondescription String  @db.Text
+  promotionheading     String    @db.Text
+  promotiondescription String    @db.Text
   //Bảo hành
-  guaranteeheading     Decimal
-  guaranteedescription Decimal
-  guaranteeinfomation  Decimal
-  guaranteeprice       Decimal
+  warranty1            Decimal?
+  warranty2            Decimal?
+  warranty3            Decimal?
+  warranty4            Decimal?
 
   // Tính năng nổi bật
   descriptionsalientfeatures  String @db.Text
@@ -195,46 +211,81 @@ model ProductDetail {
   //Chi tiết sản phẩm
   descriptionspecifications   String   @db.Text
   valuespecifications         String   @db.Text
-  description2specifications  String   @db.Text
-  value2specifications        String   @db.Text
-  description3specifications  String   @db.Text
-  value3specifications        String   @db.Text
-  description4specifications  String   @db.Text
-  value4specifications        String   @db.Text
-  description5specifications  String   @db.Text
-  value5specifications        String   @db.Text
-  description6specifications  String   @db.Text
-  value6specifications        String   @db.Text
-  description7specifications  String   @db.Text
-  value7specifications        String   @db.Text
-  description8specifications  String   @db.Text
-  value8specifications        String   @db.Text
-  description9specifications  String   @db.Text
-  value9specifications        String   @db.Text
-  description10specifications String   @db.Text
-  value10specifications       String   @db.Text
-  description11specifications String   @db.Text
-  value11specifications       String   @db.Text
-  description12specifications String   @db.Text
-  value12specifications       String   @db.Text
-  description13specifications String   @db.Text
-  value13specifications       String   @db.Text
-  description14specifications String   @db.Text
-  value14specifications       String   @db.Text
+  description2specifications  String?   @db.Text
+  value2specifications        String?   @db.Text
+  description3specifications  String?   @db.Text
+  value3specifications        String?   @db.Text
+  description4specifications  String?   @db.Text
+  value4specifications        String?   @db.Text
+  description5specifications  String?   @db.Text
+  value5specifications        String?   @db.Text
+  description6specifications  String?   @db.Text
+  value6specifications        String?   @db.Text
+  description7specifications  String?   @db.Text
+  value7specifications        String?   @db.Text
+  description8specifications  String?   @db.Text
+  value8specifications        String?   @db.Text
+  description9specifications  String?   @db.Text
+  value9specifications        String?   @db.Text
+  description10specifications String?   @db.Text
+  value10specifications       String?   @db.Text
+  description11specifications String?   @db.Text
+  value11specifications       String?   @db.Text
+  description12specifications String?   @db.Text
+  value12specifications       String?   @db.Text
+  description13specifications String?   @db.Text
+  value13specifications       String?   @db.Text
+  description14specifications String?   @db.Text
+  value14specifications       String?   @db.Text
   createdAt                   DateTime @default(now())
   updatedAt                   DateTime @updatedAt
 
   categoryId String
   category   Category @relation("CategoryProductDetail", fields: [categoryId], references: [id])
-  sizeId     String
-  size       Size     @relation("SizeProductDetail", fields: [sizeId], references: [id])
-  colorId    String
-  color      Color    @relation("ColorProductDetail", fields: [colorId], references: [id])
+  size1Id    String
+  size1      Size     @relation("SizeProductDetail1", fields: [size1Id], references: [id])
+  size2Id    String?
+  size2      Size?    @relation("SizeProductDetail2", fields: [size2Id], references: [id])
+  size3Id    String?
+  size3      Size?    @relation("SizeProductDetail3", fields: [size3Id], references: [id])
+  size4Id    String?
+  size4      Size?    @relation("SizeProductDetail4", fields: [size4Id], references: [id])
+  size5Id    String?
+  size5      Size?    @relation("SizeProductDetail5", fields: [size5Id], references: [id])
+  color1Id   String
+  color1     Color    @relation("ColorProductDetail1", fields: [color1Id], references: [id])
+  color2Id   String?
+  color2     Color?   @relation("ColorProductDetail2", fields: [color2Id], references: [id])
+  color3Id   String?
+  color3     Color?   @relation("ColorProductDetail3", fields: [color3Id], references: [id])
+  color4Id   String?
+  color4     Color?   @relation("ColorProductDetail4", fields: [color4Id], references: [id])
+  color5Id   String?
+  color5     Color?   @relation("ColorProductDetail5", fields: [color5Id], references: [id])
 
   @@index([storeId])
   @@index([categoryId])
-  @@index([sizeId])
-  @@index([colorId])
+  @@index([size1Id])
+  @@index([size2Id])
+  @@index([size3Id])
+  @@index([size4Id])
+  @@index([size5Id])
+  @@index([color1Id])
+  @@index([color2Id])
+  @@index([color3Id])
+  @@index([color4Id])
+  @@index([color5Id])
+}
+
+model Imagesalientfeatures {
+  id        String   @id @default(uuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
 }
 
 model Product {
@@ -246,8 +297,6 @@ model Product {
   name                 String                 @unique
   heading              String
   description          String                 @db.Text
-  price                Decimal
-  percentpromotion     Decimal
   isFeatured           Boolean                @default(false)
   isArchived           Boolean                @default(false)
   images               Image[]

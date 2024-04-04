@@ -1,7 +1,7 @@
 "use client";
 import * as z from "zod";
 import axios from "axios";
-import { useState } from "react";
+import { useState, ChangeEvent } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -25,50 +25,78 @@ import { AlertModal } from "@/components/modals/alert-modal";
 import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
-  name: z.string().min(1),
+  title: z.string().min(1),
   promotionheading: z.string().min(1),
   promotiondescription: z.string().min(1),
-  guaranteeheading: z.coerce.number().min(1),
-  guaranteedescription: z.coerce.number().min(1),
-  guaranteeinfomation: z.coerce.number().min(1),
-  guaranteeprice: z.coerce.number().min(1),
+  warranty1: z.coerce.number().optional(),
+  warranty2: z.coerce.number().optional(),
+  warranty3: z.coerce.number().optional(),
+  warranty4: z.coerce.number().optional(),
   // Specification
   descriptionspecifications: z.string().min(1),
   valuespecifications: z.string().min(1),
-  description2specifications: z.string().min(1),
-  value2specifications: z.string().min(1),
-  description3specifications: z.string().min(1),
-  value3specifications: z.string().min(1),
-  description4specifications: z.string().min(1),
-  value4specifications: z.string().min(1),
-  description5specifications: z.string().min(1),
-  value5specifications: z.string().min(1),
-  description6specifications: z.string().min(1),
-  value6specifications: z.string().min(1),
-  description7specifications: z.string().min(1),
-  value7specifications: z.string().min(1),
-  description8specifications: z.string().min(1),
-  value8specifications: z.string().min(1),
-  description9specifications: z.string().min(1),
-  value9specifications: z.string().min(1),
-  description10specifications: z.string().min(1),
-  value10specifications: z.string().min(1),
-  description11specifications: z.string().min(1),
-  value11specifications: z.string().min(1),
-  description12specifications: z.string().min(1),
-  value12specifications: z.string().min(1),
-  description13specifications: z.string().min(1),
-  value13specifications: z.string().min(1),
-  description14specifications: z.string().min(1),
-  value14specifications: z.string().min(1),
+  description2specifications: z.string().optional(),
+  value2specifications: z.string().optional(),
+  description3specifications: z.string().optional(),
+  value3specifications: z.string().optional(),
+  description4specifications: z.string().optional(),
+  value4specifications: z.string().optional(),
+  description5specifications: z.string().optional(),
+  value5specifications: z.string().optional(),
+  description6specifications: z.string().optional(),
+  value6specifications: z.string().optional(),
+  description7specifications: z.string().optional(),
+  value7specifications: z.string().optional(),
+  description8specifications: z.string().optional(),
+  value8specifications: z.string().optional(),
+  description9specifications: z.string().optional(),
+  value9specifications: z.string().optional(),
+  description10specifications: z.string().optional(),
+  value10specifications: z.string().optional(),
+  description11specifications: z.string().optional(),
+  value11specifications: z.string().optional(),
+  description12specifications: z.string().optional(),
+  value12specifications: z.string().optional(),
+  description13specifications: z.string().optional(),
+  value13specifications: z.string().optional(),
+  description14specifications: z.string().optional(),
+  value14specifications: z.string().optional(),
   // salientfeatures:
   descriptionsalientfeatures: z.string().min(1),
   description2salientfeatures: z.string().min(1),
   description3salientfeatures: z.string().min(1),
   description4salientfeatures: z.string().min(1),
   contentsalientfeatures: z.string().min(1),
-  sizeId: z.string().min(1),
-  colorId: z.string().min(1),
+  size1Id: z.string().min(1),
+  color1Id: z.string().min(1),
+  size2Id: z.string().optional(),
+  color2Id: z.string().optional(),
+  size3Id: z.string().optional(),
+  color3Id: z.string().optional(),
+  size4Id: z.string().optional(),
+  color4Id: z.string().optional(),
+  size5Id: z.string().optional(),
+  color5Id: z.string().optional(),
+  price1: z.coerce.number().min(1),
+  price2: z.coerce.number().optional(),
+  price3: z.coerce.number().optional(),
+  price4: z.coerce.number().optional(),
+  price5: z.coerce.number().optional(),
+  name1: z.string().min(1),
+  name2: z.string().optional(),
+  name3: z.string().optional(),
+  name4: z.string().optional(),
+  name5: z.string().optional(),
+  percentpromotion1: z.coerce.number().min(1),
+  percentpromotion2: z.coerce.number().optional(),
+  percentpromotion3: z.coerce.number().optional(),
+  percentpromotion4: z.coerce.number().optional(),
+  percentpromotion5: z.coerce.number().optional(),
+  quantity1: z.coerce.number().min(1),
+  quantity2: z.coerce.number().optional(),
+  quantity3: z.coerce.number().optional(),
+  quantity4: z.coerce.number().optional(),
+  quantity5: z.coerce.number().optional(),
   categoryId: z.string().min(1),
 });
 
@@ -93,6 +121,31 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [name1Value, setName1Value] = useState("");
+  const [name2Value, setName2Value] = useState("");
+  const [name3Value, setName3Value] = useState("");
+  const [name4Value, setName4Value] = useState("");
+  const [name5Value, setName5Value] = useState("");
+
+  const handleName1Change = (event: ChangeEvent<HTMLInputElement>) => {
+    setName1Value(event.target.value);
+  };
+
+  const handleName2Change = (event: ChangeEvent<HTMLInputElement>) => {
+    setName2Value(event.target.value);
+  };
+
+  const handleName3Change = (event: ChangeEvent<HTMLInputElement>) => {
+    setName3Value(event.target.value);
+  };
+
+  const handleName4Change = (event: ChangeEvent<HTMLInputElement>) => {
+    setName4Value(event.target.value);
+  };
+
+  const handleName5Change = (event: ChangeEvent<HTMLInputElement>) => {
+    setName5Value(event.target.value);
+  };
 
   const title = initialData ? "Edit Product Detail" : "Create Product Detail";
   const description = initialData
@@ -105,24 +158,134 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
     defaultValues: initialData
       ? {
           ...initialData,
-          guaranteeheading: parseFloat(String(initialData?.guaranteeheading)),
-          guaranteedescription: parseFloat(
-            String(initialData?.guaranteedescription)
-          ),
-          guaranteeinfomation: parseFloat(
-            String(initialData?.guaranteeinfomation)
-          ),
-          guaranteeprice: parseFloat(String(initialData?.guaranteeprice)),
+          warranty1: parseFloat(String(initialData?.warranty1)),
+          warranty2: parseFloat(String(initialData?.warranty2)),
+          warranty3: parseFloat(String(initialData?.warranty3)),
+          warranty4: parseFloat(String(initialData?.warranty4)),
+          price1: parseFloat(String(initialData?.price1)),
+          percentpromotion1: parseFloat(String(initialData?.percentpromotion1)),
+          price2: parseFloat(String(initialData?.price2)),
+          percentpromotion2: parseFloat(String(initialData?.percentpromotion2)),
+          price3: parseFloat(String(initialData?.price3)),
+          percentpromotion3: parseFloat(String(initialData?.percentpromotion3)),
+          price4: parseFloat(String(initialData?.price4)),
+          percentpromotion4: parseFloat(String(initialData?.percentpromotion4)),
+          price5: parseFloat(String(initialData?.price5)),
+          percentpromotion5: parseFloat(String(initialData?.percentpromotion5)),
+          size1Id: "",
+          color1Id: "",
+          size2Id: "" || null || undefined,
+          color2Id: "" || null || undefined,
+          size3Id: "" || null || undefined,
+          color3Id: "" || null || undefined,
+          size4Id: "" || null || undefined,
+          color4Id: "" || null || undefined,
+          size5Id: "" || null || undefined,
+          color5Id: "" || null || undefined,
+          name1: "",
+          name2: "" || null || undefined,
+          name3: "" || null || undefined,
+          name4: "" || null || undefined,
+          name5: "" || null || undefined,
+          quantity1: 0 || null || undefined,
+          quantity2: 0 || null || undefined,
+          quantity3: 0 || null || undefined,
+          quantity4: 0 || null || undefined,
+          quantity5: 0 || null || undefined,
+          descriptionspecifications: "",
+          valuespecifications: "",
+          description2specifications: "" || null || undefined,
+          value2specifications: "" || null || undefined,
+          description3specifications: "" || null || undefined,
+          value3specifications: "" || null || undefined,
+          description4specifications: "" || null || undefined,
+          value4specifications: "" || null || undefined,
+          description5specifications: "" || null || undefined,
+          value5specifications: "" || null || undefined,
+          description6specifications: "" || null || undefined,
+          value6specifications: "" || null || undefined,
+          description7specifications: "" || null || undefined,
+          value7specifications: "" || null || undefined,
+          description8specifications: "" || null || undefined,
+          value8specifications: "" || null || undefined,
+          description9specifications: "" || null || undefined,
+          value9specifications: "" || null || undefined,
+          description10specifications: "" || null || undefined,
+          value10specifications: "" || null || undefined,
+          description11specifications: "" || null || undefined,
+          value11specifications: "" || null || undefined,
+          description12specifications: "" || null || undefined,
+          value12specifications: "" || null || undefined,
+          description13specifications: "" || null || undefined,
+          value13specifications: "" || null || undefined,
+          description14specifications: "" || null || undefined,
+          value14specifications: "" || null || undefined,
         }
       : {
-          name: "",
-          guaranteeheading: 0,
-          guaranteedescription: 0,
-          guaranteeinfomation: 0,
-          guaranteeprice: 0,
-          sizeId: "",
-          colorId: "",
+          title: "",
+          warranty1: 0 || null || undefined,
+          warranty2: 0 || null || undefined,
+          warranty3: 0 || null || undefined,
+          warranty4: 0 || null || undefined,
+          size1Id: "",
+          color1Id: "",
+          size2Id: "" || null || undefined,
+          color2Id: "" || null || undefined,
+          size3Id: "" || null || undefined,
+          color3Id: "" || null || undefined,
+          size4Id: "" || null || undefined,
+          color4Id: "" || null || undefined,
+          size5Id: "" || null || undefined,
+          color5Id: "" || null || undefined,
+          price1: 0,
+          percentpromotion1: 0,
+          price2: 0 || null || undefined,
+          percentpromotion2: 0 || null || undefined,
+          price3: 0 || null || undefined,
+          percentpromotion3: 0 || null || undefined,
+          price4: 0 || null || undefined,
+          percentpromotion4: 0 || null || undefined,
+          price5: 0 || null || undefined,
+          percentpromotion5: 0 || null || undefined,
+          name1: "",
+          name2: "" || null || undefined,
+          name3: "" || null || undefined,
+          name4: "" || null || undefined,
+          name5: "" || null || undefined,
+          quantity1: 0 || null || undefined,
+          quantity2: 0 || null || undefined,
+          quantity3: 0 || null || undefined,
+          quantity4: 0 || null || undefined,
+          quantity5: 0 || null || undefined,
           categoryId: "",
+          descriptionspecifications: "",
+          valuespecifications: "",
+          description2specifications: "" || null || undefined,
+          value2specifications: "" || null || undefined,
+          description3specifications: "" || null || undefined,
+          value3specifications: "" || null || undefined,
+          description4specifications: "" || null || undefined,
+          value4specifications: "" || null || undefined,
+          description5specifications: "" || null || undefined,
+          value5specifications: "" || null || undefined,
+          description6specifications: "" || null || undefined,
+          value6specifications: "" || null || undefined,
+          description7specifications: "" || null || undefined,
+          value7specifications: "" || null || undefined,
+          description8specifications: "" || null || undefined,
+          value8specifications: "" || null || undefined,
+          description9specifications: "" || null || undefined,
+          value9specifications: "" || null || undefined,
+          description10specifications: "" || null || undefined,
+          value10specifications: "" || null || undefined,
+          description11specifications: "" || null || undefined,
+          value11specifications: "" || null || undefined,
+          description12specifications: "" || null || undefined,
+          value12specifications: "" || null || undefined,
+          description13specifications: "" || null || undefined,
+          value13specifications: "" || null || undefined,
+          description14specifications: "" || null || undefined,
+          value14specifications: "" || null || undefined,
         },
   });
 
@@ -146,14 +309,14 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
             return (
               <p>
                 Product Detail{" "}
-                <span className="font-bold">{response.data?.name}</span>{" "}
+                <span className="font-bold">{response.data?.title}</span>{" "}
                 updated.
               </p>
             );
           } else {
             return (
               <p>
-                Product Detail <span className="font-bold">{data.name}</span>{" "}
+                Product Detail <span className="font-bold">{data.title}</span>{" "}
                 created.
               </p>
             );
@@ -168,19 +331,23 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
           },
           error: (error: unknown) => {
             if (
-              (error as { response?: { data?: { error?: string } } }).response &&
-              (error as { response: { data?: { error?: string } } }).response.data &&
-              (error as { response: { data: { error?: string } } }).response.data.error
+              (error as { response?: { data?: { error?: string } } })
+                .response &&
+              (error as { response: { data?: { error?: string } } }).response
+                .data &&
+              (error as { response: { data: { error?: string } } }).response
+                .data.error
             ) {
-              return (error as { response: { data: { error: string } } }).response.data.error
+              return (error as { response: { data: { error: string } } })
+                .response.data.error;
             } else {
               return "Something went wrong.";
             }
           },
         }
       );
-    } catch (error) {} 
-      finally {
+    } catch (error) {
+    } finally {
       setLoading(false);
     }
   };
@@ -198,10 +365,14 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
         (error as { response: { data?: { error?: string } } }).response.data &&
-        (error as { response: { data: { error?: string } } }).response.data.error
+        (error as { response: { data: { error?: string } } }).response.data
+          .error
       ) {
         // Hiển thị thông báo lỗi cho người dùng
-        toast.error((error as { response: { data: { error: string } } }).response.data.error);
+        toast.error(
+          (error as { response: { data: { error: string } } }).response.data
+            .error
+        );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
@@ -247,14 +418,14 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
           <div className="md:grid md:grid-cols-6 gap-6 overflow-y-auto">
             <FormField
               control={form.control}
-              name="name"
+              name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên sản phẩm</FormLabel>
+                  <FormLabel>Tiêu đề</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập tên ..."
+                      placeholder="Nhập tiêu đề ..."
                       {...field}
                     />
                   </FormControl>
@@ -263,6 +434,424 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               )}
             />
 
+            <FormField
+              control={form.control}
+              name="name1"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tên sản phẩm 1</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      placeholder="Nhập tên sản phẩm 1..."
+                      {...field}
+                      onChange={(event) => {
+                        handleName1Change(event);
+                        field.onChange(event);
+                      }}
+                      className="border-2 border-orange-400 "
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {name1Value && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="price1"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Giá sản phẩm 1</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          disabled={loading}
+                          placeholder="Nhập giá sản phẩm 1..."
+                          {...field}
+                          className="border-2 border-orange-400 "
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="percentpromotion1"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Giảm giá sản phẩm 1</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          disabled={loading}
+                          placeholder="Nhập % giảm sản phẩm 1 ..."
+                          {...field}
+                          className="border-2 border-orange-400 "
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="quantity1"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Số lượng còn trong kho 1</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          disabled={loading}
+                          placeholder="Nhập số lượng còn trong kho 1..."
+                          {...field}
+                          className="border-2 border-orange-400 "
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+            <FormField
+              control={form.control}
+              name="name2"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tên sản phẩm 2</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      placeholder="Nhập tên sản phẩm 2 ..."
+                      {...field}
+                      onChange={(event) => {
+                        handleName2Change(event);
+                        field.onChange(event);
+                      }}
+                      className="border-2 border-green-400 "
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {name2Value && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="price2"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Giá sản phẩm 2</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          disabled={loading}
+                          placeholder="Nhập giá sản phẩm 2..."
+                          {...field}
+                          className="border-2 border-green-400 "
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="percentpromotion2"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Giảm giá sản phẩm 2</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          disabled={loading}
+                          placeholder="Nhập % giảm sản phẩm 2 ..."
+                          {...field}
+                          className="border-2 border-green-400 "
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="quantity2"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Số lượng còn trong kho 2</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          disabled={loading}
+                          placeholder="Nhập số lượng còn trong kho 2..."
+                          {...field}
+                          className="border-2 border-green-400 "
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+            <FormField
+              control={form.control}
+              name="name3"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tên sản phẩm 3</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      placeholder="Nhập tên sản phẩm 3 ..."
+                      {...field}
+                      onChange={(event) => {
+                        handleName3Change(event);
+                        field.onChange(event);
+                      }}
+                      className="border-2 border-sky-400 "
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {name3Value && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="price3"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Giá sản phẩm 3</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          disabled={loading}
+                          placeholder="Nhập giá sản phẩm 3..."
+                          {...field}
+                          className="border-2 border-sky-400 "
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="percentpromotion3"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Giảm giá sản phẩm 3</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          disabled={loading}
+                          placeholder="Nhập % giảm sản phẩm 3 ..."
+                          {...field}
+                          className="border-2 border-sky-400 "
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="quantity3"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Số lượng còn trong kho 3</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          disabled={loading}
+                          placeholder="Nhập số lượng còn trong kho 3..."
+                          {...field}
+                          className="border-2 border-sky-400 "
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+            <FormField
+              control={form.control}
+              name="name4"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tên sản phẩm 4</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      placeholder="Nhập tên sản phẩm 4 ..."
+                      {...field}
+                      onChange={(event) => {
+                        handleName4Change(event);
+                        field.onChange(event);
+                      }}
+                      className="border-2 border-violet-400 "
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {name4Value && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="price4"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Giá sản phẩm 4</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          disabled={loading}
+                          placeholder="Nhập giá sản phẩm 4..."
+                          {...field}
+                          className="border-2 border-violet-400 "
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="percentpromotion4"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Giảm giá sản phẩm 4</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          disabled={loading}
+                          placeholder="Nhập % giảm sản phẩm 4 ..."
+                          {...field}
+                          className="border-2 border-violet-400 "
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="quantity4"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Số lượng còn trong kho 4</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          disabled={loading}
+                          placeholder="Nhập số lượng còn trong kho 4..."
+                          {...field}
+                          className="border-2 border-violet-400 "
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+            <FormField
+              control={form.control}
+              name="name5"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tên sản phẩm 5</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      placeholder="Nhập tên sản phẩm 5 ..."
+                      {...field}
+                      onChange={(event) => {
+                        handleName5Change(event);
+                        field.onChange(event);
+                      }}
+                      className="border-2 border-pink-400 "
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {name5Value && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="price5"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Giá sản phẩm 5</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          disabled={loading}
+                          placeholder="Nhập giá sản phẩm 5..."
+                          {...field}
+                          className="border-2 border-pink-400 "
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="percentpromotion5"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Giảm giá sản phẩm 5</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          disabled={loading}
+                          placeholder="Nhập % giảm sản phẩm 5 ..."
+                          {...field}
+                          className="border-2 border-pink-400 "
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="quantity5"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Số lượng còn trong kho 5</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          disabled={loading}
+                          placeholder="Nhập số lượng còn trong kho 5..."
+                          {...field}
+                          className="border-2 border-pink-400 "
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
             <FormField
               name="promotionheading"
               render={({ field }) => (
@@ -299,7 +888,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
 
             <FormField
               control={form.control}
-              name="guaranteeheading"
+              name="warranty1"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Giá tiền bảo hành 1</FormLabel>
@@ -318,7 +907,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
 
             <FormField
               control={form.control}
-              name="guaranteedescription"
+              name="warranty2"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Giá tiền bảo hành 2</FormLabel>
@@ -337,7 +926,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
 
             <FormField
               control={form.control}
-              name="guaranteeinfomation"
+              name="warranty3"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Giá tiền bảo hành 3</FormLabel>
@@ -356,7 +945,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
 
             <FormField
               control={form.control}
-              name="guaranteeprice"
+              name="warranty4"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Giá tiền bảo hành 4</FormLabel>
@@ -933,83 +1522,421 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                 </FormItem>
               )}
             />
+            {name1Value && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="color1Id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Màu sản phẩm 1</FormLabel>
+                      <Input
+                        list="colors1"
+                        onChange={(e) => {
+                          const enteredValue = e.target.value;
+                          const selectedColor = colors.find(
+                            (color) => color.name === enteredValue
+                          );
+                          if (selectedColor) {
+                            // Nếu một màu được chọn từ danh sách, gán giá trị id tương ứng
+                            field.onChange(selectedColor.id);
+                          } else {
+                            // Nếu người dùng đang nhập một giá trị mới, gán giá trị văn bản cho field
+                            field.onChange(enteredValue);
+                          }
+                        }}
+                        value={
+                          field.value
+                            ? colors.find((color) => color.id === field.value)
+                                ?.name
+                            : ""
+                        }
+                        disabled={loading}
+                        placeholder="Select a color"
+                        className="border-2 border-orange-400 "
+                      />
+                      <datalist id="colors1">
+                        {colors.map((color) => (
+                          <option key={color.id} value={color.name} />
+                        ))}
+                      </datalist>
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="colorId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Màu</FormLabel>
-                  <Input
-                    list="colors"
-                    onChange={(e) => {
-                      const enteredValue = e.target.value;
-                      const selectedColor = colors.find(
-                        (color) => color.name === enteredValue
-                      );
-                      if (selectedColor) {
-                        // Nếu một màu được chọn từ danh sách, gán giá trị id tương ứng
-                        field.onChange(selectedColor.id);
-                      } else {
-                        // Nếu người dùng đang nhập một giá trị mới, gán giá trị văn bản cho field
-                        field.onChange(enteredValue);
-                      }
-                    }}
-                    value={
-                      field.value
-                        ? colors.find((color) => color.id === field.value)?.name
-                        : ""
-                    }
-                    disabled={loading}
-                    placeholder="Select a color"
-                  />
-                  <datalist id="colors">
-                    {colors.map((color) => (
-                      <option key={color.id} value={color.name} />
-                    ))}
-                  </datalist>
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name="size1Id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Kích cỡ sản phẩm 1</FormLabel>
+                      <Input
+                        list="sizes1"
+                        onChange={(e) => {
+                          const enteredValue = e.target.value;
+                          const selectedSize = sizes.find(
+                            (size) => size.name === enteredValue
+                          );
+                          if (selectedSize) {
+                            // Nếu một màu được chọn từ danh sách, gán giá trị id tương ứng
+                            field.onChange(selectedSize.id);
+                          } else {
+                            // Nếu người dùng đang nhập một giá trị mới, gán giá trị văn bản cho field
+                            field.onChange(enteredValue);
+                          }
+                        }}
+                        value={
+                          field.value
+                            ? sizes.find((size) => size.id === field.value)
+                                ?.name
+                            : ""
+                        }
+                        disabled={loading}
+                        placeholder="Select a size"
+                        className="border-2 border-orange-400 "
+                      />
+                      <datalist id="sizes1">
+                        {sizes.map((size) => (
+                          <option key={size.id} value={size.name} />
+                        ))}
+                      </datalist>
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+            {name2Value && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="color2Id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Màu sản phẩm 2</FormLabel>
+                      <Input
+                        list="colors2"
+                        onChange={(e) => {
+                          const enteredValue = e.target.value;
+                          const selectedColor = colors.find(
+                            (color) => color.name === enteredValue
+                          );
+                          if (selectedColor) {
+                            // Nếu một màu được chọn từ danh sách, gán giá trị id tương ứng
+                            field.onChange(selectedColor.id);
+                          } else {
+                            // Nếu người dùng đang nhập một giá trị mới, gán giá trị văn bản cho field
+                            field.onChange(enteredValue);
+                          }
+                        }}
+                        value={
+                          field.value
+                            ? colors.find((color) => color.id === field.value)
+                                ?.name
+                            : ""
+                        }
+                        disabled={loading}
+                        placeholder="Select a color"
+                        className="border-2 border-green-400 "
+                      />
+                      <datalist id="colors2">
+                        {colors.map((color) => (
+                          <option key={color.id} value={color.name} />
+                        ))}
+                      </datalist>
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="sizeId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Kích cỡ</FormLabel>
-                  <Input
-                    list="sizes"
-                    onChange={(e) => {
-                      const enteredValue = e.target.value;
-                      const selectedSize = sizes.find(
-                        (size) => size.name === enteredValue
-                      );
-                      if (selectedSize) {
-                        // Nếu một màu được chọn từ danh sách, gán giá trị id tương ứng
-                        field.onChange(selectedSize.id);
-                      } else {
-                        // Nếu người dùng đang nhập một giá trị mới, gán giá trị văn bản cho field
-                        field.onChange(enteredValue);
-                      }
-                    }}
-                    value={
-                      field.value
-                        ? sizes.find((size) => size.id === field.value)?.name
-                        : ""
-                    }
-                    disabled={loading}
-                    placeholder="Select a size"
-                  />
-                  <datalist id="sizes">
-                    {sizes.map((size) => (
-                      <option key={size.id} value={size.name} />
-                    ))}
-                  </datalist>
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name="size2Id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Kích cỡ sản phẩm 2</FormLabel>
+                      <Input
+                        list="sizes2"
+                        onChange={(e) => {
+                          const enteredValue = e.target.value;
+                          const selectedSize = sizes.find(
+                            (size) => size.name === enteredValue
+                          );
+                          if (selectedSize) {
+                            // Nếu một màu được chọn từ danh sách, gán giá trị id tương ứng
+                            field.onChange(selectedSize.id);
+                          } else {
+                            // Nếu người dùng đang nhập một giá trị mới, gán giá trị văn bản cho field
+                            field.onChange(enteredValue);
+                          }
+                        }}
+                        value={
+                          field.value
+                            ? sizes.find((size) => size.id === field.value)
+                                ?.name
+                            : ""
+                        }
+                        disabled={loading}
+                        placeholder="Select a size"
+                        className="border-2 border-green-400 "
+                      />
+                      <datalist id="sizes2">
+                        {sizes.map((size) => (
+                          <option key={size.id} value={size.name} />
+                        ))}
+                      </datalist>
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+            {name3Value && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="color3Id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Màu sản phẩm 3</FormLabel>
+                      <Input
+                        list="colors3"
+                        onChange={(e) => {
+                          const enteredValue = e.target.value;
+                          const selectedColor = colors.find(
+                            (color) => color.name === enteredValue
+                          );
+                          if (selectedColor) {
+                            // Nếu một màu được chọn từ danh sách, gán giá trị id tương ứng
+                            field.onChange(selectedColor.id);
+                          } else {
+                            // Nếu người dùng đang nhập một giá trị mới, gán giá trị văn bản cho field
+                            field.onChange(enteredValue);
+                          }
+                        }}
+                        value={
+                          field.value
+                            ? colors.find((color) => color.id === field.value)
+                                ?.name
+                            : ""
+                        }
+                        disabled={loading}
+                        placeholder="Select a color"
+                        className="border-2 border-sky-400 "
+                      />
+                      <datalist id="colors3">
+                        {colors.map((color) => (
+                          <option key={color.id} value={color.name} />
+                        ))}
+                      </datalist>
+                    </FormItem>
+                  )}
+                />
 
+                <FormField
+                  control={form.control}
+                  name="size3Id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Kích cỡ sản phẩm 3</FormLabel>
+                      <Input
+                        list="sizes3"
+                        onChange={(e) => {
+                          const enteredValue = e.target.value;
+                          const selectedSize = sizes.find(
+                            (size) => size.name === enteredValue
+                          );
+                          if (selectedSize) {
+                            // Nếu một màu được chọn từ danh sách, gán giá trị id tương ứng
+                            field.onChange(selectedSize.id);
+                          } else {
+                            // Nếu người dùng đang nhập một giá trị mới, gán giá trị văn bản cho field
+                            field.onChange(enteredValue);
+                          }
+                        }}
+                        value={
+                          field.value
+                            ? sizes.find((size) => size.id === field.value)
+                                ?.name
+                            : ""
+                        }
+                        disabled={loading}
+                        placeholder="Select a size"
+                        className="border-2 border-sky-400 "
+                      />
+                      <datalist id="sizes3">
+                        {sizes.map((size) => (
+                          <option key={size.id} value={size.name} />
+                        ))}
+                      </datalist>
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+            {name4Value && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="color4Id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Màu sản phẩm 4</FormLabel>
+                      <Input
+                        list="colors4"
+                        onChange={(e) => {
+                          const enteredValue = e.target.value;
+                          const selectedColor = colors.find(
+                            (color) => color.name === enteredValue
+                          );
+                          if (selectedColor) {
+                            // Nếu một màu được chọn từ danh sách, gán giá trị id tương ứng
+                            field.onChange(selectedColor.id);
+                          } else {
+                            // Nếu người dùng đang nhập một giá trị mới, gán giá trị văn bản cho field
+                            field.onChange(enteredValue);
+                          }
+                        }}
+                        value={
+                          field.value
+                            ? colors.find((color) => color.id === field.value)
+                                ?.name
+                            : ""
+                        }
+                        disabled={loading}
+                        placeholder="Select a color"
+                        className="border-2 border-violet-400 "
+                      />
+                      <datalist id="colors4">
+                        {colors.map((color) => (
+                          <option key={color.id} value={color.name} />
+                        ))}
+                      </datalist>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="size4Id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Kích cỡ sản phẩm 4</FormLabel>
+                      <Input
+                        list="sizes4"
+                        onChange={(e) => {
+                          const enteredValue = e.target.value;
+                          const selectedSize = sizes.find(
+                            (size) => size.name === enteredValue
+                          );
+                          if (selectedSize) {
+                            // Nếu một màu được chọn từ danh sách, gán giá trị id tương ứng
+                            field.onChange(selectedSize.id);
+                          } else {
+                            // Nếu người dùng đang nhập một giá trị mới, gán giá trị văn bản cho field
+                            field.onChange(enteredValue);
+                          }
+                        }}
+                        value={
+                          field.value
+                            ? sizes.find((size) => size.id === field.value)
+                                ?.name
+                            : ""
+                        }
+                        disabled={loading}
+                        placeholder="Select a size"
+                        className="border-2 border-violet-400 "
+                      />
+                      <datalist id="sizes4">
+                        {sizes.map((size) => (
+                          <option key={size.id} value={size.name} />
+                        ))}
+                      </datalist>
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+            {name5Value && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="color5Id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Màu sản phẩm 5</FormLabel>
+                      <Input
+                        list="colors5"
+                        onChange={(e) => {
+                          const enteredValue = e.target.value;
+                          const selectedColor = colors.find(
+                            (color) => color.name === enteredValue
+                          );
+                          if (selectedColor) {
+                            // Nếu một màu được chọn từ danh sách, gán giá trị id tương ứng
+                            field.onChange(selectedColor.id);
+                          } else {
+                            // Nếu người dùng đang nhập một giá trị mới, gán giá trị văn bản cho field
+                            field.onChange(enteredValue);
+                          }
+                        }}
+                        value={
+                          field.value
+                            ? colors.find((color) => color.id === field.value)
+                                ?.name
+                            : ""
+                        }
+                        disabled={loading}
+                        placeholder="Select a color"
+                        className="border-2 border-pink-400 "
+                      />
+                      <datalist id="colors5">
+                        {colors.map((color) => (
+                          <option key={color.id} value={color.name} />
+                        ))}
+                      </datalist>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="size5Id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Kích cỡ sản phẩm 5</FormLabel>
+                      <Input
+                        list="sizes5"
+                        onChange={(e) => {
+                          const enteredValue = e.target.value;
+                          const selectedSize = sizes.find(
+                            (size) => size.name === enteredValue
+                          );
+                          if (selectedSize) {
+                            // Nếu một màu được chọn từ danh sách, gán giá trị id tương ứng
+                            field.onChange(selectedSize.id);
+                          } else {
+                            // Nếu người dùng đang nhập một giá trị mới, gán giá trị văn bản cho field
+                            field.onChange(enteredValue);
+                          }
+                        }}
+                        value={
+                          field.value
+                            ? sizes.find((size) => size.id === field.value)
+                                ?.name
+                            : ""
+                        }
+                        disabled={loading}
+                        placeholder="Select a size"
+                        className="border-2 border-pink-400 "
+                      />
+                      <datalist id="sizes5">
+                        {sizes.map((size) => (
+                          <option key={size.id} value={size.name} />
+                        ))}
+                      </datalist>
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
             <FormField
               control={form.control}
               name="categoryId"

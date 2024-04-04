@@ -45,7 +45,7 @@ const ProductDetailClient: React.FC<ProductDetailClientProps> = ({ data }) => {
         </div>
       </div>
       <Separator />
-      <DataTable searchKey="name" columns={columns} data={data} />
+      <DataTable searchKey="title" columns={columns} data={data} />
       {showAPIRole && (
         <Heading title="Api" description="API calls for ProductDetail" />
       )}

@@ -22,8 +22,16 @@ export async function GET(
       },
       include: {
         category: true,
-        size: true,
-        color: true,
+        color1: true,
+        size1: true,
+        color2: true,
+        size2: true,
+        color3: true,
+        size3: true,
+        color4: true,
+        size4: true,
+        color5: true,
+        size5: true,
       },
     });
 
@@ -106,16 +114,44 @@ export async function PATCH(
     const body = await req.json();
 
     const {
-      name,
+      title,
       categoryId,
       promotionheading,
       promotiondescription,
-      guaranteeheading,
-      guaranteedescription,
-      guaranteeinfomation,
-      guaranteeprice,
-      sizeId,
-      colorId,
+      warranty1,
+      warranty2,
+      warranty3,
+      warranty4,
+      color1Id,
+      size1Id,
+      color2Id,
+      size2Id,
+      color3Id,
+      size3Id,
+      color4Id,
+      size4Id,
+      color5Id,
+      size5Id,
+      price1,
+      price2,
+      price3,
+      price4,
+      price5,
+      name1,
+      name2,
+      name4,
+      name3,
+      name5,
+      quantity1,
+      quantity2,
+      quantity3,
+      quantity4,
+      quantity5,
+      percentpromotion1,
+      percentpromotion2,
+      percentpromotion3,
+      percentpromotion4,
+      percentpromotion5,
       descriptionspecifications,
       valuespecifications,
       description2specifications,
@@ -158,11 +194,10 @@ export async function PATCH(
       );
     }
 
-    if (!name) {
-      return new NextResponse(
-        JSON.stringify({ error: "Name is required!" }),
-        { status: 400 }
-      );
+    if (!title) {
+      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+        status: 400,
+      });
     }
 
     if (!categoryId) {
@@ -185,45 +220,48 @@ export async function PATCH(
       );
     }
 
-    if (!guaranteeheading) {
-      return new NextResponse(
-        JSON.stringify({ error: "Guaranteeheading is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!guaranteedescription) {
-      return new NextResponse(
-        JSON.stringify({ error: "Guaranteedescription is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!guaranteeinfomation) {
-      return new NextResponse(
-        JSON.stringify({ error: "Guaranteeinfomation is required!" }),
-        { status: 400 }
-      );
-    }
-
-    if (!guaranteeprice) {
-      return new NextResponse(
-        JSON.stringify({ error: "Guaranteeprice is required!" }),
-        { status: 400 }
-      );
-    }
-
-    if (!sizeId) {
+    if (!size1Id) {
       return new NextResponse(
         JSON.stringify({ error: "SizeId is required!" }),
         { status: 400 }
       );
     }
 
-    if (!colorId) {
+    if (!color1Id) {
       return new NextResponse(
         JSON.stringify({ error: "ColorId is required!" }),
         { status: 400 }
       );
     }
+
+    if (!name1) {
+      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+        status: 400,
+      });
+    }
+
+    if (!percentpromotion1) {
+      return new NextResponse(
+        JSON.stringify({ error: "Percent Promotion is required!" }),
+        { status: 400 }
+      );
+    }
+
+    if (!price1) {
+      return new NextResponse(JSON.stringify({ error: "Price is required!" }), {
+        status: 400,
+      });
+    }
+
+    if (!quantity1) {
+      return new NextResponse(
+        JSON.stringify({ error: "Quantity is required!" }),
+        {
+          status: 400,
+        }
+      );
+    }
+
     if (!descriptionspecifications) {
       return new NextResponse(
         JSON.stringify({ error: "Descriptionspecifications is required!" }),
@@ -233,162 +271,6 @@ export async function PATCH(
     if (!valuespecifications) {
       return new NextResponse(
         JSON.stringify({ error: "Valuespecifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!description2specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Description2specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!value2specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Value2specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!description3specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Description3specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!value3specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Value3specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!description4specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Description4specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!value4specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Value4specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!description5specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Description5specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!value5specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Value5specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!description6specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Description6specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!value6specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Value6specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!description7specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Description7specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!value7specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Value7specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!description8specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Description8specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!value8specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Value8specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!description9specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Description9specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!value9specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Value9specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!description10specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Description10specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!value10specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Value10specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!description11specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Description11specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!value11specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Value11specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!description12specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Description12specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!value12specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Value12specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!description13specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Description13specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!value13specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Value13specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!description14specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Description14specifications is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!value14specifications) {
-      return new NextResponse(
-        JSON.stringify({ error: "Value14specifications is required!" }),
         { status: 400 }
       );
     }
@@ -484,22 +366,50 @@ export async function PATCH(
         { status: 405 }
       );
     }
-    
+
     const productDetail = await prismadb.productDetail.update({
       where: {
         id: params.productdetailId,
       },
       data: {
-        name,
+        title,
         categoryId,
+        size1Id,
+        color1Id,
+        size2Id,
+        color2Id,
+        size3Id,
+        color3Id,
+        size4Id,
+        color4Id,
+        size5Id,
+        color5Id,
+        price1,
+        price2,
+        price3,
+        price4,
+        price5,
+        name1,
+        name2,
+        name3,
+        name4,
+        name5,
+        quantity1,
+        quantity2,
+        quantity3,
+        quantity4,
+        quantity5,
+        percentpromotion1,
+        percentpromotion2,
+        percentpromotion3,
+        percentpromotion4,
+        percentpromotion5,
         promotionheading,
         promotiondescription,
-        guaranteeheading,
-        guaranteedescription,
-        guaranteeinfomation,
-        guaranteeprice,
-        sizeId,
-        colorId,
+        warranty1,
+        warranty2,
+        warranty3,
+        warranty4,
         descriptionspecifications,
         valuespecifications,
         description2specifications,
