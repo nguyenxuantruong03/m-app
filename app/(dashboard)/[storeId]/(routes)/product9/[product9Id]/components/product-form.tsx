@@ -116,7 +116,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
       if (initialData) {
         promise = axios.patch(
-          `/api/${params.storeId}/product9/${params.productId}`,
+          `/api/${params.storeId}/product9/${params.product9Id}`,
           data
         );
       } else {
