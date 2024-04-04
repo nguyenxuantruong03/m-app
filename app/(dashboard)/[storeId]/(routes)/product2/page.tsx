@@ -34,11 +34,9 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
     name: item.name,
     heading: item.heading,
     description: item.description,
-    price: formatter.format(item.price.toNumber()),
-    percentpromotion: `${item.percentpromotion}%`,
     isFeatured: item.isFeatured,
     isArchived: item.isArchived,
-    productdetail: item.productdetail.name,
+    productdetail: item.productdetail.title,
     createdAt: item.createdAt
         ? format(
             utcToZonedTime(

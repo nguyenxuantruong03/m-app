@@ -17,8 +17,6 @@ export async function POST(
       name,
       heading,
       description,
-      price,
-      percentpromotion,
       isFeatured,
       isArchived,
       images,
@@ -48,18 +46,6 @@ export async function POST(
     if (!description) {
       return new NextResponse(
         JSON.stringify({ error: "Description is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!price) {
-      return new NextResponse(
-        JSON.stringify({ error: "Price is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!percentpromotion) {
-      return new NextResponse(
-        JSON.stringify({ error: "Percentpromotion is required!" }),
         { status: 400 }
       );
     }
@@ -123,8 +109,6 @@ export async function POST(
         heading,
         description,
         productType:productType,
-        price,
-        percentpromotion,
         isFeatured,
         isArchived,
         productdetailId,

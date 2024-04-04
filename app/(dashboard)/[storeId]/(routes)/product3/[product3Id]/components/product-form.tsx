@@ -49,8 +49,6 @@ const formSchema = z.object({
   heading: z.string().min(1),
   description: z.string().min(1),
   images: z.object({ url: z.string() }).array(),
-  price: z.coerce.number().min(1),
-  percentpromotion: z.coerce.number().min(1),
   imagesalientfeatures: z.object({ url: z.string() }).array(),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
@@ -89,16 +87,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     defaultValues: initialData
       ? {
           ...initialData,
-          price: parseFloat(String(initialData?.price)),
-          percentpromotion: parseFloat(String(initialData?.percentpromotion)),
         }
       : {
           name: "",
           images: [],
           heading: "",
           description: "",
-          price: 0,
-          percentpromotion: 0,
           imagesalientfeatures: [],
           isFeatured: false,
           isArchived: false,
@@ -412,44 +406,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
             <FormField
               control={form.control}
-              name="price"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Giá tiền</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      disabled={loading}
-                      placeholder="Nhập giá tiền ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="percentpromotion"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Phần trăm khuyến mãi </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      disabled={loading}
-                      placeholder="Nhập phần trăm khuyến mãi ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
               name="productdetailId"
               render={({ field }) => (
                 <FormItem>
@@ -459,7 +415,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     onChange={(e) => {
                       const enteredValue = e.target.value;
                       const selectedProductDetail = productDetail.find(
-                        (item) => item.name === enteredValue
+                        (item) => item.title === enteredValue
                       );
                       if (selectedProductDetail) {
                         // Nếu một màu được chọn từ danh sách, gán giá trị id tương ứng
@@ -472,7 +428,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     value={
                       field.value
                         ? productDetail.find((item) => item.id === field.value)
-                            ?.name
+                            ?.title
                         : ""
                     }
                     disabled={loading}
@@ -480,7 +436,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   />
                   <datalist id="productdetails">
                     {productDetail.map((item) => (
-                      <option key={item.id} value={item.name} />
+                      <option key={item.id} value={item.title} />
                     ))}
                   </datalist>
                 </FormItem>

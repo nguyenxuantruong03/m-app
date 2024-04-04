@@ -113,8 +113,6 @@ export async function PATCH(
       name,
       heading,
       description,
-      price,
-      percentpromotion,
       images,
       imagesalientfeatures,
       productdetailId,
@@ -144,18 +142,6 @@ export async function PATCH(
     if (!description) {
       return new NextResponse(
         JSON.stringify({ error: "Description is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!price) {
-      return new NextResponse(
-        JSON.stringify({ error: "Price is required!" }),
-        { status: 400 }
-      );
-    }
-    if (!percentpromotion) {
-      return new NextResponse(
-        JSON.stringify({ error: "Percentpromotion is required!" }),
         { status: 400 }
       );
     }
@@ -210,8 +196,6 @@ export async function PATCH(
         name,
         heading,
         description,
-        price,
-        percentpromotion,
         productdetailId,
         images: {
           deleteMany: {},
