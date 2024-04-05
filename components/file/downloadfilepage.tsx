@@ -29,10 +29,12 @@ import { TaxRateColumn } from "@/app/(dashboard)/[storeId]/(routes)/taxrate/comp
 import { CouponColumn } from "@/app/(dashboard)/[storeId]/(routes)/coupon/components/columns";
 import { ManageAttendancesColumn } from "@/app/(dashboard)/[storeId]/(routes)/manageattendance/components/column";
 import { ManageStaffsColumn } from "@/app/(dashboard)/[storeId]/(routes)/managestaff/components/column";
+import { BillboardTimeColumn } from "@/app/(dashboard)/[storeId]/(routes)/billboardstime/components/columns";
 
 interface DownloadfileProps {
   data:
     | BillboardColumn[]
+    | BillboardTimeColumn[]
     | CategoriesColumn[]
     | ProductColumn[]
     | OrderColumn[]
