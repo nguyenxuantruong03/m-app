@@ -16,7 +16,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
    // Add password regex check
    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[0-9]).{6,20}$/;
    if (!passwordRegex.test(password)) {
-     return { error: "Mật khẩu yêu cầu [a-z] và [0-9] ít nhất 6 ký tự." };
+     return { error: "Mật khẩu yêu cầu [a-z] và [0-9] ít nhất 6 ký tự!" };
    }
  
 // Check if any of the required fields are empty

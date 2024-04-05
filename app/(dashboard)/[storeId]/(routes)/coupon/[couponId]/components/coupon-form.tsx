@@ -38,13 +38,17 @@ const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 import Image from "next/image";
 
 const formSchema = z.object({
-  name: z.string().min(1),
+  name: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
   imagecoupon: z.object({ url: z.string() }).array(),
-  duration: z.string().min(1),
-  description: z.string(),
-  percent: z.coerce.number().min(1),
-  durationinmoth: z.coerce.number().nullable().optional(),
-  maxredemptions: z.coerce.number().min(1),
+  duration: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
+  description: z.optional(z.string().min(4,{
+    message: "Nhập ít nhất 4 ký tự."
+  })),
+  percent: z.coerce.number().min(1,{message: "Nhập ít nhất 1%."}),
+  durationinmoth:z.optional(z.coerce.number().min(4,{
+    message: "Nhập ít nhất 1 tháng."
+  })),
+  maxredemptions: z.coerce.number().min(1,{message: "Nhập ít nhất 1 người."}),
   redeemby: z.union([z.date().nullable(), z.string().nullable()]),
 });
 

@@ -8,8 +8,12 @@ export const SettingSchema = z
     isTwoFactorEnabled: z.optional(z.boolean()),
     role: z.enum([UserRole.ADMIN, UserRole.USER,UserRole.STAFF]),
     email: z.optional(z.string().email()),
-    password: z.optional(z.string().min(6)),
-    newPassword: z.optional(z.string().min(6)),
+    password: z.optional(z.string().min(6,{
+      message: "Mật khẩu yêu cầu [a-z] và [0-9] ít nhất 6 ký tự!",
+    })),
+    newPassword: z.optional(z.string().min(6,{
+      message: "Mật khẩu mới yêu cầu [a-z] và [0-9] ít nhất 6 ký tự!",
+    })),
   })
   .refine(
     (data) => {
@@ -44,15 +48,15 @@ export const LoginSchema = z.object({
   email: z.string().email({
     message: "Email không hợp lệ !",
   }),
-  password: z.string().min(1, {
-    message: "Mật khẩu không hợp lệ !",
+  password: z.string().min(6).regex(/^(?=.*\d)(?=.*[a-z])(?=.*[0-9]).{6,20}$/, {
+    message: "Mật khẩu yêu cầu [a-z] và [0-9] ít nhất 6 ký tự!",
   }),
   code: z.optional(z.string()),
 });
 
 export const NewPasswordSchema = z.object({
-  password: z.string().min(6, {
-    message: "Mật khẩu yêu cầu 6 kí tự!",
+  password: z.string().min(6).regex(/^(?=.*\d)(?=.*[a-z])(?=.*[0-9]).{6,20}$/, {
+    message: "Mật khẩu yêu cầu [a-z] và [0-9] ít nhất 6 ký tự!",
   }),
 });
 
@@ -66,10 +70,10 @@ export const RegisterSchema = z.object({
   email: z.string().email({
     message: "Email không hợp lệ !",
   }),
-  password: z.string().min(6, {
-    message: "Nhập ít nhất 6 ký tự!",
+  password: z.string().min(6).regex(/^(?=.*\d)(?=.*[a-z])(?=.*[0-9]).{6,20}$/, {
+    message: "Mật khẩu yêu cầu [a-z] và [0-9] ít nhất 6 ký tự!",
   }),
   name: z.string().min(4, {
-    message: "Yêu cầu nhập tên!",
+    message: "Yêu cầu nhập tên ít nhất 4 ký tự!",
   }),
 });

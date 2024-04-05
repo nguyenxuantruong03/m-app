@@ -26,12 +26,8 @@ import { AlertModal } from "@/components/modals/alert-modal";
 import Tiptap from "@/components/tiptap/tiptap";
 
 const formSchema = z.object({
-  subject: z.string().min(1, {
-    message: "Chưa nhập Subject!",
-  }),
-  description: z.string().min(1, {
-    message: "Chưa nhập Description!",
-  }),
+  subject: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
+  description: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
 });
 
 type SentEmailUserFormValues = z.infer<typeof formSchema>;

@@ -25,9 +25,9 @@ import { AlertModal } from "@/components/modals/alert-modal";
 import { ChromePicker } from "react-color";
 
 const formSchema = z.object({
-  name: z.string().min(1),
+  name: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
   value: z.string().min(1).regex(/^#/, {
-    message: "String must be a valid hex code",
+    message: "Hãy nhập mã hex hợp lệ.",
   }),
 });
 

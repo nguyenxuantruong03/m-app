@@ -37,14 +37,14 @@ import {
 } from "@prisma/client";
 
 const formSchema = z.object({
-  name: z.string().min(1),
-  taxbehavior: z.string().min(1),
-  amount: z.coerce.number().min(1),
-  unitmin: z.string().min(1),
-  valuemin: z.coerce.number().min(1),
-  unitmax: z.string().min(1),
-  valuemax: z.coerce.number().min(1),
-  taxcode: z.string().min(1),
+  name: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
+  taxbehavior: z.string().min(1,{message: "Hãy chọn 1 taxbehavior."}),
+  amount: z.coerce.number().min(500,{message: "Hãy nhập ít nhấp 500 đồng."}),
+  unitmin: z.string().min(1,{message: "Hãy nhập ít nhất 1 tiếng."}),
+  valuemin: z.coerce.number().min(1,{message: "Hãy chọn giờ hoặc ngày."}),
+  unitmax: z.string().min(1,{message: "Hãy nhập ít nhất 1 tiếng."}),
+  valuemax: z.coerce.number().min(1,{message: "Hãy chọn giờ hoặc ngày."}),
+  taxcode: z.string().min(1,{message: "Hãy chọn 1 loại taxcode."}),
   active: z.boolean().default(false).optional(),
 });
 

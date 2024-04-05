@@ -31,7 +31,7 @@ import viLocale from "date-fns/locale/vi";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 
 const formSchema = z.object({
-  label: z.string().min(1),
+  label: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
   imagebillboard: z.object({ url: z.string() }).array(),
 });
 

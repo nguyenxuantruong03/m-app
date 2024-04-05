@@ -32,10 +32,10 @@ import { Heading } from "@/components/ui/heading";
 import { TaxRate, TaxType } from "@prisma/client";
 
 const formSchema = z.object({
-  name: z.string().min(1),
-  taxtype: z.string().min(1),
-  description: z.string(),
-  percentage: z.coerce.number().min(1),
+  name: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
+  taxtype: z.string().min(1,{message: "Hãy chọn 1 loại thuế."}),
+  description: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
+  percentage: z.coerce.number().min(1,{message: "Hãy nhập ít nhất 1%."}),
   inclusive: z.boolean().default(false).optional(),
   active: z.boolean().default(false).optional(),
 });

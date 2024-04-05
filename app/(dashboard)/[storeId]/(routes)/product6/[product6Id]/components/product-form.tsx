@@ -45,14 +45,14 @@ const removeDiacritics = (str: String) => {
 };
 
 const formSchema = z.object({
-  name: z.string().min(1),
-  heading: z.string().min(1),
-  description: z.string().min(1),
+  name: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
+  heading: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
+  description: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
   images: z.object({ url: z.string() }).array(),
   imagesalientfeatures: z.object({ url: z.string() }).array(),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
-  productdetailId: z.string().min(1),
+  productdetailId: z.string().min(1,{message: "Hãy chọn 1 ProductDetail."}),
 });
 
 type ProductFormValues = z.infer<typeof formSchema>;
