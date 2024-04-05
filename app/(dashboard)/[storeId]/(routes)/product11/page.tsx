@@ -21,7 +21,9 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
       productType: productType,
     },
     include: {
-    productdetail: true
+    productdetail: true,
+    imagesalientfeatures: true,
+    images: true
     },
     orderBy: {
       createdAt: "desc",
@@ -33,6 +35,8 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
     name: item.name,
     heading: item.heading,
     description: item.description,
+    imagesalientfeatures: item.imagesalientfeatures.map((item)=> item.url),
+    images: item.images.map((item)=> item.url),
     isFeatured: item.isFeatured,
     isArchived: item.isArchived,
     productdetail: item.productdetail.title,

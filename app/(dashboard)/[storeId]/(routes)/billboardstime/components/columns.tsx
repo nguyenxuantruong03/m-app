@@ -3,16 +3,17 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
 import { AlarmClock, AlarmClockOff } from "lucide-react";
+import Image from "next/image";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type BillboardTimeColumn = {
   id: string;
   label: string;
   timeout: string;
+  imagebillboardtime: string[];
   end: string;
   isTimeout: boolean | null;
   createdAt: string | null;
-  updatedAt: string | null;
 };
 
 export const columns: ColumnDef<BillboardTimeColumn>[] = [
@@ -27,6 +28,33 @@ export const columns: ColumnDef<BillboardTimeColumn>[] = [
           {label}
         </div>
       );
+    },
+  },
+  {
+    accessorKey: "imagebillboard",
+    header: "Hình ảnh",
+    // Define a custom cell to render the image
+    cell: ({ row }) => {
+      const imagebillboardtime = row.original.imagebillboardtime;
+      // Check if the image URL array is available
+      if (Array.isArray(imagebillboardtime) && imagebillboardtime.length > 0) {
+        return (
+          <div>
+            {imagebillboardtime.map((imageUrl, index) => (
+              <span key={index} className="avatar-overlapping-multiple-image">
+                <Image
+                  className="avatar-image-overlapping-multiple-image rounded-full"
+                  src={imageUrl}
+                  alt={`Image ${index + 1}`}
+                  width="50"
+                  height="50"
+                />
+              </span>
+            ))}
+          </div>
+        );
+      }
+      return "";
     },
   },
   {
@@ -81,19 +109,6 @@ export const columns: ColumnDef<BillboardTimeColumn>[] = [
       return (
         <div className={isActive ? 'line-through text-gray-400' : ''}>
           {createdAt}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "updatedAt",
-    header: "updatedAt",
-    cell: ({ row }) => {
-      const isActive = row.original.isTimeout;
-      const updatedAt = row.original.updatedAt;
-      return (
-        <div className={isActive ? 'line-through text-gray-400' : ''}>
-          {updatedAt}
         </div>
       );
     },

@@ -213,11 +213,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     className="avatar-overlapping-multiple-image"
                   >
                     <Imagee
-                      className="avatar-image-overlapping-multiple-image"
+                      className="avatar-image-overlapping-multiple-image rounded-full"
                       src={url}
                       alt=""
-                      width={40}
-                      height={40}
+                      width="50"
+                      height="50"
                     />
                   </span>
                 ))}

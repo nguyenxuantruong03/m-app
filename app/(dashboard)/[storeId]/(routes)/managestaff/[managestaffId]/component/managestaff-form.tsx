@@ -158,8 +158,8 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                   className="h-10 w-10 rounded-full"
                   src={data.imageCredential[0]}
                   alt=""
-                  width={40}
-                  height={40}
+                  width="50"
+                  height="50"
                 />
               </div>
               <div className="ml-3 flex-1">

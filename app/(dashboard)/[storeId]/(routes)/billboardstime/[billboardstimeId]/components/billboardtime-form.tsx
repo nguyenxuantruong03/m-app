@@ -161,11 +161,11 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                     className="avatar-overlapping-multiple-image"
                   >
                     <Image
-                      className="avatar-image-overlapping-multiple-image"
+                      className="avatar-image-overlapping-multiple-image rounded-full"
                       src={url}
                       alt=""
-                      width={40}
-                      height={40}
+                      width="50"
+                      height="50"
                     />
                   </span>
                 ))}

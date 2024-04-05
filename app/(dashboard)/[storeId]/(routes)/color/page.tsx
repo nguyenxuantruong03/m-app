@@ -36,17 +36,7 @@ const ColorPage = async ({ params }: { params: { storeId: string } }) => {
         "E '-' dd/MM/yyyy '-' HH:mm:ss a",
         { locale: viLocale }
       )
-    : null,
-    updatedAt: item.updatedAt
-    ? format(
-        utcToZonedTime(
-          new Date(new Date(item.updatedAt)),
-          vietnamTimeZone
-        ),
-        "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-        { locale: viLocale }
-      )
-    : null,
+    : null
   }));
   return (
     <div className="w-full">

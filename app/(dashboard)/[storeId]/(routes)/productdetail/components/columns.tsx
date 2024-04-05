@@ -49,15 +49,172 @@ export type ProductDetailColumn = {
 export const columns: ColumnDef<ProductDetailColumn>[] = [
   {
     accessorKey: "title",
-    header: "Tên sản phẩm",
+    header: "Tiêu đề",
+  },
+  {
+    accessorKey: "name1",
+    header: "Tên sản phẩm 1",
+  },
+  {
+    accessorKey: "price1",
+    header: "Giá sản phẩm 1",
   },
   {
     accessorKey: "percentpromotion1",
     header: "Giảm giá %",
   },
   {
-    accessorKey: "promotiondescription",
-    header: "Quà tặng thầu",
+    accessorKey: "quantity1",
+    header: "Sô lượng 1",
+  },
+  {
+    accessorKey: "size1",
+    header: "Kích cỡ 1",
+  },
+  {
+    accessorKey: "color1",
+    header: "Màu 1",
+    cell: ({ row }) => (
+      <div className="flex items-center gap-x-2">
+        {row.original.color1}
+        <div
+          className="h-6 w-6 rounded-full border"
+          style={{ backgroundColor: row.original.color1 }}
+        />
+      </div>
+    ),
+  },
+  {
+    accessorKey: "name2",
+    header: "Tên sản phẩm 2",
+  },
+  {
+    accessorKey: "price2",
+    header: "Giá sản phẩm 2",
+  },
+  {
+    accessorKey: "percentpromotion2",
+    header: "Giảm giá %",
+  },
+  {
+    accessorKey: "quantity2",
+    header: "Sô lượng 2",
+  },
+  {
+    accessorKey: "size2",
+    header: "Kích cỡ 2",
+  },
+  {
+    accessorKey: "color2",
+    header: "Màu 2",
+    cell: ({ row }) => (
+      <div className="flex items-center gap-x-2">
+        {row.original.color2 || ""}
+        <div
+          className="h-6 w-6 rounded-full border"
+          style={{ backgroundColor: row.original.color2  || "" }}
+        />
+      </div>
+    ),
+  },
+  {
+    accessorKey: "name3",
+    header: "Tên sản phẩm 3",
+  },
+  {
+    accessorKey: "price3",
+    header: "Giá sản phẩm 3",
+  },
+  {
+    accessorKey: "percentpromotion3",
+    header: "Giảm giá %",
+  },
+  {
+    accessorKey: "quantity3",
+    header: "Sô lượng 3",
+  },
+  {
+    accessorKey: "size3",
+    header: "Kích cỡ 3",
+  },
+  {
+    accessorKey: "color3",
+    header: "Màu 3",
+    cell: ({ row }) => (
+      <div className="flex items-center gap-x-2">
+        {row.original.color3 || ""}
+        <div
+          className="h-6 w-6 rounded-full border"
+          style={{ backgroundColor: row.original.color3 || "" }}
+        />
+      </div>
+    ),
+  },
+  {
+    accessorKey: "name4",
+    header: "Tên sản phẩm 4",
+  },
+  {
+    accessorKey: "price4",
+    header: "Giá sản phẩm 4",
+  },
+  {
+    accessorKey: "percentpromotion4",
+    header: "Giảm giá %",
+  },
+  {
+    accessorKey: "quantity4",
+    header: "Sô lượng 4",
+  },
+  {
+    accessorKey: "size4",
+    header: "Kích cỡ 4",
+  },
+  {
+    accessorKey: "color4",
+    header: "Màu 4",
+    cell: ({ row }) => (
+      <div className="flex items-center gap-x-2">
+        {row.original.color4  ||""}
+        <div
+          className="h-6 w-6 rounded-full border"
+          style={{ backgroundColor: row.original.color4 || "" }}
+        />
+      </div>
+    ),
+  },
+  {
+    accessorKey: "name5",
+    header: "Tên sản phẩm 5",
+  },
+  {
+    accessorKey: "price5",
+    header: "Giá sản phẩm 5",
+  },
+  {
+    accessorKey: "percentpromotion5",
+    header: "Giảm giá %",
+  },
+  {
+    accessorKey: "quantity5",
+    header: "Sô lượng 5",
+  },
+  {
+    accessorKey: "size5",
+    header: "Kích cỡ 1",
+  },
+  {
+    accessorKey: "color5",
+    header: "Màu 5",
+    cell: ({ row }) => (
+      <div className="flex items-center gap-x-2">
+        {row.original.color5 || ""}
+        <div
+          className="h-6 w-6 rounded-full border"
+          style={{ backgroundColor: row.original.color5 || ""}}
+        />
+      </div>
+    ),
   },
   {
     accessorKey: "warranty1",
@@ -76,25 +233,8 @@ export const columns: ColumnDef<ProductDetailColumn>[] = [
     header: "Tiền bảo hiểm",
   },
   {
-    accessorKey: "size1",
-    header: "Kích cỡ",
-  },
-  {
     accessorKey: "category",
     header: "Loại",
-  },
-  {
-    accessorKey: "color1",
-    header: "Màu",
-    cell: ({ row }) => (
-      <div className="flex items-center gap-x-2">
-        {row.original.color1}
-        <div
-          className="h-6 w-6 rounded-full border"
-          style={{ backgroundColor: row.original.color1 }}
-        />
-      </div>
-    ),
   },
   {
     accessorKey: "createdAt",

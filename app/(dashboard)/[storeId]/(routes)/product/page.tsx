@@ -2,7 +2,6 @@ import prismadb from "@/lib/prismadb";
 import ProductClient from "./components/client";
 import { ProductColumn } from "./components/columns";
 import { format } from "date-fns";
-import { formatter } from "@/lib/utils";
 import { ProductType, UserRole } from "@prisma/client";
 import { currentRole } from "@/lib/auth";
 import { RoleGate } from "@/components/auth/role-gate";
@@ -23,6 +22,8 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
     },
     include: {
       productdetail: true,
+      imagesalientfeatures: true,
+      images: true
     },
     orderBy: {
       createdAt: "desc",
@@ -33,6 +34,8 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
     id: item.id,
     name: item.name,
     heading: item.heading,
+    imagesalientfeatures: item.imagesalientfeatures.map((item)=> item.url),
+    images: item.images.map((item)=> item.url),
     description: item.description,
     isFeatured: item.isFeatured,
     isArchived: item.isArchived,

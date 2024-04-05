@@ -37,16 +37,6 @@ const SizePage = async ({ params }: { params: { storeId: string } }) => {
             { locale: viLocale }
           )
         : null,
-    updatedAt: item.updatedAt
-        ? format(
-            utcToZonedTime(
-              new Date(new Date(item.updatedAt)),
-              vietnamTimeZone
-            ),
-            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-            { locale: viLocale }
-          )
-        : null,
   }));
   return (
     <div className="w-full">

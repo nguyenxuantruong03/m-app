@@ -18,6 +18,9 @@ const BillboardsPage = async ({ params }: { params: { storeId: string } }) => {
     where: {
       storeId: params.storeId,
     },
+    include:{
+      imagebillboard: true
+    },
     orderBy: {
       createdAt: "desc",
     },
@@ -26,20 +29,11 @@ const BillboardsPage = async ({ params }: { params: { storeId: string } }) => {
   const formattedBillboards: BillboardColumn[] = billboards.map((item) => ({
     id: item.id,
     label: item.label,
+    imagebillboard:item.imagebillboard.map((item) =>item.url),
     createdAt: item.createdAt
     ? format(
         utcToZonedTime(
           new Date(new Date(item.createdAt)),
-          vietnamTimeZone
-        ),
-        "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-        { locale: viLocale }
-      )
-    : null,
-    updatedAt: item.updatedAt
-    ? format(
-        utcToZonedTime(
-          new Date(new Date(item.updatedAt)),
           vietnamTimeZone
         ),
         "E '-' dd/MM/yyyy '-' HH:mm:ss a",
