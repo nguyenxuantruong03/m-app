@@ -267,7 +267,10 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
             name="imagebillboardtime"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Hình ảnh(Chỉ thêm 10 ảnh)</FormLabel>
+                <FormLabel>
+                  Hình ảnh(Chỉ thêm 10 ảnh){" "}
+                  <span className="text-red-600 pl-1">(*)</span>
+                </FormLabel>
                 <FormControl>
                   <ImageUpload
                     value={field.value.map((image) => image.url)}
@@ -293,11 +296,11 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               name="label"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nhãn</FormLabel>
+                  <FormLabel>Nhãn <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Billboard label ..."
+                      placeholder="Enter label ..."
                       {...field}
                     />
                   </FormControl>
@@ -311,12 +314,12 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               name="timeout"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thời gian</FormLabel>
+                  <FormLabel>Thời gian <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Billboard timeout ..."
+                      placeholder="Enter timeout ..."
                       {...field}
                     />
                   </FormControl>

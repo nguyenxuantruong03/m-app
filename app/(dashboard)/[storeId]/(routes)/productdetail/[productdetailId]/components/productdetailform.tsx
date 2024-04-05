@@ -421,7 +421,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tiêu đề</FormLabel>
+                  <FormLabel>Tiêu đề <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -439,7 +439,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="name1"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên sản phẩm 1</FormLabel>
+                  <FormLabel>Tên sản phẩm 1 <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -463,7 +463,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="price1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Giá sản phẩm 1</FormLabel>
+                      <FormLabel>Giá sản phẩm 1 <span className="text-red-600 pl-1">(*)</span></FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -483,7 +483,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="percentpromotion1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Giảm giá sản phẩm 1</FormLabel>
+                      <FormLabel>Giảm giá sản phẩm 1 <span className="text-red-600 pl-1">(*)</span></FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -503,7 +503,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="quantity1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Số lượng còn trong kho 1</FormLabel>
+                      <FormLabel>Số lượng còn trong kho 1 <span className="text-red-600 pl-1">(*)</span></FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -966,7 +966,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="descriptionspecifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thông số</FormLabel>
+                  <FormLabel>Thông số <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -983,7 +983,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="valuespecifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
+                  <FormLabel>Nội dung thông số <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -1442,7 +1442,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="descriptionsalientfeatures"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mô tả tính năng nổi bật</FormLabel>
+                  <FormLabel>Mô tả tính năng nổi bật <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Textarea
                       disabled={loading}
@@ -1459,7 +1459,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="description2salientfeatures"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mô tả tính năng nổi bật</FormLabel>
+                  <FormLabel>Mô tả tính năng nổi bật <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Textarea
                       disabled={loading}
@@ -1476,7 +1476,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="description3salientfeatures"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mô tả tính năng nổi bật</FormLabel>
+                  <FormLabel>Mô tả tính năng nổi bật <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Textarea
                       disabled={loading}
@@ -1493,7 +1493,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="description4salientfeatures"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mô tả tính năng nổi bật</FormLabel>
+                  <FormLabel>Mô tả tính năng nổi bật <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Textarea
                       disabled={loading}
@@ -1510,7 +1510,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="contentsalientfeatures"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nội dung tính năng nổi bật</FormLabel>
+                  <FormLabel>Nội dung tính năng nổi bật <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Textarea
                       disabled={loading}
@@ -1529,7 +1529,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="color1Id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Màu sản phẩm 1</FormLabel>
+                      <FormLabel>Màu sản phẩm 1 <span className="text-red-600 pl-1">(*)</span></FormLabel>
                       <Input
                         list="colors1"
                         onChange={(e) => {
@@ -1569,7 +1569,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="size1Id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Kích cỡ sản phẩm 1</FormLabel>
+                      <FormLabel>Kích cỡ sản phẩm 1 <span className="text-red-600 pl-1">(*)</span></FormLabel>
                       <Input
                         list="sizes1"
                         onChange={(e) => {
@@ -1942,7 +1942,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="categoryId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Loại</FormLabel>
+                  <FormLabel>Loại <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <Input
                     list="categories"
                     onChange={(e) => {

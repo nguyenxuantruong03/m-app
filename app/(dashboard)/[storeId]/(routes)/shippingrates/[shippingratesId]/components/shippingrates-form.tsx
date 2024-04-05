@@ -194,7 +194,7 @@ useEffect(() => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên giao hàng</FormLabel>
+                  <FormLabel>Tên giao hàng <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading || isEditing}
@@ -216,7 +216,7 @@ useEffect(() => {
               render={({ field }) => {
                 return (
                   <FormItem>
-                    <FormLabel>Số tiền</FormLabel>
+                    <FormLabel>Số tiền <span className="text-red-600 pl-1">(*)</span></FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -236,7 +236,7 @@ useEffect(() => {
               name="taxbehavior"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Hành vi thuế</FormLabel>
+                  <FormLabel>Hành vi thuế <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <Select
                     disabled={loading || isEditing}
                     onValueChange={field.onChange}
@@ -269,7 +269,7 @@ useEffect(() => {
               render={({ field }) => {
                 return (
                   <FormItem>
-                    <FormLabel>Thời gian thấp nhất (Không quá 2400 giờ)</FormLabel>
+                    <FormLabel>Thời gian thấp nhất (Không quá 2400 giờ) <span className="text-red-600 pl-1">(*)</span></FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -290,7 +290,7 @@ useEffect(() => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Đơn vị thấp nhất
+                    Đơn vị thấp nhất <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <Select
                     disabled={loading || isEditing}
@@ -324,7 +324,7 @@ useEffect(() => {
               render={({ field }) => {
                 return (
                   <FormItem>
-                    <FormLabel>Thời gian tối đa (Không quá 2400 giờ)</FormLabel>
+                    <FormLabel>Thời gian tối đa (Không quá 2400 giờ) <span className="text-red-600 pl-1">(*)</span></FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -345,7 +345,7 @@ useEffect(() => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Đơn vị tối đa
+                    Đơn vị tối đa <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <Select
                     disabled={loading || isEditing}
@@ -378,7 +378,7 @@ useEffect(() => {
               name="taxcode"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Người chịu thuế</FormLabel>
+                  <FormLabel>Người chịu thuế <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <Select
                     disabled={loading || isEditing}
                     onValueChange={(value) => field.onChange(value)}

@@ -185,7 +185,7 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
               name="subject"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Chủ đề </FormLabel>
+                  <FormLabel>Chủ đề <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -206,7 +206,7 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mô tả</FormLabel>
+                  <FormLabel>Mô tả <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Tiptap
                       disabled={loading}

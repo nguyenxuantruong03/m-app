@@ -156,7 +156,7 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên Thuế</FormLabel>
+                  <FormLabel>Tên Thuế <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -177,7 +177,7 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mô tả thuế</FormLabel>
+                  <FormLabel>Mô tả thuế <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -198,7 +198,7 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
               name="taxtype"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Loại thuế</FormLabel>
+                  <FormLabel>Loại thuế <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <Select
                     disabled={loading || isEditing}
                     onValueChange={field.onChange}
@@ -240,7 +240,7 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
                 };
                 return (
                   <FormItem>
-                    <FormLabel>Phần trăm thuế (0-100)</FormLabel>
+                    <FormLabel>Phần trăm thuế (0-100) <span className="text-red-600 pl-1">(*)</span></FormLabel>
                     <FormControl>
                       <Input
                         type="number"

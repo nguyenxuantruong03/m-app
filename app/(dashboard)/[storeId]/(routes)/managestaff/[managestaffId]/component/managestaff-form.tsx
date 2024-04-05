@@ -268,7 +268,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
             name="imageCredential"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Hình ảnh</FormLabel>
+                <FormLabel>Hình ảnh <span className="text-red-600 pl-1">(*)</span></FormLabel>
                 <FormControl>
                   <ImageUpload
                     value={field.value} // Assuming field.value is an array of strings
@@ -292,7 +292,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="phonenumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Số điện thoại</FormLabel>
+                  <FormLabel>Số điện thoại <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Input
                       type="tel"
@@ -310,7 +310,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="numberCCCD"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Số căn cước công dân</FormLabel>
+                  <FormLabel>Số căn cước công dân <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Input
                       type="tel"
@@ -329,7 +329,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên</FormLabel>
+                  <FormLabel>Tên <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -347,7 +347,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="dateofbirth"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Sinh nhật</FormLabel>
+                  <FormLabel>Sinh nhật <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Input
                       type="date"
@@ -378,11 +378,11 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="issued"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Cấp ở đâu</FormLabel>
+                  <FormLabel>Cấp ở đâu <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Bộ Công An Quận Binh Tân ..."
+                      placeholder="Bộ Công An Quận ..."
                       {...field}
                     />
                   </FormControl>
@@ -396,7 +396,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="dateRange"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Ngày hết hạn CMND</FormLabel>
+                  <FormLabel>Ngày hết hạn CMND <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Input
                       type="date"
@@ -427,7 +427,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="gender"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giới tính</FormLabel>
+                  <FormLabel>Giới tính <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <Select
                     disabled={loading}
                     onValueChange={field.onChange}
@@ -459,7 +459,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="degree"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Bằng cấp</FormLabel>
+                  <FormLabel>Bằng cấp <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <Select
                     disabled={loading}
                     onValueChange={field.onChange}
@@ -490,7 +490,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="maritalStatus"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tính trạng hôn nhân</FormLabel>
+                  <FormLabel>Tình trạng hôn nhân <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <Select
                     disabled={loading}
                     onValueChange={field.onChange}
@@ -521,7 +521,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="workingTime"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thời gian làm việc</FormLabel>
+                  <FormLabel>Thời gian làm việc <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <Select
                     disabled={loading}
                     onValueChange={field.onChange}

@@ -175,11 +175,11 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData }) => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên</FormLabel>
+                  <FormLabel>Tên <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Category label ..."
+                      placeholder="Enter label ..."
                       {...field}
                     />
                   </FormControl>

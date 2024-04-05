@@ -320,7 +320,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             name="images"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Hình ảnh sản phẩm</FormLabel>
+                <FormLabel>Hình ảnh sản phẩm <span className="text-red-600 pl-1">(*)</span></FormLabel>
                 <FormControl>
                   <ImageUpload
                     value={field.value.map((image) => image.url)}
@@ -345,7 +345,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             name="imagesalientfeatures"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Hình ảnh mô tả sản phẩm (Chỉ thêm 2 ảnh)</FormLabel>
+                <FormLabel>Hình ảnh mô tả sản phẩm (Chỉ thêm 2 ảnh) <span className="text-red-600 pl-1">(*)</span></FormLabel>
                 <FormControl>
                   <ImageUpload
                     value={field.value.map((image) => image.url)}
@@ -371,7 +371,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               name="heading"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên sản phẩm</FormLabel>
+                  <FormLabel>Tên sản phẩm <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -393,7 +393,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mô tả</FormLabel>
+                  <FormLabel>Mô tả <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -411,7 +411,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               name="productdetailId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Chi tiết sản phẩm</FormLabel>
+                  <FormLabel>Chi tiết sản phẩm <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <Input
                     list="productdetails"
                     onChange={(e) => {

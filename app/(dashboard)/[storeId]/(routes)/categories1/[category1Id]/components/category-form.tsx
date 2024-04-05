@@ -168,9 +168,9 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên</FormLabel>
+                  <FormLabel>Tên <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Category label ..." {...field} />
+                    <Input disabled={loading} placeholder="Enter label ..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -31,7 +31,7 @@ import viLocale from "date-fns/locale/vi";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 
 const formSchema = z.object({
-  label: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
+  label: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
   imagebillboard: z.object({ url: z.string() }).array(),
 });
 
@@ -70,10 +70,13 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
     try {
       setLoading(true);
       let promise;
-      let imageUrl: string[] = []; 
+      let imageUrl: string[] = [];
       if (initialData) {
-        promise = axios.patch(`/api/${params.storeId}/billboards/${params.billboardId}`,data);
-        imageUrl = data.imagebillboard?.map((item) => item.url) || []; 
+        promise = axios.patch(
+          `/api/${params.storeId}/billboards/${params.billboardId}`,
+          data
+        );
+        imageUrl = data.imagebillboard?.map((item) => item.url) || [];
       } else {
         promise = axios.post(`/api/${params.storeId}/billboards`, data);
         imageUrl = data.imagebillboard?.map((item) => item.url) || [];
@@ -81,11 +84,12 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
 
       const response = await promise;
 
-      let message:React.ReactNode;
+      let message: React.ReactNode;
       if (initialData) {
         message = (
           <p>
-            Billboard <span className="font-bold">{response?.data.label}</span> updated.
+            Billboard <span className="font-bold">{response?.data.label}</span>{" "}
+            updated.
           </p>
         );
       } else {
@@ -96,7 +100,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
         );
       }
 
-      let title:React.ReactNode;
+      let title: React.ReactNode;
       if (initialData) {
         title = (
           <div className="flex items-center justify-between text-sm">
@@ -187,10 +191,14 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
         (error as { response: { data?: { error?: string } } }).response.data &&
-        (error as { response: { data: { error?: string } } }).response.data.error
+        (error as { response: { data: { error?: string } } }).response.data
+          .error
       ) {
         // Hiển thị thông báo lỗi cho người dùng
-        toast.error((error as { response: { data: { error: string } } }).response.data.error);
+        toast.error(
+          (error as { response: { data: { error: string } } }).response.data
+            .error
+        );
       } else {
         toast.error("Something went wrong.");
       }
@@ -209,14 +217,18 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
       router.refresh();
       router.push(`/${params.storeId}/billboards`);
       toast.success(`Billboard deleted.`);
-    } catch(error: unknown) {
+    } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
         (error as { response: { data?: { error?: string } } }).response.data &&
-        (error as { response: { data: { error?: string } } }).response.data.error
+        (error as { response: { data: { error?: string } } }).response.data
+          .error
       ) {
         // Hiển thị thông báo lỗi cho người dùng
-        toast.error((error as { response: { data: { error: string } } }).response.data.error);
+        toast.error(
+          (error as { response: { data: { error: string } } }).response.data
+            .error
+        );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
@@ -263,7 +275,10 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
             name="imagebillboard"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Hình ảnh(Chỉ thêm 10 ảnh)</FormLabel>
+                <FormLabel>
+                  Hình ảnh(Chỉ thêm 10 ảnh){" "}
+                  <span className="text-red-600 pl-1">(*)</span>
+                </FormLabel>
                 <FormControl>
                   <ImageUpload
                     value={field.value.map((image) => image.url)}
@@ -289,11 +304,13 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               name="label"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nhãn</FormLabel>
+                  <FormLabel>
+                    Nhãn <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Billboard label ..."
+                      placeholder="Enter label ..."
                       {...field}
                     />
                   </FormControl>

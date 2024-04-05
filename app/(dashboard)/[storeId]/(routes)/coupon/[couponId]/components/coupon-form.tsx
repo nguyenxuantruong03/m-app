@@ -308,7 +308,7 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
             name="imagecoupon"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Hình ảnh giảm giá</FormLabel>
+                <FormLabel>Hình ảnh giảm giá <span className="text-red-600 pl-1">(*)</span></FormLabel>
                 <FormControl>
                   <ImageUpload
                     value={field.value.map((image) => image.url)}
@@ -334,7 +334,7 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên giảm giá</FormLabel>
+                  <FormLabel>Tên giảm giá <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -378,7 +378,7 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
                 <FormItem>
                   <FormLabel>
                     Khoảng thời gian (Nếu chọn forever hoặc once thì không điền
-                    durationinmoth)
+                    durationinmoth) <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <Select
                     disabled={loading || isEditing}
@@ -421,12 +421,12 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
                 };
                 return (
                   <FormItem>
-                    <FormLabel>Phần trăm khuyến mãi (0-100)</FormLabel>
+                    <FormLabel>Phần trăm khuyến mãi (0-100) <span className="text-red-600 pl-1">(*)</span></FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         disabled={loading || isEditing}
-                        placeholder="Nhập phần trăm khuyến mãi ..."
+                        placeholder="Nhập % khuyến mãi ..."
                         {...field}
                         onChange={handleInputChange}
                       />
@@ -456,13 +456,13 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
                   <FormItem>
                     <FormLabel>
                       Khoảng thời gian trong tháng(0-12) (Nếu chọn forever hoặc
-                      once thì không điền durationinmoth)
+                      once thì không điền durationinmoth) <span className="text-red-600 pl-1">(*)</span>
                     </FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         disabled={loading || isEditing}
-                        placeholder="Nhập phần khoảng thời gian trong tháng ..."
+                        placeholder="Nhập % khoảng thời gian trong tháng ..."
                         value={field.value ?? 0}
                         onChange={handleInputChange}
                       />
@@ -478,7 +478,7 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
               name="maxredemptions"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Số lượng tối đa được giảm giá</FormLabel>
+                  <FormLabel>Số lượng tối đa được giảm giá <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -497,7 +497,7 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
               name="redeemby"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thời gian hết hạn</FormLabel>
+                  <FormLabel>Thời gian hết hạn <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Input
                       type="date"
