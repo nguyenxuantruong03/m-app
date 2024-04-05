@@ -91,7 +91,7 @@ const ProductDetailPage = async ({ params }: { params: { storeId: string } }) =>
         : null,
   }));
   return (
-    <div className="w-full">
+    <div>
       <div className={`space-y-4 p-8 pt-6 ${showProductDetailRole}`}>
       {showProductDetailRole && <ProductDetailClient data={formattedProductDetail} />}
       </div>
