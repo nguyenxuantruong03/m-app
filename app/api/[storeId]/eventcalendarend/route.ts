@@ -140,14 +140,11 @@ export async function POST(
     }
 
     // Chuyển đổi start và end sang múi giờ của Việt Nam
-    const vnTimeZone = "Asia/Ho_Chi_Minh";
-    const zonedStart = utcToZonedTime(new Date(start), vnTimeZone);
-    const formattedStart = format(zonedStart, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
 
     const eventCalendar = await prismadb.eventCalendar.create({
       data: {
         title,
-        start: formattedStart,
+        start: start,
         end: null,
         allDay,
         storeId: params.storeId,
@@ -156,7 +153,8 @@ export async function POST(
         userId: userId?.id || "",
       },
     });
-
+    
+    const vnTimeZone = "Asia/Ho_Chi_Minh";
     const emailTimeStart = eventCalendar.start
       ? format(
           utcToZonedTime(
