@@ -68,14 +68,22 @@ export default function Home() {
     allDay: false,
     id: 0,
   });
-  const [isCheckingAttendanceStart, setIsCheckingAttendanceStart] =
-    useState(false);
+  const [isCheckingAttendanceStart, setIsCheckingAttendanceStart] = useState(false);
   const [isCheckingAttendanceEnd, setIsCheckingAttendanceEnd] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isAddingEvent, setIsAddingEvent] = useState(false);
   const [isAttendanceStartCalled, setIsAttendanceStartCalled] = useState(false);
   const [isEventEnded, setIsEventEnded] = useState(false);
   const [account, setAccount] = useState<AccountItem | null>(null);
+  const [currentTime, setCurrentTime] = useState(new Date().toLocaleString());
+//DeleteTime now
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentTime(new Date().toLocaleString());
+    }, 1000); // Update every second
+
+    return () => clearInterval(intervalId); // Cleanup the interval on component unmount
+  }, []); // Run only once on component mount
 
   useEffect(() => {
     const fetchData = async () => {
@@ -125,6 +133,7 @@ export default function Home() {
     }
   }, []);
 
+  //Dùng để check nếu như ngày hiện tại chưa có ❎ thì disable nếu có thì không
   useEffect(() => {
     const today = new Date();
     const todayEvents = allEvents.filter((event) => {
@@ -747,16 +756,7 @@ export default function Home() {
                       - <span className="font-bold">{userId?.email}</span>. Bạn
                       đã xóa sự kiện vào lúc:{" "}
                       <span className="font-bold">
-                        {response.data?.createdAt
-                           ? format(
-                            utcToZonedTime(
-                              new Date(response.data?.createdAt),
-                              vietnamTimeZone
-                            ),
-                            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-                            { locale: viLocale }
-                          )
-                        : null}
+                          {currentTime}
                       </span>
                       .
                     </p>
