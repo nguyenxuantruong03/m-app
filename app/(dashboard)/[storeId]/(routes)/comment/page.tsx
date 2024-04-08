@@ -4,41 +4,33 @@ import { RoleGate } from "@/components/auth/role-gate";
 import { currentRole } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
 import FormSuccess from "@/components/form-success";
-import { SalaryStaffsColumn } from "./components/column";
-import SalaryStaffClient from "./components/client";
-import { formatter } from "@/lib/utils";
+import CommentClient from "./components/client";
 import { utcToZonedTime } from "date-fns-tz";
 import viLocale from "date-fns/locale/vi";
+import { CommentColumn } from "./components/column";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 
-const SalaryStaff = async () => {
+const Comment = async () => {
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN;
   const showOrderRole = isRole;
-  const caculateSalary = await prismadb.caculateSalary.findMany({
+  const comment = await prismadb.comment.findMany({
     include: {
       user: true,
-      eventcalendar: true,
+      responsecomment: true
     },
   });
 
-  const formattedUser: SalaryStaffsColumn[] = caculateSalary.map((item) => {
-    const totalSalary =
-      (item.salaryday ? item.salaryday.toNumber() : 0) +
-      (item.bonus ? item.bonus : 0);
-    return {
-      id: item.id,
-      bonus: item.bonus ? formatter.format(item.bonus) : null,
-      salaryday: item.salaryday
-        ? formatter.format(item.salaryday.toNumber())
-        : null,
-      salarytotal: totalSalary ? formatter.format(totalSalary) : null, // Gán tổng cho salarytotal
-      name: item.user.name,
-      email: item.user.email,
-      isSent: item.isSent,
-      isPaid: item.isPaid,
-      degree: item.user.degree,
-      createdAt: item.createdAt
+  const formattedComment: CommentColumn[] = comment.map((item) => ({
+    id: item.id,
+    name: item.user.name,
+    email: item.user.email,
+    role: item.user.role,
+    rating: item.rating,
+    comment: item.comment,
+    nameproduct: item.nameproduct,
+    description: item.responsecomment.map((item)=> item.description),
+    createdAt: item.createdAt
         ? format(
             utcToZonedTime(
               new Date(new Date(item.createdAt)),
@@ -48,13 +40,12 @@ const SalaryStaff = async () => {
             { locale: viLocale }
           )
         : null,
-    };
-  });
+  }));
 
   return (
     <div className="w-full">
       <div className={`space-y-4 p-8 pt-6 ${showOrderRole}`}>
-        {showOrderRole && <SalaryStaffClient data={formattedUser} />}
+        {showOrderRole && <CommentClient data={formattedComment} />}
       </div>
       <RoleGate allowedRole={UserRole.ADMIN}>
         <FormSuccess message="Bạn có thể xem được nội dung này!" />
@@ -63,4 +54,4 @@ const SalaryStaff = async () => {
   );
 };
 
-export default SalaryStaff;
+export default Comment;

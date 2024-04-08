@@ -89,13 +89,12 @@ export async function POST(
 
     //Chuyển sang giờ VIỆT NAM
     const vnTimeZone = "Asia/Ho_Chi_Minh";
-    const zonedStartTime = utcToZonedTime(new Date(start), vnTimeZone);
     const zonedEndTime = utcToZonedTime(endTime, vnTimeZone);
 
     const eventCalendar = await prismadb.eventCalendar.create({
       data: {
         title,
-        start: zonedStartTime,
+        start: start,
         end: zonedEndTime,
         allDay,
         storeId: params.storeId,

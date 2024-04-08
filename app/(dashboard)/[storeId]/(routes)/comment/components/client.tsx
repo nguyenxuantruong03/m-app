@@ -6,14 +6,14 @@ import { DataTable } from "@/components/ui/data-table";
 import { ApiList } from "@/components/ui/api-list";
 import { UserRole } from "@prisma/client";
 import { useCurrentRole } from "@/hooks/use-current-role";
-import { SalaryStaffsColumn, columns } from "./column";
+import { CommentColumn, columns } from "./column";
 import Downloadfile from "@/components/file/downloadfilepage";
 
-interface SalaryStaffClientProps {
-  data: SalaryStaffsColumn[];
+interface CommentClientProps {
+  data: CommentColumn[];
 }
 
-const SalaryStaffClient: React.FC<SalaryStaffClientProps> = ({ data }) => {
+const CommentClient: React.FC<CommentClientProps> = ({ data }) => {
   const role = useCurrentRole();
   const isRole = role === UserRole.ADMIN;
   const showAPIRole = isRole;
@@ -21,18 +21,18 @@ const SalaryStaffClient: React.FC<SalaryStaffClientProps> = ({ data }) => {
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Lương (${data.length})`}
-          description="Quản lý lương nhân viên"
+          title={`Đánh giá (${data.length})`}
+          description="Quản lý đánh giá"
         />
-        <Downloadfile data={data} filename="salarystaff" />
+        <Downloadfile data={data} filename="đánh_giá" />
       </div>
       <Separator />
       <DataTable searchKey="name" columns={columns} data={data} />
-      {showAPIRole && <Heading title="Api" description="API calls for User" />}
+      {showAPIRole && <Heading title="Api" description="API calls for Comment" />}
       <Separator />
-      <ApiList entityIdName="" entityName="salarystaff" />
+      <ApiList entityIdName="commentId" entityName="comments" />
     </>
   );
 };
 
-export default SalaryStaffClient;
+export default CommentClient;

@@ -125,7 +125,7 @@ export const sendBonus = async (
     from: "mail@vlxdxuantruong.email",
     to: email,
     subject: "Nhận tiền thường!",
-    html: `Xin chào <strong> ${name}!</strong> Bạn đã nhận thêm <strong>+${bonus}</strong> vào ngày <strong>${today}</strong> vì đã hoàn thành xuất xác trong việc <strong>${title}</strong>. Tổng số tiền bonus: <strong>${currenmoney}</strong>.`,
+    html: `Xin chào <strong> ${name}!</strong> Bạn đã nhận thêm <strong>+${bonus}</strong> vào ngày <strong>${today}</strong> vì lý do: <strong>${title}</strong>. Tổng số tiền bonus: <strong>${currenmoney}</strong>.`,
   });
 }
 };
@@ -143,7 +143,48 @@ export const sendunBonus = async (
     from: "mail@vlxdxuantruong.email",
     to: email,
     subject: "Mất tiền thưởng!",
-    html: `Xin chào <strong> ${name}!</strong> Bạn đã bị trừ <strong>${unbonus}</strong> vào ngày <strong>${today}</strong> vì chưa hoàn thành xuất xác trong việc <strong>${title}</strong>.Tổng số tiền bonus còn lại: <strong>${currenmoney}</strong>.`,
+    html: `Xin chào <strong> ${name}!</strong> Bạn đã bị trừ <strong>${unbonus}</strong> vào ngày <strong>${today}</strong> vì lý do: ${title}</strong>.Tổng số tiền bonus còn lại: <strong>${currenmoney}</strong>.`,
+  });
+}
+};
+
+
+export const sendSpin = async (
+  email: string | null | undefined,
+  name: string | null | undefined,
+  bonus: string | "0",
+  currenmoney: string | "0",
+  bonuscoin: string | "0",
+  totalcoin: string | "0",
+  title: string | null | undefined,
+  today: string | null | undefined
+) => {
+  if(email){
+  await resend.emails.send({
+    from: "mail@vlxdxuantruong.email",
+    to: email,
+    subject: "Nhận thưởng!",
+    html: `Xin chào <strong> ${name}!</strong> Bạn đã nhận thêm <strong>+${bonus}vòng quay</strong> và <strong>+${bonuscoin}xu</strong> vào ngày <strong>${today}</strong> vì lý do <strong>${title}</strong>. Tổng số spin và coin: <strong>${currenmoney}vòng quay</strong> và <strong>${totalcoin}xu</strong>.`,
+  });
+}
+};
+
+export const sendunSpin = async (
+  email: string | null | undefined,
+  name: string | null | undefined,
+  unbonus: string | "0",
+  currenmoney: string | "0",
+  unbonuscoin: string | "0",
+  totalcoin: string | "0",
+  title: string | null | undefined,
+  today: string | null | undefined
+) => {
+  if(email){
+  await resend.emails.send({
+    from: "mail@vlxdxuantruong.email",
+    to: email,
+    subject: "Mất thưởng!",
+    html: `Xin chào <strong> ${name}!</strong> Bạn đã bị trừ <strong>${unbonus}vòng quay</strong> và <strong>${unbonuscoin}xu</strong> vào ngày <strong>${today}</strong> vì lý do <strong>${title}</strong>.Tổng số spin và coin còn lại: <strong>${currenmoney}vòng quay</strong> và <strong>${totalcoin}xu</strong>.`,
   });
 }
 };

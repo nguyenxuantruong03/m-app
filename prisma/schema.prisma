@@ -661,8 +661,6 @@ model Comment {
   user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   rating          Int
   comment         String
-  commenter       String
-  imageUrl        String
   nameproduct     String
   responsecomment ResponseComment[]
   createdAt       DateTime          @default(now())
@@ -678,8 +676,6 @@ model ResponseComment {
   comment     Comment  @relation(fields: [commentId], references: [id])
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  commenter   String
-  imageUrl    String
   description String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -694,7 +690,7 @@ model WheelSpin {
   store     Store    @relation("StoreToWheelSpin", fields: [storeId], references: [id])
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  coin      String
+  coin      Int      @default(0)
   rotation  Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

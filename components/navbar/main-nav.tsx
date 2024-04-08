@@ -50,6 +50,16 @@ const MainNav = ({
       label: "Quản lý lương nhân viên",
       active: pathname === `/${params.storeId}/salarystaff`,
     },
+    {
+      href: `/${params.storeId}/wheelSpin`,
+      label: "Quản lý xu, vòng quay",
+      active: pathname === `/${params.storeId}/wheelSpin`,
+    },
+    {
+      href: `/${params.storeId}/comment`,
+      label: "Quản lý đánh giá",
+      active: pathname === `/${params.storeId}/comment`,
+    },
   ];
   const billboards = [
     {
