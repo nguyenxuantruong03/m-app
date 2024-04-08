@@ -35,7 +35,7 @@ export async function POST(
   }
 }
 
-export async function GET({ params }: { params: { storeId: string } }) {
+export async function GET() {
   try {
     const userId = await currentUser();
 
@@ -46,7 +46,6 @@ export async function GET({ params }: { params: { storeId: string } }) {
     const coins = await prismadb.wheelSpin.findMany({
       where: {
         userId: userId.id || "",
-        storeId: params.storeId,
       },
     });
     // Return the sum of all coins
@@ -78,37 +77,37 @@ export async function GET({ params }: { params: { storeId: string } }) {
 // }
 
 //--------------Delete xóa coins --------------------------------
-export async function DELETE({ params }: { params: { storeId: string } }) {
-  try {
-    const userId = await currentUser();
+// export async function DELETE({ params }: { params: { storeId: string } }) {
+//   try {
+//     const userId = await currentUser();
 
-    if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
-    }
+//     if (!userId) {
+//       return new NextResponse("Unauthenticated", { status: 403 });
+//     }
 
-    // Find the specific wheelSpin record for the authenticated user
-    const existingWheelSpin = await prismadb.wheelSpin.findFirst({
-      where: {
-        userId: userId.id || "",
-        storeId: params.storeId,
-      },
-    });
+//     // Find the specific wheelSpin record for the authenticated user
+//     const existingWheelSpin = await prismadb.wheelSpin.findFirst({
+//       where: {
+//         userId: userId.id || "",
+//         storeId: params.storeId,
+//       },
+//     });
 
-    if (!existingWheelSpin) {
-      return new NextResponse("No wheelSpin record found for the user", {
-        status: 404,
-      });
-    }
+//     if (!existingWheelSpin) {
+//       return new NextResponse("No wheelSpin record found for the user", {
+//         status: 404,
+//       });
+//     }
 
-    // Update only the 'coin' field to 0
-    await prismadb.wheelSpin.update({
-      where: { id: existingWheelSpin.id },
-      data: { coin: 0 },
-    });
+//     // Update only the 'coin' field to 0
+//     await prismadb.wheelSpin.update({
+//       where: { id: existingWheelSpin.id },
+//       data: { coin: 0 },
+//     });
 
-    return new NextResponse("Coin reset successfully", { status: 200 });
-  } catch (error) {
-    console.error("Error resetting coin:", error);
-    return new NextResponse("Internal error", { status: 500 });
-  }
-}
+//     return new NextResponse("Coin reset successfully", { status: 200 });
+//   } catch (error) {
+//     console.error("Error resetting coin:", error);
+//     return new NextResponse("Internal error", { status: 500 });
+//   }
+// }
