@@ -132,18 +132,17 @@ export default function Home() {
       const vnTimeZone = "Asia/Ho_Chi_Minh";
       const zonedDateTimeVN = utcToZonedTime(eventDate, vnTimeZone);
       return (
-        event.attendancestart === "❎" &&
         zonedDateTimeVN.getDate() === today.getDate() &&
         zonedDateTimeVN.getMonth() === today.getMonth() &&
         zonedDateTimeVN.getFullYear() === today.getFullYear()
       );
     });
-
-    // Nếu có sự kiện, đặt state để chỉ định rằng đã gọi cho ngày hiện tại
-    if (todayEvents.length > 0) {
-      setIsAttendanceStartCalled(true);
-    }
+    // Kiểm tra nếu có ít nhất một sự kiện trong ngày hiện tại và có ít nhất một sự kiện có attendancestart === "❎"
+    const isAttendanceStartCalled = todayEvents.some(event => event.attendancestart === "❎");
+    // Nếu có ít nhất một sự kiện có attendancestart === "❎", không disable, ngược lại thì disable
+    setIsAttendanceStartCalled(isAttendanceStartCalled);
   }, [allEvents]);
+  
 
   useEffect(() => {
     const hasEventEnded = allEvents.some((event) => {
