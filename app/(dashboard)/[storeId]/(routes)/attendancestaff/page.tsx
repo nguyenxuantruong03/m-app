@@ -748,15 +748,15 @@ export default function Home() {
                       đã xóa sự kiện vào lúc:{" "}
                       <span className="font-bold">
                         {response.data?.createdAt
-                          ? format(
-                              utcToZonedTime(
-                                subHours(new Date(response.data?.createdAt), 7),
-                                vietnamTimeZone
-                              ),
-                              "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-                              { locale: viLocale }
-                            )
-                          : null}
+                           ? format(
+                            utcToZonedTime(
+                              new Date(response.data?.createdAt),
+                              vietnamTimeZone
+                            ),
+                            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+                            { locale: viLocale }
+                          )
+                        : null}
                       </span>
                       .
                     </p>

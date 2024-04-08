@@ -115,9 +115,8 @@ export async function POST(
       : null;
     const emailTimeend = eventCalendar.end
       ? format(
-          utcToZonedTime(subHours(new Date(eventCalendar.end), 7), vnTimeZone),
+          (new Date(eventCalendar.end)),
           "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-          { locale: viLocale }
         )
       : null;
     await sendAttendanceStart(
