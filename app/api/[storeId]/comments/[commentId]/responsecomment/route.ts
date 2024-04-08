@@ -114,19 +114,19 @@ export async function PATCH(req: Request,{ params }: { params?: { commentId?: st
 }
 
 
-export async function GET({ params }: { params?: { commentId?: string } }) {
-  try {
+// export async function GET({ params }: { params?: { commentId?: string } }) {
+//   try {
 
-    const responseComment = await prismadb.responseComment.findMany({
-      where: {
-        commentId: params?.commentId,
-      },
-    });
+//     const responseComment = await prismadb.responseComment.findMany({
+//       where: {
+//         commentId: params?.commentId,
+//       },
+//     });
 
-    return NextResponse.json(responseComment);
-  } catch (error) {
-    console.error('Error fetching comments:', error);
-    return new NextResponse('Internal error', { status: 500 });
-  }
-}
+//     return NextResponse.json(responseComment);
+//   } catch (error) {
+//     console.error('Error fetching comments:', error);
+//     return new NextResponse('Internal error', { status: 500 });
+//   }
+// }
 
