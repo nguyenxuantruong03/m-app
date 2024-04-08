@@ -4,7 +4,7 @@ import prismadb from "@/lib/prismadb";
 import { format } from "date-fns";
 import { NextResponse } from "next/server";
 
-export async function GET({ params }: { params: { storeId: string } }) {
+export async function GET() {
     try {
       const userId = await currentUser();
      
