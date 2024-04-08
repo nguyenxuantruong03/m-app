@@ -173,13 +173,10 @@ export async function PATCH(
       );
     }
 
-    //Chuyển sang giờ VIỆT NAM
-    const vnTimeZone = "Asia/Ho_Chi_Minh";
-    const zonedStartTime = utcToZonedTime(new Date(start), vnTimeZone);
     const eventCalendar = await prismadb.eventCalendar.create({
       data: {
         title,
-        start: zonedStartTime,
+        start: start,
         allDay,
         end: null,
         storeId: params.storeId,
