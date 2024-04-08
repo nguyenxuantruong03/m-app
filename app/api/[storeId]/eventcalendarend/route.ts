@@ -70,9 +70,7 @@ export async function GET(
 
     if (latestEvent) {
       const latestEventEnd = new Date(latestEvent.end!);
-      const vnTimeZone = "Asia/Ho_Chi_Minh";
-      const latestEventEndVN = utcToZonedTime(latestEventEnd, vnTimeZone);
-      if (currentTimeVN >= latestEventEndVN) {
+      if (currentTimeVN >= latestEventEnd) {
         return NextResponse.json(latestEvent);
       } else {
         return new NextResponse(
