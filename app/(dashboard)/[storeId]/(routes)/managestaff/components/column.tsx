@@ -306,7 +306,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
 
   {
     accessorKey: "isCitizen",
-    header: "isCitizen",
+    header: "Định dạnh",
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       return (
@@ -322,7 +322,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
   },
   {
     accessorKey: "sentVeirifi",
-    header: "sentVeirifi",
+    header: "Gửi xác nhận",
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       return (

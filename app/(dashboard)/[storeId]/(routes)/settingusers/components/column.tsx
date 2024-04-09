@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-import { Ban, Shield, ShieldOff, ShieldCheck } from "lucide-react";
+import {  ShieldOff, ShieldCheck, ShieldMinus, ShieldPlus } from "lucide-react";
 import { Lock, Unlock } from "lucide-react";
 
 // This type is used to define the shape of our data.
@@ -260,9 +260,9 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
       return (
         <div className={isBanned ? "line-through text-gray-400" : ""}>
           {row.original.isTwoFactorEnabled ? (
-            <Lock className="text-red-600" />
+            <Lock className="text-green-600"  />
           ) : (
-            <Unlock className="text-green-600" />
+            <Unlock className="text-red-600" />
           )}
         </div>
       );
@@ -277,9 +277,9 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
       return (
         <div>
           {isBanned ? (
-            <Ban className="text-red-600" />
+            <ShieldMinus className="text-red-600" />
           ) : (
-            <Shield className="text-green-600" />
+            <ShieldPlus className="text-green-600" />
           )}
         </div>
       );
