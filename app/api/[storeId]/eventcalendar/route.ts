@@ -272,6 +272,10 @@ export async function DELETE(
         totalPoints -= 0;
         break;
     }
+    
+    if (deletedEvent.title === "❎") {
+      totalPoints = -0;
+    }
 
     // Tìm và cập nhật bản ghi tồn tại nếu có, nếu không, tạo mới
     let existingSalary = await prismadb.caculateSalary.findFirst({
