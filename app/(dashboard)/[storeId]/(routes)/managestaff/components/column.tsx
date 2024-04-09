@@ -230,15 +230,22 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
     header: "gender",
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
-      const genderText = row.original.gender === "Male" ? "Trai" : "Gái";
-
+      let genderText = "Undefined"; // Mặc định là Undefined
+  
+      if (row.original.gender === "Male") {
+        genderText = "Trai";
+      } else if (row.original.gender === "Female") {
+        genderText = "Gái";
+      }
+  
       return (
         <div className={isBanned ? "line-through text-gray-400" : ""}>
           {genderText}
         </div>
       );
     },
-  },
+  }
+  ,
 
   {
     accessorKey: "degree",
