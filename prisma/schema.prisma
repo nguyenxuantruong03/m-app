@@ -456,6 +456,7 @@ enum UserRole {
 }
 
 enum Gender {
+  Undefined
   Male
   Female
 }
@@ -520,7 +521,7 @@ model User {
   numberCCCD            String?
   dateRange             DateTime?
   issued                String?
-  gender                Gender?
+  gender                Gender?               @default(Undefined)
   //Bằng cấp
   degree                Degree?
   //Tình trạng hôn nhân 
