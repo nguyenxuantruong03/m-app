@@ -1,5 +1,5 @@
 import prismadb from "@/lib/prismadb";
-import { format } from "date-fns";
+import { format, subHours } from "date-fns";
 import { RoleGate } from "@/components/auth/role-gate";
 import { currentRole} from "@/lib/auth";
 import { Account, UserRole } from "@prisma/client";
@@ -44,7 +44,14 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
       .join(", "),
     password: item.password,
     lastlogin: item.lastlogin
-    ? format(new Date(item.lastlogin), "E '-' dd/MM/yyyy '-' HH:mm:ss a")
+    ? format(
+        utcToZonedTime(
+          subHours(new Date(item.lastlogin), 7),
+          vietnamTimeZone
+        ),
+        "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+        { locale: viLocale }
+      )
     : null,
     role: item.role,
     accounts: item.accounts.map((accountItem: Account) => ({
@@ -67,7 +74,14 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
         : null,
     ban: item.ban,
     banExpires:item.banExpires
-    ? format(new Date(item.banExpires), "E '-' dd/MM/yyyy '-' HH:mm:ss a")
+    ? format(
+        utcToZonedTime(
+          subHours(new Date(item.banExpires), 7),
+          vietnamTimeZone
+        ),
+        "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+        { locale: viLocale }
+      )
     : null,
   }));
 
