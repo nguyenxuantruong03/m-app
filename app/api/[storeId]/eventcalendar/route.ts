@@ -113,7 +113,7 @@ export async function POST(
       const emailTimeend = eventCalendar.end
       ? format(
           utcToZonedTime(
-            subHours(new Date(eventCalendar.end),0),
+            subHours(new Date(eventCalendar.end), 7),
             vnTimeZone
           ),
           "E '-' dd/MM/yyyy '-' HH:mm:ss a",
