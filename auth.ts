@@ -27,14 +27,14 @@ export const {
   },
   callbacks: {
     async signIn({ user, account }) {
+      const now = new Date();
+      now.setHours(now.getHours() + 7);
       const existingUser = await getUserById(user.id);
       if (account?.provider !== "credentials") return true
       if (existingUser?.ban === true) {
         const banExpiresAt = existingUser.banExpires
           ? new Date(existingUser.banExpires)
           : null;
-        const now = new Date();
-        now.setHours(now.getHours() + 7);
         if (banExpiresAt && banExpiresAt > now) {
           return false;
         } else if (banExpiresAt) {
@@ -64,6 +64,13 @@ export const {
           where: { id: twoFactorConfirmation.id },
         });
       }
+      //Cập nhật lại thời gian mỗi khi đăng nhập
+      await prismadb.user.update({
+        where: { id: existingUser.id },
+        data: {
+          lastlogin: now,
+        },
+      });
       return true;
     },
 
@@ -86,14 +93,27 @@ export const {
       }
       return session;
     },
-    async jwt({ token }) {
+    async jwt({ token, user, account }) {
       if (!token.sub) return token;
 
       const existingUser = await getUserById(token.sub);
       if (!existingUser) return token;
 
       const existingAccount = await getAccountByUserId(existingUser.id);
-
+      if (user && account) {
+        if (existingUser) {
+          const now = new Date();
+          now.setHours(now.getHours() + 7);
+  
+          //Cập nhật lại thời gian mỗi khi đăng nhập
+          await prismadb.user.update({
+            where: { id: existingUser.id },
+            data: {
+              lastlogin: now,
+            },
+          });
+        }
+      }
       token.isOAuth = !!existingAccount;
       token.name = existingUser.name;
       token.email = existingUser.email;

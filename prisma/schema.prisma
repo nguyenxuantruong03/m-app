@@ -503,6 +503,7 @@ model User {
   image                 String?
   imageCredential       String[]
   password              String?
+  lastlogin             DateTime?
   role                  UserRole               @default(USER)
   accounts              Account[]
   eventcalendar         EventCalendar[]

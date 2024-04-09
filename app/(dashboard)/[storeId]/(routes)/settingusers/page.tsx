@@ -43,6 +43,7 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
       })
       .join(", "),
     password: item.password,
+    lastlogin: item.lastlogin ? format(new Date(new Date(item.lastlogin).setHours(new Date(item.lastlogin).getHours() - 7)), "E '-' dd/MM/yyyy '-' HH:mm:ss a") : null,
     role: item.role,
     accounts: item.accounts.map((accountItem: Account) => ({
       type: accountItem.type,
@@ -63,9 +64,7 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
           )
         : null,
     ban: item.ban,
-    banExpires: item.banExpires
-      ? format(item.banExpires, "dd/MM/yyyy")
-      : null,
+    banExpires: item.banExpires ? format(new Date(new Date(item.banExpires).setHours(new Date(item.banExpires).getHours() - 7)), "E '-' dd/MM/yyyy '-' HH:mm:ss a") : null,
   }));
 
 

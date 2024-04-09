@@ -31,6 +31,7 @@ export type SettingUsersColumn = {
   isCitizen: boolean | null;
   isTwoFactorEnabled: boolean;
   ban: boolean | null;
+  lastlogin: string |   null;
   banExpires: string | null;
   createdAt: string | null;
 };
@@ -149,6 +150,20 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
       );
     },
   },
+
+  {
+    accessorKey: "lastlogin",
+    header: "lastlogin",
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      return (
+        <div className={isBanned ? "line-through text-gray-400" : ""}>
+          {row.original.lastlogin}
+        </div>
+      );
+    },
+  },
+
   {
     accessorKey: "image",
     header: "Image",
