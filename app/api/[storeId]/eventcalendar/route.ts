@@ -9,7 +9,12 @@ import viLocale from "date-fns/locale/vi";
 
 export async function GET(req: Request) {
   try {
-    const eventCalendar = await prismadb.eventCalendar.findMany();
+    const userId = await currentUser();
+    const eventCalendar = await prismadb.eventCalendar.findMany({
+      where: {
+        userId: userId?.id 
+      }
+    });
     return NextResponse.json(eventCalendar);
   } catch (error) {
     return new NextResponse(
