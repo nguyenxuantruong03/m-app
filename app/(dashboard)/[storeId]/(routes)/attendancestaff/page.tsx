@@ -157,20 +157,28 @@ export default function Home() {
     const hasEventEnded = allEvents.some((event) => {
       const eventDate = new Date(event.start);
       const today = new Date();
-      today.setHours(today.getHours() + 7);
       const vnTimeZone = "Asia/Ho_Chi_Minh";
       const zonedDateTimeVN = utcToZonedTime(eventDate, vnTimeZone);
-      return (
+  
+      // Kiểm tra nếu sự kiện đã kết thúc và không phải là ngày hiện tại thì return true
+      if (
         event.title === "✅" &&
-        zonedDateTimeVN.getDate() === today.getDate() &&
-        zonedDateTimeVN.getMonth() === today.getMonth() &&
-        zonedDateTimeVN.getFullYear() === today.getFullYear()
-      );
+        !(zonedDateTimeVN.getDate() === today.getDate() &&
+          zonedDateTimeVN.getMonth() === today.getMonth() &&
+          zonedDateTimeVN.getFullYear() === today.getFullYear())
+      ) {
+        return true;
+      }
+  
+      return false;
     });
-
-    // Cập nhật trạng thái isEventEnded
-    setIsEventEnded(hasEventEnded);
+  
+    // Nếu không có sự kiện đã kết thúc trong ngày hiện tại thì mới cập nhật trạng thái
+    if (!hasEventEnded) {
+      setIsEventEnded(false);
+    }
   }, [allEvents]);
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -815,7 +823,7 @@ export default function Home() {
   }
   return (
     <>
-      <nav className="flex justify-between mb-12 border-b border-violet-100 p-4">
+      <nav className="flex justify-between mb-12 p-4">
         <h1 className="font-bold text-2xl text-gray-700 absolute dark:text-slate-400">
           Nhân viên điểm danh
         </h1>
