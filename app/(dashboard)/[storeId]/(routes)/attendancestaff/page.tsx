@@ -73,7 +73,7 @@ export default function Home() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isAddingEvent, setIsAddingEvent] = useState(false);
   const [isAttendanceStartCalled, setIsAttendanceStartCalled] = useState(false);
-  const [isEventEnded, setIsEventEnded] = useState(false);
+  const [isAttendanceEndCalled, setIsAttendanceEndCalled] = useState(false);
   const [account, setAccount] = useState<AccountItem | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleString());
 //DeleteTime now
@@ -148,35 +148,14 @@ export default function Home() {
     });
     // Kiểm tra nếu có ít nhất một sự kiện trong ngày hiện tại và có ít nhất một sự kiện có attendancestart === "❎"
     const isAttendanceStartCalled = todayEvents.some(event => event.attendancestart === "❎");
+    // Kiểm tra nếu có ít nhất một sự kiện trong ngày hiện tại và có ít nhất một sự kiện có attendanceend === "✅"
+    const isAttendanceEndCalled = todayEvents.some(event => event.attendanceend === "✅");
+
     // Nếu có ít nhất một sự kiện có attendancestart === "❎", không disable, ngược lại thì disable
     setIsAttendanceStartCalled(isAttendanceStartCalled);
-  }, [allEvents]);
-  
 
-  useEffect(() => {
-    const hasEventEnded = allEvents.some((event) => {
-      const eventDate = new Date(event.start);
-      const today = new Date();
-      const vnTimeZone = "Asia/Ho_Chi_Minh";
-      const zonedDateTimeVN = utcToZonedTime(eventDate, vnTimeZone);
-  
-      // Kiểm tra nếu sự kiện đã kết thúc và không phải là ngày hiện tại thì return true
-      if (
-        event.title === "✅" &&
-        !(zonedDateTimeVN.getDate() === today.getDate() &&
-          zonedDateTimeVN.getMonth() === today.getMonth() &&
-          zonedDateTimeVN.getFullYear() === today.getFullYear())
-      ) {
-        return true;
-      }
-  
-      return false;
-    });
-  
-    // Nếu không có sự kiện đã kết thúc trong ngày hiện tại thì mới cập nhật trạng thái
-    if (!hasEventEnded) {
-      setIsEventEnded(false);
-    }
+    // Nếu có ít nhất một sự kiện có attendanceend === "✅", không disable, ngược lại thì disable
+    setIsAttendanceEndCalled(isAttendanceEndCalled);
   }, [allEvents]);
   
 
@@ -418,8 +397,8 @@ export default function Home() {
         return;
       }
       try {
-        if (isEventEnded) {
-          toast.error("Không thể kết thúc!");
+        if (isAttendanceEndCalled) {
+          toast.error("Đã kết thúc cho ngày hiện tại!");
           setIsCheckingAttendanceEnd(false);
           setIsCheckingAttendanceStart(false);
           setIsAddingEvent(false);
@@ -897,7 +876,7 @@ export default function Home() {
           <Button
             onClick={handleCheckAttendanceEnd}
             className="px-4 py-2 rounded-md"
-            disabled={!isAttendanceStartCalled || isCheckingAttendanceEnd}
+            disabled={!isAttendanceStartCalled || isCheckingAttendanceEnd || isAttendanceEndCalled}
           >
             Kết thúc
           </Button>
