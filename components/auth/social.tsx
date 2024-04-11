@@ -12,21 +12,38 @@ const Social = () => {
     const searchParam= useSearchParams()
     const callbackUrl = searchParam.get('callbackUrl')
 
-    const onClick = (provider: "google" | "github") => {
+    const onClick = (provider: "google" | "github" | "facebook" | "apple" | "linkedin" | "microsoft") => {
         signIn(provider, {
             callbackUrl: callbackUrl || DEFAULT_LOGIN_REDIRECT,
         });
     };
     
     return ( 
-        <div className="flex item-center w-full gap-x-2">
-            <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("google")}}>
+        <div className="grid grid-rows-2 w-full">
+            <div className="flex items-center space-x-1">
+                <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("google")}}>
                 <Image src="/images-icon/google.png" alt="404" width="50" height="50" className='h-5 w-5'/>
-            </Button>
-            <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("github")}}>
-            <Github className="h-5 w-5"/>
-            </Button>
-        </div>
+                </Button>
+                <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("github")}}>
+                <Github className="h-5 w-5"/>
+                </Button>
+                <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("facebook")}}>
+                <Image src="/images-icon/facebook-icon.png.png" alt="404" width="50" height="50" className='h-9 w-9'/>
+                </Button>
+            </div>
+
+            <div className="flex items-center space-x-1 space-y-1">
+                <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("apple")}}>
+                <Image src="/images-icon/apple.svg.png" alt="404" width="50" height="50" className='h-12 w-12'/>
+                </Button>
+                <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("linkedin")}}>
+                <Image src="/images-icon/LinkedIn.svg.png" alt="404" width="50" height="50" className='h-5 w-5'/>
+                </Button>
+                <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("microsoft")}}>
+                <Image src="/images-icon/Microsoft.svg.png" alt="404" width="50" height="50" className='h-5 w-5'/>
+                </Button>
+            </div>
+    </div>
      );
 }
  
