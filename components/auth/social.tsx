@@ -12,7 +12,7 @@ const Social = () => {
     const searchParam= useSearchParams()
     const callbackUrl = searchParam.get('callbackUrl')
 
-    const onClick = (provider: "google" | "github" | "facebook" | "gitlab" | "discord" | "microsoft") => {
+    const onClick = (provider: "google" | "github" | "facebook" | "gitlab" | "tiktok" | "microsoft") => {
         signIn(provider, {
             callbackUrl: callbackUrl || DEFAULT_LOGIN_REDIRECT,
         });
@@ -36,10 +36,11 @@ const Social = () => {
                 <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("gitlab")}}>
                 <Image src="/images-icon/gitlab.png" alt="404" width="50" height="50" className='h-5 w-5'/>
                 </Button>
-                <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("discord")}}>
+                <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("tiktok")}}>
+                1
                 {/* <Image src="/images-icon/LinkedIn.svg.png" alt="404" width="50" height="50" className='h-5 w-5'/>
+                
                  */}
-                 1
                 </Button>
                 {/* <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("microsoft")}}>
                 <Image src="/images-icon/Microsoft.svg.png" alt="404" width="50" height="50" className='h-5 w-5'/>

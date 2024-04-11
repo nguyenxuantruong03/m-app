@@ -5,8 +5,6 @@ import Google from "next-auth/providers/google";
 import Github from "next-auth/providers/github";
 import Facebook from "next-auth/providers/facebook";
 import Gitlab from "next-auth/providers/gitlab";
-import Discord from "next-auth/providers/discord";
-import Instagram from "next-auth/providers/instagram";
 import Reddit from "next-auth/providers/reddit";
 import Twitter from "next-auth/providers/twitter";
 import Tiktok from "next-auth/providers/tiktok";
@@ -33,9 +31,10 @@ export default {
       clientId: process.env.GITLAB_CLIENT_ID,
       clientSecret: process.env.GITLAB_CLIENT_SECRET
     }),
-    Discord({
-      clientId: process.env.DISCORD_CLIENT_ID,
-      clientSecret: process.env.DISCORD_CLIENT_SECRET
+    Tiktok({
+      clientId: process.env.TIKTOK_CLIENT_ID,
+      clientSecret: process.env.TIKTOK_CLIENT_SECRET,
+      issuer: "https://tiktok.com",
     }),
     Credentials({
       async authorize(credentials) {
