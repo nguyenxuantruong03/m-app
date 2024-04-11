@@ -4,9 +4,14 @@ import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import Github from "next-auth/providers/github";
 import Facebook from "next-auth/providers/facebook";
-import Linkedin from "next-auth/providers/linkedin";
-import Apple from "next-auth/providers/apple";
-import Microsoft from "next-auth/providers/azure-ad";
+import Gitlab from "next-auth/providers/gitlab";
+import Discord from "next-auth/providers/discord";
+import Instagram from "next-auth/providers/instagram";
+import Reddit from "next-auth/providers/reddit";
+import Twitter from "next-auth/providers/twitter";
+import Tiktok from "next-auth/providers/tiktok";
+import Twitch from "next-auth/providers/twitch";
+import Spotify from "next-auth/providers/spotify";
 import { LoginSchema } from "@/schemas";
 import { getUserByEmail } from "@/data/user";
 
@@ -24,19 +29,14 @@ export default {
       clientId: process.env.FACEBOOK_CLIENT_ID,
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
     }),
-    // Linkedin({
-    //   clientId: process.env.,
-    //   clientSecret: process.env.,
-    // }),
-    // Apple({
-    //   clientId: process.env.,
-    //   clientSecret: process.env.,
-    // }),
-    // Microsoft({
-    //   AZURE_AD_CLIENT_ID=: process.env.,
-    //   AZURE_AD_CLIENT_SECRET: process.env.,
-    //   AZURE_AD_TENANT_ID: process.env.,
-    // }),
+    Gitlab({
+      clientId: process.env.GITLAB_CLIENT_ID,
+      clientSecret: process.env.GITLAB_CLIENT_SECRET
+    }),
+    Discord({
+      clientId: process.env.DISCORD_CLIENT_ID,
+      clientSecret: process.env.DISCORD_CLIENT_SECRET
+    }),
     Credentials({
       async authorize(credentials) {
         const validatedFields = LoginSchema.safeParse(credentials);

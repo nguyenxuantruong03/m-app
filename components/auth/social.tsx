@@ -12,7 +12,7 @@ const Social = () => {
     const searchParam= useSearchParams()
     const callbackUrl = searchParam.get('callbackUrl')
 
-    const onClick = (provider: "google" | "github" | "facebook" | "apple" | "linkedin" | "microsoft") => {
+    const onClick = (provider: "google" | "github" | "facebook" | "gitlab" | "discord" | "microsoft") => {
         signIn(provider, {
             callbackUrl: callbackUrl || DEFAULT_LOGIN_REDIRECT,
         });
@@ -33,15 +33,17 @@ const Social = () => {
             </div>
 
             <div className="flex items-center space-x-1 space-y-1">
-                <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("apple")}}>
-                <Image src="/images-icon/apple.svg.png" alt="404" width="50" height="50" className='h-12 w-12'/>
+                <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("gitlab")}}>
+                <Image src="/images-icon/gitlab.png" alt="404" width="50" height="50" className='h-5 w-5'/>
                 </Button>
-                <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("linkedin")}}>
-                <Image src="/images-icon/LinkedIn.svg.png" alt="404" width="50" height="50" className='h-5 w-5'/>
+                <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("discord")}}>
+                {/* <Image src="/images-icon/LinkedIn.svg.png" alt="404" width="50" height="50" className='h-5 w-5'/>
+                 */}
+                 1
                 </Button>
-                <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("microsoft")}}>
+                {/* <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("microsoft")}}>
                 <Image src="/images-icon/Microsoft.svg.png" alt="404" width="50" height="50" className='h-5 w-5'/>
-                </Button>
+                </Button> */}
             </div>
     </div>
      );
