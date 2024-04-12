@@ -12,14 +12,14 @@ const Social = () => {
     const searchParam= useSearchParams()
     const callbackUrl = searchParam.get('callbackUrl')
 
-    const onClick = (provider: "google" | "github" | "facebook" | "gitlab" | "tiktok" | "microsoft") => {
+    const onClick = (provider: "google" | "github" | "facebook" | "gitlab" | "reddit" | "spotify" | "twitter") => {
         signIn(provider, {
             callbackUrl: callbackUrl || DEFAULT_LOGIN_REDIRECT,
         });
     };
     
     return ( 
-        <div className="grid grid-rows-2 w-full">
+        <div className="grid grid-rows-3 w-full">
             <div className="flex items-center space-x-1">
                 <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("google")}}>
                 <Image src="/images-icon/google.png" alt="404" width="50" height="50" className='h-5 w-5'/>
@@ -36,16 +36,19 @@ const Social = () => {
                 <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("gitlab")}}>
                 <Image src="/images-icon/gitlab.png" alt="404" width="50" height="50" className='h-5 w-5'/>
                 </Button>
-                <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("tiktok")}}>
-                1
-                {/* <Image src="/images-icon/LinkedIn.svg.png" alt="404" width="50" height="50" className='h-5 w-5'/>
-                
-                 */}
+                <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("reddit")}}>
+                <Image src="/images-icon/reddit.png" alt="404" width="50" height="50" className=' w-10'/>
                 </Button>
-                {/* <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("microsoft")}}>
-                <Image src="/images-icon/Microsoft.svg.png" alt="404" width="50" height="50" className='h-5 w-5'/>
-                </Button> */}
+                <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("spotify")}}>
+                <Image src="/images-icon/spotify.png" alt="404" width="50" height="50" className=' w-9'/>
+                </Button>
             </div>
+            <div className="flex items-center space-x-1 space-y-1">
+                <Button size="lg" variant="outline" className="w-full bg-slate-300" onClick={()=>{onClick("twitter")}}>
+                    <Image src="/images-icon/twitter.png" alt="404" width="50" height="50" className=' w-9'/>
+                </Button>
+            </div>
+
     </div>
      );
 }

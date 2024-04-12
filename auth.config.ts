@@ -6,10 +6,8 @@ import Github from "next-auth/providers/github";
 import Facebook from "next-auth/providers/facebook";
 import Gitlab from "next-auth/providers/gitlab";
 import Reddit from "next-auth/providers/reddit";
-import Twitter from "next-auth/providers/twitter";
-import Tiktok from "next-auth/providers/tiktok";
-import Twitch from "next-auth/providers/twitch";
 import Spotify from "next-auth/providers/spotify";
+import Twitter from "next-auth/providers/twitter";
 import { LoginSchema } from "@/schemas";
 import { getUserByEmail } from "@/data/user";
 
@@ -31,10 +29,22 @@ export default {
       clientId: process.env.GITLAB_CLIENT_ID,
       clientSecret: process.env.GITLAB_CLIENT_SECRET
     }),
-    Tiktok({
-      clientId: process.env.TIKTOK_CLIENT_ID,
-      clientSecret: process.env.TIKTOK_CLIENT_SECRET,
-      issuer: "https://tiktok.com",
+    Reddit({
+      clientId: process.env.REDDIT_CLIENT_ID,
+      clientSecret: process.env.REDDIT_CLIENT_SECRET,
+      authorization: {
+        params: {
+          duration: "permanent",
+        },
+      },
+    }),
+    Spotify({
+      clientId: process.env.AUTH_SPOTIFY_ID,
+      clientSecret: process.env.AUTH_SPOTIFY_SECRET,
+    }),
+    Twitter({
+      clientId: process.env.AUTH_TWITCH_ID,
+      clientSecret: process.env.AUTH_TWITCH_SECRET,
     }),
     Credentials({
       async authorize(credentials) {

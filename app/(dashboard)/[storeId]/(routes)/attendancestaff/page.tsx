@@ -102,7 +102,13 @@ export default function Home() {
   }, [userId]);
   const imageCredentials = userId?.imageCredential[0] || undefined;
   const isGitHubOrGoogleUser =
-    account?.provider === "github" || account?.provider === "google";
+    account?.provider === "github" || 
+    account?.provider === "google" || 
+    account?.provider === "facebook" || 
+    account?.provider === "gitlab" || 
+    account?.provider === "reddit" || 
+    account?.provider === "spotify" || 
+    account?.provider === "twitter";
   // Use the first image from imageCredential if available, or randomImage if available
   const avatarImage =
     imageCredentials ||

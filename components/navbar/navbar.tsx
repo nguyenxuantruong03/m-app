@@ -25,7 +25,13 @@ const Navbar = async () => {
   const account = await getAccountByUserId(userId.id);
   const imageCredentials = userId?.imageCredential[0];
   const isGitHubOrGoogleUser =
-    account?.provider === "github" || account?.provider === "google";
+  account?.provider === "github" || 
+  account?.provider === "google" || 
+  account?.provider === "facebook" || 
+  account?.provider === "gitlab" || 
+  account?.provider === "reddit" || 
+  account?.provider === "spotify" || 
+  account?.provider === "twitter";
     const avatarImage =imageCredentials ||(imageCredentials ? imageCredentials[0] : null) ||userId?.image;
   const store = await prismadb.store.findMany({
     where: {
