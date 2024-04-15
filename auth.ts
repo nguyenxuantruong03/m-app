@@ -44,6 +44,7 @@ export const {
             data: {
               ban: false,
               banExpires: null,
+              resendCount: 0,
             },
           });
         }

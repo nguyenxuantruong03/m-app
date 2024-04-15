@@ -15,20 +15,21 @@ import {
 } from "@/components/ui/form";
 import CardWrapper from "@/components/auth/card-wrapper";
 import { NewPasswordSchema } from "@/schemas";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import FormError from "@/components/form-error";
 import FormSuccess from "@/components/form-success";
 import { newPassword } from "@/actions/actions-signin-sign-up/new-password";
+import PasswordField from "./field/passwordfield";
+import { X } from "lucide-react";
 
 const NewPasswordForm = () => {
-  const searchParam = useSearchParams()
-  const token = searchParam.get('token')
+  const searchParam = useSearchParams();
+  const token = searchParam.get("token");
 
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
-
+  const [isPasswordValid, setPasswordValid] = useState(false);
   // form bên dưới dùng để validate trường nhập theo loginForm bên dưới gọi form đẻ validate code đã xử lý ở  đây và bên dưới dùng destructuring để gọi hết vào
   const form = useForm<z.infer<typeof NewPasswordSchema>>({
     resolver: zodResolver(NewPasswordSchema),
@@ -41,7 +42,7 @@ const NewPasswordForm = () => {
     setError("");
     setSuccess("");
     startTransition(() => {
-      newPassword(values,token).then((data) => {
+      newPassword(values, token).then((data) => {
         setError(data?.error);
         setSuccess(data?.success);
       });
@@ -63,11 +64,10 @@ const NewPasswordForm = () => {
                 <FormItem>
                   <FormLabel>New Password</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      disabled={isPending}
-                      placeholder="******"
-                      type="password"
+                    <PasswordField
+                      field={field}
+                      isPending={isPending}
+                      validatePassword={setPasswordValid}
                     />
                   </FormControl>
                   <FormMessage />
@@ -75,11 +75,29 @@ const NewPasswordForm = () => {
               )}
             />
           </div>
-          <FormError message={error}/>
-          <FormSuccess message={success}/>
-          <Button className="w-full" type="submit" disabled={isPending}>
+
+          <div className="my-2">
+            <FormError message={error} />
+            <FormSuccess message={success} />
+          </div>
+
+          <Button
+            className="w-full"
+            type="submit"
+            disabled={isPending || !isPasswordValid}
+          >
             Send reset password
           </Button>
+          <>
+            {!isPasswordValid && (
+              <div className="flex items-center space-x-1">
+                <X className="w-5 h-5 mr-1 text-red-500" />
+                <span className="text-red-500 text-xs">
+                  Bạn chưa nhập password.
+                </span>
+              </div>
+            )}
+          </>
         </form>
       </Form>
     </CardWrapper>

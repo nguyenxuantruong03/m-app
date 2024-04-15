@@ -32,8 +32,16 @@ export const login = async (
 
   const existingUser = await getUserByEmail(email);
 
-  if (!existingUser || !existingUser.email || !existingUser.password) {
-    return { error: "Email hoặc password không hợp lệ!" };
+  if (!existingUser?.password) {
+    return { error: "Password không hợp lệ!" };
+  }
+
+  if(!existingUser?.email){
+    return {error: "Email không hợp lệ!"}
+  }
+
+  if(!existingUser){
+    return {error: "Không tìm thấy!"}
   }
   
   //Ban User
@@ -56,6 +64,7 @@ export const login = async (
         data: {
           ban: false,
           banExpires: null,
+          resendCount: 0,
         },
       });
     }
@@ -84,11 +93,11 @@ export const login = async (
       const twoFactorToken = await getTwoFactorTokenByEmail(existingUser.email);
 
       if (!twoFactorToken) {
-        return { error: "Không tìm thấy mã xác thực!" };
+        return { error: "Không tìm thấy mã xác thực,hãy thử lại!" };
       }
 
       if (twoFactorToken.token !== code) {
-        return { error: "không tìm thấy mã xác thực!" };
+        return { error: "Mã xác thực không chính xác,hãy thử lại!" };
       }
 
       const hasExpired = new Date(twoFactorToken.expires) < new Date();
@@ -115,18 +124,50 @@ export const login = async (
           userId: existingUser.id,
         },
       });
-    } else {
-      const twoFactorToken = await genearteTwoFactorToken(existingUser.email);
-      await sendTwoFactorTokenEmail(twoFactorToken.email, twoFactorToken.token);
-      return { twoFactor: true };
+    }  else {
+      // Người dùng yêu cầu gửi lại mã xác thực
+      const resendCount = existingUser.resendCount || 0; // Lấy số lần đã gửi lại mã xác thực trước đó
+      if (resendCount >= 6) { // Nếu đã gửi lại mã xác thực quá 5 lần
+        // Cập nhật trạng thái cấm người dùng
+        await prismadb.user.update({
+          where: { id: existingUser.id },
+          data: {
+            ban: true,
+            banExpires: new Date(new Date().getTime() + (24 * 60 * 60 * 1000)), // Cấm trong 24 giờ
+          },
+        });
+        return { error: "Bạn đã gửi lại mã xác thực quá nhiều lần và đã bị khóa tài khoản trong 24 giờ." };
+      } else {
+        // Tăng resendCount lên 1 và lưu lại vào cơ sở dữ liệu
+        await prismadb.user.update({
+          where: { id: existingUser.id },
+          data: {
+            resendCount: resendCount + 1,
+          },
+        });
+        // Gửi lại mã xác thực
+        const twoFactorToken = await genearteTwoFactorToken(existingUser.email);
+        await sendTwoFactorTokenEmail(twoFactorToken.email, twoFactorToken.token);
+        return { twoFactor: true };
+      }
     }
   }
+
   try {
-    await signIn("credentials", {
+    const signInPromise = signIn("credentials", {
       email,
       password,
       redirectTo: callbackUrl || DEFAULT_LOGIN_REDIRECT,
     });
+     //Update resend nếu như người dùng đã login vào
+     const updateUserPromise =  prismadb.user.update({
+      where: { email: existingUser.email },
+      data: {
+        resendCount: 0,
+      },
+    });
+
+    await Promise.all([signInPromise, updateUserPromise]);
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {

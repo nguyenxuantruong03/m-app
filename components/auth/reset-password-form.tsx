@@ -14,10 +14,10 @@ import {
 } from "@/components/ui/form";
 import CardWrapper from "@/components/auth/card-wrapper";
 import { ResetSchema } from "@/schemas";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import FormError from "@/components/form-error";
 import FormSuccess from "@/components/form-success";
+import EmailField from "./field/emailfield";
 import { reset } from "@/actions/actions-signin-sign-up/reset";
 
 const ResetPasswordForm = () => {
@@ -59,20 +59,19 @@ const ResetPasswordForm = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      disabled={isPending}
-                      placeholder="vlxdxuantruong@gmail.com"
-                      type="email"
-                    />
+                    <EmailField field={field} isPending={isPending} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
-          <FormError message={error}/>
-          <FormSuccess message={success}/>
+
+          <div className="my-2">
+            <FormError message={error} />
+            <FormSuccess message={success} />
+          </div>
+
           <Button className="w-full" type="submit" disabled={isPending}>
             Send reset Email
           </Button>

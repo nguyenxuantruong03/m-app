@@ -6,7 +6,6 @@ export const SettingSchema = z
   .object({
     name: z.optional(z.string()),
     isTwoFactorEnabled: z.optional(z.boolean()),
-    role: z.enum([UserRole.ADMIN, UserRole.USER,UserRole.STAFF]),
     email: z.optional(z.string().email()),
     password: z.optional(z.string().min(6,{
       message: "Mật khẩu yêu cầu [a-z] và [0-9] ít nhất 6 ký tự!",

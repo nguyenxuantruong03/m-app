@@ -5,8 +5,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTransition, useState } from "react";
 import { useSession } from "next-auth/react";
-import { UserRole } from "@prisma/client";
-
 import { Switch } from "@/components/ui/switch";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import {
@@ -45,6 +43,8 @@ const SettingPage = () => {
   });
 
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
+    setSuccess("")
+    setError("")
     startTransition(() => {
       setting(values)
         .then((data) => {

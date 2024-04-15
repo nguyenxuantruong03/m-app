@@ -509,6 +509,7 @@ model User {
   accounts              Account[]
   eventcalendar         EventCalendar[]
   sentEmailUser         SentEmailUser[]
+  resendCount           Int?                   @default(0)
   //Ban user
   ban                   Boolean?
   banExpires            DateTime?

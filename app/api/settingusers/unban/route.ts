@@ -11,6 +11,7 @@ export async function POST(req: Request) {
         where: { id: userId },
         data: {
           ban: false,
+          resendCount: 0,
           banExpires: null, 
         },
       });

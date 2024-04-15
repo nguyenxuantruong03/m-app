@@ -7,7 +7,7 @@ export const sendTwoFactorTokenEmail = async (email: string, token: string) => {
   await resend.emails.send({
     from: "mail@vlxdxuantruong.email",
     to: email,
-    subject: "Xác thực 2 yếu tố! ",
+    subject: `Mã xác thực 2 yếu tố: ${token} `,
     html: `<p> Xin chào <strong>${email}!</strong> Your 2FA code: <strong style="color: #3b82f6; text-decoration: underline;">${token}</strong> là mã xác thực đăng nhập trên <a href="${domain}">vlxd Xuân Trường</a>. Mã có hiệu lực trong vòng 2 phút. Nếu có thắc mắc liên hệ <strong>0352261103</strong>.</p>`,
   });
 };
@@ -19,7 +19,7 @@ export const sendPasswordResetEmail = async (email: string, token: string) => {
     from: "mail@vlxdxuantruong.email",
     to: email,
     subject: "Reset your password",
-    html: `<p>Xin chào <strong>${email}!</strong> Click <a href="${restLink}">hear</a> to reset password. Reset password có hiệu lực trong vòng 2 phút. Nếu có thắc mắc liên hệ <strong>0352261103</strong>.</p>`,
+    html: `<p>Xin chào <strong>${email}!</strong> Nhấp <a href="${restLink}"> vào đây</a> để làm mới mật khẩu. Xác thực làm mới mật khẩu có hiệu lực trong vòng 2 phút. Nếu có thắc mắc liên hệ <strong>0352261103</strong>.</p>`,
   });
 };
 
@@ -30,7 +30,7 @@ export const sendVerificationEmail = async (email: string, token: string) => {
     from: "mail@vlxdxuantruong.email",
     to: email,
     subject: "Confirm your email",
-    html: `<p>Xin chào <strong>${email}!</strong> Click <a href="${confirmLink}">hear</a> to confirm email. Xác nhận có hiệu lực trong vòng 2 phút. Nếu có thắc mắc liên hệ <strong>0352261103</strong>.</p>`,
+    html: `<p>Xin chào <strong>${email}!</strong> Click <a href="${confirmLink}">hear</a> to confirm email. Xác thực có hiệu lực trong vòng 2 phút. Nếu có thắc mắc liên hệ <strong>0352261103</strong>.</p>`,
   });
 };
 
