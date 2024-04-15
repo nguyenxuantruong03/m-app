@@ -44,8 +44,8 @@ const Social = () => {
                 </Button>
             </div>
             <div className="flex items-center space-x-1 space-y-1">
-                <Button size="lg" variant="outline" className="w-full bg-slate-300" onClick={()=>{onClick("twitter")}}>
-                    <Image src="/images-icon/twitter.png" alt="404" width="50" height="50" className=' w-9'/>
+                <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("twitter")}}>
+                    <Image src="/images-icon/twitter.png" alt="404" width="50" height="50" className=' w-8'/>
                 </Button>
             </div>
 
