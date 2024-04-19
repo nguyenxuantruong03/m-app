@@ -88,16 +88,6 @@ const NewPasswordForm = () => {
           >
             Send reset password
           </Button>
-          <>
-            {!isPasswordValid && (
-              <div className="flex items-center space-x-1">
-                <X className="w-5 h-5 mr-1 text-red-500" />
-                <span className="text-red-500 text-xs">
-                  Bạn chưa nhập password.
-                </span>
-              </div>
-            )}
-          </>
         </form>
       </Form>
     </CardWrapper>

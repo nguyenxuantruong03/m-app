@@ -44,6 +44,7 @@ const RegisterForm = () => {
   const [isNameValid, setNameValid] = useState(false);
   const [isCaptchaVerified, setCaptchaVerified] = useState(false);
   const [theme, setTheme] = useState(getTheme());
+  const [registerClicked, setRegisterClicked] = useState(false);
 
   useEffect(() => {
     const handleThemeChange = () => {
@@ -74,6 +75,7 @@ const RegisterForm = () => {
   const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
     setError("");
     setSuccess("");
+    setRegisterClicked(true);
     if (!isCaptchaVerified) {
       return setError("Vui lòng xác minh bạn không phải là robot!");
     } else {
@@ -174,21 +176,18 @@ const RegisterForm = () => {
           <Button
             className="w-full"
             type="submit"
-            disabled={isPending || !isPasswordValid || !isNameValid}
+            disabled={
+              isPending ||
+              !isPasswordValid ||
+              !isNameValid ||
+              !isCaptchaVerified
+            }
           >
             Create an account
           </Button>
 
           <>
-            {!isPasswordValid && (
-              <div className="flex items-center space-x-1">
-                <X className="w-5 h-5 mr-1 text-red-500" />
-                <span className="text-red-500 text-xs">
-                  Bạn chưa nhập password.
-                </span>
-              </div>
-            )}
-            {!isNameValid && (
+            {registerClicked && !isCaptchaVerified && (
               <div className="flex items-center space-x-1">
                 <X className="w-5 h-5 mr-1 text-red-500" />
                 <span className="text-red-500 text-xs">

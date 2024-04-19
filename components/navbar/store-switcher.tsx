@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
-
+import { RotateCw } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
 import { Check, ChevronsUpDown, PlusCircle, Store } from "lucide-react";
@@ -36,6 +36,15 @@ export default function StoreSwitcher({
   const params = useParams();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [isRotating, setIsRotating] = useState(false);
+
+  const handleClick = () => {
+    router.refresh()
+    setIsRotating(true);
+    setTimeout(() => {
+      setIsRotating(false);
+    }, 3000);
+  };
 
   const fomattedItems = items.map((item) => ({
     label: item.name,
@@ -52,6 +61,7 @@ export default function StoreSwitcher({
   };
 
   return (
+    <div className="flex space-x-2">
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
@@ -111,5 +121,16 @@ export default function StoreSwitcher({
         </Command>
       </PopoverContent>
     </Popover>
+
+    <div>
+    <Button
+      variant="outline"
+      size="icon"
+      onClick={handleClick}
+    >
+      <RotateCw className={`w-5 h-5 ${isRotating ? 'rotation' : ''}`} />
+    </Button>
+    </div>
+    </div>
   );
 }

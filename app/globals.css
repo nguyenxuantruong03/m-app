@@ -123,3 +123,22 @@ body,
 .focus-visible\:ring-ring:focus-visible {
   --tw-ring-color: transparent !important;
 }
+
+
+.rotation {
+  -webkit-animation:rotation 1s linear infinite;
+  -moz-animation:rotation 1s linear infinite;
+  animation:rotation 1s linear infinite;
+}
+@-moz-keyframes rotation { 
+  100% { -moz-transform: rotate(360deg); } 
+}
+@-webkit-keyframes rotation { 
+  100% { -webkit-transform: rotate(360deg); } 
+}
+@keyframes rotation { 
+  100% { 
+      -webkit-transform: rotate(360deg); 
+      transform:rotate(360deg); 
+  } 
+}

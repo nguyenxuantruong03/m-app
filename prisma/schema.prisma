@@ -12,7 +12,7 @@ datasource db {
 }
 
 model Store {
-  id             String           @id @default(uuid())
+  id             String           @id @default(cuid())
   name           String
   userId         String
   billboard      Billboard[]      @relation("StoreToBillboard")
@@ -37,7 +37,7 @@ model Store {
 }
 
 model Billboard {
-  id             String           @id @default(uuid())
+  id             String           @id @default(cuid())
   storeId        String
   store          Store            @relation("StoreToBillboard", fields: [storeId], references: [id])
   label          String
@@ -49,7 +49,7 @@ model Billboard {
 }
 
 model ImageBillboard {
-  id String @id @default(uuid())
+  id String @id @default(cuid())
 
   billboardId String
   billboard   Billboard @relation(fields: [billboardId], references: [id], onDelete: Cascade)
@@ -62,7 +62,7 @@ model ImageBillboard {
 }
 
 model BillboardTime {
-  id                 String               @id @default(uuid())
+  id                 String               @id @default(cuid())
   storeId            String
   store              Store                @relation("StoreToBillboardTime", fields: [storeId], references: [id])
   label              String
@@ -77,7 +77,7 @@ model BillboardTime {
 }
 
 model ImageBillboardTime {
-  id String @id @default(uuid())
+  id String @id @default(cuid())
 
   billboardTimeId String
   billboard       BillboardTime @relation(fields: [billboardTimeId], references: [id], onDelete: Cascade)
@@ -90,7 +90,7 @@ model ImageBillboardTime {
 }
 
 model Category {
-  id            String          @id @default(uuid())
+  id            String          @id @default(cuid())
   storeId       String
   store         Store           @relation("StoreToCategory", fields: [storeId], references: [id])
   categoryType  CategoryType
@@ -103,7 +103,7 @@ model Category {
 }
 
 model Size {
-  id             String          @id @default(uuid())
+  id             String          @id @default(cuid())
   storeId        String
   store          Store           @relation("StoreToSize", fields: [storeId], references: [id])
   name           String
@@ -120,7 +120,7 @@ model Size {
 }
 
 model Color {
-  id             String          @id @default(uuid())
+  id             String          @id @default(cuid())
   storeId        String
   store          Store           @relation("StoreToColor", fields: [storeId], references: [id])
   name           String
@@ -167,7 +167,7 @@ enum ProductType {
 }
 
 model ProductDetail {
-  id                   String    @id @default(uuid())
+  id                   String    @id @default(cuid())
   storeId              String
   store                Store     @relation("StoreToDetailProductDetail", fields: [storeId], references: [id])
   product              Product[] @relation("ProductDetailToProduct")
@@ -278,7 +278,7 @@ model ProductDetail {
 }
 
 model Imagesalientfeatures {
-  id        String   @id @default(uuid())
+  id        String   @id @default(cuid())
   productId String
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   url       String
@@ -289,7 +289,7 @@ model Imagesalientfeatures {
 }
 
 model Product {
-  id      String @id @default(uuid())
+  id      String @id @default(cuid())
   storeId String
   store   Store  @relation("StoreToProduct", fields: [storeId], references: [id])
 
@@ -313,7 +313,7 @@ model Product {
 }
 
 model Image {
-  id        String   @id @default(uuid())
+  id        String   @id @default(cuid())
   productId String
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   url       String
@@ -324,7 +324,7 @@ model Image {
 }
 
 model Order {
-  id        String      @id @default(uuid())
+  id        String      @id @default(cuid())
   storeId   String
   store     Store       @relation("StoreToOrder", fields: [storeId], references: [id])
   orderItem OrderItem[]
@@ -339,7 +339,7 @@ model Order {
 }
 
 model OrderItem {
-  id         String  @id @default(uuid())
+  id         String  @id @default(cuid())
   orderId    String
   order      Order   @relation(fields: [orderId], references: [id])
   productId  String
@@ -360,7 +360,7 @@ enum Duration {
 }
 
 model Coupon {
-  id             String        @id @default(uuid())
+  id             String        @id @default(cuid())
   storeId        String
   store          Store         @relation("StoreToCoupon", fields: [storeId], references: [id])
   name           String?
@@ -378,7 +378,7 @@ model Coupon {
 }
 
 model ImageCoupon {
-  id String @id @default(uuid())
+  id String @id @default(cuid())
 
   couponId String
   coupon   Coupon @relation(fields: [couponId], references: [id], onDelete: Cascade)
@@ -396,7 +396,7 @@ enum TaxType {
 }
 
 model TaxRate {
-  id          String   @id @default(uuid())
+  id          String   @id @default(cuid())
   storeId     String
   store       Store    @relation("StoreToTaxRate", fields: [storeId], references: [id])
   name        String
@@ -431,7 +431,7 @@ enum ShippingTaxcode {
 }
 
 model ShippingRates {
-  id          String           @id @default(uuid())
+  id          String           @id @default(cuid())
   storeId     String
   store       Store            @relation("StoreToShippingRates", fields: [storeId], references: [id])
   name        String
@@ -453,6 +453,9 @@ enum UserRole {
   ADMIN
   USER
   STAFF
+  SHIPPER
+  GUEST
+  MARKETING
 }
 
 enum Gender {
@@ -636,7 +639,7 @@ model SentEmailUser {
 }
 
 model CaculateSalary {
-  id              String         @id @default(uuid())
+  id              String         @id @default(cuid())
   storeId         String
   store           Store          @relation("StoreCaculateSalary", fields: [storeId], references: [id])
   userId          String
@@ -657,7 +660,7 @@ model CaculateSalary {
 }
 
 model Comment {
-  id              String            @id @default(uuid())
+  id              String            @id @default(cuid())
   storeId         String
   store           Store             @relation("StoreToComment", fields: [storeId], references: [id])
   userId          String
@@ -674,7 +677,7 @@ model Comment {
 }
 
 model ResponseComment {
-  id          String   @id @default(uuid())
+  id          String   @id @default(cuid())
   commentId   String
   comment     Comment  @relation(fields: [commentId], references: [id])
   userId      String
@@ -688,7 +691,7 @@ model ResponseComment {
 }
 
 model WheelSpin {
-  id        String   @id @default(uuid())
+  id        String   @id @default(cuid())
   storeId   String
   store     Store    @relation("StoreToWheelSpin", fields: [storeId], references: [id])
   userId    String

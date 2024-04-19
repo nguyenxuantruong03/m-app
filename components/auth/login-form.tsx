@@ -59,6 +59,7 @@ const LoginForm = () => {
   const [isError, setIsError] = useState(false);
   const [showCaptcha, setShowCaptcha] = useState(true); // Khởi tạo giá trị mặc định là true để hiển thị ReCAPTCHA
   const [theme, setTheme] = useState(getTheme());
+  const [loginClicked, setLoginClicked] = useState(false);
 
   const MAX_RESEND_ATTEMPTS = 5;
 
@@ -131,6 +132,7 @@ const LoginForm = () => {
   };
 
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
+    setLoginClicked(true);
     setError("");
     setSuccess("");
     if (showCaptcha && !isCaptchaVerified) {
@@ -309,15 +311,7 @@ const LoginForm = () => {
 
           {/* Hiển thị lỗi nếu như chưa ghi password và robot */}
           <>
-            {!isPasswordValid && (
-              <div className="flex items-center space-x-1 mt-2">
-                <X className="w-5 h-5 mr-1 text-red-500" />
-                <span className="text-red-500 text-xs">
-                  Bạn chưa nhập password.
-                </span>
-              </div>
-            )}
-            {!isCaptchaVerified && (
+            {loginClicked && !isCaptchaVerified && (
               <div className="flex items-center space-x-1">
                 <X className="w-5 h-5 mr-1 text-red-500" />
                 <span className="text-red-500 text-xs">
@@ -330,11 +324,11 @@ const LoginForm = () => {
       </Form>
       {showTwoFacTor && (
         <div className="mt-2 text-center">
-          <Link href="/auth/login">
+          <span onClick={() => window.location.reload()}>
             <span className="hover:underline cursor-pointer text-sky-600 text-sm">
               Back to login{" "}
             </span>
-          </Link>
+          </span>
         </div>
       )}
     </CardWrapper>
