@@ -48,6 +48,10 @@ const ManageStaff = async ({ params }: { params: { storeId: string } }) => {
     ban: item.ban,
     role: item.role,
     sentVeirifi: item.sentVeirifi,
+    timestartwork: item.timestartwork,
+    urlimageCheckAttendance: item.urlimageCheckAttendance,
+    codeNFC: item.codeNFC,
+    daywork:item.daywork,
     dateRange: item.dateRange
     ? format(item.dateRange, "dd/MM/yyyy")
     : null,

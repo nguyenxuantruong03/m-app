@@ -24,6 +24,7 @@ const ResetPasswordForm = () => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
+  const [email, setEmail] = useState<string>("");
 
   // form bên dưới dùng để validate trường nhập theo loginForm bên dưới gọi form đẻ validate code đã xử lý ở  đây và bên dưới dùng destructuring để gọi hết vào
   const form = useForm<z.infer<typeof ResetSchema>>({
@@ -59,7 +60,7 @@ const ResetPasswordForm = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <EmailField field={field} isPending={isPending} />
+                    <EmailField field={field} isPending={isPending} email={email} setEmail={setEmail}/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

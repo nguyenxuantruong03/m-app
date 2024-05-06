@@ -211,32 +211,32 @@ model ProductDetail {
   //Chi tiết sản phẩm
   descriptionspecifications   String   @db.Text
   valuespecifications         String   @db.Text
-  description2specifications  String?   @db.Text
-  value2specifications        String?   @db.Text
-  description3specifications  String?   @db.Text
-  value3specifications        String?   @db.Text
-  description4specifications  String?   @db.Text
-  value4specifications        String?   @db.Text
-  description5specifications  String?   @db.Text
-  value5specifications        String?   @db.Text
-  description6specifications  String?   @db.Text
-  value6specifications        String?   @db.Text
-  description7specifications  String?   @db.Text
-  value7specifications        String?   @db.Text
-  description8specifications  String?   @db.Text
-  value8specifications        String?   @db.Text
-  description9specifications  String?   @db.Text
-  value9specifications        String?   @db.Text
-  description10specifications String?   @db.Text
-  value10specifications       String?   @db.Text
-  description11specifications String?   @db.Text
-  value11specifications       String?   @db.Text
-  description12specifications String?   @db.Text
-  value12specifications       String?   @db.Text
-  description13specifications String?   @db.Text
-  value13specifications       String?   @db.Text
-  description14specifications String?   @db.Text
-  value14specifications       String?   @db.Text
+  description2specifications  String?  @db.Text
+  value2specifications        String?  @db.Text
+  description3specifications  String?  @db.Text
+  value3specifications        String?  @db.Text
+  description4specifications  String?  @db.Text
+  value4specifications        String?  @db.Text
+  description5specifications  String?  @db.Text
+  value5specifications        String?  @db.Text
+  description6specifications  String?  @db.Text
+  value6specifications        String?  @db.Text
+  description7specifications  String?  @db.Text
+  value7specifications        String?  @db.Text
+  description8specifications  String?  @db.Text
+  value8specifications        String?  @db.Text
+  description9specifications  String?  @db.Text
+  value9specifications        String?  @db.Text
+  description10specifications String?  @db.Text
+  value10specifications       String?  @db.Text
+  description11specifications String?  @db.Text
+  value11specifications       String?  @db.Text
+  description12specifications String?  @db.Text
+  value12specifications       String?  @db.Text
+  description13specifications String?  @db.Text
+  value13specifications       String?  @db.Text
+  description14specifications String?  @db.Text
+  value14specifications       String?  @db.Text
   createdAt                   DateTime @default(now())
   updatedAt                   DateTime @updatedAt
 
@@ -459,13 +459,14 @@ enum UserRole {
 }
 
 enum Gender {
-  Undefined
+  None
   Male
   Female
 }
 
 //Bằng cấp
 enum Degree {
+  None
   //Tiểu học
   Elementary
   //Trung học
@@ -481,6 +482,7 @@ enum Degree {
 }
 
 enum MaritalStatus {
+  None
   //Cô đơn
   Single
   // Kết hôn
@@ -492,6 +494,7 @@ enum MaritalStatus {
 }
 
 enum WorkingTime {
+  None
   Parttime4h
   Parttime8h
   Fulltime
@@ -500,50 +503,67 @@ enum WorkingTime {
 }
 
 model User {
-  id                    String                 @id @default(cuid())
-  name                  String?
-  email                 String?                @unique
-  emailVerified         DateTime?
-  image                 String?
-  imageCredential       String[]
-  password              String?
-  lastlogin             DateTime?
-  role                  UserRole               @default(USER)
-  accounts              Account[]
-  eventcalendar         EventCalendar[]
-  sentEmailUser         SentEmailUser[]
-  resendCount           Int?                   @default(0)
+  id                       String                 @id @default(cuid())
+  name                     String?
+  email                    String?                @unique
+  emailVerified            DateTime?
+  image                    String?
+  imageCredential          String[]
+  password                 String?
+  lastlogin                DateTime?
   //Ban user
-  ban                   Boolean?
-  banExpires            DateTime?
+  ban                      Boolean?
+  banExpires               DateTime?
+  //Làm mới lại số lần gửi mã xác thực 2FA
+  resendCount              Int?                   @default(0)
+  //resetresendToken
+  resendTokenVerify        Int?                   @default(0)
+  //resendResetPassword
+  resendTokenResetPassword Int?                   @default(0)
   // Xác thực 2 yếu tố
-  isTwoFactorEnabled    Boolean                @default(false)
-  twoFactorConfirmation TwoFactorConfirmation?
+  isTwoFactorEnabled       Boolean                @default(false)
+  //------------------------Nhân viên------------------------------
   //Xác thực User có câp nhật chứng minh nhân dân chưa 
-  isCitizen             Boolean?               @default(false)
+  isCitizen                Boolean?               @default(false)
   //Sô chúng minh nhân dân 
-  numberCCCD            String?
-  dateRange             DateTime?
-  issued                String?
-  gender                Gender?               @default(Undefined)
+  numberCCCD               String?
+  //Ngày cấp CMND
+  dateRange                DateTime?
+  //Cấp ở đầu
+  issued                   String?
+  gender                   Gender?                @default(None)
   //Bằng cấp
-  degree                Degree?
+  degree                   Degree?                @default(None)
   //Tình trạng hôn nhân 
-  maritalStatus         MaritalStatus?
+  maritalStatus            MaritalStatus?         @default(None)
   // Số điện thoại
-  phonenumber           String?
+  phonenumber              String?
   //Thời gian làm việc 
-  workingTime           WorkingTime?
+  workingTime              WorkingTime?           @default(None)
   //Ngày sinh
-  dateofbirth           DateTime?
+  dateofbirth              DateTime?
+  //Thời gian bắt đầu làm việc
+  timestartwork            String?
   //Veiryfi email đã gửi chưa
-  sentVeirifi           Boolean?               @default(false)
-  CaculateSalary        CaculateSalary[]
-  Comment               Comment[]
-  ResponseComment       ResponseComment[]
-  WheelSpin             WheelSpin[]
-  createdAt             DateTime               @default(now())
-  updatedAt             DateTime               @updatedAt
+  sentVeirifi              Boolean?               @default(false)
+  //url đi làm của nhân viên
+  urlimageCheckAttendance     String?
+  //Mã nfc của nhân viên
+  codeNFC                  String?
+  //--------------Các thứ làm việc của  nhân viên------------------
+  daywork                  String[]
+  //----------------Other-------------------
+  role                     UserRole               @default(USER)
+  accounts                 Account[]
+  eventcalendar            EventCalendar[]
+  sentEmailUser            SentEmailUser[]
+  twoFactorConfirmation    TwoFactorConfirmation?
+  CaculateSalary           CaculateSalary[]
+  Comment                  Comment[]
+  ResponseComment          ResponseComment[]
+  WheelSpin                WheelSpin[]
+  createdAt                DateTime               @default(now())
+  updatedAt                DateTime               @updatedAt
 }
 
 model Account {
@@ -603,20 +623,37 @@ model TwoFactorConfirmation {
 }
 
 model EventCalendar {
-  id              String           @id @default(cuid())
-  storeId         String
-  store           Store            @relation("StoreToEventCalendar", fields: [storeId], references: [id])
-  userId          String
-  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  CaculateSalary  CaculateSalary[]
-  attendancestart String?
-  attendanceend   String?
-  title           String?
-  start           DateTime?
-  end             DateTime?
-  allDay          Boolean?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  id                     String           @id @default(cuid())
+  storeId                String
+  store                  Store            @relation("StoreToEventCalendar", fields: [storeId], references: [id])
+  userId                 String
+  user                   User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  CaculateSalary         CaculateSalary[]
+  attendancestart        String?
+  attendanceend          String?
+  title                  String?
+  start                  DateTime?
+  end                    DateTime?
+  allDay                 Boolean?
+  //Thời gian đi trễ của nhân viên
+  delayTime              String?
+  //isEnd dùng để kiểm tra nhân viên đã kết thúc công việc chưa nếu kết thúc disable btn kết thúc
+  isEnd                  Boolean?
+  // Lưu ảnh khi chụp lại
+  urlImageAttendance     String?
+  //lấy ảnh chuyển thành qr khi check se chuyen thanh secret
+  qrcodeCheckAttendance  String?
+  //Thời gian cập nhật của ảnh của nhân viên
+  updateImage            DateTime?
+  //Chuyển thành true để không được up image đc nữa
+  isCheckAttendanceImage Boolean          @default(false)
+  //Cập nhật mã NFC
+  codeNFC                String?
+  //Thời gian cập nhật NFC
+  updateNFC              DateTime?
+  isCheckNFC             Boolean?         @default(false)
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
 
   @@index([storeId])
   @@index([userId])

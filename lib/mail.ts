@@ -8,29 +8,37 @@ export const sendTwoFactorTokenEmail = async (email: string, token: string) => {
     from: "mail@vlxdxuantruong.email",
     to: email,
     subject: `Mã xác thực 2 yếu tố: ${token} `,
-    html: `<p> Xin chào <strong>${email}!</strong> Your 2FA code: <strong style="color: #3b82f6; text-decoration: underline;">${token}</strong> là mã xác thực đăng nhập trên <a href="${domain}">vlxd Xuân Trường</a>. Mã có hiệu lực trong vòng 2 phút. Nếu có thắc mắc liên hệ <strong>0352261103</strong>.</p>`,
+    html: `<p> Xin chào <strong>${email}!</strong> Your 2FA code: <strong style="color: #3b82f6; text-decoration: underline;">${token}</strong> là mã xác thực đăng nhập trên <a href="${domain}">vlxd Xuân Trường</a>. Mã có hiệu lực trong vòng 5 phút. Nếu có thắc mắc liên hệ <strong>0352261103</strong>.</p>`,
   });
 };
 
-export const sendPasswordResetEmail = async (email: string, token: string) => {
+export const sendPasswordResetEmail = async (email: string, token: string,resendTokenNewpassword?:number) => {
   const restLink = `${domain}/auth/new-password?token=${token}`;
+  let sendMessageResetPassword = '';
+  if (resendTokenNewpassword) {
+    sendMessageResetPassword = `Bạn đã gửi lại <span style="color:#FF3131; font-weight: 800;">${resendTokenNewpassword}</span> lần. Nếu vượt quá 5 lần bạn sẽ bị ban.<p style="color:#FF3131; font-weight: 800;"> Lý do: Spam.`;
+  }
 
   await resend.emails.send({
     from: "mail@vlxdxuantruong.email",
     to: email,
     subject: "Reset your password",
-    html: `<p>Xin chào <strong>${email}!</strong> Nhấp <a href="${restLink}"> vào đây</a> để làm mới mật khẩu. Xác thực làm mới mật khẩu có hiệu lực trong vòng 2 phút. Nếu có thắc mắc liên hệ <strong>0352261103</strong>.</p>`,
+    html: `<p>Xin chào <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>! Nhấp <a href="${restLink}"> vào đây</a> để làm mới mật khẩu. Xác thực làm mới mật khẩu có hiệu lực trong vòng 5 phút. Nếu có thắc mắc liên hệ <strong>0352261103</strong>. ${sendMessageResetPassword}</p>`,
   });
 };
 
-export const sendVerificationEmail = async (email: string, token: string) => {
+export const sendVerificationEmail = async (email: string, token: string,resendTokenVerifyCount?:number) => {
   const confirmLink = `${domain}/auth/new-verification?token=${token}`;
+  let sendMessageVerifiCount = '';
+  if (resendTokenVerifyCount) {
+    sendMessageVerifiCount = `Bạn đã gửi lại <span style="color:#FF3131; font-weight: 800;">${resendTokenVerifyCount}</span> lần. Nếu vượt quá 5 lần bạn sẽ bị ban.<p style="color:#FF3131; font-weight: 800;"> Lý do: Spam</p>.`;
+  }
 
   await resend.emails.send({
     from: "mail@vlxdxuantruong.email",
     to: email,
     subject: "Confirm your email",
-    html: `<p>Xin chào <strong>${email}!</strong> Click <a href="${confirmLink}">hear</a> to confirm email. Xác thực có hiệu lực trong vòng 2 phút. Nếu có thắc mắc liên hệ <strong>0352261103</strong>.</p>`,
+    html: `<p>Xin chào <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>! Click <a href="${confirmLink}">hear</a> to confirm email. Xác thực có hiệu lực trong vòng 5 phút. Nếu có thắc mắc liên hệ <strong>0352261103</strong>. ${sendMessageVerifiCount}</p>`,
   });
 };
 
@@ -40,7 +48,7 @@ export const sendVerifyAccountisCitizen = async (email: string | null = "") => {
     from: "mail@vlxdxuantruong.email",
     to: toEmail,
     subject: "Verify your email",
-    html: `<p>Xin chào <strong>${email}!</strong> Tài khoản của bạn đã được xác thực. Bạn đã là nhân viên của <a href="${domain}">vlxd Xuân Trường</a>. Hãy vào xem role hiện tại của bạn đã được thay đổi thành <strong style="color: #3b82f6;">STAFF</strong> chưa. Nếu có thắc mắc liên hệ <strong>0352261103</strong>.</p>`,
+    html: `<p>Xin chào <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>! Tài khoản của bạn đã được xác thực. Bạn đã là nhân viên của <a href="${domain}">vlxd Xuân Trường</a>. Hãy vào xem role hiện tại của bạn đã được thay đổi thành <strong style="color: #3b82f6;">STAFF</strong> chưa? Nếu chưa thay đổi hãy liên hệ <strong>0352261103</strong>.</p>`,
   });
 };
 
@@ -69,16 +77,21 @@ export const sendAttendanceStart = async (
   email: string | null | undefined,
   nameuser: string | null | undefined,
   start: string | null,
-  end: string | null
+  end: string | null,
+  delayHours?: number | undefined
 ) => {
   if (email) {
+    let penaltyMessage = '';
+    if (delayHours) {
+      penaltyMessage = `<p style="color:#FF3131;">Bạn đã bị -50.000đ. Lý do: điểm danh trễ (${Math.floor(delayHours) + " giờ " + Math.floor((delayHours % 1) * 60) + " phút"})</p>`;
+    }
     await resend.emails.send({
       from: "mail@vlxdxuantruong.email",
       to: email,
       subject: "Điểm danh ngày mới!",
-      html: `Xin chào <strong> ${nameuser || 'Bạn'}!</strong> Thời gian điểm danh của bạn bắt đầu lúc <strong>${start || 'không xác định'}</strong> và kết thúc lúc <strong>${end || 'không xác định'}</strong>. Chúc bạn 1 ngày làm việc tràn đầy năng lượng.`,
+      html: `Xin chào <strong style="color: #3b82f6; text-decoration: underline;"> ${nameuser || 'Bạn'}</strong>! Thời gian điểm danh của bạn bắt đầu lúc <strong>${start || 'không xác định'}</strong> và kết thúc lúc <strong>${end || 'không xác định'}</strong>. Chúc bạn 1 ngày làm việc tràn đầy năng lượng. ${penaltyMessage}`,
     });
-  } 
+  }
 };
 
 export const sendAttendanceEnd = async (
@@ -91,7 +104,7 @@ export const sendAttendanceEnd = async (
     from: "mail@vlxdxuantruong.email",
     to: email,
     subject: "Kết thúc điểm danh!",
-    html: `Xin chào <strong> ${nameuser}!</strong> Thời gian điểm danh của bạn đã kết thúc vào lúc <strong>${end}</strong>. Chúc bạn 1 ngày tốt lành.`,
+    html: `Xin chào <strong style="color: #3b82f6; text-decoration: underline;"> ${nameuser}</strong>! Thời gian điểm danh của bạn đã kết thúc vào lúc <strong>${end}</strong>. Chúc bạn 1 ngày tốt lành.`,
   })
   }
 };
@@ -107,7 +120,7 @@ export const sendSalarytotal = async (
     from: "mail@vlxdxuantruong.email",
     to: email,
     subject: "Nhận lương!",
-    html: `Xin chào <strong> ${name}!</strong> Tổng lương của bạn đã nhận <strong>${totalsalary}</strong> vào lúc <strong>${today}</strong>`,
+    html: `Xin chào <strong style="color: #3b82f6; text-decoration: underline;"> ${name}</strong>! Tổng lương của bạn đã nhận <strong>${totalsalary}</strong> vào lúc <strong>${today}</strong>`,
   });
   }
 };
@@ -125,7 +138,7 @@ export const sendBonus = async (
     from: "mail@vlxdxuantruong.email",
     to: email,
     subject: "Nhận tiền thường!",
-    html: `Xin chào <strong> ${name}!</strong> Bạn đã nhận thêm <strong>+${bonus}</strong> vào ngày <strong>${today}</strong> vì lý do: <strong>${title}</strong>. Tổng số tiền bonus: <strong>${currenmoney}</strong>.`,
+    html: `Xin chào <strong style="color: #3b82f6; text-decoration: underline;"> ${name}</strong>! Bạn đã nhận thêm <strong>+${bonus}</strong> vào ngày <strong>${today}</strong> vì lý do: <strong>${title}</strong>. Tổng số tiền bonus: <strong>${currenmoney}</strong>.`,
   });
 }
 };
@@ -143,7 +156,7 @@ export const sendunBonus = async (
     from: "mail@vlxdxuantruong.email",
     to: email,
     subject: "Mất tiền thưởng!",
-    html: `Xin chào <strong> ${name}!</strong> Bạn đã bị trừ <strong>${unbonus}</strong> vào ngày <strong>${today}</strong> vì lý do: ${title}</strong>.Tổng số tiền bonus còn lại: <strong>${currenmoney}</strong>.`,
+    html: `Xin chào <strong style="color: #3b82f6; text-decoration: underline;"> ${name}</strong>! Bạn đã bị trừ <strong>${unbonus}</strong> vào ngày <strong>${today}</strong> vì lý do: ${title}</strong>.Tổng số tiền bonus còn lại: <strong>${currenmoney}</strong>.`,
   });
 }
 };
@@ -164,7 +177,7 @@ export const sendSpin = async (
     from: "mail@vlxdxuantruong.email",
     to: email,
     subject: "Nhận thưởng!",
-    html: `Xin chào <strong> ${name}!</strong> Bạn đã nhận thêm <strong>+${bonus}vòng quay</strong> và <strong>+${bonuscoin}xu</strong> vào ngày <strong>${today}</strong> vì lý do <strong>${title}</strong>. Tổng số spin và coin: <strong>${currenmoney}vòng quay</strong> và <strong>${totalcoin}xu</strong>.`,
+    html: `Xin chào <strong style="color: #3b82f6; text-decoration: underline;"> ${name}</strong>! Bạn đã nhận thêm <strong>+${bonus}vòng quay</strong> và <strong>+${bonuscoin}xu</strong> vào ngày <strong>${today}</strong> vì lý do <strong>${title}</strong>. Tổng số spin và coin: <strong>${currenmoney}vòng quay</strong> và <strong>${totalcoin}xu</strong>.`,
   });
 }
 };
@@ -184,7 +197,7 @@ export const sendunSpin = async (
     from: "mail@vlxdxuantruong.email",
     to: email,
     subject: "Mất thưởng!",
-    html: `Xin chào <strong> ${name}!</strong> Bạn đã bị trừ <strong>${unbonus}vòng quay</strong> và <strong>${unbonuscoin}xu</strong> vào ngày <strong>${today}</strong> vì lý do <strong>${title}</strong>.Tổng số spin và coin còn lại: <strong>${currenmoney}vòng quay</strong> và <strong>${totalcoin}xu</strong>.`,
+    html: `Xin chào <strong style="color: #3b82f6; text-decoration: underline;"> ${name}</strong>! Bạn đã bị trừ <strong>${unbonus}vòng quay</strong> và <strong>${unbonuscoin}xu</strong> vào ngày <strong>${today}</strong> vì lý do <strong>${title}</strong>.Tổng số spin và coin còn lại: <strong>${currenmoney}vòng quay</strong> và <strong>${totalcoin}xu</strong>.`,
   });
 }
 };

@@ -9,12 +9,16 @@ interface PasswordFieldProps {
   };
   isPending: boolean;
   validatePassword: (isValid: boolean) => void;
+  password: string
+  setPassword: (value: string) => void;
 }
 
 const PasswordField: React.FC<PasswordFieldProps> = ({
   field,
   isPending,
   validatePassword,
+  password,
+  setPassword
 }) => {
   const [validations, setValidations] = useState({
     hasUpperCase: false,
@@ -23,7 +27,6 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
     isLengthValid: false,
   });
 
-  const [password, setPassword] = useState<string>(""); // State to store the input value
   const [showValidations, setShowValidations] = useState(false);
   const [hasSpace, setHasSpace] = useState(false); // Biến state để kiểm tra mật khẩu có chứa khoảng trắng không
   const [hasAccentError, setHasAccentError] = useState(false);

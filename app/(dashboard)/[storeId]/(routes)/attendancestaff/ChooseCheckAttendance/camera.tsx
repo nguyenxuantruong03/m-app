@@ -1,0 +1,370 @@
+"use client";
+import { useState, useRef, useEffect, Dispatch, SetStateAction } from "react";
+import "./style.css";
+import { Button } from "@/components/ui/button";
+import {
+  SwitchCamera,
+  CameraIcon,
+  Trash2,
+  SendHorizontal,
+  ArrowLeftToLine,
+  TriangleAlert,
+  X,
+  Check,
+} from "lucide-react";
+import axios from "axios";
+import { useParams } from "next/navigation";
+import { QrReader } from "react-qr-reader"; // Thư viện quét mã QR
+import toast from "react-hot-toast";
+import { useCurrentUser } from "@/hooks/use-current-user";
+
+interface QRResult {
+  text: string;
+  rawBytes: any;
+  numBits: number;
+  resultPoints: any[];
+  format: string;
+  timestamp: number;
+  resultMetadata: any;
+}
+
+interface EventProps {
+  id: string;
+  isCheckAttendanceImage: boolean;
+  isCheckNFC: boolean;
+}
+
+interface CameraPorps {
+  onClose: () => void;
+  loading: boolean;
+  dataEventCamera: string | undefined;
+  setShowCameraModal: Dispatch<SetStateAction<boolean>>;
+}
+const Camera: React.FC<CameraPorps> = ({
+  onClose,
+  loading,
+  dataEventCamera,
+  setShowCameraModal,
+}) => {
+  const userId = useCurrentUser();
+  const params = useParams();
+  const videoRef = useRef(null);
+  const photoRef = useRef(null);
+  const [isLoadingData, setIsLoadingData] = useState(false);
+  const [loadingfetch, setLoadingfetch] = useState(true);
+  const [hasPhoto, setHasPhoto] = useState(false);
+  const [facingMode, setFacingMode] = useState("environment"); // Default to back camera
+  const [qrResult, setQrResult] = useState<QRResult | null>(null);
+  const [showVideo, setShowVideo] = useState(true);
+  const [data, setALldata] = useState<EventProps[]>([]);
+  const [showMessage, setShowMessage] = useState(false);
+  const [showMessageNFC, setShowMessageNFC] = useState<boolean | null>(null);
+  const [qrCodeValid, setQrCodeValid] = useState<boolean | null>(null);
+
+  const getVideo = () => {
+    // Kiểm tra xem truy cập vào camera đã được phép hay không
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      // Yêu cầu truy cập vào camera với constraints mong muốn
+      navigator.mediaDevices
+        .getUserMedia({
+          video: {
+            width: 1280,
+            height: 720,
+            facingMode: facingMode, // Chọn camera trước hoặc sau
+          },
+        })
+        .then((stream) => {
+          let video = videoRef.current as HTMLVideoElement | null;
+          if (video) {
+            // Thiết lập thuộc tính của video element
+            video.srcObject = stream;
+            video.autoplay = true; // Auto play video
+            video.muted = true; // Tắt tiếng để tránh tiếng vang
+            video.playsInline = true; // Chơi video trong khung của trang
+            video.play();
+          } else {
+            toast.error("Không tìm thấy camera!");
+          }
+        })
+        .catch((err) => {
+          toast.error("Error accessing camera:", err);
+        });
+    } else {
+      toast.error("Trình duyệt này không được hỗ trợ!");
+    }
+  };
+
+  const filteredData = data && data.filter((item) => item.id === dataEventCamera);
+  const isCheckAttendanceImages = filteredData.map((item) => item.isCheckAttendanceImage);
+  const isCheckAttendanceNFC = filteredData.map((item) => item.isCheckNFC);
+
+  const takePhoto = () => {
+    // Ẩn video
+    setShowVideo(false);
+    const width = 414;
+    const height = width / (16 / 9);
+
+    let video = videoRef.current;
+    let photo = photoRef.current as HTMLCanvasElement | null;
+
+    if (photo) {
+      photo.width = width;
+      photo.height = height;
+
+      let ctx = photo.getContext("2d");
+
+      if (ctx) {
+        if (video) {
+          ctx.drawImage(video, 0, 0, width, height);
+          setHasPhoto(true);
+
+          // Chuyển đổi ảnh thành dataURL và truyền vào máy quét mã QR
+          const dataURL = photo.toDataURL("image/jpeg", 0.8);
+          handleScan(dataURL);
+        } else {
+          toast.error("Không tìm thấy camera!");
+        }
+      } else {
+        toast.error("Không thể tải ảnh 2D!");
+      }
+    } else {
+      toast.error("Không tìm thấy ảnh!");
+    }
+  };
+
+  const closePhoto = () => {
+    setShowVideo(true); // Đảm bảo hiển thị video khi đóng ảnh
+    let photo = photoRef.current as HTMLCanvasElement | null;
+    if (photo) {
+      let ctx = photo.getContext("2d");
+
+      ctx?.clearRect(0, 0, photo.width, photo.height);
+    }
+
+    setHasPhoto(false);
+    getVideo();
+  };
+
+  const switchCamera = () => {
+    setFacingMode(facingMode === "user" ? "environment" : "user"); // Toggle between front and back camera
+    setHasPhoto(false); // Reset photo state when switching cameras
+  };
+
+  const handleScan = (data: any) => {
+    if (data) {
+      setQrResult(data); // Lưu kết quả của quét mã QR
+    }
+  };
+
+  const updatePhoto = async () => {
+    let photo = photoRef.current as HTMLCanvasElement | null;
+    if (photo) {
+      const dataURL = photo.toDataURL("image/jpeg", 0.8);
+      if (qrResult?.text === userId?.urlimageCheckAttendance) {
+        if (isCheckAttendanceImages[0] === false) {
+          setIsLoadingData(true);
+          await axios
+            .post(`/api/${params.storeId}/checkattendance`, {
+              photo: dataURL,
+              qrResult: qrResult?.text || "",
+              datacamera: dataEventCamera,
+            })
+            .then((response) => {
+              setShowVideo(false);
+              setShowCameraModal(false);
+              setIsLoadingData(false);
+              toast.success("Đăng ảnh thành công!");
+            })
+            .catch((error) => {
+              setIsLoadingData(false);
+              toast.error("Error uploading photo:", error);
+            });
+        } else {
+          toast.error("Bạn đã checkin ngày hôm nay!");
+        }
+      } else {
+        toast.error("Qr code của bạn không đúng!");
+      }
+    } else {
+      toast.error("Không tìm thấy ảnh!");
+    }
+  };
+
+  useEffect(() => {
+    getVideo();
+  }, [facingMode]);
+
+  //Show message khi đã chụp ảnh rồi
+  useEffect(() => {
+    setShowMessage(isCheckAttendanceImages[0]);
+  }, [isCheckAttendanceImages]);
+
+  useEffect(() => {
+    setShowMessageNFC(isCheckAttendanceNFC[0]);
+  }, [isCheckAttendanceNFC]);
+
+  //Check nếu như qr code đúng thì Check sai thì X
+  useEffect(() => {
+    if (qrResult?.text === userId?.urlimageCheckAttendance) {
+      // QR code matches user's image check attendance
+      setQrCodeValid(true);
+    } else {
+      // QR code doesn't match user's image check attendance
+      setQrCodeValid(false);
+    }
+  }, [qrResult]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `/api/${params.storeId}/checkattendance`
+        );
+        // Update state with the received events
+        setALldata(response.data);
+        setLoadingfetch(false);
+      } catch (error: unknown) {
+        setLoadingfetch(false);
+        if (
+          (error as { response?: { data?: { error?: string } } }).response &&
+          (error as { response: { data?: { error?: string } } }).response
+            .data &&
+          (error as { response: { data: { error?: string } } }).response.data
+            .error
+        ) {
+          // Hiển thị thông báo lỗi cho người dùng
+          toast.error(
+            (error as { response: { data: { error: string } } }).response.data
+              .error
+          );
+        } else {
+          // Hiển thị thông báo lỗi mặc định cho người dùng
+          toast.error("Error fetching data.");
+        }
+      }
+    };
+    fetchData(); // Call the asynchronous function
+  }, [params.storeId]);
+
+  return (
+    <div className="  relative">
+      {showVideo && (
+        <div className="relative">
+          <video
+            className="xl:w-9/12 2xl:w-10/12 mx-auto"
+            ref={videoRef}
+          ></video>
+          <Button
+            className="absolute bottom-12 lg:bottom-8 left-8 xl:left-52 z-20"
+            variant="outline"
+            onClick={() => {
+              if (isCheckAttendanceImages[0] === false) {
+                takePhoto();
+              } else if (loadingfetch) {
+                // Nếu đang tải dữ liệu, không thực hiện gì khi click
+                toast.loading("Đang tải dữ liệu, vui lòng đợi...");
+              } else {
+                toast.error("Bạn đã checkin ngày hôm nay!");
+              }
+            }}
+            disabled={loadingfetch}
+          >
+            <CameraIcon className="w-5 h-5" />
+          </Button>
+          <Button
+            variant="outline"
+            onClick={switchCamera}
+            disabled={loadingfetch || isLoadingData}
+            className="absolute bottom-12 lg:bottom-8 left-32 xl:left-[19rem]  z-20"
+          >
+            <SwitchCamera className="w-5 h-5" />
+          </Button>
+          <Button
+            className="absolute bottom-12 lg:bottom-8 left-56 xl:left-[25rem]  z-20"
+            disabled={loading || isLoadingData}
+            variant="outline"
+            onClick={onClose}
+          >
+            <ArrowLeftToLine className="w-5 h-5" />
+          </Button>
+          {showMessage && (
+            // Sử dụng showMessage để kiểm soát việc hiển thị thông báo
+            <p className=" absolute bottom-12 lg:bottom-8 left-[62%] xl:left-1/2  transform -translate-x-1/2 border-yellow-400 border-2 flex items-center p-3">
+              <TriangleAlert className="w-4 h-4 text-yellow-400 mr-3" /> Ngày
+              hôm nay bạn đã checkin. Hãy quay lại ngày sau!
+            </p>
+          )}
+          {showMessageNFC && (
+            // Sử dụng showMessage để kiểm soát việc hiển thị thông báo
+            <p className=" absolute bottom-12 lg:bottom-8 left-[62%] xl:left-1/2  transform -translate-x-1/2 border-yellow-400 border-2 flex items-center p-3">
+              <TriangleAlert className="w-4 h-4 text-yellow-400 mr-3" /> Bạn đã
+              checkin bằng NFC!
+            </p>
+          )}
+        </div>
+      )}
+      <div className={"result " + (hasPhoto ? "hasPhoto" : "")}>
+        <canvas
+          className="w-full h-auto fixed xl:-bottom-96 2xl:-bottom-[30rem] right-0 z-10"
+          ref={photoRef}
+        ></canvas>
+        {hasPhoto && (
+          <>
+            <Button
+              className="absolute -bottom-[28rem] lg:-bottom-[34rem] xl:-bottom-72 2xl:-bottom-96 left-28 z-10"
+              onClick={updatePhoto}
+              variant="outline"
+              disabled={loadingfetch || isLoadingData}
+            >
+              <SendHorizontal className="w-5 h-5" />
+            </Button>
+            <Button
+              className="absolute -bottom-[28rem] lg:-bottom-[34rem] xl:-bottom-72 2xl:-bottom-96 left-5 z-10"
+              onClick={closePhoto}
+              variant="outline"
+              disabled={loadingfetch || isLoadingData}
+            >
+              <Trash2 className="w-5 h-5" />
+            </Button>
+            <Button
+              className="absolute -bottom-[28rem] lg:-bottom-[34rem] xl:-bottom-72 2xl:-bottom-96 left-52 z-10"
+              disabled={loading || loadingfetch || isLoadingData}
+              variant="outline"
+              onClick={onClose}
+            >
+              <ArrowLeftToLine className="w-5 h-5" />
+            </Button>
+            {qrCodeValid !== null && (
+              <p
+                className={`absolute -bottom-[28rem] lg:-bottom-[34rem] xl:-bottom-72 2xl:-bottom-96 left-[55%] xl:left-1/2 transform -translate-x-1/2 z-10 border-${
+                  qrCodeValid ? "green" : "red"
+                }-500 border-2 p-3 flex items-center`}
+              >
+                {qrCodeValid ? (
+                  <>
+                    <Check className="w-4 h-4 text-green-400 mr-3" />
+                    Qr code của bạn đã đúng.
+                  </>
+                ) : (
+                  <>
+                    <X className="w-4 h-4 text-red-500 mr-3" />
+                    Qr code của bạn không đúng.
+                  </>
+                )}
+              </p>
+            )}
+            <div className="qr-scanner hidden">
+              <QrReader
+                scanDelay={300}
+                onResult={handleScan}
+                constraints={{ facingMode: facingMode }}
+              />
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Camera;

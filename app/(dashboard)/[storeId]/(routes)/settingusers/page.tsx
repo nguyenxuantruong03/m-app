@@ -53,6 +53,9 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
         { locale: viLocale }
       )
     : null,
+    resendTokenVerify:item.resendTokenVerify,
+    resendTokenResetPassword: item.resendTokenResetPassword,
+    resendCount:item.resendCount,
     role: item.role,
     accounts: item.accounts.map((accountItem: Account) => ({
       type: accountItem.type,

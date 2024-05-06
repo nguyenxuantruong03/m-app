@@ -45,6 +45,10 @@ const RegisterForm = () => {
   const [isCaptchaVerified, setCaptchaVerified] = useState(false);
   const [theme, setTheme] = useState(getTheme());
   const [registerClicked, setRegisterClicked] = useState(false);
+  const [name, setName] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+
 
   useEffect(() => {
     const handleThemeChange = () => {
@@ -83,6 +87,7 @@ const RegisterForm = () => {
         register(values).then((data) => {
           if (data.error) {
             setError(data.error);
+            setPassword("")
           } else if (data.success) {
             setSuccess(data.success);
             // Reset form fields
@@ -91,6 +96,9 @@ const RegisterForm = () => {
               password: "",
               name: "",
             });
+            setPassword("")
+            setEmail("")
+            setName("")
           }
         });
       });
@@ -122,6 +130,8 @@ const RegisterForm = () => {
                       field={field}
                       isPending={isPending}
                       validateName={setNameValid}
+                      setName={setName}
+                      name={name}
                     />
                   </FormControl>
                   <FormMessage />
@@ -135,7 +145,7 @@ const RegisterForm = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <EmailField field={field} isPending={isPending} />
+                    <EmailField field={field} isPending={isPending} setEmail={setEmail} email={email}/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -152,6 +162,8 @@ const RegisterForm = () => {
                       field={field}
                       isPending={isPending}
                       validatePassword={setPasswordValid}
+                      setPassword={setPassword}
+                      password={password}
                     />
                   </FormControl>
                   <FormMessage />

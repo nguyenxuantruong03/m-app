@@ -8,8 +8,11 @@ interface ModalProps{
     isOpen: boolean;
     onClose: () => void;
     children?: React.ReactNode;
+    maxWidth?: string;
+    textCenter?: boolean;
+    top?:boolean
 }
-const Modal:React.FC<ModalProps> = ({title,description,isOpen,onClose,children}) => {
+const Modal:React.FC<ModalProps> = ({title,description,isOpen,onClose,children,maxWidth,textCenter,top}) => {
 
     const onChange =(open:boolean) =>{
         if(!open){
@@ -19,10 +22,10 @@ const Modal:React.FC<ModalProps> = ({title,description,isOpen,onClose,children})
 
     return (  
         <Dialog open={isOpen} onOpenChange={onChange}>
-            <DialogContent>
+              <DialogContent className={`max-w-${maxWidth || "xl"}  ${top ? 'dialog-content-camera' : ''}`}>
                 <DialogHeader>
-                    <DialogTitle>{title}</DialogTitle>
-                    <DialogDescription>{description}</DialogDescription>
+                    <DialogTitle className={textCenter ? "text-center" : ""}>{title}</DialogTitle>
+                    <DialogDescription className={textCenter ? "text-center" : ""}>{description}</DialogDescription>
                 </DialogHeader>
                 <div>
                     {children}

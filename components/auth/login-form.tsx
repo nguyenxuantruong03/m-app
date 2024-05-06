@@ -60,6 +60,8 @@ const LoginForm = () => {
   const [showCaptcha, setShowCaptcha] = useState(true); // Khởi tạo giá trị mặc định là true để hiển thị ReCAPTCHA
   const [theme, setTheme] = useState(getTheme());
   const [loginClicked, setLoginClicked] = useState(false);
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
   const MAX_RESEND_ATTEMPTS = 5;
 
@@ -144,10 +146,13 @@ const LoginForm = () => {
             if (data?.error) {
               setError(data.error);
               setIsError(true); // Đặt giá trị của state mới là true khi có lỗi
+              setPassword("")
             }
 
             if (data?.success) {
               setSuccess(data.success);
+              setPassword("")
+              setEmail("")
             }
 
             if (data?.twoFactor) {
@@ -208,7 +213,7 @@ const LoginForm = () => {
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <EmailField field={field} isPending={isPending} />
+                        <EmailField field={field} isPending={isPending} setEmail={setEmail} email={email}/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -225,6 +230,8 @@ const LoginForm = () => {
                           field={field}
                           isPending={isPending}
                           validatePassword={setPasswordValid}
+                          setPassword={setPassword}
+                          password={password}
                         />
                       </FormControl>
                       <Button

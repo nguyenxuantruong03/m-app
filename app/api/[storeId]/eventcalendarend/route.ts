@@ -64,6 +64,14 @@ export async function GET(
       }
     }
 
+     //Check nếu như đã điểm danh thì lọt vào đây
+     if(latestEvent?.isEnd === true) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn đã kết thúc ngày hôm nay!" }),
+        { status: 400 }
+      );
+    }
+
     //Hiện tại không thể dùng cách utcToZonedTime để change sang giờ VN nên tôi + 7 tiếng để chuyển giờ quốc tế sang giờ VN
     const currentTimeVN = new Date();
     currentTimeVN.setHours(currentTimeVN.getHours() + 7);
@@ -139,8 +147,49 @@ export async function POST(
       );
     }
 
-    // Chuyển đổi start và end sang múi giờ của Việt Nam
+    //Check nếu hôm nay ko phải ngày làm thì error
+    const today = new Date();
+    today.setHours(today.getHours() + 7);
+    const dayName = format(today, "EEEE"); // 'EEEE' là định dạng để lấy tên của thứ trong tiếng Anh
 
+    const dateWorkAttendance = userId?.daywork.join(", ");
+
+    if (dateWorkAttendance && !dateWorkAttendance.includes(dayName)) {
+      return new NextResponse(
+        JSON.stringify({ error: "Hôm nay không phải lịch làm của bạn!" }),
+        { status: 403 }
+      );
+    }
+
+    const allEvents = await prismadb.eventCalendar.findMany({
+      where: {
+        storeId: params.storeId,
+        userId: userId?.id || "",
+      },
+      orderBy: {
+        end: "desc",
+      },
+    });
+
+    // Find the latest event with non-null end time
+    let latestEvent = null;
+    for (const event of allEvents) {
+      if (event.end !== null) {
+        latestEvent = event;
+        break;
+      }
+    }
+
+    //Chuyển isEnd thành true để disable button kết thúc
+    if (latestEvent && !latestEvent.isEnd) {
+      // Update latestEvent with isEnd: true
+      await prismadb.eventCalendar.update({
+        where: { id: latestEvent.id },
+        data: { isEnd: true },
+      });
+    }
+
+    // Chuyển đổi start và end sang múi giờ của Việt Nam
     const eventCalendar = await prismadb.eventCalendar.create({
       data: {
         title,
@@ -167,80 +216,81 @@ export async function POST(
       : null;
     await sendAttendanceEnd(userId?.email, userId?.name, emailTimeStart);
 
-    const eventcalendar = await prismadb.eventCalendar.findUnique({
-      where: { id: userId?.id },
-    });
+    //Đây là khi check với totle ✅ là đc cộng lương nhưng tôi đã làm ở bên camera và nfc
+    // const eventcalendar = await prismadb.eventCalendar.findUnique({
+    //   where: { id: userId?.id },
+    // });
 
-    let totalPoints = 0; // Khởi tạo tổng điểm
+    // let totalPoints = 0; // Khởi tạo tổng điểm
 
-    let checkCount = 0;
-    for (const title of eventcalendar?.title || "") {
-      if (title.includes("✅")) {
-        checkCount++;
-      }
-    }
+    // let checkCount = 0;
+    // for (const title of eventcalendar?.title || "") {
+    //   if (title.includes("✅")) {
+    //     checkCount++;
+    //   }
+    // }
 
-    // Kiểm tra nếu đủ 26 "✅" thì thêm 500 điểm
-    if (checkCount >= 26) {
-      totalPoints += 500000;
-    }
+    // // Kiểm tra nếu đủ 26 "✅" thì thêm 500 điểm
+    // if (checkCount >= 26) {
+    //   totalPoints += 500000;
+    // }
 
-    const user = await prismadb.user.findUnique({
-      where: { id: userId?.id },
-    });
+    // const user = await prismadb.user.findUnique({
+    //   where: { id: userId?.id },
+    // });
 
-    switch (user?.degree) {
-      case Degree.Elementary:
-      case Degree.JuniorHighSchool:
-        totalPoints += 250000;
-        break;
-      case Degree.HighSchool:
-      case Degree.JuniorColleges:
-        totalPoints += 300000;
-        break;
-      case Degree.University:
-      case Degree.MastersDegree:
-        totalPoints += 400000;
-        break;
-      default:
-        totalPoints += 0;
-        break;
-    }
+    // switch (user?.degree) {
+    //   case Degree.Elementary:
+    //   case Degree.JuniorHighSchool:
+    //     totalPoints += 250000;
+    //     break;
+    //   case Degree.HighSchool:
+    //   case Degree.JuniorColleges:
+    //     totalPoints += 300000;
+    //     break;
+    //   case Degree.University:
+    //   case Degree.MastersDegree:
+    //     totalPoints += 400000;
+    //     break;
+    //   default:
+    //     totalPoints += 0;
+    //     break;
+    // }
 
-    // Tìm và cập nhật bản ghi tồn tại nếu có, nếu không, tạo mới
-    let existingSalary = await prismadb.caculateSalary.findFirst({
-      where: {
-        userId: userId?.id,
-        eventcalendarId: eventcalendar?.id,
-      },
-    });
+    // // Tìm và cập nhật bản ghi tồn tại nếu có, nếu không, tạo mới
+    // let existingSalary = await prismadb.caculateSalary.findFirst({
+    //   where: {
+    //     userId: userId?.id,
+    //     eventcalendarId: eventcalendar?.id,
+    //   },
+    // });
 
-    if (existingSalary) {
-      // Chuyển đổi giá trị từ Decimal thành number trước khi thêm vào totalPoints
-      const existingSalaryValue = existingSalary.salaryday
-        ? parseFloat(existingSalary.salaryday.toString())
-        : 0;
-      totalPoints += existingSalaryValue;
-      await prismadb.caculateSalary.update({
-        where: { id: existingSalary.id },
-        data: {
-          storeId: params.storeId, // Include the required fields
-          salaryday: totalPoints,
-          eventcalendarId: eventcalendar?.id || "",
-          userId: userId?.id || "",
-        },
-      });
-    } else {
-      // Tạo bản ghi mới nếu không có bản ghi tồn tại
-      await prismadb.caculateSalary.create({
-        data: {
-          storeId: params.storeId, // Include the required fields
-          userId: userId?.id || "",
-          eventcalendarId: eventcalendar?.id || "",
-          salaryday: totalPoints,
-        },
-      });
-    }
+    // if (existingSalary) {
+    //   // Chuyển đổi giá trị từ Decimal thành number trước khi thêm vào totalPoints
+    //   const existingSalaryValue = existingSalary.salaryday
+    //     ? parseFloat(existingSalary.salaryday.toString())
+    //     : 0;
+    //   totalPoints += existingSalaryValue;
+    //   await prismadb.caculateSalary.update({
+    //     where: { id: existingSalary.id },
+    //     data: {
+    //       storeId: params.storeId, // Include the required fields
+    //       salaryday: totalPoints,
+    //       eventcalendarId: eventcalendar?.id || "",
+    //       userId: userId?.id || "",
+    //     },
+    //   });
+    // } else {
+    //   // Tạo bản ghi mới nếu không có bản ghi tồn tại
+    //   await prismadb.caculateSalary.create({
+    //     data: {
+    //       storeId: params.storeId, // Include the required fields
+    //       userId: userId?.id || "",
+    //       eventcalendarId: eventcalendar?.id || "",
+    //       salaryday: totalPoints,
+    //     },
+    //   });
+    // }
 
     return NextResponse.json(eventCalendar);
   } catch (error) {

@@ -93,12 +93,19 @@ body,
 .fc .fc-daygrid-day-events {
   margin-top: 15px;
 }
+/* CSS cho trạng thái mặc định của trang */
 .fc-h-event .fc-event-title {
   font-size: 25px;
-  color: #333;
+  color: #333; /* Màu chữ mặc định */
 }
 
-
+/* CSS cho trường hợp Dark Mode */
+@media (prefers-color-scheme: dark) {
+  .fc-h-event .fc-event-title {
+    font-size: 25px;
+    color: #fff; /* Màu chữ trắng trong Dark Mode */
+  }
+}
 
 
 .avatar-overlapping-multiple-image {
@@ -141,4 +148,14 @@ body,
       -webkit-transform: rotate(360deg); 
       transform:rotate(360deg); 
   } 
+}
+
+.dialog-content-camera {
+  top: 40%; /* Mặc định */
+}
+
+@media (min-width: 1280px) {
+  .dialog-content-camera {
+    top: 50%; /* Cho màn hình lớn */
+  }
 }

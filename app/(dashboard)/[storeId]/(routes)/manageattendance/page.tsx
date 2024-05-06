@@ -44,6 +44,30 @@ const ManageAttendance = async ({
       attendanceend: item.attendanceend,
       allDay: item.allDay,
       title: item.title,
+      urlImageAttendance: item.urlImageAttendance,
+      qrcodeCheckAttendance: item.qrcodeCheckAttendance,
+      delayTime:item.delayTime,
+      isCheckAttendanceImage: item.isCheckAttendanceImage,
+      updateNFC: item.updateNFC
+        ? format(
+            utcToZonedTime(
+              subHours(new Date(item.updateNFC), 7),
+              vietnamTimeZone
+            ),
+            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+            { locale: viLocale }
+          )
+        : null,
+      updateImage: item.updateImage
+        ? format(
+            utcToZonedTime(
+              subHours(new Date(item.updateImage), 7),
+              vietnamTimeZone
+            ),
+            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+            { locale: viLocale }
+          )
+        : null,
       end: item.end
         ? format(
             utcToZonedTime(subHours(new Date(item.end), 7), vietnamTimeZone),
@@ -58,12 +82,9 @@ const ManageAttendance = async ({
             { locale: viLocale }
           )
         : null,
-        createdAt: item.createdAt
+      createdAt: item.createdAt
         ? format(
-            utcToZonedTime(
-              new Date(new Date(item.createdAt)),
-              vietnamTimeZone
-            ),
+            utcToZonedTime(new Date(new Date(item.createdAt)), vietnamTimeZone),
             "E '-' dd/MM/yyyy '-' HH:mm:ss a",
             { locale: viLocale }
           )

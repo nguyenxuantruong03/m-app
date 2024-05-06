@@ -33,7 +33,7 @@ export const genearteTwoFactorToken = async (email: string) => {
 
 export const generatePasswordResetToken = async (email: string) => {
   const token = uuidv4();
-  const expires = new Date(new Date().getTime() + 2 *60 * 1000);
+  const expires = new Date(new Date().getTime() + 5 *60 * 1000);
 
   const exitstingToken = await getPasswordResetTokenByEmail(email);
 
@@ -58,7 +58,7 @@ export const generatePasswordResetToken = async (email: string) => {
 
 export const generateVerificationToken = async (email: string) => {
   const token = uuidv4();
-  const expires = new Date(new Date().getTime() + 2 *60 * 1000);
+  const expires = new Date(new Date().getTime() + 5 *60 * 1000);
 
   const exitstingToken = await getVerificationTokenByEmail(email);
 

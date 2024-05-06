@@ -20,6 +20,11 @@ export const reset = async (values: z.infer<typeof ResetSchema>) =>{
         return {error: "Không tìm thấy Email !"}
     }
 
+    // Check if the user is banned
+    if (existingUser.ban) {
+        return { error: "Tài khoản của bạn đã bị cấm trong 24 giờ." };
+    }
+
     // Generate token & send email
     const passwordResetToken = await generatePasswordResetToken(email)   
     await sendPasswordResetEmail(

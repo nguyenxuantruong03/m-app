@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -42,29 +42,40 @@ import Image from "next/image";
 import { format } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import viLocale from "date-fns/locale/vi";
+import MutipleSelectOption from "./mutiple-select";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 
 const formSchema = z.object({
-  name: z.string().min(1),
+  name: z.string().min(1,{ message: "Bắt buộc nhập name" }),
   numberCCCD: z.string().refine((value) => /^[0-9]+$/.test(value), {
     message: "Vui lòng nhập số CMND hợp lệ chỉ có số.",
   }),
   phonenumber: z.string().refine((value) => /^[0-9]+$/.test(value), {
     message: "Vui lòng nhập số điện thoại hợp lệ chỉ có số.",
   }),
-  issued: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
+  issued: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
   imageCredential: z.array(z.string()),
-  gender: z.string().min(1,{message: "Bắt buộc chọn 1 gender."}),
-  degree: z.string().min(1,{message: "Bắt buộc chọn 1 degree."}),
-  maritalStatus: z.string().min(1,{message: "Bắt buộc chọn 1 maritalStatus."}),
-  workingTime: z.string().min(1,{message: "Bắt buộc chọn 1 workingTime."}),
+  gender: z.string().min(1, { message: "Bắt buộc chọn 1 gender." }),
+  degree: z.string().min(1, { message: "Bắt buộc chọn 1 degree." }),
+  maritalStatus: z
+    .string()
+    .min(1, { message: "Bắt buộc chọn 1 maritalStatus." }),
+  workingTime: z.string().min(1, { message: "Bắt buộc chọn 1 workingTime." }),
   isCitizen: z.boolean().default(false).optional(),
   dateRange: z.date().nullable(),
   dateofbirth: z.union([z.date().nullable(), z.string().nullable()]),
+  timestartwork: z.string().min(1, { message: "Hãy nhập giờ bắt đầu làm việc." }),
+  urlimageCheckAttendance: z.optional(z.string().min(2,{message: "Nhập ít nhất 2 ký tự."})),
+  codeNFC: z.optional(z.string().min(2,{message: "Nhập ít nhất 2 ký tự."})),
+  daywork: z.array(z.string()),
   createdAt: z.date().nullable(),
 });
 
 type ManageStaffFormValues = z.infer<typeof formSchema>;
+type Option = {
+  value: string;
+  label: string;
+};
 
 interface ManageStaffFormProps {
   initialData: User | null;
@@ -77,6 +88,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [selectedOption, setSelectedOption] = useState<Option[]>([]);
 
   const title = "Edit";
   const description = "Edit";
@@ -86,22 +98,46 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       ...initialData,
-      name: "",
-      numberCCCD: "",
-      issued: "",
-      imageCredential: [],
-      phonenumber: "",
-      gender: "",
-      degree: "",
-      maritalStatus: "",
-      workingTime: "",
-      isCitizen: false,
-      dateRange: initialData?.dateRange ? new Date(initialData?.dateRange) : null,
+      name: initialData?.name ?? null!,
+      numberCCCD: initialData?.numberCCCD ?? null!,
+      issued: initialData?.issued ?? null!,
+      imageCredential: initialData?.imageCredential ?? null!,
+      phonenumber: initialData?.phonenumber ?? null!,
+      gender: initialData?.gender ?? null!,
+      degree: initialData?.degree ?? null!,
+      maritalStatus: initialData?.maritalStatus ?? null!,
+      workingTime: initialData?.workingTime ?? null!,
+      isCitizen: initialData?.isCitizen ?? null!,
+      timestartwork: initialData?.timestartwork ?? null!,
+      urlimageCheckAttendance: initialData?.urlimageCheckAttendance ?? null!,
+      codeNFC: initialData?.codeNFC ?? null!,
+      daywork: initialData?.daywork ?? null!,
+      dateRange: initialData?.dateRange
+        ? new Date(initialData?.dateRange)
+        : null,
       dateofbirth: initialData?.dateofbirth
         ? new Date(initialData?.dateofbirth)
         : null,
     },
   });
+  useEffect(() => {
+    const dayNames: { [key: string]: string } = {
+      Monday: "Thứ 2",
+      Tuesday: "Thứ 3",
+      Wednesday: "Thứ 4",
+      Thursday: "Thứ 5",
+      Friday: "Thứ 6",
+      Saturday: "Thứ 7",
+      Sunday: "Chủ Nhật"
+    };
+  
+    setSelectedOption(
+      (initialData?.daywork ?? []).map((daywork: string) => ({
+        value: daywork,
+        label: dayNames[daywork] // Sử dụng đối tượng dayNames để ánh xạ tên ngày
+      }))
+    );
+  }, [initialData]);
 
   const onSubmit = async (data: ManageStaffFormValues) => {
     try {
@@ -268,7 +304,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
             name="imageCredential"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Hình ảnh <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                <FormLabel>
+                  Hình ảnh <span className="text-red-600 pl-1">(*)</span>
+                </FormLabel>
                 <FormControl>
                   <ImageUpload
                     value={field.value} // Assuming field.value is an array of strings
@@ -292,10 +330,13 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="phonenumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Số điện thoại <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel>
+                    Số điện thoại <span className="text-red-600 pl-1">(*) Nhập tối đa 11 số!</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="tel"
+                      pattern="0[0-9]{9,10}"
                       disabled={loading}
                       placeholder="095348..."
                       {...field}
@@ -305,15 +346,20 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="numberCCCD"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Số căn cước công dân <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel>
+                    Số CCCD{" "}
+                    <span className="text-red-600 pl-1">(*) Nhập tối đa 12 số!</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="tel"
+                      pattern="^0\d{8}(\d{3})?$"
                       disabled={loading}
                       placeholder="0582356234..."
                       {...field}
@@ -329,7 +375,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel>
+                    Tên <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -347,7 +395,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="dateofbirth"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Sinh nhật <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel>
+                    Sinh nhật <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="date"
@@ -375,10 +425,37 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
 
             <FormField
               control={form.control}
+              name="timestartwork"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Thời gian bắt đầu làm việc{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="time"
+                      disabled={loading}
+                      value={field.value ? field.value : ""}
+                      onChange={(e) => {
+                        const timeValue = e.target.value;
+                        field.onChange(timeValue);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
               name="issued"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Cấp ở đâu <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel>
+                    Cấp ở đâu <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -396,7 +473,10 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="dateRange"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Ngày hết hạn CMND <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel>
+                    Ngày hết hạn CMND{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="date"
@@ -427,7 +507,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="gender"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giới tính <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel>
+                    Giới tính <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
                   <Select
                     disabled={loading}
                     onValueChange={field.onChange}
@@ -459,7 +541,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="degree"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Bằng cấp <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel>
+                    Bằng cấp <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
                   <Select
                     disabled={loading}
                     onValueChange={field.onChange}
@@ -490,7 +574,10 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="maritalStatus"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tình trạng hôn nhân <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel>
+                    Tình trạng hôn nhân{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
                   <Select
                     disabled={loading}
                     onValueChange={field.onChange}
@@ -521,7 +608,10 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="workingTime"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thời gian làm việc <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel>
+                    Thời gian làm việc{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
                   <Select
                     disabled={loading}
                     onValueChange={field.onChange}
@@ -549,6 +639,44 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
             />
             <FormField
               control={form.control}
+              name="urlimageCheckAttendance"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Qrcode nhân viên
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      placeholder="Mã qr ..."
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="codeNFC"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    NFC nhân viên
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      placeholder="Mã NFC ..."
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="isCitizen"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
@@ -557,6 +685,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                       checked={field.value}
                       // @ts-ignore
                       onCheckedChange={field.onChange}
+                      disabled={loading}
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
@@ -567,6 +696,21 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               )}
             />
           </div>
+          <FormField
+              control={form.control}
+              name="daywork" 
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                  Chọn thứ làm việc  <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
+                  <FormControl>
+                   <MutipleSelectOption selectedOption={selectedOption} setSelectedOption={setSelectedOption} field={field} disabled={loading}/>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
           <Button disabled={loading} className="ml-auto" type="submit">
             {action}

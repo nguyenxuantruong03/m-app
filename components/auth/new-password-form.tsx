@@ -20,7 +20,6 @@ import FormError from "@/components/form-error";
 import FormSuccess from "@/components/form-success";
 import { newPassword } from "@/actions/actions-signin-sign-up/new-password";
 import PasswordField from "./field/passwordfield";
-import { X } from "lucide-react";
 
 const NewPasswordForm = () => {
   const searchParam = useSearchParams();
@@ -30,6 +29,8 @@ const NewPasswordForm = () => {
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
   const [isPasswordValid, setPasswordValid] = useState(false);
+  const [password, setPassword] = useState<string>("");
+
   // form bên dưới dùng để validate trường nhập theo loginForm bên dưới gọi form đẻ validate code đã xử lý ở  đây và bên dưới dùng destructuring để gọi hết vào
   const form = useForm<z.infer<typeof NewPasswordSchema>>({
     resolver: zodResolver(NewPasswordSchema),
@@ -68,6 +69,8 @@ const NewPasswordForm = () => {
                       field={field}
                       isPending={isPending}
                       validatePassword={setPasswordValid}
+                      password={password}
+                      setPassword={setPassword}
                     />
                   </FormControl>
                   <FormMessage />

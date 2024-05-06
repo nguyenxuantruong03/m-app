@@ -1,0 +1,98 @@
+//camera
+@media (min-width: 1536px) {
+  .result {
+    position: fixed;
+    top: -512px;
+    left: 100%;
+    right: 100%;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    z-index: 1;
+    transition: 0.4s;
+  }
+}
+
+@media (min-width: 1280px) {
+  .result {
+    top: -370px;
+  }
+}
+
+.result.hasPhoto{
+  left: 0;
+}
+
+
+
+//nfc
+#carta{
+  animation: animationFrames ease-in-out 1.6s;
+  animation-iteration-count: infinite;
+  transform-origin: 50% 50%;
+  animation-fill-mode:forwards; /*when the spec is finished*/
+  -webkit-animation: animationFrames ease-in-out 1.6s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-transform-origin: 50% 50%;
+  -webkit-animation-fill-mode:forwards; /*Chrome 16+, Safari 4+*/ 
+  -moz-animation: animationFrames ease-in-out 1.6s;
+  -moz-animation-iteration-count: infinite;
+  -moz-transform-origin: 50% 50%;
+  -moz-animation-fill-mode:forwards; /*FF 5+*/
+  -o-animation: animationFrames ease-in-out 1.6s;
+  -o-animation-iteration-count: infinite;
+  -o-transform-origin: 50% 50%;
+  -o-animation-fill-mode:forwards; /*Not implemented yet*/
+  -ms-animation: animationFrames ease-in-out 1.6s;
+  -ms-animation-iteration-count: infinite;
+  -ms-transform-origin: 50% 50%;
+  -ms-animation-fill-mode:forwards; /*IE 10+*/
+  
+  -webkit-animation-direction: alternate;
+  animation-direction: alternate;
+}
+
+@keyframes animationFrames{
+  0% {
+    transform:  translate(0px,0px);
+  }
+  100% {
+    transform:  translate(155%,0%);
+  }
+}
+
+@-moz-keyframes animationFrames{
+  0% {
+    -moz-transform:  translate(0px,0px);
+  }
+  100% {
+    -moz-transform:  translate(155%,0%);
+  }
+}
+
+@-webkit-keyframes animationFrames {
+  0% {
+    -webkit-transform:  translate(0px,0px);
+  }
+  100% {
+    -webkit-transform:  translate(155%,0%);
+  }
+}
+
+@-o-keyframes animationFrames {
+  0% {
+    -o-transform:  translate(0px,0px);
+  }
+  100% {
+    -o-transform:  translate(155%,0%);
+  }
+}
+
+@-ms-keyframes animationFrames {
+  0% {
+    -ms-transform:  translate(0px,0px);
+  }
+  100% {
+    -ms-transform:  translate(155%,0%);
+  }
+}

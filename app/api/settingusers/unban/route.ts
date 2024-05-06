@@ -12,6 +12,8 @@ export async function POST(req: Request) {
         data: {
           ban: false,
           resendCount: 0,
+          resendTokenVerify: 0,
+          resendTokenResetPassword: 0,
           banExpires: null, 
         },
       });

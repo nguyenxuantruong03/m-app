@@ -60,13 +60,12 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       await toast.promise(
         promise.then(() => {
           return (
-            <p>
-              Ban:{" "}
-              <span className="font-bold">
+            <span>
+              Ban: <span className="font-bold">
                 {data.email} - <span className="font-bold">{data.name}</span>
               </span>
               .
-            </p>
+            </span>
           );
         }),
         {

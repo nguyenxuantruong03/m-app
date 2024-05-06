@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
 import { currentRole, currentUser } from "@/lib/auth";
+import { sendUpdateManageStaff } from "@/lib/mail-sendUpdate-Staff";
 
 export async function GET(
   req: Request,
@@ -111,8 +112,12 @@ export async function PATCH(
       workingTime,
       imageCredential,
       dateofbirth,
+      timestartwork,
       maritalStatus,
       dateRange,
+      urlimageCheckAttendance,
+      daywork,
+      codeNFC,
     } = body;
 
     if (!userId) {
@@ -123,10 +128,9 @@ export async function PATCH(
     }
 
     if (!name) {
-      return new NextResponse(
-        JSON.stringify({ error: "Name is required!" }),
-        { status: 400 }
-      );
+      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+        status: 400,
+      });
     }
 
     if (!numberCCCD) {
@@ -178,6 +182,13 @@ export async function PATCH(
       );
     }
 
+    if (!daywork) {
+      return new NextResponse(
+        JSON.stringify({ error: "Hãy chọn làm thứ mấy!" }),
+        { status: 400 }
+      );
+    }
+
     if (!maritalStatus) {
       return new NextResponse(
         JSON.stringify({ error: "Tính trạng hôn nhân is required!" }),
@@ -207,38 +218,80 @@ export async function PATCH(
         { status: 405 }
       );
     }
-    
-    await prismadb.user.update({
+
+    // Bước 1: Truy vấn dữ liệu hiện tại
+    const existingData = await prismadb.user.findUnique({
       where: {
         id: params.managestaffId,
       },
-      data: {
-        name,
-        isCitizen,
-        numberCCCD,
-        issued,
-        gender,
-        degree,
-        phonenumber,
-        workingTime,
-        imageCredential,
-        maritalStatus,
-        dateofbirth,
-        dateRange
-      },
     });
 
+    // Bước 2: Thực hiện cập nhật dữ liệu mới
     const managestaff = await prismadb.user.update({
       where: {
         id: params.managestaffId,
       },
       data: {
-        imageCredential: {
-          set: imageCredential,
-        },
+        name,
+        phonenumber,
+        numberCCCD,
+        gender,
+        issued,
+        degree,
+        workingTime,
+        timestartwork,
+        maritalStatus,
+        daywork,
+        urlimageCheckAttendance,
+        codeNFC,
+        isCitizen,
+        imageCredential,
+        dateofbirth,
+        dateRange,
       },
     });
 
+    // Danh sách các trường cần loại bỏ
+    const ignoredFields = ['emailVerified', 'lastlogin', 'createdAt', 'updatedAt','dateofbirth','dateRange','imageCredential',"urlimageCheckAttendance","codeNFC","isCitizen"];
+
+    // Bước 3: So sánh dữ liệu cũ và mới
+    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    for (const key in existingData) {
+      if (existingData.hasOwnProperty(key) && managestaff.hasOwnProperty(key)) {
+        if (
+          existingData[key as keyof typeof existingData] !==
+          managestaff[key as keyof typeof managestaff]
+        ) {
+          // Kiểm tra xem trường hiện tại có trong danh sách loại bỏ không
+          if (!ignoredFields.includes(key)) {
+            changes[key] = {
+              oldValue: existingData[key as keyof typeof existingData],
+              newValue: managestaff[key as keyof typeof managestaff],
+            };
+          }
+        }
+      }
+    }
+
+    await sendUpdateManageStaff(
+      userId?.email,
+      managestaff.name,
+      managestaff.phonenumber,
+      managestaff.numberCCCD,
+      managestaff.gender,
+      managestaff.issued,
+      managestaff.degree,
+      managestaff.workingTime,
+      managestaff.timestartwork,
+      managestaff.maritalStatus,
+      managestaff.daywork,
+      managestaff.urlimageCheckAttendance,
+      managestaff.codeNFC,
+      managestaff.dateofbirth,
+      managestaff.dateRange,
+      managestaff.isCitizen,
+      changes
+    );
     return NextResponse.json(managestaff);
   } catch (error) {
     return new NextResponse(

@@ -22,6 +22,9 @@ export type SettingUsersColumn = {
   image: string | null;
   imageCredential: string;
   password: string | null;
+  resendTokenVerify: number | null;
+  resendTokenResetPassword: number | null;
+  resendCount: number | null;
   role: string;
   accounts: {
     type: string;
@@ -103,7 +106,7 @@ const RoleCell = <T extends SettingUsersColumn>({ row }: RoleCellProps<T>) => {
     <div
       onClick={() => setEditable(true)}
       className={`cursor-pointer font-bold ${
-        isAdmin ? "text-red-500" : isStaff ? "text-blue-500" : "text-black"
+        isAdmin ? "text-red-500" : isStaff ? "text-blue-500" : "dark:text-amber-500 text-black"
       }`}
     >
       {user.role}
@@ -299,6 +302,45 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
       return (
         <div className={isBanned ? "line-through text-gray-400" : ""}>
           {row.original.createdAt}
+        </div>
+      );
+    },
+  },
+
+  {
+    accessorKey: "resendTokenVerify",
+    header: "Gửi mã xác thực",
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      return (
+        <div className={isBanned ? "line-through text-gray-400" : ""}>
+          {row.original.resendTokenVerify}
+        </div>
+      );
+    },
+  },
+
+  {
+    accessorKey: "resendTokenResetPassword",
+    header: "Gửi mã Resetpassword",
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      return (
+        <div className={isBanned ? "line-through text-gray-400" : ""}>
+          {row.original.resendTokenResetPassword}
+        </div>
+      );
+    },
+  },
+
+  {
+    accessorKey: "resendCount",
+    header: "Gửi 2FA",
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      return (
+        <div className={isBanned ? "line-through text-gray-400" : ""}>
+          {row.original.resendCount}
         </div>
       );
     },

@@ -32,6 +32,10 @@ export const login = async (
 
   const existingUser = await getUserByEmail(email);
 
+  if(!existingUser?.emailVerified){
+    return {error: "Bạn chưa xác nhận email! Hãy kiểm tra email và click vào ''hear'' để xác nhận email."}
+  }
+
   if (!existingUser?.password) {
     return { error: "Password không hợp lệ!" };
   }
@@ -65,6 +69,8 @@ export const login = async (
           ban: false,
           banExpires: null,
           resendCount: 0,
+          resendTokenVerify: 0,
+          resendTokenResetPassword: 0,
         },
       });
     }
@@ -164,6 +170,8 @@ export const login = async (
       where: { email: existingUser.email },
       data: {
         resendCount: 0,
+        resendTokenVerify: 0,
+        resendTokenResetPassword: 0,
       },
     });
 

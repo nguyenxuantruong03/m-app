@@ -45,6 +45,8 @@ export const {
               ban: false,
               banExpires: null,
               resendCount: 0,
+              resendTokenVerify: 0,
+              resendTokenResetPassword: 0,
             },
           });
         }
@@ -91,6 +93,10 @@ export const {
         session.user.isOAuth = token.isOAuth as boolean;
         session.user.imageCredential = token.imageCredential as string[];
         session.user.ban = token.ban as boolean;
+        session.user.timestartwork = token.timestartwork as string;
+        session.user.urlimageCheckAttendance = token.urlimageCheckAttendance as string;
+        session.user.codeNFC = token.codeNFC as string;
+        session.user.daywork = token.daywork as string[];
       }
       return session;
     },
@@ -122,6 +128,10 @@ export const {
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
       token.imageCredential = existingUser.imageCredential;
       token.ban = existingUser.ban;
+      token.timestartwork = existingUser.timestartwork;
+      token.urlimageCheckAttendance = existingUser.urlimageCheckAttendance;
+      token.codeNFC = existingUser.codeNFC;
+      token.daywork = existingUser.daywork;
       return token;
     },
   },

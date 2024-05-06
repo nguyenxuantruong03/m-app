@@ -9,10 +9,11 @@ interface NameFieldProps {
   };
   isPending: boolean;
   validateName: (isValid: boolean) => void;
+  name: string; 
+  setName: (value: string) => void; 
 }
 
-const NameField: React.FC<NameFieldProps> = ({ field, isPending, validateName }) => {
-  const [name, setName] = useState<string>(""); // State to store the input value
+const NameField: React.FC<NameFieldProps> = ({ field, isPending, validateName,setName,name }) => {
   const [showNamePrompt, setShowNamePrompt] = useState(false);
   const [isValidName, setIsValidName] = useState(false);
   const [isInvalidInput, setIsInvalidInput] = useState(false);

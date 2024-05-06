@@ -8,10 +8,11 @@ interface EmailFieldProps {
     onChange: (value: string) => void;
   };
   isPending: boolean;
+  email: string;
+  setEmail: (value: string) => void;
 }
 
-const EmailField: React.FC<EmailFieldProps> = ({ field, isPending }) => {
-  const [email, setEmail] = useState<string>(""); // State to store the input value
+const EmailField: React.FC<EmailFieldProps> = ({ field, isPending,email,setEmail }) => {
   const [showEmailPrompt, setShowEmailPrompt] = useState(false);
   const [isValidEmail, setIsValidEmail] = useState(false);
   const [isInvalidInput, setIsInvalidInput] = useState(false); // Thêm state mới
