@@ -8,6 +8,15 @@ body,
   height: 100%;
 }
 
+.light .bg-image {
+  background-image: url('/background-image/bg-light.png');
+  background-repeat: no-repeat;
+}
+
+.dark .bg-image {
+  background-image: url('/background-image/bg-dark.png');
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

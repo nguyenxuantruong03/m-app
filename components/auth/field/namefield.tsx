@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Check, X } from "lucide-react";
 
@@ -17,8 +17,22 @@ const NameField: React.FC<NameFieldProps> = ({ field, isPending, validateName,se
   const [showNamePrompt, setShowNamePrompt] = useState(false);
   const [isValidName, setIsValidName] = useState(false);
   const [isInvalidInput, setIsInvalidInput] = useState(false);
+  const [isNameLengthValid, setIsNameLengthValid] = useState(false); // State mới để kiểm tra độ dài ký tự
+  const [allValid, setAllValid] = useState(false); // Thêm state để theo dõi tất cả các yêu cầu đều hợp lệ
 
   const inputRef = useRef<HTMLInputElement>(null);
+
+  //Kiếm tra nếu tất cả các valid đều đúng thì ẩn đi
+  useEffect(() => {
+    // Kiểm tra nếu tất cả các yêu cầu đều hợp lệ, ẩn showValidations
+    if (
+      isValidName && isNameLengthValid
+    ) {
+      setAllValid(true);
+    } else {
+      setAllValid(false);
+    }
+  }, [isValidName,isNameLengthValid]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let inputValue = e.target.value;
@@ -33,6 +47,8 @@ const NameField: React.FC<NameFieldProps> = ({ field, isPending, validateName,se
     validateName(isValid && inputValue !== '');
     setIsInvalidInput(!isValid);
     setName(inputValue); // Cập nhật giá trị trong state
+    // Kiểm tra độ dài tên
+    setIsNameLengthValid(inputValue.length >= 4); // Tên phải có ít nhất 2 ký tự
     field.onChange(inputValue); // Gọi field.onChange để cập nhật state của biểu mẫu
   };
   
@@ -52,11 +68,11 @@ const NameField: React.FC<NameFieldProps> = ({ field, isPending, validateName,se
         onClick={() => setShowNamePrompt(true)}
         onBlur={handleBlur}
         ref={inputRef}
-        className={`${isInvalidInput ? 'border-red-500' : (isValidName ? 'border-green-400' : '')}`}
+        className={`border-2 ${isInvalidInput ? 'border-red-500' : (isValidName || isNameLengthValid ? 'border-green-400' : '')}`}
       />
       <div
         className={`mt-2 space-y-2 ${
-          showNamePrompt
+          (showNamePrompt && !allValid)
             ? "opacity-100 max-h-96 animate-fade-down animate-once animate-duration-[1200ms] animate-delay-100 animate-ease-in-out"
             : "opacity-0 max-h-0 overflow-hidden"
         }`}
@@ -78,6 +94,23 @@ const NameField: React.FC<NameFieldProps> = ({ field, isPending, validateName,se
               </span>
             )}
           </span>
+        </div>
+        <div className="flex items-center space-x-1">
+          {isNameLengthValid ? (
+            <>
+              <Check className="w-5 h-5 text-green-400" />
+              <span className="text-xs text-green-400">
+                Bạn đã nhập đủ Họ và Tên!
+              </span>
+            </>
+          ) : (
+            <>
+              <X className="w-5 h-5 text-red-500" />
+              <span className="text-xs text-red-500">
+                Hãy nhập đủ Họ và Tên. ít nhất 4 ký tự!
+              </span>
+            </>
+          )}
         </div>
       </div>
     </>

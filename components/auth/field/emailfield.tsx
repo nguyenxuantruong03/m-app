@@ -1,5 +1,5 @@
 "use client"
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Check, X } from "lucide-react";
 
@@ -16,19 +16,33 @@ const EmailField: React.FC<EmailFieldProps> = ({ field, isPending,email,setEmail
   const [showEmailPrompt, setShowEmailPrompt] = useState(false);
   const [isValidEmail, setIsValidEmail] = useState(false);
   const [isInvalidInput, setIsInvalidInput] = useState(false); // Thêm state mới
+  const [allValid, setAllValid] = useState(false); // Thêm state để theo dõi tất cả các yêu cầu đều hợp lệ
 
   const inputRef = useRef<HTMLInputElement>(null);
 
+   //Kiếm tra nếu tất cả các valid đều đúng thì ẩn đi
+   useEffect(() => {
+    // Kiểm tra nếu tất cả các yêu cầu đều hợp lệ, ẩn showValidations
+    if (
+      isValidEmail
+    ) {
+      setAllValid(true);
+    } else {
+      setAllValid(false);
+    }
+  }, [isValidEmail]);
+  
+  const emailRegex = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const emailinput = e.target.value;
+    const emailInput = e.target.value;
     // Kiểm tra email có chứa ký tự @ hay không
-    const isValid = emailinput.includes("@");
+    const isValid = emailRegex.test(emailInput);
     setIsValidEmail(isValid);
     setShowEmailPrompt(true); // Hiển thị prompt khi có sự thay đổi trong input
     setIsInvalidInput(!isValid); // Cập nhật trạng thái của biến isInvalidInput
-
-    setEmail(emailinput)
-    field.onChange(emailinput); // Call field.onChange to update form state
+    setEmail(emailInput)
+    field.onChange(emailInput); // Call field.onChange to update form state
   };
 
   const handleBlur = () => {
@@ -51,7 +65,7 @@ const EmailField: React.FC<EmailFieldProps> = ({ field, isPending,email,setEmail
       />
       <div
         className={`mt-2 space-y-2 ${
-          showEmailPrompt
+          (showEmailPrompt && !allValid)
             ? "opacity-100 max-h-96 animate-fade-down animate-once animate-duration-[1200ms] animate-delay-100 animate-ease-in-out"
             : "opacity-0 max-h-0 overflow-hidden"
         }`}
@@ -65,11 +79,11 @@ const EmailField: React.FC<EmailFieldProps> = ({ field, isPending,email,setEmail
           <span className="text-xs">
             {isValidEmail ? (
               <span className="text-xs text-green-400">
-                Đã thêm @!
+                Đã thêm đây đủ mail!
               </span>
             ) : (
               <span className="text-xs text-red-500">
-                Bạn phải nhập email bao gồm @gmail.com hoặc các loại @ khác!
+                Bạn phải nhập email bao gồm @gmail.com hoặc các loại @example.com khác!
               </span>
             )}
           </span>
