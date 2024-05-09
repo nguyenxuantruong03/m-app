@@ -57,16 +57,20 @@ export const newPassword = async (
 
   // Kiểm tra xem đã gửi quá nhiều lần chưa nếu nhiều hơn 5 sẽ bị ban
   if (resendTokenResetPasswordCount >= 6) {
-    await prismadb.user.update({
+    const timeBanUser = new Date();
+    timeBanUser.setTime(timeBanUser.getTime() + 24); // Thêm 24 giờ
+    const banUser = await prismadb.user.update({
       where: { id: existingUser.id },
       data: {
         ban: true,
-        banExpires: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), // Cấm trong 24 giờ
+        banExpires: timeBanUser, // Cấm trong 24 giờ
       },
     });
+    const timeBan = banUser.banExpires
+      ? format(banUser.banExpires, "dd/MM/yyyy '-' HH:mm a")
+      : "";
     return {
-      error:
-        "Bạn đã gửi lại mã xác thực quá nhiều lần và đã bị khóa tài khoản trong 24 giờ.",
+      error: `Bạn đã gửi lại mã xác thực quá nhiều lần và đã bị khóa tài khoản trong 24 giờ. Hãy quay lại vào lúc ${timeBan}.`,
     };
   }
 

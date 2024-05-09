@@ -1,5 +1,13 @@
 import { currentUser } from "@/lib/auth";
+import {
+  sendBanUser,
+  sendDeleteUser,
+  sendVerifyAccountisCitizenMaketing,
+  sendVerifyAccountisCitizenShipper,
+} from "@/lib/mail";
 import prismadb from "@/lib/prismadb";
+import { UserRole } from "@prisma/client";
+import { format } from "date-fns";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -8,8 +16,9 @@ export async function GET(req: Request) {
 
     return NextResponse.json(settinguser);
   } catch (error) {
-    console.log("[SETTINGUSER_GET]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(JSON.stringify({ error: "Lỗi cục bộ khi get!" }), {
+      status: 500,
+    });
   }
 }
 
@@ -27,10 +36,16 @@ export async function PATCH(
       where: { role: "ADMIN" },
     });
 
-    // Check if there are at least 1 admin before updating the role
-    if (adminCount <= 1 && newRole !== "ADMIN") {
+    // Kiểm tra nếu chỉ có một quản trị viên và đang cố gắng cập nhật vai trò của họ
+    if (
+      adminCount <= 1 &&
+      newRole !== "ADMIN" &&
+      existingUser?.role === "ADMIN"
+    ) {
       return new NextResponse(
-        "Cannot update role. At least 1 Admin is required.",
+        JSON.stringify({
+          error: "Cannot update role. At least 1 Admin is required.",
+        }),
         { status: 400 }
       );
     }
@@ -41,8 +56,23 @@ export async function PATCH(
       data: { role: newRole },
     });
 
+    if (roleupdate.role === UserRole.SHIPPER) {
+      await sendVerifyAccountisCitizenShipper(roleupdate.email);
+    }
+
+    if (roleupdate.role === UserRole.MARKETING) {
+      await sendVerifyAccountisCitizenMaketing(roleupdate.email);
+    }
+
     // Danh sách các trường cần loại bỏ
-    const ignoredFields = ["createdAt", "updatedAt"];
+    const ignoredFields = [
+      "createdAt",
+      "updatedAt",
+      "emailVerified",
+      "imageCredential",
+      "lastlogin",
+      "daywork",
+    ];
 
     // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
     const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
@@ -84,8 +114,10 @@ export async function PATCH(
 
     return NextResponse.json(roleupdate);
   } catch (error) {
-    console.error("Error updating user role:", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Lỗi cục bộ khi thay đổi user!" }),
+      { status: 400 }
+    );
   }
 }
 
@@ -98,21 +130,38 @@ export async function DELETE(
   const { id } = body;
 
   try {
+    const existingUser = await prismadb.user.findUnique({
+      where: { id: id },
+    });
+    const adminCount = await prismadb.user.count({
+      where: { role: "ADMIN" },
+    });
+
+    // Kiểm tra nếu chỉ có một quản trị viên và đang cố gắng cập nhật vai trò của họ
+    if (adminCount <= 1 && existingUser?.role === "ADMIN") {
+      return new NextResponse(
+        JSON.stringify({
+          error: "Yêu cầu cần có 1 ADMIN.",
+        }),
+        { status: 400 }
+      );
+    }
+
     // Delete the user from the database using Prisma
     const userDeletion = await prismadb.user.delete({
       where: { id: id },
     });
 
     const sentUser = {
-      name: userDeletion?.name,
-      email: userDeletion?.email,
+      name: existingUser?.name,
+      email: existingUser?.email,
     };
 
     // Log sự thay đổi của billboard
     const changes = [`Name: ${sentUser.name}, Email: ${sentUser.email}`];
 
     // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
-    await prismadb.system.create({
+    const response = await prismadb.system.create({
       data: {
         storeId: params.storeId,
         type: "DELETEUSER",
@@ -121,16 +170,23 @@ export async function DELETE(
       },
     });
 
+    const dateonow = response.createdAt
+      ? format(response.createdAt, "dd/MM/yyyy '-' HH:mm a")
+      : "";
+
+    await sendDeleteUser(userDeletion.email, userDeletion.name, dateonow);
+
     return NextResponse.json(userDeletion);
   } catch (error) {
-    console.error("Error deleting user:", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: "Lỗi cục bộ khi delete user!" }),
+      { status: 400 }
+    );
   }
 }
 
 export async function POST(
   req: Request,
-  res: Response,
   { params }: { params: { storeId: string } }
 ) {
   const body = await req.json();
@@ -141,19 +197,36 @@ export async function POST(
     });
 
     if (!user) {
-      return new NextResponse("User not found", { status: 404 });
+      return new NextResponse(JSON.stringify({ error: "User not found!" }), {
+        status: 404,
+      });
+    }
+
+    if (user?.ban) {
+      return new NextResponse(
+        JSON.stringify({ error: "Người dùng này đã bị bạn!" }),
+        {
+          status: 404,
+        }
+      );
     }
 
     // Kiểm tra nếu người dùng có quyền là ADMIN không thể bị ban
     if (user?.role === "ADMIN") {
-      return new NextResponse("Cannot ban an ADMIN user.", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Cannot ban an ADMIN user!" }),
+        { status: 400 }
+      );
     }
+
+    const timeBanUser = new Date();
+    timeBanUser.setDate(timeBanUser.getDate() + 30); // Thêm 30 ngày
 
     const banuser = await prismadb.user.update({
       where: { id: userId },
       data: {
         ban: true,
-        banExpires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        banExpires: timeBanUser,
       },
     });
 
@@ -166,7 +239,7 @@ export async function POST(
     const changes = [`Name: ${sentUser.name}, Email: ${sentUser.email}`];
 
     // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
-    await prismadb.system.create({
+    const response = await prismadb.system.create({
       data: {
         storeId: params.storeId,
         type: "UPDATEBANUSER",
@@ -175,9 +248,20 @@ export async function POST(
       },
     });
 
+    const dateonow = response.createdAt
+      ? format(response.createdAt, "dd/MM/yyyy '-' HH:mm a")
+      : "";
+
+    const timeBan = banuser.banExpires
+      ? format(banuser.banExpires, "dd/MM/yyyy '-' HH:mm a")
+      : "";
+
+    await sendBanUser(banuser.email, banuser.name, dateonow, timeBan);
+
     return NextResponse.json(banuser);
   } catch (error) {
-    console.error("Error banning user:", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(JSON.stringify({ error: "Lỗi cục bộ khi ban!" }), {
+      status: 500,
+    });
   }
 }

@@ -79,7 +79,7 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
     banExpires:item.banExpires
     ? format(
         utcToZonedTime(
-          subHours(new Date(item.banExpires), 7),
+          subHours(new Date(item.banExpires), 0),
           vietnamTimeZone
         ),
         "E '-' dd/MM/yyyy '-' HH:mm:ss a",

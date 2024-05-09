@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, Trash, Lock } from "lucide-react";
 import { toast } from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import axios from "axios";
 import { AlertModal } from "@/components/modals/alert-modal";
@@ -23,14 +23,14 @@ interface CellActionProps {
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const router = useRouter();
-
+  const params = useParams();
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete("/api/settingusers", { data: { id: data.id } });
+      await axios.delete(`/api/${params.storeId}/settingusers`, { data: { id: data.id } });
       router.refresh();
       toast.success("User deleted.");
     } catch (error: unknown) {
@@ -56,7 +56,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const BanUser = async () => {
     try {
       setLoading(true);
-      const promise = axios.post("/api/settingusers", { userId: data.id });
+      const promise = axios.post(`/api/${params.storeId}}/settingusers`, { userId: data.id });
       await toast.promise(
         promise.then(() => {
           return (
@@ -96,7 +96,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const UnBanUser = async () => {
     try {
       setLoading(true);
-      const promise = axios.post("/api/settingusers/unban", {
+      const promise = axios.post(`/api/${params.storeId}}/settingusers/unban`, {
         userId: data.id,
       });
       await toast.promise(

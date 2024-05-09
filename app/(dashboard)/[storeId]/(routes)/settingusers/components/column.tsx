@@ -7,7 +7,7 @@ import { useState } from "react";
 import { UserRole } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import {  ShieldOff, ShieldCheck, ShieldMinus, ShieldPlus } from "lucide-react";
 import { Lock, Unlock } from "lucide-react";
@@ -45,9 +45,13 @@ interface RoleCellProps<T> {
 
 const RoleCell = <T extends SettingUsersColumn>({ row }: RoleCellProps<T>) => {
   const router = useRouter();
+  const params= useParams()
   const user = row.original;
   const isAdmin = user.role === UserRole.ADMIN;
   const isStaff = user.role === UserRole.STAFF;
+  const isShipper = user.role === UserRole.SHIPPER;
+  const isMaketing = user.role === UserRole.MARKETING;
+  const isGuest = user.role === UserRole.GUEST;
   const [editable, setEditable] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState(user.role as UserRole); // Default to ADMIN role
@@ -56,18 +60,20 @@ const RoleCell = <T extends SettingUsersColumn>({ row }: RoleCellProps<T>) => {
     setSelectedRole(newRole);
   };
   const handleSave = async () => {
+    setLoading(true);
     try {
-      await axios.patch("/api/settingusers", {
+      await axios.patch(`/api/${params.storeId}/settingusers`, {
         userId: user.id,
         newRole: selectedRole,
       });
       // Update the original role to match the newly saved role
+      toast.success("Thay đổi thành công!");
       setOriginalRole(selectedRole);
       setEditable(false);
-      setLoading(true);
-      toast.success("Thay đổi thành công!");
+      setLoading(false);
       router.refresh();
     } catch (error: unknown) {
+      setLoading(false);
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
         (error as { response: { data?: { error?: string } } }).response.data &&
@@ -87,12 +93,13 @@ const RoleCell = <T extends SettingUsersColumn>({ row }: RoleCellProps<T>) => {
   const handleCancel = () => {
     setSelectedRole(originalRole);
     setEditable(false);
-    setLoading(true);
+    setLoading(false);
   };
   return editable ? (
     <div>
       <select
         value={selectedRole}
+        className="appearance-none bg-slate-900 border border-gray-300 rounded-md px-4 py-2 pr-8 focus:outline-none focus:border-blue-500"
         onChange={(e) => handleRoleChange(e.target.value as UserRole)}
         disabled={loading}
       >
@@ -100,7 +107,7 @@ const RoleCell = <T extends SettingUsersColumn>({ row }: RoleCellProps<T>) => {
         {Object.values(UserRole).map(
           (role) =>
             role !== user.role && (
-              <option key={role} value={role}>
+              <option  key={role} value={role}>
                 {role}
               </option>
             )
@@ -119,7 +126,7 @@ const RoleCell = <T extends SettingUsersColumn>({ row }: RoleCellProps<T>) => {
     <div
       onClick={() => setEditable(true)}
       className={`cursor-pointer font-bold ${
-        isAdmin ? "text-red-500" : isStaff ? "text-blue-500" : "dark:text-amber-500 text-black"
+        isAdmin ? "text-red-500" : isStaff ? "text-blue-500" : isShipper ? "text-indigo-500" : isMaketing ? "text-purple-500" : isGuest ? "text-fuchsia-500" : "dark:text-amber-500 text-black"
       }`}
     >
       {user.role}

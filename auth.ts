@@ -6,6 +6,8 @@ import prismadb from "@/lib/prismadb";
 import { getTwoFactorConfirmationbyUserId } from "./data/two-factor-confirmation";
 import { getAccountByUserId } from "./data/account";
 import { UserRole } from "@prisma/client";
+import { sendBanUserNotStart, sendUnBanUser } from "./lib/mail";
+import { format } from "date-fns";
 
 export const {
   handlers: { GET, POST },
@@ -30,16 +32,26 @@ export const {
       const now = new Date();
       now.setHours(now.getHours() + 7);
       const existingUser = await getUserById(user.id);
-      if (account?.provider !== "credentials") return true
+      if (account?.provider !== "credentials") return true;
       if (existingUser?.ban === true) {
         const banExpiresAt = existingUser.banExpires
           ? new Date(existingUser.banExpires)
           : null;
         if (banExpiresAt && banExpiresAt > now) {
+          const timeBan = existingUser.banExpires
+            ? format(existingUser.banExpires, "dd/MM/yyyy '-' HH:mm a")
+            : "";
+          await sendBanUserNotStart(
+            existingUser.email,
+            existingUser.name,
+            timeBan
+          );
           return false;
-        } else if (banExpiresAt) {
+        }
+        //Nếu người dùng bị cấm nhưng thời gian cấm đã hết hạn, chương trình sẽ vào đây.
+        else if (banExpiresAt) {
           // Ban period has expired, unban the user
-          await prismadb.user.update({
+          const unbanUser = await prismadb.user.update({
             where: { id: existingUser.id },
             data: {
               ban: false,
@@ -49,6 +61,7 @@ export const {
               resendTokenResetPassword: 0,
             },
           });
+          await sendUnBanUser(unbanUser.email, unbanUser.name);
         }
       }
 
@@ -94,7 +107,8 @@ export const {
         session.user.imageCredential = token.imageCredential as string[];
         session.user.ban = token.ban as boolean;
         session.user.timestartwork = token.timestartwork as string;
-        session.user.urlimageCheckAttendance = token.urlimageCheckAttendance as string;
+        session.user.urlimageCheckAttendance =
+          token.urlimageCheckAttendance as string;
         session.user.codeNFC = token.codeNFC as string;
         session.user.daywork = token.daywork as string[];
       }
@@ -111,7 +125,7 @@ export const {
         if (existingUser) {
           const now = new Date();
           now.setHours(now.getHours() + 7);
-  
+
           //Cập nhật lại thời gian mỗi khi đăng nhập
           await prismadb.user.update({
             where: { id: existingUser.id },

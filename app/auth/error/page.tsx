@@ -17,14 +17,12 @@ const AuthErrorPage = async () => {
 
   // Display ban message if the user is banned
   if (isBanned && banExpires) {
-    const now = new Date();
-    const banExpiresDate = new Date(banExpires);
+    const banExpiresDate = banExpires.getTime();
+
 
     // Check if banExpiresDate is a valid date
-    if (!isNaN(banExpiresDate.getTime())) {
-      daysLeft = Math.ceil(
-        (banExpiresDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000)
-      );
+    if (!isNaN(banExpiresDate)) {
+      daysLeft = banExpiresDate
     } else {
       // Provide a default value for daysLeft if banExpiresDate is not a valid date
       daysLeft = 0;

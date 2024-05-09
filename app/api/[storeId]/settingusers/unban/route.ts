@@ -1,3 +1,4 @@
+import { sendUnBanUser } from "@/lib/mail";
 import prismadb from "@/lib/prismadb";
 import { NextResponse } from "next/server";
 
@@ -13,6 +14,15 @@ export async function POST(
       where: { id: userId },
     });
 
+    if (!existingUser?.ban) {
+      return new NextResponse(
+        JSON.stringify({ error: "Người dùng này hiện tại không bị ban!" }),
+        {
+          status: 404,
+        }
+      );
+    }
+
     const unbanUser = await prismadb.user.update({
       where: { id: userId },
       data: {
@@ -23,6 +33,8 @@ export async function POST(
         banExpires: null,
       },
     });
+
+    await sendUnBanUser(unbanUser.email, unbanUser.name);
 
     // Danh sách các trường cần loại bỏ
     const ignoredFields = ["createdAt", "updatedAt"];

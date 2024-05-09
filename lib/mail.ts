@@ -60,6 +60,71 @@ export const sendVerifyAccountisCitizen = async (email: string | null = "") => {
   });
 };
 
+export const sendVerifyAccountisCitizenShipper = async (email: string | null = "") => {
+  const toEmail = email ? [email] : [];
+  await resend.emails.send({
+    from: "mail@vlxdxuantruong.email",
+    to: toEmail,
+    subject: "Verify your email",
+    html: `<p>Xin chào <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>! Tài khoản của bạn đã được xác thực. Bạn đã là nhân viên của <a href="${domain}">vlxd Xuân Trường</a>. Hãy vào xem role hiện tại của bạn đã được thay đổi thành <strong style="color: #3b82f6;">SHIPPER</strong> chưa? Nếu chưa thay đổi hãy liên hệ <strong>0352261103</strong>.</p>`,
+  });
+};
+
+export const sendVerifyAccountisCitizenMaketing= async (email: string | null = "") => {
+  const toEmail = email ? [email] : [];
+  await resend.emails.send({
+    from: "mail@vlxdxuantruong.email",
+    to: toEmail,
+    subject: "Verify your email",
+    html: `<p>Xin chào <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>! Tài khoản của bạn đã được xác thực. Bạn đã là nhân viên của <a href="${domain}">vlxd Xuân Trường</a>. Hãy vào xem role hiện tại của bạn đã được thay đổi thành <strong style="color: #3b82f6;">MAKETING</strong> chưa? Nếu chưa thay đổi hãy liên hệ <strong>0352261103</strong>.</p>`,
+  });
+};
+
+export const sendBanUser = async (
+  email: string | null | undefined,
+  nameuser: string | null | undefined,
+  start: string | null,
+  end: string | null
+) => {
+  if (email) {
+    await resend.emails.send({
+      from: "mail@vlxdxuantruong.email",
+      to: email,
+      subject: "Sai quy định!",
+      html: `Xin chào <strong style="color: #3b82f6; text-decoration: underline;"> ${nameuser}</strong>! Tài khoản của bạn đã bị khóa vào lúc <strong>${start}</strong>. Thời gian mở khóa vào ngày${end}. Bạn đã vi phạm quy định của công ty. Vui lòng liên hệ <strong>0352261103</strong> để biết thêm chi tiết.`,
+    });
+  }
+};
+
+export const sendBanUserNotStart = async (
+  email: string | null | undefined,
+  nameuser: string | null | undefined,
+  end: string | null
+) => {
+  if (email) {
+    await resend.emails.send({
+      from: "mail@vlxdxuantruong.email",
+      to: email,
+      subject: "Sai quy định!",
+      html: `Xin chào <strong style="color: #3b82f6; text-decoration: underline;"> ${nameuser}</strong>! Tài khoản của bạn đã bị khóa. Thời gian mở khóa vào ngày${end}. Bạn đã vi phạm quy định của công ty. Vui lòng liên hệ <strong>0352261103</strong> để biết thêm chi tiết.`,
+    });
+  }
+};
+
+export const sendUnBanUser = async (
+  email: string | null | undefined,
+  nameuser: string | null | undefined,
+) => {
+  if (email) {
+    await resend.emails.send({
+      from: "mail@vlxdxuantruong.email",
+      to: email,
+      subject: "Sai quy định!",
+      html: `Xin chào <strong style="color: #3b82f6; text-decoration: underline;"> ${nameuser}</strong>!  Tài khoản của bạn đã được mở khóa. Xin lỗi vì đã khóa tài khoản của bạn. Chúng tôi chỉ làm theo những lưu ý và các điều khoản đã đưa ra. Mong bạn thông cảm! Cám ơn bạn đã đồng hành cùng chúng tôi. Vui lòng liên hệ <strong>0352261103</strong> để biết thêm chi tiết.`,
+    });
+  }
+};
+
 export const sendSpamEmail = async (
   email: (string | null)[],
   subject: string,
@@ -241,6 +306,37 @@ export const sendDismissal = async (
 <p style="margin-top:5px;">Chúng tôi cam kết hỗ trợ bạn trong quá trình chuyển tiếp và tìm kiếm cơ hội mới trong sự nghiệp của mình. Vui lòng liên hệ với phòng nhân sự nếu bạn cần bất kỳ hỗ trợ nào.</p>
 
 <p style="margin-top:5px;">Chúng tôi chân thành cảm ơn bạn một lần nữa và chúc bạn may mắn trong những bước tiếp theo trong cuộc đời và sự nghiệp của bạn.</p>
+
+<p style="margin-top:5px;"><strong>Trân trọng,</strong></p>
+
+<p><strong>VLXD XuanTruong</strong> - ${today}.</p>
+    `,
+    });
+  }
+};
+
+
+export const sendDeleteUser = async (
+  email: string | null | undefined,
+  name: string | null | undefined,
+  today: string
+) => {
+  if (email) {
+    await resend.emails.send({
+      from: "mail@vlxdxuantruong.email",
+      to: email,
+      subject: "Xóa tài khoản vĩnh viễn!",
+      html: `
+
+   <p>Kính gửi <strong>${name},</strong></p> 
+
+<p style="margin-top:5px;">Tôi viết thư này để tỏ lòng xin lỗi về việc xóa tài khoản của bạn. Tôi hiểu rằng việc này đã gây ra sự bất tiện và phiền toái cho bạn, và tôi rất tiếc về điều đó.</p>
+
+<p style="margin-top:5px;">Chúng tôi đã xem xét lại quyết định của mình và nhận ra rằng tài khoản của bạn có vấn đề. Và đã phạm vào luật nghiêm.</p>
+
+<p style="margin-top:5px;">Tôi xin chân thành xin lỗi và mong rằng bạn có thể tha thứ cho sự cố này. Nếu bạn có bất kỳ câu hỏi hoặc yêu cầu gì, xin vui lòng liên hệ trực tiếp với tôi theo địa chỉ email này.</p>
+
+<p style="margin-top:5px;">Một lần nữa, tôi xin lỗi về sự bất tiện này và mong rằng chúng ta có thể tiếp tục hợp tác một cách tích cực trong tương lai.</p>
 
 <p style="margin-top:5px;"><strong>Trân trọng,</strong></p>
 
