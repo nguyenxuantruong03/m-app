@@ -4,6 +4,8 @@ import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
 import { currentRole, currentUser } from "@/lib/auth";
 import { sendUpdateManageStaff } from "@/lib/mail-sendUpdate-Staff";
+import { sendDismissal } from "@/lib/mail";
+import { format } from "date-fns";
 
 export async function GET(
   req: Request,
@@ -77,28 +79,50 @@ export async function DELETE(
       );
     }
 
-    const managestaff = await prismadb.user.delete({
+    const userRole = await prismadb.user.findUnique({
       where: {
         id: params.managestaffId,
       },
     });
 
+    const managestaff = await prismadb.user.update({
+      where: {
+        id: params.managestaffId,
+      },
+      data:{
+        role: UserRole.USER,
+      }
+    });
+
     const sentVeirifiChanges = {
-      newValue: managestaff?.email,
+      newValue: managestaff?.role,
+      olevalue: userRole?.role,
     };
 
     // Log sự thay đổi của sentVeirifi
-    const changes = [`User: ${sentVeirifiChanges.newValue}`];
+    const newChange = [`User: ${sentVeirifiChanges.newValue}`];
+    const oldChange = [`User: ${sentVeirifiChanges.olevalue}`];
 
     // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
-    await prismadb.system.create({
+  const response=  await prismadb.system.create({
       data: {
         storeId: params.storeId,
-        delete: changes,
-        type: "DELETEMANAGESTAFF",
+        newChange: newChange,
+        oldChange: oldChange,
+        type: "UPDATE-ROLE-MANAGESTAFF",
         user: userId?.email || "",
       },
     });
+
+    const dateonow = response.createdAt
+      ? format(response.createdAt, "dd/MM/yyyy '-' HH:mm:ss a")
+      : "";
+
+    await sendDismissal(
+      managestaff.email,
+      managestaff.name,
+      dateonow
+    )
 
     return NextResponse.json(managestaff);
   } catch (error) {

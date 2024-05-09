@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 
-import { Copy, Edit, MoreHorizontal, Send, Trash } from "lucide-react";
+import { CircleSlash, Copy, Edit, MoreHorizontal, Send, Trash } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -39,7 +39,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       setLoading(true);
       await axios.delete(`/api/${params.storeId}/managestaff/${data.id}`);
       router.refresh();
-      toast.success("STAFF deleted.");
+      toast.success("Đuổi việc thành công!");
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -137,8 +137,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             Update
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>
-            <Trash className="h-4 w-4 mr-2" />
-            Delete
+            <CircleSlash className="h-4 w-4 mr-2" />
+            Đuổi việc
           </DropdownMenuItem>
           <DropdownMenuItem onClick={onSentVerify}>
             <Send className="h-4 w-4 mr-2" />
