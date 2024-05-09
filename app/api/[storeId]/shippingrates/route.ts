@@ -101,6 +101,32 @@ export async function POST(
       },
     });
 
+    const sentShippingRates = {
+      name: createdCoupon?.name,
+      amount: createdCoupon.amount,
+      taxcode: createdCoupon.taxcode,
+      unitmax: createdCoupon.unitmax,
+      valuemax: createdCoupon.valuemax,
+      unitmin: createdCoupon.unitmin,
+      valuemin: createdCoupon.valuemin,
+      taxbehavior: createdCoupon.taxbehavior,
+    };
+
+    // Log sự thay đổi của billboard
+    const changes = [
+      `Name: ${sentShippingRates.name}, Amount: ${sentShippingRates.amount}, Taxcode: ${sentShippingRates.taxcode}, Unitmax: ${sentShippingRates.unitmax}, Valuemax: ${sentShippingRates.valuemax}, Unitmin: ${sentShippingRates.unitmin}, Valuemin: ${sentShippingRates.valuemin}, Taxbehavior: ${sentShippingRates.taxbehavior}`,
+    ];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        type: "CREATESHIPPINGRATES",
+        newChange: changes,
+        user: userId?.email || "",
+      },
+    });
+
     return NextResponse.json(createdCoupon);
   } catch (error) {
     return new NextResponse(

@@ -182,7 +182,7 @@ export const sendSpin = async (
 }
 };
 
-export const sendunSpin = async (
+export const sendUnSpin = async (
   email: string | null | undefined,
   name: string | null | undefined,
   unbonus: string | "0",

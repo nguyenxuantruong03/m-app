@@ -1,9 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
-import prismadb from '@/lib/prismadb';
-import { currentUser } from '@/lib/auth';
-import { UserRole } from '@prisma/client';
- 
+import prismadb from "@/lib/prismadb";
+import { currentUser } from "@/lib/auth";
+import { UserRole } from "@prisma/client";
+
 export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
@@ -23,17 +23,15 @@ export async function POST(
     }
 
     if (!name) {
-      return new NextResponse(
-        JSON.stringify({ error: "Name is required!" }),
-        { status: 400 }
-      );
+      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+        status: 400,
+      });
     }
 
     if (!value) {
-      return new NextResponse(
-        JSON.stringify({ error: "Value is required!" }),
-        { status: 400 }
-      );
+      return new NextResponse(JSON.stringify({ error: "Value is required!" }), {
+        status: 400,
+      });
     }
 
     if (!params.storeId) {
@@ -49,7 +47,7 @@ export async function POST(
         userId: {
           equals: UserRole.USER,
         },
-      }
+      },
     });
 
     if (!storeByUserId) {
@@ -59,15 +57,32 @@ export async function POST(
       );
     }
 
-
     const size = await prismadb.size.create({
       data: {
         name,
         value,
         storeId: params.storeId,
-      }
+      },
     });
-  
+
+    const sentSize = {
+      name: size?.name,
+      value: size.value,
+    };
+
+    // Log sự thay đổi của billboard
+    const changes = [`Name: ${sentSize.name}, Value: ${sentSize.value}`];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        type: "CREATESIZE",
+        newChange: changes,
+        user: userId?.email || "",
+      },
+    });
+
     return NextResponse.json(size);
   } catch (error) {
     return new NextResponse(
@@ -75,7 +90,7 @@ export async function POST(
       { status: 500 }
     );
   }
-};
+}
 
 export async function GET(
   req: Request,
@@ -91,10 +106,10 @@ export async function GET(
 
     const size = await prismadb.size.findMany({
       where: {
-        storeId: params.storeId
-      }
+        storeId: params.storeId,
+      },
     });
-  
+
     return NextResponse.json(size);
   } catch (error) {
     return new NextResponse(
@@ -102,4 +117,4 @@ export async function GET(
       { status: 500 }
     );
   }
-};
+}

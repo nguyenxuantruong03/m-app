@@ -18,10 +18,10 @@ export async function GET(
 
     const size = await prismadb.size.findUnique({
       where: {
-        id: params.sizeId
-      }
+        id: params.sizeId,
+      },
     });
-  
+
     return NextResponse.json(size);
   } catch (error) {
     return new NextResponse(
@@ -29,11 +29,11 @@ export async function GET(
       { status: 500 }
     );
   }
-};
+}
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { sizeId: string, storeId: string } }
+  { params }: { params: { sizeId: string; storeId: string } }
 ) {
   try {
     const userId = await currentUser();
@@ -59,7 +59,7 @@ export async function DELETE(
         userId: {
           equals: UserRole.USER,
         },
-      }
+      },
     });
 
     if (!storeByUserId) {
@@ -79,9 +79,27 @@ export async function DELETE(
     const size = await prismadb.size.delete({
       where: {
         id: params.sizeId,
-      }
+      },
     });
-  
+
+    const sentSize = {
+      name: size?.name,
+      value: size.value,
+    };
+
+    // Log sự thay đổi của billboard
+    const changes = [`Name: ${sentSize.name}, Value: ${sentSize.value}`];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        type: "DELETESIZE",
+        delete: changes,
+        user: userId?.email || "",
+      },
+    });
+
     return NextResponse.json(size);
   } catch (error) {
     return new NextResponse(
@@ -89,20 +107,19 @@ export async function DELETE(
       { status: 500 }
     );
   }
-};
-
+}
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { sizeId: string, storeId: string } }
+  { params }: { params: { sizeId: string; storeId: string } }
 ) {
-  try {   
+  try {
     const userId = await currentUser();
 
     const body = await req.json();
-    
+
     const { name, value } = body;
-    
+
     if (!userId) {
       return new NextResponse(
         JSON.stringify({ error: "Không tìm thấy user id!" }),
@@ -111,17 +128,15 @@ export async function PATCH(
     }
 
     if (!name) {
-      return new NextResponse(
-        JSON.stringify({ error: "Name is required!" }),
-        { status: 400 }
-      );
+      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+        status: 400,
+      });
     }
 
     if (!value) {
-      return new NextResponse(
-        JSON.stringify({ error: "Value is required!" }),
-        { status: 400 }
-      );
+      return new NextResponse(JSON.stringify({ error: "Value is required!" }), {
+        status: 400,
+      });
     }
 
     if (!params.sizeId) {
@@ -137,7 +152,7 @@ export async function PATCH(
         userId: {
           equals: UserRole.USER,
         },
-      }
+      },
     });
 
     if (!storeByUserId) {
@@ -147,6 +162,12 @@ export async function PATCH(
       );
     }
 
+    const existingSize = await prismadb.size.findUnique({
+      where: {
+        id: params.sizeId,
+      },
+    });
+
     const size = await prismadb.size.update({
       where: {
         id: params.sizeId,
@@ -154,9 +175,50 @@ export async function PATCH(
       data: {
         name,
         value,
-      }
+      },
     });
-  
+
+    // Danh sách các trường cần loại bỏ
+    const ignoredFields = ["createdAt", "updatedAt"];
+
+    // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
+    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    for (const key in existingSize) {
+      if (existingSize.hasOwnProperty(key) && size.hasOwnProperty(key)) {
+        if (
+          existingSize[key as keyof typeof existingSize] !==
+          size[key as keyof typeof size]
+        ) {
+          // Kiểm tra xem trường hiện tại có trong danh sách loại bỏ không
+          if (!ignoredFields.includes(key)) {
+            changes[key] = {
+              oldValue: existingSize[key as keyof typeof existingSize],
+              newValue: size[key as keyof typeof size],
+            };
+          }
+        }
+      }
+    }
+
+    //Hợp nhất các thay đổi thành một hàng duy nhất và ghi lại chúng
+    const oldChanges = Object.keys(changes).map((key) => {
+      return `${key}: { Old: '${changes[key].oldValue}'}`;
+    });
+    const newChanges = Object.keys(changes).map((key) => {
+      return `${key}: { New: '${changes[key].newValue}'}`;
+    });
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        oldChange: oldChanges,
+        newChange: newChanges,
+        type: "UPDATESIZE",
+        user: userId?.email || "",
+      },
+    });
+
     return NextResponse.json(size);
   } catch (error) {
     return new NextResponse(
@@ -164,4 +226,4 @@ export async function PATCH(
       { status: 500 }
     );
   }
-};
+}

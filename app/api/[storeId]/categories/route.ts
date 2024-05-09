@@ -1,21 +1,20 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
-import prismadb from '@/lib/prismadb';
-import { CategoryType, UserRole } from '@prisma/client';
-import { currentUser } from '@/lib/auth';
+import prismadb from "@/lib/prismadb";
+import { CategoryType, UserRole } from "@prisma/client";
+import { currentUser } from "@/lib/auth";
 
 export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
-  ) {
+) {
   const categoryType = CategoryType.CATEGORY;
   try {
-
     const userId = await currentUser();
 
     const body = await req.json();
 
-    const { name, } = body;
+    const { name } = body;
 
     if (!userId) {
       return new NextResponse(
@@ -25,10 +24,9 @@ export async function POST(
     }
 
     if (!name) {
-      return new NextResponse(
-        JSON.stringify({ error: "Name is required!" }),
-        { status: 400 }
-      );
+      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+        status: 400,
+      });
     }
 
     if (!params.storeId) {
@@ -44,7 +42,7 @@ export async function POST(
         userId: {
           equals: UserRole.USER,
         },
-      }
+      },
     });
 
     if (!storeByUserId) {
@@ -57,11 +55,31 @@ export async function POST(
     const category = await prismadb.category.create({
       data: {
         name,
-        categoryType:categoryType,
+        categoryType: categoryType,
         storeId: params.storeId,
-      }
+      },
     });
-  
+
+    const sentCategory = {
+      name: category?.name,
+      CategoryType: category.categoryType,
+    };
+
+    // Log sự thay đổi của billboard
+    const changes = [
+      `Name: ${sentCategory.name}, TypeCategory: ${sentCategory.CategoryType}`,
+    ];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        type: "CREATEPIN-CATEGORY",
+        newChange: changes,
+        user: userId?.email || "",
+      },
+    });
+
     return NextResponse.json(category);
   } catch (error) {
     return new NextResponse(
@@ -69,7 +87,7 @@ export async function POST(
       { status: 500 }
     );
   }
-};
+}
 
 export async function GET(
   req: Request,
@@ -87,10 +105,10 @@ export async function GET(
     const category = await prismadb.category.findMany({
       where: {
         storeId: params.storeId,
-        categoryType:categoryType
-      }
+        categoryType: categoryType,
+      },
     });
-  
+
     return NextResponse.json(category);
   } catch (error) {
     return new NextResponse(
@@ -98,4 +116,4 @@ export async function GET(
       { status: 500 }
     );
   }
-};
+}

@@ -1,3 +1,4 @@
+import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
 import { NextResponse } from "next/server";
 
@@ -12,10 +13,16 @@ export async function GET(req: Request) {
   }
 }
 
-export async function PATCH(req: Request) {
+export async function PATCH(
+  req: Request,
+  { params }: { params: { storeId: string } }
+) {
   const body = await req.json();
   const { userId, newRole } = body;
   try {
+    const existingUser = await prismadb.user.findUnique({
+      where: { id: userId },
+    });
     const adminCount = await prismadb.user.count({
       where: { role: "ADMIN" },
     });
@@ -34,6 +41,47 @@ export async function PATCH(req: Request) {
       data: { role: newRole },
     });
 
+    // Danh sách các trường cần loại bỏ
+    const ignoredFields = ["createdAt", "updatedAt"];
+
+    // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
+    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    for (const key in existingUser) {
+      if (existingUser.hasOwnProperty(key) && roleupdate.hasOwnProperty(key)) {
+        if (
+          existingUser[key as keyof typeof existingUser] !==
+          roleupdate[key as keyof typeof roleupdate]
+        ) {
+          // Kiểm tra xem trường hiện tại có trong danh sách loại bỏ không
+          if (!ignoredFields.includes(key)) {
+            changes[key] = {
+              oldValue: existingUser[key as keyof typeof existingUser],
+              newValue: roleupdate[key as keyof typeof roleupdate],
+            };
+          }
+        }
+      }
+    }
+
+    //Hợp nhất các thay đổi thành một hàng duy nhất và ghi lại chúng
+    const oldChanges = Object.keys(changes).map((key) => {
+      return `${key}: { Old: '${changes[key].oldValue}'}`;
+    });
+    const newChanges = Object.keys(changes).map((key) => {
+      return `${key}: { New: '${changes[key].newValue}'}`;
+    });
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        oldChange: oldChanges,
+        newChange: newChanges,
+        type: "UPDATEROLEUSER",
+        user: userId?.email || "",
+      },
+    });
+
     return NextResponse.json(roleupdate);
   } catch (error) {
     console.error("Error updating user role:", error);
@@ -41,7 +89,11 @@ export async function PATCH(req: Request) {
   }
 }
 
-export async function DELETE(req: Request) {
+export async function DELETE(
+  req: Request,
+  { params }: { params: { storeId: string } }
+) {
+  const userId = await currentUser();
   const body = await req.json();
   const { id } = body;
 
@@ -51,6 +103,24 @@ export async function DELETE(req: Request) {
       where: { id: id },
     });
 
+    const sentUser = {
+      name: userDeletion?.name,
+      email: userDeletion?.email,
+    };
+
+    // Log sự thay đổi của billboard
+    const changes = [`Name: ${sentUser.name}, Email: ${sentUser.email}`];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        type: "DELETEUSER",
+        delete: changes,
+        user: userId?.email || "",
+      },
+    });
+
     return NextResponse.json(userDeletion);
   } catch (error) {
     console.error("Error deleting user:", error);
@@ -58,7 +128,11 @@ export async function DELETE(req: Request) {
   }
 }
 
-export async function POST(req: Request, res: Response) {
+export async function POST(
+  req: Request,
+  res: Response,
+  { params }: { params: { storeId: string } }
+) {
   const body = await req.json();
   const { userId } = body;
   try {
@@ -82,6 +156,25 @@ export async function POST(req: Request, res: Response) {
         banExpires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       },
     });
+
+    const sentUser = {
+      name: banuser?.name,
+      email: banuser?.email,
+    };
+
+    // Log sự thay đổi của billboard
+    const changes = [`Name: ${sentUser.name}, Email: ${sentUser.email}`];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        type: "UPDATEBANUSER",
+        newChange: changes,
+        user: userId?.email || "",
+      },
+    });
+
     return NextResponse.json(banuser);
   } catch (error) {
     console.error("Error banning user:", error);

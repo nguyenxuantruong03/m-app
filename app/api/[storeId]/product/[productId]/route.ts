@@ -25,7 +25,7 @@ export async function GET(
       include: {
         images: true,
         imagesalientfeatures: true,
-        productdetail: true
+        productdetail: true,
       },
     });
 
@@ -84,10 +84,51 @@ export async function DELETE(
       );
     }
 
+    const existingProduct = await prismadb.product.findUnique({
+      where: {
+        id: params.productId,
+        productType: productType,
+      },
+      include: {
+        images: true,
+        imagesalientfeatures: true,
+        productdetail: true,
+      },
+    });
+
     const product = await prismadb.product.delete({
       where: {
         id: params.productId,
         productType: productType,
+      },
+    });
+
+    const sentProduct = {
+      name: product?.heading,
+      description: product.description,
+      ProductType: product.productType,
+      images: existingProduct?.images.map(
+        (image: { url: string }) => image.url
+      ),
+      imagesalientfeatures: existingProduct?.imagesalientfeatures.map(
+        (image: { url: string }) => image.url
+      ),
+      isFeatured: product.isFeatured,
+      isArchived: product.isFeatured,
+      productdetailId: product.productdetailId,
+    };
+
+    const changes = [
+      `Name: ${sentProduct.name}, Description: ${sentProduct.description}, ProductType: ${sentProduct.ProductType}, Images: ${sentProduct.images}, ImageSalientfeatures: ${sentProduct.imagesalientfeatures}, isFeatured: ${sentProduct.isFeatured}, isArchived: ${sentProduct.isArchived}, ProductDetail: ${sentProduct.productdetailId}`,
+    ];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        delete: changes,
+        type: "DELETEPIN-PRODUCT",
+        user: userId?.email || "",
       },
     });
 
@@ -106,7 +147,7 @@ export async function PATCH(
 ) {
   try {
     const userId = await currentUser();
-
+    const productType = ProductType.PRODUCT;
     const body = await req.json();
 
     const {
@@ -117,7 +158,7 @@ export async function PATCH(
       imagesalientfeatures,
       productdetailId,
       isFeatured,
-      isArchived
+      isArchived,
     } = body;
 
     if (!userId) {
@@ -128,10 +169,9 @@ export async function PATCH(
     }
 
     if (!name) {
-      return new NextResponse(
-        JSON.stringify({ error: "Name is required!" }),
-        { status: 400 }
-      );
+      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+        status: 400,
+      });
     }
     if (!heading) {
       return new NextResponse(
@@ -186,7 +226,18 @@ export async function PATCH(
       );
     }
 
-    const productType = ProductType.PRODUCT;
+    const existingProduct = await prismadb.product.findUnique({
+      where: {
+        id: params.productId,
+        productType: productType,
+      },
+      include: {
+        images: true,
+        imagesalientfeatures: true,
+        productdetail: true,
+      },
+    });
+
     await prismadb.product.update({
       where: {
         id: params.productId,
@@ -229,9 +280,72 @@ export async function PATCH(
       },
     });
 
+    // Danh sách các trường cần loại bỏ
+    const ignoredFields = ["createdAt", "updatedAt"];
+
+    // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
+    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    for (const key in existingProduct) {
+      if (existingProduct.hasOwnProperty(key) && product.hasOwnProperty(key)) {
+        if (
+          existingProduct[key as keyof typeof existingProduct] !==
+          product[key as keyof typeof product]
+        ) {
+          // Kiểm tra xem trường hiện tại có trong danh sách loại bỏ không
+          if (!ignoredFields.includes(key)) {
+            changes[key] = {
+              oldValue: existingProduct[key as keyof typeof existingProduct],
+              newValue: product[key as keyof typeof product],
+            };
+          }
+        }
+      }
+    }
+
+    // Nếu có thay đổi trong imagebillboard, thêm vào danh sách changes
+    if (images && images.length) {
+      changes["images"] = {
+        oldValue: existingProduct?.images.map(
+          (image: { url: string }) => image.url
+        ),
+        newValue: images.map((image: { url: string }) => image.url),
+      };
+    }
+
+    // Nếu có thay đổi trong imagebillboard, thêm vào danh sách changes
+    if (imagesalientfeatures && imagesalientfeatures.length) {
+      changes["imagesalientfeatures"] = {
+        oldValue: existingProduct?.imagesalientfeatures.map(
+          (imagesalientfeatures: { url: string }) => imagesalientfeatures.url
+        ),
+        newValue: imagesalientfeatures.map(
+          (imagesalientfeatures: { url: string }) => imagesalientfeatures.url
+        ),
+      };
+    }
+
+    //Hợp nhất các thay đổi thành một hàng duy nhất và ghi lại chúng
+    const oldChanges = Object.keys(changes).map((key) => {
+      return `${key}: { Old: '${changes[key].oldValue}'}`;
+    });
+    const newChanges = Object.keys(changes).map((key) => {
+      return `${key}: { New: '${changes[key].newValue}'}`;
+    });
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        newChange: newChanges,
+        oldChange: oldChanges,
+        type: "UPDATEPIN-PRODUCT",
+        user: userId?.email || "",
+      },
+    });
+
     return NextResponse.json(product);
   } catch (error) {
-   return new NextResponse(
+    return new NextResponse(
       JSON.stringify({ error: "Internal error patch product." }),
       { status: 500 }
     );

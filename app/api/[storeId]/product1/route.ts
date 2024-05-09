@@ -21,7 +21,7 @@ export async function POST(
       isArchived,
       images,
       imagesalientfeatures,
-      productdetailId
+      productdetailId,
     } = body;
 
     if (!userId) {
@@ -32,10 +32,9 @@ export async function POST(
     }
 
     if (!name) {
-      return new NextResponse(
-        JSON.stringify({ error: "Name is required!" }),
-        { status: 400 }
-      );
+      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+        status: 400,
+      });
     }
     if (!heading) {
       return new NextResponse(
@@ -83,7 +82,10 @@ export async function POST(
 
     // Nếu productDetail không tồn tại, trả về thông báo lỗi
     if (!productDetail) {
-      return new NextResponse(JSON.stringify({ error: "Hãy chọn lại ProductDetail!" }), { status: 404 });
+      return new NextResponse(
+        JSON.stringify({ error: "Hãy chọn lại ProductDetail!" }),
+        { status: 404 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -108,7 +110,7 @@ export async function POST(
         name,
         heading,
         description,
-        productType:productType,
+        productType: productType,
         isFeatured,
         isArchived,
         productdetailId,
@@ -125,6 +127,34 @@ export async function POST(
           },
         },
         storeId: params.storeId,
+      },
+    });
+
+    const sentProduct = {
+      name: product?.heading,
+      description: product.description,
+      ProductType: product.productType,
+      images: images.map((image: { url: string }) => image.url),
+      imagesalientfeatures: imagesalientfeatures.map(
+        (image: { url: string }) => image.url
+      ),
+      isFeatured: product.isFeatured,
+      isArchived: product.isFeatured,
+      productdetailId: product.productdetailId,
+    };
+
+    // Log sự thay đổi của billboard
+    const changes = [
+      `Name: ${sentProduct.name}, Description: ${sentProduct.description}, ProductType: ${sentProduct.ProductType}, Images: ${sentProduct.images}, ImageSalientfeatures: ${sentProduct.imagesalientfeatures}, isFeatured: ${sentProduct.isFeatured}, isArchived: ${sentProduct.isArchived}, ProductDetail: ${sentProduct.productdetailId}`,
+    ];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        newChange: changes,
+        type: "CREATEQUẠT-PRODUCT",
+        user: userId?.email || "",
       },
     });
 
@@ -146,7 +176,7 @@ export async function GET(
     const isFeatured = searchParams.get("isFeatured");
     const productdetailId = searchParams.get("productdetailId") || undefined;
     const productType = ProductType.PRODUCT1;
-    
+
     if (!params.storeId) {
       return new NextResponse(
         JSON.stringify({ error: "Store id is required!" }),
@@ -157,7 +187,7 @@ export async function GET(
     const product = await prismadb.product.findMany({
       where: {
         storeId: params.storeId,
-        productType:productType,
+        productType: productType,
       },
     });
 

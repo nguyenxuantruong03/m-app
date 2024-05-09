@@ -9,7 +9,7 @@ export async function POST(
   { params }: { params: { storeId: string } }
 ) {
   try {
-    const userId = currentUser();
+    const userId = await currentUser();
 
     const body = await req.json();
 
@@ -68,6 +68,26 @@ export async function POST(
           },
         },
         storeId: params.storeId,
+      },
+    });
+
+    const sentBillboard = {
+      label: billboard?.label,
+      imagebillboard:imagebillboard.map((image: { url: string }) => image.url),
+    };
+
+    // Log sự thay đổi của billboard
+    const changes = [
+      `Label: ${sentBillboard.label}, ImageBillboard: ${sentBillboard.imagebillboard}`,
+    ];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        newChange: changes,
+        type: "CREATEBILLBOARD",
+        user: userId?.email || ""
       },
     });
 

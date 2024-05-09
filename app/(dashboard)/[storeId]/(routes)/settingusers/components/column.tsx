@@ -67,8 +67,21 @@ const RoleCell = <T extends SettingUsersColumn>({ row }: RoleCellProps<T>) => {
       setLoading(true);
       toast.success("Thay đổi thành công!");
       router.refresh();
-    } catch (error) {
-      toast.error("Không phù hợp, Hãy thử lại!");
+    } catch (error: unknown) {
+      if (
+        (error as { response?: { data?: { error?: string } } }).response &&
+        (error as { response: { data?: { error?: string } } }).response.data &&
+        (error as { response: { data: { error?: string } } }).response.data
+          .error
+      ) {
+        // Hiển thị thông báo lỗi cho người dùng
+        toast.error(
+          (error as { response: { data: { error: string } } }).response.data
+            .error
+        );
+      } else {
+        toast.error("Something went wrong.");
+      }
     }
   };
   const handleCancel = () => {

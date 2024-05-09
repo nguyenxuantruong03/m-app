@@ -140,6 +140,32 @@ export async function POST(
       },
     });
 
+    const sentCoupon = {
+      name: createdCoupon?.name,
+      description: createdCoupon.description,
+      duration: createdCoupon?.duration,
+      durationinmoth: createdCoupon?.durationinmoth,
+      percent: createdCoupon?.percent,
+      maxredemptions: createdCoupon?.maxredemptions,
+      redeemby: createdCoupon?.redeemby,
+      imagecoupon: imagecoupon.map((image: { url: string }) => image)
+    };
+
+    // Log sự thay đổi của billboard
+    const changes = [
+      `Name: ${sentCoupon.name}, Description: ${sentCoupon.description}, duration: ${sentCoupon.duration}, DurationInMoth:${sentCoupon.durationinmoth}, Percent: ${sentCoupon.percent}, MaxRedemptions: ${sentCoupon.maxredemptions}, Redeemby: ${sentCoupon.redeemby}, imagecoupon: ${sentCoupon.imagecoupon}`,
+    ];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        type: "CREATECOUPON",
+        newChange: changes,
+        user: userId?.email || "",
+      },
+    });
+
     return NextResponse.json(createdCoupon);
   } catch (error) {
     return new NextResponse(

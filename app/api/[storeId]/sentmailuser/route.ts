@@ -1,9 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 import { currentUser } from "@/lib/auth";
 
-import prismadb from '@/lib/prismadb';
-import { UserRole } from '@prisma/client';
- 
+import prismadb from "@/lib/prismadb";
+import { UserRole } from "@prisma/client";
+
 export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
@@ -13,7 +13,7 @@ export async function POST(
 
     const body = await req.json();
 
-    const { subject, description,createAt } = body;
+    const { subject, description, createAt } = body;
 
     if (!userId) {
       return new NextResponse(
@@ -49,7 +49,7 @@ export async function POST(
         userId: {
           equals: UserRole.USER,
         },
-      }
+      },
     });
 
     if (!storeByUserId) {
@@ -65,9 +65,29 @@ export async function POST(
         description,
         userId: userId?.id || "",
         storeId: params.storeId,
-      }
+      },
     });
-  
+
+    const sentMailUserSystem = {
+      description: sentEmailUser.description,
+      subject: sentEmailUser.subject,
+    };
+
+    // Log sự thay đổi của billboard
+    const changes = [
+      `Description: ${sentMailUserSystem.description}, Subject: ${sentMailUserSystem.subject}`,
+    ];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        type: "CREATESENTMAILUSER",
+        newChange: changes,
+        user: userId?.email || "",
+      },
+    });
+
     return NextResponse.json(sentEmailUser);
   } catch (error) {
     return new NextResponse(
@@ -75,7 +95,7 @@ export async function POST(
       { status: 500 }
     );
   }
-};
+}
 
 export async function GET(
   req: Request,
@@ -91,17 +111,16 @@ export async function GET(
 
     const sentEmailUsers = await prismadb.sentEmailUser.findMany({
       where: {
-        storeId: params.storeId
+        storeId: params.storeId,
       },
-      include:{
-        user: true
+      include: {
+        user: true,
       },
-      orderBy:{
-        createdAt: 'desc'
-      }
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
-  
     return NextResponse.json(sentEmailUsers);
   } catch (error) {
     return new NextResponse(
@@ -109,4 +128,4 @@ export async function GET(
       { status: 500 }
     );
   }
-};
+}

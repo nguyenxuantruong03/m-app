@@ -347,6 +347,25 @@ export async function POST(
       },
     });
 
+    const sentProductDetail = {
+        title:productDetail.title,
+    };
+
+    // Log sự thay đổi của billboard
+    const changes = [
+      `Title: ${sentProductDetail.title}`,
+    ];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        type: "CREATEPRODUCTDETAIL",
+        newChange: changes,
+        user: userId?.email || "",
+      },
+    });
+
     return NextResponse.json(productDetail);
   } catch (error) {
     return new NextResponse(

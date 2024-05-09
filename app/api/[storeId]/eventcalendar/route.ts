@@ -270,7 +270,7 @@ export async function POST(
     } else {
       return new NextResponse(
         JSON.stringify({
-          error: `Hãy quay lại vào lúc <p style="color:#FF3131;>${user.timestartwork}</p>!`,
+          error: `Hãy quay lại vào lúc ${user.timestartwork}!`,
         }),
         { status: 500 }
       );

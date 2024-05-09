@@ -34,7 +34,7 @@ export async function GET(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { taxrateId: string, storeId: string } }
+  { params }: { params: { taxrateId: string; storeId: string } }
 ) {
   try {
     const userId = await currentUser();
@@ -60,7 +60,7 @@ export async function DELETE(
         userId: {
           equals: UserRole.USER,
         },
-      }
+      },
     });
 
     if (!storeByUserId) {
@@ -80,9 +80,33 @@ export async function DELETE(
     const taxRate = await prismadb.taxRate.delete({
       where: {
         id: params.taxrateId,
-      }
+      },
     });
-  
+
+    const sentTaxRate = {
+      name: taxRate?.name,
+      description: taxRate?.description,
+      percentage: taxRate?.percentage,
+      inclusive: taxRate?.inclusive,
+      active: taxRate?.active,
+      taxtype: taxRate?.taxtype,
+    };
+
+    // Log sự thay đổi của billboard
+    const changes = [
+      `Name: ${sentTaxRate.name}, Description: ${sentTaxRate.description}, Percentage: ${sentTaxRate.percentage}, Inclusive: ${sentTaxRate.inclusive}, Active: ${sentTaxRate.active}, Taxtype: ${sentTaxRate.taxtype}, `,
+    ];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        type: "DELETETAXRATE",
+        delete: changes,
+        user: userId?.email || "",
+      },
+    });
+
     return NextResponse.json(taxRate);
   } catch (error) {
     return new NextResponse(
@@ -90,7 +114,7 @@ export async function DELETE(
       { status: 500 }
     );
   }
-};
+}
 
 export async function PATCH(
   req: Request,
@@ -111,10 +135,9 @@ export async function PATCH(
     }
 
     if (!name) {
-      return new NextResponse(
-        JSON.stringify({ error: "Name is required!" }),
-        { status: 400 }
-      );
+      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+        status: 400,
+      });
     }
 
     if (!params.taxrateId) {
@@ -139,6 +162,12 @@ export async function PATCH(
       );
     }
 
+    const existingTaxRate = await prismadb.taxRate.findUnique({
+      where: {
+        id: params.taxrateId,
+      },
+    });
+
     // Cập nhật thông tin tương ứng trên Stripe
     await stripe.taxRates.update(params.taxrateId, {
       display_name: name,
@@ -158,6 +187,50 @@ export async function PATCH(
         percentage,
         taxtype,
         description,
+      },
+    });
+
+    // Danh sách các trường cần loại bỏ
+    const ignoredFields = ["createdAt", "updatedAt"];
+
+    // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
+    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    for (const key in existingTaxRate) {
+      if (
+        existingTaxRate.hasOwnProperty(key) &&
+        taxRateupdate.hasOwnProperty(key)
+      ) {
+        if (
+          existingTaxRate[key as keyof typeof existingTaxRate] !==
+          taxRateupdate[key as keyof typeof taxRateupdate]
+        ) {
+          // Kiểm tra xem trường hiện tại có trong danh sách loại bỏ không
+          if (!ignoredFields.includes(key)) {
+            changes[key] = {
+              oldValue: existingTaxRate[key as keyof typeof existingTaxRate],
+              newValue: taxRateupdate[key as keyof typeof taxRateupdate],
+            };
+          }
+        }
+      }
+    }
+
+    //Hợp nhất các thay đổi thành một hàng duy nhất và ghi lại chúng
+    const oldChanges = Object.keys(changes).map((key) => {
+      return `${key}: { Old: '${changes[key].oldValue}'}`;
+    });
+    const newChanges = Object.keys(changes).map((key) => {
+      return `${key}: { New: '${changes[key].newValue}'}`;
+    });
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        oldChange: oldChanges,
+        newChange: newChanges,
+        type: "UPDATETAXRATE",
+        user: userId?.email || "",
       },
     });
 

@@ -86,6 +86,26 @@ export async function DELETE(
       },
     });
 
+    const sentCategory = {
+      name: category?.name,
+      CategoryType: category.categoryType,
+    };
+
+    // Log sự thay đổi của sentVeirifi
+    const changes = [
+      `DeleteName: ${sentCategory.name}, CategoryType: ${sentCategory.CategoryType}`,
+    ];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        type: "DELETEPIN-CATEGORY",
+        delete: changes,
+        user: userId?.email || "",
+      },
+    });
+
     return NextResponse.json(category);
   } catch (error) {
     return new NextResponse(
@@ -115,10 +135,9 @@ export async function PATCH(
     }
 
     if (!name) {
-      return new NextResponse(
-        JSON.stringify({ error: "Name is required!" }),
-        { status: 400 }
-      );
+      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+        status: 400,
+      });
     }
 
     if (!params.categoryId) {
@@ -144,6 +163,13 @@ export async function PATCH(
       );
     }
 
+    const existingCategory = await prismadb.category.findUnique({
+      where: {
+        id: params.categoryId,
+        categoryType: categoryType,
+      },
+    });
+
     const category = await prismadb.category.update({
       where: {
         id: params.categoryId,
@@ -151,6 +177,50 @@ export async function PATCH(
       },
       data: {
         name,
+      },
+    });
+
+    // Danh sách các trường cần loại bỏ
+    const ignoredFields = ["createdAt", "updatedAt"];
+
+    // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
+    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    for (const key in existingCategory) {
+      if (
+        existingCategory.hasOwnProperty(key) &&
+        category.hasOwnProperty(key)
+      ) {
+        if (
+          existingCategory[key as keyof typeof existingCategory] !==
+          category[key as keyof typeof category]
+        ) {
+          // Kiểm tra xem trường hiện tại có trong danh sách loại bỏ không
+          if (!ignoredFields.includes(key)) {
+            changes[key] = {
+              oldValue: existingCategory[key as keyof typeof existingCategory],
+              newValue: category[key as keyof typeof category],
+            };
+          }
+        }
+      }
+    }
+
+    //Hợp nhất các thay đổi thành một hàng duy nhất và ghi lại chúng
+    const oldChanges = Object.keys(changes).map((key) => {
+      return `${key}: { Old: '${changes[key].oldValue}'}`;
+    });
+    const newChanges = Object.keys(changes).map((key) => {
+      return `${key}: { New: '${changes[key].newValue}'}`;
+    });
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        oldChange: oldChanges,
+        newChange: newChanges,
+        type: "UPDATEPIN-CATEGORY",
+        user: userId?.email || "",
       },
     });
 

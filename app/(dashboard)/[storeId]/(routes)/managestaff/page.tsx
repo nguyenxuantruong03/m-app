@@ -39,6 +39,7 @@ const ManageStaff = async ({ params }: { params: { storeId: string } }) => {
       .join(", "),
     image: item.image,
     name: item.name,
+    email: item.email,
     issued: item.issued,
     gender: item.gender,
     degree:  item.degree,

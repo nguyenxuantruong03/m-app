@@ -59,15 +59,35 @@ export async function POST(
       );
     }
 
-    const category = await prismadb.color.create({
+    const color = await prismadb.color.create({
       data: {
         name,
         value,
         storeId: params.storeId,
       }
     });
+
+    const sentColor = {
+      name: color?.name,
+      value: color.value,
+    };
+
+    // Log sự thay đổi của billboard
+    const changes = [
+      `Name: ${sentColor.name}, Value: ${sentColor.value}`,
+    ];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        type: "CREATE-COLOR",
+        newChange: changes,
+        user: userId?.email || "",
+      },
+    });
   
-    return NextResponse.json(category);
+    return NextResponse.json(color);
   } catch (error) {
     return new NextResponse(
       JSON.stringify({ error: "Internal error post color." }),

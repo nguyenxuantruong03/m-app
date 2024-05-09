@@ -45,7 +45,7 @@ const removeDiacritics = (str: String) => {
 };
 
 const formSchema = z.object({
-  name: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
+  name: z.string().min(2,{message: "Nhập ít nhất 2 ký tự."}),
   heading: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
   description: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
   images: z.object({ url: z.string() }).array(),

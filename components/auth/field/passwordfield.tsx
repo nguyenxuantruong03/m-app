@@ -143,9 +143,6 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
 const leftColorStop = (borderPercentage / 2);
 const rightColorStop = 100 - (borderPercentage / 2);
 
-console.log("leftColorStop",leftColorStop)
-console.log("rightColorStop",rightColorStop)
-
   const borderStyle = isTyping ? {
     // Style được áp dựa trên trạng thái của input blur
     borderImage: `linear-gradient(to left,#22c55e ${leftColorStop}%, #ef4444 ${leftColorStop}%, #ef4444 ${rightColorStop}%, #22c55e ${rightColorStop}%) 1`,

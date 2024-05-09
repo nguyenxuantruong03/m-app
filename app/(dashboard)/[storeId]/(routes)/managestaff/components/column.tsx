@@ -11,6 +11,7 @@ import { MailCheck } from "lucide-react";
 export type ManageStaffsColumn = {
   id: string;
   name: string | null;
+  email: string | null;
   isCitizen: boolean | null;
   sentVeirifi: boolean | null;
   numberCCCD: string | null;
@@ -27,7 +28,6 @@ export type ManageStaffsColumn = {
   ban: boolean | null;
   role: string;
   image: string | null;
-  email?: string | undefined;
   urlimageCheckAttendance: string | null;
   codeNFC: string | null;
   daywork: string[];
@@ -71,7 +71,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
     accessorKey: "id",
     header: "id",
     cell: ({ row }) => {
-      // Check if the user is ADMIN or STAFF
+      // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
       return (
         <div className={isBanned ? "line-through text-gray-400" : ""}>
@@ -84,11 +84,24 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
     accessorKey: "name",
     header: "name",
     cell: ({ row }) => {
-      // Check if the user is ADMIN or STAFF
+      // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
       return (
         <div className={isBanned ? "line-through text-gray-400" : ""}>
           {row.original.name}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "email",
+    header: "Email",
+    cell: ({ row }) => {
+      // Kiểm tra nếu bị ban
+      const isBanned = row.original.ban === true;
+      return (
+        <div className={isBanned ? "line-through text-gray-400" : ""}>
+          {row.original.email}
         </div>
       );
     },

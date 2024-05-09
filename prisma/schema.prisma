@@ -34,6 +34,7 @@ model Store {
   caculateSalary CaculateSalary[] @relation("StoreCaculateSalary")
   comment        Comment[]        @relation("StoreToComment")
   wheelspin      WheelSpin[]      @relation("StoreToWheelSpin")
+  system         System[]         @relation("StoreToSystem")
 }
 
 model Billboard {
@@ -547,7 +548,7 @@ model User {
   //Veiryfi email đã gửi chưa
   sentVeirifi              Boolean?               @default(false)
   //url đi làm của nhân viên
-  urlimageCheckAttendance     String?
+  urlimageCheckAttendance  String?
   //Mã nfc của nhân viên
   codeNFC                  String?
   //--------------Các thứ làm việc của  nhân viên------------------
@@ -740,4 +741,19 @@ model WheelSpin {
 
   @@index([storeId])
   @@index([userId])
+}
+
+model System {
+  id        String   @id @default(cuid())
+  storeId   String
+  store     Store    @relation("StoreToSystem", fields: [storeId], references: [id])
+  newChange String[]
+  oldChange String[]
+  delete    String[]
+  type      String
+  user      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([storeId])
 }

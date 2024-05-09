@@ -8,8 +8,8 @@ export async function GET(req: Request) {
     const userId = await currentUser();
     const eventCalendar = await prismadb.eventCalendar.findMany({
       where: {
-        userId: userId?.id 
-      }
+        userId: userId?.id,
+      },
     });
     return NextResponse.json(eventCalendar);
   } catch (error) {
@@ -83,12 +83,14 @@ export async function POST(
 
     const data = await prismadb.eventCalendar.findMany({
       where: {
-        userId: userId?.id 
-      }
+        userId: userId?.id,
+      },
     });
     const filteredData = data && data.filter((item) => item.id === datacamera);
     const isCheckAttendance = filteredData.map((item) => item.title);
-    const isCheckAttendanceImage = filteredData.map((item) => item.isCheckAttendanceImage);
+    const isCheckAttendanceImage = filteredData.map(
+      (item) => item.isCheckAttendanceImage
+    );
     const isCheckAttendanceNFC = filteredData.map((item) => item.isCheckNFC);
 
     if (isCheckAttendanceImage[0] === true) {
@@ -105,29 +107,30 @@ export async function POST(
       );
     }
 
+    //Trả lường nếu là title✅ có nghĩa là kết thúc
     if (isCheckAttendance[0] === "✅") {
       const eventcalendar = await prismadb.eventCalendar.findUnique({
         where: { id: userId?.id },
       });
-  
+
       let totalPoints = 0; // Khởi tạo tổng điểm
-  
+
       let checkCount = 0;
       for (const title of eventcalendar?.title || "") {
         if (title.includes("✅")) {
           checkCount++;
         }
       }
-  
+
       // Kiểm tra nếu đủ 26 "✅" thì thêm 500 điểm
       if (checkCount >= 26) {
         totalPoints += 500000;
       }
-  
+
       const user = await prismadb.user.findUnique({
         where: { id: userId?.id },
       });
-  
+
       switch (user?.degree) {
         case Degree.Elementary:
         case Degree.JuniorHighSchool:
@@ -145,7 +148,7 @@ export async function POST(
           totalPoints += 0;
           break;
       }
-  
+
       // Tìm và cập nhật bản ghi tồn tại nếu có, nếu không, tạo mới
       let existingSalary = await prismadb.caculateSalary.findFirst({
         where: {
@@ -153,7 +156,7 @@ export async function POST(
           eventcalendarId: eventcalendar?.id,
         },
       });
-  
+
       if (existingSalary) {
         // Chuyển đổi giá trị từ Decimal thành number trước khi thêm vào totalPoints
         const existingSalaryValue = existingSalary.salaryday
@@ -199,6 +202,29 @@ export async function POST(
       },
     });
 
+    const sentCheckAttendance = {
+      urlImageAttendance: eventCalendar?.urlImageAttendance,
+      qrcodeCheckAttendance: eventCalendar?.qrcodeCheckAttendance,
+      updateImage: eventCalendar?.updateImage,
+      isCheckAttendanceImage: eventCalendar?.isCheckAttendanceImage,
+      isCheckAttendance: isCheckAttendance,
+    };
+
+    // Log sự thay đổi của billboard
+    const changes = [
+      `isCheckAttendance: ${sentCheckAttendance.isCheckAttendance}, UrlImageAttendance: ${sentCheckAttendance.urlImageAttendance}, QrcodeCheckAttendance: ${sentCheckAttendance.qrcodeCheckAttendance}, UpdateImage: ${sentCheckAttendance.updateImage}, isCheckAttendanceImage: ${isCheckAttendanceImage}`,
+    ];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        newChange: changes,
+        type: "UPDATECHECKATTENDANCE-QRCODE",
+        user: userId?.email || "",
+      },
+    });
+
     return NextResponse.json(eventCalendar);
   } catch (error) {
     return new NextResponse(
@@ -207,8 +233,6 @@ export async function POST(
     );
   }
 }
-
-
 
 export async function PATCH(
   req: Request,
@@ -238,10 +262,9 @@ export async function PATCH(
     });
 
     if (!serialNumber) {
-      return new NextResponse(
-        JSON.stringify({ error: "Không tìm mã thẻ!" }),
-        { status: 405 }
-      );
+      return new NextResponse(JSON.stringify({ error: "Không tìm mã thẻ!" }), {
+        status: 405,
+      });
     }
 
     if (!dataEventNFC) {
@@ -266,12 +289,15 @@ export async function PATCH(
 
     const data = await prismadb.eventCalendar.findMany({
       where: {
-        userId: userId?.id 
-      }
+        userId: userId?.id,
+      },
     });
-    const filteredData = data && data.filter((item) => item.id === dataEventNFC);
+    const filteredData =
+      data && data.filter((item) => item.id === dataEventNFC);
     const isCheckAttendance = filteredData.map((item) => item.title);
-    const isCheckAttendanceImage = filteredData.map((item) => item.isCheckAttendanceImage);
+    const isCheckAttendanceImage = filteredData.map(
+      (item) => item.isCheckAttendanceImage
+    );
     const isCheckAttendanceNFC = filteredData.map((item) => item.isCheckNFC);
 
     if (isCheckAttendanceImage[0] === true) {
@@ -292,25 +318,25 @@ export async function PATCH(
       const eventcalendar = await prismadb.eventCalendar.findUnique({
         where: { id: userId?.id },
       });
-  
+
       let totalPoints = 0; // Khởi tạo tổng điểm
-  
+
       let checkCount = 0;
       for (const title of eventcalendar?.title || "") {
         if (title.includes("✅")) {
           checkCount++;
         }
       }
-  
+
       // Kiểm tra nếu đủ 26 "✅" thì thêm 500 điểm
       if (checkCount >= 26) {
         totalPoints += 500000;
       }
-  
+
       const user = await prismadb.user.findUnique({
         where: { id: userId?.id },
       });
-  
+
       switch (user?.degree) {
         case Degree.Elementary:
         case Degree.JuniorHighSchool:
@@ -328,7 +354,7 @@ export async function PATCH(
           totalPoints += 0;
           break;
       }
-  
+
       // Tìm và cập nhật bản ghi tồn tại nếu có, nếu không, tạo mới
       let existingSalary = await prismadb.caculateSalary.findFirst({
         where: {
@@ -336,7 +362,7 @@ export async function PATCH(
           eventcalendarId: eventcalendar?.id,
         },
       });
-  
+
       if (existingSalary) {
         // Chuyển đổi giá trị từ Decimal thành number trước khi thêm vào totalPoints
         const existingSalaryValue = existingSalary.salaryday
@@ -375,9 +401,31 @@ export async function PATCH(
         userId: userId?.id || "",
       },
       data: {
-        codeNFC:serialNumber,
+        codeNFC: serialNumber,
         updateNFC: currentTimeVN,
         isCheckNFC: true,
+      },
+    });
+
+    const sentCheckAttendance = {
+      codeNFC: eventCalendar?.codeNFC,
+      updateNFC: eventCalendar?.updateNFC,
+      isCheckNFC: eventCalendar?.isCheckNFC,
+      isCheckAttendance: isCheckAttendance,
+    };
+
+    // Log sự thay đổi của billboard
+    const changes = [
+      `isCheckAttendance: ${sentCheckAttendance.isCheckAttendance}, codeNFC: ${sentCheckAttendance.codeNFC}, updateNFC: ${sentCheckAttendance.updateNFC}, isCheckNFC: ${sentCheckAttendance.isCheckNFC}`,
+    ];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        newChange: changes,
+        type: "UPDATECHECKATTENDANCE-NFC",
+        user: userId?.email || "",
       },
     });
 

@@ -128,6 +128,34 @@ export async function POST(
       },
     });
 
+    const sentProduct = {
+      name: product?.heading,
+      description: product.description,
+      ProductType: product.productType,
+      images: images.map((image: { url: string }) => image.url),
+      imagesalientfeatures: imagesalientfeatures.map(
+        (image: { url: string }) => image.url
+      ),
+      isFeatured: product.isFeatured,
+      isArchived: product.isFeatured,
+      productdetailId: product.productdetailId,
+    };
+
+    // Log sự thay đổi của billboard
+    const changes = [
+      `Name: ${sentProduct.name}, Description: ${sentProduct.description}, ProductType: ${sentProduct.ProductType}, Images: ${sentProduct.images}, ImageSalientfeatures: ${sentProduct.imagesalientfeatures}, isFeatured: ${sentProduct.isFeatured}, isArchived: ${sentProduct.isArchived}, ProductDetail: ${sentProduct.productdetailId}`,
+    ];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        newChange: changes,
+        type: "CREATEỔCẮM-PRODUCT",
+        user: userId?.email || "",
+      },
+    });
+
     return NextResponse.json(product);
   } catch (error) {
     return new NextResponse(

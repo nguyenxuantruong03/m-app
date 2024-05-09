@@ -9,7 +9,7 @@ export async function POST(
   { params }: { params: { storeId: string } }
 ) {
   try {
-    const userId = currentUser();
+    const userId = await currentUser();
 
     const body = await req.json();
 
@@ -23,23 +23,18 @@ export async function POST(
     }
 
     if (!label) {
-      return new NextResponse(
-        JSON.stringify({ error: "Label is required!" }),
-        { status: 400 }
-      );
+      return new NextResponse(JSON.stringify({ error: "Label is required!" }), {
+        status: 400,
+      });
     }
 
     if (!timeout) {
-      return new NextResponse(
-        JSON.stringify({ error: "Label is required!" }),
-        { status: 400 }
-      );
+      return new NextResponse(JSON.stringify({ error: "Label is required!" }), {
+        status: 400,
+      });
     }
 
-    if (
-      !imagebillboardtime ||
-      !imagebillboardtime.length 
-    ) {
+    if (!imagebillboardtime || !imagebillboardtime.length) {
       return new NextResponse(
         JSON.stringify({ error: "Imagebillboardtime is required!" }),
         { status: 400 }
@@ -77,10 +72,35 @@ export async function POST(
         timeout,
         imagebillboardtime: {
           createMany: {
-            data: [...imagebillboardtime.map((image: { url: string }) => image)],
+            data: [
+              ...imagebillboardtime.map((image: { url: string }) => image),
+            ],
           },
         },
         storeId: params.storeId,
+      },
+    });
+
+    const sentBillboardTime = {
+      label: billboard?.label,
+      imagebillboard: imagebillboardtime.map(
+        (image: { url: string }) => image.url
+      ),
+      time: billboard?.timeout,
+    };
+
+    // Log sự thay đổi của billboard
+    const changes = [
+      `Label: ${sentBillboardTime.label}, Timeout: ${sentBillboardTime.time}, ImageBillboardTime: ${sentBillboardTime.imagebillboard},`,
+    ];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        newChange: changes,
+        type: "CREATEBILLBOARDTIME",
+        user: userId?.email || "",
       },
     });
 

@@ -95,6 +95,25 @@ export async function DELETE(
       },
     });
 
+    const sentProductDetail = {
+      title:productDetail.title,
+  };
+
+  // Log sự thay đổi của billboard
+  const changes = [
+    `Title: ${sentProductDetail.title}`,
+  ];
+
+  // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+  await prismadb.system.create({
+    data: {
+      storeId: params.storeId,
+      type: "DELETEPRODUCTDETAIL",
+      delete: changes,
+      user: userId?.email || "",
+    },
+  });
+
     return NextResponse.json(productDetail);
   } catch (error) {
     return new NextResponse(
@@ -367,6 +386,25 @@ export async function PATCH(
       );
     }
 
+    const existingProductDetail = await prismadb.productDetail.findUnique({
+      where: {
+        id: params.productdetailId,
+      },
+      include: {
+        category: true,
+        color1: true,
+        size1: true,
+        color2: true,
+        size2: true,
+        color3: true,
+        size3: true,
+        color4: true,
+        size4: true,
+        color5: true,
+        size5: true,
+      },
+    });
+
     const productDetail = await prismadb.productDetail.update({
       where: {
         id: params.productdetailId,
@@ -445,6 +483,51 @@ export async function PATCH(
         contentsalientfeatures,
       },
     });
+
+    // Danh sách các trường cần loại bỏ
+    const ignoredFields = ["createdAt", "updatedAt"];
+
+    // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
+    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    for (const key in existingProductDetail) {
+      if (
+        existingProductDetail.hasOwnProperty(key) &&
+        productDetail.hasOwnProperty(key)
+      ) {
+        if (
+          existingProductDetail[key as keyof typeof existingProductDetail] !==
+          productDetail[key as keyof typeof productDetail]
+        ) {
+          // Kiểm tra xem trường hiện tại có trong danh sách loại bỏ không
+          if (!ignoredFields.includes(key)) {
+            changes[key] = {
+              oldValue: existingProductDetail[key as keyof typeof existingProductDetail],
+              newValue: productDetail[key as keyof typeof productDetail],
+            };
+          }
+        }
+      }
+    }
+
+    //Hợp nhất các thay đổi thành một hàng duy nhất và ghi lại chúng
+    const oldChanges = Object.keys(changes).map((key) => {
+      return `${key}: { Old: '${changes[key].oldValue}'}`;
+    });
+    const newChanges = Object.keys(changes).map((key) => {
+      return `${key}: { New: '${changes[key].newValue}'}`;
+    });
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        oldChange: oldChanges,
+        newChange: newChanges,
+        type: "UPDATEPRODUCTDETAIL",
+        user: userId?.email || "",
+      },
+    });
+
     return NextResponse.json(productDetail);
   } catch (error) {
     return new NextResponse(

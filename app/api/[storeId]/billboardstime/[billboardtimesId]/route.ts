@@ -79,11 +79,43 @@ export async function DELETE(
       );
     }
 
+    const existingBillboardTime = await prismadb.billboardTime.findUnique({
+      where: {
+        id: params.billboardtimesId,
+      },
+      include: {
+        imagebillboardtime: true,
+      },
+    });
+
     const billboardTime = await prismadb.billboardTime.delete({
       where: {
         id: params.billboardtimesId,
       },
     });
+
+    const sentBillboardTime = {
+      label: billboardTime?.label,
+      valueImage: existingBillboardTime?.imagebillboardtime.map(
+        (image: { url: string }) => image.url
+      ),
+    };
+
+    // Log sự thay đổi của sentVeirifi
+    const changes = [
+      `DeleteLabel: ${sentBillboardTime.label}, ImageBillboardTime: ${sentBillboardTime.valueImage}`,
+    ];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        delete: changes,
+        type: "DELETEBILLBOARDTIME",
+        user: userId?.email || "",
+      },
+    });
+
     return NextResponse.json(billboardTime);
   } catch (error) {
     return new NextResponse(
@@ -112,23 +144,18 @@ export async function PATCH(
     }
 
     if (!label) {
-      return new NextResponse(
-        JSON.stringify({ error: "Label is required!" }),
-        { status: 400 }
-      );
+      return new NextResponse(JSON.stringify({ error: "Label is required!" }), {
+        status: 400,
+      });
     }
 
     if (!timeout) {
-      return new NextResponse(
-        JSON.stringify({ error: "Label is required!" }),
-        { status: 400 }
-      );
+      return new NextResponse(JSON.stringify({ error: "Label is required!" }), {
+        status: 400,
+      });
     }
 
-    if (
-      !imagebillboardtime ||
-      !imagebillboardtime.length 
-    ) {
+    if (!imagebillboardtime || !imagebillboardtime.length) {
       return new NextResponse(
         JSON.stringify({ error: "Imagebillboardtime is required!" }),
         { status: 400 }
@@ -158,6 +185,15 @@ export async function PATCH(
       );
     }
 
+    const existingBillboardTime = await prismadb.billboardTime.findUnique({
+      where: {
+        id: params.billboardtimesId,
+      },
+      include: {
+        imagebillboardtime: true,
+      },
+    });
+
     await prismadb.billboardTime.update({
       where: {
         id: params.billboardtimesId,
@@ -177,9 +213,68 @@ export async function PATCH(
       data: {
         imagebillboardtime: {
           createMany: {
-            data: [...imagebillboardtime.map((image: { url: string }) => image)],
+            data: [
+              ...imagebillboardtime.map((image: { url: string }) => image),
+            ],
           },
         },
+      },
+    });
+
+    // Danh sách các trường cần loại bỏ
+    const ignoredFields = ["createdAt", "updatedAt"];
+
+    // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
+    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    for (const key in existingBillboardTime) {
+      if (
+        existingBillboardTime.hasOwnProperty(key) &&
+        billboardTime.hasOwnProperty(key)
+      ) {
+        if (
+          existingBillboardTime[key as keyof typeof existingBillboardTime] !==
+          billboardTime[key as keyof typeof billboardTime]
+        ) {
+          // Kiểm tra xem trường hiện tại có trong danh sách loại bỏ không
+          if (!ignoredFields.includes(key)) {
+            changes[key] = {
+              oldValue:
+                existingBillboardTime[
+                  key as keyof typeof existingBillboardTime
+                ],
+              newValue: billboardTime[key as keyof typeof billboardTime],
+            };
+          }
+        }
+      }
+    }
+
+    // Nếu có thay đổi trong imagebillboard, thêm vào danh sách changes
+    if (imagebillboardtime && imagebillboardtime.length) {
+      changes["imagebillboard"] = {
+        oldValue: existingBillboardTime?.imagebillboardtime.map(
+          (image: { url: string }) => image.url
+        ),
+        newValue: imagebillboardtime.map((image: { url: string }) => image.url),
+      };
+    }
+
+    //Hợp nhất các thay đổi thành một hàng duy nhất và ghi lại chúng
+    const oldChanges = Object.keys(changes).map((key) => {
+      return `${key}: { Old: '${changes[key].oldValue}'}`;
+    });
+    const newChanges = Object.keys(changes).map((key) => {
+      return `${key}: { New: '${changes[key].newValue}'}`;
+    });
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        type: "UPDATEBILLBOARDTIME",
+        newChange: newChanges,
+        oldChange: oldChanges,
+        user: userId?.email || "",
       },
     });
 
@@ -206,13 +301,52 @@ export async function POST(
       );
     }
 
+    const existingBillboardTime = await prismadb.billboardTime.findUnique({
+      where: {
+        id: params.billboardtimesId,
+      },
+      include: {
+        imagebillboardtime: true,
+      },
+    });
+
     const billboardTime = await prismadb.billboardTime.update({
       where: {
         id: params.billboardtimesId,
       },
       data: {
         timeout: 0,
-        isTimeout: true
+        isTimeout: true,
+      },
+    });
+
+    // Kiểm tra sự thay đổi của sentVeirifi
+    const sentBillboardTimeChanges = {
+      oldValueisTimeout: existingBillboardTime?.isTimeout,
+      newValueisTimeout: billboardTime.isTimeout,
+
+      oldValuetimeout: existingBillboardTime?.timeout,
+      newValuetimeout: billboardTime.timeout,
+    };
+
+    // Log sự thay đổi của sentVeirifi
+    const oldchanges = [
+      `OldValueisTimeout: ${sentBillboardTimeChanges.oldValueisTimeout}, OldValueTimeout: ${sentBillboardTimeChanges.oldValuetimeout}`,
+    ];
+
+    // Log sự thay đổi của sentVeirifi
+    const newchanges = [
+      `NewValueisTimeout: ${sentBillboardTimeChanges.newValueisTimeout}, NewValueTimeout: ${sentBillboardTimeChanges.newValuetimeout}`,
+    ];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        type: "UPDATEBILLBOARDTIME",
+        oldChange: oldchanges,
+        newChange: newchanges,
+        user: userId?.email || "",
       },
     });
 

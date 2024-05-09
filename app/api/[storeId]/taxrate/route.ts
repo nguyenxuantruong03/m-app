@@ -86,6 +86,30 @@ export async function POST(
       },
     });
 
+    const sentTaxRate = {
+      name: createdCoupon?.name,
+      description: createdCoupon?.description,
+      percentage: createdCoupon?.percentage,
+      inclusive: createdCoupon?.inclusive,
+      active: createdCoupon?.active,
+      taxtype: createdCoupon?.taxtype,
+    };
+
+    // Log sự thay đổi của billboard
+    const changes = [
+      `Name: ${sentTaxRate.name}, Description: ${sentTaxRate.description}, Percentage: ${sentTaxRate.percentage}, Inclusive: ${sentTaxRate.inclusive}, Active: ${sentTaxRate.active}, Taxtype: ${sentTaxRate.taxtype}, `,
+    ];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        type: "CREATETAXRATE",
+        newChange: changes,
+        user: userId?.email || "",
+      },
+    });
+
     return NextResponse.json(createdCoupon);
   } catch (error) {
     return new NextResponse(

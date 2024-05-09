@@ -80,11 +80,48 @@ export async function DELETE(
       );
     }
 
+    const existingCoupon = await prismadb.coupon.findUnique({
+      where: {
+        id: params.couponId,
+      },
+      include: {
+        imagecoupon: true,
+      },
+    });
+
     await stripe.coupons.del(params.couponId);
 
     const coupon = await prismadb.coupon.delete({
       where: {
         id: params.couponId,
+      },
+    });
+
+    const sentCoupon = {
+      name: coupon?.name,
+      description: coupon.description,
+      duration: coupon?.duration,
+      durationinmoth: coupon?.durationinmoth,
+      percent: coupon?.percent,
+      maxredemptions: coupon?.maxredemptions,
+      redeemby: coupon?.redeemby,
+      imagecoupon: existingCoupon?.imagecoupon.map(
+        (image: { url: string }) => image
+      ),
+    };
+
+    // Log sự thay đổi của billboard
+    const changes = [
+      `Name: ${sentCoupon.name}, Description: ${sentCoupon.description}, duration: ${sentCoupon.duration}, DurationInMoth:${sentCoupon.durationinmoth}, Percent: ${sentCoupon.percent}, MaxRedemptions: ${sentCoupon.maxredemptions}, Redeemby: ${sentCoupon.redeemby}, imagecoupon: ${sentCoupon.imagecoupon}`,
+    ];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        type: "DELETECOUPON",
+        delete: changes,
+        user: userId?.email || "",
       },
     });
 
@@ -135,9 +172,12 @@ export async function PATCH(
     }
 
     if (!percent) {
-      return new NextResponse(JSON.stringify({ error: "Percent is required!" }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: "Percent is required!" }),
+        {
+          status: 400,
+        }
+      );
     }
 
     if (!imagecoupon || !imagecoupon.length) {
@@ -169,6 +209,15 @@ export async function PATCH(
         { status: 405 }
       );
     }
+
+    const exstingCoupon = await prismadb.coupon.findUnique({
+      where: {
+        id: params.couponId,
+      },
+      include: {
+        imagecoupon: true,
+      },
+    });
 
     // Cập nhật thông tin tương ứng trên Stripe
     await stripe.coupons.update(params.couponId, {
@@ -203,6 +252,60 @@ export async function PATCH(
             data: [...imagecoupon.map((image: { url: string }) => image)],
           },
         },
+      },
+    });
+
+    // Danh sách các trường cần loại bỏ
+    const ignoredFields = ["createdAt", "updatedAt"];
+
+    // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
+    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    for (const key in exstingCoupon) {
+      if (
+        exstingCoupon.hasOwnProperty(key) &&
+        couponupdate.hasOwnProperty(key)
+      ) {
+        if (
+          exstingCoupon[key as keyof typeof exstingCoupon] !==
+          couponupdate[key as keyof typeof couponupdate]
+        ) {
+          // Kiểm tra xem trường hiện tại có trong danh sách loại bỏ không
+          if (!ignoredFields.includes(key)) {
+            changes[key] = {
+              oldValue: exstingCoupon[key as keyof typeof exstingCoupon],
+              newValue: couponupdate[key as keyof typeof couponupdate],
+            };
+          }
+        }
+      }
+    }
+
+    // Nếu có thay đổi trong imagebillboard, thêm vào danh sách changes
+    if (imagecoupon && imagecoupon.length) {
+      changes["images"] = {
+        oldValue: exstingCoupon?.imagecoupon.map(
+          (image: { url: string }) => image.url
+        ),
+        newValue: imagecoupon.map((image: { url: string }) => image.url),
+      };
+    }
+
+    //Hợp nhất các thay đổi thành một hàng duy nhất và ghi lại chúng
+    const oldChanges = Object.keys(changes).map((key) => {
+      return `${key}: { Old: '${changes[key].oldValue}'}`;
+    });
+    const newChanges = Object.keys(changes).map((key) => {
+      return `${key}: { New: '${changes[key].newValue}'}`;
+    });
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        newChange: newChanges,
+        oldChange: oldChanges,
+        type: "UPDATECOUPON",
+        user: userId?.email || "",
       },
     });
 

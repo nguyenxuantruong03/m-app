@@ -59,7 +59,27 @@ export async function POST(
         categoryType:categoryType
       }
     });
-  
+
+    const sentCategory = {
+      name: category?.name,
+      CategoryType: category.categoryType
+    };
+
+    // Log sự thay đổi của billboard
+    const changes = [
+      `Name: ${sentCategory.name}, TypeCategory: ${sentCategory.CategoryType}`,
+    ];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        type: "CREATEỐNGNHỰA-CATEGORY",
+        newChange: changes,
+        user: userId?.email || ""
+      },
+    });
+
     return NextResponse.json(category);
   } catch (error) {
     return new NextResponse(

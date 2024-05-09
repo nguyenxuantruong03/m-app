@@ -79,11 +79,43 @@ export async function DELETE(
       );
     }
 
+    const existingBillboard = await prismadb.billboard.findUnique({
+      where: {
+        id: params.billboardId,
+      },
+      include: {
+        imagebillboard: true,
+      },
+    });
+
     const billboard = await prismadb.billboard.delete({
       where: {
         id: params.billboardId,
       },
     });
+
+    const sentBillboard = {
+      label: billboard?.label,
+      valueImage: existingBillboard?.imagebillboard.map(
+        (image: { url: string }) => image.url
+      ),
+    };
+
+    // Log sự thay đổi của sentVeirifi
+    const changes = [
+      `DeleteLabel: ${sentBillboard.label}, ImageBillboard: ${sentBillboard.valueImage}`,
+    ];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        delete: changes,
+        type: "DELETEBILLBOARD",
+        user: userId?.email || "",
+      },
+    });
+
     return NextResponse.json(billboard);
   } catch (error) {
     return new NextResponse(
@@ -112,10 +144,9 @@ export async function PATCH(
     }
 
     if (!label) {
-      return new NextResponse(
-        JSON.stringify({ error: "Label is required!" }),
-        { status: 400 }
-      );
+      return new NextResponse(JSON.stringify({ error: "Label is required!" }), {
+        status: 400,
+      });
     }
 
     if (!imagebillboard || !imagebillboard.length) {
@@ -148,6 +179,15 @@ export async function PATCH(
       );
     }
 
+    const existingBillboard = await prismadb.billboard.findUnique({
+      where: {
+        id: params.billboardId,
+      },
+      include: {
+        imagebillboard: true,
+      },
+    });
+
     await prismadb.billboard.update({
       where: {
         id: params.billboardId,
@@ -169,6 +209,61 @@ export async function PATCH(
             data: [...imagebillboard.map((image: { url: string }) => image)],
           },
         },
+      },
+    });
+
+    // Danh sách các trường cần loại bỏ
+    const ignoredFields = ["createdAt", "updatedAt"];
+
+    // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
+    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    for (const key in existingBillboard) {
+      if (
+        existingBillboard.hasOwnProperty(key) &&
+        billboard.hasOwnProperty(key)
+      ) {
+        if (
+          existingBillboard[key as keyof typeof existingBillboard] !==
+          billboard[key as keyof typeof billboard]
+        ) {
+          // Kiểm tra xem trường hiện tại có trong danh sách loại bỏ không
+          if (!ignoredFields.includes(key)) {
+            changes[key] = {
+              oldValue:
+                existingBillboard[key as keyof typeof existingBillboard],
+              newValue: billboard[key as keyof typeof billboard],
+            };
+          }
+        }
+      }
+    }
+
+    // Nếu có thay đổi trong imagebillboard, thêm vào danh sách changes
+    if (imagebillboard && imagebillboard.length) {
+      changes["imagebillboard"] = {
+        oldValue: existingBillboard?.imagebillboard.map(
+          (image: { url: string }) => image.url
+        ),
+        newValue: imagebillboard.map((image: { url: string }) => image.url),
+      };
+    }
+
+    //Hợp nhất các thay đổi thành một hàng duy nhất và ghi lại chúng
+    const oldChanges = Object.keys(changes).map((key) => {
+      return `${key}: { Old: '${changes[key].oldValue}'}`;
+    });
+    const newChanges = Object.keys(changes).map((key) => {
+      return `${key}: { New: '${changes[key].newValue}'}`;
+    });
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        oldChange: oldChanges,
+        newChange: newChanges,
+        type: "UPDATEBILLBOARD",
+        user: userId?.email || "",
       },
     });
 

@@ -83,6 +83,23 @@ export async function DELETE(
       },
     });
 
+    const sentVeirifiChanges = {
+      newValue: managestaff?.email,
+    };
+
+    // Log sự thay đổi của sentVeirifi
+    const changes = [`User: ${sentVeirifiChanges.newValue}`];
+
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        delete: changes,
+        type: "DELETEMANAGESTAFF",
+        user: userId?.email || "",
+      },
+    });
+
     return NextResponse.json(managestaff);
   } catch (error) {
     return new NextResponse(
@@ -252,10 +269,30 @@ export async function PATCH(
     });
 
     // Danh sách các trường cần loại bỏ
-    const ignoredFields = ['emailVerified', 'lastlogin', 'createdAt', 'updatedAt','dateofbirth','dateRange','imageCredential',"urlimageCheckAttendance","codeNFC","isCitizen"];
+    const ignoredSentEmail = [
+      "emailVerified",
+      "lastlogin",
+      "createdAt",
+      "updatedAt",
+      "dateofbirth",
+      "dateRange",
+      "imageCredential",
+      "urlimageCheckAttendance",
+      "codeNFC",
+      "isCitizen",
+    ];
 
-    // Bước 3: So sánh dữ liệu cũ và mới
+    const ignoredInsystem = [
+      "createdAt",
+      "updatedAt",
+      "emailVerified",
+      "lastlogin",
+    ];
+
     const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
+    const newChanges: string[] = [];
+    const oldChanges: string[] = [];
     for (const key in existingData) {
       if (existingData.hasOwnProperty(key) && managestaff.hasOwnProperty(key)) {
         if (
@@ -263,15 +300,38 @@ export async function PATCH(
           managestaff[key as keyof typeof managestaff]
         ) {
           // Kiểm tra xem trường hiện tại có trong danh sách loại bỏ không
-          if (!ignoredFields.includes(key)) {
+          if (!ignoredSentEmail.includes(key)) {
             changes[key] = {
               oldValue: existingData[key as keyof typeof existingData],
               newValue: managestaff[key as keyof typeof managestaff],
             };
           }
+
+          if (!ignoredInsystem.includes(key)) {
+            newChanges.push(
+              `${key}: { New: '${
+                managestaff[key as keyof typeof managestaff]
+              }'}`
+            );
+            oldChanges.push(
+              `${key}: { Old: '${
+                existingData[key as keyof typeof existingData]
+              }'}`
+            );
+          }
         }
       }
     }
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        newChange: newChanges,
+        oldChange: oldChanges,
+        type: "UPDATEMANAGESTAFF",
+        user: userId?.email || "",
+      },
+    });
 
     await sendUpdateManageStaff(
       userId?.email,

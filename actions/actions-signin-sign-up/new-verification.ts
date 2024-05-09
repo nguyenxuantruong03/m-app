@@ -19,6 +19,19 @@ export const newVerification = async (token: string) => {
     return { error: "Email hiện tại không có!" };
   }
 
+  const user = await prismadb.user.findUnique({
+    where: { id: existingToken.id }, // Tìm user theo id
+    select: { emailVerified: true }, // Chỉ lấy trường emailVerified
+  });
+
+  if (!user || !user.emailVerified) {
+    return { error: "Email chưa được xác thực!" };
+  }
+
+  if(user.emailVerified){
+    return { success: "Email đã xác thực!" };
+  }
+  
   let resendTokenVerifyCount = existingUser.resendTokenVerify || 0; // Đếm số lần gửi resendTokenVerify
   // Tăng số lần gửi lên 1
   resendTokenVerifyCount++;
