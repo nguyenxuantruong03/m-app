@@ -325,12 +325,12 @@ export const sendDeleteUser = async (
     await resend.emails.send({
       from: "mail@vlxdxuantruong.email",
       to: email,
-      subject: "Xóa tài khoản vĩnh viễn!",
+      subject: "Khóa tài khoản vĩnh viễn!",
       html: `
 
    <p>Kính gửi <strong>${name},</strong></p> 
 
-<p style="margin-top:5px;">Tôi viết thư này để tỏ lòng xin lỗi về việc xóa tài khoản của bạn. Tôi hiểu rằng việc này đã gây ra sự bất tiện và phiền toái cho bạn, và tôi rất tiếc về điều đó.</p>
+<p style="margin-top:5px;">Tôi viết thư này để tỏ lòng xin lỗi về việc khóa tài khoản của bạn vĩnh viễn. Tôi hiểu rằng việc này đã gây ra sự bất tiện và phiền toái cho bạn, và tôi rất tiếc về điều đó.</p>
 
 <p style="margin-top:5px;">Chúng tôi đã xem xét lại quyết định của mình và nhận ra rằng tài khoản của bạn có vấn đề. Và đã phạm vào luật nghiêm.</p>
 

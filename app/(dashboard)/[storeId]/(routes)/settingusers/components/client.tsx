@@ -3,8 +3,6 @@ import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { DataTable } from "@/components/ui/data-table";
 
-import { useParams } from "next/navigation";
-
 import { ApiList } from "@/components/ui/api-list";
 import { UserRole } from "@prisma/client";
 import { useCurrentRole } from "@/hooks/use-current-role";

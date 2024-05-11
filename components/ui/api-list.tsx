@@ -8,7 +8,7 @@ import { UserRole } from "@prisma/client";
 
 interface ApiListProps {
   entityName: string;
-  entityIdName: string;
+  entityIdName?: string;
 }
 
 export const ApiList: React.FC<ApiListProps> = ({

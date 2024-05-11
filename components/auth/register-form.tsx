@@ -49,6 +49,8 @@ const RegisterForm = () => {
   const [password, setPassword] = useState<string>("");
   const [email, setEmail] = useState<string>("");
 
+  //Làm mới borderInput
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   useEffect(() => {
     const handleThemeChange = () => {
@@ -88,6 +90,7 @@ const RegisterForm = () => {
           if (data.error) {
             setError(data.error);
             setPassword("")
+            setIsSubmitted(true);
           } else if (data.success) {
             setSuccess(data.success);
             // Reset form fields
@@ -99,6 +102,7 @@ const RegisterForm = () => {
             setPassword("")
             setEmail("")
             setName("")
+            setIsSubmitted(true);
           }
         });
       });
@@ -132,6 +136,7 @@ const RegisterForm = () => {
                       validateName={setNameValid}
                       setName={setName}
                       name={name}
+                      isSubmitted ={isSubmitted}
                     />
                   </FormControl>
                   <FormMessage />
@@ -145,7 +150,7 @@ const RegisterForm = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <EmailField field={field} isPending={isPending} setEmail={setEmail} email={email}/>
+                    <EmailField field={field} isPending={isPending} setEmail={setEmail} email={email} isSubmitted ={isSubmitted}/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -164,6 +169,7 @@ const RegisterForm = () => {
                       validatePassword={setPasswordValid}
                       setPassword={setPassword}
                       password={password}
+                      isSubmitted ={isSubmitted}
                     />
                   </FormControl>
                   <FormMessage />

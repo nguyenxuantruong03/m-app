@@ -8,7 +8,10 @@ export const publicRoutes = [
   "/auth/register",
   "/auth/reset",
   "/auth/new-verification",
-  "/auth/new-password"
+  "/auth/new-password",
+  "/auth/error",
+  "/auth/errorban",
+  "/auth/errorbanforever",
 ];
 
 /**

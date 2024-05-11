@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-import {  ShieldOff, ShieldCheck, ShieldMinus, ShieldPlus } from "lucide-react";
+import { ShieldOff, ShieldCheck, ShieldMinus, ShieldPlus } from "lucide-react";
 import { Lock, Unlock } from "lucide-react";
 
 // This type is used to define the shape of our data.
@@ -34,8 +34,10 @@ export type SettingUsersColumn = {
   isCitizen: boolean | null;
   isTwoFactorEnabled: boolean;
   ban: boolean | null;
-  lastlogin: string |   null;
+  lastlogin: string | null;
   banExpires: string | null;
+  isbanforever: boolean | undefined | null;
+  timebanforever: string | null;
   createdAt: string | null;
 };
 
@@ -45,7 +47,7 @@ interface RoleCellProps<T> {
 
 const RoleCell = <T extends SettingUsersColumn>({ row }: RoleCellProps<T>) => {
   const router = useRouter();
-  const params= useParams()
+  const params = useParams();
   const user = row.original;
   const isAdmin = user.role === UserRole.ADMIN;
   const isStaff = user.role === UserRole.STAFF;
@@ -107,7 +109,7 @@ const RoleCell = <T extends SettingUsersColumn>({ row }: RoleCellProps<T>) => {
         {Object.values(UserRole).map(
           (role) =>
             role !== user.role && (
-              <option  key={role} value={role}>
+              <option key={role} value={role}>
                 {role}
               </option>
             )
@@ -126,7 +128,17 @@ const RoleCell = <T extends SettingUsersColumn>({ row }: RoleCellProps<T>) => {
     <div
       onClick={() => setEditable(true)}
       className={`cursor-pointer font-bold ${
-        isAdmin ? "text-red-500" : isStaff ? "text-blue-500" : isShipper ? "text-indigo-500" : isMaketing ? "text-purple-500" : isGuest ? "text-fuchsia-500" : "dark:text-amber-500 text-black"
+        isAdmin
+          ? "text-red-500"
+          : isStaff
+          ? "text-blue-500"
+          : isShipper
+          ? "text-indigo-500"
+          : isMaketing
+          ? "text-purple-500"
+          : isGuest
+          ? "text-fuchsia-500"
+          : "dark:text-amber-500 text-black"
       }`}
     >
       {user.role}
@@ -140,8 +152,17 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
     header: "Name",
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
       return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
+        <div
+          className={
+            isBanforever
+              ? "line-through text-red-500"
+              : isBanned
+              ? "line-through text-gray-400"
+              : ""
+          }
+        >
           {row.original.name}
         </div>
       );
@@ -153,8 +174,17 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
     header: "Email",
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
       return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
+        <div
+          className={
+            isBanforever
+              ? "line-through text-red-500"
+              : isBanned
+              ? "line-through text-gray-400"
+              : ""
+          }
+        >
           {row.original.email}
         </div>
       );
@@ -166,8 +196,17 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
     header: "EmailVerified",
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
       return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
+        <div
+          className={
+            isBanforever
+              ? "line-through text-red-500"
+              : isBanned
+              ? "line-through text-gray-400"
+              : ""
+          }
+        >
           {row.original.emailVerified}
         </div>
       );
@@ -179,8 +218,17 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
     header: "lastlogin",
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
       return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
+        <div
+          className={
+            isBanforever
+              ? "line-through text-red-500"
+              : isBanned
+              ? "line-through text-gray-400"
+              : ""
+          }
+        >
           {row.original.lastlogin}
         </div>
       );
@@ -239,8 +287,17 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
     header: "Provider",
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
       return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
+        <div
+          className={
+            isBanforever
+              ? "line-through text-red-500"
+              : isBanned
+              ? "line-through text-gray-400"
+              : ""
+          }
+        >
           {row.original.accounts[0]?.provider || ""}
         </div>
       );
@@ -252,8 +309,17 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
     header: "Token Type",
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
       return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
+        <div
+          className={
+            isBanforever
+              ? "line-through text-red-500"
+              : isBanned
+              ? "line-through text-gray-400"
+              : ""
+          }
+        >
           {row.original.accounts[0]?.token_type || ""}
         </div>
       );
@@ -264,8 +330,17 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
     header: "Định danh",
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
       return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
+        <div
+          className={
+            isBanforever
+              ? "line-through text-red-500"
+              : isBanned
+              ? "line-through text-gray-400"
+              : ""
+          }
+        >
           {row.original.isCitizen ? (
             <ShieldCheck className="text-green-600" />
           ) : (
@@ -280,10 +355,19 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
     header: "IsTwoFactorEnabled",
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
       return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
+        <div
+          className={
+            isBanforever
+              ? "line-through text-red-500"
+              : isBanned
+              ? "line-through text-gray-400"
+              : ""
+          }
+        >
           {row.original.isTwoFactorEnabled ? (
-            <Lock className="text-green-600"  />
+            <Lock className="text-green-600" />
           ) : (
             <Unlock className="text-red-600" />
           )}
@@ -297,6 +381,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
     header: "Ban",
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
       return (
         <div>
           {isBanned ? (
@@ -319,9 +404,66 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
     header: "Thành lập",
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
       return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
+        <div
+          className={
+            isBanforever
+              ? "line-through text-red-500"
+              : isBanned
+              ? "line-through text-gray-400"
+              : ""
+          }
+        >
           {row.original.createdAt}
+        </div>
+      );
+    },
+  },
+
+  {
+    accessorKey: "isbanforever",
+    header: "Ban vĩnh viễn",
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
+      return (
+        <div
+          className={
+            isBanforever
+              ? "line-through text-red-500"
+              : isBanned
+              ? "line-through text-gray-400"
+              : ""
+          }
+        >
+          {isBanforever ? (
+            <ShieldMinus className="text-red-600" />
+          ) : (
+            <ShieldPlus className="text-green-600" />
+          )}
+        </div>
+      );
+    },
+  },
+
+  {
+    accessorKey: "timebanforever",
+    header: "Thời gian Ban",
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
+      return (
+        <div
+          className={
+            isBanforever
+              ? "line-through text-red-500"
+              : isBanned
+              ? "line-through text-gray-400"
+              : ""
+          }
+        >
+          {row.original.timebanforever}
         </div>
       );
     },
@@ -332,8 +474,17 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
     header: "Gửi mã xác thực",
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
       return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
+        <div
+          className={
+            isBanforever
+              ? "line-through text-red-500"
+              : isBanned
+              ? "line-through text-gray-400"
+              : ""
+          }
+        >
           {row.original.resendTokenVerify}
         </div>
       );
@@ -345,8 +496,17 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
     header: "Gửi mã Resetpassword",
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
       return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
+        <div
+          className={
+            isBanforever
+              ? "line-through text-red-500"
+              : isBanned
+              ? "line-through text-gray-400"
+              : ""
+          }
+        >
           {row.original.resendTokenResetPassword}
         </div>
       );
@@ -358,8 +518,17 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
     header: "Gửi 2FA",
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
       return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
+        <div
+          className={
+            isBanforever
+              ? "line-through text-red-500"
+              : isBanned
+              ? "line-through text-gray-400"
+              : ""
+          }
+        >
           {row.original.resendCount}
         </div>
       );

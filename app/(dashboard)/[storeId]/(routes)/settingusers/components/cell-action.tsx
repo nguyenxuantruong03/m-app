@@ -8,7 +8,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Trash, Lock } from "lucide-react";
+import { MoreHorizontal, Ban, Lock } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -32,7 +32,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       setLoading(true);
       await axios.delete(`/api/${params.storeId}/settingusers`, { data: { id: data.id } });
       router.refresh();
-      toast.success("User deleted.");
+      toast.success("Người dùng đã bị ban vĩnh viễn!");
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -154,8 +154,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuContent>
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem onClick={() => setOpen(true)}>
-            <Trash className="h-4 w-4 mr-2" />
-            Delete
+            <Ban className="h-4 w-4 mr-2" />
+            Ban Forever
           </DropdownMenuItem>
           <DropdownMenuItem onClick={BanUser}>
             <Lock className="h-4 w-4 mr-2" />

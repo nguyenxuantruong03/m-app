@@ -744,16 +744,19 @@ model WheelSpin {
 }
 
 model System {
-  id        String   @id @default(cuid())
-  storeId   String
-  store     Store    @relation("StoreToSystem", fields: [storeId], references: [id])
-  newChange String[]
-  oldChange String[]
-  delete    String[]
-  type      String
-  user      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String   @id @default(cuid())
+  storeId        String
+  store          Store    @relation("StoreToSystem", fields: [storeId], references: [id])
+  newChange      String[]
+  oldChange      String[]
+  delete         String[]
+  banforever    String[]
+  timebanforever DateTime?
+  isbanforever   Boolean? @default(false)
+  type           String?
+  user           String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   @@index([storeId])
 }

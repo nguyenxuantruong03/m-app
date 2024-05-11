@@ -263,6 +263,11 @@ const MainNav = ({
       label: "Cài đặt",
       active: pathname === `/${params.storeId}/settings`,
     },
+    {
+      href: `/${params.storeId}/system`,
+      label: "Hệ thống",
+      active: pathname === `/${params.storeId}/system`,
+    },
   ];
   return (
     <>

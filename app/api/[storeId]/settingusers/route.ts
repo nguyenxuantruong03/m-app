@@ -50,6 +50,41 @@ export async function PATCH(
       );
     }
 
+    //Set-up1: const settinguser = await prismadb.user.findMany();
+    const system = await prismadb.system.findMany();
+    const banforeverValues = system
+      .filter((item) => item.banforever) // Lọc các mục có thuộc tính `banforever`
+      .map((item) => item.banforever) // Lấy giá trị của thuộc tính `banforever`
+      .reduce((acc, currentValue) => {
+        // Nếu currentValue không phải mảng rỗng, thêm vào mảng kết quả
+        if (currentValue.length > 0) {
+          acc.push(...currentValue);
+        }
+        return acc;
+      }, []);
+
+    //Set-up2: Gộp các giá trị lặp lại bằng cách chuyển sang Set và sau đó trở lại dạng mảng
+    const uniqueBanforeverValues = Array.from(new Set(banforeverValues));
+    //Lấy banforever so sanh với userId lấy ra email tương ứng
+    const user = await prismadb.user.findMany();
+    // Tạo một mảng chứa các ID người dùng mà bạn muốn lấy
+    const matchedUsers = user.filter((userData) =>
+      uniqueBanforeverValues.includes(userData.id)
+    );
+    const findEmail = matchedUsers.map((item) => item.email);
+
+    if (
+      existingUser &&
+      findEmail.some((email) => email === existingUser.email)
+    ) {
+      return new NextResponse(
+        JSON.stringify({
+          error: "Người dùng nay đã bị ban vĩnh viễn!",
+        }),
+        { status: 400 }
+      );
+    }
+
     // Update the user's role in the database using Prisma
     const roleupdate = await prismadb.user.update({
       where: { id: userId },
@@ -137,6 +172,41 @@ export async function DELETE(
       where: { role: "ADMIN" },
     });
 
+    //Set-up1: const settinguser = await prismadb.user.findMany();
+    const system = await prismadb.system.findMany();
+    const banforeverValues = system
+      .filter((item) => item.banforever) // Lọc các mục có thuộc tính `banforever`
+      .map((item) => item.banforever) // Lấy giá trị của thuộc tính `banforever`
+      .reduce((acc, currentValue) => {
+        // Nếu currentValue không phải mảng rỗng, thêm vào mảng kết quả
+        if (currentValue.length > 0) {
+          acc.push(...currentValue);
+        }
+        return acc;
+      }, []);
+
+    //Set-up2: Gộp các giá trị lặp lại bằng cách chuyển sang Set và sau đó trở lại dạng mảng
+    const uniqueBanforeverValues = Array.from(new Set(banforeverValues));
+    //Lấy banforever so sanh với userId lấy ra email tương ứng
+    const user = await prismadb.user.findMany();
+    // Tạo một mảng chứa các ID người dùng mà bạn muốn lấy
+    const matchedUsers = user.filter((userData) =>
+      uniqueBanforeverValues.includes(userData.id)
+    );
+    const findEmail = matchedUsers.map((item) => item.email);
+
+    if (
+      existingUser &&
+      findEmail.some((email) => email === existingUser.email)
+    ) {
+      return new NextResponse(
+        JSON.stringify({
+          error: "Người dùng nay đã bị ban vĩnh viễn!",
+        }),
+        { status: 400 }
+      );
+    }
+
     // Kiểm tra nếu chỉ có một quản trị viên và đang cố gắng cập nhật vai trò của họ
     if (adminCount <= 1 && existingUser?.role === "ADMIN") {
       return new NextResponse(
@@ -147,11 +217,6 @@ export async function DELETE(
       );
     }
 
-    // Delete the user from the database using Prisma
-    const userDeletion = await prismadb.user.delete({
-      where: { id: id },
-    });
-
     const sentUser = {
       name: existingUser?.name,
       email: existingUser?.email,
@@ -160,23 +225,30 @@ export async function DELETE(
     // Log sự thay đổi của billboard
     const changes = [`Name: ${sentUser.name}, Email: ${sentUser.email}`];
 
+    const dateNow = new Date();
+    dateNow.setHours(dateNow.getHours() + 7);
+
     // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
     const response = await prismadb.system.create({
       data: {
         storeId: params.storeId,
-        type: "DELETEUSER",
+        type: "BANFOREVER-USER",
         delete: changes,
         user: userId?.email || "",
+        banforever: [id],
+        isbanforever: true,
+        timebanforever: dateNow,
+        createdAt: dateNow,
       },
     });
 
-    const dateonow = response.createdAt
-      ? format(response.createdAt, "dd/MM/yyyy '-' HH:mm a")
+    const createdAt = response.createdAt
+      ? format(response.createdAt, "dd/MM/yyyy '-' HH:mm:ss a")
       : "";
 
-    await sendDeleteUser(userDeletion.email, userDeletion.name, dateonow);
+    await sendDeleteUser(existingUser?.email, existingUser?.name, createdAt);
 
-    return NextResponse.json(userDeletion);
+    return NextResponse.json(response);
   } catch (error) {
     return new NextResponse(
       JSON.stringify({ error: "Lỗi cục bộ khi delete user!" }),
@@ -190,21 +262,54 @@ export async function POST(
   { params }: { params: { storeId: string } }
 ) {
   const body = await req.json();
+  const userCheck = await currentUser();
   const { userId } = body;
   try {
-    const user = await prismadb.user.findUnique({
+    const existingUser = await prismadb.user.findUnique({
       where: { id: userId },
     });
 
-    if (!user) {
+    if (!existingUser) {
       return new NextResponse(JSON.stringify({ error: "User not found!" }), {
         status: 404,
       });
     }
 
-    if (user?.ban) {
+    //Set-up1: const settinguser = await prismadb.user.findMany();
+    const system = await prismadb.system.findMany();
+    const banforeverValues = system
+      .filter((item) => item.banforever) // Lọc các mục có thuộc tính `banforever`
+      .map((item) => item.banforever) // Lấy giá trị của thuộc tính `banforever`
+      .reduce((acc, currentValue) => {
+        // Nếu currentValue không phải mảng rỗng, thêm vào mảng kết quả
+        if (currentValue.length > 0) {
+          acc.push(...currentValue);
+        }
+        return acc;
+      }, []);
+
+    //Set-up2: Gộp các giá trị lặp lại bằng cách chuyển sang Set và sau đó trở lại dạng mảng
+    const uniqueBanforeverValues = Array.from(new Set(banforeverValues));
+    //Lấy banforever so sanh với userId lấy ra email tương ứng
+    const user = await prismadb.user.findMany();
+    // Tạo một mảng chứa các ID người dùng mà bạn muốn lấy
+    const matchedUsers = user.filter((userData) =>
+      uniqueBanforeverValues.includes(userData.id)
+    );
+    const findEmail = matchedUsers.map((item) => item.email);
+
+    if (existingUser && findEmail.some((email) => email === existingUser.email)) {
       return new NextResponse(
-        JSON.stringify({ error: "Người dùng này đã bị bạn!" }),
+        JSON.stringify({
+          error: "Người dùng nay đã bị ban vĩnh viễn!",
+        }),
+        { status: 400 }
+      );
+    }
+
+    if (existingUser?.ban) {
+      return new NextResponse(
+        JSON.stringify({ error: "Người dùng này đã bị ban!" }),
         {
           status: 404,
         }
@@ -212,7 +317,7 @@ export async function POST(
     }
 
     // Kiểm tra nếu người dùng có quyền là ADMIN không thể bị ban
-    if (user?.role === "ADMIN") {
+    if (existingUser?.role === "ADMIN") {
       return new NextResponse(
         JSON.stringify({ error: "Cannot ban an ADMIN user!" }),
         { status: 400 }
@@ -244,16 +349,16 @@ export async function POST(
         storeId: params.storeId,
         type: "UPDATEBANUSER",
         newChange: changes,
-        user: userId?.email || "",
+        user: userCheck?.email || "",
       },
     });
 
     const dateonow = response.createdAt
-      ? format(response.createdAt, "dd/MM/yyyy '-' HH:mm a")
+      ? format(response.createdAt, "dd/MM/yyyy '-' HH:mm:ss a")
       : "";
 
     const timeBan = banuser.banExpires
-      ? format(banuser.banExpires, "dd/MM/yyyy '-' HH:mm a")
+      ? format(banuser.banExpires, "dd/MM/yyyy '-' HH:mm:ss a")
       : "";
 
     await sendBanUser(banuser.email, banuser.name, dateonow, timeBan);

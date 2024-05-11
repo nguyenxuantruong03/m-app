@@ -37,6 +37,36 @@ export const login = async (
 
   const existingUser = await getUserByEmail(email);
 
+  //Set-up1: const settinguser = await prismadb.user.findMany();
+  const system = await prismadb.system.findMany();
+  const banforeverValues = system
+    .filter((item) => item.banforever) // Lọc các mục có thuộc tính `banforever`
+    .map((item) => item.banforever) // Lấy giá trị của thuộc tính `banforever`
+    .reduce((acc, currentValue) => {
+      // Nếu currentValue không phải mảng rỗng, thêm vào mảng kết quả
+      if (currentValue.length > 0) {
+        acc.push(...currentValue);
+      }
+      return acc;
+    }, []);
+
+  //Set-up2: Gộp các giá trị lặp lại bằng cách chuyển sang Set và sau đó trở lại dạng mảng
+  const uniqueBanforeverValues = Array.from(new Set(banforeverValues));
+  //Lấy banforever so sanh với userId lấy ra email tương ứng
+  const user = await prismadb.user.findMany();
+  // Tạo một mảng chứa các ID người dùng mà bạn muốn lấy
+  const matchedUsers = user.filter((userData) =>
+    uniqueBanforeverValues.includes(userData.id)
+  );
+  const findEmail = matchedUsers.map((item) => item.email);
+
+  const matchEmail =
+    existingUser && findEmail.some((email) => email === existingUser.email);
+
+  if (matchEmail) {
+    return { error: "Tài khoản hiện tại đã bị ban vĩnh viễn!" };
+  }
+
   if (!existingUser?.emailVerified) {
     return {
       error:
@@ -64,7 +94,7 @@ export const login = async (
     if (banExpiresAt > now) {
       // User is banned
       const daysLeft = banExpiresAt
-        ? format(banExpiresAt, "dd/MM/yyyy '-' HH:mm a")
+        ? format(banExpiresAt, "dd/MM/yyyy '-' HH:mm:ss a")
         : "";
       return {
         error: `Tài khoản của bạn đã bị khóa. Bạn có thể đăng nhập lại sau ${daysLeft} ngày. Để biết thêm thông tin liên hệ ADMIN.`,
@@ -145,7 +175,7 @@ export const login = async (
       if (resendCount >= 6) {
         // Nếu đã gửi lại mã xác thực quá 5 lần
         const timeBanUser = new Date();
-        timeBanUser.setTime(timeBanUser.getTime() + 24); // Thêm 24 giờ
+        timeBanUser.setTime(timeBanUser.getTime() + 24 * 60 * 60 * 1000);
         // Cập nhật trạng thái cấm người dùng
         const banUser = await prismadb.user.update({
           where: { id: existingUser.id },
@@ -155,7 +185,7 @@ export const login = async (
           },
         });
         const timeBan = banUser.banExpires
-          ? format(banUser.banExpires, "dd/MM/yyyy '-' HH:mm a")
+          ? format(banUser.banExpires, "dd/MM/yyyy '-' HH:mm:ss a")
           : "";
         return {
           error: `Bạn đã gửi lại mã xác thực quá nhiều lần và đã bị khóa tài khoản trong 24 giờ. Hãy quay lại vào lúc ${timeBan}.`,
@@ -195,7 +225,18 @@ export const login = async (
       },
     });
 
-    await Promise.all([signInPromise, updateUserPromise]);
+    const now = new Date();
+    now.setHours(now.getHours() + 7);
+
+    //Cập nhật lại thời gian mỗi khi đăng nhập
+    const updateLastLogin = await prismadb.user.update({
+      where: { id: existingUser.id },
+      data: {
+        lastlogin: now,
+      },
+    });
+
+    await Promise.all([signInPromise, updateUserPromise, updateLastLogin]);
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {

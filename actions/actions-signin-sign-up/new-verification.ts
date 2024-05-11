@@ -5,9 +5,19 @@ import { getUserByEmail } from "@/data/user";
 import { getVerificationTokenByToken } from "@/data/verification-token";
 import { generateVerificationToken } from "@/lib/tokens";
 import { sendVerificationEmail } from "@/lib/mail";
+import { format } from "date-fns";
 
 export const newVerification = async (token: string) => {
   const existingToken = await getVerificationTokenByToken(token);
+  const user = await prismadb.user.findUnique({
+    where: { id: existingToken?.id }, // Tìm user theo id
+    select: { emailVerified: true }, // Chỉ lấy trường emailVerified
+  });
+
+  if (user?.emailVerified) {
+    return { success: "Email đã xác thực!" };
+  }
+
   if (!existingToken) {
     return {
       error: "Token đã hết hạn! Đã gửi lại token mới. Hãy kiểm tra email.",
@@ -19,35 +29,26 @@ export const newVerification = async (token: string) => {
     return { error: "Email hiện tại không có!" };
   }
 
-  const user = await prismadb.user.findUnique({
-    where: { id: existingToken.id }, // Tìm user theo id
-    select: { emailVerified: true }, // Chỉ lấy trường emailVerified
-  });
-
-  if (!user || !user.emailVerified) {
-    return { error: "Email chưa được xác thực!" };
-  }
-
-  if(user.emailVerified){
-    return { success: "Email đã xác thực!" };
-  }
-  
   let resendTokenVerifyCount = existingUser.resendTokenVerify || 0; // Đếm số lần gửi resendTokenVerify
   // Tăng số lần gửi lên 1
   resendTokenVerifyCount++;
 
   // Kiểm tra xem đã gửi quá nhiều lần chưa nếu nhiều hơn 5 sẽ bị ban
   if (resendTokenVerifyCount >= 6) {
-    await prismadb.user.update({
+    const timeBanUser = new Date();
+    timeBanUser.setTime(timeBanUser.getTime() + (24 * 60 * 60 * 1000));
+    const banUser = await prismadb.user.update({
       where: { id: existingUser.id },
       data: {
         ban: true,
-        banExpires: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), // Cấm trong 24 giờ
+        banExpires: timeBanUser, // Cấm trong 24 giờ
       },
     });
+    const timeBan = banUser.banExpires
+      ? format(banUser.banExpires, "dd/MM/yyyy '-' HH:mm:ss a")
+      : "";
     return {
-      error:
-        "Bạn đã gửi lại mã xác thực quá nhiều lần và đã bị khóa tài khoản trong 24 giờ.",
+      error: `Bạn đã gửi lại mã xác thực quá nhiều lần và đã bị khóa tài khoản trong 24 giờ. Hãy vào lại vào lúc ${timeBan}.`,
     };
   }
 

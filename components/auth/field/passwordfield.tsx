@@ -11,6 +11,7 @@ interface PasswordFieldProps {
   validatePassword: (isValid: boolean) => void;
   password: string;
   setPassword: (value: string) => void;
+  isSubmitted?: boolean;
 }
 
 const PasswordField: React.FC<PasswordFieldProps> = ({
@@ -19,6 +20,7 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
   validatePassword,
   password,
   setPassword,
+  isSubmitted,
 }) => {
   const [validations, setValidations] = useState({
     hasUpperCase: false,
@@ -50,7 +52,6 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
       setAllValid(false);
     }
   }, [validations, hasSpace, hasAccentError]);
-  
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setShowValidations(true); // Hiển thị validations khi ghi vào input
@@ -105,7 +106,6 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
     setShowValidations(false); // Ẩn validations
   };
 
-
   const calculateBorderPercentage = (): number => {
     // Tính toán tỷ lệ phần trăm của các yếu tố hợp lệ
     const validCount = Object.values(validations).filter(
@@ -139,17 +139,20 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
 
   const borderPercentage = calculateBorderPercentage();
 
+  const leftColorStop = borderPercentage / 2;
+  const rightColorStop = 100 - borderPercentage / 2;
 
-const leftColorStop = (borderPercentage / 2);
-const rightColorStop = 100 - (borderPercentage / 2);
-
-  const borderStyle = isTyping ? {
-    // Style được áp dựa trên trạng thái của input blur
-    borderImage: `linear-gradient(to left,#22c55e ${leftColorStop}%, #ef4444 ${leftColorStop}%, #ef4444 ${rightColorStop}%, #22c55e ${rightColorStop}%) 1`,
-    borderWidth: "2px",
-    borderRadius: "10px", 
-    clipPath: "inset(0 round 3px)",
-  } : {}; // Nếu input không blur, không áp dụng style
+  const borderStyle = isTyping
+    ? {
+        // Style được áp dựa trên trạng thái của input blur
+        borderImage: isSubmitted
+        ? "" // Nếu isSubmitted là true, đặt lại border thành rỗng
+        : `linear-gradient(to left,#22c55e ${leftColorStop}%, #ef4444 ${leftColorStop}%, #ef4444 ${rightColorStop}%, #22c55e ${rightColorStop}%) 1`,
+        borderWidth: "2px",
+        borderRadius: "10px",
+        clipPath: "inset(0 round 3px)",
+      }
+    : {}; // Nếu input không blur, không áp dụng style
 
   return (
     <>
@@ -166,8 +169,8 @@ const rightColorStop = 100 - (borderPercentage / 2);
       />
 
       <div
-         className={`mt-2 space-y-2 ${
-          (showValidations && !allValid) // Sử dụng biến state mới để kiểm tra
+        className={`mt-2 space-y-2 ${
+          showValidations && !allValid // Sử dụng biến state mới để kiểm tra
             ? "opacity-100 max-h-96 animate-fade-down animate-once animate-duration-[1200ms] animate-delay-100 animate-ease-in-out"
             : "opacity-0 max-h-0 overflow-hidden"
         }`}

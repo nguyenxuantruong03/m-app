@@ -32,6 +32,7 @@ import { ManageStaffsColumn } from "@/app/(dashboard)/[storeId]/(routes)/manages
 import { BillboardTimeColumn } from "@/app/(dashboard)/[storeId]/(routes)/billboardstime/components/columns";
 import { WheelSpinColumn } from "@/app/(dashboard)/[storeId]/(routes)/wheelSpin/components/column";
 import { CommentColumn } from "@/app/(dashboard)/[storeId]/(routes)/comment/components/column";
+import { SystemsColumn } from "@/app/(dashboard)/[storeId]/(routes)/system/components/column";
 
 interface DownloadfileProps {
   data:
@@ -50,7 +51,8 @@ interface DownloadfileProps {
     | TaxRateColumn[]
     | CouponColumn[]
     | ManageAttendancesColumn[]
-    | ManageStaffsColumn[];
+    | ManageStaffsColumn[]
+    | SystemsColumn[];
   filename: string;
 }
 

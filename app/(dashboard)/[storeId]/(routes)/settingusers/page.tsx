@@ -1,7 +1,7 @@
 import prismadb from "@/lib/prismadb";
 import { format, subHours } from "date-fns";
 import { RoleGate } from "@/components/auth/role-gate";
-import { currentRole} from "@/lib/auth";
+import { currentRole } from "@/lib/auth";
 import { Account, UserRole } from "@prisma/client";
 import FormSuccess from "@/components/form-success";
 import { SettingUsersColumn } from "./components/column";
@@ -29,65 +29,82 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
     ],
   });
 
-  const formattedUser: SettingUsersColumn[] = user.map((item) => ({
-    id: item.id,
-    name: item.name,
-    email: item.email,
-    emailVerified: item.emailVerified
-      ? format(item.emailVerified, "dd/MM/yyyy")
-      : null,
-    image: item.image,
-    imageCredential: item.imageCredential
-      .map((orderItem) => {
-        return orderItem;
-      })
-      .join(", "),
-    password: item.password,
-    lastlogin: item.lastlogin
-    ? format(
-        utcToZonedTime(
-          subHours(new Date(item.lastlogin), 7),
-          vietnamTimeZone
-        ),
-        "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-        { locale: viLocale }
-      )
-    : null,
-    resendTokenVerify:item.resendTokenVerify,
-    resendTokenResetPassword: item.resendTokenResetPassword,
-    resendCount:item.resendCount,
-    role: item.role,
-    accounts: item.accounts.map((accountItem: Account) => ({
-      type: accountItem.type,
-      provider: accountItem.provider,
-      token_type: accountItem.token_type,
-    })),
-    isTwoFactorEnabled: item.isTwoFactorEnabled,
-    isCitizen: item.isCitizen,
-    twoFactorConfirmation: item.twoFactorConfirmation,
-    createdAt: item.createdAt
+  const system = await prismadb.system.findMany();
+
+  const formattedUser: SettingUsersColumn[] = user.map((item) => {
+    // Thêm thông tin từ system vào mỗi người dùng
+    const systemInfo = system.find(sys => sys.banforever.includes(item.id));
+    return {
+      id: item.id,
+      name: item.name,
+      email: item.email,
+      emailVerified: item.emailVerified
+        ? format(item.emailVerified, "dd/MM/yyyy")
+        : null,
+      image: item.image,
+      imageCredential: item.imageCredential
+        .map((orderItem) => {
+          return orderItem;
+        })
+        .join(", "),
+      password: item.password,
+      lastlogin: item.lastlogin
         ? format(
             utcToZonedTime(
-              new Date(new Date(item.createdAt)),
+              subHours(new Date(item.lastlogin), 7),
               vietnamTimeZone
             ),
             "E '-' dd/MM/yyyy '-' HH:mm:ss a",
             { locale: viLocale }
           )
         : null,
-    ban: item.ban,
-    banExpires:item.banExpires
-    ? format(
-        utcToZonedTime(
-          subHours(new Date(item.banExpires), 0),
-          vietnamTimeZone
-        ),
-        "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-        { locale: viLocale }
-      )
-    : null,
-  }));
-
+      resendTokenVerify:item.resendTokenVerify,
+      resendTokenResetPassword: item.resendTokenResetPassword,
+      resendCount:item.resendCount,
+      role: item.role,
+      accounts: item.accounts.map((accountItem: Account) => ({
+        type: accountItem.type,
+        provider: accountItem.provider,
+        token_type: accountItem.token_type,
+      })),
+      isTwoFactorEnabled: item.isTwoFactorEnabled,
+      isCitizen: item.isCitizen,
+      twoFactorConfirmation: item.twoFactorConfirmation,
+      createdAt: item.createdAt
+          ? format(
+              utcToZonedTime(
+                new Date(new Date(item.createdAt)),
+                vietnamTimeZone
+              ),
+              "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+              { locale: viLocale }
+            )
+          : null,
+      ban: item.ban,
+      banExpires:item.banExpires
+        ? format(
+            utcToZonedTime(
+              subHours(new Date(item.banExpires), 0),
+              vietnamTimeZone
+            ),
+            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+            { locale: viLocale }
+          )
+        : null,
+        isbanforever: systemInfo?.isbanforever,
+        timebanforever: systemInfo?.timebanforever
+        ? format(
+            utcToZonedTime(
+              subHours(new Date(systemInfo?.timebanforever), 0),
+              vietnamTimeZone
+            ),
+            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+            { locale: viLocale }
+          )
+        : null,
+        
+    };
+  });
 
   return (
     <div className="w-full">
