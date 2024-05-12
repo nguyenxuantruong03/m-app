@@ -10,7 +10,11 @@ interface EmailFieldProps {
   isPending: boolean;
   email: string;
   setEmail: (value: string) => void;
-  isSubmitted?: boolean;
+  isSubmittedEmail?: boolean;
+  validateEmail: (isValid: boolean) => void;
+  setError: (value: string) => void;
+  setSuccess: (value: string) => void;
+  setIsSubmittedEmail: (value: boolean) => void;
 }
 
 const EmailField: React.FC<EmailFieldProps> = ({
@@ -18,7 +22,11 @@ const EmailField: React.FC<EmailFieldProps> = ({
   isPending,
   email,
   setEmail,
-  isSubmitted,
+  isSubmittedEmail,
+  validateEmail,
+  setError,
+  setSuccess,
+  setIsSubmittedEmail,
 }) => {
   const [showEmailPrompt, setShowEmailPrompt] = useState(false);
   const [isValidEmail, setIsValidEmail] = useState(false);
@@ -47,6 +55,7 @@ const EmailField: React.FC<EmailFieldProps> = ({
     setIsValidEmail(isValid);
     setShowEmailPrompt(true); // Hiển thị prompt khi có sự thay đổi trong input
     setIsInvalidInput(!isValid); // Cập nhật trạng thái của biến isInvalidInput
+    validateEmail(isValid);
     setEmail(emailInput);
     field.onChange(emailInput); // Call field.onChange to update form state
   };
@@ -54,6 +63,19 @@ const EmailField: React.FC<EmailFieldProps> = ({
   const handleBlur = () => {
     setShowEmailPrompt(false); // Ẩn prompt khi input mất focus
     setIsInvalidInput(false); // Reset trạng thái của biến isInvalidInput khi input mất focus
+  };
+
+  const handleFocus = () => {
+    setError("");
+    setSuccess("");
+    setIsSubmittedEmail(false);
+    // Thiết lập lại màu của trường email
+    const inputElement = inputRef.current;
+    if (inputElement) {
+      setTimeout(() => {
+        inputElement.classList.remove("border-red-500", "border-green-400");
+      }, 1); // Đợi 1ms trước khi thực hiện xóa border
+    }
   };
 
   return (
@@ -65,12 +87,13 @@ const EmailField: React.FC<EmailFieldProps> = ({
         value={email}
         onClick={() => setShowEmailPrompt(true)} // Hiển thị prompt khi input được click
         onBlur={handleBlur}
+        onFocus={handleFocus}
         ref={inputRef}
         type="email"
         className={`border-2 ${
           isInvalidInput
             ? "border-red-500"
-            : isSubmitted
+            : isSubmittedEmail
             ? ""
             : isValidEmail
             ? "border-green-400"

@@ -18,6 +18,7 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
     include: {
       accounts: true,
       twoFactorConfirmation: true,
+      password: true
     },
     orderBy: [
       {
@@ -47,7 +48,7 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
           return orderItem;
         })
         .join(", "),
-      password: item.password,
+      password: item.password.length,
       lastlogin: item.lastlogin
         ? format(
             utcToZonedTime(

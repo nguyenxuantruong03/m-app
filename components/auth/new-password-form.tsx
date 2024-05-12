@@ -30,6 +30,7 @@ const NewPasswordForm = () => {
   const [isPending, startTransition] = useTransition();
   const [isPasswordValid, setPasswordValid] = useState(false);
   const [password, setPassword] = useState<string>("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   // form bên dưới dùng để validate trường nhập theo loginForm bên dưới gọi form đẻ validate code đã xử lý ở  đây và bên dưới dùng destructuring để gọi hết vào
   const form = useForm<z.infer<typeof NewPasswordSchema>>({
@@ -40,6 +41,7 @@ const NewPasswordForm = () => {
   });
 
   const onSubmit = (values: z.infer<typeof NewPasswordSchema>) => {
+    setIsSubmitted(true)
     setError("");
     setSuccess("");
     startTransition(() => {
@@ -71,6 +73,10 @@ const NewPasswordForm = () => {
                       validatePassword={setPasswordValid}
                       password={password}
                       setPassword={setPassword}
+                      setError={setError}
+                      setSuccess={setSuccess}
+                      isSubmitted={isSubmitted}
+                      setIsSubmitted={setIsSubmitted}
                     />
                   </FormControl>
                   <FormMessage />

@@ -74,7 +74,18 @@ export const login = async (
     };
   }
 
-  if (!existingUser?.password) {
+   // Truy vấn mật khẩu của người dùng từ mô hình Password
+   const userPasswords = await prismadb.password.findMany({
+    where: {
+      userId: existingUser.id,
+    },
+    orderBy: {
+      createdAt: "desc", // Sắp xếp theo thời gian giảm dần để lấy mật khẩu mới nhất
+    },
+    take: 1, // Chỉ lấy mật khẩu mới nhất
+  });
+
+  if (!userPasswords[0]) {
     return { error: "Password không hợp lệ!" };
   }
 

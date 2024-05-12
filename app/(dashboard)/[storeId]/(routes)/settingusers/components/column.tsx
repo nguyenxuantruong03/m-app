@@ -21,7 +21,7 @@ export type SettingUsersColumn = {
   emailVerified: string | null;
   image: string | null;
   imageCredential: string;
-  password: string | null;
+  password: number | null;
   resendTokenVerify: number | null;
   resendTokenResetPassword: number | null;
   resendCount: number | null;
@@ -208,6 +208,28 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
           }
         >
           {row.original.emailVerified}
+        </div>
+      );
+    },
+  },
+
+  {
+    accessorKey: "password",
+    header: "Mật khẩu",
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
+      return (
+        <div
+          className={
+            isBanforever
+              ? "line-through text-red-500"
+              : isBanned
+              ? "line-through text-gray-400"
+              : ""
+          }
+        >
+          {row.original.password}
         </div>
       );
     },

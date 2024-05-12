@@ -62,13 +62,16 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
     return { error: "Email đã được sử dụng!" };
   }
 
+// Tạo người dùng mới
   await prismadb.user.create({
-    data: {
-      name,
-      email,
-      password: hashPassword,
+  data: {
+    name,
+    email,
+    password: { 
+      create: [{ password: hashPassword }]
     },
-  });
+  },
+});
 
   //Send verification token email
   const verificationToken = await generateVerificationToken(email);

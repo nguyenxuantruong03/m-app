@@ -25,7 +25,8 @@ const ResetPasswordForm = () => {
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
   const [email, setEmail] = useState<string>("");
-
+  const [isEmailValid, setEmailValid] = useState(false);
+  const [isSubmittedEmail, setIsSubmittedEmail] = useState(false);
   // form bên dưới dùng để validate trường nhập theo loginForm bên dưới gọi form đẻ validate code đã xử lý ở  đây và bên dưới dùng destructuring để gọi hết vào
   const form = useForm<z.infer<typeof ResetSchema>>({
     resolver: zodResolver(ResetSchema),
@@ -37,6 +38,7 @@ const ResetPasswordForm = () => {
   const onSubmit = (values: z.infer<typeof ResetSchema>) => {
     setError("");
     setSuccess("");
+    setIsSubmittedEmail(true)
     startTransition(() => {
       reset(values).then((data) => {
         setError(data?.error);
@@ -60,7 +62,17 @@ const ResetPasswordForm = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <EmailField field={field} isPending={isPending} email={email} setEmail={setEmail}/>
+                    <EmailField
+                      field={field}
+                      isPending={isPending}
+                      email={email}
+                      setEmail={setEmail}
+                      setError={setError}
+                      setSuccess={setSuccess}
+                      validateEmail={setEmailValid}
+                      setIsSubmittedEmail={setIsSubmittedEmail}
+                      isSubmittedEmail={isSubmittedEmail}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -73,7 +85,7 @@ const ResetPasswordForm = () => {
             <FormSuccess message={success} />
           </div>
 
-          <Button className="w-full" type="submit" disabled={isPending}>
+          <Button className="w-full" type="submit" disabled={isPending || !isEmailValid}>
             Send reset Email
           </Button>
         </form>

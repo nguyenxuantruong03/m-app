@@ -52,6 +52,7 @@ const LoginForm = () => {
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
   const [isPasswordValid, setPasswordValid] = useState(false);
+  const [isEmailValid, setEmailValid] = useState(false);
   const [countdown, setCountdown] = useState(120); // Khởi tạo đếm ngược từ 2:00 (120 giây)
   const [resendCount, setResendCount] = useState(0);
   const [isCaptchaVerified, setCaptchaVerified] = useState(false);
@@ -62,6 +63,9 @@ const LoginForm = () => {
   const [loginClicked, setLoginClicked] = useState(false);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  //Làm mới borderInput
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmittedEmail, setIsSubmittedEmail] = useState(false);
 
   const MAX_RESEND_ATTEMPTS = 5;
 
@@ -146,13 +150,17 @@ const LoginForm = () => {
             if (data?.error) {
               setError(data.error);
               setIsError(true); // Đặt giá trị của state mới là true khi có lỗi
-              setPassword("")
+              setPassword("");
+              setIsSubmitted(true);
+              setIsSubmittedEmail(true)
             }
 
             if (data?.success) {
               setSuccess(data.success);
-              setPassword("")
-              setEmail("")
+              setPassword("");
+              setEmail("");
+              setIsSubmitted(true);
+              setIsSubmittedEmail(true)
             }
 
             if (data?.twoFactor) {
@@ -213,7 +221,17 @@ const LoginForm = () => {
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <EmailField field={field} isPending={isPending} setEmail={setEmail} email={email}/>
+                        <EmailField
+                          field={field}
+                          isPending={isPending}
+                          setEmail={setEmail}
+                          email={email}
+                          validateEmail={setEmailValid}
+                          setError={setError}
+                          setSuccess={setSuccess}
+                          isSubmittedEmail={isSubmittedEmail}
+                          setIsSubmittedEmail={setIsSubmittedEmail}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -232,6 +250,10 @@ const LoginForm = () => {
                           validatePassword={setPasswordValid}
                           setPassword={setPassword}
                           password={password}
+                          setError={setError}
+                          setSuccess={setSuccess}
+                          isSubmitted={isSubmitted}
+                          setIsSubmitted={setIsSubmitted}
                         />
                       </FormControl>
                       <Button
@@ -311,7 +333,12 @@ const LoginForm = () => {
           <Button
             className="w-full"
             type="submit"
-            disabled={isPending || !isPasswordValid || !isCaptchaVerified}
+            disabled={
+              isPending ||
+              !isPasswordValid ||
+              !isCaptchaVerified ||
+              !isEmailValid
+            }
           >
             {showTwoFacTor ? "Confirm" : "Login"}
           </Button>

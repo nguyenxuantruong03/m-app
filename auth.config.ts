@@ -10,6 +10,7 @@ import Spotify from "next-auth/providers/spotify";
 import Twitter from "next-auth/providers/twitter";
 import { LoginSchema } from "@/schemas";
 import { getUserByEmail } from "@/data/user";
+import prismadb from "./lib/prismadb";
 
 export default {
   providers: [
@@ -27,7 +28,7 @@ export default {
     }),
     Gitlab({
       clientId: process.env.GITLAB_CLIENT_ID,
-      clientSecret: process.env.GITLAB_CLIENT_SECRET
+      clientSecret: process.env.GITLAB_CLIENT_SECRET,
     }),
     Reddit({
       clientId: process.env.REDDIT_CLIENT_ID,
@@ -54,9 +55,26 @@ export default {
           const { email, password } = validatedFields.data;
 
           const user = await getUserByEmail(email);
-          if (!user || !user.password) return null;
+          if (!user) return null;
 
-          const passwordsMatch = await bcrypt.compare(password, user.password);
+          // Truy vấn mật khẩu của người dùng từ mô hình Password
+          const userPasswords = await prismadb.password.findMany({
+            where: {
+              userId: user.id,
+            },
+            orderBy: {
+              createdAt: "desc", // Sắp xếp theo thời gian giảm dần để lấy mật khẩu mới nhất
+            },
+            take: 1, // Chỉ lấy mật khẩu mới nhất
+          });
+
+          if (userPasswords.length === 0) return null;
+
+          // Kiểm tra mật khẩu
+          const passwordsMatch = await bcrypt.compare(
+            password,
+            userPasswords[0].password
+          );
 
           if (passwordsMatch && !user.ban) {
             return user;

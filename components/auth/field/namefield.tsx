@@ -11,7 +11,10 @@ interface NameFieldProps {
   validateName: (isValid: boolean) => void;
   name: string;
   setName: (value: string) => void;
-  isSubmitted: boolean;
+  isSubmittedName: boolean;
+  setError: (value: string) => void;
+  setSuccess: (value: string) => void;
+  setIsSubmittedName: (value: boolean) => void;
 }
 
 const NameField: React.FC<NameFieldProps> = ({
@@ -20,7 +23,10 @@ const NameField: React.FC<NameFieldProps> = ({
   validateName,
   setName,
   name,
-  isSubmitted,
+  isSubmittedName,
+  setError,
+  setSuccess,
+  setIsSubmittedName,
 }) => {
   const [showNamePrompt, setShowNamePrompt] = useState(false);
   const [isValidName, setIsValidName] = useState(false);
@@ -63,6 +69,19 @@ const NameField: React.FC<NameFieldProps> = ({
     setIsInvalidInput(false);
   };
 
+  const handleFocus = () => {
+    setError("");
+    setSuccess("");
+    setIsSubmittedName(false);
+    // Thiết lập lại màu của trường email
+    const inputElement = inputRef.current;
+    if (inputElement) {
+      setTimeout(() => {
+        inputElement.classList.remove("border-red-500", "border-green-400");
+      }, 1); // Đợi 1ms trước khi thực hiện xóa border
+    }
+  };
+
   return (
     <>
       <Input
@@ -72,11 +91,12 @@ const NameField: React.FC<NameFieldProps> = ({
         onChange={handleInputChange}
         onClick={() => setShowNamePrompt(true)}
         onBlur={handleBlur}
+        onFocus={handleFocus}
         ref={inputRef}
         className={`border-2 ${
           isInvalidInput
             ? "border-red-500"
-            : isSubmitted
+            : isSubmittedName
             ? ""
             : isValidName || isNameLengthValid
             ? "border-green-400"

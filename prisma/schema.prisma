@@ -510,7 +510,7 @@ model User {
   emailVerified            DateTime?
   image                    String?
   imageCredential          String[]
-  password                 String?
+  password                 Password[]
   lastlogin                DateTime?
   //Ban user
   ban                      Boolean?
@@ -565,6 +565,17 @@ model User {
   WheelSpin                WheelSpin[]
   createdAt                DateTime               @default(now())
   updatedAt                DateTime               @updatedAt
+}
+
+model Password {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }
 
 model Account {
@@ -744,19 +755,19 @@ model WheelSpin {
 }
 
 model System {
-  id             String   @id @default(cuid())
+  id             String    @id @default(cuid())
   storeId        String
-  store          Store    @relation("StoreToSystem", fields: [storeId], references: [id])
+  store          Store     @relation("StoreToSystem", fields: [storeId], references: [id])
   newChange      String[]
   oldChange      String[]
   delete         String[]
-  banforever    String[]
+  banforever     String[]
   timebanforever DateTime?
-  isbanforever   Boolean? @default(false)
+  isbanforever   Boolean?  @default(false)
   type           String?
   user           String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   @@index([storeId])
 }

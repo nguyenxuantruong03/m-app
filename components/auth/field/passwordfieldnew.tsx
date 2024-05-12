@@ -1,32 +1,32 @@
 "use client";
 import React, { useState, useRef, ChangeEvent, useEffect } from "react";
-import { Input } from "@/components/ui/input";
 import { Check, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 interface PasswordFieldProps {
   field: {
     onChange: (value: string) => void;
   };
   isPending: boolean;
-  validatePassword: (isValid: boolean) => void;
-  password: string;
-  setPassword: (value: string) => void;
-  isSubmitted?: boolean;
+  validatePasswordNew: (isValid: boolean) => void;
+  newPassword: string;
+  setNewPassword: (value: string) => void;
+  isSubmittedPasswordnew?: boolean;
   setError: (value: string) => void;
   setSuccess: (value: string) => void;
-  setIsSubmitted: (value: boolean) => void;
+  setIsSubmittedPasswordnew: (value: boolean) => void;
 }
 
-const PasswordField: React.FC<PasswordFieldProps> = ({
+const PasswordNewField: React.FC<PasswordFieldProps> = ({
   field,
   isPending,
-  validatePassword,
-  password,
-  setPassword,
-  isSubmitted,
+  validatePasswordNew,
+  newPassword,
+  setNewPassword,
+  isSubmittedPasswordnew,
   setError,
   setSuccess,
-  setIsSubmitted
+  setIsSubmittedPasswordnew,
 }) => {
   const [validations, setValidations] = useState({
     hasUpperCase: false,
@@ -70,7 +70,7 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
     const hasAccent = /[^\x00-\x7F]+/.test(passwordInput); // Kiểm tra xem có ký tự có dấu không
     setHasAccentError(hasAccent); // Cập nhật trạng thái của thông báo lỗi
     if (hasAccent) {
-      validatePassword(false); // Nếu có dấu, đặt isValid thành false
+      validatePasswordNew(false); // Nếu có dấu, đặt isValid thành false
       return; // Dừng lại và không cập nhật state
     }
 
@@ -99,8 +99,8 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
       isLengthValid,
     });
 
-    validatePassword(isValid); // Gửi kết quả cho validatePassword
-    setPassword(passwordInput);
+    validatePasswordNew(isValid); // Gửi kết quả cho validatePassword
+    setNewPassword(passwordInput);
     field.onChange(passwordInput);
   };
 
@@ -112,17 +112,17 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
     setShowValidations(false); // Ẩn validations
   };
 
-  const handleFocus = () =>{
-    setError("")
-    setSuccess("")
-    setIsSubmitted(false)
+  const handleFocus = () => {
+    setError("");
+    setSuccess("");
+    setIsSubmittedPasswordnew(false);
     const inputElement = inputRef.current;
     if (inputElement) {
       setTimeout(() => {
         inputElement.style.borderImage = "initial"; // Đặt lại border image style sau một khoảng thời gian ngắn
       }, 1); // Đợi 1ms trước khi thực hiện xóa border
     }
-  }
+  };
 
   const calculateBorderPercentage = (): number => {
     // Tính toán tỷ lệ phần trăm của các yếu tố hợp lệ
@@ -163,9 +163,9 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
   const borderStyle = isTyping
     ? {
         // Style được áp dựa trên trạng thái của input blur
-        borderImage: isSubmitted
-        ? "" // Nếu isSubmitted là true, đặt lại border thành rỗng
-        : `linear-gradient(to left,#22c55e ${leftColorStop}%, #ef4444 ${leftColorStop}%, #ef4444 ${rightColorStop}%, #22c55e ${rightColorStop}%) 1`,
+        borderImage: isSubmittedPasswordnew
+          ? "" // Nếu isSubmittedPasswordnew là true, đặt lại border thành rỗng
+          : `linear-gradient(to left,#22c55e ${leftColorStop}%, #ef4444 ${leftColorStop}%, #ef4444 ${rightColorStop}%, #22c55e ${rightColorStop}%) 1`,
         borderWidth: "2px",
         borderRadius: "10px",
         clipPath: "inset(0 round 3px)",
@@ -178,7 +178,7 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
         disabled={isPending}
         placeholder="******"
         type="password"
-        value={password}
+        value={newPassword}
         onChange={handleChange}
         onClick={handleInputClick}
         onFocus={handleFocus}
@@ -316,4 +316,4 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
   );
 };
 
-export default PasswordField;
+export default PasswordNewField;

@@ -48,9 +48,12 @@ const RegisterForm = () => {
   const [name, setName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [email, setEmail] = useState<string>("");
+  const [isEmailValid, setEmailValid] = useState(false);
 
   //Làm mới borderInput
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmittedName, setIsSubmittedName] = useState(false);
+  const [isSubmittedEmail, setIsSubmittedEmail] = useState(false);
 
   useEffect(() => {
     const handleThemeChange = () => {
@@ -89,8 +92,10 @@ const RegisterForm = () => {
         register(values).then((data) => {
           if (data.error) {
             setError(data.error);
-            setPassword("")
+            setPassword("");
             setIsSubmitted(true);
+            setIsSubmittedName(true)
+            setIsSubmittedEmail(true)
           } else if (data.success) {
             setSuccess(data.success);
             // Reset form fields
@@ -99,10 +104,12 @@ const RegisterForm = () => {
               password: "",
               name: "",
             });
-            setPassword("")
-            setEmail("")
-            setName("")
+            setPassword("");
+            setEmail("");
+            setName("");
             setIsSubmitted(true);
+            setIsSubmittedName(true)
+            setIsSubmittedEmail(true)
           }
         });
       });
@@ -136,7 +143,10 @@ const RegisterForm = () => {
                       validateName={setNameValid}
                       setName={setName}
                       name={name}
-                      isSubmitted ={isSubmitted}
+                      setError={setError}
+                      setSuccess={setSuccess}
+                      isSubmittedName={isSubmittedName}
+                      setIsSubmittedName={setIsSubmittedName}
                     />
                   </FormControl>
                   <FormMessage />
@@ -150,7 +160,17 @@ const RegisterForm = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <EmailField field={field} isPending={isPending} setEmail={setEmail} email={email} isSubmitted ={isSubmitted}/>
+                    <EmailField
+                      field={field}
+                      isPending={isPending}
+                      validateEmail={setEmailValid}
+                      setEmail={setEmail}
+                      email={email}
+                      setError={setError}
+                      setSuccess={setSuccess}
+                      isSubmittedEmail={isSubmittedEmail}
+                      setIsSubmittedEmail={setIsSubmittedEmail}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -169,7 +189,10 @@ const RegisterForm = () => {
                       validatePassword={setPasswordValid}
                       setPassword={setPassword}
                       password={password}
-                      isSubmitted ={isSubmitted}
+                      setError={setError}
+                      setSuccess={setSuccess}
+                      isSubmitted={isSubmitted}
+                      setIsSubmitted={setIsSubmitted}
                     />
                   </FormControl>
                   <FormMessage />
@@ -198,7 +221,8 @@ const RegisterForm = () => {
               isPending ||
               !isPasswordValid ||
               !isNameValid ||
-              !isCaptchaVerified
+              !isCaptchaVerified || 
+              !isEmailValid
             }
           >
             Create an account

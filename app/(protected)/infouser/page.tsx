@@ -3,7 +3,7 @@
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTransition, useState } from "react";
+import { useTransition, useState,useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
@@ -23,12 +23,41 @@ import { SettingSchema } from "@/schemas";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import FormSuccess from "@/components/form-success";
 import FormError from "@/components/form-error";
+import PasswordField from "@/components/auth/field/passwordfield";
+import PasswordNewField from "@/components/auth/field/passwordfieldnew";
+import { X } from "lucide-react";
 
 const SettingPage = () => {
   const user = useCurrentUser();
   const { update } = useSession();
   const [error, setError] = useState<string>();
   const [success, setSuccess] = useState<string>();
+  const [password, setPassword] = useState<string>("");
+  const [newPassword, setNewPassword] = useState<string>("");
+  const [isPasswordValid, setPasswordValid] = useState(false);
+  const [isPasswordNewValid, setPasswordNewValid] = useState(false);
+  const [loginClicked, setLoginClicked] = useState(false);
+    //Làm mới borderInput
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [isSubmittedPasswordnew, setIsSubmittedPasswordnew] = useState(false);
+    //Disable nếu như có password
+    const [isSaveDisabled, setIsSaveDisabled] = useState(true);
+
+    useEffect(() => {
+      // Kiểm tra xem password và newpassword có giá trị không
+      if (password !== "" || newPassword !== "") {
+        // Kiểm tra xem password và newPassword có giá trị hợp lệ không nếu đúng hết thì ko disalbe nếu sai thì disable
+        if (!isPasswordValid || !isPasswordNewValid) {
+          setIsSaveDisabled(true);
+        } else {
+          setIsSaveDisabled(false);
+        }
+      } else {
+        setIsSaveDisabled(false);
+      }
+    }, [password, newPassword,isPasswordValid, isPasswordNewValid]);
+    
+    
 
   const [isPending, startTransition] = useTransition();
   const form = useForm<z.infer<typeof SettingSchema>>({
@@ -45,15 +74,23 @@ const SettingPage = () => {
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
     setSuccess("")
     setError("")
+    setLoginClicked(true)
     startTransition(() => {
       setting(values)
         .then((data) => {
           if (data.error) {
             setError(data.error);
+            setIsSubmitted(true);
+            setIsSubmittedPasswordnew(true)
+            setNewPassword("")
           }
           if (data.success) {
             update();
             setSuccess(data.success);
+            setIsSubmitted(true);
+            setIsSubmittedPasswordnew(true)
+            setPassword("")
+            setNewPassword("")
           }
         })
         .catch(() => {
@@ -99,7 +136,7 @@ const SettingPage = () => {
                             {...field}
                             placeholder="vlxdxuantruong@gmail.com"
                             type="email"
-                            disabled={isPending}
+                            disabled={true}
                           />
                         </FormControl>
                         <FormMessage />
@@ -113,12 +150,17 @@ const SettingPage = () => {
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="******"
-                            type="password"
-                            disabled={isPending}
-                          />
+                        <PasswordField
+                          field={field}
+                          isPending={isPending}
+                          setPassword={setPassword}
+                          validatePassword={setPasswordValid}
+                          password={password}
+                          setError={setError}
+                          setSuccess={setSuccess}
+                          isSubmitted={isSubmitted}
+                          setIsSubmitted={setIsSubmitted}
+                        />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -131,12 +173,17 @@ const SettingPage = () => {
                       <FormItem>
                         <FormLabel>New password</FormLabel>
                         <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="******"
-                            type="password"
-                            disabled={isPending}
-                          />
+                        <PasswordNewField
+                          field={field}
+                          isPending={isPending}
+                          validatePasswordNew={setPasswordNewValid}
+                          setNewPassword={setNewPassword}
+                          isSubmittedPasswordnew={isSubmittedPasswordnew}
+                          newPassword={newPassword}
+                          setError={setError}
+                          setSuccess={setSuccess}
+                          setIsSubmittedPasswordnew={setIsSubmittedPasswordnew}
+                        />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -170,7 +217,15 @@ const SettingPage = () => {
             </div>
             <FormError message={error} />
             <FormSuccess message={success} />
-            <Button type="submit" disabled={isPending}>Save</Button>
+            <Button type="submit" disabled={isPending ||  isSaveDisabled}>Save</Button>
+            {loginClicked && isSaveDisabled && (
+              <div className="flex items-center space-x-1">
+                <X className="w-5 h-5 mr-1 text-red-500" />
+                <span className="text-red-500 text-xs">
+                  Bạn cần nhập mật khẩu mới!
+                </span>
+              </div>
+            )}
           </form>
         </Form>
       </CardContent>

@@ -27,29 +27,40 @@ export const newPassword = async (
     return { error: "Không tìm thấy Email!" };
   }
 
-  const existingUserPassword = existingUser.password;
+  const userPasswords = await prismadb.password.findMany({
+    where: {
+        userId: existingUser.id,
+    },
+    orderBy: {
+        createdAt: "desc", // Sắp xếp theo thời gian giảm dần để lấy mật khẩu mới nhất
+    },
+});
 
-  if (!existingUserPassword) {
+if (userPasswords.length === 0) {
     return { error: "Mật khẩu của người dùng không tồn tại!" };
-  }
+}
 
-  const lastPasswordSetDate = format(
-    existingUser.createdAt,
-    "E '-' dd/MM/yyyy '-' HH:mm:ss a"
-  );
+let isSamePassword = false;
 
-  // So sánh mật khẩu mới với mật khẩu cũ
-  const isSamePassword = await bcrypt.compare(
-    values.password,
-    existingUserPassword
-  );
+for (const userPassword of userPasswords) {
+    isSamePassword = await bcrypt.compare(
+        values.password,
+        userPassword.password
+    );
 
-  if (isSamePassword) {
-    return {
-      error: `Mật khẩu mới không được giống mật khẩu cũ! Mật khẩu cũ đã được đặt vào ngày ${lastPasswordSetDate}.`,
-    };
-  }
+    if (isSamePassword) {
+        const passwordSetDate = format(
+            userPassword.createdAt, // Lấy ngày tạo của mật khẩu đang được so sánh
+            "E '-' dd/MM/yyyy '-' HH:mm:ss a"
+        );
 
+        return {
+            error: `Mật khẩu mới không được giống mật khẩu cũ! Mật khẩu cũ đã được đặt vào ngày ${passwordSetDate}.`,
+        };
+    }
+}
+
+  
   let resendTokenResetPasswordCount =
     existingUser.resendTokenResetPassword || 0; // Đếm số lần gửi resendTokenResetPassword
   // Tăng số lần gửi lên 1
@@ -111,13 +122,16 @@ export const newPassword = async (
   const hashPassword = await bcrypt.hash(password, 10);
 
   await prismadb.user.update({
-    where: { id: existingUser.id },
+    where: { id: existingUser.id }, // Thay thế 'existingUser.id' bằng ID của người dùng bạn muốn cập nhật
     data: {
-      password: hashPassword,
-      resendTokenResetPassword: resendTokenResetPasswordCount,
-    },
+      password: {
+        create: {
+          password: hashPassword // Cập nhật mật khẩu mới
+        }
+      },
+      resendTokenResetPassword: resendTokenResetPasswordCount // Cập nhật thông tin khác của người dùng
+    }
   });
-
   await prismadb.passwordResetToken.delete({
     where: { id: existingToken.id },
   });
