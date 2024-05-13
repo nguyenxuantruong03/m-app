@@ -27,7 +27,7 @@ const SettingUserClient:React.FC<SettingUserClientProps> = ({data}) => {
         <Downloadfile data={data} filename="settinguser" />
         </div>
         <Separator />
-        <DataTable searchKey="name" columns={columns} data={data} />
+        <DataTable searchKey="email" columns={columns} data={data} />
         {showAPIRole && (
         <Heading title="Api" description="API calls for User" />
         )}

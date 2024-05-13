@@ -22,7 +22,7 @@ const OrderClient: React.FC<OrderProps> = ({ data }) => {
       <Downloadfile data={data} filename="orders" />
     </div>
       <Separator />
-      <DataTable searchKey="product" columns={columns} data={data} />
+      <DataTable searchKey="email" columns={columns} data={data} />
     </>
   );
 };

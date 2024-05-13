@@ -27,7 +27,7 @@ const WheelSpinClient: React.FC<WheelSpinClientProps> = ({ data }) => {
         <Downloadfile data={data} filename="wheelSpin" />
       </div>
       <Separator />
-      <DataTable searchKey="name" columns={columns} data={data} />
+      <DataTable searchKey="email" columns={columns} data={data} />
       {showAPIRole && <Heading title="Api" description="API calls for Spin" />}
       <Separator />
       <ApiList entityIdName="wheelSpinId" entityName="wheelSpin" />

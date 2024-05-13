@@ -70,7 +70,7 @@ const SettingUserClient: React.FC<SettingUserClientProps> = ({ data }) => {
         </div>
       </div>
       <Separator />
-      <DataTable searchKey="name" columns={columns} data={data} />
+      <DataTable searchKey="email" columns={columns} data={data} />
       {showAPIRole && <Heading title="Api" description="API calls for Staff" />}
       <Separator />
       <ApiList entityIdName="managestaffId" entityName="managestaff" />

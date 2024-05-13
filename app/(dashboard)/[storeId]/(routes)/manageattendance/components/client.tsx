@@ -27,7 +27,7 @@ const AttendanceClient: React.FC<AttendanceClientProps> = ({ data }) => {
         <Downloadfile data={data} filename="manageattendance" />
       </div>
       <Separator />
-      <DataTable searchKey="name" columns={columns} data={data} />
+      <DataTable searchKey="email" columns={columns} data={data} />
       {showAPIRole && <Heading title="Api" description="API calls for Staff" />}
       <Separator />
       <ApiList entityIdName="" entityName="manageattendance" />
