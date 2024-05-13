@@ -121,9 +121,24 @@ export const login = async (
           resendTokenVerify: 0,
           resendEmailResetPassword: 0,
           resendTokenResetPassword: 0,
+          resendBanUserNotStart: 0,
+          resendUnBanUser: 0,
         },
       });
-      await sendUnBanUser(unbanUser.email, unbanUser.name);
+      // Kiểm tra giá trị hiện tại của resendUnBanUser
+      let resendCount = existingUser.resendUnBanUser || 0;
+      if (resendCount < 2) {
+        // Nếu giá trị nhỏ hơn 2, tăng lên 1
+        await sendUnBanUser(unbanUser.email, unbanUser.name);
+        resendCount++; // Tăng giá trị lên 1
+        // Cập nhật giá trị mới cho resendUnBanUser
+        await prismadb.user.update({
+          where: { id: existingUser.id },
+          data: {
+            resendUnBanUser: resendCount,
+          },
+        });
+      }
     }
   }
 
@@ -230,6 +245,8 @@ export const login = async (
         resendTokenVerify: 0,
         resendEmailResetPassword: 0,
         resendTokenResetPassword: 0,
+        resendBanUserNotStart: 0,
+        resendUnBanUser: 0,
       },
     });
 

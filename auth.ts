@@ -43,13 +43,27 @@ export const {
           const timeBan = existingUser.banExpires
             ? format(existingUser.banExpires, "dd/MM/yyyy '-' HH:mm:ss a")
             : "";
-          await sendBanUserNotStart(
-            existingUser.email,
-            existingUser.name,
-            timeBan
-          );
-          return '/auth/errorban';
+          // Kiểm tra giá trị hiện tại của resendBanUserNotStart
+          let resendCount = existingUser.resendBanUserNotStart || 0;
+          if (resendCount < 2) {
+            // Nếu giá trị nhỏ hơn 2, tăng lên 1
+            await sendBanUserNotStart(
+              existingUser.email,
+              existingUser.name,
+              timeBan
+            );
+            resendCount++; // Tăng giá trị lên 1
+            // Cập nhật giá trị mới cho resendBanUserNotStart
+            await prismadb.user.update({
+              where: { id: existingUser.id },
+              data: {
+                resendBanUserNotStart: resendCount,
+              },
+            });
+          }
+          return "/auth/errorban";
         }
+
         //Nếu người dùng bị cấm nhưng thời gian cấm đã hết hạn, chương trình sẽ vào đây.
         else if (banExpiresAt) {
           // Ban period has expired, unban the user
@@ -62,9 +76,25 @@ export const {
               resendTokenVerify: 0,
               resendEmailResetPassword: 0,
               resendTokenResetPassword: 0,
+              resendBanUserNotStart: 0,
+              resendUnBanUser: 0,
             },
           });
-          await sendUnBanUser(unbanUser.email, unbanUser.name);
+          // Kiểm tra giá trị hiện tại của resendUnBanUser
+          let resendCount = existingUser.resendUnBanUser || 0;
+          
+          if (resendCount < 2) {
+            // Nếu giá trị nhỏ hơn 2, tăng lên 1
+            await sendUnBanUser(unbanUser.email, unbanUser.name);
+            resendCount++; // Tăng giá trị lên 1
+            // Cập nhật giá trị mới cho resendUnBanUser
+            await prismadb.user.update({
+              where: { id: existingUser.id },
+              data: {
+                resendUnBanUser: resendCount,
+              },
+            });
+          }
         }
       }
       //--Bước2--Handle check xem có bị ban vĩnh viển ko

@@ -523,6 +523,10 @@ model User {
   resendTokenResetPassword Int?                   @default(0)
   //resendEmailResetPassword xem người dùng đã gửi lại bao nhiêu lần 
   resendEmailResetPassword Int?                   @default(0)
+  //Chỉ gửi mail 2 lần cho người dùng
+  resendBanUserNotStart    Int?                   @default(0)
+  //Chỉ gửi mail 2 lần cho người dùng
+  resendUnBanUser          Int?                    @default(0)
   // Xác thực 2 yếu tố
   isTwoFactorEnabled       Boolean                @default(false)
   //------------------------Nhân viên------------------------------

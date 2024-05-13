@@ -25,6 +25,8 @@ export type SettingUsersColumn = {
   resendTokenVerify: number | null;
   resendEmailResetPassword: number | null;
   resendTokenResetPassword: number | null;
+  resendUnBanUser: number | null;
+  resendBanUserNotStart: number | null;
   resendCount: number | null;
   role: string;
   accounts: {
@@ -651,6 +653,50 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
         <div className={`${additionalClass} ${lineThroughClass} ${banClass}`}>
           {isResendCount}
           {/* Ưu tiên hiển thị isResendCount nếu có, nếu không, hiển thị isBanned */}
+        </div>
+      );
+    },
+  },
+
+  {
+    accessorKey: "resendBanUserNotStart",
+    header: "Gửi thông báo thời gian unban",
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
+      return (
+        <div
+          className={
+            isBanforever
+              ? "line-through text-red-500"
+              : isBanned
+              ? "line-through text-gray-400"
+              : ""
+          }
+        >
+          {row.original.resendBanUserNotStart}
+        </div>
+      );
+    },
+  },
+
+  {
+    accessorKey: "resendUnBanUser",
+    header: "Gửi thông báo đã hết ban",
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
+      return (
+        <div
+          className={
+            isBanforever
+              ? "line-through text-red-500"
+              : isBanned
+              ? "line-through text-gray-400"
+              : ""
+          }
+        >
+          {row.original.resendUnBanUser}
         </div>
       );
     },

@@ -62,6 +62,8 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
       resendTokenVerify:item.resendTokenVerify,
       resendEmailResetPassword: item.resendEmailResetPassword,
       resendTokenResetPassword: item.resendTokenResetPassword,
+      resendBanUserNotStart: item.resendBanUserNotStart,
+      resendUnBanUser: item.resendUnBanUser,
       resendCount:item.resendCount,
       role: item.role,
       accounts: item.accounts.map((accountItem: Account) => ({
