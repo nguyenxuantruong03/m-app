@@ -38,11 +38,15 @@ const ResetPasswordForm = () => {
   const onSubmit = (values: z.infer<typeof ResetSchema>) => {
     setError("");
     setSuccess("");
-    setIsSubmittedEmail(true)
+    setIsSubmittedEmail(true);
     startTransition(() => {
       reset(values).then((data) => {
-        setError(data?.error);
-        setSuccess(data?.success);
+        if (data.error) {
+          setError(data?.error);
+        } else if (data?.success) {
+          setSuccess(data?.success);
+          setEmail("");
+        }
       });
     });
   };
@@ -85,7 +89,11 @@ const ResetPasswordForm = () => {
             <FormSuccess message={success} />
           </div>
 
-          <Button className="w-full" type="submit" disabled={isPending || !isEmailValid}>
+          <Button
+            className="w-full"
+            type="submit"
+            disabled={isPending || !isEmailValid}
+          >
             Send reset Email
           </Button>
         </form>

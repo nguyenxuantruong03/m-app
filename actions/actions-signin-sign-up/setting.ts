@@ -18,6 +18,11 @@ export const setting = async (values: z.infer<typeof SettingSchema>) => {
     return { error: "Không được phép!" };
   }
 
+  // Check ban status again after potential update
+  if (user.ban) {
+    return { error: "Tài khoản của bạn đã bị khóa. Không thể thay đổi. Hãy kiểm tra Email để biết thời gian mở khóa!" };
+  }
+
   const dbUser = await getUserById(user.id);
 
   if (!dbUser) {

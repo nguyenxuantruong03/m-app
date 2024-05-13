@@ -517,10 +517,12 @@ model User {
   banExpires               DateTime?
   //Làm mới lại số lần gửi mã xác thực 2FA
   resendCount              Int?                   @default(0)
-  //resetresendToken
+  //resetresendToken xem người dùng đã gửi lại bao nhiêu lần 
   resendTokenVerify        Int?                   @default(0)
-  //resendResetPassword
+  //resendResetPassword xem người dùng đã gửi lại bao nhiêu lần 
   resendTokenResetPassword Int?                   @default(0)
+  //resendEmailResetPassword xem người dùng đã gửi lại bao nhiêu lần 
+  resendEmailResetPassword Int?                   @default(0)
   // Xác thực 2 yếu tố
   isTwoFactorEnabled       Boolean                @default(false)
   //------------------------Nhân viên------------------------------

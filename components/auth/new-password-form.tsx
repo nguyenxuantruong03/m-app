@@ -41,13 +41,18 @@ const NewPasswordForm = () => {
   });
 
   const onSubmit = (values: z.infer<typeof NewPasswordSchema>) => {
-    setIsSubmitted(true)
+    setIsSubmitted(true);
     setError("");
     setSuccess("");
     startTransition(() => {
       newPassword(values, token).then((data) => {
-        setError(data?.error);
-        setSuccess(data?.success);
+        if (data.error) {
+          setError(data?.error);
+          setPassword("");
+        } else if (data?.success) {
+          setSuccess(data?.success);
+          setPassword("");
+        }
       });
     });
   };

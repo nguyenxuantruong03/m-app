@@ -23,6 +23,7 @@ export type SettingUsersColumn = {
   imageCredential: string;
   password: number | null;
   resendTokenVerify: number | null;
+  resendEmailResetPassword: number | null;
   resendTokenResetPassword: number | null;
   resendCount: number | null;
   role: string;
@@ -497,17 +498,77 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
-      return (
-        <div
-          className={
-            isBanforever
-              ? "line-through text-red-500"
-              : isBanned
-              ? "line-through text-gray-400"
-              : ""
+      const isResendTokenVerify = row.original.resendTokenVerify;
+
+      // Khai báo các lớp CSS tạm thời cho mỗi trường hợp
+      let additionalClass = "";
+      let lineThroughClass = "";
+
+      if (isResendTokenVerify !== null) {
+        if (isResendTokenVerify >= 5) {
+          additionalClass = "text-amber-400";
+          lineThroughClass = "line-through";
+        } else if (isResendTokenVerify >= 3) {
+          additionalClass = "text-amber-400";
+          if (isBanned) {
+            lineThroughClass = "line-through";
           }
-        >
-          {row.original.resendTokenVerify}
+        } else if (isResendTokenVerify < 3 && isBanned) {
+          // Thêm điều kiện mới ở đây
+          additionalClass = "text-gray-400"; // Thêm màu text-gray-400
+          lineThroughClass = "line-through";
+        }
+      }
+
+      // Xác định lớp CSS cho trường hợp isBanforever
+      const banClass = isBanforever ? "line-through text-red-500" : "";
+
+      // Trả về phần tử với các lớp CSS được áp dụng
+      return (
+        <div className={`${additionalClass} ${lineThroughClass} ${banClass}`}>
+          {isResendTokenVerify}
+          {/* Ưu tiên hiển thị isResendTokenVerify nếu có, nếu không, hiển thị isBanned */}
+        </div>
+      );
+    },
+  },
+
+  {
+    accessorKey: "resendEmailResetPassword",
+    header: "Gửi Email ResetPassword",
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
+      const isResendEmailResetPassword = row.original.resendEmailResetPassword;
+
+      // Khai báo các lớp CSS tạm thời cho mỗi trường hợp
+      let additionalClass = "";
+      let lineThroughClass = "";
+
+      if (isResendEmailResetPassword !== null) {
+        if (isResendEmailResetPassword >= 5) {
+          additionalClass = "text-amber-400";
+          lineThroughClass = "line-through";
+        } else if (isResendEmailResetPassword >= 3) {
+          additionalClass = "text-amber-400";
+          if (isBanned) {
+            lineThroughClass = "line-through";
+          }
+        } else if (isResendEmailResetPassword < 3 && isBanned) {
+          // Thêm điều kiện mới ở đây
+          additionalClass = "text-gray-400"; // Thêm màu text-gray-400
+          lineThroughClass = "line-through";
+        }
+      }
+
+      // Xác định lớp CSS cho trường hợp isBanforever
+      const banClass = isBanforever ? "line-through text-red-500" : "";
+
+      // Trả về phần tử với các lớp CSS được áp dụng
+      return (
+        <div className={`${additionalClass} ${lineThroughClass} ${banClass}`}>
+          {isResendEmailResetPassword}
+          {/* Ưu tiên hiển thị isResendEmailResetPassword nếu có, nếu không, hiển thị isBanned */}
         </div>
       );
     },
@@ -515,21 +576,40 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
 
   {
     accessorKey: "resendTokenResetPassword",
-    header: "Gửi mã Resetpassword",
+    header: "Gửi Token Resetpassword",
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
-      return (
-        <div
-          className={
-            isBanforever
-              ? "line-through text-red-500"
-              : isBanned
-              ? "line-through text-gray-400"
-              : ""
+      const isResendTokenResetPassword = row.original.resendTokenResetPassword;
+
+      // Khai báo các lớp CSS tạm thời cho mỗi trường hợp
+      let additionalClass = "";
+      let lineThroughClass = "";
+
+      if (isResendTokenResetPassword !== null) {
+        if (isResendTokenResetPassword >= 5) {
+          additionalClass = "text-amber-400";
+          lineThroughClass = "line-through";
+        } else if (isResendTokenResetPassword >= 3) {
+          additionalClass = "text-amber-400";
+          if (isBanned) {
+            lineThroughClass = "line-through";
           }
-        >
-          {row.original.resendTokenResetPassword}
+        } else if (isResendTokenResetPassword < 3 && isBanned) {
+          // Thêm điều kiện mới ở đây
+          additionalClass = "text-gray-400"; // Thêm màu text-gray-400
+          lineThroughClass = "line-through";
+        }
+      }
+
+      // Xác định lớp CSS cho trường hợp isBanforever
+      const banClass = isBanforever ? "line-through text-red-500" : "";
+
+      // Trả về phần tử với các lớp CSS được áp dụng
+      return (
+        <div className={`${additionalClass} ${lineThroughClass} ${banClass}`}>
+          {isResendTokenResetPassword}
+          {/* Ưu tiên hiển thị isResendTokenResetPassword nếu có, nếu không, hiển thị isBanned */}
         </div>
       );
     },
@@ -541,17 +621,36 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
-      return (
-        <div
-          className={
-            isBanforever
-              ? "line-through text-red-500"
-              : isBanned
-              ? "line-through text-gray-400"
-              : ""
+      const isResendCount = row.original.resendCount;
+
+      // Khai báo các lớp CSS tạm thời cho mỗi trường hợp
+      let additionalClass = "";
+      let lineThroughClass = "";
+
+      if (isResendCount !== null) {
+        if (isResendCount >= 5) {
+          additionalClass = "text-amber-400";
+          lineThroughClass = "line-through";
+        } else if (isResendCount >= 3) {
+          additionalClass = "text-amber-400";
+          if (isBanned) {
+            lineThroughClass = "line-through";
           }
-        >
-          {row.original.resendCount}
+        } else if (isResendCount < 3 && isBanned) {
+          // Thêm điều kiện mới ở đây
+          additionalClass = "text-gray-400"; // Thêm màu text-gray-400
+          lineThroughClass = "line-through";
+        }
+      }
+
+      // Xác định lớp CSS cho trường hợp isBanforever
+      const banClass = isBanforever ? "line-through text-red-500" : "";
+
+      // Trả về phần tử với các lớp CSS được áp dụng
+      return (
+        <div className={`${additionalClass} ${lineThroughClass} ${banClass}`}>
+          {isResendCount}
+          {/* Ưu tiên hiển thị isResendCount nếu có, nếu không, hiển thị isBanned */}
         </div>
       );
     },

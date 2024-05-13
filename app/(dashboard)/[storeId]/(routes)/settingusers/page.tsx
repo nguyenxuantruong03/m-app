@@ -60,6 +60,7 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
           )
         : null,
       resendTokenVerify:item.resendTokenVerify,
+      resendEmailResetPassword: item.resendEmailResetPassword,
       resendTokenResetPassword: item.resendTokenResetPassword,
       resendCount:item.resendCount,
       role: item.role,

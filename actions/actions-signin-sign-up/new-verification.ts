@@ -29,6 +29,11 @@ export const newVerification = async (token: string) => {
     return { error: "Email hiện tại không có!" };
   }
 
+  // Check ban status again after potential update
+  if (existingUser.ban) {
+    return { error: "Tài khoản của bạn đã bị khóa. Không thể gửi lại mã xác thực mới. Hãy kiểm tra Email để biết thời gian mở khóa!" };
+  }
+
   let resendTokenVerifyCount = existingUser.resendTokenVerify || 0; // Đếm số lần gửi resendTokenVerify
   // Tăng số lần gửi lên 1
   resendTokenVerifyCount++;
@@ -36,7 +41,7 @@ export const newVerification = async (token: string) => {
   // Kiểm tra xem đã gửi quá nhiều lần chưa nếu nhiều hơn 5 sẽ bị ban
   if (resendTokenVerifyCount >= 6) {
     const timeBanUser = new Date();
-    timeBanUser.setTime(timeBanUser.getTime() + (24 * 60 * 60 * 1000));
+    timeBanUser.setTime(timeBanUser.getTime() + 24 * 60 * 60 * 1000);
     const banUser = await prismadb.user.update({
       where: { id: existingUser.id },
       data: {

@@ -64,6 +64,7 @@ export async function POST(
         ban: false,
         resendCount: 0,
         resendTokenVerify: 0,
+        resendEmailResetPassword: 0,
         resendTokenResetPassword: 0,
         banExpires: null,
       },

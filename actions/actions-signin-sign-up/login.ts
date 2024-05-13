@@ -119,16 +119,12 @@ export const login = async (
           banExpires: null,
           resendCount: 0,
           resendTokenVerify: 0,
+          resendEmailResetPassword: 0,
           resendTokenResetPassword: 0,
         },
       });
       await sendUnBanUser(unbanUser.email, unbanUser.name);
     }
-  }
-
-  // Check ban status again after potential update
-  if (existingUser.ban) {
-    return { error: "Tài khoản của bạn đã bị khóa và không thể đăng nhập." };
   }
 
   if (!existingUser.emailVerified) {
@@ -232,6 +228,7 @@ export const login = async (
       data: {
         resendCount: 0,
         resendTokenVerify: 0,
+        resendEmailResetPassword: 0,
         resendTokenResetPassword: 0,
       },
     });

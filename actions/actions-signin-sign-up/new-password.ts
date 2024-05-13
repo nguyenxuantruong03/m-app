@@ -14,6 +14,13 @@ export const newPassword = async (
   values: z.infer<typeof NewPasswordSchema>,
   token?: string | null
 ) => {
+  const validatedFields = NewPasswordSchema.safeParse(values);
+
+  if (!validatedFields.success) {
+    return { error: "Không tìm thấy!" };
+  }
+
+  const { password } = validatedFields.data;
   if (!token) {
     return { error: "Thiếu Token! Hãy click lại reset password!" };
   }
@@ -27,40 +34,46 @@ export const newPassword = async (
     return { error: "Không tìm thấy Email!" };
   }
 
+  // Check ban status again after potential update
+  if (existingUser.ban) {
+    return {
+      error: "Tài khoản của bạn đã bị khóa. Không thể đổi lại mật khẩu. Hãy kiểm tra Email để biết thời gian mở khóa!",
+    };
+  }
+
   const userPasswords = await prismadb.password.findMany({
     where: {
-        userId: existingUser.id,
+      userId: existingUser.id,
     },
     orderBy: {
-        createdAt: "desc", // Sắp xếp theo thời gian giảm dần để lấy mật khẩu mới nhất
+      createdAt: "desc", // Sắp xếp theo thời gian giảm dần để lấy mật khẩu mới nhất
     },
-});
+  });
 
-if (userPasswords.length === 0) {
+  if (userPasswords.length === 0) {
     return { error: "Mật khẩu của người dùng không tồn tại!" };
-}
+  }
 
-let isSamePassword = false;
+  let isSamePassword = false;
 
-for (const userPassword of userPasswords) {
+  for (const userPassword of userPasswords) {
     isSamePassword = await bcrypt.compare(
-        values.password,
-        userPassword.password
+      values.password,
+      userPassword.password
     );
 
     if (isSamePassword) {
-        const passwordSetDate = format(
-            userPassword.createdAt, // Lấy ngày tạo của mật khẩu đang được so sánh
-            "E '-' dd/MM/yyyy '-' HH:mm:ss a"
-        );
+      const passwordSetDate = format(
+        userPassword.createdAt, // Lấy ngày tạo của mật khẩu đang được so sánh
+        "E '-' dd/MM/yyyy '-' HH:mm:ss a"
+      );
 
-        return {
-            error: `Mật khẩu mới không được giống mật khẩu cũ! Mật khẩu cũ đã được đặt vào ngày ${passwordSetDate}.`,
-        };
+      return {
+        error: `Mật khẩu mới không được giống mật khẩu cũ! Mật khẩu cũ đã được đặt vào ngày ${passwordSetDate}.`,
+      };
     }
-}
+  }
 
-  
   let resendTokenResetPasswordCount =
     existingUser.resendTokenResetPassword || 0; // Đếm số lần gửi resendTokenResetPassword
   // Tăng số lần gửi lên 1
@@ -69,7 +82,7 @@ for (const userPassword of userPasswords) {
   // Kiểm tra xem đã gửi quá nhiều lần chưa nếu nhiều hơn 5 sẽ bị ban
   if (resendTokenResetPasswordCount >= 6) {
     const timeBanUser = new Date();
-    timeBanUser.setTime(timeBanUser.getTime() + (24 * 60 * 60 * 1000));
+    timeBanUser.setTime(timeBanUser.getTime() + 24 * 60 * 60 * 1000);
     const banUser = await prismadb.user.update({
       where: { id: existingUser.id },
       data: {
@@ -92,20 +105,12 @@ for (const userPassword of userPasswords) {
     },
   });
 
-  const validatedFields = NewPasswordSchema.safeParse(values);
-
-  if (!validatedFields.success) {
-    return { error: "Không tìm thấy!" };
-  }
-
-  const { password } = validatedFields.data;
-
   const hasExpired = new Date(existingToken.expires) < new Date();
 
   if (hasExpired) {
     // Tạo token mới và gửi email
     const newToken = await generatePasswordResetToken(existingToken.email);
-    if (resendTokenResetPasswordCount >= 2) {
+    if (resendTokenResetPasswordCount >= 3) {
       await sendPasswordResetEmail(
         existingToken.email,
         newToken.token,
@@ -126,11 +131,11 @@ for (const userPassword of userPasswords) {
     data: {
       password: {
         create: {
-          password: hashPassword // Cập nhật mật khẩu mới
-        }
+          password: hashPassword, // Cập nhật mật khẩu mới
+        },
       },
-      resendTokenResetPassword: resendTokenResetPasswordCount // Cập nhật thông tin khác của người dùng
-    }
+      resendTokenResetPassword: resendTokenResetPasswordCount, // Cập nhật thông tin khác của người dùng
+    },
   });
   await prismadb.passwordResetToken.delete({
     where: { id: existingToken.id },

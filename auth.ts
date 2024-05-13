@@ -60,6 +60,7 @@ export const {
               banExpires: null,
               resendCount: 0,
               resendTokenVerify: 0,
+              resendEmailResetPassword: 0,
               resendTokenResetPassword: 0,
             },
           });
