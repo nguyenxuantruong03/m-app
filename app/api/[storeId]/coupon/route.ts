@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
 import { Duration, UserRole } from "@prisma/client";
-import { currentUser } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 
 export async function POST(
   req: Request,
@@ -203,6 +203,107 @@ export async function GET(
   } catch (error) {
     return new NextResponse(
       JSON.stringify({ error: "Internal error get coupon." }),
+      { status: 500 }
+    );
+  }
+}
+
+
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: { storeId: string } }
+) {
+  try {
+    const userId = await currentUser();
+    const role = await currentRole();
+    const body = await req.json();
+
+    const { ids } = body;
+
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy userId!" }),
+        { status: 403 }
+      );
+    }
+
+    if (!ids || ids.length === 0) {
+      return new NextResponse(
+        JSON.stringify({ error: "Mảng IDs không được trống!" }),
+        { status: 400 }
+      );
+    }
+
+    const storeByUserId = await prismadb.store.findFirst({
+      where: {
+        id: params.storeId,
+        userId: {
+          equals: UserRole.USER,
+        },
+      },
+    });
+
+    if (!storeByUserId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
+    }
+    if (role !== UserRole.ADMIN) {
+      return new NextResponse(
+        JSON.stringify({ error: "Vai trò hiện tại của bạn không được quyền!" }),
+        { status: 403 }
+      );
+    }
+
+    // Fetch all coupon to delete, including their images
+    const CouponToDelete = await prismadb.coupon.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+      include: {
+        imagecoupon: true,
+      },
+    });
+
+    // Create an array of changes for logging
+    const changesArray = CouponToDelete.map(coupon => ({
+      name: coupon.name,
+      description: coupon.description,
+      duration: coupon.duration,
+      durationinmoth: coupon.durationinmoth,
+      percent: coupon.percent,
+      imagecoupon: coupon.imagecoupon.map((item)=>item.url),
+      maxredemptions: coupon.maxredemptions,
+      redeemby: coupon.redeemby,
+    }));
+
+    // Delete all the coupon in one operation
+    await prismadb.coupon.deleteMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+
+    // Log the changes in a single database operation
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        delete: changesArray.map(change => `DeleteName: ${change.name}, Description: ${change.description}, Duration: ${change.duration}, DurationInMoth: ${change.durationinmoth}, Percent: ${change.percent}, ImageCoupon: ${change.imagecoupon}, MaxRedemptions: ${change.maxredemptions}, Redeemby: ${change.redeemby}`),
+        type: "DELETEMANY-COUPON",
+        user: userId?.email || "",
+      },
+    });
+
+    return NextResponse.json({ message: "Xóa thành công!" });
+  } catch (error) {
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error delete category." }),
       { status: 500 }
     );
   }

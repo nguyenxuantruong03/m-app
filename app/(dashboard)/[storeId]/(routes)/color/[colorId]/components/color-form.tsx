@@ -170,13 +170,13 @@ export const ColorForm: React.FC<ColorFormProps> = ({ initialData }) => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-8 w-full"
         >
-          <div className="md:grid md:grid-cols-3 gap-8">
+          <div className="md:grid md:grid-cols-2 gap-8">
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center">Tên <p className="text-red-600 pl-1">(*)</p></FormLabel>
+                  <FormLabel>Tên <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -196,7 +196,7 @@ export const ColorForm: React.FC<ColorFormProps> = ({ initialData }) => {
                 <FormItem>
                   <FormLabel>Màu <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
-                    <div className="flex items-center gap-x-4">
+                    <div>
                       <Input
                         disabled={loading}
                         placeholder="Enter color ..."

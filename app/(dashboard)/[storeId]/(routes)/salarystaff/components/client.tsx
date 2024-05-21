@@ -8,6 +8,7 @@ import { UserRole } from "@prisma/client";
 import { useCurrentRole } from "@/hooks/use-current-role";
 import { SalaryStaffsColumn, columns } from "./column";
 import Downloadfile from "@/components/file/downloadfilepage";
+import { useState } from "react";
 
 interface SalaryStaffClientProps {
   data: SalaryStaffsColumn[];
@@ -16,6 +17,7 @@ interface SalaryStaffClientProps {
 const SalaryStaffClient: React.FC<SalaryStaffClientProps> = ({ data }) => {
   const role = useCurrentRole();
   const isRole = role === UserRole.ADMIN;
+  const [open, setOpen] = useState(false);
   const showAPIRole = isRole;
   return (
     <>
@@ -27,7 +29,15 @@ const SalaryStaffClient: React.FC<SalaryStaffClientProps> = ({ data }) => {
         <Downloadfile data={data} filename="salarystaff" />
       </div>
       <Separator />
-      <DataTable searchKey="name" columns={columns} data={data} />
+      <DataTable
+        searchKey="name"
+        columns={columns}
+        data={data}
+        onSelect={() => {}}
+        onDelete={() => {}}
+        setOpen={setOpen}
+        open={open}
+      />
       {showAPIRole && <Heading title="Api" description="API calls for User" />}
       <Separator />
       <ApiList entityIdName="" entityName="salarystaff" />

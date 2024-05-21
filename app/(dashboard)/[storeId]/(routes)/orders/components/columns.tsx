@@ -2,6 +2,8 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { CellAction } from "./cell-action"
+import SpanColumn from "@/components/span-column"
+import { CircleDollarSign, Clock12, HandCoins, MapPin, Package, Phone, User } from "lucide-react"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -20,31 +22,94 @@ export const columns: ColumnDef<OrderColumn>[] = [
   
   {
     accessorKey: "products",
-    header: "Product",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Sản phẩm
+          <Package className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     accessorKey: "phone",
-    header: "Phone",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Số điện thoại
+          <Phone className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     accessorKey: "address",
-    header: "Address",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Địa chỉ
+          <MapPin className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     accessorKey: "email",
-    header: "Email",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Email
+          <User className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     accessorKey: "totalPrice",
-    header: "TotalPrice",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Tông giá tiền
+          <CircleDollarSign className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     accessorKey: "isPaid",
-    header: "IsPaid",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thanh toán
+          <HandCoins className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     accessorKey: "createdAt",
-    header: "Date",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian tạo
+          <Clock12 className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     id: "actions",

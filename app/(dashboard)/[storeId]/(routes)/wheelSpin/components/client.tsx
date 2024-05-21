@@ -8,6 +8,7 @@ import { UserRole } from "@prisma/client";
 import { useCurrentRole } from "@/hooks/use-current-role";
 import { WheelSpinColumn, columns } from "./column";
 import Downloadfile from "@/components/file/downloadfilepage";
+import { useState } from "react";
 
 interface WheelSpinClientProps {
   data: WheelSpinColumn[];
@@ -15,6 +16,7 @@ interface WheelSpinClientProps {
 
 const WheelSpinClient: React.FC<WheelSpinClientProps> = ({ data }) => {
   const role = useCurrentRole();
+  const [open, setOpen] = useState(false);
   const isRole = role === UserRole.ADMIN;
   const showAPIRole = isRole;
   return (
@@ -27,7 +29,15 @@ const WheelSpinClient: React.FC<WheelSpinClientProps> = ({ data }) => {
         <Downloadfile data={data} filename="wheelSpin" />
       </div>
       <Separator />
-      <DataTable searchKey="email" columns={columns} data={data} />
+      <DataTable
+        searchKey="email"
+        columns={columns}
+        data={data}
+        onSelect={() => {}}
+        onDelete={() => {}}
+        setOpen={setOpen}
+        open={open}
+      />
       {showAPIRole && <Heading title="Api" description="API calls for Spin" />}
       <Separator />
       <ApiList entityIdName="wheelSpinId" entityName="wheelSpin" />

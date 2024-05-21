@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
 import { TaxBehavior, Unit, UserRole,ShippingTaxcode } from "@prisma/client";
-import { currentUser } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 
 export async function POST(
   req: Request,
@@ -161,6 +161,104 @@ export async function GET(
   } catch (error) {
     return new NextResponse(
       JSON.stringify({ error: "Internal error get shippingrates." }),
+      { status: 500 }
+    );
+  }
+}
+
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: { storeId: string } }
+) {
+  try {
+    const userId = await currentUser();
+    const role = await currentRole();
+    const body = await req.json();
+
+    const { ids } = body;
+
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy userId!" }),
+        { status: 403 }
+      );
+    }
+
+    if (!ids || ids.length === 0) {
+      return new NextResponse(
+        JSON.stringify({ error: "Mảng IDs không được trống!" }),
+        { status: 400 }
+      );
+    }
+
+    const storeByUserId = await prismadb.store.findFirst({
+      where: {
+        id: params.storeId,
+        userId: {
+          equals: UserRole.USER,
+        },
+      },
+    });
+
+    if (!storeByUserId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
+    }
+    if (role !== UserRole.ADMIN) {
+      return new NextResponse(
+        JSON.stringify({ error: "Vai trò hiện tại của bạn không được quyền!" }),
+        { status: 403 }
+      );
+    }
+
+    // Fetch all cartegories to delete, including their images
+    const ShipingRateToDelete = await prismadb.shippingRates.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+
+    // Create an array of changes for logging
+    const changesArray = ShipingRateToDelete.map(item => ({
+      name: item.name,
+      taxcode: item.taxbehavior,
+      taxbehavior: item.taxbehavior,
+      amount: item.amount,
+      valuemin: item.valuemin,
+      unitmin: item.unitmin,
+      valuemax: item.valuemax,
+      unitmax: item.unitmax,
+      active: item.active,
+    }));
+
+    // Delete all the cartegories in one operation
+    await prismadb.shippingRates.deleteMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+
+    // Log the changes in a single database operation
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        delete: changesArray.map(change => `DeleteName: ${change.name}, DeleteTaxcode: ${change.taxcode}, DeleteTaxbehavior: ${change.taxbehavior}, DeleteAmount: ${change.amount}, DeleteValuemin: ${change.valuemin}, DeleteUnitmin: ${change.unitmin}, DeleteValuemax: ${change.valuemax}, DeleteUnitmax: ${change.unitmax}, DeleteActive: ${change.active}`),
+        type: "DELETEMANY-SHIPPINGRATES",
+        user: userId?.email || "",
+      },
+    });
+
+    return NextResponse.json({ message: "Xóa thành công!" });
+  } catch (error) {
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error delete category." }),
       { status: 500 }
     );
   }

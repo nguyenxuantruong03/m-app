@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { currentUser } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
@@ -23,10 +23,9 @@ export async function POST(
     }
 
     if (!label) {
-      return new NextResponse(
-        JSON.stringify({ error: "Label is required!" }),
-        { status: 400 }
-      );
+      return new NextResponse(JSON.stringify({ error: "Label is required!" }), {
+        status: 400,
+      });
     }
 
     if (!imagebillboard || !imagebillboard.length) {
@@ -73,7 +72,7 @@ export async function POST(
 
     const sentBillboard = {
       label: billboard?.label,
-      imagebillboard:imagebillboard.map((image: { url: string }) => image.url),
+      imagebillboard: imagebillboard.map((image: { url: string }) => image.url),
     };
 
     // Log sự thay đổi của billboard
@@ -87,7 +86,7 @@ export async function POST(
         storeId: params.storeId,
         newChange: changes,
         type: "CREATEBILLBOARD",
-        user: userId?.email || ""
+        user: userId?.email || "",
       },
     });
 
@@ -128,6 +127,99 @@ export async function GET(
   } catch (error) {
     return new NextResponse(
       JSON.stringify({ error: "Internal error get billboard." }),
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: { storeId: string } }
+) {
+  try {
+    const userId = await currentUser();
+    const role = await currentRole();
+    const body = await req.json();
+
+    const { ids } = body;
+
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy userId!" }),
+        { status: 403 }
+      );
+    }
+
+    if (!ids || ids.length === 0) {
+      return new NextResponse(
+        JSON.stringify({ error: "Mảng IDs không được trống!" }),
+        { status: 400 }
+      );
+    }
+
+    const storeByUserId = await prismadb.store.findFirst({
+      where: {
+        id: params.storeId,
+        userId: {
+          equals: UserRole.USER,
+        },
+      },
+    });
+
+    if (!storeByUserId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
+    }
+    if (role !== UserRole.ADMIN) {
+      return new NextResponse(
+        JSON.stringify({ error: "Vai trò hiện tại của bạn không được quyền!" }),
+        { status: 403 }
+      );
+    }
+
+    // Fetch all billboards to delete, including their images
+    const billboardsToDelete = await prismadb.billboard.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+      include: {
+        imagebillboard: true,
+      },
+    });
+
+    // Create an array of changes for logging
+    const changesArray = billboardsToDelete.map(billboard => ({
+      label: billboard.label,
+      valueImage: billboard.imagebillboard.map(image => image.url),
+    }));
+
+    // Delete all the billboards in one operation
+    await prismadb.billboard.deleteMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+
+    // Log the changes in a single database operation
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        delete: changesArray.map(change => `DeleteLabel: ${change.label}, ImageBillboard: ${change.valueImage}`),
+        type: "DELETEMANYBILLBOARD",
+        user: userId?.email || "",
+      },
+    });
+
+    return NextResponse.json({ message: "Xóa thành công!" });
+  } catch (error) {
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error delete billboards." }),
       { status: 500 }
     );
   }

@@ -8,6 +8,7 @@ import { UserRole } from "@prisma/client";
 import { useCurrentRole } from "@/hooks/use-current-role";
 import { CommentColumn, columns } from "./column";
 import Downloadfile from "@/components/file/downloadfilepage";
+import { useState } from "react";
 
 interface CommentClientProps {
   data: CommentColumn[];
@@ -15,6 +16,7 @@ interface CommentClientProps {
 
 const CommentClient: React.FC<CommentClientProps> = ({ data }) => {
   const role = useCurrentRole();
+  const [open, setOpen] = useState(false);
   const isRole = role === UserRole.ADMIN;
   const showAPIRole = isRole;
   return (
@@ -27,8 +29,18 @@ const CommentClient: React.FC<CommentClientProps> = ({ data }) => {
         <Downloadfile data={data} filename="đánh_giá" />
       </div>
       <Separator />
-      <DataTable searchKey="name" columns={columns} data={data} />
-      {showAPIRole && <Heading title="Api" description="API calls for Comment" />}
+      <DataTable
+        searchKey="name"
+        columns={columns}
+        data={data}
+        onSelect={() => {}}
+        onDelete={() => {}}
+        setOpen={setOpen}
+        open={open}
+      />
+      {showAPIRole && (
+        <Heading title="Api" description="API calls for Comment" />
+      )}
       <Separator />
       <ApiList entityIdName="commentId" entityName="comments" />
     </>

@@ -2,7 +2,8 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
-import { Circle, NavigationOff, Receipt, SendHorizontal } from "lucide-react";
+import { Banknote, Circle, Clock12, GraduationCap, HandCoins, NavigationOff, Receipt, SendHorizontal, Tag, User } from "lucide-react";
+import SpanColumn from "@/components/span-column";
 
 export type SalaryStaffsColumn = {
   id: string;
@@ -29,15 +30,42 @@ const degreeMappings = {
 export const columns: ColumnDef<SalaryStaffsColumn>[] = [
   {
     accessorKey: "name",
-    header: "Name",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Name
+          <Tag className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     accessorKey: "email",
-    header: "Email",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Email
+          <User className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     accessorKey: "degree",
-    header: "degree",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          degree
+          <GraduationCap className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     cell: ({ row }) => {
       const degreeValue: string | null | undefined = row.original.degree;
       const degreeText = degreeValue
@@ -52,7 +80,16 @@ export const columns: ColumnDef<SalaryStaffsColumn>[] = [
   },
   {
     accessorKey: "bonus",
-    header: "Bonus",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Bonus
+          <HandCoins className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     cell: ({ row }) => {
       const bonus = row.original.bonus;
       return bonus ? (
@@ -64,7 +101,16 @@ export const columns: ColumnDef<SalaryStaffsColumn>[] = [
   },
   {
     accessorKey: "salaryday",
-    header: "Salaryday",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Salaryday
+          <Receipt className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     cell: ({ row }) => {
       const salaryday = row.original.salaryday;
       const salarydayValue = typeof salaryday === 'string' ? parseInt(salaryday) : salaryday;
@@ -77,7 +123,16 @@ export const columns: ColumnDef<SalaryStaffsColumn>[] = [
   },
   {
     accessorKey: "salarytotal",
-    header: "salarytotal",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          salarytotal
+          <Banknote className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     cell: ({ row }) => {
       const salarytotal = row.original.salarytotal;
       return salarytotal ? (
@@ -89,7 +144,16 @@ export const columns: ColumnDef<SalaryStaffsColumn>[] = [
   },
   {
     accessorKey: "isSent",
-    header: "IsSent",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          IsSent
+          <SendHorizontal className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     cell: ({ row }) => {
       const isAllday = row.original.isSent;
       return isAllday ? (
@@ -101,7 +165,16 @@ export const columns: ColumnDef<SalaryStaffsColumn>[] = [
   },
   {
     accessorKey: "isPaid",
-    header: "IsPaid",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          IsPaid
+          <Receipt className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     cell: ({ row }) => {
       const isAllday = row.original.isPaid;
       return isAllday ? (
@@ -113,7 +186,16 @@ export const columns: ColumnDef<SalaryStaffsColumn>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: "CreatedAt",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian tạo
+          <Clock12 className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     id: "actions",

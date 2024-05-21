@@ -2,7 +2,17 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
-import { Star } from "lucide-react";
+import {
+  Clock12,
+  MessageCircleMore,
+  Package,
+  SquareGanttChart,
+  SquareUserRound,
+  Star,
+  Tag,
+  User,
+} from "lucide-react";
+import SpanColumn from "@/components/span-column";
 
 export type CommentColumn = {
   id: string;
@@ -16,7 +26,7 @@ export type CommentColumn = {
   createdAt: string | null;
 };
 
-const convertToStars = (rating:number) => {
+const convertToStars = (rating: number) => {
   const stars = [];
   for (let i = 0; i < rating; i++) {
     stars.push(<Star key={i} />);
@@ -27,36 +37,108 @@ const convertToStars = (rating:number) => {
 export const columns: ColumnDef<CommentColumn>[] = [
   {
     accessorKey: "name",
-    header: "Name",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Name
+          <Tag className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     accessorKey: "email",
-    header: "Email",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Email
+          <User className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     accessorKey: "role",
-    header: "Vai trò",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Vai trò
+          <SquareUserRound className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     accessorKey: "rating",
-    header: "Đánh giá",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Đánh giá
+          <Star className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     cell: ({ row }) => convertToStars(row.original.rating),
   },
   {
     accessorKey: "nameproduct",
-    header: "nameproduct",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Name product
+          <Package className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     accessorKey: "comment",
-    header: "Nội dung",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Nội dung
+          <MessageCircleMore className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     accessorKey: "description",
-    header: "ResponseComment",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Response Comment
+          <SquareGanttChart className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     accessorKey: "createdAt",
-    header: "CreatedAt",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian tạo
+          <Clock12 className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     id: "actions",

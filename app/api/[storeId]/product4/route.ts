@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
 import { ProductType, UserRole } from "@prisma/client";
-import { currentUser } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 
 export async function POST(
   req: Request,
@@ -203,6 +203,111 @@ export async function GET(
   } catch (error) {
     return new NextResponse(
       JSON.stringify({ error: "Internal error get product4." }),
+      { status: 500 }
+    );
+  }
+}
+
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: { storeId: string } }
+) {
+  try {
+    const userId = await currentUser();
+    const role = await currentRole();
+    const body = await req.json();
+    const productType = ProductType.PRODUCT4;
+
+    const { ids } = body;
+
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy userId!" }),
+        { status: 403 }
+      );
+    }
+
+    if (!ids || ids.length === 0) {
+      return new NextResponse(
+        JSON.stringify({ error: "Mảng IDs không được trống!" }),
+        { status: 400 }
+      );
+    }
+
+    const storeByUserId = await prismadb.store.findFirst({
+      where: {
+        id: params.storeId,
+        userId: {
+          equals: UserRole.USER,
+        },
+      },
+    });
+
+    if (!storeByUserId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
+    }
+    if (role !== UserRole.ADMIN) {
+      return new NextResponse(
+        JSON.stringify({ error: "Vai trò hiện tại của bạn không được quyền!" }),
+        { status: 403 }
+      );
+    }
+
+    // Fetch all product to delete, including their images
+    const ProductToDelete = await prismadb.product.findMany({
+      where: {
+        productType: productType,
+        id: {
+          in: ids,
+        },
+      },
+      include: {
+        images: true,
+        imagesalientfeatures: true,
+        productdetail: true,
+      },
+    });
+
+    // Create an array of changes for logging
+    const changesArray = ProductToDelete.map(product => ({
+      name: product.name,
+      heading: product.heading,
+      description: product.description,
+      isFeatured: product.isFeatured,
+      isArchived: product.isArchived,
+      valueImage: product.images.map(image => image.url),
+      valueImagesalientfeatures: product.imagesalientfeatures.map(image => image.url),
+      productdetail: product.productdetail.title
+    }));
+
+    // Delete all the product in one operation
+    await prismadb.product.deleteMany({
+      where: {
+        productType: productType,
+        id: {
+          in: ids,
+        },
+      },
+    });
+
+    // Log the changes in a single database operation
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        delete: changesArray.map(change => `DeleteName: ${change.name}, Heading: ${change}, Description: ${change.description},isFeatured: ${change.isFeatured}, isArchived: ${change.isArchived}, Image: ${change.valueImage}, Imagesalientfeatures: ${change.valueImagesalientfeatures}, ProductDetail: ${change.productdetail}`),
+        type: "DELETEMANY-ĐÁCẮT-PRODUCT",
+        user: userId?.email || "",
+      },
+    });
+
+    return NextResponse.json({ message: "Xóa thành công!" });
+  } catch (error) {
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error delete category." }),
       { status: 500 }
     );
   }

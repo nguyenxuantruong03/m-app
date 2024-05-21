@@ -16,17 +16,56 @@ import { ApiList } from "@/components/ui/api-list";
 import { useCurrentRole } from "@/hooks/use-current-role";
 import { UserRole } from "@prisma/client";
 import DownloadFile from "@/components/file/downloadfilepage";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 interface CategoriesClientProps {
   data: CategoriesColumn[];
 }
 
 const CategoriesClient: React.FC<CategoriesClientProps> = ({ data }) => {
+  const [selectedRows, setSelectedRows] = useState<CategoriesColumn[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
   const router = useRouter();
   const params = useParams();
   const role = useCurrentRole();
   const isRole = role === UserRole.ADMIN;
   const showAPIRole = isRole;
+
+  const handleDelete = async () => {
+    setLoading(true);
+    try {
+      const ids = selectedRows.map((row) => row.id);
+      await axios.delete(`/api/${params.storeId}/categories2`, {
+        data: { ids },
+      });
+      setLoading(false);
+      setOpen(false);
+      toast.success("Category deleted successfully");
+      // Optionally, refresh data or handle post-delete state
+    } catch (error) {
+      setLoading(false);
+      if (
+        (error as { response?: { data?: { error?: string } } }).response &&
+        (error as { response: { data?: { error?: string } } }).response.data &&
+        (error as { response: { data: { error?: string } } }).response.data
+          .error
+      ) {
+        // Hiển thị thông báo lỗi cho người dùng
+        toast.error(
+          (error as { response: { data: { error: string } } }).response.data
+            .error
+        );
+      } else {
+        // Hiển thị thông báo lỗi mặc định cho người dùng
+        toast.error(
+          "Make sure you removed all categories using this category first."
+        );
+      }
+    }
+  };
   return (
     <>
       <div className="flex items-center justify-between">
@@ -45,7 +84,18 @@ const CategoriesClient: React.FC<CategoriesClientProps> = ({ data }) => {
         </div>
       </div>
       <Separator />
-      <DataTable searchKey="name" columns={columns} data={data} />
+      <DataTable
+        searchKey="name"
+        columns={columns}
+        data={data}
+        onSelect={(rows) => {
+          setSelectedRows(rows.map((row) => row.original));
+        }}
+        disable={loading}
+        onDelete={handleDelete}
+        setOpen={setOpen}
+        open={open}
+      />
       {showAPIRole && (
         <Heading title="Api" description="API calls for Category" />
       )}

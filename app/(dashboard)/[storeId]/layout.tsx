@@ -35,11 +35,13 @@ export default async function SetupLayout({
 
   return (
     <>
-      <div className="flex">
-        <div className="w-[280px] h-full bg-red-300 rounded-md bg-opacity-50">
+      <div className="flex  ">
+        <div>
           <Navbar />
         </div>
+        <div className="w-full">
         {children}
+        </div>
       </div>
     </>
   );

@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import axios from "axios";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -38,17 +38,23 @@ const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 import Image from "next/image";
 
 const formSchema = z.object({
-  name: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
+  name: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
   imagecoupon: z.object({ url: z.string() }).array(),
-  duration: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
-  description: z.optional(z.string().min(4,{
-    message: "Nhập ít nhất 4 ký tự."
-  })),
-  percent: z.coerce.number().min(1,{message: "Nhập ít nhất 1%."}),
-  durationinmoth:z.optional(z.coerce.number().min(4,{
-    message: "Nhập ít nhất 1 tháng."
-  })),
-  maxredemptions: z.coerce.number().min(1,{message: "Nhập ít nhất 1 người."}),
+  duration: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
+  description: z.optional(
+    z.string().min(4, {
+      message: "Nhập ít nhất 4 ký tự.",
+    })
+  ),
+  percent: z.coerce.number().min(1, { message: "Nhập ít nhất 1%." }),
+  durationinmoth: z.optional(
+    z.coerce.number().min(0, {
+      message: "Nhập ít nhất 1 tháng.",
+    })
+  ),
+  maxredemptions: z.coerce
+    .number()
+    .min(1, { message: "Nhập ít nhất 1 người." }),
   redeemby: z.union([z.date().nullable(), z.string().nullable()]),
 });
 
@@ -72,6 +78,17 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
   const title = initialData ? "Edit coupon" : "Create coupon";
   const description = initialData ? "Edit a coupon" : "Add a new coupon";
   const action = initialData ? "Save changes" : "Create";
+
+  // Khởi tạo state cho lựa chọn duration
+  const [selectedDuration, setSelectedDuration] = useState<Duration | null>(
+    initialData ? initialData.duration : null
+  );
+
+  // Sử dụng useEffect để theo dõi thay đổi trong lựa chọn duration
+  useEffect(() => {
+    // Cập nhật state khi lựa chọn duration thay đổi
+    setSelectedDuration(initialData ? initialData.duration : null);
+  }, [initialData]);
 
   const form = useForm<CouponFormValues>({
     resolver: zodResolver(formSchema),
@@ -107,7 +124,7 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
     try {
       setLoading(true);
       let promise;
-      let imageUrl: string[] = []; 
+      let imageUrl: string[] = [];
       if (initialData) {
         promise = axios.patch(
           `/api/${params.storeId}/coupon/${params.couponId}`,
@@ -121,14 +138,16 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
 
       const response = await promise;
 
-      let message:React.ReactNode;
+      let message: React.ReactNode;
       if (initialData) {
         message = (
           <p>
             Coupon <span className="font-bold">{response?.data.name}</span>{" "}
             updated. Phần trăm giảm:{" "}
-            <span className="font-bold">{response?.data.percent}%</span>. Số lượng tối đa: <span className="font-bold">{response?.data.maxredemptions}</span> người. Lặp
-            lại:{" "}
+            <span className="font-bold">{response?.data.percent}%</span>. Số
+            lượng tối đa:{" "}
+            <span className="font-bold">{response?.data.maxredemptions}</span>{" "}
+            người. Lặp lại:{" "}
             <span className="font-bold">{response?.data.durationinmoth}</span>{" "}
             tháng.
           </p>
@@ -137,13 +156,15 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
         message = (
           <p>
             Coupon <span className="font-bold">{data.name}</span> created. Phần
-            trăm giảm: <span className="font-bold">{data.percent}%</span>. Số lượng tối đa: <span className="font-bold">{data.maxredemptions}</span> người. Lặp
+            trăm giảm: <span className="font-bold">{data.percent}%</span>. Số
+            lượng tối đa:{" "}
+            <span className="font-bold">{data.maxredemptions}</span> người. Lặp
             lại: <span className="font-bold">{data.durationinmoth}</span> tháng.
           </p>
         );
       }
 
-      let title:React.ReactNode;
+      let title: React.ReactNode;
       if (initialData) {
         title = (
           <div className="flex items-center justify-between text-sm">
@@ -234,10 +255,14 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
         (error as { response: { data?: { error?: string } } }).response.data &&
-        (error as { response: { data: { error?: string } } }).response.data.error
+        (error as { response: { data: { error?: string } } }).response.data
+          .error
       ) {
         // Hiển thị thông báo lỗi cho người dùng
-        toast.error((error as { response: { data: { error: string } } }).response.data.error);
+        toast.error(
+          (error as { response: { data: { error: string } } }).response.data
+            .error
+        );
       } else {
         toast.error("Something went wrong.");
       }
@@ -257,10 +282,14 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
         (error as { response: { data?: { error?: string } } }).response.data &&
-        (error as { response: { data: { error?: string } } }).response.data.error
+        (error as { response: { data: { error?: string } } }).response.data
+          .error
       ) {
         // Hiển thị thông báo lỗi cho người dùng
-        toast.error((error as { response: { data: { error: string } } }).response.data.error);
+        toast.error(
+          (error as { response: { data: { error: string } } }).response.data
+            .error
+        );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
@@ -308,7 +337,10 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
             name="imagecoupon"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Hình ảnh giảm giá <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                <FormLabel>
+                  Hình ảnh giảm giá{" "}
+                  <span className="text-red-600 pl-1">(*)</span>
+                </FormLabel>
                 <FormControl>
                   <ImageUpload
                     value={field.value.map((image) => image.url)}
@@ -334,7 +366,9 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên giảm giá <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel>
+                    Tên giảm giá <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -378,11 +412,17 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
                 <FormItem>
                   <FormLabel>
                     Khoảng thời gian (Nếu chọn forever hoặc once thì không điền
-                    durationinmoth) <span className="text-red-600 pl-1">(*)</span>
+                    durationinmoth){" "}
+                    <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <Select
                     disabled={loading || isEditing}
-                    onValueChange={field.onChange}
+                    onValueChange={(value) => {
+                      // Cập nhật state khi người dùng thay đổi lựa chọn duration
+                      setSelectedDuration(value as Duration);
+                      // Gọi hàm onChange để cập nhật giá trị vào form
+                      field.onChange(value);
+                    }}
                     value={field.value}
                     defaultValue={field.value}
                   >
@@ -406,11 +446,63 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
               )}
             />
 
+            {selectedDuration !== Duration.forever &&
+              selectedDuration !== Duration.once &&
+              selectedDuration && (
+                <FormField
+                  control={form.control}
+                  name="durationinmoth"
+                  render={({ field }) => {
+                    // Hàm xác định giá trị mặc định là 0 nếu field không tồn tại
+                    const handleInputChange = (
+                      e: ChangeEvent<HTMLInputElement>
+                    ) => {
+                      const newValue = parseInt(e.target.value);
+
+                      // Kiểm tra nếu giá trị mới hợp lệ và field tồn tại
+                      if (
+                        !isNaN(newValue) &&
+                        newValue >= 0 &&
+                        newValue <= 12 &&
+                        field
+                      ) {
+                        // Cập nhật giá trị của field
+                        field.onChange(e);
+                      } else {
+                        // Nếu không hợp lệ, gán giá trị mặc định là 0
+                        field.onChange(0);
+                      }
+                    };
+                    return (
+                      <FormItem>
+                        <FormLabel>
+                          Khoảng thời gian trong tháng(0-12) (Nếu chọn forever
+                          hoặc once thì không điền durationinmoth){" "}
+                          <span className="text-red-600 pl-1">(*)</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            disabled={loading || isEditing}
+                            placeholder="Nhập % khoảng thời gian trong tháng ..."
+                            value={field.value ?? 0}
+                            onChange={handleInputChange}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+              )}
+
             <FormField
               control={form.control}
               name="percent"
               render={({ field }) => {
-                const handleInputChange = (e:ChangeEvent<HTMLInputElement>) => {
+                const handleInputChange = (
+                  e: ChangeEvent<HTMLInputElement>
+                ) => {
                   const newValue = parseInt(e.target.value);
                   if (newValue >= 0 && newValue <= 100) {
                     // Nếu giá trị mới hợp lệ, cập nhật giá trị của field
@@ -421,7 +513,10 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
                 };
                 return (
                   <FormItem>
-                    <FormLabel>Phần trăm khuyến mãi (0-100) <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                    <FormLabel>
+                      Phần trăm khuyến mãi (0-100){" "}
+                      <span className="text-red-600 pl-1">(*)</span>
+                    </FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -439,46 +534,13 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
 
             <FormField
               control={form.control}
-              name="durationinmoth"
-              render={({ field }) => {
-                // Hàm xác định giá trị mặc định là 0 nếu field không tồn tại
-                const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-                  const newValue = parseInt(e.target.value);
-
-                  if (newValue >= 0 && newValue <= 12) {
-                    // Nếu giá trị mới hợp lệ, cập nhật giá trị của field
-                    if (field) {
-                      field.onChange(e);
-                    }
-                  }
-                };
-                return (
-                  <FormItem>
-                    <FormLabel>
-                      Khoảng thời gian trong tháng(0-12) (Nếu chọn forever hoặc
-                      once thì không điền durationinmoth) <span className="text-red-600 pl-1">(*)</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        disabled={loading || isEditing}
-                        placeholder="Nhập % khoảng thời gian trong tháng ..."
-                        value={field.value ?? 0}
-                        onChange={handleInputChange}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                );
-              }}
-            />
-
-            <FormField
-              control={form.control}
               name="maxredemptions"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Số lượng tối đa được giảm giá <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel>
+                    Số lượng tối đa được giảm giá{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -497,7 +559,10 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
               name="redeemby"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thời gian hết hạn <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel>
+                    Thời gian hết hạn{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="date"

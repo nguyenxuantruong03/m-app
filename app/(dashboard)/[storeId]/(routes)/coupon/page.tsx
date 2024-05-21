@@ -32,7 +32,7 @@ const CouponPage = async ({ params }: { params: { storeId: string } }) => {
     name: item.name,
     duration: item.duration,
     durationinmoth: item.durationinmoth,
-    imagecoupon: item.imagecoupon.length > 0 ? item.imagecoupon[0].url : null,
+    imagecoupon: item.imagecoupon.map((item)=>item.url) ,
     percent: item.percent,
     maxredemptions: item.maxredemptions,
     redeemby:item.redeemby

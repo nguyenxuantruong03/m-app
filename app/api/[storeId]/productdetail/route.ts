@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
-import { currentUser } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 
 export async function POST(
   req: Request,
@@ -437,6 +437,146 @@ export async function GET(
   } catch (error) {
     return new NextResponse(
       JSON.stringify({ error: "Internal error get productdetail." }),
+      { status: 500 }
+    );
+  }
+}
+
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: { storeId: string } }
+) {
+  try {
+    const userId = await currentUser();
+    const role = await currentRole();
+    const body = await req.json();
+
+    const { ids } = body;
+
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy userId!" }),
+        { status: 403 }
+      );
+    }
+
+    if (!ids || ids.length === 0) {
+      return new NextResponse(
+        JSON.stringify({ error: "Mảng IDs không được trống!" }),
+        { status: 400 }
+      );
+    }
+
+    const storeByUserId = await prismadb.store.findFirst({
+      where: {
+        id: params.storeId,
+        userId: {
+          equals: UserRole.USER,
+        },
+      },
+    });
+
+    if (!storeByUserId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        { status: 405 }
+      );
+    }
+    if (role !== UserRole.ADMIN) {
+      return new NextResponse(
+        JSON.stringify({ error: "Vai trò hiện tại của bạn không được quyền!" }),
+        { status: 403 }
+      );
+    }
+
+    // Fetch all product to delete, including their images
+    const ProductToDelete = await prismadb.productDetail.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+      include: {
+        category: true,
+        color1: true,
+        size1: true,
+        color2: true,
+        size2: true,
+        color3: true,
+        size3: true,
+        color4: true,
+        size4: true,
+        color5: true,
+        size5: true,
+      },
+    });
+
+    // Create an array of changes for logging
+    const changesArray = ProductToDelete.map(productdetail => ({
+      title: productdetail.title,
+      name1: productdetail.name1,
+      price1: productdetail.price1,
+      percentpromotion1: productdetail.percentpromotion1,
+      quantity1: productdetail.quantity1,
+      size1: productdetail.size1,
+      color1: productdetail.color1,
+      name2: productdetail.name1,
+      price2: productdetail.price1,
+      percentpromotion2: productdetail.percentpromotion1,
+      quantity2: productdetail.quantity1,
+      size2: productdetail.size1,
+      color2: productdetail.color1,
+      name3: productdetail.name1,
+      price3: productdetail.price1,
+      percentpromotion3: productdetail.percentpromotion1,
+      quantity3: productdetail.quantity1,
+      size3: productdetail.size1,
+      color3: productdetail.color1,
+      name4: productdetail.name1,
+      price4: productdetail.price1,
+      percentpromotion4: productdetail.percentpromotion1,
+      quantity4: productdetail.quantity1,
+      size4: productdetail.size1,
+      color4: productdetail.color1,
+      name5: productdetail.name1,
+      price5: productdetail.price1,
+      percentpromotion5: productdetail.percentpromotion1,
+      quantity5: productdetail.quantity1,
+      size5: productdetail.size1,
+      color5: productdetail.color1,
+      category: productdetail.category,
+      promotionheading: productdetail.promotionheading,
+      promotiondescription: productdetail.promotiondescription,
+      warranty1: productdetail.warranty1,
+      warranty2: productdetail.warranty2,
+      warranty3: productdetail.warranty3,
+      warranty4: productdetail.warranty4,
+    }));
+
+    // Delete all the product in one operation
+    await prismadb.productDetail.deleteMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+
+    // Log the changes in a single database operation
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        delete: changesArray.map(change => `Title: ${change.title}, Name1: ${change.name1}, Price1: ${change.price1}, Percentpromotion1: ${change.percentpromotion1}, Quantity1: ${change.quantity1}, Size1: ${change.size1}, Color1: ${change.color1}, Name2: ${change.name2}, Price2: ${change.price2}, Percentpromotion2: ${change.percentpromotion2}, Quantity2: ${change.quantity2}, Size2: ${change.size2}, Color2: ${change.color2}, Name3: ${change.name3}, Price3: ${change.price3}, Percentpromotion3: ${change.percentpromotion3}, Quantity3: ${change.quantity3}, Size3: ${change.size3}, Color3: ${change.color3}, Name4: ${change.name4}, Price4: ${change.price4}, Percentpromotion4: ${change.percentpromotion4}, Quantity4: ${change.quantity4}, Size4: ${change.size4}, Color4: ${change.color4}, Name5: ${change.name5}, Price5: ${change.price5}, Percentpromotion5: ${change.percentpromotion5}, Quantity5: ${change.quantity5}, Size5: ${change.size5}, Color5: ${change.color5}, Category: ${change.category}, Promotionheading: ${change.promotionheading}, Promotiondescription: ${change.promotiondescription}, Warranty1: ${change.warranty1}, Warranty2: ${change.warranty2}, Warranty3: ${change.warranty3}, Warranty4: ${change.warranty4}`),
+        type: "DELETEMANY-PRODUCTDETAIL",
+        user: userId?.email || "",
+      },
+    });
+
+    return NextResponse.json({ message: "Xóa thành công!" });
+  } catch (error) {
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error delete category." }),
       { status: 500 }
     );
   }

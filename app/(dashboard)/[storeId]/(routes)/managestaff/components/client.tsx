@@ -14,6 +14,7 @@ import { ReplyAll } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Downloadfile from "@/components/file/downloadfilepage";
+import { useState } from "react";
 
 interface SettingUserClientProps {
   data: ManageStaffsColumn[];
@@ -22,6 +23,7 @@ interface SettingUserClientProps {
 const SettingUserClient: React.FC<SettingUserClientProps> = ({ data }) => {
   const params = useParams();
   const role = useCurrentRole();
+  const [open, setOpen] = useState(false);
   const isRole = role === UserRole.ADMIN;
   const showAPIRole = isRole;
   const onSentVerifyAll = async () => {
@@ -40,17 +42,21 @@ const SettingUserClient: React.FC<SettingUserClientProps> = ({ data }) => {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
         (error as { response: { data?: { error?: string } } }).response.data &&
-        (error as { response: { data: { error?: string } } }).response.data.error
+        (error as { response: { data: { error?: string } } }).response.data
+          .error
       ) {
         // Hiển thị thông báo lỗi cho người dùng
-        toast.error((error as { response: { data: { error: string } } }).response.data.error);
+        toast.error(
+          (error as { response: { data: { error: string } } }).response.data
+            .error
+        );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error("Failed to send verification emails.");
       }
     }
   };
-  
+
   return (
     <>
       <div className="flex items-center justify-between">
@@ -70,7 +76,15 @@ const SettingUserClient: React.FC<SettingUserClientProps> = ({ data }) => {
         </div>
       </div>
       <Separator />
-      <DataTable searchKey="email" columns={columns} data={data} />
+      <DataTable
+        searchKey="email"
+        columns={columns}
+        data={data}
+        onSelect={() => {}}
+        onDelete={() => {}}
+        setOpen={setOpen}
+        open={open}
+      />
       {showAPIRole && <Heading title="Api" description="API calls for Staff" />}
       <Separator />
       <ApiList entityIdName="managestaffId" entityName="managestaff" />

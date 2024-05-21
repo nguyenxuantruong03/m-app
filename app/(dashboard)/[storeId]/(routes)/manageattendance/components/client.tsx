@@ -8,6 +8,7 @@ import { UserRole } from "@prisma/client";
 import { useCurrentRole } from "@/hooks/use-current-role";
 import { ManageAttendancesColumn, columns } from "./column";
 import Downloadfile from "@/components/file/downloadfilepage";
+import { useState } from "react";
 
 interface AttendanceClientProps {
   data: ManageAttendancesColumn[];
@@ -16,6 +17,7 @@ interface AttendanceClientProps {
 const AttendanceClient: React.FC<AttendanceClientProps> = ({ data }) => {
   const role = useCurrentRole();
   const isRole = role === UserRole.ADMIN;
+  const [open, setOpen] = useState(false);
   const showAPIRole = isRole;
   return (
     <>
@@ -27,7 +29,15 @@ const AttendanceClient: React.FC<AttendanceClientProps> = ({ data }) => {
         <Downloadfile data={data} filename="manageattendance" />
       </div>
       <Separator />
-      <DataTable searchKey="email" columns={columns} data={data} />
+      <DataTable
+        searchKey="email"
+        columns={columns}
+        data={data}
+        onSelect={() => {}}
+        onDelete={() => {}}
+        setOpen={setOpen}
+        open={open}
+      />
       {showAPIRole && <Heading title="Api" description="API calls for Staff" />}
       <Separator />
       <ApiList entityIdName="" entityName="manageattendance" />

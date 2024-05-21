@@ -8,6 +8,7 @@ import { UserRole } from "@prisma/client";
 import { useCurrentRole } from "@/hooks/use-current-role";
 import { SystemsColumn, columns } from "./column";
 import Downloadfile from "@/components/file/downloadfilepage";
+import { useState } from "react";
 
 interface SettingUserClientProps {
   data: SystemsColumn[];
@@ -16,6 +17,7 @@ interface SettingUserClientProps {
 const SettingUserClient: React.FC<SettingUserClientProps> = ({ data }) => {
   const role = useCurrentRole();
   const isRole = role === UserRole.ADMIN;
+  const [open, setOpen] = useState(false);
   const showAPIRole = isRole;
   return (
     <>
@@ -27,7 +29,15 @@ const SettingUserClient: React.FC<SettingUserClientProps> = ({ data }) => {
         <Downloadfile data={data} filename="settinguser" />
       </div>
       <Separator />
-      <DataTable searchKey="user" columns={columns} data={data} />
+      <DataTable
+        searchKey="user"
+        columns={columns}
+        data={data}
+        onSelect={() => {}}
+        onDelete={() => {}}
+        setOpen={setOpen}
+        open={open}
+      />
       {showAPIRole && (
         <Heading title="Api" description="API calls for System" />
       )}

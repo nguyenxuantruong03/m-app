@@ -2,8 +2,11 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
-import { Home, PackageCheck, PackageX } from "lucide-react";
+import { Home, PackageCheck, PackageX, Tag,ImageUp, Clock12, View  } from "lucide-react";
+import { Images  as ImageIcon  } from "lucide-react";
 import Image from "next/image";
+import SpanColumn from "@/components/span-column";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export type ProductColumn = {
   id: string;
@@ -20,12 +23,52 @@ export type ProductColumn = {
 
 export const columns: ColumnDef<ProductColumn>[] = [
   {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     accessorKey: "heading",
-    header: "Tên sản phẩm",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Tên sản phẩm
+          <Tag className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     accessorKey: "images",
-    header: "Hình ảnh",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Hình ảnh
+          <ImageIcon className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     // Define a custom cell to render the image
     cell: ({ row }) => {
       const images = row.original.images;
@@ -52,7 +95,16 @@ export const columns: ColumnDef<ProductColumn>[] = [
   },
   {
     accessorKey: "imagesalientfeatures",
-    header: "Hình ảnh nổi bật",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Hình ảnh nổi bật
+          <ImageUp className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     // Define a custom cell to render the image
     cell: ({ row }) => {
       const imagesalientfeatures = row.original.imagesalientfeatures;
@@ -79,7 +131,16 @@ export const columns: ColumnDef<ProductColumn>[] = [
   },
   {
     accessorKey: "isFeatured",
-    header: "Hiển thị trang chính",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Hiển thị trang chính
+          <Home className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     cell: ({ row }) => {
       const isFeatured = row.original.isFeatured;
       return isFeatured ? (
@@ -91,7 +152,16 @@ export const columns: ColumnDef<ProductColumn>[] = [
   },
   {
     accessorKey: "isArchived",
-    header: "Hết hàng",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Hết hàng
+          <PackageX className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     cell: ({ row }) => {
       const isArchived = row.original.isArchived;
       return isArchived ? (
@@ -103,11 +173,29 @@ export const columns: ColumnDef<ProductColumn>[] = [
   },
   {
     accessorKey: "productdetail",
-    header: "Sản phẩm chi tiết",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Sản phẩm chi tiết
+          <View className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     accessorKey: "createdAt",
-    header: "Ngày",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian tạo
+          <Clock12 className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     id: "actions",

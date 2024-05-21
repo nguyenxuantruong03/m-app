@@ -2,7 +2,11 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
-import { Flag, FlagOff } from "lucide-react";
+import { AlarmClockCheck, AlarmClockMinus, CircleDollarSign, Flag, FlagOff, Receipt, ReceiptText, Sparkles, Tag, Tally1, Tally4 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import SpanColumn from "@/components/span-column";
+import { Clock12 } from "lucide-react";
+
 export type ShippingRatesColumn = {
   id: string;
   name: string;
@@ -38,16 +42,65 @@ const ShippingTaxcodeMapping: Record<string, string> = {
 
 export const columns: ColumnDef<ShippingRatesColumn>[] = [
   {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     accessorKey: "name",
-    header: "Tên",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Tên
+          <Tag className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     accessorKey: "amount",
-    header: "Số tiền",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          số tiền
+          <CircleDollarSign className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     accessorKey: "taxbehavior",
-    header: "Hành vi thuế",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thuế
+          <Receipt className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     cell: ({ row }) => {
       const taxbehaviortypeValue = row.original.taxbehavior;
       if (taxbehaviortypeValue && taxBehaviorMapping[taxbehaviortypeValue]) {
@@ -58,11 +111,29 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
   },
   {
     accessorKey: "valuemin",
-    header: "Thời gian thấp nhất",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian thấp nhất
+          <AlarmClockMinus className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     accessorKey: "unitmin",
-    header: "Đơn vị thấp nhất",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Đơn vị thấp nhất
+          <Tally1 className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     cell: ({ row }) => {
       const unimintypeValue = row.original.unitmin;
       if (unimintypeValue && unitMapping[unimintypeValue]) {
@@ -73,11 +144,29 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
   },
   {
     accessorKey: "valuemax",
-    header: "Thời gian tối đa",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian tối đa
+          <AlarmClockCheck className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     accessorKey: "unitmax",
-    header: "Đơn vị tối đa",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Đơn vị tối đa
+          <Tally4 className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     cell: ({ row }) => {
       const unitmaxtypeValue = row.original.unitmax;
       if (unitmaxtypeValue && unitMapping[unitmaxtypeValue]) {
@@ -88,7 +177,16 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
   },
   {
     accessorKey: "active",
-    header: "Hoạt động",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Hoạt động
+          <Sparkles className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     cell: ({ row }) => {
       const isActive = row.original.active;
       return isActive ? (
@@ -100,7 +198,16 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
   },
   {
     accessorKey: "taxcode",
-    header: "Thuế",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thuế
+          <ReceiptText className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     cell: ({ row }) => {
       const ShippingtaxcodetypeValue = row.original.taxcode;
       if (ShippingtaxcodetypeValue && ShippingTaxcodeMapping[ShippingtaxcodetypeValue]) {
@@ -111,7 +218,16 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: "Ngày",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian tạo
+          <Clock12 className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
   },
   {
     id: "actions",

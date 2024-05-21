@@ -2,7 +2,20 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
-import { Lock, Unlock } from "lucide-react";
+import {
+  Ban,
+  Clock12,
+  Hourglass,
+  Lock,
+  Minus,
+  Plus,
+  ShieldBan,
+  Tag,
+  Trash,
+  Unlock,
+  User,
+} from "lucide-react";
+import SpanColumn from "@/components/span-column";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -22,11 +35,26 @@ export type SystemsColumn = {
 export const columns: ColumnDef<SystemsColumn>[] = [
   {
     accessorKey: "oldChange",
-    header: "Cũ",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Cũ
+          <Minus className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     cell: ({ row }) => {
       const isBanforever = row.original.isbanforever;
       return (
-        <div className={isBanforever ? "line-through text-red-500" : "line-through text-gray-400"}>
+        <div
+          className={
+            isBanforever
+              ? "line-through text-red-500"
+              : "line-through text-gray-400"
+          }
+        >
           {row.original.oldChange}
         </div>
       );
@@ -34,7 +62,16 @@ export const columns: ColumnDef<SystemsColumn>[] = [
   },
   {
     accessorKey: "newChange",
-    header: "Mới",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Mới
+          <Plus className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     cell: ({ row }) => {
       const isBanforever = row.original.isbanforever;
       return (
@@ -46,7 +83,16 @@ export const columns: ColumnDef<SystemsColumn>[] = [
   },
   {
     accessorKey: "delete",
-    header: "Xóa",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Xóa
+          <Trash className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     cell: ({ row }) => {
       const isBanforever = row.original.isbanforever;
       return (
@@ -58,7 +104,16 @@ export const columns: ColumnDef<SystemsColumn>[] = [
   },
   {
     accessorKey: "banforever",
-    header: "Ban mãi mãi",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Ban mãi mãi
+          <Ban className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     cell: ({ row }) => {
       const isBanforever = row.original.isbanforever;
       return (
@@ -70,7 +125,16 @@ export const columns: ColumnDef<SystemsColumn>[] = [
   },
   {
     accessorKey: "timebanforever",
-    header: "thời gian ban",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian ban
+          <Hourglass className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     cell: ({ row }) => {
       const isBanforever = row.original.isbanforever;
       return (
@@ -82,7 +146,16 @@ export const columns: ColumnDef<SystemsColumn>[] = [
   },
   {
     accessorKey: "isbanforever",
-    header: "isbanforever",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          isbanforever
+          <ShieldBan className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     cell: ({ row }) => {
       const isBanforever = row.original.isbanforever;
       return (
@@ -98,7 +171,16 @@ export const columns: ColumnDef<SystemsColumn>[] = [
   },
   {
     accessorKey: "type",
-    header: "Loại",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Loại
+          <Tag className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     cell: ({ row }) => {
       const isBanforever = row.original.isbanforever;
       return (
@@ -110,7 +192,16 @@ export const columns: ColumnDef<SystemsColumn>[] = [
   },
   {
     accessorKey: "user",
-    header: "Người dùng",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Người dùng
+          <User className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     cell: ({ row }) => {
       const isBanforever = row.original.isbanforever;
       return (
@@ -122,7 +213,16 @@ export const columns: ColumnDef<SystemsColumn>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: "Thời gian tạo",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian tạo
+          <Clock12 className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     cell: ({ row }) => {
       const isBanforever = row.original.isbanforever;
       return (

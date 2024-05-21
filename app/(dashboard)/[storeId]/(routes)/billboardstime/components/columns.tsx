@@ -2,8 +2,13 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
-import { AlarmClock, AlarmClockOff } from "lucide-react";
+import { AlarmClock, AlarmClockOff, Timer, TimerOff, TimerReset } from "lucide-react";
 import Image from "next/image";
+import SpanColumn from "@/components/span-column";
+import { Images as ImageIcon } from "lucide-react";
+import { Clock12, Tag } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type BillboardTimeColumn = {
@@ -18,8 +23,39 @@ export type BillboardTimeColumn = {
 
 export const columns: ColumnDef<BillboardTimeColumn>[] = [
   {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     accessorKey: "label",
-    header: "Label",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Lable
+          <Tag className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      )
+    },
     cell: ({ row }) => {
       const isActive = row.original.isTimeout;
       const label = row.original.label;
@@ -32,7 +68,16 @@ export const columns: ColumnDef<BillboardTimeColumn>[] = [
   },
   {
     accessorKey: "imagebillboard",
-    header: "Hình ảnh",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Hình ảnh
+          <ImageIcon className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      )
+    },
     // Define a custom cell to render the image
     cell: ({ row }) => {
       const imagebillboardtime = row.original.imagebillboardtime;
@@ -59,7 +104,16 @@ export const columns: ColumnDef<BillboardTimeColumn>[] = [
   },
   {
     accessorKey: "timeout",
-    header: "timeout",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Time out
+          <Timer className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      )
+    },
     cell: ({ row }) => {
       const isActive = row.original.isTimeout;
       const timeout = row.original.timeout;
@@ -72,7 +126,16 @@ export const columns: ColumnDef<BillboardTimeColumn>[] = [
   },
   {
     accessorKey: "end",
-    header: "Thời gian hết",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian hết
+          <TimerOff className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      )
+    },
     cell: ({ row }) => {
       const isActive = row.original.isTimeout;
       const endTime = row.original.end;
@@ -86,7 +149,16 @@ export const columns: ColumnDef<BillboardTimeColumn>[] = [
   
   {
     accessorKey: "isTimeout",
-    header: "isTimeout",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          isTimeout
+          <TimerReset className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      )
+    },
     cell: ({ row }) => {
       const isActive = row.original.isTimeout;
       return (
@@ -102,7 +174,16 @@ export const columns: ColumnDef<BillboardTimeColumn>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: "Date",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian tạo
+          <Clock12 className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      )
+    },
     cell: ({ row }) => {
       const isActive = row.original.isTimeout;
       const createdAt = row.original.createdAt;

@@ -168,3 +168,8 @@ body,
     top: 50%; /* Cho màn hình lớn */
   }
 }
+
+.accordion-trigger svg {
+  transform: none !important;
+}
+
