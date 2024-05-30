@@ -5,7 +5,7 @@ import { useState, ChangeEvent } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
-import { Trash } from "lucide-react";
+import { Minus, Plus, Trash } from "lucide-react";
 import { Category, Size, Color, ProductDetail } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
 
@@ -25,79 +25,215 @@ import { AlertModal } from "@/components/modals/alert-modal";
 import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
-  title: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
-  promotionheading: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
-  promotiondescription: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
-  warranty1: z.optional(z.coerce.number().min(500,{message: "Hãy nhập ít nhất 500 đồng."})),
-  warranty2: z.optional(z.coerce.number().min(500,{message: "Hãy nhập ít nhất 500 đồng."})),
-  warranty3: z.optional(z.coerce.number().min(500,{message: "Hãy nhập ít nhất 500 đồng."})),
-  warranty4: z.optional(z.coerce.number().min(500,{message: "Hãy nhập ít nhất 500 đồng."})),
+  title: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
+  promotionheading: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
+  promotiondescription: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
+  warranty1: z.optional(
+    z.coerce.number().min(0, { message: "Không được nhập số âm." })
+  ),
+  warranty2: z.optional(
+    z.coerce.number().min(0, { message: "Không được nhập số âm." })
+  ),
+  warranty3: z.optional(
+    z.coerce.number().min(0, { message: "Không được nhập số âm." })
+  ),
+  warranty4: z.optional(
+    z.coerce.number().min(0, { message: "Không được nhập số âm." })
+  ),
   // Specification
-  descriptionspecifications: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
-  valuespecifications: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
-  description2specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  value2specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  description3specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  value3specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  description4specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  value4specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  description5specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  value5specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  description6specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  value6specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  description7specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  value7specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  description8specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  value8specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  description9specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  value9specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  description10specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  value10specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  description11specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  value11specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  description12specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  value12specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  description13specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  value13specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  description14specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  value14specifications: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
+  descriptionspecifications: z
+    .string()
+    .min(4, { message: "Nhập ít nhất 4 ký tự." }),
+  valuespecifications: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
+  description2specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  value2specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  description3specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  value3specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  description4specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  value4specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  description5specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  value5specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  description6specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  value6specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  description7specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  value7specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  description8specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  value8specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  description9specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  value9specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  description10specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  value10specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  description11specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  value11specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  description12specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  value12specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  description13specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  value13specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  description14specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
+  value14specifications: z.optional(
+    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
+  ),
   // salientfeatures:
-  descriptionsalientfeatures: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
-  description2salientfeatures: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
-  description3salientfeatures: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
-  description4salientfeatures: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
-  contentsalientfeatures: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
-  size1Id: z.string().min(1,{message: "Hãy chọn 1 size phù hợp."}),
-  color1Id: z.string().min(1,{message: "Hãy chọn 1 color phù hợp."}),
-  size2Id: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  color2Id: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  size3Id: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  color3Id: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  size4Id: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  color4Id: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  size5Id: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  color5Id: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  price1: z.coerce.number().min(500,{message: "Hãy nhập ít nhất 500 đồng."}),
-  price2: z.optional(z.coerce.number().min(500,{message: "Hãy nhập ít nhất 500 đồng."})),
-  price3: z.optional(z.coerce.number().min(500,{message: "Hãy nhập ít nhất 500 đồng."})),
-  price4: z.optional(z.coerce.number().min(500,{message: "Hãy nhập ít nhất 500 đồng."})),
-  price5: z.optional(z.coerce.number().min(500,{message: "Hãy nhập ít nhất 500 đồng."})),
-  name1: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
-  name2: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  name3: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  name4: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  name5: z.optional(z.string().min(4,{message: "Nhập ít nhất 4 ký tự."})),
-  percentpromotion1: z.coerce.number().min(1,{message: "Hãy nhập ít nhất 1%."}),
-  percentpromotion2: z.optional(z.coerce.number().min(1,{message: "Hãy nhập ít nhất 1%."})),
-  percentpromotion3: z.optional(z.coerce.number().min(1,{message: "Hãy nhập ít nhất 1%."})),
-  percentpromotion4: z.optional(z.coerce.number().min(1,{message: "Hãy nhập ít nhất 1%."})),
-  percentpromotion5: z.optional(z.coerce.number().min(1,{message: "Hãy nhập ít nhất 1%."})),
-  quantity1: z.coerce.number().min(1,{message: "Hãy nhập ít nhất 1."}),
-  quantity2: z.optional(z.coerce.number().min(1,{message: "Hãy nhập ít nhất 1 số lượng."})),
-  quantity3: z.optional(z.coerce.number().min(1,{message: "Hãy nhập ít nhất 1 số lượng."})),
-  quantity4: z.optional(z.coerce.number().min(1,{message: "Hãy nhập ít nhất 1 số lượng."})),
-  quantity5: z.optional(z.coerce.number().min(1,{message: "Hãy nhập ít nhất 1 số lượng."})),
-  categoryId: z.string().min(1,{message: "Hãy chọn 1 category phù hợp."}),
+  descriptionsalientfeatures: z
+    .string()
+    .min(4, { message: "Nhập ít nhất 4 ký tự." }),
+  description2salientfeatures: z
+    .string()
+    .min(4, { message: "Nhập ít nhất 4 ký tự." }),
+  description3salientfeatures: z
+    .string()
+    .min(4, { message: "Nhập ít nhất 4 ký tự." }),
+  description4salientfeatures: z
+    .string()
+    .min(4, { message: "Nhập ít nhất 4 ký tự." }),
+  contentsalientfeatures: z
+    .string()
+    .min(4, { message: "Nhập ít nhất 4 ký tự." }),
+  size1Id: z.string().min(1, { message: "Hãy chọn 1 size phù hợp." }),
+  color1Id: z.string().min(1, { message: "Hãy chọn 1 color phù hợp." }),
+  size2Id: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
+  color2Id: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
+  size3Id: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
+  color3Id: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
+  size4Id: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
+  color4Id: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
+  size5Id: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
+  color5Id: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
+  price1: z.coerce.number().min(500, { message: "Hãy nhập ít nhất 500 đồng." }),
+  price2: z.optional(
+    z.coerce.number().min(500, { message: "Hãy nhập ít nhất 500 đồng." })
+  ),
+  price3: z.optional(
+    z.coerce.number().min(500, { message: "Hãy nhập ít nhất 500 đồng." })
+  ),
+  price4: z.optional(
+    z.coerce.number().min(500, { message: "Hãy nhập ít nhất 500 đồng." })
+  ),
+  price5: z.optional(
+    z.coerce.number().min(500, { message: "Hãy nhập ít nhất 500 đồng." })
+  ),
+  name1: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
+  name2: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
+  name3: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
+  name4: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
+  name5: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
+  percentpromotion1: z.coerce
+    .number()
+    .int()
+    .min(1, { message: "Hãy nhập phần trăm từ 1 đến 100." })
+    .max(100, { message: "Hãy nhập phần trăm từ 1 đến 100." }),
+  percentpromotion2: z.optional(
+    z.coerce
+      .number()
+      .int()
+      .min(1, { message: "Hãy nhập phần trăm từ 1 đến 100." })
+      .max(100, { message: "Hãy nhập phần trăm từ 1 đến 100." })
+  ),
+  percentpromotion3: z.optional(
+    z.coerce
+      .number()
+      .int()
+      .min(1, { message: "Hãy nhập phần trăm từ 1 đến 100." })
+      .max(100, { message: "Hãy nhập phần trăm từ 1 đến 100." })
+  ),
+  percentpromotion4: z.optional(
+    z.coerce
+      .number()
+      .int()
+      .min(1, { message: "Hãy nhập phần trăm từ 1 đến 100." })
+      .max(100, { message: "Hãy nhập phần trăm từ 1 đến 100." })
+  ),
+  percentpromotion5: z.optional(
+    z.coerce
+      .number()
+      .int()
+      .min(1, { message: "Hãy nhập phần trăm từ 1 đến 100." })
+      .max(100, { message: "Hãy nhập phần trăm từ 1 đến 100." })
+  ),
+  quantity1: z.coerce
+    .number()
+    .int()
+    .min(1, { message: "Hãy nhập số lượng từ 1 đến 9999." })
+    .max(9999, { message: "Hãy nhập số lượng từ 1 đến 9999." }),
+  quantity2: z.optional(
+    z.coerce
+      .number()
+      .int()
+      .min(1, { message: "Hãy nhập số lượng từ 1 đến 9999." })
+      .max(9999, { message: "Hãy nhập số lượng từ 1 đến 9999." })
+  ),
+  quantity3: z.optional(
+    z.coerce
+      .number()
+      .int()
+      .min(1, { message: "Hãy nhập số lượng từ 1 đến 9999." })
+      .max(9999, { message: "Hãy nhập số lượng từ 1 đến 9999." })
+  ),
+  quantity4: z.optional(
+    z.coerce
+      .number()
+      .int()
+      .min(1, { message: "Hãy nhập số lượng từ 1 đến 9999." })
+      .max(9999, { message: "Hãy nhập số lượng từ 1 đến 9999." })
+  ),
+  quantity5: z.optional(
+    z.coerce
+      .number()
+      .int()
+      .min(1, { message: "Hãy nhập số lượng từ 1 đến 9999." })
+      .max(9999, { message: "Hãy nhập số lượng từ 1 đến 9999." })
+  ),
+  categoryId: z.string().min(1, { message: "Hãy chọn 1 category phù hợp." }),
 });
 
 type ProductDetailFormValues = z.infer<typeof formSchema>;
@@ -121,11 +257,270 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [name1Value, setName1Value] = useState("");
-  const [name2Value, setName2Value] = useState("");
-  const [name3Value, setName3Value] = useState("");
-  const [name4Value, setName4Value] = useState("");
-  const [name5Value, setName5Value] = useState("");
+  const [name1Value, setName1Value] = useState(initialData?.name1 || "");
+  const [name2Value, setName2Value] = useState(initialData?.name2 || "");
+  const [name3Value, setName3Value] = useState(initialData?.name3 || "");
+  const [name4Value, setName4Value] = useState(initialData?.name4 || "");
+  const [name5Value, setName5Value] = useState(initialData?.name5 || "");
+  const [description1Change, setDescription1Chnage] = useState(
+    initialData?.descriptionspecifications || ""
+  );
+  const [value1Specifications, setValue1Specifications] = useState(
+    initialData?.valuespecifications || ""
+  );
+
+  const [description2Change, setDescription2Chnage] = useState(
+    initialData?.description2specifications || ""
+  );
+  const [value2Specifications, setValue2Specifications] = useState(
+    initialData?.value2specifications || ""
+  );
+
+  const [description3Change, setDescription3Chnage] = useState(
+    initialData?.description3specifications || ""
+  );
+  const [value3Specifications, setValue3Specifications] = useState(
+    initialData?.value3specifications || ""
+  );
+
+  const [description4Change, setDescription4Chnage] = useState(
+    initialData?.description4specifications || ""
+  );
+  const [value4Specifications, setValue4Specifications] = useState(
+    initialData?.value4specifications || ""
+  );
+
+  const [description5Change, setDescription5Chnage] = useState(
+    initialData?.description5specifications || ""
+  );
+  const [value5Specifications, setValue5Specifications] = useState(
+    initialData?.value5specifications || ""
+  );
+
+  const [description6Change, setDescription6Chnage] = useState(
+    initialData?.description6specifications || ""
+  );
+  const [value6Specifications, setValue6Specifications] = useState(
+    initialData?.value6specifications || ""
+  );
+
+  const [description7Change, setDescription7Chnage] = useState(
+    initialData?.description7specifications || ""
+  );
+  const [value7Specifications, setValue7Specifications] = useState(
+    initialData?.value7specifications || ""
+  );
+
+  const [description8Change, setDescription8Chnage] = useState(
+    initialData?.description8specifications || ""
+  );
+  const [value8Specifications, setValue8Specifications] = useState(
+    initialData?.value8specifications || ""
+  );
+
+  const [description9Change, setDescription9Chnage] = useState(
+    initialData?.description9specifications || ""
+  );
+  const [value9Specifications, setValue9Specifications] = useState(
+    initialData?.value9specifications || ""
+  );
+
+  const [description10Change, setDescription10Chnage] = useState(
+    initialData?.description10specifications || ""
+  );
+  const [value10Specifications, setValue10Specifications] = useState(
+    initialData?.value10specifications || ""
+  );
+
+  const [description11Change, setDescription11Chnage] = useState(
+    initialData?.description11specifications || ""
+  );
+  const [value11Specifications, setValue11Specifications] = useState(
+    initialData?.value11specifications || ""
+  );
+
+  const [description12Change, setDescription12Chnage] = useState(
+    initialData?.description12specifications || ""
+  );
+  const [value12Specifications, setValue12Specifications] = useState(
+    initialData?.value12specifications || ""
+  );
+
+  const [description13Change, setDescription13Chnage] = useState(
+    initialData?.description13specifications || ""
+  );
+  const [value13Specifications, setValue13Specifications] = useState(
+    initialData?.value13specifications || ""
+  );
+
+  const handleDescription1Change = (event: ChangeEvent<HTMLInputElement>) => {
+    setDescription1Chnage(event.target.value);
+  };
+
+  const handleValue1SpecificationsChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    setValue1Specifications(event.target.value);
+  };
+
+  const bothFields1Filled =
+    description1Change !== "" && value1Specifications !== "";
+
+  const handleDescription2Change = (event: ChangeEvent<HTMLInputElement>) => {
+    setDescription2Chnage(event.target.value);
+  };
+  const handleValue2SpecificationsChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    setValue2Specifications(event.target.value);
+  };
+
+  const bothFields2Filled =
+    description2Change !== "" && value2Specifications !== "";
+
+  const handleDescription3Change = (event: ChangeEvent<HTMLInputElement>) => {
+    setDescription3Chnage(event.target.value);
+  };
+  const handleValue3SpecificationsChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    setValue3Specifications(event.target.value);
+  };
+
+  const bothFields3Filled =
+    description3Change !== "" && value3Specifications !== "";
+  const handleDescription4Change = (event: ChangeEvent<HTMLInputElement>) => {
+    setDescription4Chnage(event.target.value);
+  };
+  const handleValue4SpecificationsChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    setValue4Specifications(event.target.value);
+  };
+
+  const bothFields4Filled =
+    description4Change !== "" && value4Specifications !== "";
+  const handleDescription5Change = (event: ChangeEvent<HTMLInputElement>) => {
+    setDescription5Chnage(event.target.value);
+  };
+  const handleValue5SpecificationsChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    setValue5Specifications(event.target.value);
+  };
+
+  const bothFields5Filled =
+    description5Change !== "" && value5Specifications !== "";
+  const handleDescription6Change = (event: ChangeEvent<HTMLInputElement>) => {
+    setDescription6Chnage(event.target.value);
+  };
+  const handleValue6SpecificationsChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    setValue6Specifications(event.target.value);
+  };
+
+  const bothFields6Filled =
+    description6Change !== "" && value6Specifications !== "";
+  const handleDescription7Change = (event: ChangeEvent<HTMLInputElement>) => {
+    setDescription7Chnage(event.target.value);
+  };
+  const handleValue7SpecificationsChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    setValue7Specifications(event.target.value);
+  };
+
+  const bothFields7Filled =
+    description7Change !== "" && value7Specifications !== "";
+  const handleDescription8Change = (event: ChangeEvent<HTMLInputElement>) => {
+    setDescription8Chnage(event.target.value);
+  };
+  const handleValue8SpecificationsChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    setValue8Specifications(event.target.value);
+  };
+
+  const bothFields8Filled =
+    description8Change !== "" && value8Specifications !== "";
+  const handleDescription9Change = (event: ChangeEvent<HTMLInputElement>) => {
+    setDescription9Chnage(event.target.value);
+  };
+  const handleValue9SpecificationsChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    setValue9Specifications(event.target.value);
+  };
+
+  const bothFields9Filled =
+    description9Change !== "" && value9Specifications !== "";
+  const handleDescription10Change = (event: ChangeEvent<HTMLInputElement>) => {
+    setDescription10Chnage(event.target.value);
+  };
+  const handleValue10SpecificationsChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    setValue10Specifications(event.target.value);
+  };
+
+  const bothFields10Filled =
+    description10Change !== "" && value10Specifications !== "";
+  const handleDescription11Change = (event: ChangeEvent<HTMLInputElement>) => {
+    setDescription11Chnage(event.target.value);
+  };
+  const handleValue11SpecificationsChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    setValue11Specifications(event.target.value);
+  };
+
+  const bothFields11Filled =
+    description11Change !== "" && value11Specifications !== "";
+  const handleDescription12Change = (event: ChangeEvent<HTMLInputElement>) => {
+    setDescription12Chnage(event.target.value);
+  };
+  const handleValue12SpecificationsChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    setValue12Specifications(event.target.value);
+  };
+
+  const bothFields12Filled =
+    description12Change !== "" && value12Specifications !== "";
+  const handleDescription13Change = (event: ChangeEvent<HTMLInputElement>) => {
+    setDescription13Chnage(event.target.value);
+  };
+  const handleValue13SpecificationsChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    setValue13Specifications(event.target.value);
+  };
+
+  const bothFields13Filled =
+    description13Change !== "" && value13Specifications !== "";
+
+  //Logic dùng để +1 hoặc -1 description và value khi click vào plus hoặc minus
+  const [visiblePairs, setVisiblePairs] = useState(0);
+  // Định nghĩa một biến state để xác định hướng của sự thay đổi
+  const [increase, setIncrease] = useState(true);
+
+  const togglePairs = () => {
+    setVisiblePairs((prevVisiblePairs) => {
+      if (prevVisiblePairs === 12) {
+        setIncrease(false); // Khi đạt giá trị 12, chuyển hướng đi sang giảm dần
+      } else if (prevVisiblePairs === 0) {
+        setIncrease(true); // Khi đạt giá trị 0, chuyển hướng đi sang tăng dần
+      }
+
+      // Dựa vào hướng đi, thực hiện tăng hoặc giảm giá trị
+      if (increase) {
+        return prevVisiblePairs + 1;
+      } else {
+        return prevVisiblePairs - 1;
+      }
+    });
+  };
 
   const handleName1Change = (event: ChangeEvent<HTMLInputElement>) => {
     setName1Value(event.target.value);
@@ -158,68 +553,111 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
     defaultValues: initialData
       ? {
           ...initialData,
-          warranty1: parseFloat(String(initialData?.warranty1)),
-          warranty2: parseFloat(String(initialData?.warranty2)),
-          warranty3: parseFloat(String(initialData?.warranty3)),
-          warranty4: parseFloat(String(initialData?.warranty4)),
+          warranty1: parseFloat(String(initialData?.warranty1)) || 0,
+          warranty2: parseFloat(String(initialData?.warranty2)) || 0,
+          warranty3: parseFloat(String(initialData?.warranty3)) || 0,
+          warranty4: parseFloat(String(initialData?.warranty4)) || 0,
           price1: parseFloat(String(initialData?.price1)),
           percentpromotion1: parseFloat(String(initialData?.percentpromotion1)),
-          price2: parseFloat(String(initialData?.price2)),
-          percentpromotion2: parseFloat(String(initialData?.percentpromotion2)),
-          price3: parseFloat(String(initialData?.price3)),
-          percentpromotion3: parseFloat(String(initialData?.percentpromotion3)),
-          price4: parseFloat(String(initialData?.price4)),
-          percentpromotion4: parseFloat(String(initialData?.percentpromotion4)),
-          price5: parseFloat(String(initialData?.price5)),
-          percentpromotion5: parseFloat(String(initialData?.percentpromotion5)),
-          size1Id: "",
-          color1Id: "",
-          size2Id: "" || null || undefined,
-          color2Id: "" || null || undefined,
-          size3Id: "" || null || undefined,
-          color3Id: "" || null || undefined,
-          size4Id: "" || null || undefined,
-          color4Id: "" || null || undefined,
-          size5Id: "" || null || undefined,
-          color5Id: "" || null || undefined,
-          name1: "",
-          name2: "" || null || undefined,
-          name3: "" || null || undefined,
-          name4: "" || null || undefined,
-          name5: "" || null || undefined,
-          quantity1: 0 || null || undefined,
-          quantity2: 0 || null || undefined,
-          quantity3: 0 || null || undefined,
-          quantity4: 0 || null || undefined,
-          quantity5: 0 || null || undefined,
-          descriptionspecifications: "",
-          valuespecifications: "",
-          description2specifications: "" || null || undefined,
-          value2specifications: "" || null || undefined,
-          description3specifications: "" || null || undefined,
-          value3specifications: "" || null || undefined,
-          description4specifications: "" || null || undefined,
-          value4specifications: "" || null || undefined,
-          description5specifications: "" || null || undefined,
-          value5specifications: "" || null || undefined,
-          description6specifications: "" || null || undefined,
-          value6specifications: "" || null || undefined,
-          description7specifications: "" || null || undefined,
-          value7specifications: "" || null || undefined,
-          description8specifications: "" || null || undefined,
-          value8specifications: "" || null || undefined,
-          description9specifications: "" || null || undefined,
-          value9specifications: "" || null || undefined,
-          description10specifications: "" || null || undefined,
-          value10specifications: "" || null || undefined,
-          description11specifications: "" || null || undefined,
-          value11specifications: "" || null || undefined,
-          description12specifications: "" || null || undefined,
-          value12specifications: "" || null || undefined,
-          description13specifications: "" || null || undefined,
-          value13specifications: "" || null || undefined,
-          description14specifications: "" || null || undefined,
-          value14specifications: "" || null || undefined,
+          price2: parseFloat(String(initialData?.price2)) || null || undefined,
+          percentpromotion2:
+            parseFloat(String(initialData?.percentpromotion2)) ||
+            null ||
+            undefined,
+          price3: parseFloat(String(initialData?.price3)) || null || undefined,
+          percentpromotion3:
+            parseFloat(String(initialData?.percentpromotion3)) ||
+            null ||
+            undefined,
+          price4: parseFloat(String(initialData?.price4)) || null || undefined,
+          percentpromotion4:
+            parseFloat(String(initialData?.percentpromotion4)) ||
+            null ||
+            undefined,
+          price5: parseFloat(String(initialData?.price5)) || null || undefined,
+          percentpromotion5:
+            parseFloat(String(initialData?.percentpromotion5)) ||
+            null ||
+            undefined,
+          size1Id: initialData.size1Id,
+          color1Id: initialData.color1Id,
+          size2Id: initialData.size2Id || null || undefined,
+          color2Id: initialData.color2Id || null || undefined,
+          size3Id: initialData.size3Id || null || undefined,
+          color3Id: initialData.color3Id || null || undefined,
+          size4Id: initialData.size4Id || null || undefined,
+          color4Id: initialData.color4Id || null || undefined,
+          size5Id: initialData.size5Id || null || undefined,
+          color5Id: initialData.color5Id || null || undefined,
+          name1: initialData.name1,
+          name2: initialData.name2 || null || undefined,
+          name3: initialData.name3 || null || undefined,
+          name4: initialData.name4 || null || undefined,
+          name5: initialData.name5 || null || undefined,
+          quantity1: initialData.quantity1,
+          quantity2: initialData.quantity2 || null || undefined,
+          quantity3: initialData.quantity3 || null || undefined,
+          quantity4: initialData.quantity4 || null || undefined,
+          quantity5: initialData.quantity5 || null || undefined,
+          descriptionspecifications: initialData.descriptionspecifications,
+          valuespecifications: initialData.valuespecifications,
+          description2specifications:
+            initialData.description2specifications || null || undefined,
+          value2specifications:
+            initialData.value2specifications || null || undefined,
+          description3specifications:
+            initialData.description3specifications || null || undefined,
+          value3specifications:
+            initialData.value3specifications || null || undefined,
+          description4specifications:
+            initialData.description4specifications || null || undefined,
+          value4specifications:
+            initialData.value4specifications || null || undefined,
+          description5specifications:
+            initialData.description5specifications || null || undefined,
+          value5specifications:
+            initialData.value5specifications || null || undefined,
+          description6specifications:
+            initialData.description6specifications || null || undefined,
+          value6specifications:
+            initialData.value6specifications || null || undefined,
+          description7specifications:
+            initialData.description7specifications || null || undefined,
+          value7specifications:
+            initialData.value7specifications || null || undefined,
+          description8specifications:
+            initialData.description8specifications || null || undefined,
+          value8specifications:
+            initialData.value8specifications || null || undefined,
+          description9specifications:
+            initialData.description9specifications || null || undefined,
+          value9specifications:
+            initialData.value9specifications || null || undefined,
+          description10specifications:
+            initialData.description10specifications || null || undefined,
+          value10specifications:
+            initialData.value10specifications || null || undefined,
+          description11specifications:
+            initialData.description11specifications || null || undefined,
+          value11specifications:
+            initialData.value11specifications || null || undefined,
+          description12specifications:
+            initialData.description12specifications || null || undefined,
+          value12specifications:
+            initialData.value12specifications || null || undefined,
+          description13specifications:
+            initialData.description13specifications || null || undefined,
+          value13specifications:
+            initialData.value13specifications || null || undefined,
+          description14specifications:
+            initialData.description14specifications || null || undefined,
+          value14specifications:
+            initialData.value14specifications || null || undefined,
+          descriptionsalientfeatures: initialData.descriptionsalientfeatures,
+          description2salientfeatures: initialData.description2salientfeatures,
+          description3salientfeatures: initialData.description3salientfeatures,
+          description4salientfeatures: initialData.description4salientfeatures,
+          contentsalientfeatures: initialData.contentsalientfeatures,
         }
       : {
           title: "",
@@ -286,6 +724,11 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
           value13specifications: "" || null || undefined,
           description14specifications: "" || null || undefined,
           value14specifications: "" || null || undefined,
+          descriptionsalientfeatures: "" || null || undefined,
+          description2salientfeatures: "" || null || undefined,
+          description3salientfeatures: "" || null || undefined,
+          description4salientfeatures: "" || null || undefined,
+          contentsalientfeatures: "" || null || undefined,
         },
   });
 
@@ -421,7 +864,9 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tiêu đề <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel>
+                    Tiêu đề <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -439,7 +884,10 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="name1"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên sản phẩm 1 <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel>
+                    Tên sản phẩm 1{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -463,7 +911,10 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="price1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Giá sản phẩm 1 <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                      <FormLabel>
+                        Giá sản phẩm 1{" "}
+                        <span className="text-red-600 pl-1">(*)</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -483,7 +934,10 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="percentpromotion1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Giảm giá sản phẩm 1 <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                      <FormLabel>
+                        Giảm giá sản phẩm 1{" "}
+                        <span className="text-red-600 pl-1">(*)</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -503,7 +957,10 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="quantity1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Số lượng còn trong kho 1 <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                      <FormLabel>
+                        Số lượng còn trong kho 1{" "}
+                        <span className="text-red-600 pl-1">(*)</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -856,7 +1313,9 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="promotionheading"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Khuyến mãi sỉ</FormLabel>
+                  <FormLabel>
+                    Khuyến mãi sỉ <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -873,7 +1332,10 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="promotiondescription"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Khuyến mãi thầu</FormLabel>
+                  <FormLabel>
+                    Khuyến mãi thầu{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -966,12 +1428,18 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="descriptionspecifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thông số <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel>
+                    Thông số <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
                       placeholder="Nhập thông số ..."
                       {...field}
+                      onChange={(event) => {
+                        handleDescription1Change(event);
+                        field.onChange(event);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -983,12 +1451,19 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="valuespecifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nội dung thông số <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel>
+                    Nội dung thông số{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
                       placeholder="Nhập nội dung thông số ..."
                       {...field}
+                      onChange={(event) => {
+                        handleValue1SpecificationsChange(event);
+                        field.onChange(event);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -996,453 +1471,608 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               )}
             />
 
-            <FormField
-              name="description2specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {(bothFields1Filled || visiblePairs >= 1) && (
+              <>
+                <FormField
+                  name="description2specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập thông số ..."
+                          {...field}
+                          onChange={(event) => {
+                            handleDescription2Change(event);
+                            field.onChange(event);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              name="value2specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  name="value2specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nội dung thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập nội dung thông số ..."
+                          {...field}
+                          onChange={(event) => {
+                            handleValue2SpecificationsChange(event);
+                            field.onChange(event);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
 
-            <FormField
-              name="description3specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {(bothFields2Filled || visiblePairs >= 2) && (
+              <>
+                <FormField
+                  name="description3specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập thông số ..."
+                          {...field}
+                          onChange={(event) => {
+                            handleDescription3Change(event);
+                            field.onChange(event);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              name="value3specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  name="value3specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nội dung thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập nội dung thông số ..."
+                          {...field}
+                          onChange={(event) => {
+                            handleValue3SpecificationsChange(event);
+                            field.onChange(event);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
 
-            <FormField
-              name="description4specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {(bothFields3Filled || visiblePairs >= 3) && (
+              <>
+                <FormField
+                  name="description4specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập thông số ..."
+                          {...field}
+                          onChange={(event) => {
+                            handleDescription4Change(event);
+                            field.onChange(event);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              name="value4specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  name="value4specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nội dung thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập nội dung thông số ..."
+                          {...field}
+                          onChange={(event) => {
+                            handleValue4SpecificationsChange(event);
+                            field.onChange(event);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+            {(bothFields4Filled || visiblePairs >= 4) && (
+              <>
+                <FormField
+                  name="description5specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập thông số ..."
+                          {...field}
+                          onChange={(event) => {
+                            handleDescription5Change(event);
+                            field.onChange(event);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              name="description5specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  name="value5specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nội dung thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập nội dung thông số ..."
+                          {...field}
+                          onChange={(event) => {
+                            handleValue5SpecificationsChange(event);
+                            field.onChange(event);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+            {(bothFields5Filled || visiblePairs >= 5) && (
+              <>
+                <FormField
+                  name="description6specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập thông số ..."
+                          {...field}
+                          onChange={(event) => {
+                            handleDescription6Change(event);
+                            field.onChange(event);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              name="value5specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  name="value6specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nội dung thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập nội dung thông số ..."
+                          {...field}
+                          onChange={(event) => {
+                            handleValue6SpecificationsChange(event);
+                            field.onChange(event);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+            {(bothFields6Filled || visiblePairs >= 6) && (
+              <>
+                <FormField
+                  name="description7specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập thông số ..."
+                          {...field}
+                          onChange={(event) => {
+                            handleDescription7Change(event);
+                            field.onChange(event);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              name="description6specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  name="value7specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nội dung thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập nội dung thông số ..."
+                          {...field}
+                          onChange={(event) => {
+                            handleValue7SpecificationsChange(event);
+                            field.onChange(event);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
 
-            <FormField
-              name="value6specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {(bothFields7Filled || visiblePairs >= 7) && (
+              <>
+                <FormField
+                  name="description8specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập thông số ..."
+                          {...field}
+                          onChange={(event) => {
+                            handleDescription8Change(event);
+                            field.onChange(event);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              name="description7specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  name="value8specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nội dung thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập nội dung thông số ..."
+                          {...field}
+                          onChange={(event) => {
+                            handleValue8SpecificationsChange(event);
+                            field.onChange(event);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+            {(bothFields8Filled || visiblePairs >= 8) && (
+              <>
+                <FormField
+                  name="description9specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập thông số ..."
+                          {...field}
+                          onChange={(event) => {
+                            handleDescription9Change(event);
+                            field.onChange(event);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              name="value7specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  name="value9specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nội dung thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập nội dung thông số ..."
+                          {...field}
+                          onChange={(event) => {
+                            handleValue9SpecificationsChange(event);
+                            field.onChange(event);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+            {(bothFields9Filled || visiblePairs >= 9) && (
+              <>
+                <FormField
+                  name="description10specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập thông số ..."
+                          {...field}
+                          onChange={(event) => {
+                            handleDescription10Change(event);
+                            field.onChange(event);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              name="description8specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  name="value10specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nội dung thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập nội dung thông số ..."
+                          {...field}
+                          onChange={(event) => {
+                            handleValue10SpecificationsChange(event);
+                            field.onChange(event);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+            {(bothFields10Filled || visiblePairs >= 10) && (
+              <>
+                <FormField
+                  name="description11specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập thông số ..."
+                          {...field}
+                          onChange={(event) => {
+                            handleDescription11Change(event);
+                            field.onChange(event);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              name="value8specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  name="value11specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nội dung thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập nội dung thông số ..."
+                          {...field}
+                          onChange={(event) => {
+                            handleValue11SpecificationsChange(event);
+                            field.onChange(event);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+            {(bothFields11Filled || visiblePairs >= 11) && (
+              <>
+                <FormField
+                  name="description12specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập thông số ..."
+                          {...field}
+                          onChange={(event) => {
+                            handleDescription12Change(event);
+                            field.onChange(event);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              name="description9specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  name="value12specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nội dung thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập nội dung thông số ..."
+                          {...field}
+                          onChange={(event) => {
+                            handleValue12SpecificationsChange(event);
+                            field.onChange(event);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+            {(bothFields12Filled || visiblePairs >= 12) && (
+              <>
+                <FormField
+                  name="description13specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập thông số ..."
+                          {...field}
+                          onChange={(event) => {
+                            handleDescription13Change(event);
+                            field.onChange(event);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              name="value9specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  name="value13specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nội dung thông số </FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập nội dung thông số ..."
+                          {...field}
+                          onChange={(event) => {
+                            handleValue13SpecificationsChange(event);
+                            field.onChange(event);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+            {(bothFields13Filled || visiblePairs >= 13) && (
+              <>
+                <FormField
+                  name="description14specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập thông số ..."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              name="description10specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  name="value14specifications"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nội dung thông số</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Nhập nội dung thông số ..."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
 
-            <FormField
-              name="value10specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+            <span
+              onClick={!loading ? togglePairs : () => {}} 
+              className={`dark:bg-white dark:hover:bg-slate-100 bg-black hover:bg-slate-900 flex justify-center space-y-2 items-center rounded-md  h-1/2 my-3 xl:my-auto ${
+                loading ? "cursor-no-drop opacity-50" : "cursor-pointer"
+              }`}
+            >
+              {visiblePairs === 0 || increase ? (
+                <Plus className="dark:text-black text-white" />
+              ) : (
+                <Minus className="dark:text-black text-white" />
               )}
-            />
-
-            <FormField
-              name="description11specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="value11specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="description12specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="value12specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="description13specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="value13specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số </FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="description14specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="value14specifications"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            </span>
 
             <FormField
               name="descriptionsalientfeatures"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mô tả tính năng nổi bật <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel>
+                    Mô tả tính năng nổi bật{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
                   <FormControl>
                     <Textarea
                       disabled={loading}
@@ -1459,7 +2089,10 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="description2salientfeatures"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mô tả tính năng nổi bật <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel>
+                    Mô tả tính năng nổi bật{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
                   <FormControl>
                     <Textarea
                       disabled={loading}
@@ -1476,7 +2109,10 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="description3salientfeatures"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mô tả tính năng nổi bật <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel>
+                    Mô tả tính năng nổi bật{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
                   <FormControl>
                     <Textarea
                       disabled={loading}
@@ -1493,7 +2129,10 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="description4salientfeatures"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mô tả tính năng nổi bật <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel>
+                    Mô tả tính năng nổi bật{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
                   <FormControl>
                     <Textarea
                       disabled={loading}
@@ -1510,7 +2149,10 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="contentsalientfeatures"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nội dung tính năng nổi bật <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel>
+                    Nội dung tính năng nổi bật{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
                   <FormControl>
                     <Textarea
                       disabled={loading}
@@ -1529,7 +2171,10 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="color1Id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Màu sản phẩm 1 <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                      <FormLabel>
+                        Màu sản phẩm 1{" "}
+                        <span className="text-red-600 pl-1">(*)</span>
+                      </FormLabel>
                       <Input
                         list="colors1"
                         onChange={(e) => {
@@ -1569,7 +2214,10 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="size1Id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Kích cỡ sản phẩm 1 <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                      <FormLabel>
+                        Kích cỡ sản phẩm 1{" "}
+                        <span className="text-red-600 pl-1">(*)</span>
+                      </FormLabel>
                       <Input
                         list="sizes1"
                         onChange={(e) => {
@@ -1942,7 +2590,9 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="categoryId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Loại <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel>
+                    Loại <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
                   <Input
                     list="categories"
                     onChange={(e) => {

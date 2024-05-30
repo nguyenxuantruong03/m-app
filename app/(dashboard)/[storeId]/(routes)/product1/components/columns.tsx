@@ -2,11 +2,20 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
-import { Home, PackageCheck, PackageX, Tag,ImageUp, Clock12, View  } from "lucide-react";
-import { Images  as ImageIcon  } from "lucide-react";
-import Image from "next/image";
+import {
+  Home,
+  PackageCheck,
+  PackageX,
+  Tag,
+  ImageUp,
+  Clock12,
+  View,
+} from "lucide-react";
+import { Images as ImageIcon } from "lucide-react";
 import SpanColumn from "@/components/span-column";
 import { Checkbox } from "@/components/ui/checkbox";
+import ImageCellMutiple from "@/components/image-cell-mutiple";
+import EditRow from "../_components/edit-row";
 
 export type ProductColumn = {
   id: string;
@@ -14,11 +23,14 @@ export type ProductColumn = {
   heading: string;
   description: string;
   productdetail: string;
+  productdetailId: string;
   images: string[];
   imagesalientfeatures: string[];
   isFeatured: boolean;
   isArchived: boolean;
   createdAt: string | null;
+  imagesalientfeaturesUrl: { url: string }[];
+  imagesUrl: { url: string }[];
 };
 
 export const columns: ColumnDef<ProductColumn>[] = [
@@ -56,6 +68,22 @@ export const columns: ColumnDef<ProductColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({ row }) => (
+      <EditRow
+        id={row.original.id}
+        data={row.original.heading}
+        name={row.original.name}
+        heading={row.original.heading}
+        description={row.original.description}
+        productdetail={row.original.productdetail}
+        imagesalientfeatures={row.original.imagesalientfeaturesUrl}
+        images={row.original.imagesUrl}
+        isFeatured={row.original.isFeatured}
+        isArchived={row.original.isArchived}
+        productdetailId={row.original.productdetailId}
+        field="heading"
+      />
+    ),
   },
   {
     accessorKey: "images",
@@ -69,28 +97,10 @@ export const columns: ColumnDef<ProductColumn>[] = [
         </SpanColumn>
       );
     },
-    // Define a custom cell to render the image
     cell: ({ row }) => {
-      const images = row.original.images;
-      // Check if the image URL array is available
-      if (Array.isArray(images) && images.length > 0) {
-        return (
-          <div>
-            {images.map((imageUrl, index) => (
-              <span key={index} className="avatar-overlapping-multiple-image">
-                <Image
-                  className="avatar-image-overlapping-multiple-image rounded-full"
-                  src={imageUrl}
-                  alt={`Image ${index + 1}`}
-                  width="50"
-                  height="50"
-                />
-              </span>
-            ))}
-          </div>
-        );
-      }
-      return "";
+      const imageUrl = row.original.imagesUrl;
+      const image = row.original.images;
+      return <ImageCellMutiple image={image} imageUrl={imageUrl} />;
     },
   },
   {
@@ -105,28 +115,10 @@ export const columns: ColumnDef<ProductColumn>[] = [
         </SpanColumn>
       );
     },
-    // Define a custom cell to render the image
     cell: ({ row }) => {
-      const imagesalientfeatures = row.original.imagesalientfeatures;
-      // Check if the image URL array is available
-      if (Array.isArray(imagesalientfeatures) && imagesalientfeatures.length > 0) {
-        return (
-          <div>
-            {imagesalientfeatures.map((imageUrl, index) => (
-              <span key={index} className="avatar-overlapping-multiple-image">
-                <Image
-                  className="avatar-image-overlapping-multiple-image rounded-full"
-                  src={imageUrl}
-                  alt={`Image ${index + 1}`}
-                  width="50"
-                  height="50"
-                />
-              </span>
-            ))}
-          </div>
-        );
-      }
-      return "";
+      const imageUrl = row.original.imagesalientfeaturesUrl;
+      const image = row.original.imagesalientfeatures;
+      return <ImageCellMutiple image={image} imageUrl={imageUrl} />;
     },
   },
   {
@@ -144,9 +136,9 @@ export const columns: ColumnDef<ProductColumn>[] = [
     cell: ({ row }) => {
       const isFeatured = row.original.isFeatured;
       return isFeatured ? (
-        <Home  className="w-5 h-5 text-green-500" />
+        <Home className="w-5 h-5 text-green-500" />
       ) : (
-        <Home  className="w-5 h-5 text-red-500" />
+        <Home className="w-5 h-5 text-red-500" />
       );
     },
   },
@@ -165,9 +157,9 @@ export const columns: ColumnDef<ProductColumn>[] = [
     cell: ({ row }) => {
       const isArchived = row.original.isArchived;
       return isArchived ? (
-        <PackageCheck  className="w-5 h-5 text-green-500" />
+        <PackageCheck className="w-5 h-5 text-green-500" />
       ) : (
-        <PackageX  className="w-5 h-5 text-red-500" />
+        <PackageX className="w-5 h-5 text-red-500" />
       );
     },
   },

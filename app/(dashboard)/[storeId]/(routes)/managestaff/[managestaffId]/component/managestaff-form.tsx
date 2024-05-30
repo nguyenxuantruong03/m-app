@@ -67,6 +67,7 @@ const formSchema = z.object({
   timestartwork: z.string().min(1, { message: "Hãy nhập giờ bắt đầu làm việc." }),
   urlimageCheckAttendance: z.optional(z.string().min(2,{message: "Nhập ít nhất 2 ký tự."})),
   codeNFC: z.optional(z.string().min(2,{message: "Nhập ít nhất 2 ký tự."})),
+  image: z.optional(z.string().min(1,{message: "Hãy chọn 1 ảnh."})),
   daywork: z.array(z.string()),
   createdAt: z.date().nullable(),
 });
@@ -112,6 +113,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
       urlimageCheckAttendance: initialData?.urlimageCheckAttendance ?? null!,
       codeNFC: initialData?.codeNFC ?? null!,
       daywork: initialData?.daywork ?? null!,
+      image: initialData?.image ?? null!,
       dateRange: initialData?.dateRange
         ? new Date(initialData?.dateRange)
         : null,
@@ -192,7 +194,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               <div className="flex-shrink-0 pt-0.5">
                 <Image
                   className="h-10 w-10 rounded-full"
-                  src={data.imageCredential[0]}
+                  src={data.imageCredential[0] || data.image || ""}
                   alt=""
                   width="50"
                   height="50"

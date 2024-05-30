@@ -32,7 +32,7 @@ const CustomNav: React.FC<CustomNavProps> = ({
   avatarImage,
   userId,
 }) => {
-  const [currentView, setCurrentView] = useState<List>(List.LISTICON);
+  const [currentView, setCurrentView] = useState<List>(List.LIST);
 
   const toggleView = () => {
     setCurrentView((prevView) => {
@@ -63,12 +63,12 @@ const CustomNav: React.FC<CustomNavProps> = ({
   return (
     <>
       <div className="w-12">
-        <Button className="m-2 fixed" onClick={toggleView}>
+        <Button className="m-2" onClick={toggleView}>
           <LayoutDashboard  className="size-5" />
         </Button>
       </div>
       {currentView === List.LIST && (
-        <div className="bg-red-300 rounded-md bg-opacity-50 pt-1 w-[280px] ml-2 mt-16">
+        <div className="bg-red-300 rounded-md bg-opacity-50 pt-1 w-[280px] ml-2">
           <div className="border-b relative">
             <div className="items-center px-4 my-4">
               <StoreSwitcher items={store} />
@@ -193,7 +193,7 @@ const CustomNav: React.FC<CustomNavProps> = ({
         </div>
       )}
       {currentView === List.LISTICON && (
-        <div className="bg-red-300 rounded-md bg-opacity-50 pt-1 w-[70px] ml-2 mt-16">
+        <div className="bg-red-300 rounded-md bg-opacity-50 pt-1 w-[70px] ml-2">
           <div className="border-b relative">
             <div className="items-center px-4 my-4">
               <NavbarIcon />

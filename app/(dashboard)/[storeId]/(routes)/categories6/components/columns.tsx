@@ -5,6 +5,7 @@ import { CellAction } from "./cell-action"
 import { Checkbox } from "@/components/ui/checkbox"
 import SpanColumn from "@/components/span-column"
 import { Clock12, Package } from "lucide-react"
+import EditRow from "../_components/edit-row"
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type CategoriesColumn = {
@@ -48,6 +49,7 @@ export const columns: ColumnDef<CategoriesColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({row}) => <EditRow data={row.original.name} id= {row.original.id}/>
   },
   {
     accessorKey: "createdAt",

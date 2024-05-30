@@ -2,10 +2,21 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
-import { Flag, FlagOff, SignalMedium, Signal, Sparkles, Receipt, CirclePercent, ReceiptText, NotebookPen } from "lucide-react";
+import {
+  Flag,
+  FlagOff,
+  SignalMedium,
+  Signal,
+  Sparkles,
+  Receipt,
+  CirclePercent,
+  ReceiptText,
+  NotebookPen,
+} from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import SpanColumn from "@/components/span-column";
 import { Clock12, Tag } from "lucide-react";
+import EditRow from "../_components/edit-row";
 
 export type TaxRateColumn = {
   id: string;
@@ -58,6 +69,19 @@ export const columns: ColumnDef<TaxRateColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({ row }) => (
+      <EditRow
+        id={row.original.id}
+        data={row.original.name}
+        name={row.original.name}
+        percentage={row.original.percentage}
+        active={row.original.active}
+        inclusive={row.original.inclusive}
+        taxtype={row.original.taxtype}
+        description={row.original.description}
+        field="name"
+      />
+    ),
   },
   {
     accessorKey: "percentage",
@@ -111,6 +135,19 @@ export const columns: ColumnDef<TaxRateColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({ row }) => (
+      <EditRow
+        id={row.original.id}
+        data={row.original.description}
+        name={row.original.name}
+        percentage={row.original.percentage}
+        active={row.original.active}
+        inclusive={row.original.inclusive}
+        taxtype={row.original.taxtype}
+        description={row.original.description}
+        field="description"
+      />
+    ),
   },
   {
     accessorKey: "inclusive",

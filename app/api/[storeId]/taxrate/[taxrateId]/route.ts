@@ -140,6 +140,30 @@ export async function PATCH(
       });
     }
 
+    if (!description) {
+      return new NextResponse(JSON.stringify({ error: "Description is required!" }), {
+        status: 400,
+      });
+    }
+
+    if (!percentage) {
+      return new NextResponse(JSON.stringify({ error: "Percentage is required!" }), {
+        status: 400,
+      });
+    }
+
+    if (!inclusive) {
+      return new NextResponse(JSON.stringify({ error: "Inclusive is required!" }), {
+        status: 400,
+      });
+    }
+
+    if (!active) {
+      return new NextResponse(JSON.stringify({ error: "Active is required!" }), {
+        status: 400,
+      });
+    }
+
     if (!params.taxrateId) {
       return new NextResponse(
         JSON.stringify({ error: "Taxrate id is required!" }),
@@ -172,7 +196,6 @@ export async function PATCH(
     await stripe.taxRates.update(params.taxrateId, {
       display_name: name,
       description: description,
-      tax_type: taxtype,
       active: active,
     });
 

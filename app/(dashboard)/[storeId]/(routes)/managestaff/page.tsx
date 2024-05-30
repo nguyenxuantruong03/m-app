@@ -37,6 +37,7 @@ const ManageStaff = async ({ params }: { params: { storeId: string } }) => {
         return orderItem;
       })
       .join(", "),
+    imageCredentialUrl: item.imageCredential,
     image: item.image,
     name: item.name,
     email: item.email,
@@ -56,6 +57,8 @@ const ManageStaff = async ({ params }: { params: { storeId: string } }) => {
     dateRange: item.dateRange
     ? format(item.dateRange, "dd/MM/yyyy")
     : null,
+    dateRangepatch: item.dateRange,
+    dateofbirthpatach: item.dateofbirth,
     dateofbirth: item.dateofbirth
     ? format(item.dateofbirth, "dd/MM/yyyy")
     : null,

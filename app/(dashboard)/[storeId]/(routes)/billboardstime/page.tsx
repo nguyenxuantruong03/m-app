@@ -59,6 +59,9 @@ const BillboardsTimePage = async ({
               { locale: viLocale }
             )
           : null,
+        imagebillboardtimepatch: item.imagebillboardtime,
+        endpatch: item.end,
+        timeoutpatch: item.timeout
       };
     }
   );

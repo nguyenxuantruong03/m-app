@@ -2,7 +2,6 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
-import Image from "next/image";
 import {
   AlarmClock,
   BriefcaseBusiness,
@@ -34,6 +33,8 @@ import {
 import { Image as ImageIcon } from "lucide-react";
 import { MailCheck } from "lucide-react";
 import SpanColumn from "@/components/span-column";
+import ImageCellOne from "@/components/image-cell-one";
+import EditRow from "../_components/edit-row";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -61,38 +62,9 @@ export type ManageStaffsColumn = {
   codeNFC: string | null;
   daywork: string[];
   createdAt: string | null;
-};
-
-const degreeMappings = {
-  None: "Không xác định",
-  Elementary: "Tiểu học",
-  JuniorHighSchool: "Trung học",
-  HighSchool: "Trung học phổ thông",
-  JuniorColleges: "Cao đẳng",
-  University: "Đại học",
-  MastersDegree: "Thạc sĩ",
-};
-
-const maritalStatusMappings = {
-  None: "Không xác định",
-  Single: "Độc thân",
-  Married: "Kết hôn",
-  Separated: "Ly hôn",
-  Remarried: "Tái hôn",
-};
-
-const wokingTimeMappings = {
-  None: "Không xác định",
-  Parttime4h: "4 tiếng",
-  Parttime8h: "8 tiếng",
-  Fulltime: "Cả ngày",
-  SeasonalJob: "Thời vụ",
-};
-
-const genderMappings = {
-  None: "Không xác định",
-  Male: "Nam",
-  Female: "Nữ",
+  imageCredentialUrl: string[]
+  dateRangepatch: Date | null;
+  dateofbirthpatach: Date | null;
 };
 
 export const columns: ColumnDef<ManageStaffsColumn>[] = [
@@ -134,9 +106,18 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
       // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
       return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
-          {row.original.name}
-        </div>
+        <span>
+          <EditRow isBanned={isBanned} data={row.original.name} name={row.original.name} 
+          id={row.original.id} numberCCCD = {row.original.numberCCCD} imageCredential={row.original.imageCredentialUrl}
+          image={row.original.image} email={row.original.email} role={row.original.role} ban={row.original.ban}
+          phonenumber={row.original.phonenumber} dateRange={row.original.dateRangepatch} dateofbirth={row.original.dateofbirthpatach}
+          urlimageCheckAttendance={row.original.urlimageCheckAttendance} codeNFC={row.original.codeNFC}
+          timestartwork={row.original.timestartwork} issued={row.original.issued} gender={row.original.gender}
+          degree={row.original.degree} maritalStatus={row.original.maritalStatus} workingTime={row.original.workingTime}
+          daywork={row.original.daywork} isCitizen={row.original.isCitizen} sentVeirifi={row.original.sentVeirifi}
+          field="name"
+          />
+        </span>
       );
     },
   },
@@ -174,18 +155,17 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
         </SpanColumn>
       );
     },
-    // Define a custom cell to render the image
     cell: ({ row }) => {
       const imageUrl = row.original.image;
+      const updateImage = row.original.createdAt;
+      const email = row.original.email;
       // Check if the image URL is available
       if (imageUrl) {
         return (
-          <Image
-            src={imageUrl}
-            alt="User Avatar"
-            width="50"
-            height="50"
-            className="rounded-full"
+          <ImageCellOne
+            imageUrl={imageUrl}
+            updateImage={updateImage}
+            email={email}
           />
         );
       }
@@ -205,16 +185,16 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      const imageCredentialUrl = row.original.imageCredential;
+      const imageUrl = row.original.imageCredential;
+      const updateImage = row.original.createdAt;
+      const email = row.original.email;
       // Check if the image URL is available
-      if (imageCredentialUrl) {
+      if (imageUrl) {
         return (
-          <Image
-            src={imageCredentialUrl}
-            alt="User Avatar"
-            width="50"
-            height="50"
-            className="rounded-full"
+          <ImageCellOne
+            imageUrl={imageUrl}
+            updateImage={updateImage}
+            email={email}
           />
         );
       }
@@ -274,11 +254,21 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
       );
     },
     cell: ({ row }) => {
+      // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
       return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
-          {row.original.numberCCCD}
-        </div>
+        <span>
+          <EditRow isBanned={isBanned} data={row.original.numberCCCD} name={row.original.name} 
+          id={row.original.id} numberCCCD = {row.original.numberCCCD} imageCredential={row.original.imageCredentialUrl}
+          image={row.original.image} email={row.original.email} role={row.original.role} ban={row.original.ban}
+          phonenumber={row.original.phonenumber} dateRange={row.original.dateRangepatch} dateofbirth={row.original.dateofbirthpatach}
+          urlimageCheckAttendance={row.original.urlimageCheckAttendance} codeNFC={row.original.codeNFC}
+          timestartwork={row.original.timestartwork} issued={row.original.issued} gender={row.original.gender}
+          degree={row.original.degree} maritalStatus={row.original.maritalStatus} workingTime={row.original.workingTime}
+          daywork={row.original.daywork} isCitizen={row.original.isCitizen} sentVeirifi={row.original.sentVeirifi}
+          field="numberCCCD"
+          />
+        </span>
       );
     },
   },
@@ -295,11 +285,21 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
       );
     },
     cell: ({ row }) => {
+      // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
       return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
-          {row.original.phonenumber}
-        </div>
+        <span>
+          <EditRow isBanned={isBanned} data={row.original.phonenumber} name={row.original.name} 
+          id={row.original.id} numberCCCD = {row.original.numberCCCD} imageCredential={row.original.imageCredentialUrl}
+          image={row.original.image} email={row.original.email} role={row.original.role} ban={row.original.ban}
+          phonenumber={row.original.phonenumber} dateRange={row.original.dateRangepatch} dateofbirth={row.original.dateofbirthpatach}
+          urlimageCheckAttendance={row.original.urlimageCheckAttendance} codeNFC={row.original.codeNFC}
+          timestartwork={row.original.timestartwork} issued={row.original.issued} gender={row.original.gender}
+          degree={row.original.degree} maritalStatus={row.original.maritalStatus} workingTime={row.original.workingTime}
+          daywork={row.original.daywork} isCitizen={row.original.isCitizen} sentVeirifi={row.original.sentVeirifi}
+          field="phonenumber"
+          />
+        </span>
       );
     },
   },
@@ -316,11 +316,21 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
       );
     },
     cell: ({ row }) => {
+      // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
       return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
-          {row.original.dateRange}
-        </div>
+        <span>
+          <EditRow isBanned={isBanned} data={row.original.dateRange} name={row.original.name} 
+          id={row.original.id} numberCCCD = {row.original.numberCCCD} imageCredential={row.original.imageCredentialUrl}
+          image={row.original.image} email={row.original.email} role={row.original.role} ban={row.original.ban}
+          phonenumber={row.original.phonenumber} dateRange={row.original.dateRangepatch} dateofbirth={row.original.dateofbirthpatach}
+          urlimageCheckAttendance={row.original.urlimageCheckAttendance} codeNFC={row.original.codeNFC}
+          timestartwork={row.original.timestartwork} issued={row.original.issued} gender={row.original.gender}
+          degree={row.original.degree} maritalStatus={row.original.maritalStatus} workingTime={row.original.workingTime}
+          daywork={row.original.daywork} isCitizen={row.original.isCitizen} sentVeirifi={row.original.sentVeirifi}
+          field="dateRange"
+          />
+        </span>
       );
     },
   },
@@ -337,11 +347,21 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
       );
     },
     cell: ({ row }) => {
+      // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
       return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
-          {row.original.dateofbirth}
-        </div>
+        <span>
+          <EditRow isBanned={isBanned} data={row.original.dateofbirth} name={row.original.name} 
+          id={row.original.id} numberCCCD = {row.original.numberCCCD} imageCredential={row.original.imageCredentialUrl}
+          image={row.original.image} email={row.original.email} role={row.original.role} ban={row.original.ban}
+          phonenumber={row.original.phonenumber} dateRange={row.original.dateRangepatch} dateofbirth={row.original.dateofbirthpatach}
+          urlimageCheckAttendance={row.original.urlimageCheckAttendance} codeNFC={row.original.codeNFC}
+          timestartwork={row.original.timestartwork} issued={row.original.issued} gender={row.original.gender}
+          degree={row.original.degree} maritalStatus={row.original.maritalStatus} workingTime={row.original.workingTime}
+          daywork={row.original.daywork} isCitizen={row.original.isCitizen} sentVeirifi={row.original.sentVeirifi}
+          field="dateofbirth"
+          />
+        </span>
       );
     },
   },
@@ -408,11 +428,21 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
       );
     },
     cell: ({ row }) => {
+      // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
       return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
-          {row.original.timestartwork}
-        </div>
+        <span>
+          <EditRow isBanned={isBanned} data={row.original.timestartwork} name={row.original.name} 
+          id={row.original.id} numberCCCD = {row.original.numberCCCD} imageCredential={row.original.imageCredentialUrl}
+          image={row.original.image} email={row.original.email} role={row.original.role} ban={row.original.ban}
+          phonenumber={row.original.phonenumber} dateRange={row.original.dateRangepatch} dateofbirth={row.original.dateofbirthpatach}
+          urlimageCheckAttendance={row.original.urlimageCheckAttendance} codeNFC={row.original.codeNFC}
+          timestartwork={row.original.timestartwork} issued={row.original.issued} gender={row.original.gender}
+          degree={row.original.degree} maritalStatus={row.original.maritalStatus} workingTime={row.original.workingTime}
+          daywork={row.original.daywork} isCitizen={row.original.isCitizen} sentVeirifi={row.original.sentVeirifi}
+          field="timestartwork"
+          />
+        </span>
       );
     },
   },
@@ -429,11 +459,21 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
       );
     },
     cell: ({ row }) => {
+      // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
       return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
-          {row.original.issued}
-        </div>
+        <span>
+          <EditRow isBanned={isBanned} data={row.original.issued} name={row.original.name} 
+          id={row.original.id} numberCCCD = {row.original.numberCCCD} imageCredential={row.original.imageCredentialUrl}
+          image={row.original.image} email={row.original.email} role={row.original.role} ban={row.original.ban}
+          phonenumber={row.original.phonenumber} dateRange={row.original.dateRangepatch} dateofbirth={row.original.dateofbirthpatach}
+          urlimageCheckAttendance={row.original.urlimageCheckAttendance} codeNFC={row.original.codeNFC}
+          timestartwork={row.original.timestartwork} issued={row.original.issued} gender={row.original.gender}
+          degree={row.original.degree} maritalStatus={row.original.maritalStatus} workingTime={row.original.workingTime}
+          daywork={row.original.daywork} isCitizen={row.original.isCitizen} sentVeirifi={row.original.sentVeirifi}
+          field="issued"
+          />
+        </span>
       );
     },
   },
@@ -463,15 +503,21 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
       );
     },
     cell: ({ row }) => {
+      // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
-      const genderValue: string | null | undefined = row.original.gender;
-      const genderText = genderValue
-        ? genderMappings[genderValue as keyof typeof genderMappings] || "None"
-        : "None";
       return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
-          {genderText}
-        </div>
+        <span>
+          <EditRow isBanned={isBanned} data={row.original.gender} name={row.original.name} 
+          id={row.original.id} numberCCCD = {row.original.numberCCCD} imageCredential={row.original.imageCredentialUrl}
+          image={row.original.image} email={row.original.email} role={row.original.role} ban={row.original.ban}
+          phonenumber={row.original.phonenumber} dateRange={row.original.dateRangepatch} dateofbirth={row.original.dateofbirthpatach}
+          urlimageCheckAttendance={row.original.urlimageCheckAttendance} codeNFC={row.original.codeNFC}
+          timestartwork={row.original.timestartwork} issued={row.original.issued} gender={row.original.gender}
+          degree={row.original.degree} maritalStatus={row.original.maritalStatus} workingTime={row.original.workingTime}
+          daywork={row.original.daywork} isCitizen={row.original.isCitizen} sentVeirifi={row.original.sentVeirifi}
+          field="gender"
+          />
+        </span>
       );
     },
   },
@@ -488,18 +534,21 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
       );
     },
     cell: ({ row }) => {
+      // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
-      const workingTimeValue: string | null | undefined =
-        row.original.workingTime;
-      const wokingTimeText = workingTimeValue
-        ? wokingTimeMappings[
-            workingTimeValue as keyof typeof wokingTimeMappings
-          ] || "None"
-        : "None";
       return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
-          {wokingTimeText}
-        </div>
+        <span>
+          <EditRow isBanned={isBanned} data={row.original.workingTime} name={row.original.name} 
+          id={row.original.id} numberCCCD = {row.original.numberCCCD} imageCredential={row.original.imageCredentialUrl}
+          image={row.original.image} email={row.original.email} role={row.original.role} ban={row.original.ban}
+          phonenumber={row.original.phonenumber} dateRange={row.original.dateRangepatch} dateofbirth={row.original.dateofbirthpatach}
+          urlimageCheckAttendance={row.original.urlimageCheckAttendance} codeNFC={row.original.codeNFC}
+          timestartwork={row.original.timestartwork} issued={row.original.issued} gender={row.original.gender}
+          degree={row.original.degree} maritalStatus={row.original.maritalStatus} workingTime={row.original.workingTime}
+          daywork={row.original.daywork} isCitizen={row.original.isCitizen} sentVeirifi={row.original.sentVeirifi}
+          field="workingTime"
+          />
+        </span>
       );
     },
   },
@@ -516,15 +565,21 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
       );
     },
     cell: ({ row }) => {
+      // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
-      const degreeValue: string | null | undefined = row.original.degree;
-      const degreeText = degreeValue
-        ? degreeMappings[degreeValue as keyof typeof degreeMappings] || "None"
-        : "None";
       return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
-          {degreeText}
-        </div>
+        <span>
+          <EditRow isBanned={isBanned} data={row.original.degree} name={row.original.name} 
+          id={row.original.id} numberCCCD = {row.original.numberCCCD} imageCredential={row.original.imageCredentialUrl}
+          image={row.original.image} email={row.original.email} role={row.original.role} ban={row.original.ban}
+          phonenumber={row.original.phonenumber} dateRange={row.original.dateRangepatch} dateofbirth={row.original.dateofbirthpatach}
+          urlimageCheckAttendance={row.original.urlimageCheckAttendance} codeNFC={row.original.codeNFC}
+          timestartwork={row.original.timestartwork} issued={row.original.issued} gender={row.original.gender}
+          degree={row.original.degree} maritalStatus={row.original.maritalStatus} workingTime={row.original.workingTime}
+          daywork={row.original.daywork} isCitizen={row.original.isCitizen} sentVeirifi={row.original.sentVeirifi}
+          field="degree"
+          />
+        </span>
       );
     },
   },
@@ -542,19 +597,21 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
       );
     },
     cell: ({ row }) => {
+      // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
-      const maritalStatusValue: string | null | undefined =
-        row.original.maritalStatus;
-      const maritalStatusText = maritalStatusValue
-        ? maritalStatusMappings[
-            maritalStatusValue as keyof typeof maritalStatusMappings
-          ] || "None"
-        : "None";
-
       return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
-          {maritalStatusText || maritalStatusValue}
-        </div>
+        <span>
+          <EditRow isBanned={isBanned} data={row.original.maritalStatus} name={row.original.name} 
+          id={row.original.id} numberCCCD = {row.original.numberCCCD} imageCredential={row.original.imageCredentialUrl}
+          image={row.original.image} email={row.original.email} role={row.original.role} ban={row.original.ban}
+          phonenumber={row.original.phonenumber} dateRange={row.original.dateRangepatch} dateofbirth={row.original.dateofbirthpatach}
+          urlimageCheckAttendance={row.original.urlimageCheckAttendance} codeNFC={row.original.codeNFC}
+          timestartwork={row.original.timestartwork} issued={row.original.issued} gender={row.original.gender}
+          degree={row.original.degree} maritalStatus={row.original.maritalStatus} workingTime={row.original.workingTime}
+          daywork={row.original.daywork} isCitizen={row.original.isCitizen} sentVeirifi={row.original.sentVeirifi}
+          field="maritalStatus"
+          />
+        </span>
       );
     },
   },

@@ -2,7 +2,6 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
-import Image from "next/image";
 import {
   AlarmClockOff,
   Circle,
@@ -16,6 +15,8 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import SpanColumn from "@/components/span-column";
 import { Clock12 } from "lucide-react";
+import ImageCellMutiple from "@/components/image-cell-mutiple";
+import EditRow from "../_components/edit-row";
 
 export type CouponColumn = {
   id: string;
@@ -27,6 +28,8 @@ export type CouponColumn = {
   redeemby: string | null;
   imagecoupon: string[] | null;
   createdAt: string | null;
+  redeembypatch: Date | null;
+  imagecouponpatch: { url: string }[];
 };
 
 const durationMapping: Record<string, string> = {
@@ -70,6 +73,20 @@ export const columns: ColumnDef<CouponColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({ row }) => (
+      <EditRow
+        id={row.original.id}
+        data={row.original.name}
+        name={row.original.name}
+        percent={row.original.percent}
+        durationinmoth={row.original.durationinmoth}
+        duration={row.original.duration}
+        maxredemptions={row.original.maxredemptions}
+        redeemby={row.original.redeembypatch}
+        imagecoupon={row.original.imagecouponpatch}
+        field="name"
+      />
+    ),
   },
   {
     accessorKey: "imagecoupon",
@@ -83,27 +100,11 @@ export const columns: ColumnDef<CouponColumn>[] = [
         </SpanColumn>
       );
     },
+    // Define a custom cell to render the image
     cell: ({ row }) => {
-      const images = row.original.imagecoupon;
-      // Check if the image URL array is available
-      if (Array.isArray(images) && images.length > 0) {
-        return (
-          <div>
-            {images.map((imageUrl, index) => (
-              <span key={index} className="avatar-overlapping-multiple-image">
-                <Image
-                  className="avatar-image-overlapping-multiple-image rounded-full"
-                  src={imageUrl}
-                  alt={`Image ${index + 1}`}
-                  width="50"
-                  height="50"
-                />
-              </span>
-            ))}
-          </div>
-        );
-      }
-      return "";
+      const imageUrl = row.original.imagecouponpatch;
+      const image = row.original.imagecoupon;
+      return <ImageCellMutiple image={image} imageUrl={imageUrl} />;
     },
   },
   {

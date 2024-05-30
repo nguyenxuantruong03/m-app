@@ -2,7 +2,6 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
-import Image from "next/image";
 import { useState } from "react";
 import { UserRole } from "@prisma/client";
 import { Button } from "@/components/ui/button";
@@ -35,6 +34,7 @@ import {
 import { Lock, Unlock } from "lucide-react";
 import SpanColumn from "@/components/span-column";
 import { Image as ImageIcon } from "lucide-react";
+import ImageCellOne from "@/components/image-cell-one";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -341,18 +341,17 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
         </SpanColumn>
       );
     },
-    // Define a custom cell to render the image
     cell: ({ row }) => {
       const imageUrl = row.original.image;
+      const updateImage = row.original.createdAt;
+      const email = row.original.email;
       // Check if the image URL is available
       if (imageUrl) {
         return (
-          <Image
-            src={imageUrl}
-            alt="User Avatar"
-            width="50"
-            height="50"
-            className="rounded-full"
+          <ImageCellOne
+            imageUrl={imageUrl}
+            updateImage={updateImage}
+            email={email}
           />
         );
       }
@@ -372,16 +371,16 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      const imageCredentialUrl = row.original.imageCredential;
+      const imageUrl = row.original.imageCredential;
+      const updateImage = row.original.createdAt;
+      const email = row.original.email;
       // Check if the image URL is available
-      if (imageCredentialUrl) {
+      if (imageUrl) {
         return (
-          <Image
-            src={imageCredentialUrl}
-            alt="User Avatar"
-            width="50"
-            height="50"
-            className="rounded-full"
+          <ImageCellOne
+            imageUrl={imageUrl}
+            updateImage={updateImage}
+            email={email}
           />
         );
       }

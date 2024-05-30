@@ -1,6 +1,6 @@
 "use client";
 
-import { ZoomModal } from "@/components/modals/zoom-modal";
+import { ZoomImageAttendanceModal } from "@/components/modals/zoom-image-one-modal";
 import SpanColumn from "@/components/span-column";
 import { ColumnDef } from "@tanstack/react-table";
 import {
@@ -27,6 +27,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { Image as ImageIcon } from "lucide-react";
+import ImageCellOne from "@/components/image-cell-one";
 
 export type ManageAttendancesColumn = {
   id: string;
@@ -46,40 +47,6 @@ export type ManageAttendancesColumn = {
   updateNFC: string | null;
   isCheckAttendanceImage: boolean | null;
   createdAt: string | null;
-};
-
-const ImageCell: React.FC<{
-  imageUrl: string;
-  updateImage: string | null;
-  email: string | null;
-}> = ({ imageUrl, updateImage, email }) => {
-  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
-
-  const openImageModal = () => setIsImageModalOpen(true);
-  const closeImageModal = () => setIsImageModalOpen(false);
-
-  return (
-    <>
-      <div className="cursor-pointer" onClick={openImageModal}>
-        <Image
-          src={imageUrl}
-          alt="User Avatar"
-          width="50"
-          height="50"
-          className="rounded-full"
-        />
-      </div>
-      {isImageModalOpen && (
-        <ZoomModal
-          imageUrl={imageUrl}
-          updateImage={updateImage}
-          email={email}
-          onClose={closeImageModal}
-          isOpen={true}
-        />
-      )}
-    </>
-  );
 };
 
 export const columns: ColumnDef<ManageAttendancesColumn>[] = [
@@ -128,7 +95,7 @@ export const columns: ColumnDef<ManageAttendancesColumn>[] = [
       // Check if the image URL is available
       if (imageUrl) {
         return (
-          <ImageCell
+          <ImageCellOne
             imageUrl={imageUrl}
             updateImage={updateImage}
             email={email}

@@ -145,6 +145,55 @@ export async function PATCH(
       );
     }
 
+    if(!name){
+      return new NextResponse(
+        JSON.stringify({ error: "Name is required!" }),
+        { status: 400 }
+      );
+    }
+
+    if(!taxbehavior){
+      return new NextResponse(
+        JSON.stringify({ error: "Taxbehavior is required!" }),
+        { status: 400 }
+      );
+    }
+
+    if(!amount){
+      return new NextResponse(
+        JSON.stringify({ error: "Amount is required!" }),
+        { status: 400 }
+      );
+    }
+
+    if(!unitmin){
+      return new NextResponse(
+        JSON.stringify({ error: "Unit min is required!" }),
+        { status: 400 }
+      );
+    }
+
+    if(!valuemin){
+      return new NextResponse(
+        JSON.stringify({ error: "Value min is required!" }),
+        { status: 400 }
+      );
+    }
+
+    if(!unitmax){
+      return new NextResponse(
+        JSON.stringify({ error: "Unit max required!" }),
+        { status: 400 }
+      );
+    }
+
+    if(!valuemax){
+      return new NextResponse(
+        JSON.stringify({ error: "Value max is required!" }),
+        { status: 400 }
+      );
+    }
+
     if (!params.shippingratesId) {
       return new NextResponse(
         JSON.stringify({ error: "Shipping Rates id is required!" }),
@@ -177,7 +226,6 @@ export async function PATCH(
     // Cập nhật thông tin tương ứng trên Stripe
     await stripe.shippingRates.update(params.shippingratesId, {
       active: active,
-      tax_behavior: taxbehavior,
     });
 
     const shippingRateupdate = await prismadb.shippingRates.update({

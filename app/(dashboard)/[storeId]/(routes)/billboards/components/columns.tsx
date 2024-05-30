@@ -2,11 +2,12 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
-import Image from "next/image";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Clock12, Tag } from "lucide-react";
 import { Images as ImageIcon } from "lucide-react";
 import SpanColumn from "@/components/span-column";
+import EditRow from "../_components/edit-row";
+import ImageCellMutiple from "@/components/image-cell-mutiple";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -14,6 +15,7 @@ export type BillboardColumn = {
   id: string;
   label: string;
   imagebillboard: string[];
+  imagebillboardpatch: { url: string }[];
   createdAt: string | null;
 };
 
@@ -52,6 +54,13 @@ export const columns: ColumnDef<BillboardColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({ row }) => (
+      <EditRow
+        data={row.original.label}
+        id={row.original.id}
+        imagebillboard={row.original.imagebillboardpatch}
+      />
+    ),
   },
   {
     accessorKey: "imagebillboard",
@@ -67,26 +76,9 @@ export const columns: ColumnDef<BillboardColumn>[] = [
     },
     // Define a custom cell to render the image
     cell: ({ row }) => {
-      const imagebillboard = row.original.imagebillboard;
-      // Check if the image URL array is available
-      if (Array.isArray(imagebillboard) && imagebillboard.length > 0) {
-        return (
-          <div>
-            {imagebillboard.map((imageUrl, index) => (
-              <span key={index} className="avatar-overlapping-multiple-image">
-                <Image
-                  className="avatar-image-overlapping-multiple-image rounded-full"
-                  src={imageUrl}
-                  alt={`Image ${index + 1}`}
-                  width="50"
-                  height="50"
-                />
-              </span>
-            ))}
-          </div>
-        );
-      }
-      return "";
+      const imageUrl = row.original.imagebillboardpatch;
+      const image = row.original.imagebillboard;
+      return <ImageCellMutiple image={image} imageUrl={imageUrl} />;
     },
   },
   {

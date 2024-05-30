@@ -6,6 +6,7 @@ import { NotebookPen, SendHorizontal, Tag, User } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import SpanColumn from "@/components/span-column";
 import { Clock12 } from "lucide-react";
+import EditRow from "../_components/edit-row";
 
 export type SentEmailUserColumn = {
   id: string;
@@ -64,6 +65,7 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({row}) => <EditRow id={row.original.id} data={row.original.subject} subject={row.original.subject} description={row.original.description} field="subject"/>
   },
   {
     accessorKey: "description",
@@ -77,6 +79,7 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({row}) => <EditRow id={row.original.id} data={row.original.description} subject={row.original.subject} description={row.original.description} field="description"/>
   },
   {
     accessorKey: "isSent",

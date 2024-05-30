@@ -30,6 +30,7 @@ const BillboardsPage = async ({ params }: { params: { storeId: string } }) => {
     id: item.id,
     label: item.label,
     imagebillboard:item.imagebillboard.map((item) =>item.url),
+    imagebillboardpatch: item.imagebillboard,
     createdAt: item.createdAt
     ? format(
         utcToZonedTime(

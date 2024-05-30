@@ -2,10 +2,23 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
-import { AlarmClockCheck, AlarmClockMinus, CircleDollarSign, Flag, FlagOff, Receipt, ReceiptText, Sparkles, Tag, Tally1, Tally4 } from "lucide-react";
+import {
+  AlarmClockCheck,
+  AlarmClockMinus,
+  CircleDollarSign,
+  Flag,
+  FlagOff,
+  Receipt,
+  ReceiptText,
+  Sparkles,
+  Tag,
+  Tally1,
+  Tally4,
+} from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import SpanColumn from "@/components/span-column";
 import { Clock12 } from "lucide-react";
+import EditRow from "../_components/edit-row";
 
 export type ShippingRatesColumn = {
   id: string;
@@ -18,6 +31,7 @@ export type ShippingRatesColumn = {
   unitmax: string;
   valuemax: number;
   active: boolean | null;
+  amountnotformat: number;
   createdAt: string | null;
 };
 
@@ -75,6 +89,22 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({ row }) => (
+      <EditRow
+        data={row.original.name}
+        name={row.original.name}
+        amount={row.original.amountnotformat}
+        id={row.original.id}
+        taxbehavior={row.original.taxbehavior}
+        valuemin={row.original.valuemin}
+        unitmin={row.original.unitmin}
+        valuemax={row.original.valuemax}
+        unitmax={row.original.unitmax}
+        active={row.original.active}
+        taxcode={row.original.taxcode}
+        field="name"
+      />
+    ),
   },
   {
     accessorKey: "amount",
@@ -210,7 +240,10 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
     },
     cell: ({ row }) => {
       const ShippingtaxcodetypeValue = row.original.taxcode;
-      if (ShippingtaxcodetypeValue && ShippingTaxcodeMapping[ShippingtaxcodetypeValue]) {
+      if (
+        ShippingtaxcodetypeValue &&
+        ShippingTaxcodeMapping[ShippingtaxcodetypeValue]
+      ) {
         return ShippingTaxcodeMapping[ShippingtaxcodetypeValue];
       }
       return "";

@@ -2,12 +2,19 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
-import { AlarmClock, AlarmClockOff, Timer, TimerOff, TimerReset } from "lucide-react";
-import Image from "next/image";
+import {
+  AlarmClock,
+  AlarmClockOff,
+  Timer,
+  TimerOff,
+  TimerReset,
+} from "lucide-react";
 import SpanColumn from "@/components/span-column";
 import { Images as ImageIcon } from "lucide-react";
 import { Clock12, Tag } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import EditRow from "../_components/edit-row";
+import ImageCellMutiple from "@/components/image-cell-mutiple";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -19,6 +26,9 @@ export type BillboardTimeColumn = {
   end: string;
   isTimeout: boolean | null;
   createdAt: string | null;
+  imagebillboardtimepatch: { url: string }[];
+  endpatch: number | null;
+  timeoutpatch: number;
 };
 
 export const columns: ColumnDef<BillboardTimeColumn>[] = [
@@ -54,20 +64,28 @@ export const columns: ColumnDef<BillboardTimeColumn>[] = [
           Lable
           <Tag className="ml-2 h-4 w-4" />
         </SpanColumn>
-      )
+      );
     },
     cell: ({ row }) => {
-      const isActive = row.original.isTimeout;
-      const label = row.original.label;
       return (
-        <div className={isActive ? 'line-through text-gray-400' : ''}>
-          {label}
+        <div>
+          <EditRow
+            isActive={row.original.isTimeout}
+            timeout={row.original.timeoutpatch}
+            end={row.original.endpatch}
+            isTimeout={row.original.isTimeout}
+            data={row.original.label}
+            label={row.original.label}
+            id={row.original.id}
+            imagebillboardtime={row.original.imagebillboardtimepatch}
+            field="label"
+          />
         </div>
       );
     },
   },
   {
-    accessorKey: "imagebillboard",
+    accessorKey: "imagebillboardtime",
     header: ({ column }) => {
       return (
         <SpanColumn
@@ -76,30 +94,12 @@ export const columns: ColumnDef<BillboardTimeColumn>[] = [
           Hình ảnh
           <ImageIcon className="ml-2 h-4 w-4" />
         </SpanColumn>
-      )
+      );
     },
-    // Define a custom cell to render the image
     cell: ({ row }) => {
-      const imagebillboardtime = row.original.imagebillboardtime;
-      // Check if the image URL array is available
-      if (Array.isArray(imagebillboardtime) && imagebillboardtime.length > 0) {
-        return (
-          <div>
-            {imagebillboardtime.map((imageUrl, index) => (
-              <span key={index} className="avatar-overlapping-multiple-image">
-                <Image
-                  className="avatar-image-overlapping-multiple-image rounded-full"
-                  src={imageUrl}
-                  alt={`Image ${index + 1}`}
-                  width="50"
-                  height="50"
-                />
-              </span>
-            ))}
-          </div>
-        );
-      }
-      return "";
+      const imageUrl = row.original.imagebillboardtimepatch;
+      const image = row.original.imagebillboardtime;
+      return <ImageCellMutiple image={image} imageUrl={imageUrl} />;
     },
   },
   {
@@ -112,14 +112,22 @@ export const columns: ColumnDef<BillboardTimeColumn>[] = [
           Time out
           <Timer className="ml-2 h-4 w-4" />
         </SpanColumn>
-      )
+      );
     },
     cell: ({ row }) => {
-      const isActive = row.original.isTimeout;
-      const timeout = row.original.timeout;
       return (
-        <div className={isActive ? 'line-through text-gray-400' : ''}>
-          {timeout}
+        <div>
+          <EditRow
+            isActive={row.original.isTimeout}
+            label={row.original.label}
+            timeout={row.original.timeoutpatch}
+            end={row.original.endpatch}
+            isTimeout={row.original.isTimeout}
+            data={row.original.timeout}
+            id={row.original.id}
+            imagebillboardtime={row.original.imagebillboardtimepatch}
+            field="timeout"
+          />
         </div>
       );
     },
@@ -134,19 +142,10 @@ export const columns: ColumnDef<BillboardTimeColumn>[] = [
           Thời gian hết
           <TimerOff className="ml-2 h-4 w-4" />
         </SpanColumn>
-      )
-    },
-    cell: ({ row }) => {
-      const isActive = row.original.isTimeout;
-      const endTime = row.original.end;
-      return (
-        <div className={isActive ? 'line-through text-gray-400' : ''}>
-          {endTime}
-        </div>
       );
     },
   },
-  
+
   {
     accessorKey: "isTimeout",
     header: ({ column }) => {
@@ -157,12 +156,12 @@ export const columns: ColumnDef<BillboardTimeColumn>[] = [
           isTimeout
           <TimerReset className="ml-2 h-4 w-4" />
         </SpanColumn>
-      )
+      );
     },
     cell: ({ row }) => {
       const isActive = row.original.isTimeout;
       return (
-        <div className={isActive ? 'line-through text-gray-400' : ''}>
+        <div className={isActive ? "line-through text-gray-400" : ""}>
           {isActive ? (
             <AlarmClock className="w-5 h-5 text-green-500" />
           ) : (
@@ -182,13 +181,13 @@ export const columns: ColumnDef<BillboardTimeColumn>[] = [
           Thời gian tạo
           <Clock12 className="ml-2 h-4 w-4" />
         </SpanColumn>
-      )
+      );
     },
     cell: ({ row }) => {
       const isActive = row.original.isTimeout;
       const createdAt = row.original.createdAt;
       return (
-        <div className={isActive ? 'line-through text-gray-400' : ''}>
+        <div className={isActive ? "line-through text-gray-400" : ""}>
           {createdAt}
         </div>
       );

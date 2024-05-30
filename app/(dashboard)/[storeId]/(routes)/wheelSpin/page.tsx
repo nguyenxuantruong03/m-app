@@ -14,19 +14,18 @@ const SalaryStaff = async () => {
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN;
   const showOrderRole = isRole;
-  const user = await prismadb.user.findMany({
+  const user = await prismadb.wheelSpin.findMany({
     include: {
-      WheelSpin: true,
+      user: true,
     },
   });
-
   
   const formattedWheelSpin: WheelSpinColumn[] = user.map((item => ({
     id: item.id,
-    name: item.name,
-    coin: item.WheelSpin.map((item)=> item.coin),
-    rotation:  item.WheelSpin.map((item)=> item.rotation),
-    email: item.email,
+    name: item.user.name,
+    coin: item.coin,
+    rotation:  item.rotation,
+    email: item.user.email,
     createdAt: item.createdAt
       ? format(
           utcToZonedTime(

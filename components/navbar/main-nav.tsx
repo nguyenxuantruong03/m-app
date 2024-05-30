@@ -287,7 +287,7 @@ const MainNav = ({
                   key={route.href}
                   href={route.href}
                   className={cn(
-                    "text-md font-medium transition-colors hover:text-primary grid grid-rows-1",
+                    "text-md font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
                     route.active
                       ? "text-black dark:text-white"
                       : "text-muted-foreground"
@@ -316,7 +316,7 @@ const MainNav = ({
                   key={route.href}
                   href={route.href}
                   className={cn(
-                    "text-md font-medium transition-colors hover:text-primary grid grid-rows-1",
+                    "text-md font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
                     route.active
                       ? "text-black dark:text-white"
                       : "text-muted-foreground"
@@ -345,7 +345,7 @@ const MainNav = ({
                   key={route.href}
                   href={route.href}
                   className={cn(
-                    "text-md font-medium transition-colors hover:text-primary grid grid-rows-1",
+                    "text-md font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
                     route.active
                       ? "text-black dark:text-white"
                       : "text-muted-foreground"

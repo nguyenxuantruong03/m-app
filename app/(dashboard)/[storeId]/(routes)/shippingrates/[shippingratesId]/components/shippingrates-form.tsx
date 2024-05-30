@@ -36,17 +36,25 @@ import {
   ShippingTaxcode,
 } from "@prisma/client";
 
-const formSchema = z.object({
-  name: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
-  taxbehavior: z.string().min(1,{message: "Hãy chọn 1 taxbehavior."}),
-  amount: z.coerce.number().min(500,{message: "Hãy nhập ít nhấp 500 đồng."}),
-  unitmin: z.string().min(1,{message: "Hãy nhập ít nhất 1 tiếng."}),
-  valuemin: z.coerce.number().min(1,{message: "Hãy chọn giờ hoặc ngày."}),
-  unitmax: z.string().min(1,{message: "Hãy nhập ít nhất 1 tiếng."}),
-  valuemax: z.coerce.number().min(1,{message: "Hãy chọn giờ hoặc ngày."}),
-  taxcode: z.string().min(1,{message: "Hãy chọn 1 loại taxcode."}),
-  active: z.boolean().default(false).optional(),
-});
+const formSchema = z
+  .object({
+    name: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
+    taxbehavior: z.string().min(1, { message: "Hãy chọn 1 taxbehavior." }),
+    amount: z.coerce.number().min(500, { message: "Hãy nhập ít nhấp 500 đồng." }),
+    unitmin: z.string().min(1, { message: "Hãy nhập ít nhất 1 tiếng." }),
+    valuemin: z.coerce.number().min(1, { message: "Hãy chọn giờ hoặc ngày." }),
+    unitmax: z.string().min(1, { message: "Hãy nhập ít nhất 1 tiếng." }),
+    valuemax: z.coerce.number().min(1, { message: "Hãy chọn giờ hoặc ngày." }),
+    taxcode: z.string().min(1, { message: "Hãy chọn 1 loại taxcode." }),
+    active: z.boolean().default(false).optional(),
+  })
+  .refine(
+    (data) => data.valuemax > data.valuemin,
+    {
+      message: "Thời gian tối đa phải lớn hơn thời gian tối thiểu.",
+      path: ["valuemax"], // indicate that the error should be shown at the valuemax field
+    }
+  );
 
 type ShippingRatesFormValues = z.infer<typeof formSchema>;
 
@@ -73,17 +81,19 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
   const [loading, setLoading] = useState(false);
   const isEditing = !!initialData;
   const [disableActive, setDisableActive] = useState(true);
+  const [unitMinValue, setUnitMinValue] = useState<string>(initialData ? initialData.unitmin : "");
+  const [valueMinSelected, setValueMinSelected] = useState<boolean>(!!initialData?.valuemin);
+  const [unitMinSelected, setUnitMinSelected] = useState<boolean>(!!initialData?.unitmin);
 
-// Sử dụng useEffect để kiểm tra khi component được tạo và cập nhật trạng thái active
-useEffect(() => {
-  // Nếu initialData không tồn tại (không có dữ liệu ban đầu), có nghĩa là bạn đang tạo mới
-  if (!initialData) {
-    setDisableActive(true); // Vô hiệu hóa trường active
-  } else {
-    setDisableActive(false); // Mở trường active
-  }
-}, [initialData]); // Sử dụng initialData làm dependency để useEffect chạy khi initialData thay đổi
-
+  // Sử dụng useEffect để kiểm tra khi component được tạo và cập nhật trạng thái active
+  useEffect(() => {
+    // Nếu initialData không tồn tại (không có dữ liệu ban đầu), có nghĩa là bạn đang tạo mới
+    if (!initialData) {
+      setDisableActive(true); // Vô hiệu hóa trường active
+    } else {
+      setDisableActive(false); // Mở trường active
+    }
+  }, [initialData]); // Sử dụng initialData làm dependency để useEffect chạy khi initialData thay đổi
 
   const title = initialData ? "Edit shipping rates" : "Create shipping rates";
   const description = initialData
@@ -175,6 +185,17 @@ useEffect(() => {
     }
   };
 
+  const handleUnitMinChange = (value: string) => {
+    setUnitMinValue(value);
+    form.setValue('unitmin', value);
+    setUnitMinSelected(!!value);
+  };
+
+  const handleValueMinChange = (value: number) => {
+    form.setValue('valuemin', value);
+    setValueMinSelected(value > 0);
+  };
+
   return (
     <>
       {/* update and create */}
@@ -197,7 +218,7 @@ useEffect(() => {
                   <FormLabel>Tên giao hàng <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <FormControl>
                     <Input
-                      disabled={loading || isEditing}
+                      disabled={loading}
                       placeholder="Nhập tên giao hàng ..."
                       {...field}
                       onChange={(e) => {
@@ -238,7 +259,7 @@ useEffect(() => {
                 <FormItem>
                   <FormLabel>Hành vi thuế <span className="text-red-600 pl-1">(*)</span></FormLabel>
                   <Select
-                    disabled={loading || isEditing}
+                    disabled={loading}
                     onValueChange={field.onChange}
                     value={field.value}
                     defaultValue={field.value}
@@ -247,7 +268,7 @@ useEffect(() => {
                       <SelectTrigger>
                         <SelectValue
                           defaultValue={field.value}
-                          placeholder="Select TaxBehavior"
+                          placeholder="Chọn hành vi thuế"
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -276,6 +297,18 @@ useEffect(() => {
                         disabled={loading || isEditing}
                         placeholder="Nhập phần thời gian thấp nhất ..."
                         {...field}
+                        onChange={(e) => {
+                          const value = Number(e.target.value);
+                          if (!isNaN(value)) {
+                            if (value <= 2400) { // Kiểm tra giá trị nhỏ hơn hoặc bằng 2400
+                              field.onChange(value);
+                              handleValueMinChange(value);
+                            } else {
+                              // Nếu giá trị lớn hơn 2400, không thay đổi giá trị
+                              toast.error("Thời gian thấp nhất không được lớn hơn 2400 giờ");
+                            }
+                          }
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -294,7 +327,10 @@ useEffect(() => {
                   </FormLabel>
                   <Select
                     disabled={loading || isEditing}
-                    onValueChange={field.onChange}
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      handleUnitMinChange(value);
+                    }}
                     value={field.value}
                     defaultValue={field.value}
                   >
@@ -328,9 +364,10 @@ useEffect(() => {
                     <FormControl>
                       <Input
                         type="number"
-                        disabled={loading || isEditing}
+                        disabled={loading || isEditing || !valueMinSelected || !unitMinSelected}
                         placeholder="Nhập phần thời gian tối đa ..."
                         {...field}
+                        max={2400} 
                       />
                     </FormControl>
                     <FormMessage />
@@ -348,7 +385,7 @@ useEffect(() => {
                     Đơn vị tối đa <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <Select
-                    disabled={loading || isEditing}
+                    disabled={loading || isEditing || !valueMinSelected || !unitMinSelected}
                     onValueChange={field.onChange}
                     value={field.value}
                     defaultValue={field.value}
@@ -362,11 +399,13 @@ useEffect(() => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {Object.values(Unit).map((item) => (
-                        <SelectItem key={item} value={item}>
-                          {item}
-                        </SelectItem>
-                      ))}
+                      {Object.values(Unit)
+                        .filter((item) => item === unitMinValue)
+                        .map((item) => (
+                          <SelectItem key={item} value={item}>
+                            {item}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 </FormItem>
@@ -383,6 +422,7 @@ useEffect(() => {
                     disabled={loading || isEditing}
                     onValueChange={(value) => field.onChange(value)}
                     value={field.value}
+                    defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -413,7 +453,7 @@ useEffect(() => {
                       checked={field.value}
                       // @ts-ignore
                       onCheckedChange={field.onChange}
-                      disabled={loading ||  disableActive} // Disable nếu đang thực hiện POST
+                      disabled={loading || disableActive} // Disable nếu đang thực hiện POST
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">

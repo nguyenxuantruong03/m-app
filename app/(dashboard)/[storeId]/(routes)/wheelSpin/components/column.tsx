@@ -3,14 +3,14 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
 import SpanColumn from "@/components/span-column";
-import { Clock12, Coins,Tag,User,LoaderPinwheel  } from "lucide-react";
+import { Clock12, Coins, Tag, User, Disc } from "lucide-react";
 
 export type WheelSpinColumn = {
   id: string;
   name: string | null;
   email: string | null;
-  coin: number[];
-  rotation: number[];
+  coin: number;
+  rotation: number;
   createdAt: string | null;
 };
 
@@ -49,7 +49,7 @@ export const columns: ColumnDef<WheelSpinColumn>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           vòng quay
-          <LoaderPinwheel className="ml-2 h-4 w-4" />
+          <Disc className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
     },
@@ -65,6 +65,9 @@ export const columns: ColumnDef<WheelSpinColumn>[] = [
           <Coins className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
+    },
+    cell: ({ row }) => {
+      return <span>{row.original.coin}</span>;
     },
   },
   {

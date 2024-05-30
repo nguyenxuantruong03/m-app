@@ -28,6 +28,7 @@ const ShippingRatesPage = async ({ params }: { params: { storeId: string } }) =>
     name: item.name,
     active: item.active,
     amount: formatter.format(item.amount),
+    amountnotformat: item.amount,
     taxcode: item.taxcode,
     taxbehavior: item.taxbehavior,
     unitmin: item.unitmin,

@@ -35,11 +35,14 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
     name: item.name,
     heading: item.heading,
     imagesalientfeatures: item.imagesalientfeatures.map((item)=> item.url),
+    imagesalientfeaturesUrl: item.imagesalientfeatures,
     images: item.images.map((item)=> item.url),
+    imagesUrl: item.images,
     description: item.description,
     isFeatured: item.isFeatured,
     isArchived: item.isArchived,
     productdetail: item.productdetail.title,
+    productdetailId: item.productdetail.id,
     createdAt: item.createdAt
       ? format(
           utcToZonedTime(new Date(new Date(item.createdAt)), vietnamTimeZone),

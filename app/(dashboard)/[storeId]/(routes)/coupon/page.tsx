@@ -33,8 +33,10 @@ const CouponPage = async ({ params }: { params: { storeId: string } }) => {
     duration: item.duration,
     durationinmoth: item.durationinmoth,
     imagecoupon: item.imagecoupon.map((item)=>item.url) ,
+    imagecouponpatch: item.imagecoupon,
     percent: item.percent,
     maxredemptions: item.maxredemptions,
+    redeembypatch: item.redeemby,
     redeemby:item.redeemby
     ? format(item.redeemby, "dd/MM/yyyy")
     : null,
