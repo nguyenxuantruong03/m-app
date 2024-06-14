@@ -2,11 +2,19 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
-import { Home, PackageCheck, PackageX, Tag,ImageUp, Clock12, View  } from "lucide-react";
-import { Images  as ImageIcon  } from "lucide-react";
+import {
+  Home,
+  PackageCheck,
+  PackageX,
+  Tag,
+  ImageUp,
+  Clock12,
+  View,
+} from "lucide-react";
+import { Images as ImageIcon } from "lucide-react";
 import SpanColumn from "@/components/span-column";
 import { Checkbox } from "@/components/ui/checkbox";
-import ImageCellMutiple from "@/components/image-cell-mutiple";
+import ImageCellMutiple from "@/components/image-cell-multiple";
 import EditRow from "../_components/edit-row";
 
 export type ProductColumn = {
@@ -128,9 +136,9 @@ export const columns: ColumnDef<ProductColumn>[] = [
     cell: ({ row }) => {
       const isFeatured = row.original.isFeatured;
       return isFeatured ? (
-        <Home  className="w-5 h-5 text-green-500" />
+        <Home className="w-5 h-5 text-green-500" />
       ) : (
-        <Home  className="w-5 h-5 text-red-500" />
+        <Home className="w-5 h-5 text-red-500" />
       );
     },
   },
@@ -149,9 +157,9 @@ export const columns: ColumnDef<ProductColumn>[] = [
     cell: ({ row }) => {
       const isArchived = row.original.isArchived;
       return isArchived ? (
-        <PackageCheck  className="w-5 h-5 text-green-500" />
+        <PackageCheck className="w-5 h-5 text-green-500" />
       ) : (
-        <PackageX  className="w-5 h-5 text-red-500" />
+        <PackageX className="w-5 h-5 text-red-500" />
       );
     },
   },

@@ -9,9 +9,11 @@ interface AlertModalProps {
     onClose: () => void;
     onConfirm: () => void;
     loading?: boolean;
+    message?: string;
+    title?: string
 }
 
-export const AlertModal: React.FC<AlertModalProps> = ({ isOpen, onClose, onConfirm, loading }) => {
+export const AlertModal: React.FC<AlertModalProps> = ({ isOpen, onClose, onConfirm, loading,message,title }) => {
     const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
@@ -24,8 +26,8 @@ export const AlertModal: React.FC<AlertModalProps> = ({ isOpen, onClose, onConfi
 
     return (
         <Modal
-            title="Bạn có chắc chắn?"
-            description="Hành động này sẽ xóa đi vĩnh viễn!"
+            title={title || "Bạn có chắc chắn?"}
+            description={message || "Hành động này sẽ xóa đi vĩnh viễn!"}
             isOpen={isOpen}
             onClose={onClose}
         >

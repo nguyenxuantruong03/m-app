@@ -506,7 +506,11 @@ enum WorkingTime {
 model User {
   id                       String                 @id @default(cuid())
   name                     String?
+  nameuser                 String?
+  bio                      String?
   email                    String?                @unique
+  address                  String?
+  addressother             String?
   emailVerified            DateTime?
   image                    String?
   imageCredential          String[]
@@ -526,7 +530,7 @@ model User {
   //Chỉ gửi mail 2 lần cho người dùng
   resendBanUserNotStart    Int?                   @default(0)
   //Chỉ gửi mail 2 lần cho người dùng
-  resendUnBanUser          Int?                    @default(0)
+  resendUnBanUser          Int?                   @default(0)
   // Xác thực 2 yếu tố
   isTwoFactorEnabled       Boolean                @default(false)
   //------------------------Nhân viên------------------------------
@@ -565,10 +569,12 @@ model User {
   eventcalendar            EventCalendar[]
   sentEmailUser            SentEmailUser[]
   twoFactorConfirmation    TwoFactorConfirmation?
+  socialLink               SocialLink?
   CaculateSalary           CaculateSalary[]
   Comment                  Comment[]
   ResponseComment          ResponseComment[]
   WheelSpin                WheelSpin[]
+  deviceInfo               DeviceInfo[]
   createdAt                DateTime               @default(now())
   updatedAt                DateTime               @updatedAt
 }
@@ -581,6 +587,26 @@ model Password {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([userId])
+}
+
+model SocialLink {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  linkyoutube   String?
+  linkfacebook  String?
+  linkinstagram String?
+  linktwitter   String?
+  linklinkedin  String?
+  linkgithub    String?
+  linktiktok    String?
+  linkwebsite   String?
+  linkother     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([userId])
   @@index([userId])
 }
 
@@ -677,6 +703,24 @@ model EventCalendar {
   @@index([userId])
 }
 
+model DeviceInfo {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  browser     String
+  cpu         String
+  device      String
+  engine      String
+  os          String
+  fullModel   String?
+  ua          String?
+  limitDevice Int?     @default(2)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+}
+
 model SentEmailUser {
   id          String   @id @default(cuid())
   storeId     String
@@ -762,8 +806,8 @@ model WheelSpin {
 
 model System {
   id             String    @id @default(cuid())
-  storeId        String
-  store          Store     @relation("StoreToSystem", fields: [storeId], references: [id])
+  storeId        String?
+  store          Store?     @relation("StoreToSystem", fields: [storeId], references: [id])
   newChange      String[]
   oldChange      String[]
   delete         String[]

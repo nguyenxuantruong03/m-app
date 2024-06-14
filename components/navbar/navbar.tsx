@@ -6,7 +6,7 @@ import { UserRole } from "@prisma/client";
 import { getAccountByUserId } from "@/data/account";
 import CustomNav from "./custom-nav";
 
-const Navbar = async () => {
+const Navbar= async () => {
   const userId = await currentUser();
 
   if (!userId || !userId.id) {
@@ -34,7 +34,7 @@ const Navbar = async () => {
 
   return (
     <>
-    <CustomNav store={store} isGitHubOrGoogleUser={isGitHubOrGoogleUser} avatarImage={avatarImage} userId={userId}/>
+    <CustomNav store={store} isGitHubOrGoogleUser={isGitHubOrGoogleUser} avatarImage={avatarImage}/>
     </>
   );
 };

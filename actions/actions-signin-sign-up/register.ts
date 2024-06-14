@@ -16,7 +16,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
   // Add password regex check
   const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[0-9]).{6,20}$/;
   if (!passwordRegex.test(password)) {
-    return { error: "Mật khẩu yêu cầu [a-z] và [0-9] ít nhất 6 ký tự!" };
+    return { error: "Mật khẩu yêu cầu [a-z] và [0-9] ,từ 6 đến 20 ký tự!" };
   }
 
   // Check if any of the required fields are empty
@@ -62,11 +62,16 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
     return { error: "Email đã được sử dụng!" };
   }
 
+  // Xử lý tạo nameuser từ email
+  const atIndex = email.indexOf("@");
+  const nameuser = "@" + email.slice(0, atIndex).toLowerCase();
+
 // Tạo người dùng mới
   await prismadb.user.create({
   data: {
     name,
     email,
+    nameuser:nameuser,
     password: { 
       create: [{ password: hashPassword }]
     },

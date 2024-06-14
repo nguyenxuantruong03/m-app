@@ -10,6 +10,7 @@ import { generateVerificationToken } from "@/lib/tokens";
 import { sendVerificationEmail } from "@/lib/mail";
 import bcrypt from "bcryptjs";
 import { format } from "date-fns";
+import { Gender } from "@prisma/client";
 
 export const setting = async (values: z.infer<typeof SettingSchema>) => {
   const user = await currentUser();
@@ -20,7 +21,10 @@ export const setting = async (values: z.infer<typeof SettingSchema>) => {
 
   // Check ban status again after potential update
   if (user.ban) {
-    return { error: "Tài khoản của bạn đã bị khóa. Không thể thay đổi. Hãy kiểm tra Email để biết thời gian mở khóa!" };
+    return {
+      error:
+        "Tài khoản của bạn đã bị khóa. Không thể thay đổi. Hãy kiểm tra Email để biết thời gian mở khóa!",
+    };
   }
 
   const dbUser = await getUserById(user.id);
@@ -51,8 +55,12 @@ export const setting = async (values: z.infer<typeof SettingSchema>) => {
     return { success: "Xác thực email thành công!" };
   }
 
-  if(!values.newPassword){
-    return { error: "Bạn chưa nhập Password mới!" };
+  const FindNameUser = await prismadb.user.findMany();
+
+  for (const user of FindNameUser) {
+    if (user.nameuser === values.nameuser) {
+      return { error: "Tên người dùng này đã có người đặt!" };
+    }
   }
 
   const userPasswords = await prismadb.password.findMany({
@@ -104,13 +112,50 @@ export const setting = async (values: z.infer<typeof SettingSchema>) => {
     data: {
       password: {
         create: {
-          password: values.password || "" // Cập nhật mật khẩu mới
-        }
+          password: values.password || "", // Cập nhật mật khẩu mới
+        },
       },
+      socialLink: {
+        upsert: {
+          where: { userId: dbUser.id }, // Điều kiện để kiểm tra sự tồn tại
+          create: {
+            // Dữ liệu sẽ được tạo mới nếu chưa tồn tại
+            linkyoutube: values.linkyoutube || "",
+            linkfacebook: values.linkfacebook || "",
+            linkinstagram: values.linkinstagram || "",
+            linktwitter: values.linktwitter || "",
+            linklinkedin: values.linklinkedin || "",
+            linkgithub: values.linkgithub || "",
+            linktiktok: values.linktiktok || "",
+            linkwebsite: values.linkwebsite || "",
+            linkother: values.linkother || "",
+          },
+          update: {
+            // Dữ liệu sẽ được cập nhật nếu đã tồn tại
+            linkyoutube: values.linkyoutube || "",
+            linkfacebook: values.linkfacebook || "",
+            linkinstagram: values.linkinstagram || "",
+            linktwitter: values.linktwitter || "",
+            linklinkedin: values.linklinkedin || "",
+            linkgithub: values.linkgithub || "",
+            linktiktok: values.linktiktok || "",
+            linkwebsite: values.linkwebsite || "",
+            linkother: values.linkother || "",
+          },
+        },
+      },
+      bio: values.bio,
+      address: values.address,
+      addressother: values.addressother,
+      nameuser: values.nameuser,
+      gender: values.gender as Gender,
+      phonenumber: values.phonenumber,
+      dateofbirth: values.dateofbirth,
+      imageCredential: values.imageCredential,
       name: values.name,
       email: undefined,
       isTwoFactorEnabled: values.isTwoFactorEnabled,
     },
   });
-  return { success: "Cài đặt thành công!" };
+  return { success: "Thay đổi thành công!" };
 };

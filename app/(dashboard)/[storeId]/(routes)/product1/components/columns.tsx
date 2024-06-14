@@ -14,7 +14,7 @@ import {
 import { Images as ImageIcon } from "lucide-react";
 import SpanColumn from "@/components/span-column";
 import { Checkbox } from "@/components/ui/checkbox";
-import ImageCellMutiple from "@/components/image-cell-mutiple";
+import ImageCellMutiple from "@/components/image-cell-multiple";
 import EditRow from "../_components/edit-row";
 
 export type ProductColumn = {

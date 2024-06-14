@@ -15,7 +15,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import SpanColumn from "@/components/span-column";
 import { Clock12 } from "lucide-react";
-import ImageCellMutiple from "@/components/image-cell-mutiple";
+import ImageCellMutiple from "@/components/image-cell-multiple";
 import EditRow from "../_components/edit-row";
 
 export type CouponColumn = {

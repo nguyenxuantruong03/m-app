@@ -272,300 +272,227 @@ const MainNav = ({
   return (
     <>
       {/* Overview */}
-      <nav
-        className={cn(
-          "flex items-center space-x-4 lg:space-x-6 space-y-4",
-          className
-        )}
-      >
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-1">
-            <AccordionTrigger>Tổng quan</AccordionTrigger>
-            <AccordionContent>
-              {routes.map((route) => (
-                <Link
-                  key={route.href}
-                  href={route.href}
-                  className={cn(
-                    "text-md font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
-                    route.active
-                      ? "text-black dark:text-white"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  {route.label}
-                </Link>
-              ))}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </nav>
-      {/* Data statistics */}
-      <nav
-        className={cn(
-          "flex items-center space-x-4 lg:space-x-6 space-y-4",
-          className
-        )}
-      >
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-1">
-            <AccordionTrigger>Thống kê dữ liệu</AccordionTrigger>
-            <AccordionContent>
-              {datastatistics.map((route) => (
-                <Link
-                  key={route.href}
-                  href={route.href}
-                  className={cn(
-                    "text-md font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
-                    route.active
-                      ? "text-black dark:text-white"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  {route.label}
-                </Link>
-              ))}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </nav>
-      {/* Staff Attendance */}
-      <nav
-        className={cn(
-          "flex items-center space-x-4 lg:space-x-6 space-y-4",
-          className
-        )}
-      >
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-1">
-            <AccordionTrigger>Nhân viên</AccordionTrigger>
-            <AccordionContent>
-              {staff.map((route) => (
-                <Link
-                  key={route.href}
-                  href={route.href}
-                  className={cn(
-                    "text-md font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
-                    route.active
-                      ? "text-black dark:text-white"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  {route.label}
-                </Link>
-              ))}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </nav>
-      {/* Billboard */}
-      <nav
-        className={cn("flex items-center space-x-4 lg:space-x-6", className)}
-      >
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-1">
-            <AccordionTrigger>Ảnh quảng cáo</AccordionTrigger>
-            <AccordionContent>
-              {billboards.map((billboard) => (
-                <Link
-                  key={billboard.href}
-                  href={billboard.href}
-                  className={cn(
-                    "text-sm font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
-                    billboard.active
-                      ? "text-black dark:text-white"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  {billboard.label}
-                </Link>
-              ))}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </nav>
-      {/* Category */}
-      <nav
-        className={cn("flex items-center space-x-4 lg:space-x-6", className)}
-      >
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-1">
-            <AccordionTrigger>Loại hàng</AccordionTrigger>
-            <AccordionContent>
-              {categorys.map((category) => (
-                <Link
-                  key={category.href}
-                  href={category.href}
-                  className={cn(
-                    "text-sm font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
-                    category.active
-                      ? "text-black dark:text-white"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  {category.label}
-                </Link>
-              ))}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </nav>
-      {/* Parameter */}
-      <nav
-        className={cn("flex items-center space-x-4 lg:space-x-6", className)}
-      >
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-1">
-            <AccordionTrigger>Thông số</AccordionTrigger>
-            <AccordionContent>
-              {parameters.map((parameter) => (
-                <Link
-                  key={parameter.href}
-                  href={parameter.href}
-                  className={cn(
-                    "text-sm font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
-                    parameter.active
-                      ? "text-black dark:text-white"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  {parameter.label}
-                </Link>
-              ))}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </nav>
-      {/* Product */}
-      <nav
-        className={cn("flex items-center space-x-4 lg:space-x-6", className)}
-      >
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-1">
-            <AccordionTrigger>Sản phẩm</AccordionTrigger>
-            <AccordionContent>
-              {products.map((product) => (
-                <Link
-                  key={product.href}
-                  href={product.href}
-                  className={cn(
-                    "text-sm font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
-                    product.active
-                      ? "text-black dark:text-white"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  {product.label}
-                </Link>
-              ))}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </nav>
-      {/* Order */}
-      <nav
-        className={cn("flex items-center space-x-4 lg:space-x-6", className)}
-      >
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-1">
-            <AccordionTrigger>Đơn hàng</AccordionTrigger>
-            <AccordionContent>
-              {orders.map((order) => (
-                <Link
-                  key={order.href}
-                  href={order.href}
-                  className={cn(
-                    "text-md font-medium transition-colors hover:text-primary grid grid-rows-1",
-                    order.active
-                      ? "text-black dark:text-white"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  {order.label}
-                </Link>
-              ))}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </nav>
-      {/* Người dùng */}
-      <nav
-        className={cn("flex items-center space-x-4 lg:space-x-6", className)}
-      >
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-1">
-            <AccordionTrigger>Người dùng</AccordionTrigger>
-            <AccordionContent>
-              {user.map((order) => (
-                <Link
-                  key={order.href}
-                  href={order.href}
-                  className={cn(
-                    "text-md font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
-                    order.active
-                      ? "text-black dark:text-white"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  {order.label}
-                </Link>
-              ))}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </nav>
-      {/*Thanh toán online */}
-      <nav
-        className={cn("flex items-center space-x-4 lg:space-x-6", className)}
-      >
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-1">
-            <AccordionTrigger>Thanh toán</AccordionTrigger>
-            <AccordionContent>
-              {checkouts.map((order) => (
-                <Link
-                  key={order.href}
-                  href={order.href}
-                  className={cn(
-                    "text-md font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
-                    order.active
-                      ? "text-black dark:text-white"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  {order.label}
-                </Link>
-              ))}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </nav>
-      {/* Setting */}
-      <nav
-        className={cn("flex items-center space-x-4 lg:space-x-6", className)}
-      >
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-1">
-            <AccordionTrigger>Cài đặt</AccordionTrigger>
-            <AccordionContent>
-              {settings.map((setting) => (
-                <Link
-                  key={setting.href}
-                  href={setting.href}
-                  className={cn(
-                    "text-md font-medium transition-colors hover:text-primary grid grid-rows-1",
-                    setting.active
-                      ? "text-black dark:text-white"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  {setting.label}
-                </Link>
-              ))}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </nav>
+      <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value="item-1">
+          <AccordionTrigger>Tổng quan</AccordionTrigger>
+          <AccordionContent>
+            {routes.map((route) => (
+              <Link
+                key={route.href}
+                href={route.href}
+                className={cn(
+                  "text-md font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
+                  route.active
+                    ? "text-black dark:text-white"
+                    : "text-muted-foreground"
+                )}
+              >
+                {route.label}
+              </Link>
+            ))}
+          </AccordionContent>
+        </AccordionItem>
+        {/* Data statistics */}
+        <AccordionItem value="item-2">
+          <AccordionTrigger>Thống kê dữ liệu</AccordionTrigger>
+          <AccordionContent>
+            {datastatistics.map((route) => (
+              <Link
+                key={route.href}
+                href={route.href}
+                className={cn(
+                  "text-md font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
+                  route.active
+                    ? "text-black dark:text-white"
+                    : "text-muted-foreground"
+                )}
+              >
+                {route.label}
+              </Link>
+            ))}
+          </AccordionContent>
+        </AccordionItem>
+        {/* Staff Attendance */}
+        <AccordionItem value="item-3">
+          <AccordionTrigger>Nhân viên</AccordionTrigger>
+          <AccordionContent>
+            {staff.map((route) => (
+              <Link
+                key={route.href}
+                href={route.href}
+                className={cn(
+                  "text-md font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
+                  route.active
+                    ? "text-black dark:text-white"
+                    : "text-muted-foreground"
+                )}
+              >
+                {route.label}
+              </Link>
+            ))}
+          </AccordionContent>
+        </AccordionItem>
+        {/* Billboard */}
+        <AccordionItem value="item-4">
+          <AccordionTrigger>Ảnh quảng cáo</AccordionTrigger>
+          <AccordionContent>
+            {billboards.map((billboard) => (
+              <Link
+                key={billboard.href}
+                href={billboard.href}
+                className={cn(
+                  "text-sm font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
+                  billboard.active
+                    ? "text-black dark:text-white"
+                    : "text-muted-foreground"
+                )}
+              >
+                {billboard.label}
+              </Link>
+            ))}
+          </AccordionContent>
+        </AccordionItem>
+        {/* Category */}
+        <AccordionItem value="item-5">
+          <AccordionTrigger>Loại hàng</AccordionTrigger>
+          <AccordionContent>
+            {categorys.map((category) => (
+              <Link
+                key={category.href}
+                href={category.href}
+                className={cn(
+                  "text-sm font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
+                  category.active
+                    ? "text-black dark:text-white"
+                    : "text-muted-foreground"
+                )}
+              >
+                {category.label}
+              </Link>
+            ))}
+          </AccordionContent>
+        </AccordionItem>
+        {/* Parameter */}
+        <AccordionItem value="item-6">
+          <AccordionTrigger>Thông số</AccordionTrigger>
+          <AccordionContent>
+            {parameters.map((parameter) => (
+              <Link
+                key={parameter.href}
+                href={parameter.href}
+                className={cn(
+                  "text-sm font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
+                  parameter.active
+                    ? "text-black dark:text-white"
+                    : "text-muted-foreground"
+                )}
+              >
+                {parameter.label}
+              </Link>
+            ))}
+          </AccordionContent>
+        </AccordionItem>
+        {/* Product */}
+        <AccordionItem value="item-7">
+          <AccordionTrigger>Sản phẩm</AccordionTrigger>
+          <AccordionContent>
+            {products.map((product) => (
+              <Link
+                key={product.href}
+                href={product.href}
+                className={cn(
+                  "text-sm font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
+                  product.active
+                    ? "text-black dark:text-white"
+                    : "text-muted-foreground"
+                )}
+              >
+                {product.label}
+              </Link>
+            ))}
+          </AccordionContent>
+        </AccordionItem>
+        {/* Order */}
+        <AccordionItem value="item-8">
+          <AccordionTrigger>Đơn hàng</AccordionTrigger>
+          <AccordionContent>
+            {orders.map((order) => (
+              <Link
+                key={order.href}
+                href={order.href}
+                className={cn(
+                  "text-md font-medium transition-colors hover:text-primary grid grid-rows-1",
+                  order.active
+                    ? "text-black dark:text-white"
+                    : "text-muted-foreground"
+                )}
+              >
+                {order.label}
+              </Link>
+            ))}
+          </AccordionContent>
+        </AccordionItem>
+        {/* Người dùng */}
+        <AccordionItem value="item-9">
+          <AccordionTrigger>Người dùng</AccordionTrigger>
+          <AccordionContent>
+            {user.map((order) => (
+              <Link
+                key={order.href}
+                href={order.href}
+                className={cn(
+                  "text-md font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
+                  order.active
+                    ? "text-black dark:text-white"
+                    : "text-muted-foreground"
+                )}
+              >
+                {order.label}
+              </Link>
+            ))}
+          </AccordionContent>
+        </AccordionItem>
+        {/*Thanh toán online */}
+        <AccordionItem value="item-10">
+          <AccordionTrigger>Thanh toán</AccordionTrigger>
+          <AccordionContent>
+            {checkouts.map((order) => (
+              <Link
+                key={order.href}
+                href={order.href}
+                className={cn(
+                  "text-md font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
+                  order.active
+                    ? "text-black dark:text-white"
+                    : "text-muted-foreground"
+                )}
+              >
+                {order.label}
+              </Link>
+            ))}
+          </AccordionContent>
+        </AccordionItem>
+        {/* Setting */}
+        <AccordionItem value="item-11">
+          <AccordionTrigger>Cài đặt</AccordionTrigger>
+          <AccordionContent>
+            {settings.map((setting) => (
+              <Link
+                key={setting.href}
+                href={setting.href}
+                className={cn(
+                  "text-md font-medium transition-colors hover:text-primary grid grid-rows-1",
+                  setting.active
+                    ? "text-black dark:text-white"
+                    : "text-muted-foreground"
+                )}
+              >
+                {setting.label}
+              </Link>
+            ))}
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </>
   );
 };

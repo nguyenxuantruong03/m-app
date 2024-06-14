@@ -7,7 +7,7 @@ import { Clock12, Tag } from "lucide-react";
 import { Images as ImageIcon } from "lucide-react";
 import SpanColumn from "@/components/span-column";
 import EditRow from "../_components/edit-row";
-import ImageCellMutiple from "@/components/image-cell-mutiple";
+import ImageCellMutiple from "@/components/image-cell-multiple";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.

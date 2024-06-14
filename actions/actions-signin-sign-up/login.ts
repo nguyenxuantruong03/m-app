@@ -22,10 +22,13 @@ import { getTwoFactorTokenByEmail } from "@/data/two-factor-token";
 import { getUserByEmail } from "@/data/user";
 import { getTwoFactorConfirmationbyUserId } from "@/data/two-factor-confirmation";
 import { format } from "date-fns";
+import bcrypt from "bcryptjs";
+import { UAInfo } from "@/providers/device-info-provider";
 
 export const login = async (
   values: z.infer<typeof LoginSchema>,
-  callbackUrl?: string | null
+  callbackUrl?: string | null,
+  deviceInfo?: any
 ) => {
   //safeParse: Phân tích an toàn
   const validatedFields = LoginSchema.safeParse(values);
@@ -54,6 +57,7 @@ export const login = async (
   const uniqueBanforeverValues = Array.from(new Set(banforeverValues));
   //Lấy banforever so sanh với userId lấy ra email tương ứng
   const user = await prismadb.user.findMany();
+
   // Tạo một mảng chứa các ID người dùng mà bạn muốn lấy
   const matchedUsers = user.filter((userData) =>
     uniqueBanforeverValues.includes(userData.id)
@@ -67,15 +71,18 @@ export const login = async (
     return { error: "Tài khoản hiện tại đã bị ban vĩnh viễn!" };
   }
 
+  if (!existingUser?.email) {
+    return { error: "Email không hợp lệ!" };
+  }
+
   if (!existingUser?.emailVerified) {
     return {
-      error:
-        "Bạn chưa xác nhận email! Hãy kiểm tra email và click vào ''hear'' để xác nhận email.",
+      error: "Bạn chưa xác nhận email hoặc email của bạn không hợp lệ!",
     };
   }
 
-   // Truy vấn mật khẩu của người dùng từ mô hình Password
-   const userPasswords = await prismadb.password.findMany({
+  // Truy vấn mật khẩu của người dùng từ mô hình Password
+  const userPasswords = await prismadb.password.findMany({
     where: {
       userId: existingUser.id,
     },
@@ -85,16 +92,14 @@ export const login = async (
     take: 1, // Chỉ lấy mật khẩu mới nhất
   });
 
-  if (!userPasswords[0]) {
-    return { error: "Password không hợp lệ!" };
-  }
+  //Chuyển values password sang hash để so sánh nếu 2 cái match thì mk đúng còn không match thì error
+  const passwordsMatch = await bcrypt.compare(
+    values.password,
+    userPasswords[0].password
+  );
 
-  if (!existingUser?.email) {
-    return { error: "Email không hợp lệ!" };
-  }
-
-  if (!existingUser) {
-    return { error: "Không tìm thấy!" };
+  if (!passwordsMatch) {
+    return { error: "Mật khẩu không đúng!" };
   }
 
   //Ban User
@@ -152,6 +157,27 @@ export const login = async (
     );
     return { success: "Thông tin chính xác!" };
   }
+
+  //Dùng để kiểm tra thiết bị xem có quá giới hạn không
+  const existingDeviceLimitDevice = await prismadb.deviceInfo.findMany({
+    where: { userId: existingUser.id },
+  }); 
+
+  let limitDevice = null;
+  if (existingDeviceLimitDevice.length > 0) {
+    // Assuming limitDevice is stored as a property in each deviceInfo object
+    limitDevice = existingDeviceLimitDevice[0].limitDevice;
+  }
+  // Ensure limitDevice is not null
+  const effectiveLimitDevice = limitDevice ?? 0;
+
+  const totalDeviceCount = existingDeviceLimitDevice.length;
+  if (totalDeviceCount > effectiveLimitDevice) {
+    return {
+      error: `Xin lỗi! Người dùng đã giới hạn thiết bị đăng nhập. Hiện tại đã quá nhiều thiết bị đăng nhập vào tài khoản này.`,
+    };
+  }
+  
 
   // Xác thực 2FA hay còn được gọi là xác thục 2 bước
   if (existingUser.isTwoFactorEnabled && existingUser.email) {
@@ -261,14 +287,82 @@ export const login = async (
       },
     });
 
-    await Promise.all([signInPromise, updateUserPromise, updateLastLogin]);
+    const saveDeviceInfo = async (deviceInfo: UAInfo) => {
+      try {
+        const existingDeviceInfo = await prismadb.deviceInfo.findMany({
+          where: { ua: deviceInfo.ua,userId:existingUser.id },
+        });
+
+        let deviceExists = false;
+
+        existingDeviceInfo.forEach((deviceInfo) => {
+          if (deviceInfo.ua) {
+            const start = deviceInfo.ua.indexOf("(");
+            const end = deviceInfo.ua.indexOf(")");
+
+            // Kiểm tra xem có phần "(" và ")" trong chuỗi không
+            if (start !== -1 && end !== -1) {
+              // Cắt chuỗi từ vị trí bắt đầu của "(" đến kết thúc của ")"
+              const cutString = deviceInfo.ua.substring(start + 1, end);
+
+              if (deviceInfo.ua.includes(cutString)) {
+                console.error("Thiết bị đã tồn tại.");
+                deviceExists = true;
+              }
+            } else {
+              console.error("Lỗi tìm kiếm thiết bị.");
+            }
+          } else {
+            console.error("Không tìm thấy ua trên thiết bị này.");
+          }
+        });
+
+        // Nếu không có thiết bị nào sử dụng UA này, tạo mới
+        if (!deviceExists) {
+          await prismadb.deviceInfo.create({
+            data: {
+              userId: existingUser.id,
+              browser: deviceInfo.browser
+                ? [deviceInfo.browser.name, deviceInfo.browser.version]
+                : [],
+              cpu: deviceInfo.cpu ? [deviceInfo.cpu.architecture] : [],
+              device: [
+                deviceInfo.device.type,
+                deviceInfo.device.brand,
+                deviceInfo.device.model,
+              ],
+              engine: deviceInfo.engine
+                ? [deviceInfo.engine.name, deviceInfo.engine.version]
+                : [],
+              os: [
+                deviceInfo.os.platform,
+                deviceInfo.os.name || "unknown",
+                deviceInfo.os.version || "unknown",
+              ],
+              ua: deviceInfo.ua,
+              fullModel: deviceInfo.fullModel,
+            },
+          });
+        }
+      } catch (errors) {
+        console.error("Lỗi lưu thiết bị vào dữ liệu.", errors);
+      }
+    };
+
+    const saveDeviceInfoResult = await saveDeviceInfo(deviceInfo);
+    await Promise.all([
+      signInPromise,
+      updateUserPromise,
+      updateLastLogin,
+      saveDeviceInfoResult,
+    ]);
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CredentialsSignin":
           return { error: "Email hoặc mật khẩu không đúng!" };
         default:
-          return { error: " Something went wrong" };
+          return { error: "Something went wrong" };
       }
     }
     throw error;

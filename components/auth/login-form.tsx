@@ -26,6 +26,8 @@ import { login } from "@/actions/actions-signin-sign-up/login";
 import axios from "axios";
 import ReCAPTCHA from "react-google-recaptcha";
 import { X } from "lucide-react";
+import { Label } from "../ui/label";
+import { useDevice } from "@/providers/device-info-provider";
 
 const getTheme = () => {
   if (
@@ -41,6 +43,7 @@ const getTheme = () => {
 
 const LoginForm = () => {
   const searchParams = useSearchParams();
+  const deviceInfo = useDevice();
   const callbackUrl = searchParams.get("callbackUrl");
   const urlError =
     searchParams.get("error") === "OAuthAccountNotLinked"
@@ -66,6 +69,7 @@ const LoginForm = () => {
   //Làm mới borderInput
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmittedEmail, setIsSubmittedEmail] = useState(false);
+  const [loadingResent, setLoadingResent] = useState(false);
 
   const MAX_RESEND_ATTEMPTS = 5;
 
@@ -86,6 +90,7 @@ const LoginForm = () => {
     };
   }, []);
 
+  //Đếm ngược khi gửi lại mã xác thực
   useEffect(() => {
     let timer: NodeJS.Timeout | undefined;
     if (showTwoFacTor && countdown > 0) {
@@ -106,25 +111,30 @@ const LoginForm = () => {
   const handleResendCode = async () => {
     setError(""); // Xóa thông báo lỗi hiện tại
     setSuccess(""); // Xóa thông báo thành công hiện tại
+    setLoadingResent(true);
 
     // Kiểm tra số lần thử lại đã vượt quá giới hạn
     if (resendCount >= MAX_RESEND_ATTEMPTS) {
       setShowTwoFactor(false); // Tắt chế độ xác thực hai yếu tố
+      setLoadingResent(true);
       setError("Bạn đã vượt quá số lần cho phép.");
       return;
     }
 
     try {
       const values = form.getValues(); // Lấy giá trị mới nhất từ form
+      setLoadingResent(true);
       const data = await login(values); // Gửi lại mã xác thực
 
       if (data?.error) {
         setError(data.error); // Hiển thị thông báo lỗi nếu có
         setIsError(true); // Đặt giá trị của state mới là true khi có lỗi
+        setLoadingResent(false);
       }
 
       if (data?.success) {
         setSuccess(data.success); // Hiển thị thông báo thành công nếu có
+        setLoadingResent(false);
       } else {
         setSuccess("Mã xác thực đã được gửi lại thành công!");
       }
@@ -145,22 +155,24 @@ const LoginForm = () => {
       return setError("Vui lòng xác minh bạn không phải là robot!");
     } else {
       startTransition(() => {
-        login(values, callbackUrl)
+        login(values, callbackUrl,deviceInfo)
           .then((data) => {
             if (data?.error) {
               setError(data.error);
               setIsError(true); // Đặt giá trị của state mới là true khi có lỗi
+              setPasswordValid(false);
               setPassword("");
               setIsSubmitted(true);
-              setIsSubmittedEmail(true)
+              setIsSubmittedEmail(true);
             }
 
             if (data?.success) {
               setSuccess(data.success);
+              setPasswordValid(false);
               setPassword("");
               setEmail("");
               setIsSubmitted(true);
-              setIsSubmittedEmail(true)
+              setIsSubmittedEmail(true);
             }
 
             if (data?.twoFactor) {
@@ -233,7 +245,6 @@ const LoginForm = () => {
                           setIsSubmittedEmail={setIsSubmittedEmail}
                         />
                       </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -264,7 +275,6 @@ const LoginForm = () => {
                       >
                         <Link href="/auth/reset">Quên mật khẩu?</Link>
                       </Button>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -275,20 +285,24 @@ const LoginForm = () => {
             <div className="mt-2 mb-6">
               {countdown > 0 ? (
                 <p className="text-sm">
-                  Xác thực 2 yếu tố sẽ hết sau{" "}
+                  Xác thực 2 yếu tố sẽ hết hiệu lực sau{" "}
                   <span className="font-bold">{countdown}</span> giây.
                 </p>
               ) : (
                 <>
                   <p className="text-sm">
-                    Xác thực 2 yếu tố đã hết hạn. Nhấn để{" "}
+                    Xác thực 2 yếu tố đã hết hiệu lực. Nhấn để{" "}
                     {countdown === 0 && (
-                      <label
-                        className="hover:underline text-sm text-sky-400 cursor-pointer"
-                        onClick={handleResendCode}
+                      <Label
+                        className={`text-sm cursor-pointer ${
+                          loadingResent
+                            ? "text-gray-400 cursor-not-allowed"
+                            : "hover:underline text-sky-400"
+                        }`}
+                        onClick={loadingResent ? () => {} : handleResendCode}
                       >
                         thử lại
-                      </label>
+                      </Label>
                     )}
                     .
                   </p>

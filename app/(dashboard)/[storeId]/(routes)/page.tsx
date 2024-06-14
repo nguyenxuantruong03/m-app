@@ -29,6 +29,7 @@ const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
   const graphRevenue = await getGraphRevenue(params.storeId)
   const composedChart = await getComposedChart(params.storeId)
   const lineChart = await getLineChart(params.storeId)
+
   return (
     <div className="flex-col">
       <div className="flex-1 space-y-4 p-8 pt-6">

@@ -14,7 +14,7 @@ import { Images as ImageIcon } from "lucide-react";
 import { Clock12, Tag } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import EditRow from "../_components/edit-row";
-import ImageCellMutiple from "@/components/image-cell-mutiple";
+import ImageCellMutiple from "@/components/image-cell-multiple";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.

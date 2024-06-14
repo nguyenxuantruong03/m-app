@@ -28,7 +28,7 @@ const Social = () => {
                 <Github className="h-5 w-5"/>
                 </Button>
                 <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("facebook")}}>
-                <Image src="/images-icon/facebook-icon.png.png" alt="404" width="50" height="50" className='h-9 w-9'/>
+                <Image src="/images-icon/facebook-icon.png" alt="404" width="50" height="50" className='h-9 w-9'/>
                 </Button>
             </div>
 

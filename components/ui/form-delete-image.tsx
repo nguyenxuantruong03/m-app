@@ -56,9 +56,9 @@ export const ForDeleteImage = () => {
             </FormItem>
           )}
         />
-         <button type="submit" className="w-full cursor-pointer flex">
-         <Trash2 className="h-4 w-4 mr-2" />
-          Xóa
+         <button type="submit" className="w-full cursor-pointer flex items-center">
+         <Trash2 className="h-5 w-5 mr-2" />
+          Xóa ảnh đại diện
         </button>
       </form>
     </Form>

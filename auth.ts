@@ -5,7 +5,7 @@ import { getUserById } from "@/data/user";
 import prismadb from "@/lib/prismadb";
 import { getTwoFactorConfirmationbyUserId } from "./data/two-factor-confirmation";
 import { getAccountByUserId } from "./data/account";
-import { UserRole } from "@prisma/client";
+import { Gender, UserRole } from "@prisma/client";
 import { sendBanUserNotStart, sendUnBanUser } from "./lib/mail";
 import { format } from "date-fns";
 
@@ -170,14 +170,31 @@ export const {
       }
       if (session.user) {
         session.user.name = token.name;
+        session.user.nameuser = token.nameuser as string;
         session.user.email = token.email as string;
         session.user.isOAuth = token.isOAuth as boolean;
+        session.user.provider = token.provider as string;
         session.user.imageCredential = token.imageCredential as string[];
         session.user.ban = token.ban as boolean;
         session.user.timestartwork = token.timestartwork as string;
         session.user.urlimageCheckAttendance = token.urlimageCheckAttendance as string;
         session.user.codeNFC = token.codeNFC as string;
         session.user.daywork = token.daywork as string[];
+        session.user.bio = token.bio as string;
+        session.user.address = token.address as string;
+        session.user.addressother = token.addressother as string;
+        session.user.gender = token.gender as Gender;
+        session.user.phonenumber = token.phonenumber as string;
+        session.user.dateofbirth = token.dateofbirth as Date;
+        session.user.linkyoutube = token.linkyoutube as string;
+        session.user.linkfacebook = token.linkfacebook as string;
+        session.user.linkinstagram = token.linkinstagram as string;
+        session.user.linktwitter = token.linktwitter as string;
+        session.user.linklinkedin = token.linklinkedin as string;
+        session.user.linkgithub = token.linkgithub as string;
+        session.user.linktiktok = token.linktiktok as string;
+        session.user.linkwebsite = token.linkwebsite as string;
+        session.user.linkother = token.linkother as string;
         const existingUser = await getUserById(token.sub);
         if (existingUser) {
           const now = new Date();
@@ -216,7 +233,9 @@ export const {
         }
       }
       token.isOAuth = !!existingAccount;
+      token.provider = existingAccount?.provider;
       token.name = existingUser.name;
+      token.nameuser = existingUser.nameuser;
       token.email = existingUser.email;
       token.role = existingUser.role;
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
@@ -226,6 +245,34 @@ export const {
       token.urlimageCheckAttendance = existingUser.urlimageCheckAttendance;
       token.codeNFC = existingUser.codeNFC;
       token.daywork = existingUser.daywork;
+      token.bio = existingUser.bio;
+      token.address = existingUser.address;
+      token.addressother = existingUser.addressother;
+      token.gender = existingUser.gender;
+      token.phonenumber = existingUser.phonenumber;
+      token.dateofbirth = existingUser.dateofbirth;
+      if (existingUser.socialLink) {
+        token.linkyoutube = existingUser.socialLink.linkyoutube;
+        token.linkfacebook = existingUser.socialLink.linkfacebook;
+        token.linkinstagram = existingUser.socialLink.linkinstagram;
+        token.linktwitter = existingUser.socialLink.linktwitter;
+        token.linklinkedin = existingUser.socialLink.linklinkedin;
+        token.linkgithub = existingUser.socialLink.linkgithub;
+        token.linktiktok = existingUser.socialLink.linktiktok;
+        token.linkwebsite = existingUser.socialLink.linkwebsite;
+        token.linkother = existingUser.socialLink.linkother;
+      } else {
+        token.linkyoutube = null;
+        token.linkfacebook = null;
+        token.linkinstagram = null;
+        token.linktwitter = null;
+        token.linklinkedin = null;
+        token.linkgithub = null;
+        token.linktiktok = null;
+        token.linkwebsite = null;
+        token.linkother = null;
+      }
+      
       return token;
     },
   },
