@@ -17,6 +17,7 @@ import FormAddress from "../components/form/form-infomation/form-address";
 import FormAddressOther from "../components/form/form-infomation/form-addressother";
 import FormBio from "../components/form/form-infomation/form-bio";
 import FormImageCredential from "../components/form/form-infomation/form-imageCredential";
+import FormDeleteAccount from "../components/form/form-infomation/form-delete-account";
 
 interface SheetInfomationProps {
   name?: string;
@@ -28,7 +29,7 @@ interface SheetInfomationProps {
   address?: string;
   addressother?: string;
   children: React.ReactNode;
-  type: "name" | "nameuser" | "bio" | "gender" | "phonenumber" | "dateofbirth" | "address" | "addressother" | "avatar"; // Add type to specify the prop to display
+  type: "name" | "nameuser" | "bio" | "gender" | "phonenumber" | "dateofbirth" | "address" | "addressother" | "avatar" | "email"; // Add type to specify the prop to display
 }
 
 const SheetInfomation: React.FC<SheetInfomationProps> = ({
@@ -90,6 +91,11 @@ const SheetInfomation: React.FC<SheetInfomationProps> = ({
       title: `Chỉnh sửa ảnh đại diện`,
       description: `Ảnh đại diện giúp mọi người nhận biết bạn dễ dàng hơn qua các bài viết, bình luận, tin nhắn...`,
       form: <FormImageCredential/>
+    },
+    email: {
+      title: `Xóa tài khoản`,
+      description: `Hành động của bạn sẽ xóa đi vĩnh viễn tài khoản khỏi hệ thống. Hãy cân nhắc kỹ trước khi thực hiện hành động này.`,
+      form: <FormDeleteAccount />
     },
   };
 

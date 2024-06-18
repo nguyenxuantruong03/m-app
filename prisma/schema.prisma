@@ -707,11 +707,11 @@ model DeviceInfo {
   id          String   @id @default(cuid())
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  browser     String
-  cpu         String
-  device      String
-  engine      String
-  os          String
+  browser     String[]
+  cpu         String[]
+  device      String[]
+  engine      String[]
+  os          String[]
   fullModel   String?
   ua          String?
   limitDevice Int?     @default(2)

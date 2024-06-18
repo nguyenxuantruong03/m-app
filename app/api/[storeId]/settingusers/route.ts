@@ -1,4 +1,4 @@
-import { currentUser } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 import {
   sendBanUser,
   sendDeleteUser,
@@ -7,7 +7,7 @@ import {
 } from "@/lib/mail";
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
-import { format } from "date-fns";
+import { format, subHours } from "date-fns";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -263,13 +263,26 @@ export async function POST(
 ) {
   const body = await req.json();
   const userCheck = await currentUser();
-  const { userId } = body;
+  const role = await currentRole()
+  const { userId,descriptionBan,time } = body;
   try {
     const existingUser = await prismadb.user.findUnique({
       where: { id: userId },
     });
 
-    if (!existingUser) {
+    if(userCheck?.id === existingUser?.id){
+      return new NextResponse(JSON.stringify({ error: "Không thể tự ban chỉnh mình!" }), {
+        status: 404,
+      });
+    }
+
+    if(role !== UserRole.ADMIN) {
+      return new NextResponse(JSON.stringify({ error: "Bạn không có quyền để ban." }), {
+        status: 404,
+      });
+    }
+
+    if (!existingUser?.id) {
       return new NextResponse(JSON.stringify({ error: "User not found!" }), {
         status: 404,
       });
@@ -307,41 +320,22 @@ export async function POST(
       );
     }
 
-    if (existingUser?.ban) {
-      return new NextResponse(
-        JSON.stringify({ error: "Người dùng này đã bị ban!" }),
-        {
-          status: 404,
-        }
-      );
-    }
-
-    // Kiểm tra nếu người dùng có quyền là ADMIN không thể bị ban
-    if (existingUser?.role === "ADMIN") {
-      return new NextResponse(
-        JSON.stringify({ error: "Cannot ban an ADMIN user!" }),
-        { status: 400 }
-      );
-    }
-
-    const timeBanUser = new Date();
-    timeBanUser.setDate(timeBanUser.getDate() + 30); // Thêm 30 ngày
-
     const banuser = await prismadb.user.update({
       where: { id: userId },
       data: {
         ban: true,
-        banExpires: timeBanUser,
+        banExpires: new Date(time),
       },
     });
 
     const sentUser = {
       name: banuser?.name,
       email: banuser?.email,
+      descriptionBan:descriptionBan
     };
 
     // Log sự thay đổi của billboard
-    const changes = [`Name: ${sentUser.name}, Email: ${sentUser.email}`];
+    const changes = [`Name: ${sentUser.name}, Email: ${sentUser.email}, Description Ban:${sentUser.descriptionBan}`];
 
     // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
     const response = await prismadb.system.create({
@@ -357,11 +351,12 @@ export async function POST(
       ? format(response.createdAt, "dd/MM/yyyy '-' HH:mm:ss a")
       : "";
 
-    const timeBan = banuser.banExpires
-      ? format(banuser.banExpires, "dd/MM/yyyy '-' HH:mm:ss a")
+
+      const timeBan = banuser.banExpires
+      ? format(subHours(new Date(banuser.banExpires), 7), "dd/MM/yyyy '-' HH:mm:ss a")
       : "";
 
-    await sendBanUser(banuser.email, banuser.name, dateonow, timeBan);
+    await sendBanUser(banuser.email, banuser.name, dateonow, timeBan,descriptionBan);
 
     return NextResponse.json(banuser);
   } catch (error) {

@@ -1,5 +1,5 @@
 "use client";
-import { ChevronRight, User } from "lucide-react";
+import { Cake, Captions, ChevronRight, Contact, ImageUp, MapPin, Phone, SquareUser, Trash, User, Users } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useEffect, useState } from "react";
@@ -71,7 +71,7 @@ const InfoUser: React.FC<InfoUserProps> = ({ user }) => {
 
   const infousers = [
     {
-      name: "Họ và tên",
+      name: <span className="flex items-center"><Contact className="h-4 w-4 mr-1"/>Họ và tên</span>,
       state: user.name || "Chưa cập nhật",
       icons: (
         <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
@@ -79,7 +79,7 @@ const InfoUser: React.FC<InfoUserProps> = ({ user }) => {
       key: "name", // Add a key to identify the item
     },
     {
-      name: "Tên người dùng",
+      name: <span className="flex items-center"><SquareUser className="h-4 w-4 mr-1"/>Tên người dùng</span>,
       state: user.nameuser || "Chưa cập nhật",
       icons: (
         <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
@@ -87,11 +87,11 @@ const InfoUser: React.FC<InfoUserProps> = ({ user }) => {
       key: "nameuser",
     },
     {
-      name: "Email",
+      name: <span className="flex items-center"><User className="h-4 w-4 mr-1"/>Email</span>,
       state: user.email || "Chưa cập nhật",
     },
     {
-      name: "Giới thiệu trang cá nhân",
+      name: <span className="flex items-center"><Captions className="h-4 w-4 mr-1"/>Giới thiệu trang cá nhân</span>,
       state: user.bio || "Chưa cập nhật",
       icons: (
         <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
@@ -99,7 +99,7 @@ const InfoUser: React.FC<InfoUserProps> = ({ user }) => {
       key: "bio",
     },
     {
-      name: "Giới tính",
+      name: <span className="flex items-center"><Users className="h-4 w-4 mr-1"/>Giới tính</span>,
       state: user.gender || "Chưa cập nhật",
       icons: (
         <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
@@ -107,7 +107,7 @@ const InfoUser: React.FC<InfoUserProps> = ({ user }) => {
       key: "gender",
     },
     {
-      name: "Số điện thoại",
+      name: <span className="flex items-center"><Phone className="h-4 w-4 mr-1"/>Số điện thoại</span>,
       state: user.phonenumber || "Chưa cập nhật",
       icons: (
         <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
@@ -115,7 +115,7 @@ const InfoUser: React.FC<InfoUserProps> = ({ user }) => {
       key: "phonenumber",
     },
     {
-      name: "Sinh nhật",
+      name: <span className="flex items-center"><Cake className="h-4 w-4 mr-1"/>Sinh nhật</span>,
       state: formatDate(user.dateofbirth) || "Chưa cập nhật",
       icons: (
         <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
@@ -123,7 +123,7 @@ const InfoUser: React.FC<InfoUserProps> = ({ user }) => {
       key: "dateofbirth",
     },
     {
-      name: "Địa chỉ",
+      name: <span className="flex items-center"><MapPin className="h-4 w-4 mr-1"/>Địa chỉ</span>,
       state: user.address || "Chưa cập nhật",
       icons: (
         <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
@@ -131,7 +131,7 @@ const InfoUser: React.FC<InfoUserProps> = ({ user }) => {
       key: "address",
     },
     {
-      name: "Địa chỉ khác",
+      name: <span className="flex items-center"><MapPin className="h-4 w-4 mr-1"/>Địa chỉ khác</span>,
       state: user.addressother || "Chưa cập nhật",
       icons: (
         <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
@@ -139,7 +139,15 @@ const InfoUser: React.FC<InfoUserProps> = ({ user }) => {
       key: "addressother",
     },
     {
-      name: "Ảnh đại diện",
+      name: <span className="flex items-center"><Trash className="h-4 w-4 mr-1"/>Xóa tài khoản</span>,
+      state: user.email || "Chưa cập nhật",
+      icons: (
+        <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
+      ),
+      key: "email",
+    },
+    {
+      name: <span className="flex items-center mb-2"><ImageUp className="h-4 w-4 mr-1"/>Ảnh đại diện</span>,
       state: (
         <Avatar>
           {isGitHubOrGoogleUser && avatarImage ? (
@@ -170,7 +178,8 @@ const InfoUser: React.FC<InfoUserProps> = ({ user }) => {
       infouser.key === "dateofbirth" ||
       infouser.key === "address" ||
       infouser.key === "addressother" || 
-      infouser.key === "avatar"
+      infouser.key === "avatar" ||
+      infouser.key === "email"
     ) {
       return (
         <SheetInfomation
@@ -194,7 +203,7 @@ const InfoUser: React.FC<InfoUserProps> = ({ user }) => {
   return (
     <div className="dark:bg-white bg-slate-900 rounded-md overflow-hidden my-2">
       {infousers.map((infouser) => (
-        <div key={infouser.name}>
+        <div key={infouser.key}>
           {wrapWithSheet(
             infouser,
             <div className="cursor-pointer hover:bg-slate-300 hover:bg-opacity-40">

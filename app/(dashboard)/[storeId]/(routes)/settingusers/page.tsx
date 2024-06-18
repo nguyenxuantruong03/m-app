@@ -1,20 +1,16 @@
 import prismadb from "@/lib/prismadb";
-import { format, subHours } from "date-fns";
 import { RoleGate } from "@/components/auth/role-gate";
 import { currentRole } from "@/lib/auth";
 import { Account, UserRole } from "@prisma/client";
 import FormSuccess from "@/components/form-success";
 import { SettingUsersColumn } from "./components/column";
 import SettingUserClient from "./components/client";
-import { utcToZonedTime } from "date-fns-tz";
-import viLocale from "date-fns/locale/vi";
-const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 
 const SettingUser = async ({ params }: { params: { storeId: string } }) => {
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN;
   const showOrderRole = isRole;
-  const user = await prismadb.user.findMany({
+  const users = await prismadb.user.findMany({
     include: {
       accounts: true,
       twoFactorConfirmation: true,
@@ -32,39 +28,39 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
 
   const system = await prismadb.system.findMany();
 
-  const formattedUser: SettingUsersColumn[] = user.map((item) => {
-    // Thêm thông tin từ system vào mỗi người dùng
+  // Lấy ngày hiện tại
+  const today = new Date();
+
+  // Format lại danh sách người dùng với thông tin từ system và thêm kiểm tra sinh nhật
+  const formattedUser: SettingUsersColumn[] = users.map((item) => {
     const systemInfo = system.find(sys => sys.banforever.includes(item.id));
+    
+    // Xử lý ngày sinh
+    const birthdayDate = item.dateofbirth ? new Date(item.dateofbirth) : null;
+
+    // Kiểm tra nếu hôm nay là sinh nhật của người dùng
+    const isBirthdayToday =
+    birthdayDate &&
+    birthdayDate.getDate() === today.getDate() &&
+    birthdayDate.getMonth() === today.getMonth();
+
+
     return {
       id: item.id,
       name: item.name,
       email: item.email,
-      emailVerified: item.emailVerified
-        ? format(item.emailVerified, "dd/MM/yyyy")
-        : null,
+      emailVerified: item.emailVerified,
       image: item.image,
-      imageCredential: item.imageCredential
-        .map((orderItem) => {
-          return orderItem;
-        })
-        .join(", "),
+      imageCredential: item.imageCredential.map(orderItem => orderItem).join(", "),
       password: item.password.length,
-      lastlogin: item.lastlogin
-        ? format(
-            utcToZonedTime(
-              subHours(new Date(item.lastlogin), 7),
-              vietnamTimeZone
-            ),
-            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-            { locale: viLocale }
-          )
-        : null,
-      resendTokenVerify:item.resendTokenVerify,
+      dateofbirth: item.dateofbirth,
+      lastlogin: item.lastlogin,
+      resendTokenVerify: item.resendTokenVerify,
       resendEmailResetPassword: item.resendEmailResetPassword,
       resendTokenResetPassword: item.resendTokenResetPassword,
       resendBanUserNotStart: item.resendBanUserNotStart,
       resendUnBanUser: item.resendUnBanUser,
-      resendCount:item.resendCount,
+      resendCount: item.resendCount,
       role: item.role,
       accounts: item.accounts.map((accountItem: Account) => ({
         type: accountItem.type,
@@ -74,46 +70,30 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
       isTwoFactorEnabled: item.isTwoFactorEnabled,
       isCitizen: item.isCitizen,
       twoFactorConfirmation: item.twoFactorConfirmation,
-      createdAt: item.createdAt
-          ? format(
-              utcToZonedTime(
-                new Date(new Date(item.createdAt)),
-                vietnamTimeZone
-              ),
-              "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-              { locale: viLocale }
-            )
-          : null,
       ban: item.ban,
-      banExpires:item.banExpires
-        ? format(
-            utcToZonedTime(
-              subHours(new Date(item.banExpires), 0),
-              vietnamTimeZone
-            ),
-            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-            { locale: viLocale }
-          )
-        : null,
-        isbanforever: systemInfo?.isbanforever,
-        timebanforever: systemInfo?.timebanforever
-        ? format(
-            utcToZonedTime(
-              subHours(new Date(systemInfo?.timebanforever), 0),
-              vietnamTimeZone
-            ),
-            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-            { locale: viLocale }
-          )
-        : null,
-        
+      banExpiresTime: item.banExpires,
+      isbanforever: systemInfo?.isbanforever,
+      timebanforever: systemInfo?.timebanforever,
+      createdAt: item.createdAt,
+      isBirthdayToday: isBirthdayToday, // Thêm trường này để xử lý sau này
     };
+  });
+
+  // Sắp xếp lại danh sách: đưa những người có sinh nhật hôm nay lên đầu
+  formattedUser.sort((a, b) => {
+    if (b.isBirthdayToday && !a.isBirthdayToday) {
+      return 1;
+    }
+    if (a.isBirthdayToday && !b.isBirthdayToday) {
+      return -1;
+    }
+    return 0;
   });
 
   return (
     <div className="w-full">
-      <div className={`space-y-4 p-8 pt-6 ${showOrderRole}`}>
-          {showOrderRole && <SettingUserClient data={formattedUser} />}
+      <div className={`space-y-4 p-8 pt-6 ${showOrderRole ? '' : 'hidden'}`}>
+        {showOrderRole && <SettingUserClient data={formattedUser} />}
       </div>
       <RoleGate allowedRole={UserRole.ADMIN}>
         <FormSuccess message="Bạn có thể xem được nội dung này!" />
@@ -122,4 +102,4 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
   );
 };
 
-export default SettingUser;
+export default SettingUser

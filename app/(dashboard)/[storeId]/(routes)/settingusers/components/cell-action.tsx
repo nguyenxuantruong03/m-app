@@ -16,6 +16,7 @@ import axios from "axios";
 import { AlertModal } from "@/components/modals/alert-modal";
 import { SettingUsersColumn } from "./column";
 import { KeyRound } from "lucide-react";
+import SheetBanUser from "./sheet-ban";
 
 interface CellActionProps {
   data: SettingUsersColumn;
@@ -26,21 +27,27 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const params = useParams();
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [openSheet, setOpenSheet] = useState<boolean>(false);
 
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/settingusers`, { data: { id: data.id } });
+      await axios.delete(`/api/${params.storeId}/settingusers`, {
+        data: { id: data.id },
+      });
       router.refresh();
       toast.success("Người dùng đã bị ban vĩnh viễn!");
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
         (error as { response: { data?: { error?: string } } }).response.data &&
-        (error as { response: { data: { error?: string } } }).response.data.error
+        (error as { response: { data: { error?: string } } }).response.data
+          .error
       ) {
         // Hiển thị thông báo lỗi cho người dùng
-        toast.error((error as { response: { data: { error: string } } }).response.data.error);
+        toast.error(
+          (error as { response: { data: { error: string } } }).response.data.error
+        );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
@@ -53,50 +60,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     }
   };
 
-  const BanUser = async () => {
-    try {
-      setLoading(true);
-      const promise = axios.post(`/api/${params.storeId}}/settingusers`, { userId: data.id });
-      await toast.promise(
-        promise.then(() => {
-          return (
-            <span>
-              Ban: <span className="font-bold">
-                {data.email} - <span className="font-bold">{data.name}</span>
-              </span>
-              .
-            </span>
-          );
-        }),
-        {
-          loading: "Updating ban user...",
-          success: (message) => {
-            router.refresh();
-            return message;
-          },
-          error: (error: unknown) => {
-            if (
-              (error as { response?: { data?: { error?: string } } }).response &&
-              (error as { response: { data?: { error?: string } } }).response.data &&
-              (error as { response: { data: { error?: string } } }).response.data.error
-            ) {
-              return (error as { response: { data: { error: string } } }).response.data.error
-            } else {
-              return "Ban user Error.";
-            }
-          },
-        }
-      );
-    } catch (error) {
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const UnBanUser = async () => {
     try {
       setLoading(true);
-      const promise = axios.post(`/api/${params.storeId}}/settingusers/unban`, {
+      const promise = axios.post(`/api/${params.storeId}/settingusers/unban`, {
         userId: data.id,
       });
       await toast.promise(
@@ -123,7 +90,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               (error as { response: { data?: { error?: string } } }).response.data &&
               (error as { response: { data: { error?: string } } }).response.data.error
             ) {
-              return (error as { response: { data: { error: string } } }).response.data.error
+              return (error as { response: { data: { error: string } } }).response.data.error;
             } else {
               return "Unban user Error.";
             }
@@ -131,11 +98,12 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         }
       );
     } catch (error) {
+      toast.error("Đã xảy ra lỗi khi cấm người dùng.");
     } finally {
       setLoading(false);
     }
   };
-
+  
   return (
     <>
       <AlertModal
@@ -143,6 +111,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         onClose={() => setOpen(false)}
         onConfirm={onDelete}
         loading={loading}
+      />
+      <SheetBanUser
+        email={data.email || ""}
+        openSheet={openSheet}
+        userId = {data.id || ""}
+        setOpenSheet={setOpenSheet}
+        name={data.name || ""}
+        banTime= {data.banExpiresTime}
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -157,7 +133,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             <Ban className="h-4 w-4 mr-2" />
             Ban Forever
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={BanUser}>
+          <DropdownMenuItem onClick={() => setOpenSheet(true)}>
             <Lock className="h-4 w-4 mr-2" />
             Ban
           </DropdownMenuItem>

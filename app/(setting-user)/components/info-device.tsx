@@ -191,22 +191,23 @@ const InfoDevice: React.FC<InfoDeviceProps> = ({
     }
     return false;
   };
-  
   // Sắp xếp lại danh sách findDevice ở đây
   const sortedDevices = initialFindDevice.sort((a, b) => {
     const aIsCurrentDevice = checkCurrentDevice(a) ? -1 : 1;
     const bIsCurrentDevice = checkCurrentDevice(b) ? -1 : 1;
     return aIsCurrentDevice - bIsCurrentDevice;
   });
+
   
   const [findDevice, setFindDevice] = useState(sortedDevices);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState<string | null>(null);
 
+
   const handleDelete = async (id: string) => {
     setLoading(true);
     try {
-      await axios.delete(`/api/limit-device`, { data: { id } });
+      await axios.delete(`/api/limitdevice`, { data: { id } });
       const updatedDevices = findDevice.filter((device) => device.id !== id);
       setFindDevice(updatedDevices);
       toast.success("Xóa thành công.");

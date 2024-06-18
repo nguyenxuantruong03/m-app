@@ -1,4 +1,4 @@
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Drama, KeyRound } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import SheetSecurity from "../showsheet/sheet-security";
@@ -11,7 +11,7 @@ interface InfoPasswordProp {
 const InfoPassword: React.FC<InfoPasswordProp> = ({ user, password }) => {
   const infopasswords = [
     {
-      name: "Đổi mật khẩu",
+      name: <span className="flex items-center"><KeyRound className="h-4 w-4 mr-1"/>Đổi mật khẩu</span>,
       state: password
         ? `Đã đổi mật khẩu vào ngày: ${password}`
         : "Chưa đổi mật khẩu",
@@ -19,7 +19,7 @@ const InfoPassword: React.FC<InfoPasswordProp> = ({ user, password }) => {
       key: "password",
     },
     {
-      name: "Xác minh 2 bước",
+      name: <span className="flex items-center mb-2"><Drama className="h-4 w-4 mr-1"/>Xác minh 2 bước</span>,
       state: (
         <Badge variant={user?.isTwoFactorEnabled ? "success" : "destructive"}>
           {user?.isTwoFactorEnabled ? "ON" : "OFF"}
@@ -47,7 +47,7 @@ const InfoPassword: React.FC<InfoPasswordProp> = ({ user, password }) => {
   return (
     <div className="dark:bg-white bg-slate-900 rounded-md overflow-hidden my-2">
     {infopasswords.map((infopassword) => (
-      <div key={infopassword.name}>
+      <div key={infopassword.key}>
         {wrapWithSheet(infopassword, (
           <div className="cursor-pointer hover:bg-slate-300 hover:bg-opacity-40">
             <div>

@@ -1,4 +1,4 @@
-import { ChevronRight } from "lucide-react";
+import { ChevronRight,Github, Linkedin,Facebook, Youtube, Dribbble, Twitter, Instagram, CircleFadingPlus, TrendingUp  } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import SheetLinkSocial from "../showsheet/sheet-link-social";
 import Link from "next/link";
@@ -53,55 +53,55 @@ const InfoSocial: React.FC<InfoSocialProps> = ({ user }) => {
 
   const sosials = [
     {
-      name: "Trang web cá nhân",
+      name: <span className="flex items-center"><Dribbble className="h-4 w-4 mr-1"/>Trang web cá nhân</span>,
       state: linkwebsite,
       separator: <Separator className="border-[1px] border-gray-400" />,
       key: "linkwebsite", // Add a key to identify the item
     },
     {
-      name: "GitHub",
+      name: <span className="flex items-center"><Github className="h-4 w-4 mr-1"/>GitHub</span>,
       state: linkgithub,
       separator: <Separator className="border-[1px] border-gray-400" />,
       key: "linkgithub", // Add a key to identify the item
     },
     {
-      name: "LinkedIn",
+      name: <span className="flex items-center"><Linkedin className="h-4 w-4 mr-1"/>LinkedIn</span>,
       state: linklinkedin,
       separator: <Separator className="border-[1px] border-gray-400" />,
       key: "linklinkedin", // Add a key to identify the item
     },
     {
-      name: "FaceBook",
+      name: <span className="flex items-center"><Facebook className="h-4 w-4 mr-1"/>FaceBook</span>,
       state: linkfacebook,
       separator: <Separator className="border-[1px] border-gray-400" />,
       key: "linkfacebook", // Add a key to identify the item
     },
     {
-      name: "Youtube",
+      name: <span className="flex items-center"><Youtube className="h-4 w-4 mr-1"/>Youtube</span>,
       state: linkyoutube,
       separator: <Separator className="border-[1px] border-gray-400" />,
       key: "linkyoutube", // Add a key to identify the item
     },
     {
-      name: "Tiktok",
+      name: <span className="flex items-center"><TrendingUp className="h-4 w-4 mr-1"/>Tiktok</span>,
       state: linktiktok,
       separator: <Separator className="border-[1px] border-gray-400" />,
       key: "linktiktok", // Add a key to identify the item
     },
     {
-      name: "Instagram",
+      name: <span className="flex items-center"><Instagram className="h-4 w-4 mr-1"/>Instagram</span>,
       state: linkinstagram,
       separator: <Separator className="border-[1px] border-gray-400" />,
       key: "linkinstagram", // Add a key to identify the item
     },
     {
-      name: "Twitter",
+      name: <span className="flex items-center"><Twitter className="h-4 w-4 mr-1"/>Twitter</span>,
       state: linktwitter,
       separator: <Separator className="border-[1px] border-gray-400" />,
       key: "linktwitter", // Add a key to identify the item
     },
     {
-      name: "Other",
+      name: <span className="flex items-center"><CircleFadingPlus className="h-4 w-4 mr-1"/>Other</span>,
       state: linkother,
       key: "linkother", // Add a key to identify the item
     },
@@ -142,7 +142,7 @@ const InfoSocial: React.FC<InfoSocialProps> = ({ user }) => {
   return (
     <div className="bg-white rounded-md overflow-hidden my-2">
       {sosials.map((sosial) => (
-        <div key={sosial.name}>
+        <div key={sosial.key}>
           {wrapWithSheet(
             sosial,
             <div className="cursor-pointer hover:bg-slate-300 hover:bg-opacity-40">

@@ -202,7 +202,7 @@ const FormInfoDevice: React.FC<FormInfoDeviceProps> = ({ findDevice }) => {
     if (inputValue !== null && inputValue >= 1 && inputValue <= 5) {
       // Gửi giá trị đến API khi giá trị thay đổi
       axios
-        .patch("/api/limit-device", { limitDevice: inputValue, ua: getUa })
+        .patch("/api/limitdevice", { limitDevice: inputValue, ua: getUa })
         .then((response) => {
           setLoading(false);
           router.refresh();

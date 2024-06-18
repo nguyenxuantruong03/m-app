@@ -84,14 +84,15 @@ export const sendBanUser = async (
   email: string | null | undefined,
   nameuser: string | null | undefined,
   start: string | null,
-  end: string | null
+  end: string | null,
+  descriptionBan: string
 ) => {
   if (email) {
     await resend.emails.send({
       from: "mail@vlxdxuantruong.email",
       to: email,
       subject: "Sai quy định!",
-      html: `Xin chào <strong style="color: #3b82f6; text-decoration: underline;"> ${nameuser}</strong>! Tài khoản của bạn đã bị khóa vào lúc <strong>${start}</strong>. Thời gian mở khóa vào ngày${end}. Bạn đã vi phạm quy định của công ty. Vui lòng liên hệ <strong>0352261103</strong> để biết thêm chi tiết.`,
+      html: `Xin chào <strong style="color: #3b82f6; text-decoration: underline;"> ${nameuser}</strong>! Tài khoản của bạn đã bị khóa vào lúc <strong>${start}</strong>. Thời gian mở khóa vào ngày ${end}. Bạn đã vi phạm quy định của công ty. Vì lý do: <strong>${descriptionBan}</strong>. Vui lòng liên hệ <strong>0352261103</strong> để biết thêm chi tiết.`,
     });
   }
 };

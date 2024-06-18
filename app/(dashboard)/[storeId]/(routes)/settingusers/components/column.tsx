@@ -30,11 +30,17 @@ import {
   CircleSlash,
   AlarmClockOff,
   SendHorizontal,
+  Cake,
 } from "lucide-react";
 import { Lock, Unlock } from "lucide-react";
 import SpanColumn from "@/components/span-column";
 import { Image as ImageIcon } from "lucide-react";
 import ImageCellOne from "@/components/image-cell-one";
+import { utcToZonedTime } from "date-fns-tz";
+import viLocale from "date-fns/locale/vi";
+const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
+import { format, subHours } from "date-fns";
+import FireworksComponent from "@/components/canvas-confetti";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -42,7 +48,7 @@ export type SettingUsersColumn = {
   id: string;
   name: string | null;
   email: string | null;
-  emailVerified: string | null;
+  emailVerified: Date | null;
   image: string | null;
   imageCredential: string;
   password: number | null;
@@ -61,11 +67,13 @@ export type SettingUsersColumn = {
   isCitizen: boolean | null;
   isTwoFactorEnabled: boolean;
   ban: boolean | null;
-  lastlogin: string | null;
-  banExpires: string | null;
+  lastlogin: Date | null;
+  banExpiresTime: Date | null;
   isbanforever: boolean | undefined | null;
-  timebanforever: string | null;
-  createdAt: string | null;
+  timebanforever: Date | null | undefined;
+  dateofbirth: Date | null;
+  createdAt: Date | null;
+  isBirthdayToday?: boolean | null;
 };
 
 interface RoleCellProps<T> {
@@ -189,6 +197,30 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
+
+      const birthdayDate = row.original.dateofbirth
+        ? utcToZonedTime(
+            subHours(new Date(row.original.dateofbirth), 7),
+            vietnamTimeZone
+          )
+        : null;
+
+      const today = new Date();
+      const isBirthdayToday =
+        birthdayDate &&
+        birthdayDate.getDate() === today.getDate() &&
+        birthdayDate.getMonth() === today.getMonth();
+
+      const BirthdayFireworks: React.FC<{ isBirthdayToday: boolean }> = ({
+        isBirthdayToday,
+      }) => {
+        if (isBirthdayToday) {
+          return <FireworksComponent />;
+        } else {
+          return null; // Không có gì để hiển thị nếu không phải sinh nhật hôm nay
+        }
+      };
+
       return (
         <div
           className={
@@ -196,9 +228,14 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
               ? "line-through text-red-500"
               : isBanned
               ? "line-through text-gray-400"
+              : isBirthdayToday
+              ? "bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text font-bold"
               : ""
           }
         >
+          {isBirthdayToday !== null ? (
+            <BirthdayFireworks isBirthdayToday={isBirthdayToday} />
+          ) : null}
           {row.original.name}
         </div>
       );
@@ -237,6 +274,58 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
   },
 
   {
+    accessorKey: "birthday",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Sinh nhật
+          <Cake className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
+      const birthdayDate = row.original.dateofbirth
+        ? utcToZonedTime(
+            subHours(new Date(row.original.dateofbirth), 7),
+            vietnamTimeZone
+          )
+        : null;
+
+      let birthday = birthdayDate
+        ? format(birthdayDate, "E '-' dd/MM/yyyy", {
+            locale: viLocale,
+          })
+        : null;
+
+      const today = new Date();
+      const isBirthdayToday =
+        birthdayDate &&
+        birthdayDate.getDate() === today.getDate() &&
+        birthdayDate.getMonth() === today.getMonth();
+
+      return (
+        <div
+          className={
+            isBanforever
+              ? "line-through text-red-500"
+              : isBanned
+              ? "line-through text-gray-400"
+              : isBirthdayToday
+              ? "bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text font-bold"
+              : ""
+          }
+        >
+          {birthday}
+        </div>
+      );
+    },
+  },
+
+  {
     accessorKey: "emailVerified",
     header: ({ column }) => {
       return (
@@ -251,6 +340,9 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
+      const emailVerified = row.original.emailVerified
+        ? format(row.original.emailVerified, "dd/MM/yyyy")
+        : null;
       return (
         <div
           className={
@@ -261,7 +353,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
               : ""
           }
         >
-          {row.original.emailVerified}
+          {emailVerified}
         </div>
       );
     },
@@ -313,6 +405,17 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
+
+      const lastlogin = row.original.lastlogin
+        ? format(
+            utcToZonedTime(
+              subHours(new Date(row.original.lastlogin), 7),
+              vietnamTimeZone
+            ),
+            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+            { locale: viLocale }
+          )
+        : null;
       return (
         <div
           className={
@@ -323,7 +426,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
               : ""
           }
         >
-          {row.original.lastlogin}
+          {lastlogin}
         </div>
       );
     },
@@ -343,7 +446,16 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
     },
     cell: ({ row }) => {
       const imageUrl = row.original.image;
-      const updateImage = row.original.createdAt;
+      const updateImage = row.original.createdAt
+        ? format(
+            utcToZonedTime(
+              new Date(new Date(row.original.createdAt)),
+              vietnamTimeZone
+            ),
+            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+            { locale: viLocale }
+          )
+        : null;
       const email = row.original.email;
       // Check if the image URL is available
       if (imageUrl) {
@@ -372,7 +484,16 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
     },
     cell: ({ row }) => {
       const imageUrl = row.original.imageCredential;
-      const updateImage = row.original.createdAt;
+      const updateImage = row.original.createdAt
+        ? format(
+            utcToZonedTime(
+              new Date(new Date(row.original.createdAt)),
+              vietnamTimeZone
+            ),
+            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+            { locale: viLocale }
+          )
+        : null;
       const email = row.original.email;
       // Check if the image URL is available
       if (imageUrl) {
@@ -560,7 +681,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
   },
 
   {
-    accessorKey: "banExpires",
+    accessorKey: "banExpiresTime",
     header: ({ column }) => {
       return (
         <SpanColumn
@@ -570,6 +691,19 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
           <Hourglass className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
+    },
+    cell: ({ row }) => {
+      const banExpires = row.original.banExpiresTime
+        ? format(
+            utcToZonedTime(
+              new Date(new Date(row.original.banExpiresTime)),
+              vietnamTimeZone
+            ),
+            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+            { locale: viLocale }
+          )
+        : null;
+      return <div>{banExpires}</div>;
     },
   },
 
@@ -588,6 +722,17 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
+
+      const createdAt = row.original.createdAt
+        ? format(
+            utcToZonedTime(
+              new Date(new Date(row.original.createdAt)),
+              vietnamTimeZone
+            ),
+            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+            { locale: viLocale }
+          )
+        : null;
       return (
         <div
           className={
@@ -598,7 +743,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
               : ""
           }
         >
-          {row.original.createdAt}
+          {createdAt}
         </div>
       );
     },
@@ -654,6 +799,17 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
+
+      const timebanforever = row.original.timebanforever
+        ? format(
+            utcToZonedTime(
+              subHours(new Date(row.original.timebanforever), 0),
+              vietnamTimeZone
+            ),
+            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+            { locale: viLocale }
+          )
+        : null;
       return (
         <div
           className={
@@ -664,7 +820,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
               : ""
           }
         >
-          {row.original.timebanforever}
+          {timebanforever}
         </div>
       );
     },
