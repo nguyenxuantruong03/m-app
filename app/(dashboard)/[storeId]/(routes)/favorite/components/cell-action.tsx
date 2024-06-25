@@ -9,17 +9,17 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 
-import { Copy, Edit, MoreHorizontal, SendHorizontal, Trash } from "lucide-react";
+import { Copy, Edit, MoreHorizontal, Trash } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import axios from "axios";
 
-import { SentEmailUserColumn } from "./columns";
+import { FavoriteColumn } from "./columns";
 import { AlertModal } from "@/components/modals/alert-modal";
 
 interface CellActionProps {
-  data: SentEmailUserColumn;
+  data: FavoriteColumn;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -31,15 +31,15 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id);
-    toast.success("Sent Email User Id copied to the clipboard.");
+    toast.success("Favorite Id copied to the clipboard.");
   };
 
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/sentmailuser/${data.id}`);
+      await axios.delete(`/api/${params.storeId}/favorite/${data.id}`);
       router.refresh();
-      toast.success("Sent Email User deleted.");
+      toast.success("Favorite deleted.");
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -51,51 +51,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
-          "Make sure you removed all categories using this billboard first."
+          "Make sure you removed all favorite using this favorite first."
         );
       }
     } finally {
-      setLoading(false);
-      setOpen(false);
-    }
-  };
-
-  const onSent = async () => {
-    try {
-      setLoading(true);
-      const promise = axios.post(
-        `/api/${params.storeId}/sentmailuser/${data.id}`,{sentuser:data.sentemailuser}
-      );
-      await toast.promise(
-        promise.then(() => {
-          return (
-            <p>
-              {" "}
-              Sent Email with Subject: <span className="font-bold">{data.subject}</span>.
-            </p>
-          );
-        }),
-        {
-          loading: "Updating sent Email...",
-          success: (message) => {
-            router.refresh();
-            return message;
-          },
-          error: (error: unknown) => {
-            if (
-              (error as { response?: { data?: { error?: string } } }).response &&
-              (error as { response: { data?: { error?: string } } }).response.data &&
-              (error as { response: { data: { error?: string } } }).response.data.error
-            ) {
-              return (error as { response: { data: { error: string } } }).response.data.error
-            } else {
-              return "Sent Email Error.";
-            }
-          },
-        }
-      );
-    } catch (error) {} 
-      finally {
       setLoading(false);
       setOpen(false);
     }
@@ -118,13 +77,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => onCopy(data.id)}>
+          <DropdownMenuItem onClick={() => onCopy(data.name)}>
             <Copy className="h-4 w-4 mr-2" />
             CopyId
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() =>
-              router.push(`/${params.storeId}/sentmailuser/${data.id}`)
+              router.push(`/${params.storeId}/favorite/${data.id}`)
             }
           >
             <Edit className="h-4 w-4 mr-2" />
@@ -133,10 +92,6 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuItem onClick={() => setOpen(true)}>
             <Trash className="h-4 w-4 mr-2" />
             Delete
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={onSent}>
-            <SendHorizontal className="h-4 w-4 mr-2" />
-            Sent user
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

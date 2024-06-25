@@ -23,7 +23,7 @@ import {
   userTitle,
   checkoutTitle,
   settingTitle,
-} from "./export-navbarmultiple";
+} from "../export-name-navbar";
 import { useParams, usePathname } from "next/navigation";
 import {
   Accordion,

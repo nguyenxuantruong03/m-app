@@ -1,29 +1,45 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "./button";
+import { Button } from "../../ui/button";
 import { Trash2, Image as Imageicon } from "lucide-react";
 import Image from "next/image";
 import { CldUploadWidget } from "next-cloudinary";
 
-interface ImageUploadProps {
-  classNamesUpload?: string | undefined;
+interface UploadAvatarNavbarProps {
+  classNamesForm?: string | undefined;
   disabled?: boolean;
   onChange: (value: string) => void;
   onRemove: (value: string) => void;
   value: string[];
 }
 
-const ImageUpload: React.FC<ImageUploadProps> = ({
+const UploadAvatarNavbar: React.FC<UploadAvatarNavbarProps> = ({
   disabled,
   onChange,
   onRemove,
   value,
-  classNamesUpload
+  classNamesForm,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
   const [isImageUploaded, setIsImageUploaded] = useState(false);
   const [showImageOverlay, setShowImageOverlay] = useState(false);
+
+  //Ngăn chặn hành khi cuộn chuột khi đã xuất hiện showImageOverlay
+  useEffect(() => {
+    if (showImageOverlay) {
+      // Disable scroll on body
+      document.body.style.overflow = "hidden";
+    } else {
+      // Enable scroll on body when modal is closed
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      // Clean up: enable scroll on body when component unmounts
+      document.body.style.overflow = "auto";
+    };
+  }, [showImageOverlay]);
 
   const onUpload = (result: any) => {
     onChange(result.info.secure_url);
@@ -31,7 +47,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     setShowImageOverlay(true);
   };
 
-  const CancleEdit = () => {
+  const CancelEdit = () => {
     setIsImageUploaded(false);
     setShowImageOverlay(false);
   };
@@ -52,15 +68,16 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   }
 
   //Xử lý nếu như ,infouser thì không có bottom-12 còn tất cả page khác thì có
-  let overlayClass = '';
+  let overlayClass = "";
 
-  if (typeof window !== 'undefined') {
-    const isInfoUserPage = window.location.pathname.includes("/infouser");
-    overlayClass = `absolute ${showImageOverlay ? "bg-white" : "hidden"} z-20 rounded-md p-2 ${isInfoUserPage ? "" : "bottom-12"}`;
+  if (typeof window !== "undefined") {
+    overlayClass = `fixed ${
+      showImageOverlay ? "bg-white" : "hidden"
+    } z-20 rounded-md bottom-12 h-max w-3/4 max-w-md border rounded-md gap-4 bg-background p-6 shadow-lg transition ease-in-out`;
   } else {
     return null;
   }
-  
+
   const renderUploadButton = () => {
     return (
       <Button
@@ -82,11 +99,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       {value.length === 1 ? (
         renderUploadButton()
       ) : (
-        <CldUploadWidget onUpload={onUpload} uploadPreset="ktkokc1o">
+        <CldUploadWidget onUpload={onUpload} uploadPreset="ktkokc1o" options={{ maxFiles: 1 }}>
           {({ open }) => {
             const onClick = () => {
               open();
-            };
+          };
             return (
               <>
                 <Button
@@ -94,7 +111,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                   disabled={disabled}
                   onClick={onClick}
                   variant="outline"
-                  className={`flex items-center justify-center ${classNamesUpload}`}
+                  className={`flex items-center justify-center ${classNamesForm}`}
                 >
                   <Imageicon className="w-4 h-4 mr-1" /> Ảnh nền
                 </Button>
@@ -107,7 +124,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       {showImageOverlay && (
         <div
           className="fixed top-0 left-0 w-full h-full bg-black opacity-50 z-10"
-          onClick={CancleEdit}
+          onClick={CancelEdit}
         />
       )}
 
@@ -126,6 +143,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                       onClick={() => onRemove(url)}
                       variant="destructive"
                       size="icon"
+                      disabled={disabled}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -140,23 +158,28 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
               <p className="text-sm text-gray-400">
                 Lưu ý:
                 <span className="ml-1">
-                  Khi bạn upload lên có thể sẽ lựa chọn 1 ảnh
-                  <br />
-                  nhưng nếu bạn không xóa, mặc định sẽ lấy ảnh đầu tiên upload.
+                  Ảnh đại diện giúp mọi người nhận biết bạn dễ dàng hơn qua các bài
+                  viết, bình luận, tin nhắn...
                 </span>
               </p>
             </div>
 
-            <Button className="mt-2 mr-2" type="submit">
+            <Button
+              className="mt-2 mr-2"
+              type="submit"
+              variant="secondary"
+              disabled={disabled}
+            >
               Lưu
             </Button>
-            
+
             <Button
               className="mt-2"
-              onClick={CancleEdit}
-              variant="secondary"
+              onClick={CancelEdit}
+              variant="destructive"
+              disabled={disabled}
             >
-              Hủy bỏ
+              Cancel
             </Button>
           </>
         )}
@@ -165,4 +188,4 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   );
 };
 
-export default ImageUpload;
+export default UploadAvatarNavbar;

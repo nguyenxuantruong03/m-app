@@ -7,6 +7,8 @@
   overflow: hidden;
   padding: 0.2rem;
   position: relative;
+  overflow-y: auto;
+  max-height: 160px;
 }
 
 .item {

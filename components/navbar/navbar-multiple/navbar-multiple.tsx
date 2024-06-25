@@ -30,7 +30,7 @@ import {
   userTitle,
   checkoutTitle,
   settingTitle,
-} from "./export-navbarmultiple";
+} from "../export-name-navbar";
 
 const NavbarMultiple = () => {
   const userId = useCurrentUser();
@@ -127,7 +127,7 @@ const NavbarMultiple = () => {
                   onMouseLeave={() => setFlyer(false)}
                   className={
                     flyer
-                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/4"
+                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/4 z-[9999]"
                       : " hidden translate-y-1 absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2"
                   }
                 >
@@ -248,7 +248,7 @@ const NavbarMultiple = () => {
                   onMouseLeave={() => setFlyerTwo(false)}
                   className={
                     flyerTwo
-                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2 "
+                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2 z-[9999] "
                       : " hidden translate-y-1 absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2"
                   }
                 >
@@ -369,7 +369,7 @@ const NavbarMultiple = () => {
                   onMouseLeave={() => setFlyer3(false)}
                   className={
                     flyer3
-                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2"
+                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2 z-[9999]"
                       : " hidden translate-y-1 absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2"
                   }
                 >
@@ -490,7 +490,7 @@ const NavbarMultiple = () => {
                   onMouseLeave={() => setFlyer4(false)}
                   className={
                     flyer4
-                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2"
+                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2 z-[9999]"
                       : " hidden translate-y-1 absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2"
                   }
                 >
@@ -611,7 +611,7 @@ const NavbarMultiple = () => {
                   onMouseLeave={() => setFlyer5(false)}
                   className={
                     flyer5
-                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2"
+                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2 z-[9999]"
                       : " hidden translate-y-1 absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2"
                   }
                 >
@@ -732,7 +732,7 @@ const NavbarMultiple = () => {
                   onMouseLeave={() => setFlyer6(false)}
                   className={
                     flyer6
-                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2"
+                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2 z-[9999]"
                       : " hidden translate-y-1 absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2"
                   }
                 >
@@ -853,7 +853,7 @@ const NavbarMultiple = () => {
                   onMouseLeave={() => setFlyer7(false)}
                   className={
                     flyer7
-                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2"
+                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2 z-[9999]"
                       : " hidden translate-y-1 absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2"
                   }
                 >
@@ -974,7 +974,7 @@ const NavbarMultiple = () => {
                   onMouseLeave={() => setFlyer8(false)}
                   className={
                     flyer8
-                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2"
+                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2 z-[9999]"
                       : " hidden translate-y-1 absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2"
                   }
                 >
@@ -1095,7 +1095,7 @@ const NavbarMultiple = () => {
                   onMouseLeave={() => setFlyer9(false)}
                   className={
                     flyer9
-                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2"
+                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2 z-[9999]"
                       : " hidden translate-y-1 absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2"
                   }
                 >
@@ -1216,7 +1216,7 @@ const NavbarMultiple = () => {
                   onMouseLeave={() => setFlyer10(false)}
                   className={
                     flyer10
-                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2"
+                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2 z-[9999]"
                       : " hidden translate-y-1 absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2"
                   }
                 >
@@ -1337,7 +1337,7 @@ const NavbarMultiple = () => {
                   onMouseLeave={() => setFlyer11(false)}
                   className={
                     flyer11
-                      ? " block transition ease-out duration-200 absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2"
+                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2 z-[9999]"
                       : " hidden translate-y-1 absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2"
                   }
                 >
@@ -1537,35 +1537,35 @@ const NavbarMultiple = () => {
                   className="flex items-center text-base font-medium text-slate-900 hover:text-gray-700"
                 >
                   Blog
-                <ArrowUpRight className="h-5 w-5 ml-1" />
+                  <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
                   className="flex items-center text-base font-medium text-slate-900 hover:text-gray-700"
                 >
                   Help Center
-                <ArrowUpRight className="h-5 w-5 ml-1" />
+                  <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
                   className="flex items-center text-base font-medium text-slate-900 hover:text-gray-700"
                 >
                   Guides
-                <ArrowUpRight className="h-5 w-5 ml-1" />
+                  <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
                   className="flex items-center text-base font-medium text-slate-900 hover:text-gray-700"
                 >
                   Security
-                <ArrowUpRight className="h-5 w-5 ml-1" />
+                  <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
                   className="flex items-center text-base font-medium text-slate-900 hover:text-gray-700"
                 >
                   Events
-                <ArrowUpRight className="h-5 w-5 ml-1" />              
+                  <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
               </div>
             </div>

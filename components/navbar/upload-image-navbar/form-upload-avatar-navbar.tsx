@@ -1,6 +1,6 @@
 "use client";
 
-import ImageUpload from "@/components/ui/upload-image-avatar";
+import UploadAvatarNavbar from "@/components/navbar/upload-image-navbar/upload-avatar-navbar";
 import { useForm } from "react-hook-form";
 import { UpdateImageSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,16 +14,22 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
-interface FormUploadImageItem {
+interface FormUploadAvatarNavbarItem {
   classNamesForm?: string;
-  classNamesUpload?: string
+  classNamesUpload?: string;
 }
 
-export const FormUploadImage: React.FC<FormUploadImageItem> = ({
+export const FormUploadAvatarNavbar: React.FC<FormUploadAvatarNavbarItem> = ({
   classNamesForm,
-  classNamesUpload
+  classNamesUpload,
 }) => {
+  const user = useCurrentUser();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof UpdateImageSchema>>({
     resolver: zodResolver(UpdateImageSchema),
     defaultValues: {
@@ -32,19 +38,22 @@ export const FormUploadImage: React.FC<FormUploadImageItem> = ({
   });
 
   const onSubmit = (values: z.infer<typeof UpdateImageSchema>) => {
+    setLoading(true);
     image(values)
       .then((data) => {
         if (data.error) {
           toast.error("Tải ảnh lên không thành công");
         }
         if (data.success) {
+          router.refresh();
           toast.success("Tải ảnh thành công");
           form.reset();
         }
       })
       .catch(() => {
         toast.error("Tải ảnh lên không thành công");
-      });
+      })
+      .finally(() => setLoading(false));
   };
   return (
     <span className={classNamesForm}>
@@ -59,7 +68,7 @@ export const FormUploadImage: React.FC<FormUploadImageItem> = ({
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <ImageUpload
+                  <UploadAvatarNavbar
                     value={field.value.map((image) => image.url)}
                     onChange={(url) =>
                       field.onChange([...field.value, { url }])
@@ -69,7 +78,8 @@ export const FormUploadImage: React.FC<FormUploadImageItem> = ({
                         ...field.value.filter((current) => current.url !== url),
                       ])
                     }
-                    classNamesUpload={classNamesUpload}
+                    classNamesForm={classNamesUpload}
+                    disabled={loading}
                   />
                 </FormControl>
                 <FormMessage />

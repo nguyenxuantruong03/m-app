@@ -124,7 +124,7 @@ export async function PATCH(
 
     const body = await req.json();
 
-    const { subject, description } = body;
+    const { subject, description, sentemailuser } = body;
 
     if (!userId) {
       return new NextResponse(
@@ -143,6 +143,13 @@ export async function PATCH(
     if (!description) {
       return new NextResponse(
         JSON.stringify({ error: "Description is required!" }),
+        { status: 400 }
+      );
+    }
+
+    if (!sentemailuser) {
+      return new NextResponse(
+        JSON.stringify({ error: "Yêu cầu chọn người dùng!" }),
         { status: 400 }
       );
     }
@@ -186,6 +193,7 @@ export async function PATCH(
       data: {
         subject,
         description,
+        sentemailuser,
       },
     });
 
@@ -252,12 +260,29 @@ export async function POST(
   try {
     const userId = await currentUser();
 
+    const body = await req.json();
+
+    const { sentuser } = body;
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy id người dùng!" }),
+        { status: 404 }
+      );
+    }
+    const cleanedStrsentuser = sentuser.join(", ").replace(/@\[(.*?)\]\(.*?\)/g, '$1');
+
+    if (!sentuser || !cleanedStrsentuser) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy người dùng để gửi!" }),
+        { status: 404 }
+      );
     }
 
     if (!params.sentmailuserId) {
-      return new NextResponse("Sentmailuser Id  is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: "Sentmailuser Id  is required!" }),
+        { status: 404 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -270,17 +295,10 @@ export async function POST(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
+        status: 405,
+      });
     }
-
-    const existingSentEmailUser = await prismadb.sentEmailUser.findUnique({
-      where: {
-        id: params.sentmailuserId,
-      },
-      include: {
-        user: true,
-      },
-    });
 
     const sentEmailUser = await prismadb.sentEmailUser.update({
       where: {
@@ -293,62 +311,86 @@ export async function POST(
 
     // Check if the sentEmailUser update was successful before proceeding
     if (!sentEmailUser) {
-      return new NextResponse("Error updating sentEmailUser", { status: 500 });
+      return new NextResponse(
+        JSON.stringify({ error: "Error updating sentEmailUser" }),
+        { status: 405 }
+      );
     }
 
     const sentEmailUsers = await prismadb.user.findMany();
+    const favoriteAll = await prismadb.favorite.findMany();
+
+    // Lọc những người dùng có favorite chứa cleanedStr
+    const usersWithMatchingFavorite = sentEmailUsers.filter((user) =>
+      user.favorite.includes(cleanedStrsentuser)
+    );
+    // Lấy ra danh sách email của những người dùng thỏa mãn điều kiện
+    const emailsToSend = usersWithMatchingFavorite.map((user) => user.email);
+
+    if (emailsToSend.length > 0) {
+      await sendSpamEmail(
+        emailsToSend,
+        sentEmailUser.subject,
+        sentEmailUser.description
+      );
+    }
 
     const allEmails = sentEmailUsers.map((user) => user.email);
     // Wait for sendSpamEmail to complete before returning
-    await sendSpamEmail(
-      allEmails,
-      sentEmailUser.subject,
-      sentEmailUser.description
-    );
-
-    // Danh sách các trường cần loại bỏ
-    const ignoredFields = ["createdAt", "updatedAt"];
-
-    // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
-    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
-    for (const key in existingSentEmailUser) {
-      if (
-        existingSentEmailUser.hasOwnProperty(key) &&
-        sentEmailUser.hasOwnProperty(key)
-      ) {
-        if (
-          existingSentEmailUser[key as keyof typeof existingSentEmailUser] !==
-          sentEmailUser[key as keyof typeof sentEmailUser]
-        ) {
-          // Kiểm tra xem trường hiện tại có trong danh sách loại bỏ không
-          if (!ignoredFields.includes(key)) {
-            changes[key] = {
-              oldValue:
-                existingSentEmailUser[
-                  key as keyof typeof existingSentEmailUser
-                ],
-              newValue: sentEmailUser[key as keyof typeof sentEmailUser],
-            };
-          }
-        }
-      }
+    if (cleanedStrsentuser === "all") {
+      // Send email to all users
+      await sendSpamEmail(
+        allEmails,
+        sentEmailUser.subject,
+        sentEmailUser.description
+      );
+    } else {
+      // Send email to specific user
+      const emailArray = cleanedStrsentuser
+        .split(", ")
+        .map((email: string) => email.trim());
+      await sendSpamEmail(
+        emailArray,
+        sentEmailUser.subject,
+        sentEmailUser.description
+      );
     }
 
-    //Hợp nhất các thay đổi thành một hàng duy nhất và ghi lại chúng
-    const oldChanges = Object.keys(changes).map((key) => {
-      return `${key}: { Old: '${changes[key].oldValue}'}`;
-    });
-    const newChanges = Object.keys(changes).map((key) => {
-      return `${key}: { New: '${changes[key].newValue}'}`;
-    });
+    // Chuyển người dùng và favorite thành email và name
+    const ChangeStringUser = sentEmailUser.sentemailuser
+      .map((item) => item)
+      .join(",");
+    const matchingUser = sentEmailUsers.filter((user) =>
+      ChangeStringUser.includes(user.id)
+    );
+    const checkMatchingUser = matchingUser.map((item) => item.email);
+    const matchingFavorite = favoriteAll.filter((favorite) =>
+      ChangeStringUser.includes(favorite.id)
+    );
+    const checkMatchingFavorite = matchingFavorite.map((item) => item.name);
+
+
+    const sentMailUserSystem = {
+      description: sentEmailUser.description,
+      subject: sentEmailUser.subject,
+      sentemailuser: ["all", "phobien"].includes(sentEmailUser.sentemailuser[0])
+        ? sentEmailUser.sentemailuser
+        : checkMatchingUser.length > 0
+        ? checkMatchingUser.join(", ")
+        : checkMatchingFavorite.join(", "),
+    };
+
+    // Log sự thay đổi của billboard
+    const changes = [
+      `Description: ${sentMailUserSystem.description}, Subject: ${sentMailUserSystem.subject}, SentEmailUser: ${sentMailUserSystem.sentemailuser}`,
+    ];
 
     // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
     await prismadb.system.create({
       data: {
         storeId: params.storeId,
-        oldChange: oldChanges,
-        newChange: newChanges,
-        type: "UPDATESENTSPAMMAIL",
+        type: "CREATESENTMAILUSER",
+        newChange: changes,
         user: userId?.email || "",
       },
     });

@@ -11,7 +11,6 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { setting } from "@/actions/actions-signin-sign-up/setting";
@@ -25,7 +24,6 @@ import { User } from "lucide-react";
 import { redirect, useRouter } from "next/navigation";
 import { getAccountByUserId } from "@/data/account";
 import toast from "react-hot-toast";
-import { FormUploadImage } from "@/components/ui/form-upload-image-avatar";
 
 interface AccountItem {
   id: string;
@@ -44,7 +42,7 @@ interface AccountItem {
 
 const FormImageCredential = () => {
   const user = useCurrentUser();
-  const router = useRouter()
+  const router = useRouter();
   const [account, setAccount] = useState<AccountItem | null>(null);
   const { update } = useSession();
   const [error, setError] = useState<string>();
@@ -92,8 +90,22 @@ const FormImageCredential = () => {
   });
 
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
-    // Kiểm tra giá trị imageCredential nhập vào và user?.imageCredential
-    if (values.imageCredential === user?.imageCredential) {
+    const valuesString = JSON.stringify(values.imageCredential);
+    const userString = JSON.stringify(user?.imageCredential);
+    if(!values.imageCredential){
+      setError(
+        "Hãy thêm ảnh đại diện cho tài khoản của bạn."
+      );
+    }
+    
+    if (!values.imageCredential || values.imageCredential.length > 1) {
+      setError(
+        "Hãy lựa chọn 1 bức ảnh đẹp nhất để làm ảnh đại diện và xóa các ảnh khác đi."
+      );
+      return;
+    }
+   // Kiểm tra giá trị imageCredential nhập vào và user?.imageCredential
+    if (valuesString === userString) {
       setError("Hãy thay đổi ảnh mới ảnh trên đang được sử dụng.");
       return;
     }
@@ -107,7 +119,7 @@ const FormImageCredential = () => {
           }
           if (data.success) {
             update();
-            router.refresh()
+            router.refresh();
             setSuccess(data.success);
           }
         })
@@ -128,25 +140,26 @@ const FormImageCredential = () => {
                 <FormLabel>Ảnh đại diện</FormLabel>
                 <FormControl>
                   <>
-                    <div className="relative flex items-center justify-center">
-                      <Avatar className="w-40 h-40">
-                        {isGitHubOrGoogleUser && avatarImage ? (
-                          <AvatarImage src={avatarImage} />
-                        ) : avatarImage ? (
-                          <AvatarImage src={avatarImage} />
-                        ) : (
-                          <AvatarFallback className="bg-sky-500">
-                            <User className="text-white" />
-                          </AvatarFallback>
-                        )}
-                      </Avatar>
-                    </div>
-                    <FormUploadImage
-                    classNamesForm="absolute top-[32%] left-[24%] md:left-[32%] md:top-[30%]"
-                    classNamesUpload="w-44 md:w-40 h-44 opacity-0"
-                  />
-                  <div className="flex items-center justify-center"> 
+                    {user?.imageCredential &&
+                    user.imageCredential.length > 0 ? null : (
+                      <div className="relative flex items-center justify-center">
+                        <Avatar className="w-40 h-40">
+                          {isGitHubOrGoogleUser && avatarImage ? (
+                            <AvatarImage src={avatarImage} />
+                          ) : avatarImage ? (
+                            <AvatarImage src={avatarImage} />
+                          ) : (
+                            <AvatarFallback className="bg-sky-500">
+                              <User className="text-white" />
+                            </AvatarFallback>
+                          )}
+                        </Avatar>
+                      </div>
+                    )}
+
                     <ImageUpload
+                      classNamesForm="pb-[160px] left-[20%] top-[33%] md:left-[32%] md:top-[30%] absolute px-5 opacity-0 ml-3.5"
+                      classNameImage="hidden"
                       value={field.value || []} // Provide an empty array as default value
                       disabled={isPending}
                       onChange={(url) =>
@@ -160,6 +173,23 @@ const FormImageCredential = () => {
                         )
                       }
                     />
+                    <div className="flex items-center justify-center">
+                      <ImageUpload
+                        classNamesForm="ml-3.5"
+                        value={field.value || []} // Provide an empty array as default value
+                        disabled={isPending}
+                        onChange={(url) =>
+                          field.onChange([...(field.value || []), url])
+                        } // Use field.value || [] to ensure it's an array
+                        onRemove={(url) =>
+                          field.onChange(
+                            (field.value || []).filter(
+                              (current) => current !== url
+                            )
+                          )
+                        }
+                        maxFiles={1}
+                      />
                     </div>
                   </>
                 </FormControl>

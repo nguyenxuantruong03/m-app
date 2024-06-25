@@ -104,6 +104,7 @@ export const SettingSchema = z
       })
     ),
     dateofbirth: z.optional(z.date().nullable()),
+    favorite: z.optional(z.array(z.string())),
     imageCredential: z.optional(z.array(z.string())),
     linkyoutube: z.optional(
       z

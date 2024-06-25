@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { currentRole, currentUser } from "@/lib/auth";
 
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
+import { currentRole, currentUser } from "@/lib/auth";
 
 export async function POST(
   req: Request,
@@ -13,7 +13,7 @@ export async function POST(
 
     const body = await req.json();
 
-    const { subject, description, sentemailuser } = body;
+    const { name,value } = body;
 
     if (!userId) {
       return new NextResponse(
@@ -22,25 +22,10 @@ export async function POST(
       );
     }
 
-    if (!subject) {
-      return new NextResponse(
-        JSON.stringify({ error: "Subject is required!" }),
-        { status: 400 }
-      );
-    }
-
-    if (!description) {
-      return new NextResponse(
-        JSON.stringify({ error: "Description is required!" }),
-        { status: 400 }
-      );
-    }
-
-    if (!sentemailuser) {
-      return new NextResponse(
-        JSON.stringify({ error: "Yêu cầu chọn người dùng!" }),
-        { status: 400 }
-      );
+    if (!name) {
+      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+        status: 400,
+      });
     }
 
     if (!params.storeId) {
@@ -66,60 +51,37 @@ export async function POST(
       );
     }
 
-    const sentEmailUser = await prismadb.sentEmailUser.create({
+    const favorite = await prismadb.favorite.create({
       data: {
-        subject,
-        description,
-        sentemailuser,
-        userId: userId?.id || "",
+        name,
+        value,
         storeId: params.storeId,
       },
     });
 
-    const sentEmailUsers = await prismadb.user.findMany();
-    const favoriteAll = await prismadb.favorite.findMany();
-    // Chuyển người dùng và favorite thành email và name
-    const ChangeStringUser = sentEmailUser.sentemailuser
-      .map((item) => item)
-      .join(",");
-    const matchingUser = sentEmailUsers.filter((user) =>
-      ChangeStringUser.includes(user.id)
-    );
-    const checkMatchingUser = matchingUser.map((item) => item.email);
-    const matchingFavorite = favoriteAll.filter((favorite) =>
-      ChangeStringUser.includes(favorite.id)
-    );
-    const checkMatchingFavorite = matchingFavorite.map((item) => item.name);
-
-    const sentMailUserSystem = {
-      description: sentEmailUser.description,
-      subject: sentEmailUser.subject,
-      sentemailuser: ["all", "phobien"].includes(sentEmailUser.sentemailuser[0])
-        ? sentEmailUser.sentemailuser
-        : checkMatchingUser.length > 0
-        ? checkMatchingUser.join(", ")
-        : checkMatchingFavorite.join(", "),
+    const sentFavorite = {
+      name: favorite?.name,
     };
 
     // Log sự thay đổi của billboard
     const changes = [
-      `Description: ${sentMailUserSystem.description}, Subject: ${sentMailUserSystem.subject}, SentEmailUser: ${sentMailUserSystem.sentemailuser}`,
+      `Name: ${sentFavorite.name}`,
     ];
 
     // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
     await prismadb.system.create({
       data: {
         storeId: params.storeId,
-        type: "CREATESENTMAILUSER",
+        type: "CREATEPIN-FAVORITE",
         newChange: changes,
         user: userId?.email || "",
       },
     });
 
-    return NextResponse.json(sentEmailUser);
+    return NextResponse.json(favorite);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error post sentmailUser." }),
+      JSON.stringify({ error: "Internal error post favorite." }),
       { status: 500 }
     );
   }
@@ -137,26 +99,22 @@ export async function GET(
       );
     }
 
-    const sentEmailUsers = await prismadb.sentEmailUser.findMany({
+    const favorite = await prismadb.favorite.findMany({
       where: {
         storeId: params.storeId,
       },
-      include: {
-        user: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
     });
 
-    return NextResponse.json(sentEmailUsers);
+    return NextResponse.json(favorite);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get sentmailUser." }),
+      JSON.stringify({ error: "Internal error get favorite." }),
       { status: 500 }
     );
   }
 }
+
+
 
 export async function DELETE(
   req: Request,
@@ -205,8 +163,8 @@ export async function DELETE(
       );
     }
 
-    // Fetch all cartegories to delete, including their images
-    const SentMailToDelete = await prismadb.sentEmailUser.findMany({
+    // Fetch all favorite to delete, including their images
+    const FavoriteToDelete = await prismadb.favorite.findMany({
       where: {
         id: {
           in: ids,
@@ -215,14 +173,12 @@ export async function DELETE(
     });
 
     // Create an array of changes for logging
-    const changesArray = SentMailToDelete.map((item) => ({
-      subject: item.subject,
-      description: item.description,
-      isSent: item.isSent,
+    const changesArray = FavoriteToDelete.map(favorite => ({
+      name: favorite.name,
     }));
 
     // Delete all the cartegories in one operation
-    await prismadb.sentEmailUser.deleteMany({
+    await prismadb.favorite.deleteMany({
       where: {
         id: {
           in: ids,
@@ -234,11 +190,8 @@ export async function DELETE(
     await prismadb.system.create({
       data: {
         storeId: params.storeId,
-        delete: changesArray.map(
-          (change) =>
-            `DeleteSubject: ${change.subject}, Description: ${change.description}, IsSent: ${change.isSent}`
-        ),
-        type: "DELETEMANYSENTMAILUSER",
+        delete: changesArray.map(change => `DeleteName: ${change.name}`),
+        type: "DELETEMANY-FAVORITE",
         user: userId?.email || "",
       },
     });
@@ -246,7 +199,7 @@ export async function DELETE(
     return NextResponse.json({ message: "Xóa thành công!" });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete category." }),
+      JSON.stringify({ error: "Internal error delete favorite." }),
       { status: 500 }
     );
   }

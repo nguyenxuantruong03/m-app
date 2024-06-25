@@ -43,6 +43,7 @@ import {
   Contact,
   Banknote,
   Settings2,
+  BookHeart,
 } from "lucide-react";
 
 export const route = (params: string, pathname: string) => [
@@ -233,6 +234,13 @@ export const parameter = (params: string, pathname: string) => [
     content: "Chi tiết sản phẩm.",
     active: pathname === `/${params}/productdetail`,
   },
+  {
+    href: `/${params}/favorite`,
+    label: "Sở thích",
+    icon: <BookHeart className="size-5" />,
+    content: "Sở thích của người dùng.",
+    active: pathname === `/${params}/favorite`,
+  },
 ];
 
 export const product = (params: string, pathname: string) => [
@@ -398,6 +406,7 @@ export const routeTitle = [
         Tổng quan
       </span>
     ),
+    icon: <AlignJustify className="size-5" />,
   },
 ];
 
@@ -409,6 +418,7 @@ export const datastatisticTitle = [
         Thống kê
       </span>
     ),
+    icon: <LineChart className="size-5" />,
   },
 ];
 
@@ -420,6 +430,7 @@ export const staffTitle = [
         Nhân viên{" "}
       </span>
     ),
+    icon: <Users className="size-5" />,
   },
 ];
 
@@ -431,6 +442,7 @@ export const billboardTitle = [
         Quảng cáo
       </span>
     ),
+    icon: <Construction className="size-5" />,
   },
 ];
 
@@ -442,6 +454,7 @@ export const categoryTitle = [
         Danh mục
       </span>
     ),
+    icon: <Layers3 className="size-5" />,
   },
 ];
 
@@ -453,6 +466,7 @@ export const parameterTitle = [
         Tham số
       </span>
     ),
+    icon: <AlignEndHorizontal className="size-5" />,
   },
 ];
 
@@ -464,6 +478,7 @@ export const productTitle = [
         Sản phẩm
       </span>
     ),
+    icon: <Package2 className="size-5" />,
   },
 ];
 
@@ -475,6 +490,7 @@ export const orderTitle = [
         Đơn hàng
       </span>
     ),
+    icon: <Container className="size-5" />,
   },
 ];
 
@@ -486,6 +502,7 @@ export const userTitle = [
         Người dùng
       </span>
     ),
+    icon: <Contact className="size-5" />,
   },
 ];
 
@@ -497,6 +514,7 @@ export const checkoutTitle = [
         Thanh toán
       </span>
     ),
+    icon: <Banknote className="size-5" />,
   },
 ];
 
@@ -508,5 +526,6 @@ export const settingTitle = [
         Cài đặt
       </span>
     ),
+    icon: <Settings2 className="size-5" />,
   },
 ];

@@ -276,6 +276,20 @@ export const login = async (
       },
     });
 
+    if (existingUser) {
+      // --Bước3-- Kiểm tra xem "phobien" có trong favorite của người dùng không
+      const hasPhobien = existingUser.favorite.includes("phobien");
+      //Xem người dùng đã có favorite mặc định là phobien chưa nếu chưa có thì create
+      if (!hasPhobien) {
+        await prismadb.user.update({
+          where: { id: existingUser.id },
+          data: {
+            favorite: [...existingUser.favorite, "phobien"],
+          },
+        });
+      }
+    }
+
     const now = new Date();
     now.setHours(now.getHours() + 7);
 

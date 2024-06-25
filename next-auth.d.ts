@@ -7,6 +7,7 @@ export type ExtendedUser = DefaultSession["user"] & {
   isOAuth: boolean;
   provider: string;
   imageCredential: string[];
+  favorite: string[];
   ban: boolean;
   timestartwork: string;
   urlimageCheckAttendance: string;

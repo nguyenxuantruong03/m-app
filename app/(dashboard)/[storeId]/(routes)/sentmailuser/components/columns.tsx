@@ -14,7 +14,8 @@ export type SentEmailUserColumn = {
   subject: string;
   user: string | null;
   isSent: boolean | null;
-  createdAt: string  | null;
+  sentemailuser: string[];
+  createdAt: string | null;
 };
 
 export const columns: ColumnDef<SentEmailUserColumn>[] = [
@@ -65,8 +66,37 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
         </SpanColumn>
       );
     },
-    cell: ({row}) => <EditRow id={row.original.id} data={row.original.subject} subject={row.original.subject} description={row.original.description} field="subject"/>
+    cell: ({ row }) => (
+      <EditRow
+        id={row.original.id}
+        data={row.original.subject}
+        subject={row.original.subject}
+        description={row.original.description}
+        field="subject"
+      />
+    ),
   },
+  {
+    accessorKey: "sentemailuser",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Gửi đến người dùng
+          <SendHorizontal className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
+    cell: ({ row }) => {
+      const cleanedStr = row.original.sentemailuser.join(", ").replace(/@\[(.*?)\]\(.*?\)/g, '$1');
+      return (
+        <span>
+          {cleanedStr}
+        </span>
+      );
+    },
+  },  
   {
     accessorKey: "description",
     header: ({ column }) => {
@@ -79,7 +109,15 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
         </SpanColumn>
       );
     },
-    cell: ({row}) => <EditRow id={row.original.id} data={row.original.description} subject={row.original.subject} description={row.original.description} field="description"/>
+    cell: ({ row }) => (
+      <EditRow
+        id={row.original.id}
+        data={row.original.description}
+        subject={row.original.subject}
+        description={row.original.description}
+        field="description"
+      />
+    ),
   },
   {
     accessorKey: "isSent",
@@ -96,9 +134,9 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
     cell: ({ row }) => {
       const isAllday = row.original.isSent;
       return isAllday ? (
-        <SendHorizontal  className="w-5 h-5 text-green-500" />
+        <SendHorizontal className="w-5 h-5 text-green-500" />
       ) : (
-        <SendHorizontal  className="w-5 h-5 text-red-500" />
+        <SendHorizontal className="w-5 h-5 text-red-500" />
       );
     },
   },

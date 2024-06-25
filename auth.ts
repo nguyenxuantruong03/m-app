@@ -82,7 +82,7 @@ export const {
           });
           // Kiểm tra giá trị hiện tại của resendUnBanUser
           let resendCount = existingUser.resendUnBanUser || 0;
-          
+
           if (resendCount < 2) {
             // Nếu giá trị nhỏ hơn 2, tăng lên 1
             await sendUnBanUser(unbanUser.email, unbanUser.name);
@@ -124,16 +124,30 @@ export const {
         existingUser && findEmail.some((email) => email === existingUser.email);
 
       if (matchEmail) {
-        return '/auth/errorbanforever';
+        return "/auth/errorbanforever";
       }
 
-      //--Bước3--Ngăn chặn đăng nhập mà không cần xác minh email
+      if (existingUser) {
+        // --Bước3-- Kiểm tra xem "phobien" có trong favorite của người dùng không
+        const hasPhobien = existingUser.favorite.includes("phobien");
+        //Xem người dùng đã có favorite mặc định là phobien chưa nếu chưa có thì create
+        if (!hasPhobien) {
+          await prismadb.user.update({
+            where: { id: existingUser.id },
+            data: {
+              favorite: [...existingUser.favorite, "phobien"],
+            },
+          });
+        }
+      }
+
+      //--Bước4--Ngăn chặn đăng nhập mà không cần xác minh email
       if (account?.provider !== "credentials") return true;
 
-      //--Bước4--Ngăn chặn đăng nhập mà không cần xác minh email và 2FA
+      //--Bước5--Ngăn chặn đăng nhập mà không cần xác minh email và 2FA
       if (!existingUser?.emailVerified) return false;
 
-      //--Bước5--ADD 2FA check --- 2FA: Có nghĩa là xác thực 2 lớp
+      //--Bước6--ADD 2FA check --- 2FA: Có nghĩa là xác thực 2 lớp
       if (existingUser.isTwoFactorEnabled) {
         const twoFactorConfirmation = await getTwoFactorConfirmationbyUserId(
           existingUser.id
@@ -141,13 +155,13 @@ export const {
 
         if (!twoFactorConfirmation) return false;
 
-        //--Bước6--Xóa xác nhận hai yếu tố cho lần đăng nhập tiếp theo
+        //--Bước7--Xóa xác nhận hai yếu tố cho lần đăng nhập tiếp theo
         //Delete two factor confirmation for next sign in
         await prismadb.twoFactorConfirmation.delete({
           where: { id: twoFactorConfirmation.id },
         });
       }
-      //Cập nhật lại thời gian mỗi khi đăng nhập
+      //--Bước8--Cập nhật lại thời gian mỗi khi đăng nhập
       await prismadb.user.update({
         where: { id: existingUser.id },
         data: {
@@ -158,7 +172,6 @@ export const {
     },
 
     async session({ token, session }) {
-      
       if (token.sub && session.user) {
         session.user.id = token.sub;
       }
@@ -175,9 +188,11 @@ export const {
         session.user.isOAuth = token.isOAuth as boolean;
         session.user.provider = token.provider as string;
         session.user.imageCredential = token.imageCredential as string[];
+        session.user.favorite = token.favorite as string[];
         session.user.ban = token.ban as boolean;
         session.user.timestartwork = token.timestartwork as string;
-        session.user.urlimageCheckAttendance = token.urlimageCheckAttendance as string;
+        session.user.urlimageCheckAttendance =
+          token.urlimageCheckAttendance as string;
         session.user.codeNFC = token.codeNFC as string;
         session.user.daywork = token.daywork as string[];
         session.user.bio = token.bio as string;
@@ -251,6 +266,7 @@ export const {
       token.gender = existingUser.gender;
       token.phonenumber = existingUser.phonenumber;
       token.dateofbirth = existingUser.dateofbirth;
+      token.favorite = existingUser.favorite;
       if (existingUser.socialLink) {
         token.linkyoutube = existingUser.socialLink.linkyoutube;
         token.linkfacebook = existingUser.socialLink.linkfacebook;
@@ -272,7 +288,7 @@ export const {
         token.linkwebsite = null;
         token.linkother = null;
       }
-      
+
       return token;
     },
   },

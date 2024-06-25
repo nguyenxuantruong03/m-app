@@ -27,6 +27,7 @@ import FontFamily from "@tiptap/extension-font-family";
 import TextStyle from "@tiptap/extension-text-style";
 import "./styles.scss";
 import MentionPlugin from "./mention/suggestion";
+import Recommend from "../ui/recommend";
 interface Tiptap {
   value: string;
   onChange: (richText: string) => void;
@@ -108,7 +109,8 @@ const Tiptap: React.FC<Tiptap> = ({ value, onChange, disabled }) => {
   return (
     <div className="flex flex-col justify-stretch min-h-[250px] overflow-y-auto">
       <Toolbar disabled={disabled} editor={editor} />
-      <EditorContent disabled={disabled} editor={editor} />
+      <div className="text-sm flex items-center space-x-3 mt-3"> Nội dung <span className="text-red-600 pl-1">(*)</span> <Recommend message="Nhập nội dung xong có thể chỉnh sửa lựa chọn các style bên trên."/></div>
+      <EditorContent disabled={disabled} editor={editor}/>
     </div>
   );
 };

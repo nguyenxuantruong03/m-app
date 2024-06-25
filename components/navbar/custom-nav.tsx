@@ -9,7 +9,7 @@ import Link from "next/link";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { User as UserIcon } from "lucide-react";
 import LogoutButton from "../auth/logout-button";
-import { FormUploadImage } from "../ui/form-upload-image-avatar";
+import { FormUploadAvatarNavbar } from "./upload-image-navbar/form-upload-avatar-navbar";
 import { Button } from "../ui/button";
 import NavbarIcon from "./navbar-icon";
 import { useCurrentUser } from "@/hooks/use-current-user";
@@ -119,7 +119,7 @@ const CustomNav: React.FC<CustomNavProps> = ({
                       </AvatarFallback>
                     )}
                   </Avatar>
-                  <FormUploadImage
+                  <FormUploadAvatarNavbar
                     classNamesForm="absolute left-[-15px] top-[-3px]"
                     classNamesUpload="opacity-0"
                   />

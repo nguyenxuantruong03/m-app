@@ -107,6 +107,11 @@ export const setting = async (values: z.infer<typeof SettingSchema>) => {
     values.newPassword = undefined;
   }
 
+  // Ensure 'phobien' is included in favorites
+  const favoriteWithPhobien = Array.isArray(values.favorite) 
+    ? Array.from(new Set([...values.favorite, 'phobien'])) 
+    : ['phobien'];
+
   await prismadb.user.update({
     where: { id: dbUser.id },
     data: {
@@ -144,6 +149,7 @@ export const setting = async (values: z.infer<typeof SettingSchema>) => {
           },
         },
       },
+      favorite: favoriteWithPhobien,
       bio: values.bio,
       address: values.address,
       addressother: values.addressother,
