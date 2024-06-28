@@ -35,12 +35,15 @@ import {
   Unit,
   ShippingTaxcode,
 } from "@prisma/client";
+import Recommend from "@/components/ui/recommend";
 
 const formSchema = z
   .object({
     name: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
     taxbehavior: z.string().min(1, { message: "Hãy chọn 1 taxbehavior." }),
-    amount: z.coerce.number().min(500, { message: "Hãy nhập ít nhấp 500 đồng." }),
+    amount: z.coerce
+      .number()
+      .min(500, { message: "Hãy nhập ít nhấp 500 đồng." }),
     unitmin: z.string().min(1, { message: "Hãy nhập ít nhất 1 tiếng." }),
     valuemin: z.coerce.number().min(1, { message: "Hãy chọn giờ hoặc ngày." }),
     unitmax: z.string().min(1, { message: "Hãy nhập ít nhất 1 tiếng." }),
@@ -48,13 +51,10 @@ const formSchema = z
     taxcode: z.string().min(1, { message: "Hãy chọn 1 loại taxcode." }),
     active: z.boolean().default(false).optional(),
   })
-  .refine(
-    (data) => data.valuemax > data.valuemin,
-    {
-      message: "Thời gian tối đa phải lớn hơn thời gian tối thiểu.",
-      path: ["valuemax"], // indicate that the error should be shown at the valuemax field
-    }
-  );
+  .refine((data) => data.valuemax > data.valuemin, {
+    message: "Thời gian tối đa phải lớn hơn thời gian tối thiểu.",
+    path: ["valuemax"], // indicate that the error should be shown at the valuemax field
+  });
 
 type ShippingRatesFormValues = z.infer<typeof formSchema>;
 
@@ -81,9 +81,15 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
   const [loading, setLoading] = useState(false);
   const isEditing = !!initialData;
   const [disableActive, setDisableActive] = useState(true);
-  const [unitMinValue, setUnitMinValue] = useState<string>(initialData ? initialData.unitmin : "");
-  const [valueMinSelected, setValueMinSelected] = useState<boolean>(!!initialData?.valuemin);
-  const [unitMinSelected, setUnitMinSelected] = useState<boolean>(!!initialData?.unitmin);
+  const [unitMinValue, setUnitMinValue] = useState<string>(
+    initialData ? initialData.unitmin : ""
+  );
+  const [valueMinSelected, setValueMinSelected] = useState<boolean>(
+    !!initialData?.valuemin
+  );
+  const [unitMinSelected, setUnitMinSelected] = useState<boolean>(
+    !!initialData?.unitmin
+  );
 
   // Sử dụng useEffect để kiểm tra khi component được tạo và cập nhật trạng thái active
   useEffect(() => {
@@ -148,13 +154,16 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
           if (initialData) {
             return (
               <p>
-                Shipping rates <span className="font-bold">{response.data?.name}</span> updated.
+                Shipping rates{" "}
+                <span className="font-bold">{response.data?.name}</span>{" "}
+                updated.
               </p>
             );
           } else {
             return (
               <p>
-                Shipping rates <span className="font-bold">{data.name}</span> created.
+                Shipping rates <span className="font-bold">{data.name}</span>{" "}
+                created.
               </p>
             );
           }
@@ -168,31 +177,35 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
           },
           error: (error: unknown) => {
             if (
-              (error as { response?: { data?: { error?: string } } }).response &&
-              (error as { response: { data?: { error?: string } } }).response.data &&
-              (error as { response: { data: { error?: string } } }).response.data.error
+              (error as { response?: { data?: { error?: string } } })
+                .response &&
+              (error as { response: { data?: { error?: string } } }).response
+                .data &&
+              (error as { response: { data: { error?: string } } }).response
+                .data.error
             ) {
-              return (error as { response: { data: { error: string } } }).response.data.error
+              return (error as { response: { data: { error: string } } })
+                .response.data.error;
             } else {
               return "Something went wrong.";
             }
           },
         }
       );
-    } catch (error) {} 
-      finally {
+    } catch (error) {
+    } finally {
       setLoading(false);
     }
   };
 
   const handleUnitMinChange = (value: string) => {
     setUnitMinValue(value);
-    form.setValue('unitmin', value);
+    form.setValue("unitmin", value);
     setUnitMinSelected(!!value);
   };
 
   const handleValueMinChange = (value: number) => {
-    form.setValue('valuemin', value);
+    form.setValue("valuemin", value);
     setValueMinSelected(value > 0);
   };
 
@@ -215,7 +228,11 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên giao hàng <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Tên giao hàng
+                    <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Nhập cái tên sản phẩm muốn giao." />
+                  </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -237,7 +254,11 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
               render={({ field }) => {
                 return (
                   <FormItem>
-                    <FormLabel>Số tiền <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                    <FormLabel className="flex space-x-3 items-center">
+                      Số tiền
+                      <span className="text-red-600 pl-1">(*)</span>
+                      <Recommend message="Nhập phí tiền giao hàng." />
+                    </FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -257,7 +278,11 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
               name="taxbehavior"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Hành vi thuế <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Hành vi thuế
+                    <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Chọn loại thuế." />
+                  </FormLabel>
                   <Select
                     disabled={loading}
                     onValueChange={field.onChange}
@@ -290,7 +315,11 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
               render={({ field }) => {
                 return (
                   <FormItem>
-                    <FormLabel>Thời gian thấp nhất (Không quá 2400 giờ) <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                    <FormLabel className="flex space-x-3 items-center">
+                      Thời gian thấp nhất
+                      <span className="text-red-600 pl-1">(*)</span>
+                      <Recommend message="Lưu ý: Nhập không quá 2400 giờ. Khoảng thời gian thấp nhất sẽ được giao." />
+                    </FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -300,12 +329,15 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
                         onChange={(e) => {
                           const value = Number(e.target.value);
                           if (!isNaN(value)) {
-                            if (value <= 2400) { // Kiểm tra giá trị nhỏ hơn hoặc bằng 2400
+                            if (value <= 2400) {
+                              // Kiểm tra giá trị nhỏ hơn hoặc bằng 2400
                               field.onChange(value);
                               handleValueMinChange(value);
                             } else {
                               // Nếu giá trị lớn hơn 2400, không thay đổi giá trị
-                              toast.error("Thời gian thấp nhất không được lớn hơn 2400 giờ");
+                              toast.error(
+                                "Thời gian thấp nhất không được lớn hơn 2400 giờ"
+                              );
                             }
                           }
                         }}
@@ -322,8 +354,10 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
               name="unitmin"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Đơn vị thấp nhất <span className="text-red-600 pl-1">(*)</span>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Đơn vị thấp nhất
+                    <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Chọn giờ hoặc ngày." />
                   </FormLabel>
                   <Select
                     disabled={loading || isEditing}
@@ -360,14 +394,23 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
               render={({ field }) => {
                 return (
                   <FormItem>
-                    <FormLabel>Thời gian tối đa (Không quá 2400 giờ) <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                    <FormLabel className="flex space-x-3 items-center">
+                      Thơi gian tối đa
+                      <span className="text-red-600 pl-1">(*)</span>
+                      <Recommend message="Lưu ý: Nhập không quá 2400 giờ. Đây là thời gian tối đa khách hàng sẽ nhận được sản phẩm." />
+                    </FormLabel>
                     <FormControl>
                       <Input
                         type="number"
-                        disabled={loading || isEditing || !valueMinSelected || !unitMinSelected}
+                        disabled={
+                          loading ||
+                          isEditing ||
+                          !valueMinSelected ||
+                          !unitMinSelected
+                        }
                         placeholder="Nhập phần thời gian tối đa ..."
                         {...field}
-                        max={2400} 
+                        max={2400}
                       />
                     </FormControl>
                     <FormMessage />
@@ -381,11 +424,18 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
               name="unitmax"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Đơn vị tối đa <span className="text-red-600 pl-1">(*)</span>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Đơn vị tối đa
+                    <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Chọn giờ hoặc ngày." />
                   </FormLabel>
                   <Select
-                    disabled={loading || isEditing || !valueMinSelected || !unitMinSelected}
+                    disabled={
+                      loading ||
+                      isEditing ||
+                      !valueMinSelected ||
+                      !unitMinSelected
+                    }
                     onValueChange={field.onChange}
                     value={field.value}
                     defaultValue={field.value}
@@ -417,7 +467,11 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
               name="taxcode"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Người chịu thuế <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Người chịu thuế
+                    <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Mặc định đơn hàng sẽ được cửa hàng chịu thuế." />
+                  </FormLabel>
                   <Select
                     disabled={loading || isEditing}
                     onValueChange={(value) => field.onChange(value)}
@@ -457,7 +511,11 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel>Hoạt động</FormLabel>
+                    <FormLabel className="flex space-x-3 items-center">
+                      Hoạt động
+                      <span className="text-red-600 pl-1">(*)</span>
+                      <Recommend message="Lựa chọn ngừng hoặc mở thuế mặc định là ngừng." />
+                    </FormLabel>
                     <FormDescription>Ngừng hoặc mở thuế</FormDescription>
                   </div>
                 </FormItem>

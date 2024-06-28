@@ -23,9 +23,10 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Heading } from "@/components/ui/heading";
 import { AlertModal } from "@/components/modals/alert-modal";
+import Recommend from "@/components/ui/recommend";
 
 const formSchema = z.object({
-  name: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
+  name: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
 });
 
 type CategoryFormValues = z.infer<typeof formSchema>;
@@ -71,7 +72,9 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData }) => {
           if (initialData) {
             return (
               <p>
-                Category <span className="font-bold">{response.data?.name}</span> updated.
+                Category{" "}
+                <span className="font-bold">{response.data?.name}</span>{" "}
+                updated.
               </p>
             );
           } else {
@@ -91,19 +94,23 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData }) => {
           },
           error: (error: unknown) => {
             if (
-              (error as { response?: { data?: { error?: string } } }).response &&
-              (error as { response: { data?: { error?: string } } }).response.data &&
-              (error as { response: { data: { error?: string } } }).response.data.error
+              (error as { response?: { data?: { error?: string } } })
+                .response &&
+              (error as { response: { data?: { error?: string } } }).response
+                .data &&
+              (error as { response: { data: { error?: string } } }).response
+                .data.error
             ) {
-              return (error as { response: { data: { error: string } } }).response.data.error
+              return (error as { response: { data: { error: string } } })
+                .response.data.error;
             } else {
               return "Something went wrong.";
             }
           },
         }
       );
-    } catch (error) {} 
-      finally {
+    } catch (error) {
+    } finally {
       setLoading(false);
     }
   };
@@ -121,10 +128,14 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData }) => {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
         (error as { response: { data?: { error?: string } } }).response.data &&
-        (error as { response: { data: { error?: string } } }).response.data.error
+        (error as { response: { data: { error?: string } } }).response.data
+          .error
       ) {
         // Hiển thị thông báo lỗi cho người dùng
-        toast.error((error as { response: { data: { error: string } } }).response.data.error);
+        toast.error(
+          (error as { response: { data: { error: string } } }).response.data
+            .error
+        );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
@@ -173,7 +184,10 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData }) => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Tên <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Hãy đặt tên phù hợp với từng loại hàng. VD: Pin con ó ..." />
+                  </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}

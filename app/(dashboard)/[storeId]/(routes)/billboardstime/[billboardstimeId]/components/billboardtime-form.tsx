@@ -27,11 +27,12 @@ import Image from "next/image";
 import { format } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import viLocale from "date-fns/locale/vi";
+import Recommend from "@/components/ui/recommend";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 
 const formSchema = z.object({
-  label: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
-  timeout: z.coerce.number().min(10,{message: "Nhập ít nhất tối thiểu 10."}),
+  label: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
+  timeout: z.coerce.number().min(10, { message: "Nhập ít nhất tối thiểu 10." }),
   imagebillboardtime: z.object({ url: z.string() }).array(),
 });
 
@@ -71,7 +72,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
     try {
       setLoading(true);
       let promise;
-      let imageUrl: string[] = []; 
+      let imageUrl: string[] = [];
 
       if (initialData) {
         promise = axios.patch(
@@ -86,22 +87,26 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
 
       const response = await promise;
 
-      let message:React.ReactNode;
+      let message: React.ReactNode;
       if (initialData) {
         message = (
           <p>
-            Billboardtime <span className="font-bold">{response?.data.label}</span> updated. Thời gian: <span className="font-bold">{data.timeout}</span>.
+            Billboardtime{" "}
+            <span className="font-bold">{response?.data.label}</span> updated.
+            Thời gian: <span className="font-bold">{data.timeout}</span>.
           </p>
         );
       } else {
         message = (
           <p>
-            Billboardtime <span className="font-bold">{data.label}</span> created. Thời gian: <span className="font-bold">{data.timeout}</span>.
+            Billboardtime <span className="font-bold">{data.label}</span>{" "}
+            created. Thời gian:{" "}
+            <span className="font-bold">{data.timeout}</span>.
           </p>
         );
       }
 
-      let title:React.ReactNode;
+      let title: React.ReactNode;
       if (initialData) {
         title = (
           <div className="flex items-center justify-between text-sm">
@@ -192,10 +197,14 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
         (error as { response: { data?: { error?: string } } }).response.data &&
-        (error as { response: { data: { error?: string } } }).response.data.error
+        (error as { response: { data: { error?: string } } }).response.data
+          .error
       ) {
         // Hiển thị thông báo lỗi cho người dùng
-        toast.error((error as { response: { data: { error: string } } }).response.data.error);
+        toast.error(
+          (error as { response: { data: { error: string } } }).response.data
+            .error
+        );
       } else {
         toast.error("Something went wrong.");
       }
@@ -217,10 +226,14 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
         (error as { response: { data?: { error?: string } } }).response.data &&
-        (error as { response: { data: { error?: string } } }).response.data.error
+        (error as { response: { data: { error?: string } } }).response.data
+          .error
       ) {
         // Hiển thị thông báo lỗi cho người dùng
-        toast.error((error as { response: { data: { error: string } } }).response.data.error);
+        toast.error(
+          (error as { response: { data: { error: string } } }).response.data
+            .error
+        );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
@@ -267,9 +280,9 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
             name="imagebillboardtime"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
-                  Hình ảnh(Chỉ thêm 10 ảnh){" "}
-                  <span className="text-red-600 pl-1">(*)</span>
+                <FormLabel className="flex space-x-3 items-center">
+                  Hình ảnh <span className="text-red-600 pl-1">(*)</span>
+                  <Recommend message="Lưu ý: chỉ thêm tối đa 10 ảnh và ảnh phải rõ nét với tất cả màn hình." />
                 </FormLabel>
                 <FormControl>
                   <ImageUpload
@@ -296,7 +309,10 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               name="label"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nhãn <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Nhãn <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Hãy đặt tên phù hợp với tất cả ảnh trên." />
+                  </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -314,7 +330,10 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               name="timeout"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thời gian <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Thời gian <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Lưu ý: thời gian sẽ đếm ngược sau đó sẽ ẩn." />
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"

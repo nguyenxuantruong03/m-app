@@ -28,6 +28,7 @@ import Image from "next/image";
 import { format } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import viLocale from "date-fns/locale/vi";
+import Recommend from "@/components/ui/recommend";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 
 const formSchema = z.object({
@@ -275,9 +276,9 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
             name="imagebillboard"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
-                  Hình ảnh(Chỉ thêm 10 ảnh){" "}
-                  <span className="text-red-600 pl-1">(*)</span>
+                <FormLabel className="flex space-x-3 items-center">
+                  Hình ảnh <span className="text-red-600 pl-1">(*)</span>
+                  <Recommend message="Lưu ý: chỉ thêm tối đa 10 ảnh và ảnh phải rõ nét với tất cả màn hình." />
                 </FormLabel>
                 <FormControl>
                   <ImageUpload
@@ -304,8 +305,9 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               name="label"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
+                  <FormLabel className="flex space-x-3 items-center">
                     Nhãn <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Hãy đặt tên phù hợp với tất cả ảnh trên." />
                   </FormLabel>
                   <FormControl>
                     <Input

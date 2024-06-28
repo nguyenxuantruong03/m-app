@@ -23,6 +23,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Heading } from "@/components/ui/heading";
 import { AlertModal } from "@/components/modals/alert-modal";
+import Recommend from "@/components/ui/recommend";
 
 const formSchema = z.object({
   name: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
@@ -202,8 +203,9 @@ export const FavoriteForm: React.FC<FavoriteProps> = ({ initialData }) => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
+                  <FormLabel className="flex space-x-3 items-center">
                     Tên <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Các loại sản phẩm mà khách hàng ưa thích." />
                   </FormLabel>
                   <FormControl>
                     <Input

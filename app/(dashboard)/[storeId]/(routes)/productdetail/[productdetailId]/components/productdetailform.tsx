@@ -23,6 +23,7 @@ import { Separator } from "@/components/ui/separator";
 import { Heading } from "@/components/ui/heading";
 import { AlertModal } from "@/components/modals/alert-modal";
 import { Textarea } from "@/components/ui/textarea";
+import Recommend from "@/components/ui/recommend";
 
 const formSchema = z.object({
   title: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
@@ -864,8 +865,9 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Tiêu đề <span className="text-red-600 pl-1">(*)</span>
+                  <FormLabel className="flex space-x-3 items-center">
+                      Tiêu đề<span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Hãy nhập tiêu để dễ dàng lựa chọn khi tạo sản phẩm." />
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -884,9 +886,9 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="name1"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Tên sản phẩm 1{" "}
-                    <span className="text-red-600 pl-1">(*)</span>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Tên sản phẩm 1<span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Nhập đầy đủ tên sản phẩm. Không bao gồm các loại khác như kích thước..." />
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -911,9 +913,9 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="price1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Giá sản phẩm 1{" "}
-                        <span className="text-red-600 pl-1">(*)</span>
+                      <FormLabel className="flex space-x-3 items-center">
+                        Giá sản phẩm 1 <span className="text-red-600 pl-1">(*)</span>
+                        <Recommend message="Nhập giá của sản phẩm." />
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -934,10 +936,10 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="percentpromotion1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Giảm giá sản phẩm 1{" "}
-                        <span className="text-red-600 pl-1">(*)</span>
-                      </FormLabel>
+                      <FormLabel className="flex space-x-3 items-center">
+                    Giảm giá sản phẩm 1 <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Sản phẩm sẽ giảm giá từ 0% đến 100%." />
+                  </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -957,10 +959,10 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="quantity1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Số lượng còn trong kho 1{" "}
-                        <span className="text-red-600 pl-1">(*)</span>
-                      </FormLabel>
+                      <FormLabel className="flex space-x-3 items-center">
+                    Số lượng còn trong kho 1 <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Xem thử số lượng sản phẩm còn trong kho bao nhiêu." />
+                  </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -1313,8 +1315,9 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="promotionheading"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
+                  <FormLabel className="flex space-x-3 items-center">
                     Khuyến mãi sỉ <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Ghi những ưa đãi giành cho khách hàng mua sỉ." />
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -1332,9 +1335,9 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="promotiondescription"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Khuyến mãi thầu{" "}
-                    <span className="text-red-600 pl-1">(*)</span>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Khuyến mãi thầu <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Nhập những ưa đãi giành cho những nhà thầu." />
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -1353,7 +1356,10 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="warranty1"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giá tiền bảo hành 1</FormLabel>
+                  <FormLabel className="flex items-center">
+                    <span className="mr-3">Giá tiền bảo hành 1 </span>
+                    <Recommend message="Lưu ý: Sẽ có một vài sản phẩm sẽ bỏ chi phí để bảo hành." />
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -1428,8 +1434,9 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="descriptionspecifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
+                  <FormLabel className="flex space-x-3 items-center">
                     Thông số <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Nhập thông số sản phẩm pin VD: Thời gian sử dụng:" />
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -1451,9 +1458,9 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="valuespecifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Nội dung thông số{" "}
-                    <span className="text-red-600 pl-1">(*)</span>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Nội dung thông số <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Nhập nội dung thông số VD: 2400 giờ" />
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -2069,9 +2076,9 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="descriptionsalientfeatures"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Mô tả tính năng nổi bật{" "}
-                    <span className="text-red-600 pl-1">(*)</span>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Mô tả tính năng nổi bật <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Mô tả những tính năng nổi bật: Vd: Có thể chông nước và ngoài trời." />
                   </FormLabel>
                   <FormControl>
                     <Textarea
@@ -2149,9 +2156,9 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="contentsalientfeatures"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Nội dung tính năng nổi bật{" "}
-                    <span className="text-red-600 pl-1">(*)</span>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Nội dung tính năng nổi bật <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Hãy một nội dung dài mô tả chi tiết nhất về sản phẩm và liệt kê ưa và nhược điểm." />
                   </FormLabel>
                   <FormControl>
                     <Textarea

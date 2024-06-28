@@ -43,6 +43,7 @@ import { format } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import viLocale from "date-fns/locale/vi";
 import MutipleSelectOption from "./mutiple-select";
+import Recommend from "@/components/ui/recommend";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 
 const formSchema = z.object({
@@ -306,9 +307,10 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
             name="imageCredential"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
-                  Hình ảnh <span className="text-red-600 pl-1">(*)</span>
-                </FormLabel>
+                <FormLabel className="flex space-x-3 items-center">
+                    Hình ảnh <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Đây là hình ảnh nhân viên ảnh phông xanh." />
+                  </FormLabel>
                 <FormControl>
                   <ImageUpload
                     value={field.value} // Assuming field.value is an array of strings
@@ -332,8 +334,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="phonenumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Số điện thoại <span className="text-red-600 pl-1">(*) Nhập tối đa 11 số!</span>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Số điện thoại <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Số điện thoại của nhân viên tối đa 10 só." />
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -354,9 +357,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="numberCCCD"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Số CCCD{" "}
-                    <span className="text-red-600 pl-1">(*) Nhập tối đa 12 số!</span>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Số CCDD <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Nhập tối đa 12 số giông với trong CCCD" />
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -377,8 +380,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
+                  <FormLabel className="flex space-x-3 items-center">
                     Tên <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Tên nhân viên theo giấy khai sinh." />
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -397,8 +401,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="dateofbirth"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
+                  <FormLabel className="flex space-x-3 items-center">
                     Sinh nhật <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Dựa vào giấy khai sinh ghi chính xác sinh nhật để ưa đãi cho nhân viên." />
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -430,9 +435,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="timestartwork"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Thời gian bắt đầu làm việc{" "}
-                    <span className="text-red-600 pl-1">(*)</span>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Thời gian bắt đầu làm việc <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Quan trọng: Liên quan đến điểm danh của nhân viên sẽ bắt đầu điểm danh vào mấy giờ." />
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -455,8 +460,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="issued"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Cấp ở đâu <span className="text-red-600 pl-1">(*)</span>
+                  <FormLabel className="flex space-x-3 items-center">
+                    CCCD cấp ở đâu <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Nơi căn cứ công dân được cấp. VD: Bộ cộng An Quận Bình Tân." />
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -475,9 +481,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="dateRange"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Ngày hết hạn CMND{" "}
-                    <span className="text-red-600 pl-1">(*)</span>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Ngày hết hạn CMND <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Thời gian Căn cước công dân hết hạn năm ở dưới ảnh hoặc dưới nơi cập." />
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -509,8 +515,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="gender"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
+                  <FormLabel className="flex space-x-3 items-center">
                     Giới tính <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Lựa chọn giới tính nhân viên." />
                   </FormLabel>
                   <Select
                     disabled={loading}
@@ -543,8 +550,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="degree"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
+                  <FormLabel className="flex space-x-3 items-center">
                     Bằng cấp <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Bắt buộc nhân viên cung cấp lương sẽ phù thuộc vào bằng cấp có được." />
                   </FormLabel>
                   <Select
                     disabled={loading}
@@ -576,9 +584,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="maritalStatus"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Tình trạng hôn nhân{" "}
-                    <span className="text-red-600 pl-1">(*)</span>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Tính trạng hôn nhân <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Theo dõi tình trạng hôn nhân của nhân viên." />
                   </FormLabel>
                   <Select
                     disabled={loading}
@@ -610,9 +618,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="workingTime"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Thời gian làm việc{" "}
-                    <span className="text-red-600 pl-1">(*)</span>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Thời gian làm việc <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Lựa chọn loại công việc bán thời gian hay fulltime." />
                   </FormLabel>
                   <Select
                     disabled={loading}
@@ -644,8 +652,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="urlimageCheckAttendance"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Qrcode nhân viên
+                  <FormLabel className="flex space-x-3 items-center">
+                    Qr code nhân viên <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Mã này sẽ được cấp bởi quản lý để nhân viên điểm danh." />
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -663,8 +672,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="codeNFC"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    NFC nhân viên
+                  <FormLabel className="flex space-x-3 items-center">
+                    NFC Nhân viên <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Nhân viên sẽ được tích hợp NFC vào QrCode." />
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -691,7 +701,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel>Định danh</FormLabel>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Định dạng <Recommend message="Xác nhận thông tin nhân viên đã cập nhật đầy đủ hay chưa." />
+                  </FormLabel>
                     <FormDescription>Tài khoản xác thực</FormDescription>
                   </div>
                 </FormItem>
@@ -703,8 +715,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               name="daywork" 
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                  Chọn thứ làm việc  <span className="text-red-600 pl-1">(*)</span>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Thứ làm việc <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Lưu ý: Chọn đúng thứ ngày làm việc để nhân viên điểm danh. Nếu chọn sai nhân viên không thể điểm danh." />
                   </FormLabel>
                   <FormControl>
                    <MutipleSelectOption selectedOption={selectedOption} setSelectedOption={setSelectedOption} field={field} disabled={loading}/>

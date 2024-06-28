@@ -36,6 +36,7 @@ import { utcToZonedTime } from "date-fns-tz";
 import viLocale from "date-fns/locale/vi";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 import Image from "next/image";
+import Recommend from "@/components/ui/recommend";
 
 const formSchema = z.object({
   name: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
@@ -337,9 +338,10 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
             name="imagecoupon"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
+                <FormLabel className="flex space-x-3 items-center">
                   Hình ảnh giảm giá{" "}
                   <span className="text-red-600 pl-1">(*)</span>
+                  <Recommend message="Chọn những hình ảnh đẹp phù hợp với mã giảm giá." />
                 </FormLabel>
                 <FormControl>
                   <ImageUpload
@@ -366,8 +368,9 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
+                  <FormLabel className="flex space-x-3 items-center">
                     Tên giảm giá <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Tên giảm giá. Vd: Giảm giá sốc 50% ..." />
                   </FormLabel>
                   <FormControl>
                     <Input

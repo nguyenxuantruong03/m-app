@@ -23,10 +23,11 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Heading } from "@/components/ui/heading";
 import { AlertModal } from "@/components/modals/alert-modal";
+import Recommend from "@/components/ui/recommend";
 
 const formSchema = z.object({
-  name: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
-  value: z.string().min(1,{message: "Nhập ít nhất 1 ký tự."}),
+  name: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
+  value: z.string().min(1, { message: "Nhập ít nhất 1 ký tự." }),
 });
 
 type SizeFormValues = z.infer<typeof formSchema>;
@@ -94,19 +95,23 @@ export const SizeForm: React.FC<SizeFormProps> = ({ initialData }) => {
           },
           error: (error: unknown) => {
             if (
-              (error as { response?: { data?: { error?: string } } }).response &&
-              (error as { response: { data?: { error?: string } } }).response.data &&
-              (error as { response: { data: { error?: string } } }).response.data.error
+              (error as { response?: { data?: { error?: string } } })
+                .response &&
+              (error as { response: { data?: { error?: string } } }).response
+                .data &&
+              (error as { response: { data: { error?: string } } }).response
+                .data.error
             ) {
-              return (error as { response: { data: { error: string } } }).response.data.error
+              return (error as { response: { data: { error: string } } })
+                .response.data.error;
             } else {
               return "Something went wrong.";
             }
           },
         }
       );
-    } catch (error) {} 
-      finally {
+    } catch (error) {
+    } finally {
       setLoading(false);
     }
   };
@@ -122,10 +127,14 @@ export const SizeForm: React.FC<SizeFormProps> = ({ initialData }) => {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
         (error as { response: { data?: { error?: string } } }).response.data &&
-        (error as { response: { data: { error?: string } } }).response.data.error
+        (error as { response: { data: { error?: string } } }).response.data
+          .error
       ) {
         // Hiển thị thông báo lỗi cho người dùng
-        toast.error((error as { response: { data: { error: string } } }).response.data.error);
+        toast.error(
+          (error as { response: { data: { error: string } } }).response.data
+            .error
+        );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
@@ -174,7 +183,11 @@ export const SizeForm: React.FC<SizeFormProps> = ({ initialData }) => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Tên
+                    <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Tên kích thước. VD: Lớn, Trung bình, nhỏ..." />
+                  </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -192,7 +205,11 @@ export const SizeForm: React.FC<SizeFormProps> = ({ initialData }) => {
               name="value"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giá trị <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel className="flex space-x-3 items-center">
+                     Tên ngắn gọn
+                    <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Giông với tên kích thước nhưng chỉ cần ghi chữ cái đầu. VD: S,M,L..." />
+                  </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}

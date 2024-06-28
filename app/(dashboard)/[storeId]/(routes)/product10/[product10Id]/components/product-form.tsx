@@ -38,6 +38,7 @@ import { utcToZonedTime } from "date-fns-tz";
 import viLocale from "date-fns/locale/vi";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 import Imagee from "next/image";
+import Recommend from "@/components/ui/recommend";
 
 //Loại bỏ dấu
 const removeDiacritics = (str: String) => {
@@ -45,14 +46,14 @@ const removeDiacritics = (str: String) => {
 };
 
 const formSchema = z.object({
-  name: z.string().min(2,{message: "Nhập ít nhất 2 ký tự."}),
-  heading: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
-  description: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
+  name: z.string().min(2, { message: "Nhập ít nhất 2 ký tự." }),
+  heading: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
+  description: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
   images: z.object({ url: z.string() }).array(),
   imagesalientfeatures: z.object({ url: z.string() }).array(),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
-  productdetailId: z.string().min(1,{message: "Hãy chọn 1 ProductDetail."}),
+  productdetailId: z.string().min(1, { message: "Hãy chọn 1 ProductDetail." }),
 });
 
 type ProductFormValues = z.infer<typeof formSchema>;
@@ -137,7 +138,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
       const response = await promise;
 
-      let message:React.ReactNode;
+      let message: React.ReactNode;
       if (initialData) {
         message = (
           <p>
@@ -153,7 +154,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         );
       }
 
-      let title:React.ReactNode;
+      let title: React.ReactNode;
       if (initialData) {
         title = (
           <div className="flex items-center justify-between text-sm">
@@ -244,10 +245,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
         (error as { response: { data?: { error?: string } } }).response.data &&
-        (error as { response: { data: { error?: string } } }).response.data.error
+        (error as { response: { data: { error?: string } } }).response.data
+          .error
       ) {
         // Hiển thị thông báo lỗi cho người dùng
-        toast.error((error as { response: { data: { error: string } } }).response.data.error);
+        toast.error(
+          (error as { response: { data: { error: string } } }).response.data
+            .error
+        );
       } else {
         toast.error("Something went wrong.");
       }
@@ -269,10 +274,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
         (error as { response: { data?: { error?: string } } }).response.data &&
-        (error as { response: { data: { error?: string } } }).response.data.error
+        (error as { response: { data: { error?: string } } }).response.data
+          .error
       ) {
         // Hiển thị thông báo lỗi cho người dùng
-        toast.error((error as { response: { data: { error: string } } }).response.data.error);
+        toast.error(
+          (error as { response: { data: { error: string } } }).response.data
+            .error
+        );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
@@ -320,7 +329,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             name="images"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Hình ảnh sản phẩm <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                <FormLabel className="flex space-x-3 items-center">
+                  Hình ảnh sản phẩm{" "}
+                  <span className="text-red-600 pl-1">(*)</span>
+                  <Recommend message="Hãy chụp ảnh sản phẩm rõ nết xóa phông." />
+                </FormLabel>
                 <FormControl>
                   <ImageUpload
                     value={field.value.map((image) => image.url)}
@@ -345,7 +358,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             name="imagesalientfeatures"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Hình ảnh mô tả sản phẩm (Chỉ thêm 2 ảnh) <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                <FormLabel className="flex space-x-3 items-center">
+                  Hình ảnh mô tả sản phẩm{" "}
+                  <span className="text-red-600 pl-1">(*)</span>
+                  <Recommend message="Chỉ chọn 2 ảnh sản phẩm chi tiết nhất." />
+                </FormLabel>
                 <FormControl>
                   <ImageUpload
                     value={field.value.map((image) => image.url)}
@@ -371,7 +388,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               name="heading"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên sản phẩm <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Tên sản phẩm<span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Hãy nhập đầy đủ tên sản phẩm." />
+                  </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -393,7 +413,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mô tả <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Mô tả <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Mô tả ngắn về sản phẩm." />
+                  </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -411,7 +434,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               name="productdetailId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Chi tiết sản phẩm <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Chi tiết sản phẩm{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Lựa chọn chi tiết sản phẩm phù hợp." />
+                  </FormLabel>
                   <Input
                     list="productdetails"
                     onChange={(e) => {

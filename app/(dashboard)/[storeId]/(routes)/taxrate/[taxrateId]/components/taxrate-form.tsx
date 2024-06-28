@@ -30,12 +30,13 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Heading } from "@/components/ui/heading";
 import { TaxRate, TaxType } from "@prisma/client";
+import Recommend from "@/components/ui/recommend";
 
 const formSchema = z.object({
-  name: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
-  taxtype: z.string().min(1,{message: "Hãy chọn 1 loại thuế."}),
-  description: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
-  percentage: z.coerce.number().min(1,{message: "Hãy nhập ít nhất 1%."}),
+  name: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
+  taxtype: z.string().min(1, { message: "Hãy chọn 1 loại thuế." }),
+  description: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
+  percentage: z.coerce.number().min(1, { message: "Hãy nhập ít nhất 1%." }),
   inclusive: z.boolean().default(false).optional(),
   active: z.boolean().default(false).optional(),
 });
@@ -119,19 +120,23 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
           },
           error: (error: unknown) => {
             if (
-              (error as { response?: { data?: { error?: string } } }).response &&
-              (error as { response: { data?: { error?: string } } }).response.data &&
-              (error as { response: { data: { error?: string } } }).response.data.error
+              (error as { response?: { data?: { error?: string } } })
+                .response &&
+              (error as { response: { data?: { error?: string } } }).response
+                .data &&
+              (error as { response: { data: { error?: string } } }).response
+                .data.error
             ) {
-              return (error as { response: { data: { error: string } } }).response.data.error
+              return (error as { response: { data: { error: string } } })
+                .response.data.error;
             } else {
               return "Something went wrong.";
             }
           },
         }
       );
-    } catch (error) {} 
-      finally {
+    } catch (error) {
+    } finally {
       setLoading(false);
     }
   };
@@ -156,7 +161,11 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên Thuế <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Tên thuế
+                    <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Tên loại thuế là gì ?" />
+                  </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -177,7 +186,11 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mô tả thuế <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Mô tả thuế
+                    <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Giải thích sơ qua về thuế cần phải đóng." />
+                  </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
@@ -198,7 +211,14 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
               name="taxtype"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Loại thuế <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                  <FormLabel>
+                    Loại thuế <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Loại thuế
+                    <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Hãy lựa chọn loại thuế là VAT hoặc là thuế mua sắm." />
+                  </FormLabel>
                   <Select
                     disabled={loading || isEditing}
                     onValueChange={field.onChange}
@@ -229,7 +249,9 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
               control={form.control}
               name="percentage"
               render={({ field }) => {
-                const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+                const handleInputChange = (
+                  e: ChangeEvent<HTMLInputElement>
+                ) => {
                   const newValue = parseInt(e.target.value);
                   if (newValue >= 0 && newValue <= 100) {
                     // Nếu giá trị mới hợp lệ, cập nhật giá trị của field
@@ -240,7 +262,11 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
                 };
                 return (
                   <FormItem>
-                    <FormLabel>Phần trăm thuế (0-100) <span className="text-red-600 pl-1">(*)</span></FormLabel>
+                    <FormLabel className="flex space-x-3 items-center">
+                      Phần trăm thuế
+                      <span className="text-red-600 pl-1">(*)</span>
+                      <Recommend message="Phần trăm thuế sẽ bắt đầu từ mốc 0% - 100%" />
+                    </FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -269,7 +295,11 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel>Hoạt động</FormLabel>
+                    <FormLabel className="flex space-x-3 items-center">
+                      Hoạt động
+                      <span className="text-red-600 pl-1">(*)</span>
+                      <Recommend message="Mặc định thuế sễ ngừng nếu muốn hoạt động thì mở lên." />
+                    </FormLabel>
                     <FormDescription>Ngừng hoặc mở thuế</FormDescription>
                   </div>
                 </FormItem>
@@ -290,7 +320,11 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel>Bao gồm</FormLabel>
+                    <FormLabel className="flex space-x-3 items-center">
+                    Bao gôm
+                    <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Xem thử loại thuế này do sản phẩm độc quyền hay do các nguyên nhân khác." />
+                  </FormLabel>
                     <FormDescription>Bao gồm hay độc quyền.</FormDescription>
                   </div>
                 </FormItem>

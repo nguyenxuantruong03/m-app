@@ -15,7 +15,7 @@ const Recommend:React.FC<RecommendProps> = ({message}) => {
         <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-          <CircleAlert className="w-5 h-5 text-yellow-500 shadow-md" fill="bg-white"/>
+          <CircleAlert className="w-5 h-5 hover:text-green-500 text-yellow-500 shadow-md bg-slate-900 rounded-full"/>
           </TooltipTrigger>
           <TooltipContent>
             <p>{message}</p>
