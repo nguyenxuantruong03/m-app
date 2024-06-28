@@ -72,8 +72,8 @@ export type SettingUsersColumn = {
   isbanforever: boolean | undefined | null;
   timebanforever: Date | null | undefined;
   dateofbirth: Date | null;
-  createdAt: Date | null;
   isBirthdayToday?: boolean | null;
+  createdAt: Date | null;
 };
 
 interface RoleCellProps<T> {

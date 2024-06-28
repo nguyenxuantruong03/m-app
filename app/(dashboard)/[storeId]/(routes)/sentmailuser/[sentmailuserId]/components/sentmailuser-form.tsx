@@ -137,7 +137,20 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
   });
 
   const onSubmit = async (data: SentEmailUserFormValues) => {
+    const datasentemailuser = data.sentemailuser.map(item => item.trim()).filter(item => item !== "")
+    const datasubject= data.subject.replace(/\s/g, '').trim()
+    const datadescription = data.description.replace(/\s/g, '').trim()
+
+    // Kiểm tra xem dữ liệu đã xử lý có giống dữ liệu ban đầu không
+    const isSentEmailUserUnchanged = JSON.stringify(datasentemailuser) === JSON.stringify(initialData?.sentemailuser);
+    const isSubjectUnchanged = datasubject === initialData?.subject;
+    const isDescriptionUnchanged = datadescription === initialData?.description.replace(/\s/g, '').trim();
     try {
+      // Hiển thị toast error nếu cả ba trường không thay đổi
+      if (isSentEmailUserUnchanged && isSubjectUnchanged && isDescriptionUnchanged) {
+        toast.error("Không có thay đổi nào được thực hiện.");
+        return;
+      }
       //Check xem dữ liệu có giống nhau không của data.sentemailuser
       const normalizeEmail = (item: string) => {
         // Try to match typical email pattern
@@ -207,18 +220,20 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
       setLoading(true);
       let promise;
       //Lọc bỏ chỉ lấy trong dâu () !Cách này dùng để có thể update lại
-      const filteredSentEmailUser = data.sentemailuser
+      const filteredSentEmailUser = datasentemailuser
         .filter((item) => /\(([^)]+)\)/.test(item)) // Lọc các item có dấu ngoặc đơn
         .map((item) => item.match(/\(([^)]+)\)/)![1]); // Lấy phần tử trong dấu ngoặc đơn
 
       const requestDataPost = {
-        ...data,
+        subject: datasubject,
+        description: datadescription,
         sentemailuser: filteredSentEmailUser,
       };
 
       const requestDataPatch = {
-        ...data,
-        sentemailuser: data.sentemailuser,
+        subject: datasubject,
+        description: datadescription,
+        sentemailuser: datasentemailuser,
       };
 
       if (initialData) {

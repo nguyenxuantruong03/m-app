@@ -1,14 +1,10 @@
 import prismadb from "@/lib/prismadb";
 import TaxRateClient from "./components/client";
 import { TaxRateColumn } from "./components/columns";
-import { format } from "date-fns";
 import { UserRole } from "@prisma/client";
 import { currentRole } from "@/lib/auth";
 import { RoleGate } from "@/components/auth/role-gate";
 import FormSuccess from "@/components/form-success";
-import { utcToZonedTime } from "date-fns-tz";
-import viLocale from "date-fns/locale/vi";
-const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 
 const TaxRatePage = async ({ params }: { params: { storeId: string } }) => {
   const role = await currentRole();
@@ -31,16 +27,7 @@ const TaxRatePage = async ({ params }: { params: { storeId: string } }) => {
     inclusive: item.inclusive,
     active: item.active,
     taxtype: item.taxtype,
-    createdAt: item.createdAt
-        ? format(
-            utcToZonedTime(
-              new Date(new Date(item.createdAt)),
-              vietnamTimeZone
-            ),
-            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-            { locale: viLocale }
-          )
-        : null,
+    createdAt: item.createdAt,
   }));
   return (
     <div className="w-full">

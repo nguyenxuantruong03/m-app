@@ -1,15 +1,11 @@
 import prismadb from "@/lib/prismadb";
 import ProductDetailClient from "./components/client";
 import { ProductDetailColumn } from "./components/columns";
-import { format } from "date-fns";
 import { formatter } from "@/lib/utils";
 import {  UserRole } from "@prisma/client";
 import { currentRole } from "@/lib/auth";
 import { RoleGate } from "@/components/auth/role-gate";
 import FormSuccess from "@/components/form-success";
-import { utcToZonedTime } from "date-fns-tz";
-import viLocale from "date-fns/locale/vi";
-const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 
 const ProductDetailPage = async ({ params }: { params: { storeId: string } }) => {
   const role = await currentRole();
@@ -137,16 +133,7 @@ const ProductDetailPage = async ({ params }: { params: { storeId: string } }) =>
     description3salientfeatures: item.description3salientfeatures,
     description4salientfeatures: item.description4salientfeatures,
     contentsalientfeatures: item.contentsalientfeatures,
-    createdAt: item.createdAt
-        ? format(
-            utcToZonedTime(
-              new Date(new Date(item.createdAt)),
-              vietnamTimeZone
-            ),
-            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-            { locale: viLocale }
-          )
-        : null,
+    createdAt: item.createdAt,
   }));
   return (
     <div>

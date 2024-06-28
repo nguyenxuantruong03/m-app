@@ -43,13 +43,7 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
     isArchived: item.isArchived,
     productdetail: item.productdetail.title,
     productdetailId: item.productdetail.id,
-    createdAt: item.createdAt
-      ? format(
-          utcToZonedTime(new Date(new Date(item.createdAt)), vietnamTimeZone),
-          "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-          { locale: viLocale }
-        )
-      : null,
+    createdAt: item.createdAt,
   }));
   return (
     <div className="w-full">

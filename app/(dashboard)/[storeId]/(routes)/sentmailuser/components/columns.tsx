@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import SpanColumn from "@/components/span-column";
 import { Clock12 } from "lucide-react";
 import EditRow from "../_components/edit-row";
+import FormatDate from "@/components/format-Date";
 
 export type SentEmailUserColumn = {
   id: string;
@@ -15,7 +16,7 @@ export type SentEmailUserColumn = {
   user: string | null;
   isSent: boolean | null;
   sentemailuser: string[];
-  createdAt: string | null;
+  createdAt: Date;
 };
 
 export const columns: ColumnDef<SentEmailUserColumn>[] = [
@@ -152,6 +153,11 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({ row }) => {
+      return (
+      <FormatDate data={row.original.createdAt}/>
+      )
+    }
   },
   {
     id: "actions",

@@ -3,6 +3,10 @@
 import { useEffect, useState } from "react";
 import Modal from "../ui/modal";
 import { Lock, Unlock } from "lucide-react";
+import { utcToZonedTime } from "date-fns-tz";
+import viLocale from "date-fns/locale/vi";
+const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
+import { format } from "date-fns";
 
 type System = {
   id: string;
@@ -10,11 +14,11 @@ type System = {
   oldChange: string[];
   delete: string[];
   banforever: string[];
-  timebanforever: string | null;
   isbanforever: boolean | null;
   type: string | null;
   user: string | null;
-  createdAt: string | null;
+  timebanforever: Date | null;
+  createdAt: Date | null;
 };
 
 interface ShowSystemProps {
@@ -37,6 +41,14 @@ export const ShowSystem: React.FC<ShowSystemProps> = ({
   if (!isMounted) {
     return null;
   }
+
+  const formatDate = (date: Date | null, noneTime?: boolean) => {
+    if (!date) return null;
+    const zonedDate = utcToZonedTime(new Date(date), vietnamTimeZone);
+    return noneTime
+      ? format(zonedDate, "dd/MM/yyyy", { locale: viLocale })
+      : format(zonedDate, "E '-' dd/MM/yyyy '-' HH:mm:ss a", { locale: viLocale });
+  };
 
   return (
     <Modal
@@ -86,8 +98,10 @@ export const ShowSystem: React.FC<ShowSystemProps> = ({
                         ) : (
                           <Unlock className="text-red-600" />
                         )
+                      ) : key === "createdAt" || key === "timebanforever" ? (
+                        formatDate(data[key as keyof System] as Date)
                       ) : (
-                        data[key as keyof System]
+                        String(data[key as keyof System])
                       )}
                     </td>
                   );
@@ -102,3 +116,4 @@ export const ShowSystem: React.FC<ShowSystemProps> = ({
   );
 };
 
+export default ShowSystem;

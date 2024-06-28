@@ -1,14 +1,10 @@
 import prismadb from "@/lib/prismadb";
-import { format, subHours } from "date-fns";
 import { RoleGate } from "@/components/auth/role-gate";
 import { currentRole } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
 import FormSuccess from "@/components/form-success";
 import { SystemsColumn } from "./components/column";
 import SystemClient from "./components/client";
-import { utcToZonedTime } from "date-fns-tz";
-import viLocale from "date-fns/locale/vi";
-const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 
 const System = async () => {
   const role = await currentRole();
@@ -31,20 +27,8 @@ const System = async () => {
     isbanforever: item.isbanforever,
     type: item.type,
     user: item.user,
-    timebanforever: item.timebanforever
-    ? format(
-        utcToZonedTime(new Date(new Date(item.timebanforever).getTime() - (7 * 60 * 60 * 1000)), vietnamTimeZone),
-        "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-        { locale: viLocale }
-      )
-    : null,
-    createdAt: item.createdAt
-      ? format(
-          utcToZonedTime(new Date(new Date(item.createdAt).getTime() - (7 * 60 * 60 * 1000)), vietnamTimeZone),
-          "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-          { locale: viLocale }
-        )
-      : null,
+    timebanforever: item.timebanforever,
+    createdAt: item.createdAt,
   }));
 
   return (

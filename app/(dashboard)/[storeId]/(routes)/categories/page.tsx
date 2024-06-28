@@ -28,16 +28,7 @@ const CategoriesPage = async ({ params }: { params: { storeId: string } }) => {
   const formattedCategories: CategoriesColumn[] = categories.map((item) => ({
     id: item.id,
     name: item.name,
-    createdAt: item.createdAt
-        ? format(
-            utcToZonedTime(
-              new Date(new Date(item.createdAt)),
-              vietnamTimeZone
-            ),
-            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-            { locale: viLocale }
-          )
-        : null,
+    createdAt: item.createdAt,
   }));
   return (
     <div className="w-full">

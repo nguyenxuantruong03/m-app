@@ -4,6 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
 import SpanColumn from "@/components/span-column";
 import { Clock12, Coins, Tag, User, Disc } from "lucide-react";
+import FormatDate from "@/components/format-Date";
 
 export type WheelSpinColumn = {
   id: string;
@@ -11,7 +12,7 @@ export type WheelSpinColumn = {
   email: string | null;
   coin: number;
   rotation: number;
-  createdAt: string | null;
+  createdAt: Date;
 };
 
 export const columns: ColumnDef<WheelSpinColumn>[] = [
@@ -82,6 +83,11 @@ export const columns: ColumnDef<WheelSpinColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({ row }) => {
+      return (
+      <FormatDate data={row.original.createdAt}/>
+      )
+    }
   },
   {
     id: "actions",

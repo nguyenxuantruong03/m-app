@@ -17,6 +17,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import SpanColumn from "@/components/span-column";
 import { Clock12, Tag } from "lucide-react";
 import EditRow from "../_components/edit-row";
+import FormatDate from "@/components/format-Date";
 
 export type TaxRateColumn = {
   id: string;
@@ -26,7 +27,7 @@ export type TaxRateColumn = {
   inclusive: boolean;
   active: boolean;
   taxtype: string | null;
-  createdAt: string | null;
+  createdAt: Date;
 };
 
 const taxTypeMapping: Record<string, string> = {
@@ -203,6 +204,11 @@ export const columns: ColumnDef<TaxRateColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({ row }) => {
+      return (
+      <FormatDate data={row.original.createdAt}/>
+      )
+    }
   },
   {
     id: "actions",

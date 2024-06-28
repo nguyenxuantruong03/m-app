@@ -1,13 +1,9 @@
 import prismadb from "@/lib/prismadb";
 import SentEmailUserClient from "./components/client";
-import { format } from "date-fns";
 import { UserRole } from "@prisma/client";
 import { currentRole } from "@/lib/auth";
 import { RoleGate } from "@/components/auth/role-gate";
 import FormSuccess from "@/components/form-success";
-import { utcToZonedTime } from "date-fns-tz";
-import viLocale from "date-fns/locale/vi";
-const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 
 const SentEmailUserPage = async ({
   params,
@@ -57,12 +53,6 @@ const SentEmailUserPage = async ({
         user: item.user.email,
         isSent: item.isSent,
         createdAt: item.createdAt
-          ? format(
-              utcToZonedTime(new Date(item.createdAt), vietnamTimeZone),
-              "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-              { locale: viLocale }
-            )
-          : null,
       };
     })
   );

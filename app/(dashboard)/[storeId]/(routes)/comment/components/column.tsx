@@ -13,6 +13,7 @@ import {
   User,
 } from "lucide-react";
 import SpanColumn from "@/components/span-column";
+import FormatDate from "@/components/format-Date";
 
 export type CommentColumn = {
   id: string;
@@ -23,7 +24,7 @@ export type CommentColumn = {
   nameproduct: string;
   comment: string;
   description: string[];
-  createdAt: string | null;
+  createdAt: Date;
 };
 
 const convertToStars = (rating: number) => {
@@ -139,6 +140,11 @@ export const columns: ColumnDef<CommentColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({ row }) => {
+      return (
+      <FormatDate data={row.original.createdAt}/>
+      )
+    }
   },
   {
     id: "actions",

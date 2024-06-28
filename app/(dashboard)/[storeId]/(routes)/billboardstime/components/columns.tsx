@@ -15,6 +15,7 @@ import { Clock12, Tag } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import EditRow from "../_components/edit-row";
 import ImageCellMutiple from "@/components/image-cell-multiple";
+import FormatDate from "@/components/format-Date";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -25,10 +26,10 @@ export type BillboardTimeColumn = {
   imagebillboardtime: string[];
   end: string;
   isTimeout: boolean | null;
-  createdAt: string | null;
   imagebillboardtimepatch: { url: string }[];
   endpatch: number | null;
   timeoutpatch: number;
+  createdAt: Date
 };
 
 export const columns: ColumnDef<BillboardTimeColumn>[] = [
@@ -184,14 +185,10 @@ export const columns: ColumnDef<BillboardTimeColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      const isActive = row.original.isTimeout;
-      const createdAt = row.original.createdAt;
       return (
-        <div className={isActive ? "line-through text-gray-400" : ""}>
-          {createdAt}
-        </div>
-      );
-    },
+      <FormatDate data={row.original.createdAt}/>
+      )
+    }
   },
   {
     id: "actions",

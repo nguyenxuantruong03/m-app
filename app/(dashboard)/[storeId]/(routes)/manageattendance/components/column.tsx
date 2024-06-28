@@ -1,6 +1,5 @@
 "use client";
 
-import { ZoomImageAttendanceModal } from "@/components/modals/zoom-image-one-modal";
 import SpanColumn from "@/components/span-column";
 import { ColumnDef } from "@tanstack/react-table";
 import {
@@ -23,11 +22,10 @@ import {
   SmartphoneNfc,
   Clock12,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
 import { Image as ImageIcon } from "lucide-react";
 import ImageCellOne from "@/components/image-cell-one";
+import FormatDate from "@/components/format-Date";
 
 export type ManageAttendancesColumn = {
   id: string;
@@ -46,7 +44,7 @@ export type ManageAttendancesColumn = {
   updateImage: string | null;
   updateNFC: string | null;
   isCheckAttendanceImage: boolean | null;
-  createdAt: string | null;
+  createdAt: Date;
 };
 
 export const columns: ColumnDef<ManageAttendancesColumn>[] = [
@@ -288,5 +286,10 @@ export const columns: ColumnDef<ManageAttendancesColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({ row }) => {
+      return (
+      <FormatDate data={row.original.createdAt}/>
+      )
+    }
   },
 ];

@@ -25,6 +25,8 @@ import {
 } from "@/components/ui/table";
 import { Trash } from "lucide-react";
 import { AlertModal } from "../modals/alert-modal";
+import { DatePickerWithRange } from "./pick-calendar";
+import { DateRange } from "react-day-picker";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -50,10 +52,11 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = useState({});
+  const [filteredData, setFilteredData] = useState<TData[]>(data);
   const prevRowSelection = useRef(rowSelection);
 
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns,
     state: {
       columnFilters,
@@ -77,6 +80,21 @@ export function DataTable<TData, TValue>({
     }
   }, [rowSelection, onSelect, table]);
 
+
+  const handleDateChange = (dateRange: DateRange | undefined) => {
+    if (dateRange?.from && dateRange.to) {
+      const filtered = data.filter((item: any) => {
+        const itemDate = new Date(item.createdAt);
+        if(dateRange.from && dateRange.to){
+          return itemDate >= dateRange.from && itemDate <= dateRange.to;
+        }
+      });
+      setFilteredData(filtered);
+    } else {
+      setFilteredData(data); // Show all data if no date range is selected
+    }
+  };
+
   return (
     <div>
       <AlertModal
@@ -88,7 +106,7 @@ export function DataTable<TData, TValue>({
         }}
         loading={disable}
       />
-      <div className="flex items-center py-4">
+      <div className="lg:flex items-center py-4 space-y-2 lg:space-y-0 lg:space-x-3 grid grid-rows-2">
         <Input
           placeholder="Search"
           value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
@@ -109,6 +127,7 @@ export function DataTable<TData, TValue>({
             Delete ({Object.keys(rowSelection).length})
           </Button>
         )}
+        <DatePickerWithRange onDateChange={handleDateChange} data={data}/>
       </div>
       <div className="rounded-md border">
         <Table>

@@ -6,6 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import SpanColumn from "@/components/span-column";
 import { Clock12, Package, Ruler } from "lucide-react";
 import EditRow from "../_components/edit-row";
+import FormatDate from "@/components/format-Date";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -13,7 +14,7 @@ export type SizeColumn = {
   id: string
   name: string
   value: string
-  createdAt: string | null
+  createdAt: Date
 }
 
 export const columns: ColumnDef<SizeColumn>[] = [
@@ -79,6 +80,11 @@ export const columns: ColumnDef<SizeColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({ row }) => {
+      return (
+      <FormatDate data={row.original.createdAt}/>
+      )
+    }
   },
   {
     id: "actions",

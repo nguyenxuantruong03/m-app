@@ -19,6 +19,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import SpanColumn from "@/components/span-column";
 import { Clock12 } from "lucide-react";
 import EditRow from "../_components/edit-row";
+import FormatDate from "@/components/format-Date";
 
 export type ShippingRatesColumn = {
   id: string;
@@ -32,7 +33,7 @@ export type ShippingRatesColumn = {
   valuemax: number;
   active: boolean | null;
   amountnotformat: number;
-  createdAt: string | null;
+  createdAt: Date;
 };
 
 const taxBehaviorMapping: Record<string, string> = {
@@ -261,6 +262,11 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({ row }) => {
+      return (
+      <FormatDate data={row.original.createdAt}/>
+      )
+    }
   },
   {
     id: "actions",

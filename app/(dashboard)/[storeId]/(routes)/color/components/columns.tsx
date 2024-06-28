@@ -6,12 +6,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import SpanColumn from "@/components/span-column";
 import { Clock12, Package, Palette } from "lucide-react";
 import EditRow from "../_components/edit-row";
+import FormatDate from "@/components/format-Date";
 
 export type ColorColumn = {
   id: string;
   name: string;
   value: string;
-  createdAt: string | null;
+  createdAt: Date
 };
 
 export const columns: ColumnDef<ColorColumn>[] = [
@@ -93,6 +94,11 @@ export const columns: ColumnDef<ColorColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({ row }) => {
+      return (
+      <FormatDate data={row.original.createdAt}/>
+      )
+    }
   },
   {
     id: "actions",

@@ -4,6 +4,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { CellAction } from "./cell-action"
 import SpanColumn from "@/components/span-column"
 import { CircleDollarSign, Clock12, HandCoins, MapPin, Package, Phone, User } from "lucide-react"
+import FormatDate from "@/components/format-Date"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -15,7 +16,7 @@ export type OrderColumn = {
   isPaid: boolean
   totalPrice: string
   products: string
-  createdAt: string | null
+  createdAt: Date
 }
 
 export const columns: ColumnDef<OrderColumn>[] = [
@@ -110,6 +111,11 @@ export const columns: ColumnDef<OrderColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({ row }) => {
+      return (
+      <FormatDate data={row.original.createdAt}/>
+      )
+    }
   },
   {
     id: "actions",

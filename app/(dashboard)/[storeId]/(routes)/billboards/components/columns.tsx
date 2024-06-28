@@ -8,6 +8,7 @@ import { Images as ImageIcon } from "lucide-react";
 import SpanColumn from "@/components/span-column";
 import EditRow from "../_components/edit-row";
 import ImageCellMutiple from "@/components/image-cell-multiple";
+import FormatDate from "@/components/format-Date";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -16,7 +17,7 @@ export type BillboardColumn = {
   label: string;
   imagebillboard: string[];
   imagebillboardpatch: { url: string }[];
-  createdAt: string | null;
+  createdAt: Date;
 };
 
 export const columns: ColumnDef<BillboardColumn>[] = [
@@ -93,6 +94,11 @@ export const columns: ColumnDef<BillboardColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({ row }) => {
+      return (
+      <FormatDate data={row.original.createdAt}/>
+      )
+    }
   },
   {
     id: "actions",

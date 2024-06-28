@@ -17,6 +17,7 @@ import SpanColumn from "@/components/span-column";
 import { Clock12 } from "lucide-react";
 import ImageCellMutiple from "@/components/image-cell-multiple";
 import EditRow from "../_components/edit-row";
+import FormatDate from "@/components/format-Date";
 
 export type CouponColumn = {
   id: string;
@@ -25,11 +26,11 @@ export type CouponColumn = {
   durationinmoth: number | null;
   duration: string | null;
   maxredemptions: number | null;
-  redeemby: string | null;
+  redeemby: Date | null;
   imagecoupon: string[] | null;
-  createdAt: string | null;
   redeembypatch: Date | null;
   imagecouponpatch: { url: string }[];
+  createdAt: Date;
 };
 
 const durationMapping: Record<string, string> = {
@@ -203,6 +204,11 @@ export const columns: ColumnDef<CouponColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({ row }) => {
+      return (
+      <FormatDate data={row.original.redeemby}/>
+      )
+    }
   },
   {
     accessorKey: "createdAt",
@@ -216,6 +222,11 @@ export const columns: ColumnDef<CouponColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({ row }) => {
+      return (
+      <FormatDate data={row.original.createdAt}/>
+      )
+    }
   },
   {
     id: "actions",

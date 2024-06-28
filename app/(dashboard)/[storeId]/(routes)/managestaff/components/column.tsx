@@ -35,6 +35,7 @@ import { MailCheck } from "lucide-react";
 import SpanColumn from "@/components/span-column";
 import ImageCellOne from "@/components/image-cell-one";
 import EditRow from "../_components/edit-row";
+import FormatDate from "@/components/format-Date";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -61,10 +62,11 @@ export type ManageStaffsColumn = {
   urlimageCheckAttendance: string | null;
   codeNFC: string | null;
   daywork: string[];
-  createdAt: string | null;
   imageCredentialUrl: string[]
   dateRangepatch: Date | null;
   dateofbirthpatach: Date | null;
+  createdAt: Date;
+  createdAtString: string | null
 };
 
 export const columns: ColumnDef<ManageStaffsColumn>[] = [
@@ -157,7 +159,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
     },
     cell: ({ row }) => {
       const imageUrl = row.original.image;
-      const updateImage = row.original.createdAt;
+      const updateImage = row.original.createdAtString;
       const email = row.original.email;
       // Check if the image URL is available
       if (imageUrl) {
@@ -186,7 +188,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
     },
     cell: ({ row }) => {
       const imageUrl = row.original.imageCredential;
-      const updateImage = row.original.createdAt;
+      const updateImage = row.original.createdAtString;
       const email = row.original.email;
       // Check if the image URL is available
       if (imageUrl) {
@@ -742,7 +744,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
       const isBanned = row.original.ban === true;
       return (
         <div className={isBanned ? "line-through text-gray-400" : ""}>
-          {row.original.createdAt}
+          <FormatDate data={row.original.createdAt} />;
         </div>
       );
     },

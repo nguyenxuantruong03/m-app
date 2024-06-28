@@ -62,16 +62,17 @@ const ManageStaff = async ({ params }: { params: { storeId: string } }) => {
     dateofbirth: item.dateofbirth
     ? format(item.dateofbirth, "dd/MM/yyyy")
     : null,
-    createdAt: item.createdAt
-        ? format(
-            utcToZonedTime(
-              new Date(new Date(item.createdAt)),
-              vietnamTimeZone
-            ),
-            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-            { locale: viLocale }
-          )
-        : null,
+    createdAt: item.createdAt,
+    createdAtString: item.createdAt
+    ? format(
+        utcToZonedTime(
+          new Date(new Date(item.createdAt)),
+          vietnamTimeZone
+        ),
+        "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+        { locale: viLocale }
+      )
+    : null,
   }));
 
 

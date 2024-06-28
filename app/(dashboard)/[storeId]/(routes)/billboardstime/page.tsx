@@ -52,16 +52,10 @@ const BillboardsTimePage = async ({
         end: end,
         imagebillboardtime: item.imagebillboardtime.map((item) => item.url),
         isTimeout: item.isTimeout,
-        createdAt: item.createdAt
-          ? format(
-              utcToZonedTime(new Date(new Date(item.createdAt)), vietnamTimeZone),
-              "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-              { locale: viLocale }
-            )
-          : null,
         imagebillboardtimepatch: item.imagebillboardtime,
         endpatch: item.end,
-        timeoutpatch: item.timeout
+        timeoutpatch: item.timeout,
+        createdAt: item.createdAt,
       };
     }
   );

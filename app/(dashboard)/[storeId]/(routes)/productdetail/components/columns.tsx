@@ -7,6 +7,7 @@ import SpanColumn from "@/components/span-column";
 import {Hash ,Tag ,CircleDollarSign,Tornado,CirclePercent,HandCoins,Heading,Book,Ruler,Palette,Scale3D, Clock12    } from "lucide-react"
 import { Decimal } from "@prisma/client/runtime/library";
 import EditRow from "../_components/edit-row";
+import FormatDate from "@/components/format-Date";
 
 export type ProductDetailColumn = {
   id: string;
@@ -48,7 +49,7 @@ export type ProductDetailColumn = {
   size5: string | null;
   color5: string | null;
   category: string | null;
-  createdAt: string | null;
+  createdAt: Date;
 
   //notformat
   pricenotformat1: Decimal | null;
@@ -1257,6 +1258,11 @@ export const columns: ColumnDef<ProductDetailColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({ row }) => {
+      return (
+      <FormatDate data={row.original.createdAt}/>
+      )
+    }
   },
   {
     id: "actions",

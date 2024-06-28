@@ -16,6 +16,7 @@ import {
   User,
 } from "lucide-react";
 import SpanColumn from "@/components/span-column";
+import FormatDate from "@/components/format-Date";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -25,11 +26,11 @@ export type SystemsColumn = {
   oldChange: string[];
   delete: string[];
   banforever: string[];
-  timebanforever: string | null;
+  timebanforever: Date | null;
   isbanforever: boolean | null;
   type: string | null;
   user: string | null;
-  createdAt: string | null;
+  createdAt: Date;
 };
 
 export const columns: ColumnDef<SystemsColumn>[] = [
@@ -139,7 +140,7 @@ export const columns: ColumnDef<SystemsColumn>[] = [
       const isBanforever = row.original.isbanforever;
       return (
         <div className={isBanforever ? "line-through text-red-500" : ""}>
-          {row.original.timebanforever}
+          <FormatDate data={row.original.timebanforever} subtractiontime={true}/>;
         </div>
       );
     },
@@ -227,12 +228,11 @@ export const columns: ColumnDef<SystemsColumn>[] = [
       const isBanforever = row.original.isbanforever;
       return (
         <div className={isBanforever ? "line-through text-red-500" : ""}>
-          {row.original.createdAt}
+          <FormatDate data={row.original.createdAt} subtractiontime={true}/>;
         </div>
       );
     },
   },
-
   {
     id: "actions",
     cell: ({ row }) => <CellAction data={row.original} />,

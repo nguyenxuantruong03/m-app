@@ -16,6 +16,7 @@ import SpanColumn from "@/components/span-column";
 import { Checkbox } from "@/components/ui/checkbox";
 import ImageCellMutiple from "@/components/image-cell-multiple";
 import EditRow from "../_components/edit-row";
+import FormatDate from "@/components/format-Date";
 
 export type ProductColumn = {
   id: string;
@@ -28,9 +29,9 @@ export type ProductColumn = {
   imagesalientfeatures: string[];
   isFeatured: boolean;
   isArchived: boolean;
-  createdAt: string | null;
   imagesalientfeaturesUrl: { url: string }[];
   imagesUrl: { url: string }[];
+  createdAt: Date;
 };
 
 export const columns: ColumnDef<ProductColumn>[] = [
@@ -188,6 +189,11 @@ export const columns: ColumnDef<ProductColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({ row }) => {
+      return (
+      <FormatDate data={row.original.createdAt}/>
+      )
+    }
   },
   {
     id: "actions",

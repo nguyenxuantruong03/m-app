@@ -4,6 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
 import { Banknote, Circle, Clock12, GraduationCap, HandCoins, NavigationOff, Receipt, SendHorizontal, Tag, User } from "lucide-react";
 import SpanColumn from "@/components/span-column";
+import FormatDate from "@/components/format-Date";
 
 export type SalaryStaffsColumn = {
   id: string;
@@ -15,7 +16,7 @@ export type SalaryStaffsColumn = {
   isSent: boolean | null;
   isPaid: boolean | null;
   degree: string | null;
-  createdAt: string | null;
+  createdAt: Date;
 };
 
 const degreeMappings = {
@@ -196,6 +197,11 @@ export const columns: ColumnDef<SalaryStaffsColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({ row }) => {
+      return (
+      <FormatDate data={row.original.createdAt}/>
+      )
+    }
   },
   {
     id: "actions",
