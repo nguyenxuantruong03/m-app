@@ -21,14 +21,14 @@ import FormFavorite from "../components/form/form-infomation/form-favorite";
 import { Favorite } from "@prisma/client";
 
 interface SheetInfomationProps {
-  name?: string;
-  nameuser?: string;
-  bio?: string;
-  gender?: string;
-  phonenumber?: string;
-  dateofbirth?: string;
-  address?: string;
-  addressother?: string;
+  name?: string | null;
+  nameuser?: string | null;
+  bio?: string | null;
+  gender?: string | null;
+  phonenumber?: string | null;
+  dateofbirth?: string | null;
+  address?: string | null;
+  addressother?: string | null;
   children: React.ReactNode;
   favorite: string[];
   dataallfavorite: Favorite[];

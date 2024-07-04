@@ -12,8 +12,8 @@ import FormTwoFactor from "../components/form/form-2FA";
 import FormPassword from "../components/form/form-newpassword";
 
 interface SheetSecurityProps {
-    isTwoFactorEnabled?: any;
-  password?: any;
+  isTwoFactorEnabled?: boolean;
+  password?: string | null;
   children: React.ReactNode;
   type: "password" | "2FA" 
 }

@@ -4,6 +4,13 @@ import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
 import { currentRole, currentUser } from "@/lib/auth";
 
+type ColorValue = string | Date | undefined;
+
+interface ChangeRecord {
+  oldValue: ColorValue;
+  newValue: ColorValue;
+}
+
 export async function GET(
   req: Request,
   { params }: { params: { colorId: string } }
@@ -184,7 +191,7 @@ export async function PATCH(
     const ignoredFields = ["createdAt", "updatedAt"];
 
     // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
-    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    const changes: Record<string, ChangeRecord> = {};
     for (const key in existingColor) {
       if (
         existingColor.hasOwnProperty(key) &&

@@ -22,12 +22,19 @@ import { getAccountByUserId } from "@/data/account";
 import { redirect } from "next/navigation";
 import SheetInfomation from "../showsheet/sheet-infomation";
 import { format } from "date-fns";
-import { Favorite } from "@prisma/client";
+import { Favorite, User as Userdata } from "@prisma/client";
 import FormImageCredential from "./form/form-infomation/form-imageCredential";
 
 interface InfoUserProps {
-  user: any;
+  user: Userdata;
   favorite: Favorite[];
+}
+
+interface InfoUser {
+  key?: string;
+  name: JSX.Element;
+  state: React.ReactNode;
+  icons?: JSX.Element;
 }
 
 interface AccountItem {
@@ -117,9 +124,9 @@ const InfoUser: React.FC<InfoUserProps> = ({ user, favorite }) => {
     (imageCredentials ? imageCredentials[0] : null) ||
     user?.image;
 
-  const formatDate = (dateString: Date) => {
-    if (!dateString) return "Chưa cập nhật";
-    const formattedDate = format(new Date(dateString), "dd/MM/yyyy");
+  const formatDate = (dateString: Date | null) => {
+    if (!dateString) return "Chưa cập nhật"; // Return a default message if date is null
+    const formattedDate = format(dateString, "dd/MM/yyyy"); // Safe to use dateString here as it's guaranteed to be non-null
     return formattedDate;
   };
 
@@ -230,7 +237,7 @@ const InfoUser: React.FC<InfoUserProps> = ({ user, favorite }) => {
           Sinh nhật
         </span>
       ),
-      state: formatDate(user.dateofbirth) || "Chưa cập nhật",
+      state: formatDate(user?.dateofbirth) || "Chưa cập nhật",
       icons: (
         <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
       ),
@@ -298,7 +305,7 @@ const InfoUser: React.FC<InfoUserProps> = ({ user, favorite }) => {
     },
   ];
 
-  const wrapWithSheet = (infouser: any, content: React.ReactNode) => {
+  const wrapWithSheet = (infouser: InfoUser, content: React.ReactNode) => {
     if (infouser.key === "avatar") {
       // Handle click event for avatar
       return <div onClick={() => setOpen(true)}>{content}</div>;

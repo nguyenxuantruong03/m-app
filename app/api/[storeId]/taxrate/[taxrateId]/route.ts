@@ -5,6 +5,13 @@ import { UserRole } from "@prisma/client";
 import { currentRole, currentUser } from "@/lib/auth";
 import { stripe } from "@/lib/stripe";
 
+type TaxRateValue = string | number | Date | boolean | undefined | null;
+
+interface ChangeRecord {
+  oldValue: TaxRateValue;
+  newValue: TaxRateValue;
+}
+
 export async function GET(
   req: Request,
   { params }: { params: { taxrateId: string } }
@@ -217,7 +224,7 @@ export async function PATCH(
     const ignoredFields = ["createdAt", "updatedAt"];
 
     // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
-    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    const changes: Record<string, ChangeRecord> = {};
     for (const key in existingTaxRate) {
       if (
         existingTaxRate.hasOwnProperty(key) &&

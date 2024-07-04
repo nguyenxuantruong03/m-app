@@ -2,14 +2,20 @@ import { ChevronRight,Github, Linkedin,Facebook, Youtube, Dribbble, Twitter, Ins
 import { Separator } from "@/components/ui/separator";
 import SheetLinkSocial from "../showsheet/sheet-link-social";
 import Link from "next/link";
+import { SocialLink } from "@prisma/client";
 
 interface InfoSocialProps {
-  user: any;
+  user: SocialLink | null;
+}
+
+interface InfoUser {
+  key: string;
 }
 
 const InfoSocial: React.FC<InfoSocialProps> = ({ user }) => {
+  console.log()
   const linkwebsite = user?.linkwebsite
-    ? user.linkwebsite
+    ? user?.linkwebsite
     : "Chưa cập nhật";
   const linkgithub = user?.linkgithub
     ? user.linkgithub
@@ -107,7 +113,7 @@ const InfoSocial: React.FC<InfoSocialProps> = ({ user }) => {
     },
   ];
 
-  const wrapWithSheet = (infouser: any, content: React.ReactNode) => {
+  const wrapWithSheet = (infouser: InfoUser, content: React.ReactNode) => {
     if (
       infouser.key === "linkwebsite" ||
       infouser.key === "linkgithub" ||
@@ -122,14 +128,14 @@ const InfoSocial: React.FC<InfoSocialProps> = ({ user }) => {
       return (
         <SheetLinkSocial
           linkwebsite={linkwebsite}
-          linkgithub={user.linkgithub}
-          linklinkedin={user.linklinkedin}
-          linkfacebook={user.linkfacebook}
-          linkyoutube={user.linkyoutube}
-          linktiktok={user.linktiktok}
-          linkinstagram={user.linkinstagram}
-          linktwitter={user.linktwitter}
-          linkother={user.linkother}
+          linkgithub={user?.linkgithub || ""}
+          linklinkedin={user?.linklinkedin || ""}
+          linkfacebook={user?.linkfacebook || ""}
+          linkyoutube={user?.linkyoutube || ""}
+          linktiktok={user?.linktiktok || ""}
+          linkinstagram={user?.linkinstagram || ""}
+          linktwitter={user?.linktwitter || ""}
+          linkother={user?.linkother || ""}
           type={infouser.key} // Pass the key as type
         >
           {content}

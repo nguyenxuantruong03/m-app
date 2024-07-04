@@ -2,8 +2,15 @@ import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
 import { currentRole, currentUser } from "@/lib/auth";
-import { UserRole } from "@prisma/client";
+import { User, UserRole } from "@prisma/client";
 import { sendSpamEmail } from "@/lib/mail";
+
+type SentEmailUserValue = string | boolean | Date | User | string[] | undefined | null;
+
+interface ChangeRecord {
+  oldValue: SentEmailUserValue;
+  newValue: SentEmailUserValue;
+}
 
 export async function GET(
   req: Request,
@@ -201,7 +208,7 @@ export async function PATCH(
     const ignoredFields = ["createdAt", "updatedAt"];
 
     // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
-    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    const changes: Record<string, ChangeRecord> = {};
     for (const key in existingSentEmailUser) {
       if (
         existingSentEmailUser.hasOwnProperty(key) &&

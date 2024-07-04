@@ -4,6 +4,13 @@ import prismadb from "@/lib/prismadb";
 import { sendVerifyAccountisCitizen } from "@/lib/mail";
 import { currentUser } from "@/lib/auth";
 
+type ManageStaffValue = boolean | undefined | null;
+
+interface ChangeRecord {
+  oldValue: ManageStaffValue;
+  newValue: ManageStaffValue;
+}
+
 export async function GET(req: Request) {
   try {
     const managestaff = await prismadb.user.findMany();
@@ -89,7 +96,7 @@ export async function POST(
     // Khởi tạo một mảng để lưu trữ email đã gửi
     const sentEmails = [];
     //Khỏi tạo một Object để lưu trữ changes
-    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    const changes: Record<string, ChangeRecord> = {};
 
     // Get all users
     const allUsers = await prismadb.user.findMany({

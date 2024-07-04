@@ -28,7 +28,7 @@ import { UAInfo } from "@/providers/device-info-provider";
 export const login = async (
   values: z.infer<typeof LoginSchema>,
   callbackUrl?: string | null,
-  deviceInfo?: any
+  deviceInfo?: UAInfo | null
 ) => {
   //safeParse: Phân tích an toàn
   const validatedFields = LoginSchema.safeParse(values);
@@ -161,7 +161,7 @@ export const login = async (
   //Dùng để kiểm tra thiết bị xem có quá giới hạn không
   const existingDeviceLimitDevice = await prismadb.deviceInfo.findMany({
     where: { userId: existingUser.id },
-  }); 
+  });
 
   let limitDevice = null;
   if (existingDeviceLimitDevice.length > 0) {
@@ -177,7 +177,6 @@ export const login = async (
       error: `Xin lỗi! Người dùng đã giới hạn thiết bị đăng nhập. Hiện tại đã quá nhiều thiết bị đăng nhập vào tài khoản này.`,
     };
   }
-  
 
   // Xác thực 2FA hay còn được gọi là xác thục 2 bước
   if (existingUser.isTwoFactorEnabled && existingUser.email) {
@@ -304,7 +303,7 @@ export const login = async (
     const saveDeviceInfo = async (deviceInfo: UAInfo) => {
       try {
         const existingDeviceInfo = await prismadb.deviceInfo.findMany({
-          where: { ua: deviceInfo.ua,userId:existingUser.id },
+          where: { ua: deviceInfo.ua, userId: existingUser.id },
         });
 
         let deviceExists = false;
@@ -363,13 +362,18 @@ export const login = async (
       }
     };
 
-    const saveDeviceInfoResult = await saveDeviceInfo(deviceInfo);
-    await Promise.all([
-      signInPromise,
-      updateUserPromise,
-      updateLastLogin,
-      saveDeviceInfoResult,
-    ]);
+    // Assuming deviceInfo is defined somewhere in your code
+    if (deviceInfo) {
+      const saveDeviceInfoResult = await saveDeviceInfo(deviceInfo);
+      await Promise.all([
+        signInPromise,
+        updateUserPromise,
+        updateLastLogin,
+        saveDeviceInfoResult,
+      ]);
+    } else {
+      console.error("DeviceInfo không tìm thấy!");
+    }
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {

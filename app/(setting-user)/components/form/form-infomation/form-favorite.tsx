@@ -26,6 +26,12 @@ interface FormFavoriteProps {
   dataallfavorite: Favorite[];
 }
 
+interface OptionType {
+  label: string;
+  value: string;
+}
+
+
 const getRandomColor = () => {
   const r = Math.floor(Math.random() * 256);
   const g = Math.floor(Math.random() * 256);
@@ -95,7 +101,7 @@ const FormFavorite: React.FC<FormFavoriteProps> = ({ dataallfavorite }) => {
     });
   };
 
-  const customStyles: StylesConfig<any, true> = {
+  const customStyles: StylesConfig<OptionType, true> = {
     multiValue: (provided, state) => {
       const { background, text } = getRandomColor();
       return {

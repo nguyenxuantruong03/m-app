@@ -1,9 +1,16 @@
 import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
-import { UserRole } from "@prisma/client";
+import { ImageCoupon, UserRole } from "@prisma/client";
 import { currentRole, currentUser } from "@/lib/auth";
 import { stripe } from "@/lib/stripe";
+
+type CouponValue = string | string[] | number | Date | ImageCoupon[] |  undefined | null;
+
+interface ChangeRecord {
+  oldValue: CouponValue;
+  newValue: CouponValue;
+}
 
 export async function GET(
   req: Request,
@@ -259,7 +266,7 @@ export async function PATCH(
     const ignoredFields = ["createdAt", "updatedAt"];
 
     // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
-    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    const changes: Record<string, ChangeRecord> = {};
     for (const key in exstingCoupon) {
       if (
         exstingCoupon.hasOwnProperty(key) &&

@@ -4,6 +4,14 @@ import prismadb from "@/lib/prismadb";
 import { format } from "date-fns";
 import { NextResponse } from "next/server";
 import { formatter } from "@/lib/utils";
+import { Decimal } from "@prisma/client/runtime/library";
+
+type SalaryStaffValue =string | number | boolean | Date | Decimal | null | undefined;
+
+interface ChangeRecord {
+  oldValue: SalaryStaffValue;
+  newValue: SalaryStaffValue;
+}
 
 export async function GET(req: Request) {
   try {
@@ -77,7 +85,7 @@ export async function PATCH(
     const ignoredFields = ["createdAt", "updatedAt"];
 
     // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
-    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    const changes: Record<string, ChangeRecord> = {};
     for (const key in existingSalary) {
       if (
         existingSalary.hasOwnProperty(key) &&
@@ -157,7 +165,7 @@ export async function POST(
     const ignoredFields = ["createdAt", "updatedAt"];
 
     // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
-    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    const changes: Record<string, ChangeRecord> = {};
     for (const key in existingSalary) {
       if (
         existingSalary.hasOwnProperty(key) &&

@@ -2,11 +2,17 @@ import { ChevronRight, Drama, KeyRound } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import SheetSecurity from "../showsheet/sheet-security";
+import { User } from "@prisma/client";
 
 interface InfoPasswordProp {
-  user: any;
-  password: any;
+  user: User;
+  password: string | null;
 }
+
+interface InfoUser {
+  key: string;
+}
+
 
 const InfoPassword: React.FC<InfoPasswordProp> = ({ user, password }) => {
   const infopasswords = [
@@ -30,7 +36,7 @@ const InfoPassword: React.FC<InfoPasswordProp> = ({ user, password }) => {
     },
   ];
 
-  const wrapWithSheet = (infouser: any, content: React.ReactNode) => {
+  const wrapWithSheet = (infouser: InfoUser, content: React.ReactNode) => {
     if (infouser.key === "password" || infouser.key === "2FA") {
       return (
         <SheetSecurity

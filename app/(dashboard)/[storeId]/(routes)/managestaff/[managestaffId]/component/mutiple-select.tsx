@@ -1,5 +1,5 @@
 "use client";
-import Select, { MultiValue } from "react-select";
+import Select, { MultiValue, StylesConfig } from "react-select";
 
 type Option = {
   value: string;
@@ -42,9 +42,9 @@ const MutipleOption: React.FC<MutipleOptionProps> = ({
   field,
   disabled
 }) => {
-  // Custom styles for options
-  const customStyles = {
-    option: (provided: any, state: { data: { value: string } }) => {
+  // Define the custom styles using strongly typed StylesConfig
+  const customStyles: StylesConfig<Option, true> = {
+    option: (provided, state) => {
       const dayColors: DayColors = {
         Monday: "#FFA500",
         Tuesday: "#DEB887",
@@ -70,14 +70,14 @@ const MutipleOption: React.FC<MutipleOptionProps> = ({
       return {
         ...provided,
         backgroundColor: "transparent",
-        color: value ? dayColors[value as keyof DayColors] : "#FFFFFF",
+        color: dayColors[value as keyof DayColors],
         "&:hover": {
-          backgroundColor: value ? backgroundColors[value] : null,
+          backgroundColor: backgroundColors[value],
         },
       };
     },
     // Custom styles for multiValueLabel
-    multiValueLabel: (provided: any, state: { data: { value: string } }) => {
+    multiValueLabel: (provided, state) => {
       const dayColors: DayColors = {
         Monday: "#FFA500",
         Tuesday: "#DEB887",
@@ -102,24 +102,18 @@ const MutipleOption: React.FC<MutipleOptionProps> = ({
 
       return {
         ...provided,
-        color: value ? dayColors[value as keyof DayColors] : "#60a5fa",
-        backgroundColor: value
-          ? backgroundColors[value as keyof DayColors]
-          : "#FFFFFF",
+        color: dayColors[value as keyof DayColors],
+        backgroundColor: backgroundColors[value],
       };
     },
-    // Custom styles for multiValueRemove
-    multiValueRemove: (provided: any, state: { data: { value: string } }) => {
-      return {
-        ...provided,
-        color: "#333",
-        ":hover": {
-          backgroundColor: "#f87171",
-          color: "#ffffff",
-        },
-      };
-    },
-    multiValue: (provided: any, state: { data: { value: string } }) => {
+    multiValueRemove: (provided, state) => ({
+      ...provided,
+      ":hover": {
+        backgroundColor: "#f87171",
+        color: "#ffffff",
+      },
+    }),
+    multiValue: (provided, state) => {
       const backgroundColors: Record<string, string> = {
         Monday: "rgba(255, 165, 0, 0.1)",
         Tuesday: "rgba(222, 184, 135, 0.1)",
@@ -132,50 +126,28 @@ const MutipleOption: React.FC<MutipleOptionProps> = ({
       const value = state.data.value;
       return {
         ...provided,
-        backgroundColor: value
-          ? backgroundColors[value as keyof DayColors]
-          : "#000000",
-        borderRadius: "4px",
+        backgroundColor: backgroundColors[value],
       };
     },
-    control: (provided: any) => ({
+    control: (provided) => ({
       ...provided,
-      backgroundColor: "#0f172a", // Thay đổi màu nền ở đây
+      backgroundColor: "#0f172a",
       border: "1px solid #1f2937",
       borderRadius: "8px",
     }),
-    menu: (provided: any) => ({
+    menu: (provided) => ({
       ...provided,
-      backgroundColor: "#0f172a", // Thay đổi màu nền của dropdown menu ở đây
+      backgroundColor: "#0f172a",
     }),
-    placeholder: (provided: any) => ({
+    placeholder: (provided) => ({
       ...provided,
-      color: "#999999", // Thay đổi màu chữ của placeholder ở đây
+      color: "#999999",
     }),
   };
 
-  //Dùng để sort khi truyền vào dữ liệu 
-  const sortDaysOfWeek = (selectedOption: Option[]): Option[] => {
-    // Tạo một đối tượng để ánh xạ từ value của ngày thành thứ tự của nó
-    const dayOrder: Record<string, number> = {
-      Monday: 1,
-      Tuesday: 2,
-      Wednesday: 3,
-      Thursday: 4,
-      Friday: 5,
-      Saturday: 6,
-      Sunday: 7,
-    };
-  
-    // Sắp xếp lại các ngày theo thứ tự từ "Thứ 2" đến "Chủ nhật"
-    const sortedOptions = [...selectedOption].sort((a, b) => {
-      return dayOrder[a.value] - dayOrder[b.value];
-    });
-  
-    return sortedOptions;
-  };
-
+  // Handling change and sorting of options
   const handleChange = (selectedOption: MultiValue<Option>) => {
+    // Handling logic based on "All" or "None" options
     if (selectedOption && selectedOption.length > 0) {
       const isAllSelected = selectedOption.some(
         (option) => option.value === "All"
@@ -183,6 +155,7 @@ const MutipleOption: React.FC<MutipleOptionProps> = ({
       const isNoneSelected = selectedOption.some(
         (option) => option.value === "None"
       );
+
       if (isAllSelected) {
         setSelectedOption(options);
         field.onChange(options.map((option) => option.value));
@@ -200,6 +173,21 @@ const MutipleOption: React.FC<MutipleOptionProps> = ({
     }
   };
 
+  // Additional sorting function
+  const sortDaysOfWeek = (selectedOption: Option[]): Option[] => {
+    const dayOrder: Record<string, number> = {
+      Monday: 1,
+      Tuesday: 2,
+      Wednesday: 3,
+      Thursday: 4,
+      Friday: 5,
+      Saturday: 6,
+      Sunday: 7,
+    };
+
+    return selectedOption.sort((a, b) => dayOrder[a.value] - dayOrder[b.value]);
+  };
+
   const selectAllOption: Option = { value: "All", label: "Tất cả" };
   const selectNoneOption: Option = { value: "None", label: "Bỏ chọn tất cả" };
 
@@ -213,7 +201,7 @@ const MutipleOption: React.FC<MutipleOptionProps> = ({
       isSearchable={false}
       getOptionLabel={(option: Option) => option.label}
       menuPlacement="top"
-      isDisabled={disabled} 
+      isDisabled={disabled}
     />
   );
 };

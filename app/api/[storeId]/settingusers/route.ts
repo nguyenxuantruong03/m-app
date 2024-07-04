@@ -10,6 +10,13 @@ import { UserRole } from "@prisma/client";
 import { format, subHours } from "date-fns";
 import { NextResponse } from "next/server";
 
+type SettingUserValue = string | number | boolean | Date | string[] | null | undefined;
+
+interface ChangeRecord {
+  oldValue: SettingUserValue;
+  newValue: SettingUserValue;
+}
+
 export async function GET(req: Request) {
   try {
     const settinguser = await prismadb.user.findMany();
@@ -110,7 +117,7 @@ export async function PATCH(
     ];
 
     // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
-    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    const changes: Record<string, ChangeRecord> = {};
     for (const key in existingUser) {
       if (existingUser.hasOwnProperty(key) && roleupdate.hasOwnProperty(key)) {
         if (

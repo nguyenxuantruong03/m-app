@@ -19,7 +19,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
     return { error: "Mật khẩu yêu cầu [a-z] và [0-9] ,từ 6 đến 20 ký tự!" };
   }
 
-  // Check if any of the required fields are empty
+  // Check if field of the required fields are empty
   if (!name || !email || !password) {
     return { error: "Vui lòng nhập đầy đủ thông tin." };
   }

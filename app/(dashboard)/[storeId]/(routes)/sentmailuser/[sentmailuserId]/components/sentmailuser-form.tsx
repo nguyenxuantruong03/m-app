@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { Trash, UserIcon } from "lucide-react";
-import { Favorite, SentEmailUser } from "@prisma/client";
+import { Favorite, SentEmailUser, User } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
 
 import { Input } from "@/components/ui/input";
@@ -38,6 +38,30 @@ const formSchema = z.object({
 
 type SentEmailUserFormValues = z.infer<typeof formSchema>;
 
+interface UserSuggestion {
+  imageCredential?: string;
+  image?: string;
+  email: string;
+  nameuser: string;
+}
+
+interface FavoriteSuggestion {
+  name: string; // Thêm các thuộc tính khác tùy theo cấu trúc dữ liệu của bạn
+}
+
+interface MappedUser {
+  id: string;
+  email: string;
+  image: string | null;
+  imageCredential: string[]
+  nameuser: string;
+}
+
+interface MappedFavorite {
+  id: string;
+  value: string[];
+}
+
 interface SentEmailUserFormProps {
   initialData: SentEmailUser | null;
   associatedUser: (string | null | undefined)[];
@@ -54,7 +78,7 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [dataUser, setDataUser] = useState<any[]>([]); // Allow the array to contain any type
+  const [dataUser, setDataUser] = useState<User[]>([]); // Allow the array to contain USER type
   const [favorites, setFavorites] = useState<Favorite[]>([]); // Favorites array
 
   const title = initialData ? "Edit sent" : "Create sent";
@@ -82,7 +106,7 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
             imageCredential: null,
             nameuser: "All Users",
           },
-          ...users.map((item: any) => ({
+          ...users.map((item:MappedUser) => ({
             id: item.id.toString(),
             display: item.email,
             image: item.image,
@@ -96,7 +120,7 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
             id: "phobien",
             display: "Phổbiến",
           },
-          ...favorite.map((item: any) => ({
+          ...favorite.map((item:MappedFavorite) => ({
             id: item.id.toString(),
             display: item.value,
           })),
@@ -161,7 +185,7 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
           return emailMatch[0].toLowerCase();
         }
         // Check for special identifiers or usernames encapsulated in special syntax
-        // Updated regex to match any identifier in the special syntax
+        // Updated regex to match email identifier in the special syntax
         const specialIdentifierMatch = item.match(/@\[([^\]]+)\]\(([^)]+)\)/i);
         if (specialIdentifierMatch) {
           return specialIdentifierMatch[1].toLowerCase(); // returns 'nguyễnxuântrường (ID: clxrcqu9w0001cg2reju63ch1)' from your example
@@ -174,7 +198,7 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
       // Assuming `data.sentemailuser` contains an array of strings
       const normalizedData = data.sentemailuser
         .map(normalizeEmail)
-        .filter((email): email is string => email !== null); // Filter out any nulls from failed matches
+        .filter((email): email is string => email !== null); // Filter out nulls from failed matches
 
       // Function to find duplicates
       const findDuplicates = (emails: string[]) => {
@@ -469,9 +493,9 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
                         trigger="@"
                         data={dataUser}
                         renderSuggestion={(
-                          suggestion: any,
-                          search: any,
-                          highlightedDisplay: any
+                          suggestion: UserSuggestion,
+                          search: string,
+                          highlightedDisplay: React.ReactNode
                         ) => (
                           <div className="">
                             <div className="flex items-center space-x-3">
@@ -482,7 +506,7 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
                                   height={32}
                                   src={
                                     suggestion.imageCredential ||
-                                    suggestion.image
+                                    suggestion.image || "/device/404.png"
                                   }
                                   alt={`Error avatar của ${suggestion.email}`}
                                   className="rounded-full"
@@ -512,9 +536,9 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
                         trigger="$"
                         data={favorites}
                         renderSuggestion={(
-                          suggestion: any,
-                          search: any,
-                          highlightedDisplay: any
+                          suggestion: FavoriteSuggestion,
+                          search: string,
+                          highlightedDisplay: React.ReactNode
                         ) => (
                           <p className="text-sm font-semibold text-slate-900">
                             {highlightedDisplay}

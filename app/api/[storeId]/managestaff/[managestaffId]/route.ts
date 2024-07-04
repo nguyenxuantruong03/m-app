@@ -7,6 +7,14 @@ import { sendUpdateManageStaff } from "@/lib/mail-sendUpdate-Staff";
 import { sendDismissal } from "@/lib/mail";
 import { format } from "date-fns";
 
+
+type ManageStaffValue = string | number | boolean | string[] | Date | undefined | null;
+
+interface ChangeRecord {
+  oldValue: ManageStaffValue;
+  newValue: ManageStaffValue;
+}
+
 export async function GET(
   req: Request,
   { params }: { params: { managestaffId: string } }
@@ -143,6 +151,7 @@ export async function PATCH(
     const body = await req.json();
 
     const {
+      email,
       name,
       isCitizen,
       numberCCCD,
@@ -313,7 +322,7 @@ export async function PATCH(
       "lastlogin",
     ];
 
-    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    const changes: Record<string, ChangeRecord> = {};
     // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
     const newChanges: string[] = [];
     const oldChanges: string[] = [];
@@ -358,7 +367,7 @@ export async function PATCH(
     });
 
     await sendUpdateManageStaff(
-      userId?.email,
+      email,
       managestaff.name,
       managestaff.phonenumber,
       managestaff.numberCCCD,

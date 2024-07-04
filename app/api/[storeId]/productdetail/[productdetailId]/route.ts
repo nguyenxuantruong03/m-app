@@ -1,8 +1,16 @@
 import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
-import { UserRole } from "@prisma/client";
+import { Category, Color, Size, UserRole } from "@prisma/client";
 import { currentRole, currentUser } from "@/lib/auth";
+import { Decimal } from "@prisma/client/runtime/library";
+
+type ProductDetailValue = string | number | Date | Decimal | undefined | Category | Size | Color |null;
+
+interface ChangeRecord {
+  oldValue: ProductDetailValue;
+  newValue: ProductDetailValue;
+}
 
 export async function GET(
   req: Request,
@@ -488,7 +496,7 @@ export async function PATCH(
     const ignoredFields = ["createdAt", "updatedAt"];
 
     // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
-    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    const changes: Record<string, ChangeRecord> = {};
     for (const key in existingProductDetail) {
       if (
         existingProductDetail.hasOwnProperty(key) &&

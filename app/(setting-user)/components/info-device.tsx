@@ -10,6 +10,11 @@ import toast from "react-hot-toast";
 import { AlertModal } from "@/components/modals/alert-modal";
 import { useDevice } from "@/providers/device-info-provider";
 
+interface InfoUser {
+  key: string;   
+  name: string;  
+}
+
 function resolveImage(item: DeviceInfoData): string {
   // Check FullModel first
   if (item.fullModel || item.device[2]) {
@@ -310,7 +315,7 @@ const InfoDevice: React.FC<InfoDeviceProps> = ({
     },
   ];
 
-  const wrapWithSheet = (infouser: any, content: React.ReactNode) => {
+  const wrapWithSheet = (infouser: InfoUser, content: React.ReactNode) => {
     if (infouser.key === "device") {
       return (
         <SheetDevice

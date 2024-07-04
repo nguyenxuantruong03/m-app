@@ -2,6 +2,22 @@ import { format } from "date-fns";
 import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_EMAIL_API_KEY);
 
+type FieldValue =
+  | string
+  | Date
+  | number
+  | boolean
+  | string[]
+  | null
+  | undefined;
+interface ChangeRecord {
+  oldValue: FieldValue;
+  newValue: FieldValue;
+}
+type Changes = {
+  [key: string]: ChangeRecord;
+};
+
 export const sendUpdateManageStaff = async (
   email: string | null | undefined,
   name: string | null | undefined,
@@ -19,7 +35,7 @@ export const sendUpdateManageStaff = async (
   dateofbirth: Date | null | undefined,
   dateRange: Date | null | undefined,
   isCitizen: boolean | null | undefined,
-  changes: { [key: string]: { oldValue: any; newValue: any } }
+  changes: Changes
 ) => {
   const degreeMappings = {
     None: "Không xác định",
@@ -116,9 +132,8 @@ export const sendUpdateManageStaff = async (
 
     const dateRangeformat = dateRange ? format(dateRange, "dd/MM/yyyy") : "";
 
-    const formatChangedFields = (changes: {
-      [key: string]: { oldValue: any; newValue: any };
-    }) => {
+    // Function to format changed fields
+    const formatChangedFields = (changes: Changes) => {
       let formattedContent = "";
       const orderedFields = [
         "name",
@@ -132,16 +147,20 @@ export const sendUpdateManageStaff = async (
         "timestartwork",
         "daywork",
       ];
-    
+
       for (const field of orderedFields) {
         if (changes.hasOwnProperty(field)) {
           const { oldValue, newValue } = changes[field];
           const oldValueString =
-            typeof oldValue === "object" ? JSON.stringify(oldValue) : oldValue;
+            typeof oldValue === "object" && oldValue !== null
+              ? JSON.stringify(oldValue)
+              : oldValue;
           const newValueString =
-            typeof newValue === "object" ? JSON.stringify(newValue) : newValue;
+            typeof newValue === "object" && newValue !== null
+              ? JSON.stringify(newValue)
+              : newValue;
           let translatedField = field;
-          // Chuyển đổi tên các trường dữ liệu sang tiếng Việt
+          // Translate field names to Vietnamese
           switch (field) {
             case "name":
               translatedField = "Tên";
@@ -165,26 +184,29 @@ export const sendUpdateManageStaff = async (
               translatedField = "Khoảng thời gian làm việc";
               break;
             case "timestartwork":
-              translatedField = "Thời gian làm việc";
+              translatedField = "Thời gian bắt đầu làm việc";
               break;
             case "maritalStatus":
               translatedField = "Tình trạng hôn nhân";
               break;
             case "daywork":
-              translatedField = "Thứ làm việc";
-              // Chuyển đổi giá trị daywork thành chuỗi văn bản theo định dạng yêu cầu
-              const formattedDaywork = newValue
-                .filter((day: string) =>
-                  Object.prototype.hasOwnProperty.call(dayOfWeekMapping, day)
-                )
-                .map((day: string) => dayOfWeekMapping[day])
-                .join(", ");
-              formattedContent += `<p>${translatedField}: <span style="color: #ef4444; font-weight:800;">${formattedDaywork}</span></p>`;
-              continue; // Skip remaining processing for daywork
-            default:
+              translatedField = "Ngày làm việc";
+              // Special handling for arrays
+              if (Array.isArray(newValue)) {
+                const formattedDaywork = newValue
+                  .filter(
+                    (day) =>
+                      typeof day === "string" &&
+                      dayOfWeekMapping.hasOwnProperty(day)
+                  )
+                  .map((day) => dayOfWeekMapping[day])
+                  .join(", ");
+                formattedContent += `<p>${translatedField}: <span style="color: #ef4444; font-weight:800;">${formattedDaywork}</span></p>`;
+                continue; // Skip remaining processing for daywork
+              }
               break;
           }
-          // Add formatted content for non-daywork fields
+          // Add formatted content for non-array fields
           formattedContent += `<p>${translatedField}: `;
           if (typeof oldValue === "object" || typeof newValue === "object") {
             formattedContent += `<span style="color: red;">${newValueString}</span>`;
@@ -196,7 +218,7 @@ export const sendUpdateManageStaff = async (
       }
       return formattedContent;
     };
-    
+
     const changedFieldsContent = formatChangedFields(changes);
 
     // Gửi email

@@ -19,15 +19,15 @@ import FormLinkTwitter from "../components/form/form-social/form-linktwitter";
 import FormLinkOther from "../components/form/form-social/form-linkother";
 
 interface SheetLinkSocialProps {
-  linkwebsite: string;
-  linkgithub: string;
-  linklinkedin: string;
-  linkfacebook: string;
-  linkyoutube: string;
-  linktiktok: string;
-  linkinstagram: string;
-  linktwitter: string;
-  linkother: string;
+  linkwebsite: string | null;
+  linkgithub: string | null;
+  linklinkedin: string | null;
+  linkfacebook: string | null;
+  linkyoutube: string | null;
+  linktiktok: string | null;
+  linkinstagram: string | null;
+  linktwitter: string | null;
+  linkother: string | null;
   children: React.ReactNode;
   type:
     | "linkwebsite"

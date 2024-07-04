@@ -47,6 +47,7 @@ import Recommend from "@/components/ui/recommend";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 
 const formSchema = z.object({
+  email: z.string().min(1,{ message: "Bắt buộc nhập email" }),
   name: z.string().min(1,{ message: "Bắt buộc nhập name" }),
   numberCCCD: z.string().refine((value) => /^[0-9]+$/.test(value), {
     message: "Vui lòng nhập số CMND hợp lệ chỉ có số.",
@@ -100,6 +101,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       ...initialData,
+      email: initialData?.email ?? null!,
       name: initialData?.name ?? null!,
       numberCCCD: initialData?.numberCCCD ?? null!,
       issued: initialData?.issued ?? null!,
@@ -702,7 +704,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                   </FormControl>
                   <div className="space-y-1 leading-none">
                   <FormLabel className="flex space-x-3 items-center">
-                    Định dạng <Recommend message="Xác nhận thông tin nhân viên đã cập nhật đầy đủ hay chưa." />
+                    Định danh <Recommend message="Xác nhận thông tin nhân viên đã cập nhật đầy đủ thông tin hay chưa." />
                   </FormLabel>
                     <FormDescription>Tài khoản xác thực</FormDescription>
                   </div>

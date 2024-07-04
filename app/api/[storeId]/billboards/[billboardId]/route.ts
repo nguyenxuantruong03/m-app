@@ -2,7 +2,16 @@ import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
 import { currentRole, currentUser } from "@/lib/auth";
-import { UserRole } from "@prisma/client";
+import { ImageBillboard, UserRole } from "@prisma/client";
+
+// Update the BillboardValue type to include the new types
+type BillboardValue = string | number | boolean | string[] | Date | ImageBillboard[] | undefined;
+
+// Define the type for change records
+interface ChangeRecord {
+  oldValue: BillboardValue;
+  newValue: BillboardValue;
+}
 
 export async function GET(
   req: Request,
@@ -216,7 +225,7 @@ export async function PATCH(
     const ignoredFields = ["createdAt", "updatedAt"];
 
     // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
-    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    const changes: Record<string, ChangeRecord> = {};
     for (const key in existingBillboard) {
       if (
         existingBillboard.hasOwnProperty(key) &&

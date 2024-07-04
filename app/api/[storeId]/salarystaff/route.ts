@@ -2,8 +2,17 @@ import { currentUser } from "@/lib/auth";
 import { sendBonus, sendunBonus } from "@/lib/mail";
 import prismadb from "@/lib/prismadb";
 import { formatter } from "@/lib/utils";
+import { EventCalendar, User } from "@prisma/client";
+import { Decimal } from "@prisma/client/runtime/library";
 import { format } from "date-fns";
 import { NextResponse } from "next/server";
+
+type SalaryStaffValue = string | number |EventCalendar | User |  boolean | Decimal | Date | undefined | null;
+
+interface ChangeRecord {
+  oldValue: SalaryStaffValue;
+  newValue: SalaryStaffValue;
+}
 
 export async function GET(req: Request) {
   try {
@@ -100,7 +109,7 @@ export async function PATCH(
     const ignoredFields = ["createdAt", "updatedAt"];
 
     // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
-    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    const changes: Record<string, ChangeRecord> = {};
     for (const key in salarystaff) {
       if (
         salarystaff.hasOwnProperty(key) &&
@@ -233,7 +242,7 @@ export async function POST(
     const ignoredFields = ["createdAt", "updatedAt"];
 
     // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
-    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    const changes: Record<string, ChangeRecord> = {};
     for (const key in salarystaff) {
       if (
         salarystaff.hasOwnProperty(key) &&

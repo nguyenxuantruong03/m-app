@@ -62,7 +62,7 @@ const PasswordSecurity = async () => {
       <div className="text-sm text-gray-500 py-2">
         Quản lý mật khẩu và xác minh 2 bước.
       </div>
-      <InfoPassword user={user} password={formatPassword} />
+      <InfoPassword user={user! ?? undefined} password={formatPassword} />
 
       {shouldRenderDeviceInfo && (
         <>

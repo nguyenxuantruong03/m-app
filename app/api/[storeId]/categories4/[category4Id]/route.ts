@@ -4,6 +4,13 @@ import prismadb from "@/lib/prismadb";
 import { CategoryType, UserRole } from "@prisma/client";
 import { currentRole, currentUser } from "@/lib/auth";
 
+type CategoryValue = string | CategoryType | Date | undefined;
+
+interface ChangeRecord {
+  oldValue: CategoryValue;
+  newValue: CategoryValue;
+}
+
 export async function GET(
   req: Request,
   { params }: { params: { category4Id: string } }
@@ -186,7 +193,7 @@ export async function PATCH(
     const ignoredFields = ["createdAt", "updatedAt"];
 
     // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
-    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    const changes: Record<string, ChangeRecord> = {};
     for (const key in existingCategory) {
       if (
         existingCategory.hasOwnProperty(key) &&

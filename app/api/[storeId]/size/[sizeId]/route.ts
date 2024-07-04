@@ -4,6 +4,13 @@ import prismadb from "@/lib/prismadb";
 import { currentRole, currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
 
+type SizeValue = string | Date | undefined;
+
+interface ChangeRecord {
+  oldValue: SizeValue;
+  newValue: SizeValue;
+}
+
 export async function GET(
   req: Request,
   { params }: { params: { sizeId: string } }
@@ -182,7 +189,7 @@ export async function PATCH(
     const ignoredFields = ["createdAt", "updatedAt"];
 
     // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
-    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    const changes: Record<string, ChangeRecord> = {};
     for (const key in existingSize) {
       if (existingSize.hasOwnProperty(key) && size.hasOwnProperty(key)) {
         if (

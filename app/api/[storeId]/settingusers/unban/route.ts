@@ -2,6 +2,14 @@ import { sendUnBanUser } from "@/lib/mail";
 import prismadb from "@/lib/prismadb";
 import { NextResponse } from "next/server";
 
+type SettingUserUnbanValue = string | number | boolean | Date | string[] | null | undefined;
+
+interface ChangeRecord {
+  oldValue: SettingUserUnbanValue;
+  newValue: SettingUserUnbanValue;
+}
+
+
 export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
@@ -78,7 +86,7 @@ export async function POST(
     const ignoredFields = ["createdAt", "updatedAt"];
 
     // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
-    const changes: { [key: string]: { oldValue: any; newValue: any } } = {};
+    const changes: Record<string, ChangeRecord> = {};
     for (const key in existingUser) {
       if (existingUser.hasOwnProperty(key) && unbanUser.hasOwnProperty(key)) {
         if (
