@@ -1,8 +1,14 @@
 "use client";
 import Image from "next/image";
 import { useParams, usePathname } from "next/navigation";
-import { useState } from "react";
-import { CircleUser, UserRoundPlus, Bell, ArrowUpRight } from "lucide-react";
+import React, { useState } from "react";
+import {
+  CircleUser,
+  UserRoundPlus,
+  Bell,
+  ArrowUpRight,
+  BadgeDollarSign,
+} from "lucide-react";
 import Link from "next/link";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { UserButton } from "../../auth/user-button";
@@ -32,20 +38,26 @@ import {
   settingTitle,
 } from "../export-name-navbar";
 
+import { cn } from "@/lib/utils";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
+
+type ListItemProps = React.ComponentPropsWithoutRef<"a"> & {
+  title: string; // Assuming title is also a custom prop you want to pass
+  icon?: any; // icon can be any valid React node (component, element, etc.)
+  active?: string;
+};
+
 const NavbarMultiple = () => {
   const userId = useCurrentUser();
   const [open, setOpen] = useState(false);
-  const [flyer, setFlyer] = useState(false);
-  const [flyerTwo, setFlyerTwo] = useState(false);
-  const [flyer3, setFlyer3] = useState(false);
-  const [flyer4, setFlyer4] = useState(false);
-  const [flyer5, setFlyer5] = useState(false);
-  const [flyer6, setFlyer6] = useState(false);
-  const [flyer7, setFlyer7] = useState(false);
-  const [flyer8, setFlyer8] = useState(false);
-  const [flyer9, setFlyer9] = useState(false);
-  const [flyer10, setFlyer10] = useState(false);
-  const [flyer11, setFlyer11] = useState(false);
   const params = useParams();
   const pathname = usePathname();
   const storeId = Array.isArray(params.storeId)
@@ -63,12 +75,13 @@ const NavbarMultiple = () => {
   const users = user(storeId, pathname);
   const checkouts = checkout(storeId, pathname);
   const settings = setting(storeId, pathname);
+
   return (
     <>
       {/* This example requires Tailwind CSS v2.0+ */}
       <div className="fixed dark:bg-slate-200 bg-slate-900 w-full top-0 z-[999]">
-        <div className="max-w-8xl mx-auto px-2 2xl:px-5 lg:px-2 sm:px-6">
-          <div className="flex justify-between items-center py-6 md:space-x-3">
+        <div className="mx-auto px-2 2xl:px-5 lg:px-2 sm:px-4">
+          <div className="flex justify-between items-center py-6">
             <div className="flex justify-start">
               <Link href="/">
                 <span className="sr-only">Workflow</span>
@@ -82,1337 +95,501 @@ const NavbarMultiple = () => {
               </Link>
             </div>
 
-            <nav className="hidden xl:flex space-x-1 lg:space-x-1 2xl:space-x-4 z-[999]">
-              <div className="relative">
-                <button
-                  type="button"
-                  className="group z-[999] dark:bg-slate-200 bg-slate-900 rounded-md text-gray-500 inline-flex items-center text-base font-medium dark:hover:text-slate-900 hover:text-white focus:outline-none "
-                  onClick={() => (
-                    setFlyer(!flyer),
-                    setFlyerTwo(false),
-                    setFlyer3(false),
-                    setFlyer4(false),
-                    setFlyer5(false),
-                    setFlyer6(false),
-                    setFlyer7(false),
-                    setFlyer8(false),
-                    setFlyer9(false),
-                    setFlyer10(false),
-                    setFlyer11(false)
-                  )}
-                >
-                  {routeTitle.map((route) => (
-                    <>{route.mainicon}</>
-                  ))}
-                  <svg
-                    className={
-                      flyer === true
-                        ? "transform rotate-180 ml-2 lg:ml-0 2xl:ml-2 h-4 w-4 text-gray-400 group-hover:text-gray-500 transition ease-out duration-200"
-                        : "ml-2 lg:ml-0 2xl:ml-2 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-                    }
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-
-                <div
-                  onMouseLeave={() => setFlyer(false)}
-                  className={
-                    flyer
-                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/4 z-[9999]"
-                      : " hidden translate-y-1 absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2"
-                  }
-                >
-                  <div className="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden">
-                    {routes.map((route) => (
-                      <>
-                        <div className="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8">
-                          <Link
-                            key={route.href}
-                            href={route.href}
-                            title={route.label}
-                            className="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50"
-                          >
-                            {/* Heroicon name: outline/support */}
-                            <span className="flex-shrink-0 h-6 w-6 text-indigo-600">
-                              {route.icon}
-                            </span>
-                            <div className="ml-4">
-                              <p className="text-base font-medium text-slate-900">
-                                {route.label}
+            <nav className="hidden xl:flex space-x-1 z-[999]">
+              {/* Overview */}
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-slate-900">
+                      {routeTitle.map((route) => (
+                        <>{route.mainicon}</>
+                      ))}
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                        <li className="row-span-3">
+                          <NavigationMenuLink asChild>
+                            <a
+                              className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                              href="/"
+                            >
+                              <BadgeDollarSign className="h-6 w-6" />
+                              <div className="mb-2 mt-4 text-lg font-medium">
+                                shadcn/ui
+                              </div>
+                              <p className="text-sm leading-tight text-muted-foreground">
+                                Beautifully designed components that you can
+                                copy and paste into your apps. Accessible.
+                                Customizable. Open Source.
                               </p>
-                              <p className="mt-1 text-sm text-gray-500">
-                                {route.content}
+                            </a>
+                          </NavigationMenuLink>
+                        </li>
+                        {routes.map((route) => (
+                          <>
+                            <ListItem
+                              active={cn(
+                                "text-md font-medium transition-colors hover:text-primary",
+                                route.active
+                                  ? "text-sky-500"
+                                  : "text-muted-foreground"
+                              )}
+                              key={route.href}
+                              href={route.href}
+                              title={route.label}
+                              icon={route.icon}
+                            >
+                              {route.content}
+                            </ListItem>
+                          </>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
+              {/* datastatistic */}
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-slate-900">
+                      {datastatisticTitle.map((datastatistic) => (
+                        <>{datastatistic.mainicon}</>
+                      ))}
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                        <li className="row-span-3">
+                          <NavigationMenuLink asChild>
+                            <a
+                              className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                              href="/"
+                            >
+                              <BadgeDollarSign className="h-6 w-6" />
+                              <div className="mb-2 mt-4 text-lg font-medium">
+                                shadcn/ui
+                              </div>
+                              <p className="text-sm leading-tight text-muted-foreground">
+                                Beautifully designed components that you can
+                                copy and paste into your apps. Accessible.
+                                Customizable. Open Source.
                               </p>
-                            </div>
-                          </Link>
-                        </div>
-                      </>
-                    ))}
-                    <div className="px-5 py-5 bg-gray-50 sm:px-8 sm:py-8">
-                      <div>
-                        <h3 className="text-sm tracking-wide font-medium text-gray-500 uppercase">
-                          Related Posts
-                        </h3>
-                        <ul className="mt-4 space-y-4">
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
+                            </a>
+                          </NavigationMenuLink>
+                        </li>
+                        {datastatistics.map((datastatistic) => (
+                          <>
+                            <ListItem
+                              active={cn(
+                                "text-md font-medium transition-colors hover:text-primary",
+                                datastatistic.active
+                                  ? "text-sky-500"
+                                  : "text-muted-foreground"
+                              )}
+                              key={datastatistic.href}
+                              href={datastatistic.href}
+                              title={datastatistic.label}
+                              icon={datastatistic.icon}
                             >
-                              Boost your conversion rate
-                            </Link>
-                          </li>
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              How to use search engine optimization to drive
-                              traffic to your site
-                            </Link>
-                          </li>
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              Improve your customer experience
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                      <div className="mt-5 text-sm">
-                        <Link
-                          href="#"
-                          className="font-medium text-indigo-600 hover:text-indigo-500"
-                        >
-                          {" "}
-                          View all posts <span aria-hidden="true">→</span>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative">
-                {/* Item active: "text-slate-900", Item inactive: "text-gray-500" */}
-                <button
-                  type="button"
-                  className="group z-[999] dark:bg-slate-200 bg-slate-900 rounded-md text-gray-500 inline-flex items-center text-base font-medium dark:hover:text-slate-900 hover:text-white focus:outline-none "
-                  onClick={() => (
-                    setFlyer(false),
-                    setFlyerTwo(!flyerTwo),
-                    setFlyer3(false),
-                    setFlyer4(false),
-                    setFlyer5(false),
-                    setFlyer6(false),
-                    setFlyer7(false),
-                    setFlyer8(false),
-                    setFlyer9(false),
-                    setFlyer10(false),
-                    setFlyer11(false)
-                  )}
-                >
-                  {datastatisticTitle.map((datastatistic) => (
-                    <>{datastatistic.mainicon}</>
-                  ))}
-                  <svg
-                    className={
-                      flyerTwo === true
-                        ? "transform rotate-180 ml-2 lg:ml-0 2xl:ml-2 h-4 w-4 text-gray-400 group-hover:text-gray-500 transition ease-out duration-200"
-                        : "ml-2 lg:ml-0 2xl:ml-2 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-                    }
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-                <div
-                  onMouseLeave={() => setFlyerTwo(false)}
-                  className={
-                    flyerTwo
-                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2 z-[9999] "
-                      : " hidden translate-y-1 absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2"
-                  }
-                >
-                  <div className="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden">
-                    {datastatistics.map((datastatistic) => (
-                      <>
-                        <div className="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8">
-                          <Link
-                            key={datastatistic.href}
-                            href={datastatistic.href}
-                            title={datastatistic.label}
-                            className="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50"
-                          >
-                            {/* Heroicon name: outline/support */}
-                            <span className="flex-shrink-0 h-6 w-6 text-indigo-600">
-                              {datastatistic.icon}
-                            </span>
-                            <div className="ml-4">
-                              <p className="text-base font-medium text-slate-900">
-                                {datastatistic.label}
-                              </p>
-                              <p className="mt-1 text-sm text-gray-500">
-                                {datastatistic.content}
-                              </p>
-                            </div>
-                          </Link>
-                        </div>
-                      </>
-                    ))}
-                    <div className="px-5 py-5 bg-gray-50 sm:px-8 sm:py-8">
-                      <div>
-                        <h3 className="text-sm tracking-wide font-medium text-gray-500 uppercase">
-                          Recent Posts
-                        </h3>
-                        <ul className="mt-4 space-y-4">
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              Boost your conversion rate
-                            </Link>
-                          </li>
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              How to use search engine optimization to drive
-                              traffic to your site
-                            </Link>
-                          </li>
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              Improve your customer experience
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                      <div className="mt-5 text-sm">
-                        <Link
-                          href="#"
-                          className="font-medium text-indigo-600 hover:text-indigo-500"
-                        >
-                          {" "}
-                          View all posts <span aria-hidden="true">→</span>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative">
-                {/* Item active: "text-slate-900", Item inactive: "text-gray-500" */}
-                <button
-                  type="button"
-                  className="group z-[999] dark:bg-slate-200 bg-slate-900 rounded-md text-gray-500 inline-flex items-center text-base font-medium dark:hover:text-slate-900 hover:text-white focus:outline-none "
-                  onClick={() => (
-                    setFlyer(false),
-                    setFlyerTwo(false),
-                    setFlyer3(!flyer3),
-                    setFlyer4(false),
-                    setFlyer5(false),
-                    setFlyer6(false),
-                    setFlyer7(false),
-                    setFlyer8(false),
-                    setFlyer9(false),
-                    setFlyer10(false),
-                    setFlyer11(false)
-                  )}
-                >
-                  {staffTitle.map((staff) => (
-                    <>{staff.mainicon}</>
-                  ))}
-                  <svg
-                    className={
-                      flyer3 === true
-                        ? "transform rotate-180 ml-2 lg:ml-0 2xl:ml-2 h-4 w-4 text-gray-400 group-hover:text-gray-500 transition ease-out duration-200"
-                        : "ml-2 lg:ml-0 2xl:ml-2 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-                    }
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-                <div
-                  onMouseLeave={() => setFlyer3(false)}
-                  className={
-                    flyer3
-                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2 z-[9999]"
-                      : " hidden translate-y-1 absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2"
-                  }
-                >
-                  <div className="lg:h-[600px] 2xl:h-[800px] overflow-y-auto rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden">
-                    {staffs.map((staff) => (
-                      <>
-                        <div className="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8">
-                          <Link
+                              {datastatistic.content}
+                            </ListItem>
+                          </>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
+              {/* staff */}
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-slate-900">
+                      {staffTitle.map((staff) => (
+                        <>{staff.mainicon}</>
+                      ))}
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+                        {staffs.map((staff) => (
+                          <ListItem
                             key={staff.href}
-                            href={staff.href}
+                            active={cn(
+                              "text-md font-medium transition-colors hover:text-primary",
+                              staff.active
+                                ? "text-sky-500"
+                                : "text-muted-foreground"
+                            )}
                             title={staff.label}
-                            className="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50"
+                            href={staff.href}
+                            icon={staff.icon}
                           >
-                            {/* Heroicon name: outline/support */}
-                            <span className="flex-shrink-0 h-6 w-6 text-indigo-600">
-                              {staff.icon}
-                            </span>
-                            <div className="ml-4">
-                              <p className="text-base font-medium text-slate-900">
-                                {staff.label}
+                            {staff.content}
+                          </ListItem>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
+              {/* billboard */}
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-slate-900">
+                      {billboardTitle.map((billboard) => (
+                        <>{billboard.mainicon}</>
+                      ))}
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                        <li className="row-span-3">
+                          <NavigationMenuLink asChild>
+                            <a
+                              className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                              href="/"
+                            >
+                              <BadgeDollarSign className="h-6 w-6" />
+                              <div className="mb-2 mt-4 text-lg font-medium">
+                                shadcn/ui
+                              </div>
+                              <p className="text-sm leading-tight text-muted-foreground">
+                                Beautifully designed components that you can
+                                copy and paste into your apps. Accessible.
+                                Customizable. Open Source.
                               </p>
-                              <p className="mt-1 text-sm text-gray-500">
-                                {staff.content}
-                              </p>
-                            </div>
-                          </Link>
-                        </div>
-                      </>
-                    ))}
-                    <div className="px-5 py-5 bg-gray-50 sm:px-8 sm:py-8">
-                      <div>
-                        <h3 className="text-sm tracking-wide font-medium text-gray-500 uppercase">
-                          Recent Posts
-                        </h3>
-                        <ul className="mt-4 space-y-4">
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
+                            </a>
+                          </NavigationMenuLink>
+                        </li>
+                        {billboards.map((billboard) => (
+                          <>
+                            <ListItem
+                              active={cn(
+                                "text-md font-medium transition-colors hover:text-primary",
+                                billboard.active
+                                  ? "text-sky-500"
+                                  : "text-muted-foreground"
+                              )}
+                              key={billboard.href}
+                              href={billboard.href}
+                              title={billboard.label}
+                              icon={billboard.icon}
                             >
-                              Boost your conversion rate
-                            </Link>
-                          </li>
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              How to use search engine optimization to drive
-                              traffic to your site
-                            </Link>
-                          </li>
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              Improve your customer experience
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                      <div className="mt-5 text-sm">
-                        <Link
-                          href="#"
-                          className="font-medium text-indigo-600 hover:text-indigo-500"
-                        >
-                          {" "}
-                          View all posts <span aria-hidden="true">→</span>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative">
-                {/* Item active: "text-slate-900", Item inactive: "text-gray-500" */}
-                <button
-                  type="button"
-                  className="group z-[999] dark:bg-slate-200 bg-slate-900 rounded-md text-gray-500 inline-flex items-center text-base font-medium dark:hover:text-slate-900 hover:text-white focus:outline-none "
-                  onClick={() => (
-                    setFlyer(false),
-                    setFlyerTwo(false),
-                    setFlyer3(false),
-                    setFlyer4(!flyer4),
-                    setFlyer5(false),
-                    setFlyer6(false),
-                    setFlyer7(false),
-                    setFlyer8(false),
-                    setFlyer9(false),
-                    setFlyer10(false),
-                    setFlyer11(false)
-                  )}
-                >
-                  {billboardTitle.map((billboard) => (
-                    <>{billboard.mainicon}</>
-                  ))}
-                  <svg
-                    className={
-                      flyer4 === true
-                        ? "transform rotate-180 ml-2 lg:ml-0 2xl:ml-2 h-4 w-4 text-gray-400 group-hover:text-gray-500 transition ease-out duration-200"
-                        : "ml-2 lg:ml-0 2xl:ml-2 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-                    }
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-                <div
-                  onMouseLeave={() => setFlyer4(false)}
-                  className={
-                    flyer4
-                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2 z-[9999]"
-                      : " hidden translate-y-1 absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2"
-                  }
-                >
-                  <div className="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden">
-                    {billboards.map((billboard) => (
-                      <>
-                        <div className="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8">
-                          <Link
-                            key={billboard.href}
-                            href={billboard.href}
-                            title={billboard.label}
-                            className="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50"
-                          >
-                            {/* Heroicon name: outline/support */}
-                            <span className="flex-shrink-0 h-6 w-6 text-indigo-600">
-                              {billboard.icon}
-                            </span>
-                            <div className="ml-4">
-                              <p className="text-base font-medium text-slate-900">
-                                {billboard.label}
-                              </p>
-                              <p className="mt-1 text-sm text-gray-500">
-                                {billboard.content}
-                              </p>
-                            </div>
-                          </Link>
-                        </div>
-                      </>
-                    ))}
-                    <div className="px-5 py-5 bg-gray-50 sm:px-8 sm:py-8">
-                      <div>
-                        <h3 className="text-sm tracking-wide font-medium text-gray-500 uppercase">
-                          Recent Posts
-                        </h3>
-                        <ul className="mt-4 space-y-4">
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              Boost your conversion rate
-                            </Link>
-                          </li>
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              How to use search engine optimization to drive
-                              traffic to your site
-                            </Link>
-                          </li>
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              Improve your customer experience
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                      <div className="mt-5 text-sm">
-                        <Link
-                          href="#"
-                          className="font-medium text-indigo-600 hover:text-indigo-500"
-                        >
-                          {" "}
-                          View all posts <span aria-hidden="true">→</span>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative">
-                {/* Item active: "text-slate-900", Item inactive: "text-gray-500" */}
-                <button
-                  type="button"
-                  className="group z-[999] dark:bg-slate-200 bg-slate-900 rounded-md text-gray-500 inline-flex items-center text-base font-medium dark:hover:text-slate-900 hover:text-white focus:outline-none "
-                  onClick={() => (
-                    setFlyer(false),
-                    setFlyerTwo(false),
-                    setFlyer3(false),
-                    setFlyer4(false),
-                    setFlyer5(!flyer5),
-                    setFlyer6(false),
-                    setFlyer7(false),
-                    setFlyer8(false),
-                    setFlyer9(false),
-                    setFlyer10(false),
-                    setFlyer11(false)
-                  )}
-                >
-                  {categoryTitle.map((categories) => (
-                    <>{categories.mainicon}</>
-                  ))}
-                  <svg
-                    className={
-                      flyer5 === true
-                        ? "transform rotate-180 ml-2 lg:ml-0 2xl:ml-2 h-4 w-4 text-gray-400 group-hover:text-gray-500 transition ease-out duration-200"
-                        : "ml-2 lg:ml-0 2xl:ml-2 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-                    }
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-                <div
-                  onMouseLeave={() => setFlyer5(false)}
-                  className={
-                    flyer5
-                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2 z-[9999]"
-                      : " hidden translate-y-1 absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2"
-                  }
-                >
-                  <div className="lg:h-[600px] 2xl:h-[800px] overflow-y-auto rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden">
-                    {category.map((categories) => (
-                      <>
-                        <div className="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8">
-                          <Link
+                              {billboard.content}
+                            </ListItem>
+                          </>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
+              {/* Category */}
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-slate-900">
+                      {categoryTitle.map((categories) => (
+                        <>{categories.mainicon}</>
+                      ))}
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+                        {category.map((categories) => (
+                          <ListItem
                             key={categories.href}
-                            href={categories.href}
+                            active={cn(
+                              "text-md font-medium transition-colors hover:text-primary",
+                              categories.active
+                                ? "text-sky-500"
+                                : "text-muted-foreground"
+                            )}
                             title={categories.label}
-                            className="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50"
+                            href={categories.href}
+                            icon={categories.icon}
                           >
-                            {/* Heroicon name: outline/support */}
-                            <span className="flex-shrink-0 h-6 w-6 text-indigo-600">
-                              {categories.icon}
-                            </span>
-                            <div className="ml-4">
-                              <p className="text-base font-medium text-slate-900">
-                                {categories.label}
+                            {categories.content}
+                          </ListItem>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
+              {/* Parameter */}
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-slate-900">
+                      {parameterTitle.map((parameter) => (
+                        <>{parameter.mainicon}</>
+                      ))}
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                        <li className="row-span-3">
+                          <NavigationMenuLink asChild>
+                            <a
+                              className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                              href="/"
+                            >
+                              <BadgeDollarSign className="h-6 w-6" />
+                              <div className="mb-2 mt-4 text-lg font-medium">
+                                shadcn/ui
+                              </div>
+                              <p className="text-sm leading-tight text-muted-foreground">
+                                Beautifully designed components that you can
+                                copy and paste into your apps. Accessible.
+                                Customizable. Open Source.
                               </p>
-                              <p className="mt-1 text-sm text-gray-500">
-                                {categories.content}
-                              </p>
-                            </div>
-                          </Link>
-                        </div>
-                      </>
-                    ))}
-                    <div className="px-5 py-5 bg-gray-50 sm:px-8 sm:py-8">
-                      <div>
-                        <h3 className="text-sm tracking-wide font-medium text-gray-500 uppercase">
-                          Recent Posts
-                        </h3>
-                        <ul className="mt-4 space-y-4">
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
+                            </a>
+                          </NavigationMenuLink>
+                        </li>
+                        {parameters.map((parameter) => (
+                          <>
+                            <ListItem
+                              active={cn(
+                                "text-md font-medium transition-colors hover:text-primary",
+                                parameter.active
+                                  ? "text-sky-500"
+                                  : "text-muted-foreground"
+                              )}
+                              key={parameter.href}
+                              href={parameter.href}
+                              title={parameter.label}
+                              icon={parameter.icon}
                             >
-                              Boost your conversion rate
-                            </Link>
-                          </li>
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              How to use search engine optimization to drive
-                              traffic to your site
-                            </Link>
-                          </li>
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              Improve your customer experience
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                      <div className="mt-5 text-sm">
-                        <Link
-                          href="#"
-                          className="font-medium text-indigo-600 hover:text-indigo-500"
-                        >
-                          {" "}
-                          View all posts <span aria-hidden="true">→</span>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative">
-                {/* Item active: "text-slate-900", Item inactive: "text-gray-500" */}
-                <button
-                  type="button"
-                  className="group z-[999] dark:bg-slate-200 bg-slate-900 rounded-md text-gray-500 inline-flex items-center text-base font-medium dark:hover:text-slate-900 hover:text-white focus:outline-none "
-                  onClick={() => (
-                    setFlyer(false),
-                    setFlyerTwo(false),
-                    setFlyer3(false),
-                    setFlyer4(false),
-                    setFlyer5(false),
-                    setFlyer6(!flyer6),
-                    setFlyer7(false),
-                    setFlyer8(false),
-                    setFlyer9(false),
-                    setFlyer10(false),
-                    setFlyer11(false)
-                  )}
-                >
-                  {parameterTitle.map((parameter) => (
-                    <>{parameter.mainicon}</>
-                  ))}
-                  <svg
-                    className={
-                      flyer6 === true
-                        ? "transform rotate-180 ml-2 lg:ml-0 2xl:ml-2 h-4 w-4 text-gray-400 group-hover:text-gray-500 transition ease-out duration-200"
-                        : "ml-2 lg:ml-0 2xl:ml-2 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-                    }
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-                <div
-                  onMouseLeave={() => setFlyer6(false)}
-                  className={
-                    flyer6
-                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2 z-[9999]"
-                      : " hidden translate-y-1 absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2"
-                  }
-                >
-                  <div className="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden">
-                    {parameters.map((parameter) => (
-                      <>
-                        <div className="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8">
-                          <Link
-                            key={parameter.href}
-                            href={parameter.href}
-                            title={parameter.label}
-                            className="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50"
-                          >
-                            {/* Heroicon name: outline/support */}
-                            <span className="flex-shrink-0 h-6 w-6 text-indigo-600">
-                              {parameter.icon}
-                            </span>
-                            <div className="ml-4">
-                              <p className="text-base font-medium text-slate-900">
-                                {parameter.label}
-                              </p>
-                              <p className="mt-1 text-sm text-gray-500">
-                                {parameter.content}
-                              </p>
-                            </div>
-                          </Link>
-                        </div>
-                      </>
-                    ))}
-                    <div className="px-5 py-5 bg-gray-50 sm:px-8 sm:py-8">
-                      <div>
-                        <h3 className="text-sm tracking-wide font-medium text-gray-500 uppercase">
-                          Recent Posts
-                        </h3>
-                        <ul className="mt-4 space-y-4">
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              Boost your conversion rate
-                            </Link>
-                          </li>
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              How to use search engine optimization to drive
-                              traffic to your site
-                            </Link>
-                          </li>
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              Improve your customer experience
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                      <div className="mt-5 text-sm">
-                        <Link
-                          href="#"
-                          className="font-medium text-indigo-600 hover:text-indigo-500"
-                        >
-                          {" "}
-                          View all posts <span aria-hidden="true">→</span>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative">
-                {/* Item active: "text-slate-900", Item inactive: "text-gray-500" */}
-                <button
-                  type="button"
-                  className="group z-[999] dark:bg-slate-200 bg-slate-900 rounded-md text-gray-500 inline-flex items-center text-base font-medium dark:hover:text-slate-900 hover:text-white focus:outline-none "
-                  onClick={() => (
-                    setFlyer(false),
-                    setFlyerTwo(false),
-                    setFlyer3(false),
-                    setFlyer4(false),
-                    setFlyer5(false),
-                    setFlyer6(false),
-                    setFlyer7(!flyer7),
-                    setFlyer8(false),
-                    setFlyer9(false),
-                    setFlyer10(false),
-                    setFlyer11(false)
-                  )}
-                >
-                  {productTitle.map((product) => (
-                    <>{product.mainicon}</>
-                  ))}
-                  <svg
-                    className={
-                      flyer7 === true
-                        ? "transform rotate-180 ml-2 lg:ml-0 2xl:ml-2 h-4 w-4 text-gray-400 group-hover:text-gray-500 transition ease-out duration-200"
-                        : "ml-2 lg:ml-0 2xl:ml-2 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-                    }
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-                <div
-                  onMouseLeave={() => setFlyer7(false)}
-                  className={
-                    flyer7
-                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2 z-[9999]"
-                      : " hidden translate-y-1 absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2"
-                  }
-                >
-                  <div className="lg:h-[600px] 2xl:h-[800px] overflow-y-auto rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden">
-                    {products.map((product) => (
-                      <>
-                        <div className="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8">
-                          <Link
+                              {parameter.content}
+                            </ListItem>
+                          </>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
+              {/* Product */}
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-slate-900">
+                      {productTitle.map((product) => (
+                        <>{product.mainicon}</>
+                      ))}
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+                        {products.map((product) => (
+                          <ListItem
                             key={product.href}
-                            href={product.href}
+                            active={cn(
+                              "text-md font-medium transition-colors hover:text-primary",
+                              product.active
+                                ? "text-sky-500"
+                                : "text-muted-foreground"
+                            )}
                             title={product.label}
-                            className="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50"
+                            href={product.href}
+                            icon={product.icon}
                           >
-                            {/* Heroicon name: outline/support */}
-                            <span className="flex-shrink-0 h-6 w-6 text-indigo-600">
-                              {product.icon}
-                            </span>
-                            <div className="ml-4">
-                              <p className="text-base font-medium text-slate-900">
-                                {product.label}
+                            {product.content}
+                          </ListItem>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
+              {/* Order */}
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-slate-900">
+                      {orderTitle.map((order) => (
+                        <>{order.mainicon}</>
+                      ))}
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                        <li className="row-span-3">
+                          <NavigationMenuLink asChild>
+                            <a
+                              className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                              href="/"
+                            >
+                              <BadgeDollarSign className="h-6 w-6" />
+                              <div className="mb-2 mt-4 text-lg font-medium">
+                                shadcn/ui
+                              </div>
+                              <p className="text-sm leading-tight text-muted-foreground">
+                                Beautifully designed components that you can
+                                copy and paste into your apps. Accessible.
+                                Customizable. Open Source.
                               </p>
-                              <p className="mt-1 text-sm text-gray-500">
-                                {product.content}
+                            </a>
+                          </NavigationMenuLink>
+                        </li>
+                        {orders.map((order) => (
+                          <>
+                            <ListItem
+                              active={cn(
+                                "text-md font-medium transition-colors hover:text-primary",
+                                order.active
+                                  ? "text-sky-500"
+                                  : "text-muted-foreground"
+                              )}
+                              key={order.href}
+                              href={order.href}
+                              title={order.label}
+                              icon={order.icon}
+                            >
+                              {order.content}
+                            </ListItem>
+                          </>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
+              {/* User */}
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-slate-900">
+                      {userTitle.map((user) => (
+                        <>{user.mainicon}</>
+                      ))}
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                        <li className="row-span-3">
+                          <NavigationMenuLink asChild>
+                            <a
+                              className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                              href="/"
+                            >
+                              <BadgeDollarSign className="h-6 w-6" />
+                              <div className="mb-2 mt-4 text-lg font-medium">
+                                shadcn/ui
+                              </div>
+                              <p className="text-sm leading-tight text-muted-foreground">
+                                Beautifully designed components that you can
+                                copy and paste into your apps. Accessible.
+                                Customizable. Open Source.
                               </p>
-                            </div>
-                          </Link>
-                        </div>
-                      </>
-                    ))}
-                    <div className="px-5 py-5 bg-gray-50 sm:px-8 sm:py-8">
-                      <div>
-                        <h3 className="text-sm tracking-wide font-medium text-gray-500 uppercase">
-                          Recent Posts
-                        </h3>
-                        <ul className="mt-4 space-y-4">
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
+                            </a>
+                          </NavigationMenuLink>
+                        </li>
+                        {users.map((user) => (
+                          <>
+                            <ListItem
+                              active={cn(
+                                "text-md font-medium transition-colors hover:text-primary",
+                                user.active
+                                  ? "text-sky-500"
+                                  : "text-muted-foreground"
+                              )}
+                              key={user.href}
+                              href={user.href}
+                              title={user.label}
+                              icon={user.icon}
                             >
-                              Boost your conversion rate
-                            </Link>
-                          </li>
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
+                              {user.content}
+                            </ListItem>
+                          </>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
+              {/* Payment */}
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-slate-900">
+                      {checkoutTitle.map((checkout) => (
+                        <>{checkout.mainicon}</>
+                      ))}
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                        <li className="row-span-3">
+                          <NavigationMenuLink asChild>
+                            <a
+                              className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                              href="/"
                             >
-                              How to use search engine optimization to drive
-                              traffic to your site
-                            </Link>
-                          </li>
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              Improve your customer experience
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                      <div className="mt-5 text-sm">
-                        <Link
-                          href="#"
-                          className="font-medium text-indigo-600 hover:text-indigo-500"
-                        >
-                          {" "}
-                          View all posts <span aria-hidden="true">→</span>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative">
-                {/* Item active: "text-slate-900", Item inactive: "text-gray-500" */}
-                <button
-                  type="button"
-                  className="group z-[999] dark:bg-slate-200 bg-slate-900 rounded-md text-gray-500 inline-flex items-center text-base font-medium dark:hover:text-slate-900 hover:text-white focus:outline-none "
-                  onClick={() => (
-                    setFlyer(false),
-                    setFlyerTwo(false),
-                    setFlyer3(false),
-                    setFlyer4(false),
-                    setFlyer5(false),
-                    setFlyer6(false),
-                    setFlyer7(false),
-                    setFlyer8(!flyer8),
-                    setFlyer9(false),
-                    setFlyer10(false),
-                    setFlyer11(false)
-                  )}
-                >
-                  {orderTitle.map((order) => (
-                    <>{order.mainicon}</>
-                  ))}
-                  <svg
-                    className={
-                      flyer8 === true
-                        ? "transform rotate-180 ml-2 lg:ml-0 2xl:ml-2 h-4 w-4 text-gray-400 group-hover:text-gray-500 transition ease-out duration-200"
-                        : "ml-2 lg:ml-0 2xl:ml-2 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-                    }
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-                <div
-                  onMouseLeave={() => setFlyer8(false)}
-                  className={
-                    flyer8
-                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2 z-[9999]"
-                      : " hidden translate-y-1 absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2"
-                  }
-                >
-                  <div className="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden">
-                    {orders.map((order) => (
-                      <>
-                        <div className="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8">
-                          <Link
-                            key={order.href}
-                            href={order.href}
-                            title={order.label}
-                            className="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50"
-                          >
-                            {/* Heroicon name: outline/support */}
-                            <span className="flex-shrink-0 h-6 w-6 text-indigo-600">
-                              {order.icon}
-                            </span>
-                            <div className="ml-4">
-                              <p className="text-base font-medium text-slate-900">
-                                {order.label}
+                              <BadgeDollarSign className="h-6 w-6" />
+                              <div className="mb-2 mt-4 text-lg font-medium">
+                                shadcn/ui
+                              </div>
+                              <p className="text-sm leading-tight text-muted-foreground">
+                                Beautifully designed components that you can
+                                copy and paste into your apps. Accessible.
+                                Customizable. Open Source.
                               </p>
-                              <p className="mt-1 text-sm text-gray-500">
-                                {order.content}
-                              </p>
-                            </div>
-                          </Link>
-                        </div>
-                      </>
-                    ))}
-                    <div className="px-5 py-5 bg-gray-50 sm:px-8 sm:py-8">
-                      <div>
-                        <h3 className="text-sm tracking-wide font-medium text-gray-500 uppercase">
-                          Recent Posts
-                        </h3>
-                        <ul className="mt-4 space-y-4">
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
+                            </a>
+                          </NavigationMenuLink>
+                        </li>
+                        {checkouts.map((checkout) => (
+                          <>
+                            <ListItem
+                              active={cn(
+                                "text-md font-medium transition-colors hover:text-primary",
+                                checkout.active
+                                  ? "text-sky-500"
+                                  : "text-muted-foreground"
+                              )}
+                              key={checkout.href}
+                              href={checkout.href}
+                              title={checkout.label}
+                              icon={checkout.icon}
                             >
-                              Boost your conversion rate
-                            </Link>
-                          </li>
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
+                              {checkout.content}
+                            </ListItem>
+                          </>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
+              {/* Setting */}
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-slate-900">
+                      {settingTitle.map((setting) => (
+                        <>{setting.mainicon}</>
+                      ))}
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="flex flex-col gap-3 p-6 w-[250px]">
+                        {settings.map((setting) => (
+                          <>
+                            <ListItem
+                              active={cn(
+                                "text-md font-medium transition-colors hover:text-primary",
+                                setting.active
+                                  ? "text-sky-500"
+                                  : "text-muted-foreground"
+                              )}
+                              key={setting.href}
+                              href={setting.href}
+                              title={setting.label}
+                              icon={setting.icon}
                             >
-                              How to use search engine optimization to drive
-                              traffic to your site
-                            </Link>
-                          </li>
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              Improve your customer experience
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                      <div className="mt-5 text-sm">
-                        <Link
-                          href="#"
-                          className="font-medium text-indigo-600 hover:text-indigo-500"
-                        >
-                          {" "}
-                          View all posts <span aria-hidden="true">→</span>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative">
-                {/* Item active: "text-slate-900", Item inactive: "text-gray-500" */}
-                <button
-                  type="button"
-                  className="group z-[999] dark:bg-slate-200 bg-slate-900 rounded-md text-gray-500 inline-flex items-center text-base font-medium dark:hover:text-slate-900 hover:text-white focus:outline-none "
-                  onClick={() => (
-                    setFlyer(false),
-                    setFlyerTwo(false),
-                    setFlyer3(false),
-                    setFlyer4(false),
-                    setFlyer5(false),
-                    setFlyer6(false),
-                    setFlyer7(false),
-                    setFlyer8(false),
-                    setFlyer9(!flyer9),
-                    setFlyer10(false),
-                    setFlyer11(false)
-                  )}
-                >
-                  {userTitle.map((user) => (
-                    <>{user.mainicon}</>
-                  ))}
-                  <svg
-                    className={
-                      flyer9 === true
-                        ? "transform rotate-180 ml-2 lg:ml-0 2xl:ml-2 h-4 w-4 text-gray-400 group-hover:text-gray-500 transition ease-out duration-200"
-                        : "ml-2 lg:ml-0 2xl:ml-2 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-                    }
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-                <div
-                  onMouseLeave={() => setFlyer9(false)}
-                  className={
-                    flyer9
-                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2 z-[9999]"
-                      : " hidden translate-y-1 absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2"
-                  }
-                >
-                  <div className="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden">
-                    {users.map((user) => (
-                      <>
-                        <div className="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8">
-                          <Link
-                            key={user.href}
-                            href={user.href}
-                            title={user.label}
-                            className="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50"
-                          >
-                            {/* Heroicon name: outline/support */}
-                            <span className="flex-shrink-0 h-6 w-6 text-indigo-600">
-                              {user.icon}
-                            </span>
-                            <div className="ml-4">
-                              <p className="text-base font-medium text-slate-900">
-                                {user.label}
-                              </p>
-                              <p className="mt-1 text-sm text-gray-500">
-                                {user.content}
-                              </p>
-                            </div>
-                          </Link>
-                        </div>
-                      </>
-                    ))}
-                    <div className="px-5 py-5 bg-gray-50 sm:px-8 sm:py-8">
-                      <div>
-                        <h3 className="text-sm tracking-wide font-medium text-gray-500 uppercase">
-                          Recent Posts
-                        </h3>
-                        <ul className="mt-4 space-y-4">
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              Boost your conversion rate
-                            </Link>
-                          </li>
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              How to use search engine optimization to drive
-                              traffic to your site
-                            </Link>
-                          </li>
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              Improve your customer experience
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                      <div className="mt-5 text-sm">
-                        <Link
-                          href="#"
-                          className="font-medium text-indigo-600 hover:text-indigo-500"
-                        >
-                          {" "}
-                          View all posts <span aria-hidden="true">→</span>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative">
-                {/* Item active: "text-slate-900", Item inactive: "text-gray-500" */}
-                <button
-                  type="button"
-                  className="group z-[999] dark:bg-slate-200 bg-slate-900 rounded-md text-gray-500 inline-flex items-center text-base font-medium dark:hover:text-slate-900 hover:text-white focus:outline-none "
-                  onClick={() => (
-                    setFlyer(false),
-                    setFlyerTwo(false),
-                    setFlyer3(false),
-                    setFlyer4(false),
-                    setFlyer5(false),
-                    setFlyer6(false),
-                    setFlyer7(false),
-                    setFlyer8(false),
-                    setFlyer9(false),
-                    setFlyer10(!flyer10),
-                    setFlyer11(false)
-                  )}
-                >
-                  {checkoutTitle.map((checkout) => (
-                    <>{checkout.mainicon}</>
-                  ))}
-                  <svg
-                    className={
-                      flyer10 === true
-                        ? "transform rotate-180 ml-2 lg:ml-0 2xl:ml-2 h-4 w-4 text-gray-400 group-hover:text-gray-500 transition ease-out duration-200"
-                        : "ml-2 lg:ml-0 2xl:ml-2 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-                    }
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-                <div
-                  onMouseLeave={() => setFlyer10(false)}
-                  className={
-                    flyer10
-                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2 z-[9999]"
-                      : " hidden translate-y-1 absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2"
-                  }
-                >
-                  <div className="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden">
-                    {checkouts.map((checkout) => (
-                      <>
-                        <div className="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8">
-                          <Link
-                            key={checkout.href}
-                            href={checkout.href}
-                            title={checkout.label}
-                            className="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50"
-                          >
-                            {/* Heroicon name: outline/support */}
-                            <span className="flex-shrink-0 h-6 w-6 text-indigo-600">
-                              {checkout.icon}
-                            </span>
-                            <div className="ml-4">
-                              <p className="text-base font-medium text-slate-900">
-                                {checkout.label}
-                              </p>
-                              <p className="mt-1 text-sm text-gray-500">
-                                {checkout.content}
-                              </p>
-                            </div>
-                          </Link>
-                        </div>
-                      </>
-                    ))}
-                    <div className="px-5 py-5 bg-gray-50 sm:px-8 sm:py-8">
-                      <div>
-                        <h3 className="text-sm tracking-wide font-medium text-gray-500 uppercase">
-                          Recent Posts
-                        </h3>
-                        <ul className="mt-4 space-y-4">
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              Boost your conversion rate
-                            </Link>
-                          </li>
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              How to use search engine optimization to drive
-                              traffic to your site
-                            </Link>
-                          </li>
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              Improve your customer experience
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                      <div className="mt-5 text-sm">
-                        <Link
-                          href="#"
-                          className="font-medium text-indigo-600 hover:text-indigo-500"
-                        >
-                          {" "}
-                          View all posts <span aria-hidden="true">→</span>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative">
-                {/* Item active: "text-slate-900", Item inactive: "text-gray-500" */}
-                <button
-                  type="button"
-                  className="group z-[999] dark:bg-slate-200 bg-slate-900 rounded-md text-gray-500 inline-flex items-center text-base font-medium dark:hover:text-slate-900 hover:text-white focus:outline-none "
-                  onClick={() => (
-                    setFlyer(false),
-                    setFlyerTwo(false),
-                    setFlyer3(false),
-                    setFlyer4(false),
-                    setFlyer5(false),
-                    setFlyer6(false),
-                    setFlyer7(false),
-                    setFlyer8(false),
-                    setFlyer9(false),
-                    setFlyer10(false),
-                    setFlyer11(!flyer11)
-                  )}
-                >
-                  {settingTitle.map((setting) => (
-                    <>{setting.mainicon}</>
-                  ))}
-                  <svg
-                    className={
-                      flyer11 === true
-                        ? "transform rotate-180 ml-2 lg:ml-0 2xl:ml-2 h-4 w-4 text-gray-400 group-hover:text-gray-500 transition ease-out duration-200"
-                        : "ml-2 lg:ml-0 2xl:ml-2 h-4 w-4 text-gray-400 group-hover:text-gray-500"
-                    }
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-                <div
-                  onMouseLeave={() => setFlyer11(false)}
-                  className={
-                    flyer11
-                      ? " block animate-fade-down animate-duration-[300ms] animate-ease-linear absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:-left-1/2 z-[9999]"
-                      : " hidden translate-y-1 absolute -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2"
-                  }
-                >
-                  <div className="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden">
-                    {settings.map((setting) => (
-                      <>
-                        <div className="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8">
-                          <Link
-                            key={setting.href}
-                            href={setting.href}
-                            title={setting.label}
-                            className="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50"
-                          >
-                            {/* Heroicon name: outline/support */}
-                            <span className="flex-shrink-0 h-6 w-6 text-indigo-600">
-                              {setting.icon}
-                            </span>
-                            <div className="ml-4">
-                              <p className="text-base font-medium text-slate-900">
-                                {setting.label}
-                              </p>
-                              <p className="mt-1 text-sm text-gray-500">
-                                {setting.content}
-                              </p>
-                            </div>
-                          </Link>
-                        </div>
-                      </>
-                    ))}
-                    <div className="px-5 py-5 bg-gray-50 sm:px-8 sm:py-8">
-                      <div>
-                        <h3 className="text-sm tracking-wide font-medium text-gray-500 uppercase">
-                          Recent Posts
-                        </h3>
-                        <ul className="mt-4 space-y-4">
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              Boost your conversion rate
-                            </Link>
-                          </li>
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              How to use search engine optimization to drive
-                              traffic to your site
-                            </Link>
-                          </li>
-                          <li className="text-base truncate">
-                            <Link
-                              href="#"
-                              className="font-medium text-slate-900 hover:text-gray-700"
-                            >
-                              Improve your customer experience
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                      <div className="mt-5 text-sm">
-                        <Link
-                          href="#"
-                          className="font-medium text-indigo-600 hover:text-indigo-500"
-                        >
-                          {" "}
-                          View all posts <span aria-hidden="true">→</span>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                              {setting.content}
+                            </ListItem>
+                          </>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
             </nav>
 
             <div className="flex items-center justify-between">
@@ -1530,7 +707,7 @@ const NavbarMultiple = () => {
                   className="flex items-center text-base font-medium text-slate-900 hover:text-gray-700"
                 >
                   Enterprise
-                <ArrowUpRight className="h-5 w-5 ml-1" />
+                  <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
@@ -1577,3 +754,33 @@ const NavbarMultiple = () => {
 };
 
 export default NavbarMultiple;
+
+export const ListItem = React.forwardRef<React.ElementRef<"a">, ListItemProps>(
+  ({ className, title, icon, children, active, ...props }, ref) => {
+    return (
+      <li>
+        <NavigationMenuLink asChild>
+          <a
+            ref={ref}
+            className={cn(
+              "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+              className
+            )}
+            {...props}
+          >
+            <div
+              className={`text-base font-medium flex items-center ${active}`}
+            >
+              <span className="mr-2">{icon}</span> {title}
+            </div>
+            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+              {children}
+            </p>
+          </a>
+        </NavigationMenuLink>
+      </li>
+    );
+  }
+);
+
+ListItem.displayName = "ListItem";
