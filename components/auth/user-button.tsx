@@ -24,6 +24,11 @@ import { toast } from "react-hot-toast";
 import { Separator } from "../ui/separator";
 import Link from "next/link";
 import { ThemeToggleDrakorLight } from "../ui/theme-toggle";
+import ImageCellOne from "../image-cell-one";
+import { utcToZonedTime } from "date-fns-tz";
+import viLocale from "date-fns/locale/vi";
+const vietnamTimeZone = "Asia/Ho_Chi_Minh";
+import { format } from "date-fns";
 
 interface AccountItem {
   id: string;
@@ -50,14 +55,14 @@ export const UserButton = () => {
   const [scrollLeft, setScrollLeft] = useState(0);
   const [isGrabbing, setIsGrabbing] = useState(false);
 
-  const handleMouseDown = (e:React.MouseEvent<HTMLParagraphElement>) => {
+  const handleMouseDown = (e: React.MouseEvent<HTMLParagraphElement>) => {
     setIsDragging(true);
     setIsGrabbing(true); // Bắt đầu grab
     setStartX(e.pageX - e.currentTarget.offsetLeft);
     setScrollLeft(e.currentTarget.scrollLeft);
   };
 
-  const handleMouseMove = (e:React.MouseEvent<HTMLParagraphElement>) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLParagraphElement>) => {
     if (!isDragging) return;
     const x = e.pageX - e.currentTarget.offsetLeft;
     const walk = (x - startX) * 3; // Điều chỉnh tốc độ kéo ở đây
@@ -103,7 +108,17 @@ export const UserButton = () => {
     imageCredentials ||
     (imageCredentials ? imageCredentials[0] : null) ||
     userId?.image;
-  // Sử dụng randomImage trong AvatarImage
+
+  //Fomat thời gian thành String
+  const zonedSubtractedDate = utcToZonedTime(
+    new Date(new Date(userId?.createdAt).getTime() - 7 * 60 * 60 * 1000),
+    vietnamTimeZone
+  );
+  const formatcreatedAt = format(
+    zonedSubtractedDate,
+    "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+    { locale: viLocale }
+  );
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -123,9 +138,17 @@ export const UserButton = () => {
         <div className="flex items-center space-x-3">
           <Avatar>
             {isGitHubOrGoogleUser && avatarImage ? (
-              <AvatarImage src={avatarImage} />
+              <ImageCellOne
+                imageUrl={avatarImage}
+                updateImage={formatcreatedAt || ""}
+                email={userId?.email || ""}
+              />
             ) : avatarImage ? (
-              <AvatarImage src={avatarImage} />
+              <ImageCellOne
+                imageUrl={avatarImage}
+                updateImage={formatcreatedAt || ""}
+                email={userId?.email || ""}
+              />
             ) : (
               <AvatarFallback className="bg-sky-500">
                 <User className="text-white" />
@@ -133,15 +156,19 @@ export const UserButton = () => {
             )}
           </Avatar>
           <div className="">
-          <p  className={`font-bold text-lg w-32 overflow-x-auto whitespace-nowrap ${grabCursorClass} hide-scrollbar select-none`}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          
-          >{userId?.name || "Người dùng"}</p>
+            <p
+              className={`font-bold text-lg w-32 overflow-x-auto whitespace-nowrap ${grabCursorClass} hide-scrollbar select-none`}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+            >
+              {userId?.name || "Người dùng"}
+            </p>
 
-            <p className="text-xs text-gray-300 ">{userId?.nameuser || "@Người dùng"}</p>
+            <p className="text-xs text-gray-300 ">
+              {userId?.nameuser || "@Người dùng"}
+            </p>
           </div>
         </div>
 
@@ -169,16 +196,16 @@ export const UserButton = () => {
         <Separator />
 
         <DropdownMenuItem className="flex items-center cursor-pointer">
-          <ThemeToggleDrakorLight dropdown={false}/>
+          <ThemeToggleDrakorLight dropdown={false} />
         </DropdownMenuItem>
-        
+
         <Separator />
         <Link href="/setting-profile">
           <DropdownMenuItem className="flex items-center cursor-pointer">
             <Settings className="h-5 w-5 mr-2" /> Cài đặt
           </DropdownMenuItem>
         </Link>
-        
+
         <Separator />
         <LogoutButton>
           <DropdownMenuItem className="cursor-pointer mt-2">

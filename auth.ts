@@ -210,6 +210,7 @@ export const {
         session.user.linktiktok = token.linktiktok as string;
         session.user.linkwebsite = token.linkwebsite as string;
         session.user.linkother = token.linkother as string;
+        session.user.createdAt = token.createdAt as Date;
         const existingUser = await getUserById(token.sub);
         if (existingUser) {
           const now = new Date();
@@ -267,6 +268,7 @@ export const {
       token.phonenumber = existingUser.phonenumber;
       token.dateofbirth = existingUser.dateofbirth;
       token.favorite = existingUser.favorite;
+      token.createdAt = existingUser.createdAt;
       if (existingUser.socialLink) {
         token.linkyoutube = existingUser.socialLink.linkyoutube;
         token.linkfacebook = existingUser.socialLink.linkfacebook;

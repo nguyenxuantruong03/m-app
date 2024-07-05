@@ -1,29 +1,31 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images:{
-        domains:["res.cloudinary.com","lh3.googleusercontent.com"]
-    },
-    async headers() {
-        return [
+        domains:["res.cloudinary.com","lh3.googleusercontent.com"],
+        remotePatterns: [
           {
-            source: '/api/:path*', // Update this source pattern to match your API routes
-            headers: [
-              {
-                key: 'Access-Control-Allow-Origin',
-                value: '*',
-              },
-              {
-                key: 'Access-Control-Allow-Methods',
-                value: 'POST, GET, OPTIONS, PUT, DELETE',
-              },
-              {
-                key: 'Access-Control-Allow-Headers',
-                value: 'Content-Type, X-Auth-Token, Origin, Authorization',
-              },
-            ],
+            protocol: 'https',
+            hostname: 'raw.githubusercontent.com',
+            port: '',
+            pathname: '/asdiop159752/BlogPost/master/images/**',
           },
-        ];
-      },
+          {
+            hostname:"images.unsplash.com"
+          },
+          {
+            hostname:"www.simplilearn.com"
+          },
+          {
+            hostname:"www.google.com",
+          },
+          {
+            hostname:"bathanh.com.vn",
+          },
+          {
+            hostname:"https://user-images.githubusercontent.com/43953425/166269493-acd08ccb-4df3-4474-95c7-ad1034d3c070.svg",
+          }
+        ],
+    },
 }
 
 module.exports = nextConfig

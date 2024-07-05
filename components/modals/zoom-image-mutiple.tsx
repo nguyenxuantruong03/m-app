@@ -41,12 +41,16 @@ export const ZoomImageModal: React.FC<ZoomModalProps> = ({
     setCurrentIndex((prevIndex) =>
       prevIndex === 0 ? imageUrl.length - 1 : prevIndex - 1
     );
+    setScale(1); // Reset scale when changing image
+    setPosition({ x: 0, y: 0 }); // Reset position when changing image
   };
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) =>
       prevIndex === imageUrl.length - 1 ? 0 : prevIndex + 1
     );
+    setScale(1); // Reset scale when changing image
+    setPosition({ x: 0, y: 0 }); // Reset position when changing image
   };
 
   //Đè chuột nó sẽ tự động zoomIn hoặc zoomOut
@@ -203,7 +207,7 @@ export const ZoomImageModal: React.FC<ZoomModalProps> = ({
         <Button onClick={handleNext}>
           <ChevronRight className="size-5" />
         </Button>
-    </div>
+      </div>
     </Modal>
   );
 };

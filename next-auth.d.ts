@@ -20,6 +20,7 @@ export type ExtendedUser = DefaultSession["user"] & {
   gender: Gender; 
   phonenumber: string;
   dateofbirth: DateTime;
+  createdAt: DateTime
   linkyoutube: string;
   linkfacebook: string;
   linkinstagram: string;

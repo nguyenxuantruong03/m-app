@@ -339,9 +339,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   <ImageUpload
                     value={field.value.map((image) => image.url)}
                     disabled={loading}
-                    onChange={(url) =>
-                      field.onChange([...field.value, { url }])
-                    }
+                    onChange={(url) => {
+                      if (field.value.length < 10) {
+                        field.onChange([...field.value, { url }]);
+                      } else {
+                        toast.error("Chỉ chọn 10 ảnh sản phẩm rõ nét.");
+                      }
+                    }}
                     onRemove={(url) =>
                       field.onChange([
                         ...field.value.filter((current) => current.url !== url),
@@ -368,14 +372,19 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   <ImageUpload
                     value={field.value.map((image) => image.url)}
                     disabled={loading}
-                    onChange={(url) =>
-                      field.onChange([...field.value, { url }])
-                    }
+                    onChange={(url) => {
+                      if (field.value.length < 2) {
+                        field.onChange([...field.value, { url }]);
+                      } else {
+                        toast.error("Chỉ chọn 2 ảnh sản phẩm chi tiết nhất.");
+                      }
+                    }}
                     onRemove={(url) =>
                       field.onChange([
                         ...field.value.filter((current) => current.url !== url),
                       ])
                     }
+                    maxFiles={2}
                   />
                 </FormControl>
                 <FormMessage />

@@ -16,8 +16,6 @@ import {
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useCurrentUser } from "@/hooks/use-current-user";
-
 interface FormUploadAvatarNavbarItem {
   classNamesForm?: string;
   classNamesUpload?: string;
@@ -27,7 +25,6 @@ export const FormUploadAvatarNavbar: React.FC<FormUploadAvatarNavbarItem> = ({
   classNamesForm,
   classNamesUpload,
 }) => {
-  const user = useCurrentUser();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof UpdateImageSchema>>({

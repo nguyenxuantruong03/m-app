@@ -26,7 +26,7 @@ const ImageCellOne: React.FC<{
       {isImageModalOpen && (
         <ZoomImageAttendanceModal
           imageUrl={imageUrl}
-          updateImage={updateImage}
+          createdAt={updateImage}
           email={email}
           onClose={closeImageModal}
           isOpen={true}

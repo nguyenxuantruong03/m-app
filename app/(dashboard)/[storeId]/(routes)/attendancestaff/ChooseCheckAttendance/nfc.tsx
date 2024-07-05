@@ -214,7 +214,7 @@ const NFC: React.FC<NFCProrps> = ({
                 alt=""
                 width={300}
                 height={300}
-                src="/image/NFC.gif"
+                src="/images/NFC.gif"
                 className="w-96 h-96"
               />
             </div>

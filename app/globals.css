@@ -92,6 +92,10 @@ body,
   }
 }
 
+.leaflet-control-attribution{
+  display:none;
+}
+
 .fc-daygrid-event {
   background-color: rgba(0, 0, 0, 0.1);
   border: none;

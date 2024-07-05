@@ -55,26 +55,6 @@ interface AccountItem {
 const InfoUser: React.FC<InfoUserProps> = ({ user, favorite }) => {
   const [open, setOpen] = useState(false);
   const [account, setAccount] = useState<AccountItem | null>(null);
-  // Change useRef type to RefObject<HTMLDivElement>
-  const modalRef = useRef<HTMLDivElement>(null);
-
-  //Dùng để bấm ra khỏi phạm vi form sẽ setOpen thành false
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        modalRef.current &&
-        !modalRef.current.contains(event.target as Node)
-      ) {
-        setOpen(false); // Close the modal when clicking outside
-      }
-    };
-    // Add event listener when component mounts
-    document.addEventListener("mousedown", handleClickOutside);
-    // Clean up event listener when component unmounts
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [setOpen]);
 
   //Ngăn chặn hành vi scoll down and up khi mở open
   useEffect(() => {
@@ -348,7 +328,6 @@ const InfoUser: React.FC<InfoUserProps> = ({ user, favorite }) => {
         <>
           <div className="fixed inset-0 bg-black/80 h-full w-full " />
           <div
-            ref={modalRef}
             className="absolute inset-0 m-auto h-max w-3/4 max-w-md border rounded-md gap-4 bg-background p-6 shadow-lg transition ease-in-out z-10"
           >
             <div className="flex items-center justify-between">
