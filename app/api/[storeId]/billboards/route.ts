@@ -13,7 +13,7 @@ export async function POST(
 
     const body = await req.json();
 
-    const { label, imagebillboard } = body;
+    const { label, imagebillboard,description } = body;
 
     if (!userId) {
       return new NextResponse(
@@ -24,6 +24,12 @@ export async function POST(
 
     if (!label) {
       return new NextResponse(JSON.stringify({ error: "Label is required!" }), {
+        status: 400,
+      });
+    }
+
+    if (!description) {
+      return new NextResponse(JSON.stringify({ error: "Description is required!" }), {
         status: 400,
       });
     }
@@ -61,6 +67,7 @@ export async function POST(
     const billboard = await prismadb.billboard.create({
       data: {
         label,
+        description,
         imagebillboard: {
           createMany: {
             data: [...imagebillboard.map((image: { url: string }) => image)],
@@ -72,12 +79,13 @@ export async function POST(
 
     const sentBillboard = {
       label: billboard?.label,
+      description: billboard?.description,
       imagebillboard: imagebillboard.map((image: { url: string }) => image.url),
     };
 
     // Log sự thay đổi của billboard
     const changes = [
-      `Label: ${sentBillboard.label}, ImageBillboard: ${sentBillboard.imagebillboard}`,
+      `Label: ${sentBillboard.label}, ImageBillboard: ${sentBillboard.imagebillboard} description: ${sentBillboard.description}`,
     ];
 
     // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
@@ -194,6 +202,7 @@ export async function DELETE(
     // Create an array of changes for logging
     const changesArray = billboardsToDelete.map(billboard => ({
       label: billboard.label,
+      description: billboard.description,
       valueImage: billboard.imagebillboard.map(image => image.url),
     }));
 
@@ -210,7 +219,7 @@ export async function DELETE(
     await prismadb.system.create({
       data: {
         storeId: params.storeId,
-        delete: changesArray.map(change => `DeleteLabel: ${change.label}, ImageBillboard: ${change.valueImage}`),
+        delete: changesArray.map(change => `DeleteLabel: ${change.label}, ImageBillboard: ${change.valueImage}, Descriotion: ${change.description}`),
         type: "DELETEMANYBILLBOARD",
         user: userId?.email || "",
       },

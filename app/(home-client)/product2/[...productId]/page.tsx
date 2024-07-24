@@ -1,0 +1,53 @@
+import Container from "@/components/ui/container";
+import getProduct2 from "@/actions/client/product/get-product2";
+import { getProducts2 } from "@/actions/client/products/get-products";
+import getProduct from "@/actions/client/product/get-product";
+import DetailProduct from "@/components/(client)/info-product/detail-product";
+export const revalidate = 86400;
+
+interface PropductPageProps {
+  params: {
+    productId: string;
+  };
+}
+const ProductPage: React.FC<PropductPageProps> = async ({ params }) => {
+  const [product, suggestedProducts, suggestedProducts0] = await Promise.all([
+    getProducts2(params.productId),
+    getProduct2({}),
+    getProduct({})
+  ]);
+
+  if (!product) {
+    return null;
+  }
+
+  return (
+    <div className="bg-white">
+      <Container>
+        <DetailProduct
+          data={product}
+          images={product.images}
+          otherSuggestions={suggestedProducts}
+          routeOtherSuggestions="product2"
+          other={suggestedProducts0}
+          routeOther="product"
+        />
+      </Container>
+    </div>
+  );
+};
+
+export default ProductPage;
+
+export async function generateMetadata({params :{productId}}:PropductPageProps ) {
+  const post = await getProducts2(`${productId}`); //deduped!
+//deduped loại bỏ trùng lặp trong quá trình xây dựng 
+  if (!post) {
+    return {
+      title: "Product Not Found",
+    }
+  }
+  return {
+    title: post.heading,
+  };
+}

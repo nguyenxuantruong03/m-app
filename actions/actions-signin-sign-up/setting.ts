@@ -159,6 +159,7 @@ export const setting = async (values: z.infer<typeof SettingSchema>) => {
       dateofbirth: values.dateofbirth,
       imageCredential: values.imageCredential,
       name: values.name,
+      frameAvatar: values.frame,
       email: undefined,
       isTwoFactorEnabled: values.isTwoFactorEnabled,
     },

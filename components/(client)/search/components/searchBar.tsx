@@ -149,15 +149,15 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
   return (
     <>
-      <div className="relative h-12 md:h-10 z-20 border-none rounded-2xl px-4 shadow-md bg-white flex items-center ">
-        <Search className="text-red-500" />
+      <div className="relative h-12 md:h-10 max-w-[11rem] md:max-w-[13rem] lg:max-w-7xl z-20 border-none rounded-2xl px-4 shadow-md bg-white flex items-center ">
+        <Search className="text-red-500 hidden md:flex" />
         <input
           placeholder="Bạn cần tìm gì ?"
           value={input}
           onChange={(e) => handleChange(e.target.value)}
           onFocus={handleInputFocus}
           onBlur={handleInputBlur}
-          className="bg-transparent border-none h-full text-lg w-full ml-5 focus:outline-none"
+          className="bg-transparent border-none h-full text-lg w-full ml-0 md:ml-5 focus:outline-none"
         />
         {input && (
           <div

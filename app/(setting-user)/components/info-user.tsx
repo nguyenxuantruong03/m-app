@@ -4,19 +4,20 @@ import {
   Captions,
   ChevronRight,
   Contact,
+  Frame,
   Heart,
   ImageUp,
   MapPin,
   Phone,
   SquareUser,
-  Trash,
+  Trash2,
   User,
   Users,
   X,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { getAccountByUserId } from "@/data/account";
 import { redirect } from "next/navigation";
@@ -24,6 +25,7 @@ import SheetInfomation from "../showsheet/sheet-infomation";
 import { format } from "date-fns";
 import { Favorite, User as Userdata } from "@prisma/client";
 import FormImageCredential from "./form/form-infomation/form-imageCredential";
+import Image from "next/image";
 
 interface InfoUserProps {
   user: Userdata;
@@ -114,7 +116,7 @@ const InfoUser: React.FC<InfoUserProps> = ({ user, favorite }) => {
     {
       name: (
         <span className="flex items-center mb-2">
-          <ImageUp className="h-4 w-4 mr-1" />
+          <Contact className="h-4 w-4 mr-1" />
           Ảnh đại diện
         </span>
       ),
@@ -135,6 +137,27 @@ const InfoUser: React.FC<InfoUserProps> = ({ user, favorite }) => {
         <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
       ),
       key: "avatar",
+    },
+    {
+      name: (
+        <span className="flex items-center">
+          <Frame className="h-4 w-4 mr-1" />
+          Khung ảnh
+        </span>
+      ),
+      state: (
+        <Image 
+        alt="404"
+        width="60"
+        height="60"
+        src={user.frameAvatar || "/avatar-frame/frame-1.png"}
+        loading="lazy"
+        />
+      ),
+      icons: (
+        <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
+      ),
+      key: "frame", // Add a key to identify the item
     },
     {
       name: (
@@ -273,7 +296,7 @@ const InfoUser: React.FC<InfoUserProps> = ({ user, favorite }) => {
     {
       name: (
         <span className="flex items-center">
-          <Trash className="h-4 w-4 mr-1" />
+          <Trash2 className="h-4 w-4 mr-1" />
           Xóa tài khoản
         </span>
       ),
@@ -299,7 +322,8 @@ const InfoUser: React.FC<InfoUserProps> = ({ user, favorite }) => {
       infouser.key === "address" ||
       infouser.key === "addressother" ||
       infouser.key === "email" ||
-      infouser.key === "favorite"
+      infouser.key === "favorite" ||
+      infouser.key === "frame"
     ) {
       return (
         <SheetInfomation

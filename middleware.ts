@@ -23,43 +23,43 @@ export default auth(
 
     // Đây là chức năng phần mềm trung gian chính. Nó kiểm tra xem tuyến hiện tại là tuyến xác thực API, tuyến xác thực hay tuyến công cộng.
     // Dựa trên những lần kiểm tra này, nó sẽ quyết định chuyển hướng người dùng sang một tuyến đường khác hay cho phép tiếp tục yêu cầu.
-    const { nextUrl } = req;
-    const isLoggedIn = !!req.auth;
+    // const { nextUrl } = req;
+    // const isLoggedIn = !!req.auth;
 
-    const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
-    const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
-    const isAuthRoute = authRoutes.includes(nextUrl.pathname);
+    // const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
+    // const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
+    // const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
-    if (isApiAuthRoute) {
-      return;
-    }
+    // if (isApiAuthRoute) {
+    //   return;
+    // }
 
-    const isBanned = true;
-    if (isAuthRoute && !isBanned) {
-      if (isLoggedIn) {
-        // Redirect to the default login redirect path
-        return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
-      }
-      // Allow unauthenticated users to access auth routes
-      return;
-    }
+    // const isBanned = true;
+    // if (isAuthRoute && !isBanned) {
+    //   if (isLoggedIn) {
+    //     // Redirect to the default login redirect path
+    //     return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
+    //   }
+    //   // Allow unauthenticated users to access auth routes
+    //   return;
+    // }
 
-    if (!isLoggedIn && !isPublicRoute) {
-      let callbackUrl = nextUrl.pathname;
-      if (nextUrl.search) {
-        const params = new URLSearchParams(nextUrl.search);
-        // Kiểm tra xem tham số callbackUrl đã tồn tại trong URL chưa
-        if (!params.has('callbackUrl')) {
-          callbackUrl += nextUrl.search;
-        }
-      }
+    // if (!isLoggedIn && !isPublicRoute) {
+    //   let callbackUrl = nextUrl.pathname;
+    //   if (nextUrl.search) {
+    //     const params = new URLSearchParams(nextUrl.search);
+    //     // Kiểm tra xem tham số callbackUrl đã tồn tại trong URL chưa
+    //     if (!params.has('callbackUrl')) {
+    //       callbackUrl += nextUrl.search;
+    //     }
+    //   }
     
-      const endcodeedCallbackUrl = encodeURIComponent(callbackUrl);
-      return Response.redirect(
-        new URL(`/auth/login?callbackUrl=${endcodeedCallbackUrl}`, nextUrl)
-      );
-    }
-    return;
+    //   const endcodeedCallbackUrl = encodeURIComponent(callbackUrl);
+    //   return Response.redirect(
+    //     new URL(`/auth/login?callbackUrl=${endcodeedCallbackUrl}`, nextUrl)
+    //   );
+    // }
+    // return;
   }
 );
 

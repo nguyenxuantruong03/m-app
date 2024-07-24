@@ -1,7 +1,7 @@
 import { Billboard } from "@/types/type";
 
 interface Imagesaleprops{
-   data: Billboard
+   data: Billboard | null
 }
 const ImageSale:React.FC<Imagesaleprops> = ({data}) => {
     return ( 

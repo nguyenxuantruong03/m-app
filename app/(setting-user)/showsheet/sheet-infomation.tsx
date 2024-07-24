@@ -19,6 +19,7 @@ import FormBio from "../components/form/form-infomation/form-bio";
 import FormDeleteAccount from "../components/form/form-infomation/form-delete-account";
 import FormFavorite from "../components/form/form-infomation/form-favorite";
 import { Favorite } from "@prisma/client";
+import FormAvatarandFrame from "../components/form/form-infomation/form-avatar-frame";
 
 interface SheetInfomationProps {
   name?: string | null;
@@ -42,7 +43,8 @@ interface SheetInfomationProps {
     | "address"
     | "addressother"
     | "email"
-    | "favorite" // Add type to specify the prop to display
+    | "favorite"
+    | "frame" // Add type to specify the prop to display
 }
 
 const SheetInfomation: React.FC<SheetInfomationProps> = ({
@@ -62,6 +64,11 @@ const SheetInfomation: React.FC<SheetInfomationProps> = ({
   const [open, setOpen] = useState(false);
 
   const infoMap = {
+    frame: {
+      title: `Thay đổi khung`,
+      description: `Bạn có thể thay đổi khung tùy thích.`,
+      form: <FormAvatarandFrame />,
+    },
     name: {
       title: `Chỉnh sửa tên: ${name || "Chưa thay đổi"}`,
       description: `Tên sẽ được hiển thị trên trang cá nhân, trong các bình luận và bài viết của bạn.: ${

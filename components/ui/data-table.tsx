@@ -47,7 +47,7 @@ export function DataTable<TData, TValue>({
   onSelect,
   disable,
   open,
-  setOpen
+  setOpen,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -55,9 +55,19 @@ export function DataTable<TData, TValue>({
   const [filteredData, setFilteredData] = useState<TData[]>(data);
   const prevRowSelection = useRef(rowSelection);
 
+  // Add the index column to the columns
+  const indexedColumns = [
+    {
+      id: "index",
+      header: "STT",
+      cell: (info: { row: { index: number } }) => info.row.index + 1,
+    },
+    ...columns,
+  ];
+
   const table = useReactTable({
     data: filteredData,
-    columns,
+    columns: indexedColumns,
     state: {
       columnFilters,
       sorting,
@@ -80,12 +90,11 @@ export function DataTable<TData, TValue>({
     }
   }, [rowSelection, onSelect, table]);
 
-
   const handleDateChange = (dateRange: DateRange | undefined) => {
     if (dateRange?.from && dateRange.to) {
       const filtered = data.filter((item: any) => {
         const itemDate = new Date(item.createdAt);
-        if(dateRange.from && dateRange.to){
+        if (dateRange.from && dateRange.to) {
           return itemDate >= dateRange.from && itemDate <= dateRange.to;
         }
       });
@@ -127,7 +136,7 @@ export function DataTable<TData, TValue>({
             Delete ({Object.keys(rowSelection).length})
           </Button>
         )}
-        <DatePickerWithRange onDateChange={handleDateChange} data={data}/>
+        <DatePickerWithRange onDateChange={handleDateChange} data={data} />
       </div>
       <div className="rounded-md border">
         <Table>

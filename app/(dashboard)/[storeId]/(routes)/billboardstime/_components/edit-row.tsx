@@ -14,15 +14,16 @@ interface EditRowProps {
   data: string;
   label: string;
   id: string;
+  description: string
   imagebillboardtime: { url: string }[];
   isActive: boolean | null;
   timeout: number;
   end: number | null;
   isTimeout: boolean | null;
-  field: "label" | "timeout";
+  field: "label" | "timeout" | "description";
 }
 
-const EditRow: React.FC<EditRowProps> = ({ data, id, imagebillboardtime, isActive, timeout, end, isTimeout, field,label }) => {
+const EditRow: React.FC<EditRowProps> = ({ data, id, imagebillboardtime, isActive, timeout, end, isTimeout, field,label,description }) => {
   const [open, setOpen] = useState(false);
 
   const handleClick = () => {
@@ -33,6 +34,13 @@ const EditRow: React.FC<EditRowProps> = ({ data, id, imagebillboardtime, isActiv
     setOpen(false);
   };
 
+  const getFieldValue = () => {
+    if (field === "label") return label;
+    if (field === "timeout") return timeout;
+    if (field === "description") return description;
+    return data;
+  };
+
   return (
     <>
       <div onClick={handleClick} className={isActive ? 'line-through text-gray-400' : 'hover:underline cursor-pointer'}>
@@ -41,8 +49,8 @@ const EditRow: React.FC<EditRowProps> = ({ data, id, imagebillboardtime, isActiv
       <Sheet open={open} onOpenChange={handleonClose}>
         <SheetContent className="space-y-4">
           <SheetHeader>
-            <SheetTitle>Edit {field === "label" ? `${data}` : `${timeout}`}</SheetTitle>
-            <SheetDescription>Edit an existing {field === "label" ? `${data}` : `${timeout}`}.</SheetDescription>
+          <SheetTitle>Edit {getFieldValue()}</SheetTitle>
+          <SheetDescription>Edit an existing {getFieldValue()}.</SheetDescription>
           </SheetHeader>
           <LabelForm
             data={data}
@@ -53,6 +61,7 @@ const EditRow: React.FC<EditRowProps> = ({ data, id, imagebillboardtime, isActiv
             label={label}
             end={end}
             isTimeout={isTimeout}
+            description={description}
             field={field}
           />
         </SheetContent>

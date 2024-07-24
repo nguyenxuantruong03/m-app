@@ -6,7 +6,7 @@ import {usePathname} from "next/navigation"
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import {menutreecolor} from "@/components/(client)/color/color"
-import { Category } from "@prisma/client";
+import { Category } from "@/types/type";
 interface menuTreeProps{
 data: Category[]
 categories1: Category[]

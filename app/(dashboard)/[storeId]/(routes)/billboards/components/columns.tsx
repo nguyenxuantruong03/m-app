@@ -3,7 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Clock12, Tag } from "lucide-react";
+import { Clock12, MessageCircleMore, Tag } from "lucide-react";
 import { Images as ImageIcon } from "lucide-react";
 import SpanColumn from "@/components/span-column";
 import EditRow from "../_components/edit-row";
@@ -15,6 +15,7 @@ import FormatDate from "@/components/format-Date";
 export type BillboardColumn = {
   id: string;
   label: string;
+  description: string;
   imagebillboard: string[];
   imagebillboardpatch: { url: string }[];
   createdAt: Date;
@@ -58,8 +59,34 @@ export const columns: ColumnDef<BillboardColumn>[] = [
     cell: ({ row }) => (
       <EditRow
         data={row.original.label}
+        label={row.original.label}
         id={row.original.id}
+        description={row.original.description}
         imagebillboard={row.original.imagebillboardpatch}
+        field= "label"
+      />
+    ),
+  },
+  {
+    accessorKey: "description",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Description
+          <MessageCircleMore className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
+    cell: ({ row }) => (
+      <EditRow
+        data={row.original.description}
+        label={row.original.label}
+        id={row.original.id}
+        description={row.original.description}
+        imagebillboard={row.original.imagebillboardpatch}
+        field= "description"
       />
     ),
   },

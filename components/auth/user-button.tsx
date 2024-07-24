@@ -8,6 +8,7 @@ import {
 import {
   Bookmark,
   NotepadText,
+  Package,
   PencilLine,
   Settings,
   User,
@@ -29,8 +30,9 @@ import { utcToZonedTime } from "date-fns-tz";
 import viLocale from "date-fns/locale/vi";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 import { format } from "date-fns";
+import CircleAvatar from "../ui/circle-avatar";
 
-interface AccountItem {
+export interface AccountItem {
   id: string;
   userId: string;
   type: string;
@@ -122,18 +124,14 @@ export const UserButton = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Avatar>
-          {isGitHubOrGoogleUser && avatarImage ? (
-            <AvatarImage src={avatarImage} />
-          ) : avatarImage ? (
-            <AvatarImage src={avatarImage} />
-          ) : (
-            <AvatarFallback className="bg-sky-500">
-              <User className="text-white" />
-            </AvatarFallback>
-          )}
-        </Avatar>
+        <CircleAvatar
+          srcFrame={userId?.frameAvatar}
+          classAvatar="z-10"
+          isCitizen={userId?.isCitizen}
+          role={userId?.role}
+        />
       </DropdownMenuTrigger>
+
       <DropdownMenuContent className="z-[9999] p-5">
         <div className="flex items-center space-x-3">
           <Avatar>
@@ -198,6 +196,19 @@ export const UserButton = () => {
         <DropdownMenuItem className="flex items-center cursor-pointer">
           <ThemeToggleDrakorLight dropdown={false} />
         </DropdownMenuItem>
+
+        <DropdownMenuItem className="my-2 flex items-center">
+          <Package className="h-5 w-5 mr-2" /> Sản phẩm đã mua
+        </DropdownMenuItem>
+
+        <DropdownMenuItem className="my-2 flex items-center">
+          <Package className="h-5 w-5 mr-2" /> Đơn vận chuyển
+        </DropdownMenuItem>
+
+        <DropdownMenuItem className="my-2 flex items-center">
+          <Package className="h-5 w-5 mr-2" /> Kho voucher
+        </DropdownMenuItem>
+        <Separator />
 
         <Separator />
         <Link href="/setting-profile">

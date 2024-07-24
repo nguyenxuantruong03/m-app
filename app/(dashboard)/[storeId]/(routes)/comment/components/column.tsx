@@ -21,7 +21,6 @@ export type CommentColumn = {
   email: string | null;
   role: string | null;
   rating: number;
-  nameproduct: string;
   comment: string;
   description: string[];
   createdAt: Date;
@@ -88,19 +87,6 @@ export const columns: ColumnDef<CommentColumn>[] = [
       );
     },
     cell: ({ row }) => convertToStars(row.original.rating),
-  },
-  {
-    accessorKey: "nameproduct",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Name product
-          <Package className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
   },
   {
     accessorKey: "comment",

@@ -56,10 +56,10 @@ export const ShowSystem: React.FC<ShowSystemProps> = ({
       description="Thông tin người dùng trong hệ thống"
       isOpen={isOpen}
       onClose={onClose}
-      textCenter={true}
-      maxWidth="2xl"
+      textCenter={false}
+      maxWidth="6xl"
     >
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto md:w-2/6 lg:w-[45%] xl:w-8/12 2xl:w-11/12">
         <table className="w-full whitespace-no-wrap">
           <thead>
             <tr className="bg-blue-500">

@@ -1,16 +1,5 @@
 import {
   Product,
-  Product1,
-  Product10,
-  Product11,
-  Product2,
-  Product3,
-  Product4,
-  Product5,
-  Product6,
-  Product7,
-  Product8,
-  Product9,
 } from "@/types/type";
 import toast from "react-hot-toast";
 import { create } from "zustand";
@@ -18,17 +7,6 @@ import { persist, createJSONStorage } from "zustand/middleware";
 
 export type ProductUnion =
   | Product
-  | Product1
-  | Product2
-  | Product3
-  | Product4
-  | Product5
-  | Product6
-  | Product7
-  | Product8
-  | Product9
-  | Product10
-  | Product11;
 
 interface LikeStore {
   items: ProductUnion[];
@@ -78,16 +56,16 @@ const useLike = create(
         const { items, sortType } = get();
         // Implement sorting logic based on the sortType
         if (sortType === "priceHighToLow") {
-          return [...items.sort((a, b) => b.price - a.price)];
+          return [...items.sort((a, b) => b.productdetail.price1 - a.productdetail.price1)];
         } else if (sortType === "priceLowToHigh") {
-          return [...items.sort((a, b) => a.price - b.price)];
+          return [...items.sort((a, b) => a.productdetail.price1 - b.productdetail.price1)];
         } else if (sortType === "nameAToZ") {
           return [...items.sort((a, b) => a.name.localeCompare(b.name))];
         } else if (sortType === "nameZToA") {
           return [...items.sort((a, b) => b.name.localeCompare(a.name))];
         } else if (sortType === "percentPromotionHighToLow") {
           return [
-            ...items.sort((a, b) => b.percentpromotion - a.percentpromotion),
+            ...items.sort((a, b) => b.productdetail.percentpromotion1 - a.productdetail.percentpromotion1),
           ];
         } else {
           return [...items];

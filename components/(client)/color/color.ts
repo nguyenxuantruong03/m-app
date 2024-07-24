@@ -47,7 +47,7 @@ export const mainnavcolor={
   bgroundedmd:"bg-[#e53350] px-1 m-0  md:px-2  rounded-lg md:m-1.5",
   bghover: "rounded-lg p-2 hover:bg-[#e53350] ",
   bg_dang_nhap:"bg-[#e53350]  px-2 py-1  rounded-lg ",
-  bghover_gio_hang:" rounded-lg p-4 md:p-2 md:hover:bg-[#e53350] ",
+  bghover_gio_hang:" rounded-lg p-2 md:p-2 md:hover:bg-[#e53350] ",
   bg_list:"bg-[#e53350] p-2 rounded-lg cursor-pointer pr-2.5"
 }
 

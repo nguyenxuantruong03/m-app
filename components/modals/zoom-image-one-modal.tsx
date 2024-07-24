@@ -9,8 +9,8 @@ interface ZoomModalProps {
   isOpen: boolean;
   onClose: () => void;
   imageUrl: string;
-  createdAt: string | null;
-  email: string | null;
+  createdAt: string | null | undefined;
+  email: string | null | undefined;
 }
 
 export const ZoomImageAttendanceModal: React.FC<ZoomModalProps> = ({
@@ -146,8 +146,8 @@ export const ZoomImageAttendanceModal: React.FC<ZoomModalProps> = ({
 
   return (
     <Modal
-        title={`Người dùng: ${email}`}
-        description={`Tài khoản đã thành lập ngày - ${createdAt}`}
+        title={email ? `Người dùng: ${email}` : undefined}
+        description={createdAt ? `Tài khoản đã thành lập ngày - ${createdAt}` : undefined}
         isOpen={isOpen}
         onClose={onClose}
         maxWidth="4xl"

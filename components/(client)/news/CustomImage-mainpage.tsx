@@ -11,7 +11,7 @@ export default function CustomImageMainPage({ src, alt, priority }: Props) {
     const prty = priority ? true : false
     return (
 
-        <div className="w-full h-full my-2 ">
+        <div className="w-full h-full my-2 flex justify-center">
             <Image
                 className="rounded-lg"
                 src={src}

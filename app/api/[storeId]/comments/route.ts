@@ -3,22 +3,42 @@ import { currentUser } from '@/lib/auth';
 import prismadb from '@/lib/prismadb';
 import { NextResponse } from 'next/server';
 
-export async function POST(req: Request,
-  { params }: { params: { storeId: string } }) {
+export async function POST(req: Request) {
     const body = await req.json();
-    const { rating, comment, commenter,nameproduct,imageUrl  } = body;
+    const { rating, comment,productId  } = body;
+    if (!rating) {
+      return new NextResponse(
+        JSON.stringify({ error: "Rating is required!" }),
+        { status: 400 }
+      );
+    }
+    if (!productId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Product is required!" }),
+        { status: 400 }
+      );
+    }
+    if (!comment) {
+      return new NextResponse(
+        JSON.stringify({ error: "Comment is required!" }),
+        { status: 400 }
+      );
+    }
     try {
       const userId = await currentUser();
-    if (!userId) {
+    if (!userId?.id) {
       return new NextResponse("Unauthenticated", { status: 403 });
     }
       const newComment = await prismadb.comment.create({
         data: {
           rating,
           comment,
-          nameproduct,
+          productId,
           userId: userId.id || "",
-          storeId: params.storeId,
+        },
+        include: {
+          user: true,
+          product: true
         },
       });
       return NextResponse.json(newComment);
@@ -35,20 +55,26 @@ export async function DELETE(req: Request,
     const userId = await currentUser();
     const body = await req.json();
     const { id  } = body;
-    if (!userId) {
+    if (!userId?.id) {
       return new NextResponse("Unauthenticated", { status: 403 });
     }
 
     const commentById = await prismadb.comment.findFirst({
       where: {
         userId: userId.id || "",
-        storeId: params.storeId,
       }
     });
 
     if (!commentById) {
       return new NextResponse("Unauthorized", { status: 405 });
     }
+
+    await prismadb.emoji.deleteMany({
+      where: {
+        commentId: id,
+      },
+    });
+
 
     await prismadb.responseComment.deleteMany({
       where: {
@@ -75,9 +101,9 @@ export async function PATCH(req: Request,
   try {
     const userId = await currentUser();
     const body = await req.json();
-    const { id, rating, comment } = body;
+    const { id, rating, comment,changeReview } = body;
 
-    if (!userId) {
+    if (!userId?.id) {
       return new NextResponse("Unauthenticated", { status: 403 });
     }
 
@@ -85,21 +111,19 @@ export async function PATCH(req: Request,
       where: {
         id: id,
         userId: userId.id || "",
-        storeId: params.storeId,
       },
     });
-
-    if (!existingComment) {
-      return new NextResponse("Comment not found or unauthorized", { status: 403 });
-    }
 
     const updatedComment = await prismadb.comment.update({
       where: {
         id: id,
       },
       data: {
-        rating: rating ?? existingComment.rating,
-        comment: comment ?? existingComment.comment,
+        rating: rating ?? existingComment?.rating,
+        comment: comment ?? existingComment?.comment,
+        changeReview: changeReview,
+        totalchange: existingComment?.totalchange != null ? existingComment.totalchange + 1 : 1,
+
       },
     });
 
@@ -116,6 +140,8 @@ export async function GET() {
     const responseComment = await prismadb.comment.findMany({
       include: {
         responsecomment: true,
+        user: true,
+        product:true
       },
     });
     return NextResponse.json(responseComment);

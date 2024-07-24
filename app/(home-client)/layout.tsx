@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`${inter.className}`}>
+    <div className={`${inter.className} bg-white text-slate-900`}>
       <Navbar />
       {children}
       <ScrollButton />

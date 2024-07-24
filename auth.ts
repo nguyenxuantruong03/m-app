@@ -33,8 +33,22 @@ export const {
       now.setHours(now.getHours() + 7);
 
       //Các bước check trước khi đăng nhập bầng  account google,github...
-      //--Bước1--Check người dùng có bị ban
       const existingUser = await getUserById(user.id);
+
+       // --Bước bắt buộc-- Nếu không có nameuser se tự động update
+      const atIndex = existingUser?.email?.indexOf("@");
+      const nameuser = "@" + existingUser?.email?.slice(0, atIndex).toLowerCase();
+      
+      if(!existingUser?.nameuser){
+        await prismadb.user.update({
+          where: { id: existingUser?.id },
+          data: {
+            nameuser: nameuser,
+          },
+        });
+      }
+
+      //--Bước1--Check người dùng có bị ban
       if (existingUser?.ban === true) {
         const banExpiresAt = existingUser.banExpires
           ? new Date(existingUser.banExpires)
@@ -161,6 +175,7 @@ export const {
           where: { id: twoFactorConfirmation.id },
         });
       }
+      
       //--Bước8--Cập nhật lại thời gian mỗi khi đăng nhập
       await prismadb.user.update({
         where: { id: existingUser.id },
@@ -168,6 +183,7 @@ export const {
           lastlogin: now,
         },
       });
+
       return true;
     },
 
@@ -210,6 +226,8 @@ export const {
         session.user.linktiktok = token.linktiktok as string;
         session.user.linkwebsite = token.linkwebsite as string;
         session.user.linkother = token.linkother as string;
+        session.user.frameAvatar = token.frameAvatar as string;
+        session.user.isCitizen = token.isCitizen as boolean;
         session.user.createdAt = token.createdAt as Date;
         const existingUser = await getUserById(token.sub);
         if (existingUser) {
@@ -268,6 +286,8 @@ export const {
       token.phonenumber = existingUser.phonenumber;
       token.dateofbirth = existingUser.dateofbirth;
       token.favorite = existingUser.favorite;
+      token.frameAvatar = existingUser.frameAvatar;
+      token.isCitizen = existingUser.isCitizen;
       token.createdAt = existingUser.createdAt;
       if (existingUser.socialLink) {
         token.linkyoutube = existingUser.socialLink.linkyoutube;

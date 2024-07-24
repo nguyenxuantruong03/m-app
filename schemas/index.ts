@@ -98,6 +98,11 @@ export const SettingSchema = z
         .string()
         .min(1, { message: "Vui lòng chon 1 giới tính." })
     ),
+    frame: z.optional(
+      z
+        .string()
+        .min(1, { message: "Vui lòng chọn 1 khung ảnh." })
+    ),
     phonenumber: z.optional(
       z.string().refine((value) => /^[0-9]+$/.test(value), {
         message: "Vui lòng nhập số điện thoại hợp lệ chỉ có số.",

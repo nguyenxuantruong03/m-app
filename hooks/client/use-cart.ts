@@ -1,9 +1,10 @@
-import { Product,Product1,Product10,Product11,Product2,Product3,Product4,Product5,Product6,Product7,Product8,Product9 } from "@/types/type";
+import { currentUser } from "@/lib/auth";
+import { Product } from "@/types/type";
 import toast from "react-hot-toast";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-export type ProductUnion =  Product | Product1 | Product2 | Product3 |Product4 |Product5| Product6 | Product7 |Product8 |Product9 | Product10 | Product11;
+export type ProductUnion =  Product
 
 
 interface CartStore {
@@ -27,7 +28,7 @@ const useCart = create(
   persist<CartStore>(
     (set, get) => ({
       items: [],
-       userId: null,
+      userId: null,
       selectedItems: [], // Initialize with an empty array
       selectAll: false, // Initialize as false
       selectedWarranties: {},
@@ -74,21 +75,22 @@ const useCart = create(
         });
       },
       
-      addItem: (data: ProductUnion, quantity: number,userId:any) => {
-        const currentUserCart = get().items.filter(item => item.userId === userId);
+      addItem: async (data: ProductUnion, quantity: number,userId:any) => {
+        const currentUsser = await currentUser()
+        const currentUserCart = get().items.filter(item => currentUsser?.id === userId);
         const existingItem = currentUserCart.find((item) => item.id === data.id);
 
     
         if (existingItem) {
           // Update the quantity of the existing item
           const updatedItems = currentUserCart.map((item) =>
-            item.id === existingItem.id ? { ...item, quantity: item.quantity + quantity } : item
+            item.id === existingItem.id ? { ...item, quantity: item.productdetail.quantity1 + quantity } : item
           );
           set({ items: updatedItems });
           toast.success("Sản phẩm đã được cập nhật số lượng trong giỏ hàng.");
         } else {
           // Add the new item to the cart
-          set({ items: [...get().items, { ...data, quantity }] });
+          set({ items: [...get().items, { ...data }] });
           toast.success("Sản phẩm đã thêm vào giỏ hàng.");
         }
       },

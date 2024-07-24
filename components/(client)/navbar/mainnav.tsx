@@ -2,7 +2,6 @@
 import Link from "next/link";
 import {
   AlignJustify,
-  UserCircle2,
   ShoppingBag,
   Gift,
   Coins,
@@ -11,6 +10,10 @@ import {
   Bell,
   CircleUser,
   UserRoundPlus,
+  Blocks,
+  TicketPercent,
+  PackageSearch,
+  ShoppingCart,
 } from "lucide-react";
 import {
   Tooltip,
@@ -18,10 +21,18 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname} from "next/navigation";
 // import useCart from "@/hooks/use-cart";
-import Menu from "@/components/(client)/navbar/menu-list";
+import Menu from "@/components/(client)/slider-item/menu";
 import axios from "axios";
 import { mainnavcolor } from "@/components/(client)/color/color";
 import Image from "next/image";
@@ -31,11 +42,12 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { UserButton } from "@/components/auth/user-button";
 import useLike from "@/hooks/client/use-like";
 import useCart from "@/hooks/client/use-cart";
+import { cn } from "@/lib/utils";
 
 const MainNav = () => {
+  const pathname = usePathname();
   const [isMounted, setIsMounted] = useState(false);
   const userId = useCurrentUser();
-  const router = useRouter();
   const cart = useCart();
   const like = useLike();
   //List-onClick-onBlur click mở blur ra ngoài thì tắt đi
@@ -142,7 +154,7 @@ const MainNav = () => {
       {/* Menu */}
       {isOpen && (
         <div className="absolute top-[-40px] z-40 " ref={menuRef}>
-          <Menu />
+          <Menu showCategories={true}/>
         </div>
       )}
 
@@ -159,55 +171,166 @@ const MainNav = () => {
           </div>
         </div>
       </div>
-
-      <div className="flex md:hidden">
-        <button onClick={() => router.push("/like-product")}>
-          <div className={mainnavcolor.bghover_gio_hang}>
-            <div className="flex flex-col md:flex-row justify-center  items-center relative">
-              <div className="basis-1/2 md:flex gap-2">
-                <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center ">
-                  <Heart className="w-6 h-6 text-white" />
-                  <span className="w-5 h-5 absolute bg-[#e53350] rounded-full left-[10px] -top-[5px] md:top-0 bg-opacity-90 -mt[1px] shadow-lg">
-                    <p className="text-[0.75rem] m-auto text-white font-semibold">
-                      {like.items.length}
-                    </p>
-                  </span>
-                </div>
-                <div className="basis-2/3 hidden md:block">
-                  <div className="text-xs flex gap-4 text-white">Thả</div>
-                  <div className="text-xs text-white">Tim</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </button>
-      </div>
-
+      
       <div className="ml-1.5 md:ml-0">
         <SearchPage />
       </div>
 
-      <Link href="/spinlucky" className=" hidden md:block">
-        <div className={mainnavcolor.bghover}>
-          <div className="flex flex-col md:flex-row justify-center  items-center">
-            <div className="basis-1/2 md:flex gap-2">
-              <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center relative">
-                <Gift className="w-6 h-6 text-white" />
-                <span className="w-5 h-5 absolute bg-[#e53350] rounded-full  left-[10px] top-0 -mt[1px] shadow-lg">
-                  <p className="text-[0.75rem] text-center font-semibold text-white">
-                    {rotation}{" "}
-                  </p>
-                </span>
+      <NavigationMenu className="hidden md:block">
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger>
+              <div>
+                <div className="flex flex-col md:flex-row justify-center  items-center relative">
+                  <div className="basis-1/2 md:flex gap-2">
+                    <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center ">
+                      <Blocks className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="basis-2/3 hidden md:block">
+                      <div className="text-xs flex gap-4 text-white">Tiện</div>
+                      <div className="text-xs text-white">ích</div>
+                    </div>
+                  </div>
+                </div>
               </div>
+            </NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                <li className="row-span-3">
+                  <NavigationMenuLink asChild>
+                    <a
+                      className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                      href="/"
+                    >
+                      <ShoppingCart className="h-6 w-6" />
+                      <div className="mb-2 mt-4 text-lg font-medium">
+                        Mua sắm thỏa ga
+                      </div>
+                      <p className="text-sm leading-tight text-muted-foreground">
+                        Việc mua sắm sẽ tiết kiệm nhiều chi phí được giảm giá qua từng khung giờ.
+                      </p>
+                    </a>
+                  </NavigationMenuLink>
+                </li>
 
-              <div className="basis-2/3">
-                <div className="text-xs flex gap-4 text-white">Vòng quay</div>
-                <div className="text-xs w-20 text-white">May Mắn</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Link>
+                <>
+                  <Link href="/spinlucky" className=" hidden md:block">
+                    <div className={mainnavcolor.bghover}>
+                      <div className="flex flex-col md:flex-row items-center">
+                        <div className="basis-1/2 md:flex gap-2">
+                          <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center relative">
+                            <Gift className="w-6 h-6 text-white" />
+                            <span className="w-5 h-5 absolute bg-[#e53350] rounded-full  left-[10px] top-0 -mt[1px] shadow-lg">
+                              <p className="text-[0.75rem] text-center font-semibold text-white">
+                                {rotation}{" "}
+                              </p>
+                            </span>
+                          </div>
+                          <div className="basis-2/3">
+                            <div
+                              className={cn(
+                                "text-xs w-20",
+                                pathname === `/spinlucky`
+                                  ? "text-sky-500"
+                                  : "text-white"
+                              )}
+                            >
+                              Vòng quay
+                            </div>
+                            <div
+                              className={cn(
+                                "text-xs w-20",
+                                pathname === `/spinlucky`
+                                  ? "text-sky-500"
+                                  : "text-white"
+                              )}
+                            >
+                              May Mắn
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+
+                  <Link href="/ticket" className=" hidden md:block">
+                    <div className={mainnavcolor.bghover}>
+                      <div className="flex flex-col md:flex-row items-center">
+                        <div className="basis-1/2 md:flex gap-2">
+                          <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center relative">
+                            <TicketPercent className="w-6 h-6 text-white" />
+                            {/* <span className="w-5 h-5 absolute bg-[#e53350] rounded-full  left-[10px] top-0 -mt[1px] shadow-lg">
+                            <p className="text-[0.75rem] text-center font-semibold text-white">
+                              {rotation}{" "}
+                            </p>
+                          </span> */}
+                          </div>
+                          <div className="basis-2/3 text-red-500">
+                            <div
+                              className={cn(
+                                "text-xs w-20",
+                                pathname === `/ticket`
+                                  ? "text-sky-500"
+                                  : "text-white"
+                              )}
+                            >
+                              Mã giảm giá
+                            </div>
+                            <div
+                              className={cn(
+                                "text-xs w-20",
+                                pathname === `/ticket`
+                                  ? "text-sky-500"
+                                  : "text-white"
+                              )}
+                            >
+                              siêu sốc
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+
+                  <Link href="/shippingcode" className=" hidden md:block">
+                    <div className={mainnavcolor.bghover}>
+                      <div className="flex flex-col md:flex-row items-center">
+                        <div className="basis-1/2 md:flex gap-2">
+                          <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center relative">
+                            <PackageSearch className="w-6 h-6 text-white" />
+                          </div>
+                          <div className="basis-2/3 text-red-500">
+                            <div
+                              className={cn(
+                                "text-xs flex gap-4 text-white",
+                                pathname === `/shippingcode`
+                                  ? "text-sky-500"
+                                  : "text-white"
+                              )}
+                            >
+                              Mã vận
+                            </div>
+                            <div
+                              className={cn(
+                                "text-xs w-20",
+                                pathname === `/shippingcode`
+                                  ? "text-sky-500"
+                                  : "text-white"
+                              )}
+                            >
+                              chuyển hàng
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                </>
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
 
       <Link href="/game" className="hidden xl:block">
         <div className={mainnavcolor.bghover}>
@@ -225,8 +348,8 @@ const MainNav = () => {
         </div>
       </Link>
 
-      <div className="hidden md:flex">
-        <button onClick={() => router.push("/like-product")}>
+      <Link href="/like-product" className="hidden md:flex">
+        <button>
           <div className={mainnavcolor.bghover_gio_hang}>
             <div className="flex flex-col md:flex-row justify-center  items-center relative">
               <div className="basis-1/2 md:flex gap-2">
@@ -246,9 +369,10 @@ const MainNav = () => {
             </div>
           </div>
         </button>
-      </div>
+      </Link>
 
-      <button onClick={() => router.push("/cart")}>
+      <Link href="/cart">
+      <button>
         <div className={mainnavcolor.bghover_gio_hang}>
           <div className="flex flex-col md:flex-row justify-center  items-center relative">
             <div className="basis-1/2 md:flex gap-2">
@@ -268,6 +392,7 @@ const MainNav = () => {
           </div>
         </div>
       </button>
+      </Link>
 
       <div className="flex items-center justify-between">
         {userId?.id && userId?.email ? (
@@ -275,21 +400,21 @@ const MainNav = () => {
             <div className="p-2 rounded-full hover:bg-gray-300 hover:bg-opacity-50 cursor-pointer">
               <Bell className="size-5 text-amber-400" />
             </div>
-            <div className={mainnavcolor.bghover}>
+            <div>
               <UserButton />
             </div>
           </div>
-          ) : (
+        ) : (
           <div className="flex items-center justify-end md:flex-1">
             <Link href="/auth/login">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <div  className="whitespace-nowrap p-1 lg:p-2 border-slate-300 shadow-sm rounded-md border-2 2xl:text-base lg:text-sm font-medium text-white hover:border-slate-900 dark:hover:text-slate-900">
-                    <span className="flex items-center 2xl:text-base lg:text-sm">
-                      <CircleUser className="size-3 lg:h-5 lg:w-5 2xl:size-4 md:mr-1" />
-                      <span className="hidden md:block"> Login</span>
-                    </span>
+                    <div className="whitespace-nowrap p-1 lg:p-2 border-slate-300 shadow-sm rounded-md border-2 2xl:text-base lg:text-sm font-medium text-white hover:border-slate-900 dark:hover:text-slate-900">
+                      <span className="flex items-center 2xl:text-base lg:text-sm">
+                        <CircleUser className="size-3 lg:h-5 lg:w-5 2xl:size-4 md:mr-1" />
+                        <span className="hidden md:block"> Login</span>
+                      </span>
                     </div>
                   </TooltipTrigger>
                   <TooltipContent side="bottom">
@@ -303,10 +428,10 @@ const MainNav = () => {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <div className="whitespace-nowrap inline-flex items-center justify-center p-1 lg:p-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700">
-                    <span className="flex items-center 2xl:text-base lg:text-sm">
-                      <UserRoundPlus className="size-3 lg:h-5 lg:w-5 2xl:size-4 md:mr-1" />
-                      <span className="hidden md:block"> Register</span>
-                    </span>
+                      <span className="flex items-center 2xl:text-base lg:text-sm">
+                        <UserRoundPlus className="size-3 lg:h-5 lg:w-5 2xl:size-4 md:mr-1" />
+                        <span className="hidden md:block"> Register</span>
+                      </span>
                     </div>
                   </TooltipTrigger>
                   <TooltipContent side="bottom">

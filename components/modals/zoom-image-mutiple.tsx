@@ -164,7 +164,7 @@ export const ZoomImageModal: React.FC<ZoomModalProps> = ({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} maxWidth="4xl" textCenter={true}>
+    <Modal isOpen={isOpen} onClose={onClose} maxWidth="[60rem]" textCenter={true}>
       <div className={`flex items-center justify-center space-x-3`}>
         <Button onClick={handlePrev}>
           <ChevronLeft className="size-5" />

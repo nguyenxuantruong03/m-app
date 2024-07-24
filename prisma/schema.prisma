@@ -32,7 +32,6 @@ model Store {
   updatedAt      DateTime         @updatedAt
   sentEmailUser  SentEmailUser[]  @relation("StoreToSentEmailUser")
   caculateSalary CaculateSalary[] @relation("StoreCaculateSalary")
-  comment        Comment[]        @relation("StoreToComment")
   wheelspin      WheelSpin[]      @relation("StoreToWheelSpin")
   system         System[]         @relation("StoreToSystem")
   favorite       Favorite[]       @relation("StoreToFavorite")
@@ -43,6 +42,7 @@ model Billboard {
   storeId        String
   store          Store            @relation("StoreToBillboard", fields: [storeId], references: [id])
   label          String
+  description    String
   imagebillboard ImageBillboard[]
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
@@ -55,10 +55,11 @@ model ImageBillboard {
 
   billboardId String
   billboard   Billboard @relation(fields: [billboardId], references: [id], onDelete: Cascade)
-
-  url       String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  label       String?
+  description String?
+  url         String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@index([billboardId])
 }
@@ -68,6 +69,7 @@ model BillboardTime {
   storeId            String
   store              Store                @relation("StoreToBillboardTime", fields: [storeId], references: [id])
   label              String
+  description        String
   isTimeout          Boolean?             @default(false)
   end                Int?
   timeout            Int
@@ -83,10 +85,11 @@ model ImageBillboardTime {
 
   billboardTimeId String
   billboard       BillboardTime @relation(fields: [billboardTimeId], references: [id], onDelete: Cascade)
-
-  url       String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  label           String?
+  description     String?
+  url             String
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
   @@index([billboardTimeId])
 }
@@ -316,6 +319,9 @@ model Product {
   images               Image[]
   imagesalientfeatures Imagesalientfeatures[]
   orderItems           OrderItem[]
+  comment              Comment[]
+  responsecomment      ResponseComment[]
+  emoji                Emoji[]
   // CheckoutCashItem            CheckoutcashItem[]
   createdAt            DateTime               @default(now())
   updatedAt            DateTime               @updatedAt
@@ -517,17 +523,20 @@ enum WorkingTime {
 }
 
 model User {
-  id                       String                 @id @default(cuid())
-  name                     String?
-  nameuser                 String?
-  favorite                 String[]
-  bio                      String?
-  email                    String?                @unique
-  address                  String?
-  addressother             String?
-  emailVerified            DateTime?
-  image                    String?
-  imageCredential          String[]
+  id              String    @id @default(cuid())
+  name            String?
+  nameuser        String?
+  favorite        String[]
+  bio             String?
+  email           String?   @unique
+  address         String?
+  addressother    String?
+  emailVerified   DateTime?
+  image           String?
+  imageCredential String[]
+  timeChangeImage DateTime?
+  frameAvatar     String?
+
   password                 Password[]
   lastlogin                DateTime?
   //Ban user
@@ -589,6 +598,7 @@ model User {
   ResponseComment          ResponseComment[]
   WheelSpin                WheelSpin[]
   deviceInfo               DeviceInfo[]
+  emoji                    Emoji[]
   createdAt                DateTime               @default(now())
   updatedAt                DateTime               @updatedAt
 }
@@ -728,7 +738,7 @@ model DeviceInfo {
   os          String[]
   fullModel   String?
   ua          String?
-  limitDevice Int?     @default(2)
+  limitDevice Int?     @default(10)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -775,32 +785,61 @@ model CaculateSalary {
 
 model Comment {
   id              String            @id @default(cuid())
-  storeId         String
-  store           Store             @relation("StoreToComment", fields: [storeId], references: [id])
   userId          String
   user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   rating          Int
   comment         String
-  nameproduct     String
   responsecomment ResponseComment[]
+  emoji           Emoji[]
+  changeReview    Boolean?
+  totalchange     Int?              @default(0)
+  productId       String
+  product         Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 
-  @@index([storeId])
+  @@index([productId])
   @@index([userId])
 }
 
 model ResponseComment {
-  id          String   @id @default(cuid())
-  commentId   String
-  comment     Comment  @relation(fields: [commentId], references: [id])
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  description String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String   @id @default(cuid())
+  commentId    String
+  comment      Comment  @relation(fields: [commentId], references: [id])
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId    String
+  product      Product  @relation(fields: [productId], references: [id])
+  description  String
+  changeReview Boolean?
+  totalchange  Int?     @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@index([commentId])
+  @@index([productId])
+  @@index([userId])
+}
+
+model Emoji {
+  id               String   @id @default(cuid())
+  commentId        String
+  comment          Comment  @relation(fields: [commentId], references: [id])
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId        String
+  product          Product  @relation(fields: [productId], references: [id])
+  emoji            String
+  emojilengthLove Int      @default(0)
+  emojilengthHaha  Int      @default(0)
+  emojilengthWow   Int      @default(0)
+  emojilengthAngry Int      @default(0)
+  emojilengthLike  Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([commentId])
+  @@index([productId])
   @@index([userId])
 }
 

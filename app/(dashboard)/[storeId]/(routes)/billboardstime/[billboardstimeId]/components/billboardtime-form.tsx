@@ -32,6 +32,7 @@ const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 
 const formSchema = z.object({
   label: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
+  description: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
   timeout: z.coerce.number().min(10, { message: "Nhập ít nhất tối thiểu 10." }),
   imagebillboardtime: z.object({ url: z.string() }).array(),
 });
@@ -63,6 +64,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
       label: "",
+      description: "",
       timeout: 0 || undefined,
       imagebillboardtime: [],
     },
@@ -317,6 +319,27 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                     <Input
                       disabled={loading}
                       placeholder="Enter label ..."
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Mô tả <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Hãy đặt tên phù hợp với tất cả ảnh trên." />
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      placeholder="Enter mô tả ..."
                       {...field}
                     />
                   </FormControl>

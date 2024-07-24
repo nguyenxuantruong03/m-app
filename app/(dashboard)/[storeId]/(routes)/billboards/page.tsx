@@ -25,6 +25,7 @@ const BillboardsPage = async ({ params }: { params: { storeId: string } }) => {
   const formattedBillboards: BillboardColumn[] = billboards.map((item) => ({
     id: item.id,
     label: item.label,
+    description: item.description,
     imagebillboard:item.imagebillboard.map((item) =>item.url),
     imagebillboardpatch: item.imagebillboard,
     createdAt: item.createdAt,

@@ -18,24 +18,37 @@ import { useState } from "react";
 
 interface LabelFormPorps {
   data: string;
+  description: string;
   id: string;
+  label: string;
+  field: string;
   imagebillboard: { url: string }[];
   setOpen: (open: boolean) => void;
 }
 
 const formSchema = z.object({
   label: z.string().min(2, { message: "Nhập ít nhất 2 ký tự." }),
+  description: z.string().min(2, { message: "Nhập ít nhất 2 ký tự." }),
   imagebillboard: z.object({ url: z.string() }).array(),
 });
 type FormValues = z.input<typeof formSchema>;
 
-const LabelForm: React.FC<LabelFormPorps> = ({ data, id, imagebillboard,setOpen }) => {
+const LabelForm: React.FC<LabelFormPorps> = ({
+  data,
+  id,
+  imagebillboard,
+  setOpen,
+  description,
+  field,
+  label
+}) => {
   const params = useParams();
   const [loading, setLoading] = useState(false);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      label: data || "",
+      label: label || "",
+      description: description || "",
       imagebillboard: imagebillboard || [],
     },
   });
@@ -45,7 +58,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({ data, id, imagebillboard,setOpen 
     try {
       await axios.patch(`/api/${params.storeId}/billboards/${id}`, datas);
       setLoading(false);
-      setOpen(false)
+      setOpen(false);
       toast.success("Cập nhật thành công!");
     } catch (error: unknown) {
       if (
@@ -69,25 +82,49 @@ const LabelForm: React.FC<LabelFormPorps> = ({ data, id, imagebillboard,setOpen 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
-        <FormField
-          control={form.control}
-          name="label"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                Tên sản phẩm <span className="text-red-600 pl-1">(*)</span>
-              </FormLabel>
-              <FormControl>
-                <Input
-                  disabled={loading}
-                  placeholder="Nhập tên ..."
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {field === "label" && (
+          <FormField
+            control={form.control}
+            name="label"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  Tên sản phẩm <span className="text-red-600 pl-1">(*)</span>
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    disabled={loading}
+                    placeholder="Nhập tên ..."
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
+        {field === "description" && (
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  Mô tả <span className="text-red-600 pl-1">(*)</span>
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    disabled={loading}
+                    placeholder="Nhập mô tả ..."
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <Button disabled={loading} className="ml-auto" type="submit">
           Save Change

@@ -24,7 +24,6 @@ const Comment = async () => {
     role: item.user.role,
     rating: item.rating,
     comment: item.comment,
-    nameproduct: item.nameproduct,
     description: item.responsecomment.map((item)=> item.description),
     createdAt: item.createdAt,
   }));

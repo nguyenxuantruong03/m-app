@@ -8,7 +8,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Ban, Lock } from "lucide-react";
+import { MoreHorizontal, Ban, Lock, ShieldCheck, ShieldOff } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -103,6 +103,94 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       setLoading(false);
     }
   };
+
+  const OpenCitizen = async () => {
+    try {
+      setLoading(true);
+      const promise = axios.post(`/api/${params.storeId}/settingusers/isCitizen`, {
+        userId: data.id,
+      });
+      await toast.promise(
+        promise.then(() => {
+          return (
+            <p>
+              Xác thực đầy đủ:{" "}
+              <span className="font-bold">
+                {data.email} - <span className="font-bold">{data.name}</span>
+              </span>
+              .
+            </p>
+          );
+        }),
+        {
+          loading: "Updating Citizen user...",
+          success: (message) => {
+            router.refresh();
+            return message;
+          },
+          error: (error: unknown) => {
+            if (
+              (error as { response?: { data?: { error?: string } } }).response &&
+              (error as { response: { data?: { error?: string } } }).response.data &&
+              (error as { response: { data: { error?: string } } }).response.data.error
+            ) {
+              return (error as { response: { data: { error: string } } }).response.data.error;
+            } else {
+              return "Unban user Error.";
+            }
+          },
+        }
+      );
+    } catch (error) {
+      toast.error("Đã xảy ra lỗi khi cấm người dùng.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const UnCitizen = async () => {
+    try {
+      setLoading(true);
+      const promise = axios.patch(`/api/${params.storeId}/settingusers/isCitizen`, {
+        userId: data.id,
+      });
+      await toast.promise(
+        promise.then(() => {
+          return (
+            <p>
+              Xóa xác thực:{" "}
+              <span className="font-bold">
+                {data.email} - <span className="font-bold">{data.name}</span>
+              </span>
+              .
+            </p>
+          );
+        }),
+        {
+          loading: "Updating Citizen user...",
+          success: (message) => {
+            router.refresh();
+            return message;
+          },
+          error: (error: unknown) => {
+            if (
+              (error as { response?: { data?: { error?: string } } }).response &&
+              (error as { response: { data?: { error?: string } } }).response.data &&
+              (error as { response: { data: { error?: string } } }).response.data.error
+            ) {
+              return (error as { response: { data: { error: string } } }).response.data.error;
+            } else {
+              return "Unban user Error.";
+            }
+          },
+        }
+      );
+    } catch (error) {
+      toast.error("Đã xảy ra lỗi khi cấm người dùng.");
+    } finally {
+      setLoading(false);
+    }
+  };
   
   return (
     <>
@@ -140,6 +228,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuItem onClick={UnBanUser}>
             <KeyRound className="h-4 w-4 mr-2" />
             UnBan
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={OpenCitizen}>
+            <ShieldCheck className="h-4 w-4 mr-2" />
+            Xác thực đầy đủ
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={UnCitizen}>
+            <ShieldOff className="h-4 w-4 mr-2" />
+            Xóa xác thực
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

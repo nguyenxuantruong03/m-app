@@ -192,6 +192,25 @@ export async function GET(
         isArchived: false,
         productdetailId
       },
+      include:{
+        productdetail: {
+          include: {
+            category: true,
+            color1: true,
+            color2: true,
+            color3: true,
+            color4: true,
+            color5: true,
+            size1: true,
+            size2: true,
+            size3: true,
+            size4: true,
+            size5: true,
+          }
+        },
+        imagesalientfeatures: true,
+        images: true
+      }
     });
 
     return NextResponse.json(product);

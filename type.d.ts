@@ -5,6 +5,7 @@ declare module "canvas-confetti";
 declare module "react-mentions";
 declare module "react-sound";
 declare module "lodash";
+declare module "react-helmet";
 declare module "react-chrome-dino" {
   import React from "react";
 

@@ -81,7 +81,7 @@ const NavbarMultiple = () => {
       {/* This example requires Tailwind CSS v2.0+ */}
       <div className="fixed dark:bg-slate-200 bg-slate-900 w-full top-0 z-[999]">
         <div className="mx-auto px-2 2xl:px-5 lg:px-2 sm:px-4">
-          <div className="flex justify-between items-center py-6">
+          <div className="flex justify-between items-center py-2">
             <div className="flex justify-start">
               <Link href="/">
                 <span className="sr-only">Workflow</span>
@@ -139,7 +139,16 @@ const NavbarMultiple = () => {
                               title={route.label}
                               icon={route.icon}
                             >
-                              {route.content}
+                              <span
+                                className={cn(
+                                  "text-md font-medium transition-colors hover:text-primary",
+                                  route.active
+                                    ? "text-sky-500"
+                                    : "text-muted-foreground"
+                                )}
+                              >
+                                {route.content}
+                              </span>
                             </ListItem>
                           </>
                         ))}
@@ -191,7 +200,16 @@ const NavbarMultiple = () => {
                               title={datastatistic.label}
                               icon={datastatistic.icon}
                             >
-                              {datastatistic.content}
+                              <span
+                                className={cn(
+                                  "text-md font-medium transition-colors hover:text-primary",
+                                  datastatistic.active
+                                    ? "text-sky-500"
+                                    : "text-muted-foreground"
+                                )}
+                              >
+                                {datastatistic.content}
+                              </span>
                             </ListItem>
                           </>
                         ))}
@@ -224,7 +242,16 @@ const NavbarMultiple = () => {
                             href={staff.href}
                             icon={staff.icon}
                           >
-                            {staff.content}
+                            <span
+                                className={cn(
+                                  "text-md font-medium transition-colors hover:text-primary",
+                                  staff.active
+                                    ? "text-sky-500"
+                                    : "text-muted-foreground"
+                                )}
+                              >
+                                {staff.content}
+                              </span>
                           </ListItem>
                         ))}
                       </ul>
@@ -275,7 +302,16 @@ const NavbarMultiple = () => {
                               title={billboard.label}
                               icon={billboard.icon}
                             >
-                              {billboard.content}
+                              <span
+                                className={cn(
+                                  "text-md font-medium transition-colors hover:text-primary",
+                                  billboard.active
+                                    ? "text-sky-500"
+                                    : "text-muted-foreground"
+                                )}
+                              >
+                                {billboard.content}
+                              </span>
                             </ListItem>
                           </>
                         ))}
@@ -308,7 +344,16 @@ const NavbarMultiple = () => {
                             href={categories.href}
                             icon={categories.icon}
                           >
-                            {categories.content}
+                            <span
+                                className={cn(
+                                  "text-md font-medium transition-colors hover:text-primary",
+                                  categories.active
+                                    ? "text-sky-500"
+                                    : "text-muted-foreground"
+                                )}
+                              >
+                                {categories.content}
+                              </span>
                           </ListItem>
                         ))}
                       </ul>
@@ -359,7 +404,16 @@ const NavbarMultiple = () => {
                               title={parameter.label}
                               icon={parameter.icon}
                             >
-                              {parameter.content}
+                              <span
+                                className={cn(
+                                  "text-md font-medium transition-colors hover:text-primary",
+                                  parameter.active
+                                    ? "text-sky-500"
+                                    : "text-muted-foreground"
+                                )}
+                              >
+                                {parameter.content}
+                              </span>
                             </ListItem>
                           </>
                         ))}
@@ -392,7 +446,16 @@ const NavbarMultiple = () => {
                             href={product.href}
                             icon={product.icon}
                           >
-                            {product.content}
+                            <span
+                                className={cn(
+                                  "text-md font-medium transition-colors hover:text-primary",
+                                  product.active
+                                    ? "text-sky-500"
+                                    : "text-muted-foreground"
+                                )}
+                              >
+                                {product.content}
+                              </span>
                           </ListItem>
                         ))}
                       </ul>
@@ -443,7 +506,16 @@ const NavbarMultiple = () => {
                               title={order.label}
                               icon={order.icon}
                             >
-                              {order.content}
+                              <span
+                                className={cn(
+                                  "text-md font-medium transition-colors hover:text-primary",
+                                  order.active
+                                    ? "text-sky-500"
+                                    : "text-muted-foreground"
+                                )}
+                              >
+                                {order.content}
+                              </span>
                             </ListItem>
                           </>
                         ))}
@@ -495,7 +567,16 @@ const NavbarMultiple = () => {
                               title={user.label}
                               icon={user.icon}
                             >
-                              {user.content}
+                              <span
+                                className={cn(
+                                  "text-md font-medium transition-colors hover:text-primary",
+                                  user.active
+                                    ? "text-sky-500"
+                                    : "text-muted-foreground"
+                                )}
+                              >
+                                {user.content}
+                              </span>
                             </ListItem>
                           </>
                         ))}
@@ -547,7 +628,16 @@ const NavbarMultiple = () => {
                               title={checkout.label}
                               icon={checkout.icon}
                             >
-                              {checkout.content}
+                              <span
+                                className={cn(
+                                  "text-md font-medium transition-colors hover:text-primary",
+                                  checkout.active
+                                    ? "text-sky-500"
+                                    : "text-muted-foreground"
+                                )}
+                              >
+                                {checkout.content}
+                              </span>
                             </ListItem>
                           </>
                         ))}
@@ -581,7 +671,16 @@ const NavbarMultiple = () => {
                               title={setting.label}
                               icon={setting.icon}
                             >
-                              {setting.content}
+                              <span
+                                className={cn(
+                                  "text-md font-medium transition-colors hover:text-primary",
+                                  setting.active
+                                    ? "text-sky-500"
+                                    : "text-muted-foreground"
+                                )}
+                              >
+                                {setting.content}
+                              </span>
                             </ListItem>
                           </>
                         ))}

@@ -21,15 +21,19 @@ interface LabelFormPorps {
   id: string;
   label: string;
   imagebillboardtime: { url: string }[];
+  description: string;
   setOpen: (open: boolean) => void;
   timeout: number;
   end: number | null;
   isTimeout: boolean | null;
-  field: "label" | "timeout";
+  field: "label" | "timeout" | "description";
 }
 
 const formSchema = z.object({
   label: z.optional(z.string().min(2, { message: "Nhập ít nhất 2 ký tự." })),
+  description: z.optional(
+    z.string().min(2, { message: "Nhập ít nhất 2 ký tự." })
+  ),
   imagebillboardtime: z.object({ url: z.string() }).array(),
   timeout: z.optional(
     z.coerce.number().min(0, { message: "Hãy nhập ít nhất 1." })
@@ -46,6 +50,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({
   setOpen,
   timeout,
   label,
+  description,
   end,
   isTimeout,
   field,
@@ -56,6 +61,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       label: label || "",
+      description: description || "",
       imagebillboardtime: imagebillboardtime || [],
       timeout: timeout || 0,
       end: end || 0,
@@ -113,6 +119,29 @@ const LabelForm: React.FC<LabelFormPorps> = ({
             )}
           />
         )}
+
+        {field === "description" && (
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  Mô tả <span className="text-red-600 pl-1">(*)</span>
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    disabled={loading}
+                    placeholder="Nhập mô tả ..."
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
         {field === "timeout" && (
           <FormField
             control={form.control}

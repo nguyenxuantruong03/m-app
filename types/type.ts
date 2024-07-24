@@ -1,5 +1,3 @@
-import { Category } from "@prisma/client";
-
 export interface Store {
   name: string;
 }
@@ -7,30 +5,55 @@ export interface Store {
 export interface Billboard {
   id: string;
   label: string;
+  description: string;
   imagebillboard: ImageBillboard[];
 }
 
 export interface ImageBillboard {
   id: string;
   url: string;
-}
-
-export interface Billboardmini {
-  id: string;
   label: string;
-  imagebillboardmini: ImageBillboardmini[];
+  description: string;
 }
 
-export interface ImageBillboardmini {
-  id: string;
-  url: string;
+export enum CategoryType {
+  CATEGORY,
+  CATEGORY1,
+  CATEGORY2,
+  CATEGORY3,
+  CATEGORY4,
+  CATEGORY5,
+  CATEGORY6,
+  CATEGORY7,
+  CATEGORY8,
+  CATEGORY9,
+  CATEGORY10,
+  CATEGORY11,
 }
 
-export interface Billboardsale {
+export type Category = {
   id: string;
-  label: string;
-  imageUrl: string;
-}
+  storeId: string;
+  categoryType: string;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type Categories = {
+  categories: Category[];
+  categories1: Category[];
+  categories2: Category[];
+  categories3: Category[];
+  categories4: Category[];
+  categories5: Category[];
+  categories6: Category[];
+  categories7: Category[];
+  categories8: Category[];
+  categories9: Category[];
+  categories10: Category[];
+  categories11: Category[];
+};
 
 export enum ProductType {
   PRODUCT,
@@ -46,748 +69,117 @@ export enum ProductType {
   PRODUCT10,
   PRODUCT11,
 }
+type ProductDetail = {
+  id: string;
+  storeId: string;
+  store: Store;
+  product: Product[];
+  title: string;
+  name1: string;
+  name2: string;
+  name3: string;
+  name4: string;
+  name5: string;
+  price1: number;
+  price2: number;
+  price3: number;
+  price4: number;
+  price5: number;
+  percentpromotion1: number;
+  percentpromotion2: number;
+  percentpromotion3: number;
+  percentpromotion4: number;
+  percentpromotion5: number;
+  quantity1: number;
+  quantity2: number;
+  quantity3: number;
+  quantity4: number;
+  quantity5: number;
+  // Khuyến mãi
+  promotionheading: string;
+  promotiondescription: string;
+  //Bảo hành
+  warranty1: number;
+  warranty2: number;
+  warranty3: number;
+  warranty4: number;
+
+  // Tính năng nổi bật
+  descriptionsalientfeatures: string;
+  description2salientfeatures: string;
+  description3salientfeatures: string;
+  description4salientfeatures: string;
+  contentsalientfeatures: string;
+
+  //Chi tiết sản phẩm
+  descriptionspecifications: string;
+  valuespecifications: string;
+  description2specifications: string;
+  value2specifications: string;
+  description3specifications: string;
+  value3specifications: string;
+  description4specifications: string;
+  value4specifications: string;
+  description5specifications: string;
+  value5specifications: string;
+  description6specifications: string;
+  value6specifications: string;
+  description7specifications: string;
+  value7specifications: string;
+  description8specifications: string;
+  value8specifications: string;
+  description9specifications: string;
+  value9specifications: string;
+  description10specifications: string;
+  value10specifications: string;
+  description11specifications: string;
+  value11specifications: string;
+  description12specifications: string;
+  value12specifications: string;
+  description13specifications: string;
+  value13specifications: string;
+  description14specifications: string;
+  value14specifications: string;
+  categoryId: string;
+  category: Category;
+  size1Id: string;
+  size1: Size;
+  size2Id: string;
+  size2: Size;
+  size3Id: string;
+  size3: Size;
+  size4Id: string;
+  size4: Size;
+  size5Id: string;
+  size5: Size;
+  color1Id: string;
+  color1: Color;
+  color2Id: string;
+  color2: Color;
+  color3Id: string;
+  color3: Color;
+  color4Id: string;
+  color4: Color;
+  color5Id: string;
+  color5: Color;
+};
+
 export interface Product {
   id: string;
-  productType: ProductType.PRODUCT;
-  category: Category;
-  size: Size;
-  color: Color;
-  images: Image[];
-  // Specification
-  descriptionspecifications: string;
-  valuespecifications: string;
-  description2specifications: string;
-  value2specifications: string;
-  description3specifications: string;
-  value3specifications: string;
-  description4specifications: string;
-  value4specifications: string;
-  description5specifications: string;
-  value5specifications: string;
-  description6specifications: string;
-  value6specifications: string;
-  description7specifications: string;
-  value7specifications: string;
-  description8specifications: string;
-  value8specifications: string;
-  description9specifications: string;
-  value9specifications: string;
-  description10specifications: string;
-  value10specifications: string;
-  description11specifications: string;
-  value11specifications: string;
-  description12specifications: string;
-  value12specifications: string;
-  description13specifications: string;
-  value13specifications: string;
-  description14specifications: string;
-  value14specifications: string;
-  // salientfeatures
-  descriptionsalientfeatures: string;
-  description2salientfeatures: string;
-  description3salientfeatures: string;
-  description4salientfeatures: string;
-  contentsalientfeatures: string;
-  imagesalientfeatures: Imagesalientfeaturesproduct[];
-  name: string;
-  heading: string;
-  description: string;
-  price: number;
-  percentpromotion: number;
-  // Khuyến mãi
-  promotionheading: string;
-  promotiondescription: string;
-  //Bảo hành
-  guaranteeheading: string;
-  guaranteedescription: string;
-  guaranteeinfomation: string;
-  guaranteeprice: string;
-  userId: any;
-  isFeatured: boolean;
-  quantity: number;
-  selectedWarranty: any;
-}
+  storeId: string;
+  store: Store;
 
-export interface Product1 {
-  id: string;
-  productType: ProductType.PRODUCT1;
-  category: Category;
-  size: Size;
-  color: Color;
-  images: Image[];
-  // Specification
-  descriptionspecifications: string;
-  valuespecifications: string;
-  description2specifications: string;
-  value2specifications: string;
-  description3specifications: string;
-  value3specifications: string;
-  description4specifications: string;
-  value4specifications: string;
-  description5specifications: string;
-  value5specifications: string;
-  description6specifications: string;
-  value6specifications: string;
-  description7specifications: string;
-  value7specifications: string;
-  description8specifications: string;
-  value8specifications: string;
-  description9specifications: string;
-  value9specifications: string;
-  description10specifications: string;
-  value10specifications: string;
-  description11specifications: string;
-  value11specifications: string;
-  description12specifications: string;
-  value12specifications: string;
-  description13specifications: string;
-  value13specifications: string;
-  description14specifications: string;
-  value14specifications: string;
-  // salientfeatures
-  descriptionsalientfeatures: string;
-  description2salientfeatures: string;
-  description3salientfeatures: string;
-  description4salientfeatures: string;
-  contentsalientfeatures: string;
-  imagesalientfeatures: Imagesalientfeaturesproduct[];
+  productType: ProductType; // Add this field to distinguish product type (Product1 or Product2)
   name: string;
   heading: string;
   description: string;
-  price: number;
-  percentpromotion: number;
-  // Khuyến mãi
-  promotionheading: string;
-  promotiondescription: string;
-  //Bảo hành
-  guaranteeheading: string;
-  guaranteedescription: string;
-  guaranteeinfomation: string;
-  guaranteeprice: string;
-  userId: any;
-  isFeatured: boolean;
-  quantity: number;
-  selectedWarranty: any;
-}
-
-export interface Product2 {
-  id: string;
-  productType: ProductType.PRODUCT2;
-  category: Category;
-  size: Size;
-  color: Color;
+  isFeatured: Boolean;
+  isArchived: Boolean;
   images: Image[];
-  // Specification
-  descriptionspecifications: string;
-  valuespecifications: string;
-  description2specifications: string;
-  value2specifications: string;
-  description3specifications: string;
-  value3specifications: string;
-  description4specifications: string;
-  value4specifications: string;
-  description5specifications: string;
-  value5specifications: string;
-  description6specifications: string;
-  value6specifications: string;
-  description7specifications: string;
-  value7specifications: string;
-  description8specifications: string;
-  value8specifications: string;
-  description9specifications: string;
-  value9specifications: string;
-  description10specifications: string;
-  value10specifications: string;
-  description11specifications: string;
-  value11specifications: string;
-  description12specifications: string;
-  value12specifications: string;
-  description13specifications: string;
-  value13specifications: string;
-  description14specifications: string;
-  value14specifications: string;
-  // salientfeatures
-  descriptionsalientfeatures: string;
-  description2salientfeatures: string;
-  description3salientfeatures: string;
-  description4salientfeatures: string;
-  contentsalientfeatures: string;
   imagesalientfeatures: Imagesalientfeaturesproduct[];
-  name: string;
-  heading: string;
-  description: string;
-  price: number;
-  percentpromotion: number;
-  // Khuyến mãi
-  promotionheading: string;
-  promotiondescription: string;
-  //Bảo hành
-  guaranteeheading: string;
-  guaranteedescription: string;
-  guaranteeinfomation: string;
-  guaranteeprice: string;
-  userId: any;
-  isFeatured: boolean;
-  quantity: number;
-  selectedWarranty: any;
-}
-
-export interface Product3 {
-  id: string;
-  productType: ProductType.PRODUCT3;
-  category: Category;
-  size: Size;
-  color: Color;
-  images: Image[];
-  // Specification
-  descriptionspecifications: string;
-  valuespecifications: string;
-  description2specifications: string;
-  value2specifications: string;
-  description3specifications: string;
-  value3specifications: string;
-  description4specifications: string;
-  value4specifications: string;
-  description5specifications: string;
-  value5specifications: string;
-  description6specifications: string;
-  value6specifications: string;
-  description7specifications: string;
-  value7specifications: string;
-  description8specifications: string;
-  value8specifications: string;
-  description9specifications: string;
-  value9specifications: string;
-  description10specifications: string;
-  value10specifications: string;
-  description11specifications: string;
-  value11specifications: string;
-  description12specifications: string;
-  value12specifications: string;
-  description13specifications: string;
-  value13specifications: string;
-  description14specifications: string;
-  value14specifications: string;
-  // salientfeatures
-  descriptionsalientfeatures: string;
-  description2salientfeatures: string;
-  description3salientfeatures: string;
-  description4salientfeatures: string;
-  contentsalientfeatures: string;
-  imagesalientfeatures: Imagesalientfeaturesproduct[];
-  name: string;
-  heading: string;
-  description: string;
-  price: number;
-  percentpromotion: number;
-  // Khuyến mãi
-  promotionheading: string;
-  promotiondescription: string;
-  //Bảo hành
-  guaranteeheading: string;
-  guaranteedescription: string;
-  guaranteeinfomation: string;
-  guaranteeprice: string;
-  userId: any;
-  isFeatured: boolean;
-  quantity: number;
-  selectedWarranty: any;
-}
-
-export interface Product4 {
-  id: string;
-  productType: ProductType.PRODUCT4;
-  category: Category;
-  size: Size;
-  color: Color;
-  images: Image[];
-  // Specification
-  descriptionspecifications: string;
-  valuespecifications: string;
-  description2specifications: string;
-  value2specifications: string;
-  description3specifications: string;
-  value3specifications: string;
-  description4specifications: string;
-  value4specifications: string;
-  description5specifications: string;
-  value5specifications: string;
-  description6specifications: string;
-  value6specifications: string;
-  description7specifications: string;
-  value7specifications: string;
-  description8specifications: string;
-  value8specifications: string;
-  description9specifications: string;
-  value9specifications: string;
-  description10specifications: string;
-  value10specifications: string;
-  description11specifications: string;
-  value11specifications: string;
-  description12specifications: string;
-  value12specifications: string;
-  description13specifications: string;
-  value13specifications: string;
-  description14specifications: string;
-  value14specifications: string;
-  // salientfeatures
-  descriptionsalientfeatures: string;
-  description2salientfeatures: string;
-  description3salientfeatures: string;
-  description4salientfeatures: string;
-  contentsalientfeatures: string;
-  imagesalientfeatures: Imagesalientfeaturesproduct[];
-  name: string;
-  heading: string;
-  description: string;
-  price: number;
-  percentpromotion: number;
-  // Khuyến mãi
-  promotionheading: string;
-  promotiondescription: string;
-  //Bảo hành
-  guaranteeheading: string;
-  guaranteedescription: string;
-  guaranteeinfomation: string;
-  guaranteeprice: string;
-  userId: any;
-  isFeatured: boolean;
-  quantity: number;
-  selectedWarranty: any;
-}
-
-export interface Product5 {
-  id: string;
-  productType: ProductType.PRODUCT5;
-  category: Category;
-  size: Size;
-  color: Color;
-  images: Image[];
-  // Specification
-  descriptionspecifications: string;
-  valuespecifications: string;
-  description2specifications: string;
-  value2specifications: string;
-  description3specifications: string;
-  value3specifications: string;
-  description4specifications: string;
-  value4specifications: string;
-  description5specifications: string;
-  value5specifications: string;
-  description6specifications: string;
-  value6specifications: string;
-  description7specifications: string;
-  value7specifications: string;
-  description8specifications: string;
-  value8specifications: string;
-  description9specifications: string;
-  value9specifications: string;
-  description10specifications: string;
-  value10specifications: string;
-  description11specifications: string;
-  value11specifications: string;
-  description12specifications: string;
-  value12specifications: string;
-  description13specifications: string;
-  value13specifications: string;
-  description14specifications: string;
-  value14specifications: string;
-  // salientfeatures
-  descriptionsalientfeatures: string;
-  description2salientfeatures: string;
-  description3salientfeatures: string;
-  description4salientfeatures: string;
-  contentsalientfeatures: string;
-  imagesalientfeatures: Imagesalientfeaturesproduct[];
-  name: string;
-  heading: string;
-  description: string;
-  price: number;
-  percentpromotion: number;
-  // Khuyến mãi
-  promotionheading: string;
-  promotiondescription: string;
-  //Bảo hành
-  guaranteeheading: string;
-  guaranteedescription: string;
-  guaranteeinfomation: string;
-  guaranteeprice: string;
-  userId: any;
-  isFeatured: boolean;
-  quantity: number;
-  selectedWarranty: any;
-}
-
-export interface Product6 {
-  id: string;
-  productType: ProductType.PRODUCT6;
-  category: Category;
-  size: Size;
-  color: Color;
-  images: Image[];
-  // Specification
-  descriptionspecifications: string;
-  valuespecifications: string;
-  description2specifications: string;
-  value2specifications: string;
-  description3specifications: string;
-  value3specifications: string;
-  description4specifications: string;
-  value4specifications: string;
-  description5specifications: string;
-  value5specifications: string;
-  description6specifications: string;
-  value6specifications: string;
-  description7specifications: string;
-  value7specifications: string;
-  description8specifications: string;
-  value8specifications: string;
-  description9specifications: string;
-  value9specifications: string;
-  description10specifications: string;
-  value10specifications: string;
-  description11specifications: string;
-  value11specifications: string;
-  description12specifications: string;
-  value12specifications: string;
-  description13specifications: string;
-  value13specifications: string;
-  description14specifications: string;
-  value14specifications: string;
-  // salientfeatures
-  descriptionsalientfeatures: string;
-  description2salientfeatures: string;
-  description3salientfeatures: string;
-  description4salientfeatures: string;
-  contentsalientfeatures: string;
-  imagesalientfeatures: Imagesalientfeaturesproduct[];
-  name: string;
-  heading: string;
-  description: string;
-  price: number;
-  percentpromotion: number;
-  // Khuyến mãi
-  promotionheading: string;
-  promotiondescription: string;
-  //Bảo hành
-  guaranteeheading: string;
-  guaranteedescription: string;
-  guaranteeinfomation: string;
-  guaranteeprice: string;
-  userId: any;
-  isFeatured: boolean;
-  quantity: number;
-  selectedWarranty: any;
-}
-
-export interface Product7 {
-  id: string;
-  productType: ProductType.PRODUCT7;
-  category: Category;
-  size: Size;
-  color: Color;
-  images: Image[];
-  // Specification
-  descriptionspecifications: string;
-  valuespecifications: string;
-  description2specifications: string;
-  value2specifications: string;
-  description3specifications: string;
-  value3specifications: string;
-  description4specifications: string;
-  value4specifications: string;
-  description5specifications: string;
-  value5specifications: string;
-  description6specifications: string;
-  value6specifications: string;
-  description7specifications: string;
-  value7specifications: string;
-  description8specifications: string;
-  value8specifications: string;
-  description9specifications: string;
-  value9specifications: string;
-  description10specifications: string;
-  value10specifications: string;
-  description11specifications: string;
-  value11specifications: string;
-  description12specifications: string;
-  value12specifications: string;
-  description13specifications: string;
-  value13specifications: string;
-  description14specifications: string;
-  value14specifications: string;
-  // salientfeatures
-  descriptionsalientfeatures: string;
-  description2salientfeatures: string;
-  description3salientfeatures: string;
-  description4salientfeatures: string;
-  contentsalientfeatures: string;
-  imagesalientfeatures: Imagesalientfeaturesproduct[];
-  name: string;
-  heading: string;
-  description: string;
-  price: number;
-  percentpromotion: number;
-  // Khuyến mãi
-  promotionheading: string;
-  promotiondescription: string;
-  //Bảo hành
-  guaranteeheading: string;
-  guaranteedescription: string;
-  guaranteeinfomation: string;
-  guaranteeprice: string;
-  userId: any;
-  isFeatured: boolean;
-  quantity: number;
-  selectedWarranty: any;
-}
-
-export interface Product8 {
-  id: string;
-  productType: ProductType.PRODUCT8;
-  category: Category;
-  size: Size;
-  color: Color;
-  images: Image[];
-  // Specification
-  descriptionspecifications: string;
-  valuespecifications: string;
-  description2specifications: string;
-  value2specifications: string;
-  description3specifications: string;
-  value3specifications: string;
-  description4specifications: string;
-  value4specifications: string;
-  description5specifications: string;
-  value5specifications: string;
-  description6specifications: string;
-  value6specifications: string;
-  description7specifications: string;
-  value7specifications: string;
-  description8specifications: string;
-  value8specifications: string;
-  description9specifications: string;
-  value9specifications: string;
-  description10specifications: string;
-  value10specifications: string;
-  description11specifications: string;
-  value11specifications: string;
-  description12specifications: string;
-  value12specifications: string;
-  description13specifications: string;
-  value13specifications: string;
-  description14specifications: string;
-  value14specifications: string;
-  // salientfeatures
-  descriptionsalientfeatures: string;
-  description2salientfeatures: string;
-  description3salientfeatures: string;
-  description4salientfeatures: string;
-  contentsalientfeatures: string;
-  imagesalientfeatures: Imagesalientfeaturesproduct[];
-  name: string;
-  heading: string;
-  description: string;
-  price: number;
-  percentpromotion: number;
-  // Khuyến mãi
-  promotionheading: string;
-  promotiondescription: string;
-  //Bảo hành
-  guaranteeheading: string;
-  guaranteedescription: string;
-  guaranteeinfomation: string;
-  guaranteeprice: string;
-  userId: any;
-  isFeatured: boolean;
-  quantity: number;
-  selectedWarranty: any;
-}
-
-export interface Product9 {
-  id: string;
-  productType: ProductType.PRODUCT9;
-  category: Category;
-  size: Size;
-  color: Color;
-  images: Image[];
-  // Specification
-  descriptionspecifications: string;
-  valuespecifications: string;
-  description2specifications: string;
-  value2specifications: string;
-  description3specifications: string;
-  value3specifications: string;
-  description4specifications: string;
-  value4specifications: string;
-  description5specifications: string;
-  value5specifications: string;
-  description6specifications: string;
-  value6specifications: string;
-  description7specifications: string;
-  value7specifications: string;
-  description8specifications: string;
-  value8specifications: string;
-  description9specifications: string;
-  value9specifications: string;
-  description10specifications: string;
-  value10specifications: string;
-  description11specifications: string;
-  value11specifications: string;
-  description12specifications: string;
-  value12specifications: string;
-  description13specifications: string;
-  value13specifications: string;
-  description14specifications: string;
-  value14specifications: string;
-  // salientfeatures
-  descriptionsalientfeatures: string;
-  description2salientfeatures: string;
-  description3salientfeatures: string;
-  description4salientfeatures: string;
-  contentsalientfeatures: string;
-  imagesalientfeatures: Imagesalientfeaturesproduct[];
-  name: string;
-  heading: string;
-  description: string;
-  price: number;
-  percentpromotion: number;
-  // Khuyến mãi
-  promotionheading: string;
-  promotiondescription: string;
-  //Bảo hành
-  guaranteeheading: string;
-  guaranteedescription: string;
-  guaranteeinfomation: string;
-  guaranteeprice: string;
-  userId: any;
-  isFeatured: boolean;
-  quantity: number;
-  selectedWarranty: any;
-}
-
-export interface Product10 {
-  id: string;
-  productType: ProductType.PRODUCT10;
-  category: Category;
-  size: Size;
-  color: Color;
-  images: Image[];
-  // Specification
-  descriptionspecifications: string;
-  valuespecifications: string;
-  description2specifications: string;
-  value2specifications: string;
-  description3specifications: string;
-  value3specifications: string;
-  description4specifications: string;
-  value4specifications: string;
-  description5specifications: string;
-  value5specifications: string;
-  description6specifications: string;
-  value6specifications: string;
-  description7specifications: string;
-  value7specifications: string;
-  description8specifications: string;
-  value8specifications: string;
-  description9specifications: string;
-  value9specifications: string;
-  description10specifications: string;
-  value10specifications: string;
-  description11specifications: string;
-  value11specifications: string;
-  description12specifications: string;
-  value12specifications: string;
-  description13specifications: string;
-  value13specifications: string;
-  description14specifications: string;
-  value14specifications: string;
-  // salientfeatures
-  descriptionsalientfeatures: string;
-  description2salientfeatures: string;
-  description3salientfeatures: string;
-  description4salientfeatures: string;
-  contentsalientfeatures: string;
-  imagesalientfeatures: Imagesalientfeaturesproduct[];
-  name: string;
-  heading: string;
-  description: string;
-  price: number;
-  percentpromotion: number;
-  // Khuyến mãi
-  promotionheading: string;
-  promotiondescription: string;
-  //Bảo hành
-  guaranteeheading: string;
-  guaranteedescription: string;
-  guaranteeinfomation: string;
-  guaranteeprice: string;
-  userId: any;
-  isFeatured: boolean;
-  quantity: number;
-  selectedWarranty: any;
-}
-
-export interface Product11 {
-  id: string;
-  productType: ProductType.PRODUCT11;
-  category: Category;
-  size: Size;
-  color: Color;
-  images: Image[];
-  // Specification
-  descriptionspecifications: string;
-  valuespecifications: string;
-  description2specifications: string;
-  value2specifications: string;
-  description3specifications: string;
-  value3specifications: string;
-  description4specifications: string;
-  value4specifications: string;
-  description5specifications: string;
-  value5specifications: string;
-  description6specifications: string;
-  value6specifications: string;
-  description7specifications: string;
-  value7specifications: string;
-  description8specifications: string;
-  value8specifications: string;
-  description9specifications: string;
-  value9specifications: string;
-  description10specifications: string;
-  value10specifications: string;
-  description11specifications: string;
-  value11specifications: string;
-  description12specifications: string;
-  value12specifications: string;
-  description13specifications: string;
-  value13specifications: string;
-  description14specifications: string;
-  value14specifications: string;
-  // salientfeatures
-  descriptionsalientfeatures: string;
-  description2salientfeatures: string;
-  description3salientfeatures: string;
-  description4salientfeatures: string;
-  contentsalientfeatures: string;
-  imagesalientfeatures: Imagesalientfeaturesproduct[];
-  name: string;
-  heading: string;
-  description: string;
-  price: number;
-  percentpromotion: number;
-  // Khuyến mãi
-  promotionheading: string;
-  promotiondescription: string;
-  //Bảo hành
-  guaranteeheading: string;
-  guaranteedescription: string;
-  guaranteeinfomation: string;
-  guaranteeprice: string;
-  userId: any;
-  isFeatured: boolean;
-  quantity: number;
-  selectedWarranty: any;
+  // CheckoutCashItem: CheckoutcashItem[];
+  productdetailId: string;
+  productdetail: ProductDetail;
 }
 
 export interface Size {
@@ -809,6 +201,29 @@ export interface Imagesalientfeaturesproduct {
   id: string;
   url: string;
 }
+
+interface User {
+  id: string;
+  imageCredential: string[];
+  image: string;
+  name: string;
+}
+export interface Emoji {
+  id: string;
+  commentId: string;
+  userId: string;
+  productId: string;
+  emoji: string;
+  emojilengthLove: number;
+  emojilengthHaha: number;
+  emojilengthWow: number;
+  emojilengthAngry: number;
+  emojilengthLike: number;
+  createdAt: Date;
+  updatedAt: Date;
+  user: User;
+}
+
 
 //-------------------------Pacman---------------------------
 export type Character = {

@@ -141,7 +141,7 @@ export async function PATCH(
 
     const body = await req.json();
 
-    const { label, imagebillboardtime, timeout } = body;
+    const { label, imagebillboardtime, timeout,description,isTimeout,end } = body;
 
     if (!userId) {
       return new NextResponse(
@@ -167,6 +167,12 @@ export async function PATCH(
         JSON.stringify({ error: "Imagebillboardtime is required!" }),
         { status: 400 }
       );
+    }
+
+    if (!description) {
+      return new NextResponse(JSON.stringify({ error: "Description is required!" }), {
+        status: 400,
+      });
     }
 
     if (!params.billboardtimesId) {
@@ -201,30 +207,46 @@ export async function PATCH(
       },
     });
 
-    await prismadb.billboardTime.update({
-      where: {
-        id: params.billboardtimesId,
-      },
-      data: {
-        label,
-        timeout,
-        imagebillboardtime: {
-          deleteMany: {},
+    const existingImages = existingBillboardTime?.imagebillboardtime || [];
+
+    // Tạo danh sách URL hiện tại
+    const existingImageUrls = existingImages.map((image) => image.url);
+
+    // Tìm các hình ảnh cần thêm mới và các hình ảnh cần cập nhật
+    const imagesToCreate = imagebillboardtime.filter((image: { url: string }) => !existingImageUrls.includes(image.url));
+    const imagesToUpdate = imagebillboardtime.filter((image: { url: string }) => existingImageUrls.includes(image.url));
+
+    // Thêm các ảnh mới
+    if (imagesToCreate.length > 0) {
+      await prismadb.imageBillboardTime.createMany({
+        data: imagesToCreate.map((image:string[]) => ({ ...image, billboardTimeId: params.billboardtimesId })),
+      });
+    }
+
+    // Cập nhật các ảnh hiện tại
+    for (const image of imagesToUpdate) {
+      await prismadb.imageBillboardTime.updateMany({
+        where: {
+          billboardTimeId: params.billboardtimesId,
+          url: image.url,
         },
-      },
-    });
+        data: {
+          label: image.label,
+          description: image.description,
+        },
+      });
+    }
+
     const billboardTime = await prismadb.billboardTime.update({
       where: {
         id: params.billboardtimesId,
       },
       data: {
-        imagebillboardtime: {
-          createMany: {
-            data: [
-              ...imagebillboardtime.map((image: { url: string }) => image),
-            ],
-          },
-        },
+        label,
+        description,
+        isTimeout,
+        timeout,
+        end
       },
     });
 

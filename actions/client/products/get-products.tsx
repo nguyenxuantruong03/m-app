@@ -1,4 +1,4 @@
-import { Product } from "@prisma/client";
+import { Product } from "@/types/type";
 
 
 const URLProduct = `${process.env.NEXT_PUBLIC_API_URL}/product`

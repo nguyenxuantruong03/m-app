@@ -4,8 +4,8 @@ import { ZoomImageAttendanceModal } from "./modals/zoom-image-one-modal";
 
 const ImageCellOne: React.FC<{
   imageUrl: string;
-  updateImage: string | null;
-  email: string | null;
+  updateImage?: string | null;
+  email?: string | null;
 }> = ({ imageUrl, updateImage, email }) => {
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 

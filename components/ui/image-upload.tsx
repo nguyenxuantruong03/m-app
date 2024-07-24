@@ -9,7 +9,6 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { redirect } from "next/navigation";
 import { getAccountByUserId } from "@/data/account";
 import { Avatar, AvatarFallback } from "./avatar";
-import { ZoomImageAttendanceModal } from "../modals/zoom-image-one-modal";
 import { utcToZonedTime } from "date-fns-tz";
 import viLocale from "date-fns/locale/vi";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
@@ -23,6 +22,7 @@ interface ImageUploadProps {
   value?: string[];
   maxFiles?: number;
   showAvatar?: boolean;
+  selectedAvatar?: string;
 }
 
 interface AccountItem {
@@ -47,6 +47,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   value = [],
   maxFiles = 10,
   showAvatar = false,
+  selectedAvatar
 }) => {
   const [isMounted, setIsMounted] = useState(false);
   const userId = useCurrentUser();
@@ -100,7 +101,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
+  
   const zonedSubtractedDate = utcToZonedTime(
     new Date(new Date(userId?.createdAt).getTime() - 7 * 60 * 60 * 1000),
     vietnamTimeZone
@@ -133,7 +134,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                         fill
                         className="object-cover cursor-pointer"
                         alt="Image"
-                        src={avatarImage}
+                        src={selectedAvatar || avatarImage}
                         onClick={() => {
                           if (open) {
                             open();
@@ -151,7 +152,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                         fill
                         className="object-cover cursor-pointer"
                         alt="Image"
-                        src={avatarImage}
+                        src={selectedAvatar || avatarImage}
                         onClick={() => {
                           if (open) {
                             open();
@@ -206,7 +207,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                           fill
                           className="object-cover cursor-pointer"
                           alt="Image"
-                          src={url}
+                          src={selectedAvatar || url}
                           onClick={() => {
                             if (value.length === 1 || !showAvatar) {
                               if (open) {
@@ -229,7 +230,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                             fill
                             className="object-cover cursor-pointer"
                             alt="Image"
-                            src={url}
+                            src={selectedAvatar || url}
                             onClick={() => {
                               if (open) {
                                 open();
@@ -245,7 +246,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                               fill
                               className="object-cover"
                               alt="Image"
-                              src={url}
+                              src={selectedAvatar || url}
                               onClick={() => openImageModal(index)}
                             />
                           )}

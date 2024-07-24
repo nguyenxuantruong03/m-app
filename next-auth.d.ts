@@ -19,7 +19,9 @@ export type ExtendedUser = DefaultSession["user"] & {
   addressother:string; 
   gender: Gender; 
   phonenumber: string;
+  frameAvatar:string
   dateofbirth: DateTime;
+  isCitizen: boolean;
   createdAt: DateTime
   linkyoutube: string;
   linkfacebook: string;

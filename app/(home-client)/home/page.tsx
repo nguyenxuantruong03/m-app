@@ -1,4 +1,3 @@
-import FlowerFalling from "@/components/(client)/flower-falling/flower-falling";
 import BuyProduct from "@/components/(client)/home/buy-product";
 import IntroductProduct from "@/components/(client)/home/introduct-product";
 import News from "@/components/(client)/home/news";
@@ -16,7 +15,6 @@ const MapAPI = dynamic(() => import("@/components/(client)/leaflet-map/leaflet-m
 const HomePage = async () => {
   return (
     <>
-      <FlowerFalling />
       <Slider />
       <Story />
       <Service />

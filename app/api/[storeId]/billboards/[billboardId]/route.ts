@@ -143,7 +143,7 @@ export async function PATCH(
 
     const body = await req.json();
 
-    const { label, imagebillboard } = body;
+    const { label, imagebillboard,description } = body;
 
     if (!userId) {
       return new NextResponse(
@@ -154,6 +154,12 @@ export async function PATCH(
 
     if (!label) {
       return new NextResponse(JSON.stringify({ error: "Label is required!" }), {
+        status: 400,
+      });
+    }
+
+    if (!description) {
+      return new NextResponse(JSON.stringify({ error: "Description is required!" }), {
         status: 400,
       });
     }
@@ -197,29 +203,47 @@ export async function PATCH(
       },
     });
 
-    await prismadb.billboard.update({
-      where: {
-        id: params.billboardId,
-      },
-      data: {
-        label,
-        imagebillboard: {
-          deleteMany: {},
+    const existingImages = existingBillboard?.imagebillboard || [];
+
+    // Tạo danh sách URL hiện tại
+    const existingImageUrls = existingImages.map((image) => image.url);
+
+    // Tìm các hình ảnh cần thêm mới và các hình ảnh cần cập nhật
+    const imagesToCreate = imagebillboard.filter((image: { url: string }) => !existingImageUrls.includes(image.url));
+    const imagesToUpdate = imagebillboard.filter((image: { url: string }) => existingImageUrls.includes(image.url));
+
+    // Thêm các ảnh mới
+    if (imagesToCreate.length > 0) {
+      await prismadb.imageBillboard.createMany({
+        data: imagesToCreate.map((image:string[]) => ({ ...image, billboardId: params.billboardId })),
+      });
+    }
+
+    // Cập nhật các ảnh hiện tại
+    for (const image of imagesToUpdate) {
+      await prismadb.imageBillboard.updateMany({
+        where: {
+          billboardId: params.billboardId,
+          url: image.url,
         },
-      },
-    });
+        data: {
+          label: image.label,
+          description: image.description,
+        },
+      });
+    }
+
+    // Cập nhật các trường khác của billboard
     const billboard = await prismadb.billboard.update({
       where: {
         id: params.billboardId,
       },
       data: {
-        imagebillboard: {
-          createMany: {
-            data: [...imagebillboard.map((image: { url: string }) => image)],
-          },
-        },
+        label,
+        description,
       },
     });
+
 
     // Danh sách các trường cần loại bỏ
     const ignoredFields = ["createdAt", "updatedAt"];

@@ -5,6 +5,7 @@ import { CellAction } from "./cell-action";
 import {
   AlarmClock,
   AlarmClockOff,
+  MessageCircleMore,
   Timer,
   TimerOff,
   TimerReset,
@@ -22,6 +23,7 @@ import FormatDate from "@/components/format-Date";
 export type BillboardTimeColumn = {
   id: string;
   label: string;
+  description: string;
   timeout: string;
   imagebillboardtime: string[];
   end: string;
@@ -77,9 +79,41 @@ export const columns: ColumnDef<BillboardTimeColumn>[] = [
             isTimeout={row.original.isTimeout}
             data={row.original.label}
             label={row.original.label}
+            description={row.original.description}
             id={row.original.id}
             imagebillboardtime={row.original.imagebillboardtimepatch}
             field="label"
+          />
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "description",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Mô tả
+          <MessageCircleMore className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+        <div>
+          <EditRow
+            isActive={row.original.isTimeout}
+            timeout={row.original.timeoutpatch}
+            end={row.original.endpatch}
+            isTimeout={row.original.isTimeout}
+            data={row.original.description}
+            description={row.original.description}
+            label={row.original.label}
+            id={row.original.id}
+            imagebillboardtime={row.original.imagebillboardtimepatch}
+            field="description"
           />
         </div>
       );
@@ -123,6 +157,7 @@ export const columns: ColumnDef<BillboardTimeColumn>[] = [
             label={row.original.label}
             timeout={row.original.timeoutpatch}
             end={row.original.endpatch}
+            description={row.original.description}
             isTimeout={row.original.isTimeout}
             data={row.original.timeout}
             id={row.original.id}

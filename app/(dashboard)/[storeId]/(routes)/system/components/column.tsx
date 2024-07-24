@@ -140,7 +140,7 @@ export const columns: ColumnDef<SystemsColumn>[] = [
       const isBanforever = row.original.isbanforever;
       return (
         <div className={isBanforever ? "line-through text-red-500" : ""}>
-          <FormatDate data={row.original.timebanforever} subtractiontime={true}/>;
+          <FormatDate data={row.original.timebanforever} subtractiontime={true}/>
         </div>
       );
     },

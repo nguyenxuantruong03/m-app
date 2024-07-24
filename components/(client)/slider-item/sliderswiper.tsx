@@ -1,19 +1,22 @@
-"use client"
-import React from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import Image from 'next/image';
-import SwiperButtons from './swiperButton';
-import 'swiper/css';
-import 'swiper/css/pagination';
-import 'swiper/css/scrollbar';
-import { Autoplay, Pagination, Scrollbar } from 'swiper/modules';
-import { Billboard } from '@/types/type';
+"use client";
+import React, { useState, useRef } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import Image from "next/image";
+import SwiperButtons from "./swiperButton";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/scrollbar";
+import { Autoplay, Pagination, Scrollbar } from "swiper/modules";
+import { Billboard } from "@/types/type";
 
 interface SliderSwiperProps {
-  data: Billboard;
+  data: Billboard | null;
 }
 
 const SliderSwiper: React.FC<SliderSwiperProps> = ({ data }) => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const swiperRef = useRef<any>(null);
+
   const renderSlides = () => {
     return data?.imagebillboard?.map((image, index) => (
       <SwiperSlide key={index}>
@@ -23,15 +26,37 @@ const SliderSwiper: React.FC<SliderSwiperProps> = ({ data }) => {
             fill
             alt="Image"
             className="aspect-square object-cover rounded-md"
+            placeholder="blur"
+            blurDataURL="/images/signup-ipad.png"
+            loading="lazy"
           />
         </div>
       </SwiperSlide>
     ));
   };
 
+  const handleLabelClick = (index: number) => {
+    swiperRef.current?.swiper.slideTo(index);
+    setActiveIndex(index);
+  };
+
+  const renderLabels = () => {
+    return data?.imagebillboard?.map((image, index) => (
+      <button
+        key={index}
+        onClick={() => handleLabelClick(index)}
+        className={`p-4 cursor-pointer hover:bg-gray-300 hover:bg-opacity-30 ${activeIndex === index ? "text-gray-900 font-semibold border-b-2 border-red-500" : "text-gray-500"}`}
+      >
+        <p>{image.label}</p>
+        <p>{image.description}</p>
+      </button>
+    ));
+  };
+
   return (
-    <div className="w-[90vw] md:w-[70vw] lg:w-[750px] h-[430px] md:h-[432px] lg:h-[408px] rounded-md shadow-md">
+    <div className="w-[90vw] md:w-[70vw] lg:w-[750px] rounded-md shadow-md">
       <Swiper
+        ref={swiperRef}
         spaceBetween={20}
         centeredSlides={true}
         autoplay={{
@@ -41,14 +66,18 @@ const SliderSwiper: React.FC<SliderSwiperProps> = ({ data }) => {
         scrollbar={{
           hide: true,
         }}
+        onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
         modules={[Autoplay, Pagination, Scrollbar]}
-        className="h-[430px] md:h-[432px] lg:h-[408px] relative group"
+        className="h-[330px] md:h-[350px] lg:h-[324px] relative group"
       >
         {renderSlides()}
         <div className="absolute top-10 z-10 hidden group-hover:block">
           <SwiperButtons />
         </div>
       </Swiper>
+      <div className="text-center text-gray-700 flex flex-col">
+        <div className="flex overflow-x-auto whitespace-nowrap">{renderLabels()}</div>
+      </div>
     </div>
   );
 };

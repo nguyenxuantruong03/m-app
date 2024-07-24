@@ -1,34 +1,32 @@
 // pages/api/comments/[commentsId]/responses.ts
-
-import { currentUser } from '@/lib/auth';
 import prismadb from '@/lib/prismadb';
 import { NextResponse } from 'next/server';
-
+import { currentUser } from '@/lib/auth';
 
 export async function POST(req:Request, { params }: { params?: { commentId?: string} }) {
     const body = await req.json();
-    const { description,commenter,imageUrl  } = body;
-  try {
+    const { description,product,comment } = body;
     const userId = await currentUser();
-
-    if (!userId) {
-      return new NextResponse('Unauthenticated', { status: 403 });
+    if (!description) {
+      return new NextResponse(
+        JSON.stringify({ error: "Description is required!" }),
+        { status: 400 }
+      );
     }
-    const existingComment = await prismadb.comment.findFirst({
-      where: {
-        id: params?.commentId,
-        userId: userId.id || "",
-      },
-    });
-
-    if (!existingComment) {
-      return new NextResponse('Comment not found or unauthorized', { status: 403 });
+    if (!userId?.id) {
+      return new NextResponse("Unauthenticated", { status: 403 });
     }
+  try {
+
     const newResponse = await prismadb.responseComment.create({
       data: {
-        description,
-        userId: userId.id || "",
-        commentId: params?.commentId || "",
+          description:description,
+          productId: product,
+          commentId: comment,
+          userId: userId?.id || "",
+      },
+      include: {
+        user: true,
       },
     });
 
@@ -39,20 +37,20 @@ export async function POST(req:Request, { params }: { params?: { commentId?: str
   }
 }
 
-
 export async function DELETE(
   req: Request,{ params }: { params?: { commentId?: string } }) {
   try {
-    const userId = await currentUser();
     const body = await req.json();
     const { id  } = body;
-    if (!userId) {
+    const userId = await currentUser();
+
+    if (!userId?.id) {
       return new NextResponse("Unauthenticated", { status: 403 });
     }
 
     const commentById = await prismadb.comment.findFirst({
       where: {
-        userId: userId.id || "",
+        userId: userId?.id || "",
         id: params?.commentId,
       }
     });
@@ -76,24 +74,21 @@ export async function DELETE(
 
 export async function PATCH(req: Request,{ params }: { params?: { commentId?: string } }) {
   try {
-    const userId = await currentUser();
     const body = await req.json();
-    const { id, description } = body;
+    const { id, description,changeReview } = body;
+    const userId = await currentUser();
 
-    if (!userId) {
+
+    if (!userId?.id) {
       return new NextResponse("Unauthenticated", { status: 403 });
     }
 
-    const existingComment = await prismadb.comment.findFirst({
+    const existingComment = await prismadb.responseComment.findFirst({
       where: {
-        id: params?.commentId,
-        userId: userId.id || "",
+        id: id,
+        userId: userId?.id || "",
       },
     });
-
-    if (!existingComment) {
-      return new NextResponse("Comment not found or unauthorized", { status: 403 });
-    }
 
     const updatedComment = await prismadb.responseComment.update({
       where: {
@@ -101,8 +96,8 @@ export async function PATCH(req: Request,{ params }: { params?: { commentId?: st
       },
       data: {
         description: description,
-        // description: description ?? existingComment.comment,
-
+        changeReview: changeReview,
+        totalchange: existingComment?.totalchange != null ? existingComment.totalchange + 1 : 1,
       },
     });
 
@@ -114,19 +109,22 @@ export async function PATCH(req: Request,{ params }: { params?: { commentId?: st
 }
 
 
-// export async function GET({ params }: { params?: { commentId?: string } }) {
-//   try {
+export async function GET(req: Request, { params }: { params?: { commentId?: string } }) {
+  try {
 
-//     const responseComment = await prismadb.responseComment.findMany({
-//       where: {
-//         commentId: params?.commentId,
-//       },
-//     });
+    const responseComment = await prismadb.responseComment.findMany({
+      where: {
+        commentId: params?.commentId,
+      },
+      include: {
+        user: true
+      }
+    });
 
-//     return NextResponse.json(responseComment);
-//   } catch (error) {
-//     console.error('Error fetching comments:', error);
-//     return new NextResponse('Internal error', { status: 500 });
-//   }
-// }
+    return NextResponse.json(responseComment);
+  } catch (error) {
+    console.error('Error fetching comments:', error);
+    return new NextResponse('Internal error', { status: 500 });
+  }
+}
 

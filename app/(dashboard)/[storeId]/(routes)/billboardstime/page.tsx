@@ -54,6 +54,7 @@ const BillboardsTimePage = async ({
         isTimeout: item.isTimeout,
         imagebillboardtimepatch: item.imagebillboardtime,
         endpatch: item.end,
+        description: item.description,
         timeoutpatch: item.timeout,
         createdAt: item.createdAt,
       };

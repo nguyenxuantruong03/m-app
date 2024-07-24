@@ -13,13 +13,19 @@ export async function POST(
 
     const body = await req.json();
 
-    const { label, imagebillboardtime, timeout } = body;
+    const { label, imagebillboardtime, timeout,description } = body;
 
     if (!userId) {
       return new NextResponse(
         JSON.stringify({ error: "Người dùng hiện tại không có id!" }),
         { status: 403 }
       );
+    }
+
+    if (!description) {
+      return new NextResponse(JSON.stringify({ error: "Description is required!" }), {
+        status: 400,
+      });
     }
 
     if (!label) {
@@ -70,6 +76,7 @@ export async function POST(
       data: {
         label,
         timeout,
+        description,
         imagebillboardtime: {
           createMany: {
             data: [
@@ -210,6 +217,7 @@ export async function DELETE(
     // Create an array of changes for logging
     const changesArray = billboardsToDelete.map(billboard => ({
       label: billboard.label,
+      description: billboard.description,
       valueImage: billboard.imagebillboardtime.map(image => image.url),
     }));
 
@@ -226,7 +234,7 @@ export async function DELETE(
     await prismadb.system.create({
       data: {
         storeId: params.storeId,
-        delete: changesArray.map(change => `DeleteLabel: ${change.label}, ImageBillboardTime: ${change.valueImage}`),
+        delete: changesArray.map(change => `DeleteLabel: ${change.label}, ImageBillboardTime: ${change.valueImage}, Description: ${change.description}`),
         type: "DELETEMANYBILLBOARDTIME",
         user: userId?.email || "",
       },

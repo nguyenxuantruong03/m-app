@@ -44,6 +44,7 @@ import {
   Banknote,
   Settings2,
   BookHeart,
+  MessageSquareText 
 } from "lucide-react";
 
 export const route = (params: string, pathname: string) => [
@@ -112,7 +113,7 @@ export const billboard = (params: string, pathname: string) => [
   {
     href: `/${params}/billboards`,
     label: "Ảnh quảng cáo",
-    icon: <AppWindowMac className="size-5" />,
+    icon: <MessageSquareMore  className="size-5" />,
     content: "Quản lý ảnh quảng cáo trên trang bán hàng.",
     active: pathname === `/${params}/billboards`,
   },
@@ -122,6 +123,13 @@ export const billboard = (params: string, pathname: string) => [
     icon: <AppWindow className="size-5" />,
     content: "Quản lý thời gian hiển thị ảnh quảng cáo.",
     active: pathname === `/${params}/billboardstime`,
+  },
+  {
+    href: `/${params}/image-billboards`,
+    label: "Mô tả ảnh",
+    icon: <MessageSquareText  className="size-5" />,
+    content: "Mô tả chi tiết ảnh quảng cáo.",
+    active: pathname === `/${params}/image-billboards`,
   },
 ];
 
