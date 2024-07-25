@@ -8,14 +8,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Ban, Lock, ShieldCheck, ShieldOff } from "lucide-react";
+import { MoreHorizontal, Ban, Lock, ShieldCheck, ShieldOff,KeyRound } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import axios from "axios";
 import { AlertModal } from "@/components/modals/alert-modal";
 import { SettingUsersColumn } from "./column";
-import { KeyRound } from "lucide-react";
 import SheetBanUser from "./sheet-ban";
 
 interface CellActionProps {

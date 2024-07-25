@@ -7,8 +7,10 @@ import "./delivery.css";
 import { Home, AlignLeft, Heart, Gift, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import axios from "axios";
+import { useParams } from "next/navigation";
 
 const Navbar = () => {
+  const param = useParams()
   const [activeIndex, setActiveIndex] = useState(0);
   const [totalCoins, setTotalCoins] = useState<number>(0);
   const [rotation, setRotation] = useState<number>(0);
@@ -19,10 +21,10 @@ const Navbar = () => {
       setActiveIndex(Number(savedActiveIndex));
     }
     // Load totalCoins from the server using GET request
-    // axios.get("/api/wheelSpin").then((response) => {
-    //   setTotalCoins(response.data.totalCoins);
-    //   setRotation(response.data.latestRotation)
-    // });
+    axios.get(`/api/${param.storeId}/wheelSpin`).then((response) => {
+      setTotalCoins(response.data.totalCoins);
+      setRotation(response.data.latestRotation)
+    });
     // Add scroll event listener
     const handleScroll = () => {
       // Check if the scroll position is greater than or equal to 30

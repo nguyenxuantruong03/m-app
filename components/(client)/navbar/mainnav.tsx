@@ -30,7 +30,7 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { usePathname} from "next/navigation";
+import { usePathname,useParams } from "next/navigation";
 // import useCart from "@/hooks/use-cart";
 import Menu from "@/components/(client)/slider-item/menu";
 import axios from "axios";
@@ -46,6 +46,7 @@ import { cn } from "@/lib/utils";
 
 const MainNav = () => {
   const pathname = usePathname();
+  const param = useParams()
   const [isMounted, setIsMounted] = useState(false);
   const userId = useCurrentUser();
   const cart = useCart();
@@ -86,13 +87,13 @@ const MainNav = () => {
   const [totalCoins, setTotalCoins] = useState<number>(0);
   const [rotation, setRotation] = useState<number>(0);
 
-  //   useEffect(() => {
-  //     // Load totalCoins from the server using GET request
-  //     axios.get("/api/wheelSpin").then((response) => {
-  //       setTotalCoins(response.data.totalCoins);
-  //       setRotation(response.data.latestRotation);
-  //     });
-  //   }, []);
+    useEffect(() => {
+      // Load totalCoins from the server using GET request
+      axios.get(`/api/${param.storeId}/wheelSpin`).then((response) => {
+        setTotalCoins(response.data.totalCoins);
+        setRotation(response.data.latestRotation);
+      });
+    }, []);
 
   if (!isMounted) {
     return null;

@@ -20,9 +20,9 @@ export const CurrentViewProvider = ({ children }: { children: React.ReactNode })
   const [currentView, setCurrentView] = useState<List>(() => {
     if (typeof localStorage !== "undefined") {
       const storedValue = localStorage.getItem("currentView");
-      return storedValue ? (storedValue as List) : List.LIST;
+      return storedValue ? (storedValue as List) : List.NAVBAR;
     } else {
-      return List.LIST; // Sử dụng giá trị mặc định nếu không có localStorage
+      return List.NAVBAR; // Sử dụng giá trị mặc định nếu không có localStorage
     }
   });
 

@@ -64,9 +64,17 @@ const FormBanUser: React.FC<FormBanUserProps> = ({
 
     try {
       const checkTime = new Date(time);
+      const now = new Date();
+      const thirtyMinutesFromNow = new Date(now.getTime() + 30 * 60 * 1000);
       // Kiểm tra nếu thời gian ban nhỏ hơn thời gian hiện tại
-      if (checkTime <= new Date()) {
+      if (checkTime <= now) {
         setError("Bạn không thể ban vào một thời điểm đã qua.");
+        setLoading(false);
+        return;
+      }
+      // Kiểm tra nếu thời gian ban ít nhất là 30 phút từ bây giờ
+      if (checkTime < thirtyMinutesFromNow) {
+        setError("Thời gian ban phải ít nhất là 30 phút.");
         setLoading(false);
         return;
       }
@@ -99,7 +107,9 @@ const FormBanUser: React.FC<FormBanUserProps> = ({
         // Hiển thị thông báo lỗi mặc định cho người dùng
         setError("Có vấn đề ở server khi ban.");
       }
-    } 
+    }finally {
+      setLoading(false)
+    }
   };
 
   return (
@@ -119,7 +129,7 @@ const FormBanUser: React.FC<FormBanUserProps> = ({
           value={time}
           onChange={(e) => setTime(e.target.value)}
           type="datetime-local"
-          placeholder="Thời gian ban."
+          placeholder="Thời gian mở ban."
           disabled={loading}
         />
       </div>

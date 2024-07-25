@@ -8,9 +8,11 @@ import Image from "next/image";
 import Container from "@/components/ui/container";
 import axios from "axios";
 import { AlertTriangle } from 'lucide-react';
+import { useParams } from "next/navigation";
 export const revalidate = 86400;
 
 const SpinCoinPage: React.FC = () => {
+  const param = useParams()
   const [portal, setPortal] = useState<boolean>(false);
   const [show, setShow] = useState<string | false>(false);
   const [totalCoins, setTotalCoins] = useState<number>(0);
@@ -19,7 +21,7 @@ const SpinCoinPage: React.FC = () => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    axios.get("/api/wheelSpin").then((response) => {
+    axios.get(`/api/${param.storeId}/wheelSpin`).then((response) => {
       setTotalCoins(response.data.totalCoins);
       setRotation(response.data.latestRotation)
     });
@@ -85,9 +87,9 @@ const SpinCoinPage: React.FC = () => {
     const newRotation = rotation - 1 
     try {
       // Send the winner data to the server using POST request
-      await axios.post("/api/wheelSpin", { coin,rotation: newRotation });
+      await axios.post(`/api/${param.storeId}/wheelSpin`, { coin:coinsWon,rotation: newRotation });
       setTotalCoins(newTotalCoins);
-      const response = await axios.get("/api/wheelSpin");
+      const response = await axios.get(`/api/${param.storeId}/wheelSpin`);
       setRotation( newRotation);
       setTotalCoins(response.data.totalCoins);
       setRotation(response.data.latestRotation)

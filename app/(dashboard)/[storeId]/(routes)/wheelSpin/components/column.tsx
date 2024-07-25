@@ -10,8 +10,8 @@ export type WheelSpinColumn = {
   id: string;
   name: string | null;
   email: string | null;
-  coin: number;
-  rotation: number;
+  coin: number[];
+  rotation: number[];
   createdAt: Date;
 };
 

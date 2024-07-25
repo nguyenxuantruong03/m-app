@@ -1,6 +1,7 @@
 import { sendUnBanUser } from "@/lib/mail";
 import prismadb from "@/lib/prismadb";
 import { NextResponse } from "next/server";
+import { currentUser } from "@/lib/auth";
 
 type SettingUserUnbanValue = string | number | boolean | Date | string[] | null | undefined;
 
@@ -14,6 +15,7 @@ export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser()
   const body = await req.json();
   const { userId } = body;
 
@@ -21,48 +23,22 @@ export async function POST(
     const existingUser = await prismadb.user.findUnique({
       where: { id: userId },
     });
-    
-    //Set-up1: const settinguser = await prismadb.user.findMany();
-    const system = await prismadb.system.findMany();
-    const banforeverValues = system
-      .filter((item) => item.banforever) // Lọc các mục có thuộc tính `banforever`
-      .map((item) => item.banforever) // Lấy giá trị của thuộc tính `banforever`
-      .reduce((acc, currentValue) => {
-        // Nếu currentValue không phải mảng rỗng, thêm vào mảng kết quả
-        if (currentValue.length > 0) {
-          acc.push(...currentValue);
-        }
-        return acc;
-      }, []);
 
-    //Set-up2: Gộp các giá trị lặp lại bằng cách chuyển sang Set và sau đó trở lại dạng mảng
-    const uniqueBanforeverValues = Array.from(new Set(banforeverValues));
-    //Lấy banforever so sanh với userId lấy ra email tương ứng
-    const user = await prismadb.user.findMany();
-    // Tạo một mảng chứa các ID người dùng mà bạn muốn lấy
-    const matchedUsers = user.filter((userData) =>
-      uniqueBanforeverValues.includes(userData.id)
-    );
-    const findEmail = matchedUsers.map((item) => item.email);
-
-    if (
-      existingUser &&
-      findEmail.some((email) => email === existingUser.email)
-    ) {
-      return new NextResponse(
-        JSON.stringify({
-          error: "Người dùng nay đã bị ban vĩnh viễn!",
-        }),
-        { status: 400 }
-      );
-    }
-
-    if (!existingUser?.ban) {
+    if (!existingUser?.ban && !existingUser?.isbanforever) {
       return new NextResponse(
         JSON.stringify({ error: "Người dùng này hiện tại không bị ban!" }),
         {
           status: 404,
         }
+      );
+    }
+
+    if(user?.id === userId) {
+      return new NextResponse(
+        JSON.stringify({
+          error: "Bạn không thể unban bản thân!",
+        }),
+        { status: 400 }
       );
     }
 
@@ -77,6 +53,7 @@ export async function POST(
         resendBanUserNotStart: 0,
         resendUnBanUser: 0,
         banExpires: null,
+        isbanforever: false
       },
     });
 

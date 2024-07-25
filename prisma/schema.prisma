@@ -534,14 +534,15 @@ model User {
   emailVerified   DateTime?
   image           String?
   imageCredential String[]
-  timeChangeImage DateTime?
+  
   frameAvatar     String?
-
   password                 Password[]
   lastlogin                DateTime?
   //Ban user
   ban                      Boolean?
   banExpires               DateTime?
+  isbanforever             Boolean?  @default(false)
+  timebanforever           DateTime?
   //Làm mới lại số lần gửi mã xác thực 2FA
   resendCount              Int?                   @default(0)
   //resetresendToken xem người dùng đã gửi lại bao nhiêu lần 
@@ -865,9 +866,6 @@ model System {
   newChange      String[]
   oldChange      String[]
   delete         String[]
-  banforever     String[]
-  timebanforever DateTime?
-  isbanforever   Boolean?  @default(false)
   type           String?
   user           String?
   createdAt      DateTime  @default(now())

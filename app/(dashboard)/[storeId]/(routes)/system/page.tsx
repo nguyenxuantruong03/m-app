@@ -23,11 +23,8 @@ const System = async () => {
     newChange: item.newChange.map((item) => item),
     oldChange: item.oldChange.map((item) => item),
     delete: item.delete.map((item) => item),
-    banforever:item.banforever.map((item) => item),
-    isbanforever: item.isbanforever,
     type: item.type,
     user: item.user,
-    timebanforever: item.timebanforever,
     createdAt: item.createdAt,
   }));
 

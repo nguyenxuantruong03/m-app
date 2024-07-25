@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Modal from "../ui/modal";
-import { Lock, Unlock } from "lucide-react";
 import { utcToZonedTime } from "date-fns-tz";
 import viLocale from "date-fns/locale/vi";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
@@ -13,11 +12,8 @@ type System = {
   newChange: string[];
   oldChange: string[];
   delete: string[];
-  banforever: string[];
-  isbanforever: boolean | null;
   type: string | null;
   user: string | null;
-  timebanforever: Date | null;
   createdAt: Date | null;
 };
 
@@ -52,7 +48,7 @@ export const ShowSystem: React.FC<ShowSystemProps> = ({
 
   return (
     <Modal
-      title="Quá trình người trình thực hiện"
+      title="Quá trình người dùng thực hiện"
       description="Thông tin người dùng trong hệ thống"
       isOpen={isOpen}
       onClose={onClose}
@@ -92,13 +88,7 @@ export const ShowSystem: React.FC<ShowSystemProps> = ({
                       key={key}
                       className="px-6 py-4 text-black dark:text-white"
                     >
-                      {key === "isbanforever" ? (
-                        data[key] ? (
-                          <Lock className="text-green-600" />
-                        ) : (
-                          <Unlock className="text-red-600" />
-                        )
-                      ) : key === "createdAt" || key === "timebanforever" ? (
+                      {key === "createdAt" ? (
                         formatDate(data[key as keyof System] as Date)
                       ) : (
                         String(data[key as keyof System])

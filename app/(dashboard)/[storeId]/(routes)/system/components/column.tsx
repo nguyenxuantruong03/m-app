@@ -3,16 +3,11 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
 import {
-  Ban,
   Clock12,
-  Hourglass,
-  Lock,
   Minus,
   Plus,
-  ShieldBan,
   Tag,
   Trash,
-  Unlock,
   User,
 } from "lucide-react";
 import SpanColumn from "@/components/span-column";
@@ -25,9 +20,6 @@ export type SystemsColumn = {
   newChange: string[];
   oldChange: string[];
   delete: string[];
-  banforever: string[];
-  timebanforever: Date | null;
-  isbanforever: boolean | null;
   type: string | null;
   user: string | null;
   createdAt: Date;
@@ -47,15 +39,9 @@ export const columns: ColumnDef<SystemsColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      const isBanforever = row.original.isbanforever;
+      const isBanForeverUser = row.original.type === "BANFOREVER-USER";
       return (
-        <div
-          className={
-            isBanforever
-              ? "line-through text-red-500"
-              : "line-through text-gray-400"
-          }
-        >
+        <div className={isBanForeverUser ? "text-red-500 font-semibold" : ""}>
           {row.original.oldChange}
         </div>
       );
@@ -74,9 +60,9 @@ export const columns: ColumnDef<SystemsColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      const isBanforever = row.original.isbanforever;
+      const isBanForeverUser = row.original.type === "BANFOREVER-USER";
       return (
-        <div className={isBanforever ? "line-through text-red-500" : ""}>
+        <div className={isBanForeverUser ? "text-red-500 font-semibold" : ""}>
           {row.original.newChange}
         </div>
       );
@@ -95,77 +81,10 @@ export const columns: ColumnDef<SystemsColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      const isBanforever = row.original.isbanforever;
+      const isBanForeverUser = row.original.type === "BANFOREVER-USER";
       return (
-        <div className={isBanforever ? "line-through text-red-500" : ""}>
+        <div className={isBanForeverUser ? "text-red-500 font-semibold" : ""}>
           {row.original.delete}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "banforever",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Ban mãi mãi
-          <Ban className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
-    cell: ({ row }) => {
-      const isBanforever = row.original.isbanforever;
-      return (
-        <div className={isBanforever ? "line-through text-red-500" : ""}>
-          {row.original.banforever}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "timebanforever",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian ban
-          <Hourglass className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
-    cell: ({ row }) => {
-      const isBanforever = row.original.isbanforever;
-      return (
-        <div className={isBanforever ? "line-through text-red-500" : ""}>
-          <FormatDate data={row.original.timebanforever} subtractiontime={true}/>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "isbanforever",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          isbanforever
-          <ShieldBan className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
-    cell: ({ row }) => {
-      const isBanforever = row.original.isbanforever;
-      return (
-        <div className={isBanforever ? "line-through text-red-500" : ""}>
-          {row.original.isbanforever ? (
-            <Lock className="text-green-600" />
-          ) : (
-            <Unlock className="text-red-600" />
-          )}
         </div>
       );
     },
@@ -183,9 +102,9 @@ export const columns: ColumnDef<SystemsColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      const isBanforever = row.original.isbanforever;
+      const isBanForeverUser = row.original.type === "BANFOREVER-USER";
       return (
-        <div className={isBanforever ? "line-through text-red-500" : ""}>
+        <div className={isBanForeverUser ? "text-red-500 font-semibold" : ""}>
           {row.original.type}
         </div>
       );
@@ -204,10 +123,10 @@ export const columns: ColumnDef<SystemsColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      const isBanforever = row.original.isbanforever;
+      const isBanForeverUser = row.original.type === "BANFOREVER-USER";
       return (
-        <div className={isBanforever ? "line-through text-red-500" : ""}>
-          {row.original.user}
+        <div className={isBanForeverUser ? "text-blue-500 font-semibold" : ""}>
+          {row.original.delete}
         </div>
       );
     },
@@ -225,10 +144,9 @@ export const columns: ColumnDef<SystemsColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      const isBanforever = row.original.isbanforever;
       return (
-        <div className={isBanforever ? "line-through text-red-500" : ""}>
-          <FormatDate data={row.original.createdAt} subtractiontime={true}/>;
+        <div>
+          <FormatDate data={row.original.createdAt} subtractiontime={true} />
         </div>
       );
     },

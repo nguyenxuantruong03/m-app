@@ -40,35 +40,8 @@ export const login = async (
 
   const existingUser = await getUserByEmail(email);
 
-  //Set-up1: const settinguser = await prismadb.user.findMany();
-  const system = await prismadb.system.findMany();
-  const banforeverValues = system
-    .filter((item) => item.banforever) // Lọc các mục có thuộc tính `banforever`
-    .map((item) => item.banforever) // Lấy giá trị của thuộc tính `banforever`
-    .reduce((acc, currentValue) => {
-      // Nếu currentValue không phải mảng rỗng, thêm vào mảng kết quả
-      if (currentValue.length > 0) {
-        acc.push(...currentValue);
-      }
-      return acc;
-    }, []);
-
-  //Set-up2: Gộp các giá trị lặp lại bằng cách chuyển sang Set và sau đó trở lại dạng mảng
-  const uniqueBanforeverValues = Array.from(new Set(banforeverValues));
-  //Lấy banforever so sanh với userId lấy ra email tương ứng
-  const user = await prismadb.user.findMany();
-
-  // Tạo một mảng chứa các ID người dùng mà bạn muốn lấy
-  const matchedUsers = user.filter((userData) =>
-    uniqueBanforeverValues.includes(userData.id)
-  );
-  const findEmail = matchedUsers.map((item) => item.email);
-
-  const matchEmail =
-    existingUser && findEmail.some((email) => email === existingUser.email);
-
-  if (matchEmail) {
-    return { error: "Tài khoản hiện tại đã bị ban vĩnh viễn!" };
+  if(existingUser?.isbanforever){
+    return { error: "Tài khoản của bạn đã bị ban vĩnh viên do vi phạm chính sách có thể liên hệ chúng tôi để biết thêm lý do 0352261103." }; 
   }
 
   if (!existingUser?.email) {

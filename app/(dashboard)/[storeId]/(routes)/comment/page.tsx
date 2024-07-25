@@ -13,20 +13,34 @@ const Comment = async () => {
   const comment = await prismadb.comment.findMany({
     include: {
       user: true,
-      responsecomment: true
+      responsecomment: {
+        include: {
+          user: true
+        },
+      },
     },
   });
 
-  const formattedComment: CommentColumn[] = comment.map((item) => ({
+  const formattedComment: CommentColumn[] = comment.map((item) => {
+   return {
     id: item.id,
+    userId: item.user.id,
     name: item.user.name,
     email: item.user.email,
     role: item.user.role,
     rating: item.rating,
     comment: item.comment,
-    description: item.responsecomment.map((item)=> item.description),
+    banExpiresTime: item.user.banExpires,
+    ban: item.user.ban,
+    isbanforever: item?.user.isbanforever,
+    description: item.responsecomment.map((item)=> { return(
+    <div key={item.id}> 
+      <div>{item.user.name}: {item.description}</div>
+    </div>
+    )}),
     createdAt: item.createdAt,
-  }));
+   }
+  });
 
   return (
     <div className="w-full">

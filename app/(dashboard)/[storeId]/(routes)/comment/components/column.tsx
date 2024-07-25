@@ -5,7 +5,6 @@ import { CellAction } from "./cell-action";
 import {
   Clock12,
   MessageCircleMore,
-  Package,
   SquareGanttChart,
   SquareUserRound,
   Star,
@@ -22,14 +21,18 @@ export type CommentColumn = {
   role: string | null;
   rating: number;
   comment: string;
-  description: string[];
+  userId: string;
+  description: JSX.Element[];
+  banExpiresTime: Date | null;
+  isbanforever: boolean | undefined | null;
+  ban: boolean | null;
   createdAt: Date;
 };
 
-const convertToStars = (rating: number) => {
+const convertToStars = (rating: number,ban:boolean) => {
   const stars = [];
   for (let i = 0; i < rating; i++) {
-    stars.push(<Star key={i} />);
+    stars.push(<Star fill={ban ?  "#9ca3af" : "#F4D03F"} className={ban ?  "text-[#9ca3af]" : "text-[#F4D03F]"} key={i} />);
   }
   return stars;
 };
@@ -47,6 +50,23 @@ export const columns: ColumnDef<CommentColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
+      return (
+        <div
+          className={
+            isBanforever
+              ? "line-through text-red-500"
+              : isBanned
+              ? "line-through text-gray-400"
+              : ""
+          }
+        >
+          {row.original.name}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "email",
@@ -58,6 +78,23 @@ export const columns: ColumnDef<CommentColumn>[] = [
           Email
           <User className="ml-2 h-4 w-4" />
         </SpanColumn>
+      );
+    },
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
+      return (
+        <div
+          className={
+            isBanforever
+              ? "line-through text-red-500"
+              : isBanned
+              ? "line-through text-gray-400"
+              : ""
+          }
+        >
+          {row.original.email}
+        </div>
       );
     },
   },
@@ -73,6 +110,23 @@ export const columns: ColumnDef<CommentColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
+      return (
+        <div
+          className={
+            isBanforever
+              ? "line-through text-red-500"
+              : isBanned
+              ? "line-through text-gray-400"
+              : ""
+          }
+        >
+          {row.original.role}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "rating",
@@ -86,7 +140,16 @@ export const columns: ColumnDef<CommentColumn>[] = [
         </SpanColumn>
       );
     },
-    cell: ({ row }) => convertToStars(row.original.rating),
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
+      const ban = isBanforever || isBanned
+      return (
+        <div className="flex items-center">
+          {convertToStars(row.original.rating,ban)}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "comment",
@@ -100,6 +163,23 @@ export const columns: ColumnDef<CommentColumn>[] = [
         </SpanColumn>
       );
     },
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
+      return (
+        <div
+          className={
+            isBanforever
+              ? "line-through text-red-500"
+              : isBanned
+              ? "line-through text-gray-400"
+              : ""
+          }
+        >
+          {row.original.comment}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "description",
@@ -111,6 +191,21 @@ export const columns: ColumnDef<CommentColumn>[] = [
           Response Comment
           <SquareGanttChart className="ml-2 h-4 w-4" />
         </SpanColumn>
+      );
+    },
+    cell: ({ row }) => {
+      const isBanned = row.original.ban === true;
+      const isBanforever = row.original.isbanforever;
+      return (
+        <div className={
+          isBanforever
+            ? "flex flex-col items-start line-through text-red-500"
+            : isBanned
+            ? "flex flex-col items-start line-through text-gray-400"
+            : "flex flex-col items-start"
+        }>
+          {row.original.description}
+        </div>
       );
     },
   },
@@ -127,10 +222,8 @@ export const columns: ColumnDef<CommentColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      return (
-      <FormatDate data={row.original.createdAt}/>
-      )
-    }
+      return <FormatDate data={row.original.createdAt} />;
+    },
   },
   {
     id: "actions",

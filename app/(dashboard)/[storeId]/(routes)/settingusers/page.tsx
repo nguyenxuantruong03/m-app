@@ -26,15 +26,11 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
     ],
   });
 
-  const system = await prismadb.system.findMany();
-
   // Lấy ngày hiện tại
   const today = new Date();
 
   // Format lại danh sách người dùng với thông tin từ system và thêm kiểm tra sinh nhật
   const formattedUser: SettingUsersColumn[] = users.map((item) => {
-    const systemInfo = system.find(sys => sys.banforever.includes(item.id));
-    
     // Xử lý ngày sinh
     const birthdayDate = item.dateofbirth ? new Date(item.dateofbirth) : null;
 
@@ -72,8 +68,8 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
       twoFactorConfirmation: item.twoFactorConfirmation,
       ban: item.ban,
       banExpiresTime: item.banExpires,
-      isbanforever: systemInfo?.isbanforever,
-      timebanforever: systemInfo?.timebanforever,
+      isbanforever: item?.isbanforever,
+      timebanforever: item?.timebanforever,
       createdAt: item.createdAt,
       isBirthdayToday: isBirthdayToday, // Thêm trường này để xử lý sau này
     };
