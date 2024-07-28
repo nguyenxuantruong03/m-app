@@ -20,6 +20,13 @@ const ManageStaff = async ({ params }: { params: { storeId: string } }) => {
         in: ["ADMIN", "STAFF"]
       }
     },
+    include: {
+      imageCredential: {
+        orderBy: {
+            createdAt: 'desc'
+        }
+      }
+    },
     orderBy: [
       {
         createdAt: "desc",
@@ -32,11 +39,7 @@ const ManageStaff = async ({ params }: { params: { storeId: string } }) => {
     id: item.id,
     isCitizen: item.isCitizen,
     numberCCCD: item.numberCCCD,
-    imageCredential: item.imageCredential
-      .map((orderItem) => {
-        return orderItem;
-      })
-      .join(", "),
+    imageCredential: item.imageCredential[0]?.url,
     imageCredentialUrl: item.imageCredential,
     image: item.image,
     name: item.name,

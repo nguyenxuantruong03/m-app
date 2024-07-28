@@ -32,6 +32,14 @@ export async function PATCH(
     const userId = await currentUser();
     const body = await req.json();
     const { id, sentVeirifi } = body;
+
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
     const user = await prismadb.user.findUnique({
       where: { id },
     });
@@ -92,6 +100,14 @@ export async function POST(
   { params }: { params: { managestaffId: string; storeId: string } }
 ) {
   const userId = await currentUser();
+
+  if (!userId) {
+    return new NextResponse(
+      JSON.stringify({ error: "Không tìm thấy user id!" }),
+      { status: 403 }
+    );
+  }
+  
   try {
     // Khởi tạo một mảng để lưu trữ email đã gửi
     const sentEmails = [];

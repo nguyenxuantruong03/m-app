@@ -6,7 +6,7 @@ export type ExtendedUser = DefaultSession["user"] & {
   isTwoFactorEnabled: boolean;
   isOAuth: boolean;
   provider: string;
-  imageCredential: string[];
+  imageCredential: string;
   favorite: string[];
   ban: boolean;
   timestartwork: string;

@@ -158,24 +158,24 @@ export default function Home() {
       } else {
         setIsCheckingAttendanceStart(false);
       }
-      console.log("now", now);
-      console.log("currentDate", currentDate);
-      console.log(
-        "delayTime:",
-        Math.floor(delayTime / (1000 * 60 * 60)) +
-          " hours " +
-          Math.floor((delayTime % (1000 * 60 * 60)) / (1000 * 60)) +
-          " minutes " +
-          Math.floor((delayTime % (1000 * 60)) / 1000) +
-          " seconds"
-      );
-      console.log(
-        "delayHours:",
-        Math.floor(delayHours) +
-          " hours " +
-          Math.floor((delayHours % 1) * 60) +
-          " minutes"
-      );
+      // console.log("now", now);
+      // console.log("currentDate", currentDate);
+      // console.log(
+      //   "delayTime:",
+      //   Math.floor(delayTime / (1000 * 60 * 60)) +
+      //     " hours " +
+      //     Math.floor((delayTime % (1000 * 60 * 60)) / (1000 * 60)) +
+      //     " minutes " +
+      //     Math.floor((delayTime % (1000 * 60)) / 1000) +
+      //     " seconds"
+      // );
+      // console.log(
+      //   "delayHours:",
+      //   Math.floor(delayHours) +
+      //     " hours " +
+      //     Math.floor((delayHours % 1) * 60) +
+      //     " minutes"
+      // );
     }
   }, []);
 
@@ -203,7 +203,8 @@ export default function Home() {
     };
     fetchData();
   }, [userId]);
-  const imageCredentials = userId?.imageCredential[0] || undefined;
+  
+  const imageCredentials = userId?.imageCredential || undefined;
   const isGitHubOrGoogleUser =
     account?.provider === "github" ||
     account?.provider === "google" ||
@@ -217,7 +218,6 @@ export default function Home() {
     imageCredentials ||
     (imageCredentials ? imageCredentials[0] : null) ||
     userId?.image;
-  // Sử dụng randomImage trong AvatarImage
 
   // Use a ref to track whether draggable setup has been done
   const draggableSetupRef = useRef(false);
@@ -342,7 +342,6 @@ export default function Home() {
           // Đặt giờ và phút từ user.timestartwork vào ngày hiện tại
           currentDate.setHours(parseInt(hours, 10));
           currentDate.setMinutes(parseInt(minutes, 10));
-          // So sánh thời gian hiện tại với thời gian user.timestartwork
           if (currentTime.getTime() <= currentDate.getTime()) {
             toast.error(
               `Chưa đến giờ điểm danh hãy quay lại lúc:${userId?.timestartwork}!`

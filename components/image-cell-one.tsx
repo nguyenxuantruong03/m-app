@@ -4,9 +4,9 @@ import { ZoomImageAttendanceModal } from "./modals/zoom-image-one-modal";
 
 const ImageCellOne: React.FC<{
   imageUrl: string;
-  updateImage?: string | null;
+  createdAt?: string | null;
   email?: string | null;
-}> = ({ imageUrl, updateImage, email }) => {
+}> = ({ imageUrl, createdAt, email }) => {
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
   const openImageModal = () => setIsImageModalOpen(true);
@@ -26,7 +26,7 @@ const ImageCellOne: React.FC<{
       {isImageModalOpen && (
         <ZoomImageAttendanceModal
           imageUrl={imageUrl}
-          createdAt={updateImage}
+          createdAt={createdAt}
           email={email}
           onClose={closeImageModal}
           isOpen={true}

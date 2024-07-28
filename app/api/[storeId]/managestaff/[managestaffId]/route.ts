@@ -227,7 +227,7 @@ export async function PATCH(
 
     if (!imageCredential) {
       return new NextResponse(
-        JSON.stringify({ error: "Hình ảnh cmnd is required!" }),
+        JSON.stringify({ error: "Hình ảnh is required!" }),
         { status: 400 }
       );
     }
@@ -295,7 +295,11 @@ export async function PATCH(
         urlimageCheckAttendance,
         codeNFC,
         isCitizen,
-        imageCredential,
+        imageCredential: {
+          createMany: {
+            data: [...imageCredential.map((image: { url: string }) => image)],
+          },
+        },
         dateofbirth,
         dateRange,
       },

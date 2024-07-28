@@ -18,14 +18,16 @@ export const image = async (values: z.infer<typeof UpdateImageSchema>) => {
   const existingUser = await getUserById(user?.id);
 
   // Update the existing user with the imageCredential
-  await prismadb.user.update({
-    where: {
-      id: existingUser?.id,
-    },
-    data: {
-      imageCredential: imageCredential.map((image: { url: string }) => image.url),
-    },
-  });
+  if (existingUser) {
+    await prismadb.imageCredential.create({
+      data: {
+        userId: existingUser.id,
+        url: imageCredential[0]?.url // Assuming imageCredential is an array and we take the first one
+      }
+    });
+  } else {
+    return { error: "User not found!" };
+  }
 
   return { success: "Thành công!" };
 };

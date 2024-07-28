@@ -178,7 +178,7 @@ export const {
         session.user.email = token.email as string;
         session.user.isOAuth = token.isOAuth as boolean;
         session.user.provider = token.provider as string;
-        session.user.imageCredential = token.imageCredential as string[];
+        session.user.imageCredential = token.imageCredential as string;
         session.user.favorite = token.favorite as string[];
         session.user.ban = token.ban as boolean;
         session.user.timestartwork = token.timestartwork as string;
@@ -248,7 +248,9 @@ export const {
       token.email = existingUser.email;
       token.role = existingUser.role;
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
-      token.imageCredential = existingUser.imageCredential;
+      if (existingUser.imageCredential.length > 0) {
+        token.imageCredential = existingUser.imageCredential[0].url;
+    }
       token.ban = existingUser.ban;
       token.timestartwork = existingUser.timestartwork;
       token.urlimageCheckAttendance = existingUser.urlimageCheckAttendance;

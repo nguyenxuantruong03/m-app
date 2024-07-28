@@ -53,7 +53,7 @@ interface MappedUser {
   id: string;
   email: string;
   image: string | null;
-  imageCredential: string[]
+  imageCredential: { url: string }[];
   nameuser: string;
 }
 
@@ -110,7 +110,7 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
             id: item.id.toString(),
             display: item.email,
             image: item.image,
-            imageCredential: item.imageCredential[0],
+            imageCredential: item.imageCredential[0]?.url,
             nameuser: item.nameuser,
           })),
         ];
@@ -499,13 +499,13 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
                         ) => (
                           <div className="">
                             <div className="flex items-center space-x-3">
-                              {suggestion.imageCredential ||
+                              {suggestion?.imageCredential ||
                               suggestion.image ? (
                                 <Image
                                   width={32}
                                   height={32}
                                   src={
-                                    suggestion.imageCredential ||
+                                    suggestion?.imageCredential ||
                                     suggestion.image || "/device/404.png"
                                   }
                                   alt={`Error avatar của ${suggestion.email}`}

@@ -36,9 +36,11 @@ import SpanColumn from "@/components/span-column";
 import ImageCellOne from "@/components/image-cell-one";
 import EditRow from "../_components/edit-row";
 import FormatDate from "@/components/format-Date";
+import { ImageCredential } from "@/types/type";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
+
 export type ManageStaffsColumn = {
   id: string;
   name: string | null;
@@ -62,7 +64,7 @@ export type ManageStaffsColumn = {
   urlimageCheckAttendance: string | null;
   codeNFC: string | null;
   daywork: string[];
-  imageCredentialUrl: string[]
+  imageCredentialUrl: ImageCredential[]
   dateRangepatch: Date | null;
   dateofbirthpatach: Date | null;
   createdAt: Date;
@@ -166,7 +168,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
         return (
           <ImageCellOne
             imageUrl={imageUrl}
-            updateImage={updateImage}
+            createdAt={updateImage}
             email={email}
           />
         );
@@ -195,7 +197,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
         return (
           <ImageCellOne
             imageUrl={imageUrl}
-            updateImage={updateImage}
+            createdAt={updateImage}
             email={email}
           />
         );
@@ -744,7 +746,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
       const isBanned = row.original.ban === true;
       return (
         <div className={isBanned ? "line-through text-gray-400" : ""}>
-          <FormatDate data={row.original.createdAt} />;
+          <FormatDate data={row.original.createdAt} />
         </div>
       );
     },

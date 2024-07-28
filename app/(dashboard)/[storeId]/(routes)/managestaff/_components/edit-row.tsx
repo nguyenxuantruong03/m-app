@@ -9,6 +9,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import LabelForm from "./form-edit";
+import { ImageCredential } from "@/types/type";
 
 const degreeMappings: Record<string, string> = {
   None: "Không xác định",
@@ -62,7 +63,7 @@ interface EditRowProps {
   urlimageCheckAttendance: string | null;
   codeNFC: string | null;
   daywork: string[];
-  imageCredential: string[];
+  imageCredential: ImageCredential[];
   dateRange: Date | null;
   dateofbirth: Date | null;
   data: string | null;

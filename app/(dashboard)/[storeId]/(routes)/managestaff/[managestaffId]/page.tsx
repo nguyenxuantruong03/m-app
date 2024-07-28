@@ -17,6 +17,13 @@ const ManageStaffPage = async ({
     where: {
       id: params.managestaffId,
     },
+    include: {
+      imageCredential: {
+        orderBy: {
+            createdAt: 'desc'
+        }
+      }
+    }
   });
   return (
     <div className="flex-col">
@@ -24,6 +31,7 @@ const ManageStaffPage = async ({
         {showProductRole && (
           <ManageStaffForm
             initialData={ManageStaff}
+            imageCredential={ManageStaff?.imageCredential || []}
           />
         )}
       </div>

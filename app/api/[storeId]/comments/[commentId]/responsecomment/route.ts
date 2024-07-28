@@ -117,7 +117,15 @@ export async function GET(req: Request, { params }: { params?: { commentId?: str
         commentId: params?.commentId,
       },
       include: {
-        user: true
+        user: {
+          include: {
+            imageCredential: {
+              orderBy: {
+                createdAt: 'desc',
+              },
+            },
+          },
+        },
       }
     });
 

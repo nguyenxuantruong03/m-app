@@ -140,7 +140,15 @@ export async function GET() {
     const responseComment = await prismadb.comment.findMany({
       include: {
         responsecomment: true,
-        user: true,
+        user: {
+          include: {
+            imageCredential: {
+              orderBy: {
+                createdAt: 'desc',
+              },
+            },
+          },
+        },
         product:true
       },
     });

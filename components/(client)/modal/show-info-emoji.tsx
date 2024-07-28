@@ -101,13 +101,13 @@ const ShowInfoEmojiModal: React.FC<PreviewModalProps> = ({
     >
         <div className="space-y-2">
           {emojiUserIdModal?.map((item) => (
-            <div key={item?.user?.imageCredential[0]} className="flex items-center justify-between">
+            <div key={item?.user?.id} className="flex items-center justify-between">
               <div className="space-x-2 flex items-center">
               <Image
                 className="rounded-full"
                 width={35}
                 height={35}
-                src={item?.user?.image ||item?.user?.imageCredential[0] || ""}
+                src={item?.user?.image ||item?.user?.imageCredential[0]?.url || ""}
                 alt="404"
               />
               <span className="text-xs">{item.user?.name} </span>

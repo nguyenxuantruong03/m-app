@@ -1,6 +1,6 @@
 import { utcToZonedTime } from "date-fns-tz";
-import viLocale from "date-fns/locale/vi";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
+import viLocale from "date-fns/locale/vi";
 import { format } from "date-fns";
 
 interface FormatDateProps {

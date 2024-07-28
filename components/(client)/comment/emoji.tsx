@@ -48,6 +48,8 @@ const EmojiPage: React.FC<EmojiProps> = ({
   const [emojiUserIdModal, setEmojiUserIdModal] = useState<[]>([]); // New state for emoji user ID
   const shareOptionsRef = useRef<HTMLDivElement | null>(null);
 
+  console.log("emojiUserIdModal",emojiUserIdModal)
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (

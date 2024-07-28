@@ -1106,7 +1106,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                             <>
                               <CircleAvatar
                                 srcAvatar={
-                                  comment.user?.imageCredential[0] ||
+                                  comment.user?.imageCredential[0]?.url ||
                                   comment?.user?.image
                                 }
                                 srcFrame={comment?.user?.frameAvatar}
@@ -1255,7 +1255,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                                       <CircleAvatar
                                                         srcAvatar={
                                                           response?.user
-                                                            ?.imageCredential[0] ||
+                                                            ?.imageCredential[0]?.url ||
                                                           response?.user?.image
                                                         }
                                                         srcFrame={
@@ -1449,7 +1449,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                                       <CircleAvatar
                                                         srcAvatar={
                                                           response?.user
-                                                            ?.imageCredential[0] ||
+                                                            ?.imageCredential[0]?.url ||
                                                           response?.user.image
                                                         }
                                                         role={

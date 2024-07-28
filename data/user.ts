@@ -13,6 +13,11 @@ export const getUserById = async (id:string | undefined) => {
     try {
         const user = await prismadb.user.findUnique({where: {id},include:{
             socialLink: true,
+            imageCredential: {
+                orderBy: {
+                    createdAt: 'desc'
+                }
+            }
         }})
         return user
     } catch (error) {

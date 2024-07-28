@@ -8,7 +8,6 @@ import toast from "react-hot-toast";
 import { User } from "lucide-react";
 import { AccountItem } from "@/components/auth/user-button";
 import { UserRole } from "@prisma/client";
-import { useCurrentRole } from "@/hooks/use-current-role";
 
 const getFrameDimensions = (frame: string | undefined) => {
   if (frame?.startsWith("/avatar-frame/frame-special")) {
@@ -84,7 +83,6 @@ const CircleAvatar = ({
   role,
 }: CircleAvatarProps) => {
   const user = useCurrentUser();
-  const roleCurrent = useCurrentRole();
   const [account, setAccount] = useState<AccountItem | null>(null);
   const { width, height } = getFrameDimensions(user?.frameAvatar);
 
@@ -104,7 +102,7 @@ const CircleAvatar = ({
     fetchData();
   }, [user]);
 
-  const imageCredentials = user?.imageCredential[0] || undefined;
+  const imageCredentials = user?.imageCredential || undefined;
   const isGitHubOrGoogleUser =
     account?.provider === "github" ||
     account?.provider === "google" ||
@@ -116,7 +114,7 @@ const CircleAvatar = ({
   // Use the first image from imageCredential if available, or randomImage if available
   const avatarImage =
     imageCredentials ||
-    (imageCredentials ? imageCredentials[0] : null) ||
+    (imageCredentials ? imageCredentials : null) ||
     user?.image;
 
   return (

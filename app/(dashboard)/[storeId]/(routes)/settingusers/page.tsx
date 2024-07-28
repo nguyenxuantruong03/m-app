@@ -14,7 +14,12 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
     include: {
       accounts: true,
       twoFactorConfirmation: true,
-      password: true
+      password: true,
+      imageCredential: {
+        orderBy: {
+            createdAt: 'desc'
+        }
+      }
     },
     orderBy: [
       {
@@ -47,7 +52,7 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
       email: item.email,
       emailVerified: item.emailVerified,
       image: item.image,
-      imageCredential: item.imageCredential.map(orderItem => orderItem).join(", "),
+      imageCredential: item?.imageCredential[0]?.url,
       password: item.password.length,
       dateofbirth: item.dateofbirth,
       lastlogin: item.lastlogin,

@@ -23,13 +23,14 @@ import { getAccountByUserId } from "@/data/account";
 import { redirect } from "next/navigation";
 import SheetInfomation from "../showsheet/sheet-infomation";
 import { format } from "date-fns";
-import { Favorite, User as Userdata } from "@prisma/client";
+import { Favorite, ImageCredential, User as Userdata } from "@prisma/client";
 import FormImageCredential from "./form/form-infomation/form-imageCredential";
 import Image from "next/image";
 
 interface InfoUserProps {
   user: Userdata;
   favorite: Favorite[];
+  imageCredential: string;
 }
 
 interface InfoUser {
@@ -54,7 +55,7 @@ interface AccountItem {
   session_state: string | null;
 }
 
-const InfoUser: React.FC<InfoUserProps> = ({ user, favorite }) => {
+const InfoUser: React.FC<InfoUserProps> = ({ user, favorite, imageCredential }) => {
   const [open, setOpen] = useState(false);
   const [account, setAccount] = useState<AccountItem | null>(null);
 
@@ -91,7 +92,7 @@ const InfoUser: React.FC<InfoUserProps> = ({ user, favorite }) => {
     fetchData();
   }, [user]);
 
-  const imageCredentials = user?.imageCredential[0] || undefined;
+  const imageCredentials = imageCredential || undefined;
   const isGitHubOrGoogleUser =
     account?.provider === "github" ||
     account?.provider === "google" ||

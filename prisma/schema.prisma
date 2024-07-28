@@ -523,25 +523,25 @@ enum WorkingTime {
 }
 
 model User {
-  id              String    @id @default(cuid())
+  id              String            @id @default(cuid())
   name            String?
   nameuser        String?
   favorite        String[]
   bio             String?
-  email           String?   @unique
+  email           String?           @unique
   address         String?
   addressother    String?
   emailVerified   DateTime?
   image           String?
-  imageCredential String[]
-  
-  frameAvatar     String?
+  imageCredential ImageCredential[]
+
+  frameAvatar              String?
   password                 Password[]
   lastlogin                DateTime?
   //Ban user
   ban                      Boolean?
   banExpires               DateTime?
-  isbanforever             Boolean?  @default(false)
+  isbanforever             Boolean?               @default(false)
   timebanforever           DateTime?
   //Làm mới lại số lần gửi mã xác thực 2FA
   resendCount              Int?                   @default(0)
@@ -609,6 +609,17 @@ model Password {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model ImageCredential {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  url       String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -831,7 +842,7 @@ model Emoji {
   productId        String
   product          Product  @relation(fields: [productId], references: [id])
   emoji            String
-  emojilengthLove Int      @default(0)
+  emojilengthLove  Int      @default(0)
   emojilengthHaha  Int      @default(0)
   emojilengthWow   Int      @default(0)
   emojilengthAngry Int      @default(0)
@@ -860,16 +871,16 @@ model WheelSpin {
 }
 
 model System {
-  id             String    @id @default(cuid())
-  storeId        String?
-  store          Store?    @relation("StoreToSystem", fields: [storeId], references: [id])
-  newChange      String[]
-  oldChange      String[]
-  delete         String[]
-  type           String?
-  user           String?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  id        String   @id @default(cuid())
+  storeId   String?
+  store     Store?   @relation("StoreToSystem", fields: [storeId], references: [id])
+  newChange String[]
+  oldChange String[]
+  delete    String[]
+  type      String?
+  user      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([storeId])
 }

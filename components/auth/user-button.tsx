@@ -17,7 +17,6 @@ import { LogOut } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import LogoutButton from "@/components/auth/logout-button";
-import { ForDeleteImage } from "../ui/form-delete-image";
 import { getAccountByUserId } from "@/data/account";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -96,7 +95,8 @@ export const UserButton = () => {
     fetchData();
   }, [userId]);
 
-  const imageCredentials = userId?.imageCredential[0] || undefined;
+  const imageCredentials = userId?.imageCredential || undefined;
+
   const isGitHubOrGoogleUser =
     account?.provider === "github" ||
     account?.provider === "google" ||
@@ -138,13 +138,13 @@ export const UserButton = () => {
             {isGitHubOrGoogleUser && avatarImage ? (
               <ImageCellOne
                 imageUrl={avatarImage}
-                updateImage={formatcreatedAt || ""}
+                createdAt={formatcreatedAt || ""}
                 email={userId?.email || ""}
               />
             ) : avatarImage ? (
               <ImageCellOne
                 imageUrl={avatarImage}
-                updateImage={formatcreatedAt || ""}
+                createdAt={formatcreatedAt || ""}
                 email={userId?.email || ""}
               />
             ) : (
@@ -172,10 +172,6 @@ export const UserButton = () => {
 
         <DropdownMenuItem className="mt-4 mb-2 flex items-center">
           <User className="h-5 w-5 mr-2" /> Trang cá nhân
-        </DropdownMenuItem>
-
-        <DropdownMenuItem>
-          <ForDeleteImage />
         </DropdownMenuItem>
 
         <Separator />

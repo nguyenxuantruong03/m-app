@@ -11,6 +11,11 @@ const SettingProfile = async () => {
     },
     include: {
       socialLink: true,
+      imageCredential: {
+        orderBy: {
+            createdAt: 'desc'
+        }
+    }
     },
   });
   const favorite = await prismadb.favorite.findMany()
@@ -29,7 +34,7 @@ const SettingProfile = async () => {
         <div className="text-sm text-gray-500 py-2">
           Quản lý tên hiển thị, tên người dùng, bio và avatar của bạn.
         </div>
-        <InfoUser user={user! ?? undefined} favorite={favorite}/>
+        <InfoUser user={user! ?? undefined} imageCredential={user?.imageCredential[0]?.url || ""} favorite={favorite}/>
 
         <div className="font-semibold text-lg md:text-xl mt-5">
           Thông tin mạng xã hội

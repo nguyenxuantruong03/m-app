@@ -28,6 +28,7 @@ import {
   MaritalStatus,
   WorkingTime,
 } from "@prisma/client";
+import { ImageCredential } from "@/types/type";
 
 interface LabelFormProps {
   id: string;
@@ -49,7 +50,7 @@ interface LabelFormProps {
   urlimageCheckAttendance: string | null;
   codeNFC: string | null;
   daywork: string[];
-  imageCredential: string[];
+  imageCredential: ImageCredential[];
   dateRange: Date | null;
   dateofbirth: Date | null;
   data: string | null;
@@ -107,7 +108,7 @@ const formSchema = z.object({
     .min(4, { message: "Nhập ít nhất 4 ký tự." })
     .nullable()
     .optional(),
-  imageCredential: z.array(z.string()).nullable().optional(),
+  imageCredential: z.object({ url: z.string() }).array(),
   image: z.string().min(1, { message: "Hãy thêm 1 ảnh" }).nullable().optional(),
   gender: z
     .string()

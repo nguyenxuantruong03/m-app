@@ -462,7 +462,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
         return (
           <ImageCellOne
             imageUrl={imageUrl}
-            updateImage={updateImage}
+            createdAt={updateImage}
             email={email}
           />
         );
@@ -500,7 +500,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
         return (
           <ImageCellOne
             imageUrl={imageUrl}
-            updateImage={updateImage}
+            createdAt={updateImage}
             email={email}
           />
         );

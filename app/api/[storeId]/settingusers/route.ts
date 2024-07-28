@@ -26,7 +26,15 @@ interface ChangeRecord {
 
 export async function GET(req: Request) {
   try {
-    const settinguser = await prismadb.user.findMany();
+    const settinguser = await prismadb.user.findMany({
+      include:{
+        imageCredential: {
+          orderBy: {
+              createdAt: 'desc'
+          }
+        }
+      }
+    });
 
     return NextResponse.json(settinguser);
   } catch (error) {

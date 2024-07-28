@@ -108,9 +108,9 @@ export const setting = async (values: z.infer<typeof SettingSchema>) => {
   }
 
   // Ensure 'phobien' is included in favorites
-  const favoriteWithPhobien = Array.isArray(values.favorite) 
-    ? Array.from(new Set([...values.favorite, 'phobien'])) 
-    : ['phobien'];
+  const favoriteWithPhobien = Array.isArray(values.favorite)
+    ? Array.from(new Set([...values.favorite, "phobien"]))
+    : ["phobien"];
 
   await prismadb.user.update({
     where: { id: dbUser.id },
@@ -149,6 +149,14 @@ export const setting = async (values: z.infer<typeof SettingSchema>) => {
           },
         },
       },
+      imageCredential:
+        values.imageCredential && values.imageCredential.length > 0
+          ? {
+              create: {
+                url: values.imageCredential[0], // Select the first URL if available
+              },
+            }
+          : undefined,
       favorite: favoriteWithPhobien,
       bio: values.bio,
       address: values.address,
@@ -157,8 +165,7 @@ export const setting = async (values: z.infer<typeof SettingSchema>) => {
       gender: values.gender as Gender,
       phonenumber: values.phonenumber,
       dateofbirth: values.dateofbirth,
-      imageCredential: values.imageCredential,
-      name: values.name,
+
       frameAvatar: values.frame,
       email: undefined,
       isTwoFactorEnabled: values.isTwoFactorEnabled,

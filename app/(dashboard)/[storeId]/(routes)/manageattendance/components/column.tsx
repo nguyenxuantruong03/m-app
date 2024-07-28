@@ -95,7 +95,7 @@ export const columns: ColumnDef<ManageAttendancesColumn>[] = [
         return (
           <ImageCellOne
             imageUrl={imageUrl}
-            updateImage={updateImage}
+            createdAt={updateImage}
             email={email}
           />
         );

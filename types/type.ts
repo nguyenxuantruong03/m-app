@@ -202,9 +202,14 @@ export interface Imagesalientfeaturesproduct {
   url: string;
 }
 
+export interface ImageCredential {
+  id: string;
+  url: string;
+}
+
 interface User {
   id: string;
-  imageCredential: string[];
+  imageCredential: ImageCredential[];
   image: string;
   name: string;
 }

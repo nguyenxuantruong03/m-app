@@ -35,11 +35,16 @@ const FormImageCredential = () => {
   const [selectedAvatar, setSelectedAvatar] = useState<string>("");
   const role = useCurrentRole() || UserRole.GUEST;
 
+  console.log("user", user)
   const form = useForm<z.infer<typeof SettingSchema>>({
     resolver: zodResolver(SettingSchema),
     defaultValues: {
-      imageCredential: user?.imageCredential || undefined,
-    },
+      imageCredential: Array.isArray(user?.imageCredential)
+      ? user.imageCredential
+      : user?.imageCredential
+      ? [user.imageCredential]
+      : [],
+  },
   });
 
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
@@ -100,11 +105,11 @@ const FormImageCredential = () => {
 
   const AvatarVIP = [];
 
-  for (let i = 1; i <= 30; i++) {
+  for (let i = 1; i <= 31; i++) {
     AvatarVIP.push(`/avatar/avatar-special-${i}.gif`);
   }
 
-  for (let i = 1; i <= 17; i++) {
+  for (let i = 11; i <= 17; i++) {
     AvatarVIP.push(`/avatar/avatar-${i}.jpg`);
   }
 
@@ -141,7 +146,7 @@ const FormImageCredential = () => {
                 </FormControl>
               </FormItem>
             )}
-          />
+          /> 
         </div>
         <div className="space-y-4">
           <FormLabel>Chọn ảnh đại diện (Nếu bạn không có ảnh)</FormLabel>
@@ -172,7 +177,7 @@ const FormImageCredential = () => {
                 <Image
                   key={index}
                   src={avatar}
-                  alt={`Avatar ${index + 1}`}
+                  alt={`Avatar VIP ${index + 1}`}
                   loading="lazy"
                   width={100}
                   height={100}

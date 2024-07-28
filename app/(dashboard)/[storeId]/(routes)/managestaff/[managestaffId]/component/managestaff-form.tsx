@@ -44,6 +44,7 @@ import { utcToZonedTime } from "date-fns-tz";
 import viLocale from "date-fns/locale/vi";
 import MutipleSelectOption from "./mutiple-select";
 import Recommend from "@/components/ui/recommend";
+import { ImageCredential } from "@/types/type";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 
 const formSchema = z.object({
@@ -56,7 +57,7 @@ const formSchema = z.object({
     message: "Vui lòng nhập số điện thoại hợp lệ chỉ có số.",
   }),
   issued: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  imageCredential: z.array(z.string()),
+  imageCredential: z.object({ url: z.string() }).array(),
   gender: z.string().min(1, { message: "Bắt buộc chọn 1 gender." }),
   degree: z.string().min(1, { message: "Bắt buộc chọn 1 degree." }),
   maritalStatus: z
@@ -82,10 +83,12 @@ type Option = {
 
 interface ManageStaffFormProps {
   initialData: User | null;
+  imageCredential: ImageCredential[] | null;
 }
 
 export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
   initialData,
+  imageCredential
 }) => {
   const params = useParams();
   const router = useRouter();
@@ -105,7 +108,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
       name: initialData?.name ?? null!,
       numberCCCD: initialData?.numberCCCD ?? null!,
       issued: initialData?.issued ?? null!,
-      imageCredential: initialData?.imageCredential ?? null!,
+      imageCredential: imageCredential && imageCredential.length > 0
+      ? [{ url: imageCredential[0].url || "" }]
+      : [{ url: "" }],
       phonenumber: initialData?.phonenumber ?? null!,
       gender: initialData?.gender ?? null!,
       degree: initialData?.degree ?? null!,
@@ -145,6 +150,10 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
   }, [initialData]);
 
   const onSubmit = async (data: ManageStaffFormValues) => {
+    if (data.imageCredential.length > 1) {
+      toast.error("Chỉ chọn 1 đại diện hãy xóa các ảnh khác!")
+      return; 
+    }
     try {
       setLoading(true);
       if (initialData) {
@@ -197,7 +206,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               <div className="flex-shrink-0 pt-0.5">
                 <Image
                   className="h-10 w-10 rounded-full"
-                  src={data.imageCredential[0] || data.image || ""}
+                  src={data.imageCredential[0]?.url || data.image || ""}
                   alt=""
                   width="50"
                   height="50"
@@ -315,14 +324,23 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                   </FormLabel>
                 <FormControl>
                   <ImageUpload
-                    value={field.value} // Assuming field.value is an array of strings
+                    value={Array.isArray(field.value) ? field.value.map((image) => image.url) : []}
                     disabled={loading}
-                    onChange={(url) => field.onChange([...field.value, url])}
-                    onRemove={(url) =>
-                      field.onChange(
-                        field.value.filter((current) => current !== url)
-                      )
-                    }
+                    onChange={(url) => {
+                      const updatedImages = Array.isArray(field.value) ? [...field.value, { url }] : [{ url }];
+                      if (updatedImages.length <= 1) {
+                        field.onChange(updatedImages);
+                      } else {
+                        toast.error("Chỉ chọn 1 ảnh đại diện rõ nét.");
+                      }
+                    }}
+                    onRemove={(url) => {
+                      const updatedImages = Array.isArray(field.value)
+                        ? field.value.filter((current) => current.url !== url)
+                        : [];
+                      field.onChange(updatedImages);
+                    }}
+                    maxFiles={1}
                   />
                 </FormControl>
                 <FormMessage />
