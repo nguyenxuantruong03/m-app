@@ -35,7 +35,7 @@ const DetailProduct: React.FC<ProductDetailProps> = ({
     <>
       <div className="px-4 py-8 sm:px-6 xl:px-8 mt-20">
         <div className="xl:grid xl:grid-cols-2 xl:item-start xl:gap-x-8 mt-5">
-          <Gallery images={images} />
+          <Gallery images={images} data={data}/>
           <div className="mt-10 px-4 sm:mt-16 sm:px-0 xl:mt-0">
             <InfoProduct data={data} />
           </div>

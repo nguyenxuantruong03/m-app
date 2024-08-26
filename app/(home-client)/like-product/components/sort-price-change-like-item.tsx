@@ -2,11 +2,8 @@
 import useLike from "@/hooks/client/use-like";
 import "./like-item.css";
 import React, { useState, useEffect } from "react";
-import Currencyonevalue from "../../../../components/ui/currencyonevalue";
-export const formatter = new Intl.NumberFormat("de-DE", {
-  style: "currency",
-  currency: "VND",
-});
+import Currency from "@/components/ui/currency";
+
 const PriceRange: React.FC = () => {
   const [priceGap, setPriceGap] = useState<number>(100);
   const [minPrice, setMinPrice] = useState<number>(0);
@@ -60,12 +57,12 @@ const PriceRange: React.FC = () => {
       <div className="price-input">
         <div className="field">
           <span className="font-semibold mr-1">Tối thiểu: </span>
-          <Currencyonevalue value={minPrice} />
+          <Currency value={minPrice} />
         </div>
         <div className="seperator text-red-500">-</div>
         <div className="field">
           <span className="font-semibold mr-1">Tối đa: </span>
-          <Currencyonevalue value={maxPrice} />
+          <Currency value={maxPrice} />
         </div>
         {/* Thanh trướt slider và progress để kéo */}
       </div>

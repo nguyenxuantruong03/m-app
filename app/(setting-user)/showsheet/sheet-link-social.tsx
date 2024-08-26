@@ -29,6 +29,9 @@ interface SheetLinkSocialProps {
   linktwitter: string | null;
   linkother: string | null;
   children: React.ReactNode;
+  role: string | undefined;
+  userId: string
+  setAlertGuestModal: React.Dispatch<React.SetStateAction<boolean>>;
   type:
     | "linkwebsite"
     | "linkgithub"
@@ -53,8 +56,23 @@ const SheetLinkSocial: React.FC<SheetLinkSocialProps> = ({
   linkother,
   children,
   type,
+  role,
+  userId,
+  setAlertGuestModal,
 }) => {
   const [open, setOpen] = useState(false);
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (isOpen) {
+      if (role !== "GUEST" && userId) {
+        setOpen(true);
+      } else {
+        setAlertGuestModal(true);
+      }
+    } else {
+      setOpen(false);
+    }
+  };
 
   const links = {
     linkwebsite: {
@@ -107,7 +125,7 @@ const SheetLinkSocial: React.FC<SheetLinkSocialProps> = ({
   const { title, description,form } = links[type];
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent className="space-y-4" side="center">
         <SheetHeader>

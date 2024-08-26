@@ -3,7 +3,6 @@ import prismadb from "@/lib/prismadb";
 import { redirect } from "next/navigation";
 import { currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
-import { getAccountByUserId } from "@/data/account";
 import CustomNav from "./custom-nav";
 
 const Navbar= async () => {
@@ -13,17 +12,9 @@ const Navbar= async () => {
     redirect("/auth/login");
   }
 
-  const account = await getAccountByUserId(userId.id);
-  const imageCredentials = userId?.imageCredential[0];
-  const isGitHubOrGoogleUser =
-  account?.provider === "github" || 
-  account?.provider === "google" || 
-  account?.provider === "facebook" || 
-  account?.provider === "gitlab" || 
-  account?.provider === "reddit" || 
-  account?.provider === "spotify" || 
-  account?.provider === "twitter";
-    const avatarImage =imageCredentials ||(imageCredentials ? imageCredentials[0] : null) ||userId?.image;
+  const imageCredentials = userId?.imageCredential;
+  // Use the first image from imageCredential hoăc ảnh iamge nêu ko có thì dùng deafault
+  const avatarImage =imageCredentials ||(imageCredentials ? imageCredentials : null) ||userId?.image;
   const store = await prismadb.store.findMany({
     where: {
       userId: {
@@ -34,7 +25,7 @@ const Navbar= async () => {
 
   return (
     <>
-    <CustomNav store={store} isGitHubOrGoogleUser={isGitHubOrGoogleUser} avatarImage={avatarImage}/>
+    <CustomNav store={store} avatarImage={avatarImage}/>
     </>
   );
 };

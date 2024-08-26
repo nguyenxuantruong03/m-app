@@ -21,6 +21,7 @@ export default async function SetupLayout({
       },
     },
   });
+  
   /* Mã đang kiểm tra xem cửa hàng có tồn tại cho người dùng hiện tại hay không. Nếu một cửa hàng tồn tại, nó sẽ chuyển hướng
      người dùng đến trang tương ứng với ID của cửa hàng đó. */
   if (store) {

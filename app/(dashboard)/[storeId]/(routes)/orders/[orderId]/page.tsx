@@ -28,6 +28,7 @@ const OrderPage = async ({
           product: true,
         },
       },
+      user: true
     },
     orderBy: {
       createdAt: "desc",
@@ -39,6 +40,10 @@ const OrderPage = async ({
     phone: item.phone.split(",").join(", "),
     address: item.address.split(",").join(", "),
     email: item.email.split(",").join(", "),
+    emailcurrent: item.user?.email,
+    namecurrent: item.user?.name,
+    phonenumbercurrent: item.user?.phonenumber,
+    addresscurrent: item.user?.address,
     products: item.orderItem
       .map((orderItem) => {
         return `Số lượng: ${orderItem.quantity} - Sản phẩm: ${orderItem.product.heading}`;
@@ -49,9 +54,14 @@ const OrderPage = async ({
         return 0 + Number(item.pricesales);
       }, 0)
     ),
+    name: item?.name,
+    note: item?.note,
+    gender: item?.gender,
+    addressOther: item?.addressOther,
+    deliveryMethod: item?.deliveryMethod,
     isPaid: item.isPaid,
-    createdAt: item.createdAt,
-    updatedAt: item.updatedAt,
+    isGift: item.orderItem.map((item)=> item?.isGift),
+    createdAt: item.createdAt
   }));
   return (
     <>

@@ -1,10 +1,21 @@
+"use client"
 import React from "react";
 import { TetrisProvider } from "./hooks/useTetris";
 import Tetris from "./components/Tetris/Tetris";
 import { AlertTriangle } from "lucide-react";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 export const revalidate = 86400;
 
 const TetrisPage = () => {
+  const user = useCurrentUser()
+  const router = useRouter();
+  useEffect(() => {
+    if(user?.role === "GUEST" || !user?.id){
+      router.push("/home-product")
+    }
+  }, [router,user?.id,user?.role]);
   return (
     <div className="relative">
             <div className="absolute xl:left-16 2xl:left-36 top-60"> 

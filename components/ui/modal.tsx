@@ -6,24 +6,25 @@ interface ModalProps{
     title?: string;
     description?: string;
     isOpen: boolean;
-    onClose: () => void;
+    onClose?: () => void;
     children?: React.ReactNode;
     maxWidth?: string;
     textCenter?: boolean;
     top?:boolean
     customClass?:string
+    showCloseButton?: boolean
 }
-const Modal:React.FC<ModalProps> = ({title,description,isOpen,onClose,children,maxWidth,textCenter,top,customClass}) => {
+const Modal:React.FC<ModalProps> = ({title,description,isOpen,onClose,children,maxWidth,textCenter,top,customClass,showCloseButton}) => {
 
     const onChange =(open:boolean) =>{
-        if(!open){
+        if(!open && onClose){
             onClose();
         }
     }
 
     return (  
-        <Dialog open={isOpen} onOpenChange={onChange}>
-              <DialogContent className={`max-w-${maxWidth || "xl"}  ${top ? 'dialog-content-camera' : ''} ${customClass}`}>
+        <Dialog open={isOpen} onOpenChange={onChange} >
+              <DialogContent showCloseButton={showCloseButton} className={`max-w-${maxWidth || "xl"}  ${top ? 'dialog-content-camera' : ''} ${customClass}`}>
                 <DialogHeader>
                     <DialogTitle className={textCenter ? "text-center" : ""}>{title}</DialogTitle>
                     <DialogDescription className={textCenter ? "text-center" : ""}>{description}</DialogDescription>

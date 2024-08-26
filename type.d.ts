@@ -6,6 +6,7 @@ declare module "react-mentions";
 declare module "react-sound";
 declare module "lodash";
 declare module "react-helmet";
+declare module "crypto-js";
 declare module "react-chrome-dino" {
   import React from "react";
 

@@ -1,28 +1,89 @@
 "use client";
-import { useState, useEffect } from "react";
-import "./checkoutcash.css";
+import {
+  useState,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+  ChangeEvent,
+} from "react";
 import axios from "axios";
-import "./checkoutcash.css";
+import Select from "react-select";
+import "../checkoutcash.css";
+import { Provinces } from "@/types/type";
 
-interface Item {
-  code: string;
-  name: string;
+interface DeliveryProps {
+  selectedProvince: Provinces | null;
+  setSelectedProvince: Dispatch<SetStateAction<Provinces | null>>;
+  selectedDistrict: Provinces | null;
+  setSelectedDistrict: Dispatch<SetStateAction<Provinces | null>>;
+  selectedWard: Provinces | null;
+  setSelectedWard: Dispatch<SetStateAction<Provinces | null>>;
+  address: string;
+  setAddress: Dispatch<SetStateAction<string>>;
+  addressOther: string;
+  setAddressOther: Dispatch<SetStateAction<string>>;
+  note: string;
+  setNote: Dispatch<SetStateAction<string>>;
+  setSelectedProvinceError: Dispatch<SetStateAction<string>>;
+  selectedProvinceError: string;
+  setSelectedDistrictError: Dispatch<SetStateAction<string>>;
+  selectedDistrictError: string;
+  setSelectedWardError: Dispatch<SetStateAction<string>>;
+  selectedWardError: string;
+  setAddressError: Dispatch<SetStateAction<string>>;
+  addressError: string;
+  setAddressOtherError: Dispatch<SetStateAction<string>>;
+  addressOtherError: string;
+  setNoteError: Dispatch<SetStateAction<string>>;
+  noteError: string;
+  isNoneSelect:boolean;
+  isNoneSelectDb: boolean;
+  userRole: string;
+  userId: string;
 }
+
 const host = "https://provinces.open-api.vn/api/";
-const ApiProvinces = () => {
-  const [provinces, setProvinces] = useState<Item[]>([]);
-  const [districts, setDistricts] = useState<Item[]>([]);
-  const [wards, setWards] = useState<Item[]>([]);
-  const [selectedProvince, setSelectedProvince] = useState("");
-  const [selectedDistrict, setSelectedDistrict] = useState("");
-  const [selectedWard, setSelectedWard] = useState("");
-  const [address, setAddress] = useState("");
-  const [note, setNote] = useState("");
-  const isValidSelection = selectedProvince && selectedDistrict && selectedWard;
+const ApiProvinces: React.FC<DeliveryProps> = ({
+  selectedProvince,
+  setSelectedProvince,
+  selectedDistrict,
+  setSelectedDistrict,
+  selectedWard,
+  setSelectedWard,
+  address,
+  setAddress,
+  addressOther,
+  setAddressOther,
+  note,
+  setNote,
+  setSelectedProvinceError,
+  selectedProvinceError,
+  setSelectedDistrictError,
+  selectedDistrictError,
+  setSelectedWardError,
+  selectedWardError,
+  setAddressError,
+  addressError,
+  setAddressOtherError,
+  addressOtherError,
+  setNoteError,
+  noteError,
+  isNoneSelect,
+  isNoneSelectDb,
+  userRole,
+  userId
+}) => {
+  const [provinces, setProvinces] = useState<Provinces[]>([]);
+  const [districts, setDistricts] = useState<Provinces[]>([]);
+  const [wards, setWards] = useState<Provinces[]>([]);
 
   const callAPI = (api: string) => {
     return axios.get(api).then((response) => {
-      setProvinces(response.data);
+      const formattedProvinces = response.data.map((province: any) => ({
+        value: province.code,
+        label: province.name,
+      }));
+      setProvinces(formattedProvinces);
     });
   };
 
@@ -32,168 +93,200 @@ const ApiProvinces = () => {
 
   const callApiDistrict = (api: string) => {
     return axios.get(api).then((response) => {
-      setDistricts(response.data.districts);
+      const formattedDistricts = response.data.districts.map(
+        (district: any) => ({
+          value: district.code,
+          label: district.name,
+        })
+      );
+      setDistricts(formattedDistricts);
     });
   };
 
   const callApiWard = (api: string) => {
     return axios.get(api).then((response) => {
-      setWards(response.data.wards);
+      const formattedWards = response.data.wards.map((ward: any) => ({
+        value: ward.code,
+        label: ward.name,
+      }));
+      setWards(formattedWards);
     });
-  };
-
-  const renderData = (
-    array: Item[],
-    setFunction: React.Dispatch<React.SetStateAction<Item[]>>
-  ) => {
-    let row = [{ code: "", name: "chọn" }, ...array];
-    setFunction(row);
   };
 
   useEffect(() => {
     if (selectedProvince) {
-      callApiDistrict(`${host}p/${selectedProvince}?depth=2`);
+      callApiDistrict(`${host}p/${selectedProvince.value}?depth=2`);
+      setSelectedDistrict(null); // Clear selected district when province changes
+      setSelectedWard(null); // Clear selected ward when province changes
     }
   }, [selectedProvince]);
 
   useEffect(() => {
     if (selectedDistrict) {
-      callApiWard(`${host}d/${selectedDistrict}?depth=2`);
+      callApiWard(`${host}d/${selectedDistrict.value}?depth=2`);
+      setSelectedWard(null); // Clear selected ward when district changes
     }
   }, [selectedDistrict]);
 
-  const printResult = () => {
-    if (selectedDistrict && selectedProvince && selectedWard) {
-      let result = `${selectedProvince} | ${selectedDistrict} | ${selectedWard}`;
-      console.log(result);
+  const handleSelectChange = (
+    setter: React.Dispatch<React.SetStateAction<Provinces | null>>,
+    value: any,
+    clearError: Dispatch<SetStateAction<string>>
+  ) => {
+
+    if (value) {
+      clearError("");
     }
+    setter(value);
+  };
+  
+  const handleAdressChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    if(value){
+      setAddressError("")
+    }
+    // Check if the length of the input exceeds 20 characters
+    if (value.length > 120) {
+      setAddressError("Không được nhập quá 120 ký tự!");
+      return;
+    }
+    setAddress(value);
   };
 
-  // const handleOrder = async () => {
-  //   try {
-  //     // Send customer information and address details to the backend
-  //     const response = await axios.post("/api/checkout", {
-  //       selectedProvince,
-  //       selectedDistrict,
-  //       selectedWard,
-  //       address,
-  //       note,
-  //     });
+  const handleAdressOtherChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    if(value){
+      setAddressOtherError("")
+    }
+    if (value.length > 120) {
+      setAddressOtherError("Không được nhập quá 120 ký tự!");
+      return;
+    }
+    setAddressOther(value);
+  };
 
-  //     if (response.data.success) {
-  //       console.log("Order placed successfully:", response.data.customer);
-  //     } else {
-  //       console.error("Error placing order:", response.data.error);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error placing order:", error);
-  //   }
-  // };
+  const handleNoteChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    if(value){
+      setNoteError("")
+    }
+    if (value.length > 120) {
+      setNoteError("Không được nhập quá 120 ký tự!");
+      return;
+    }
+    setNote(value);
+  };
 
   return (
-    <div className="container mx-auto p-4">
-      <form action="">
-        <div className="mb-4">
-          <label className="block text-sm font-bold">Chọn Thành phố</label>
-          <select
-            id="province"
-            onChange={(e) => setSelectedProvince(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 outline-none p-2"
-          >
-            <option value="" disabled selected hidden>
-              Chọn thành phố
-            </option>
-            {provinces.map((province) => (
-              <option key={province.code} value={province.code}>
-                {province.name}
-              </option>
-            ))}
-          </select>
-          {!selectedProvince && (
-            <p className="text-red-500">Vui lòng chọn thành phố</p>
-          )}
-        </div>
+    <div className="mx-auto p-4">
+      <div className="mb-4">
+        <label className={`block text-sm font-bold ${selectedProvinceError && "error-label"}`}>Chọn Thành phố <span className="text-red-500">*</span></label>
+        <Select
+          id="province"
+          options={provinces}
+          onChange={(value) => handleSelectChange(setSelectedProvince, value, setSelectedProvinceError)}
+          value={selectedProvince}
+          placeholder="Chọn thành phố"
+          className="react-select-container"
+          classNamePrefix="react-select"
+          noOptionsMessage={() => "Không tìm thấy!"}
+          isDisabled={userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb}
+        />
+        {selectedProvinceError && (
+          <p className="text-red-500">{selectedProvinceError}</p>
+        )}
+      </div>
 
-        <div className="mb-4">
-          <label className="block text-sm font-bold">Chọn Quận/Huyện</label>
-          <select
-            id="district"
-            onChange={(e) => setSelectedDistrict(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 outline-none p-2"
-            disabled={!selectedProvince}
-          >
-            <option value="" disabled selected hidden>
-              Chọn Quận/Huyện
-            </option>
-            {districts.map((district) => (
-              <option key={district.code} value={district.code}>
-                {district.name}
-              </option>
-            ))}
-          </select>
-          {!selectedDistrict && (
-            <p className="text-red-500">Vui lòng chọn quận/huyện</p>
-          )}
-        </div>
+      <div className="mb-4">
+        <label className={`block text-sm font-bold ${selectedDistrictError && "error-label"}`}>Chọn Quận/Huyện <span className="text-red-500">*</span></label>
+        <Select
+          id="district"
+          options={districts}
+          onChange={(value) => handleSelectChange(setSelectedDistrict, value, setSelectedDistrictError)}
+          value={selectedDistrict}
+          placeholder="Chọn Quận/Huyện"
+          className="react-select-container"
+          classNamePrefix="react-select"
+          isDisabled={!selectedProvince || userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb}
+          noOptionsMessage={() => "Không tìm thấy!"}
+        />
+        {selectedDistrictError && (
+          <p className="text-red-500">{selectedDistrictError}</p>
+        )}
+      </div>
 
-        <div className="mb-4">
-          <label className="block text-sm font-bold">Chọn Phường Xã</label>
-          <select
-            id="ward"
-            onChange={(e) => setSelectedWard(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 outline-none p-2"
-            disabled={!selectedDistrict}
-          >
-            <option value="" disabled selected hidden>
-              Chọn Phường/Xã
-            </option>
-            {wards.map((ward) => (
-              <option key={ward.code} value={ward.code}>
-                {ward.name}
-              </option>
-            ))}
-          </select>
-          {!selectedWard && (
-            <p className="text-red-500">Vui lòng chọn phường/xã</p>
-          )}
-        </div>
+      <div className="mb-4">
+        <label className={`block text-sm font-bold ${selectedWardError && "error-label"}`}>Chọn Phường Xã <span className="text-red-500">*</span></label>
+        <Select
+          id="ward"
+          options={wards}
+          onChange={(value) => handleSelectChange(setSelectedWard, value, setSelectedWardError)}
+          value={selectedWard}
+          placeholder="Chọn Phường/Xã"
+          className="react-select-container"
+          classNamePrefix="react-select"
+          isDisabled={!selectedDistrict || userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb}
+          noOptionsMessage={() => "Không tìm thấy!"}
+        />
+        {selectedWardError && (
+          <p className="text-red-500">{selectedWardError}</p>
+        )}
+      </div>
 
-         <div className="flex items-center">
-          <div className="lg:px-8">
-            <div className="field field_v3">
-              <label className="ha-screen-reader">Địa chỉ</label>
-              <input
-                className={`field__input ${!address && 'border-red-500'}`}
-                placeholder="Vd: 4xx Lê Văn Q*"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-              />
-             
-              <span className="field__label-wrap" aria-hidden="true">
-                <span className="field__label">Địa chỉ</span>
-              </span>
-            </div>
-            {!address && (
-                <p className="text-red-500">Vui lòng nhập địa chỉ</p>
-              )}
+      <div className="flex items-center">
+        <div className="lg:px-8">
+          <div className="field field_v3">
+            <label className="ha-screen-reader">Địa chỉ <span className="text-red-500">*</span></label>
+            <input
+              className="field__input"
+              placeholder="Vd: 4xx Lê Văn Q*"
+              value={address}
+              onChange={handleAdressChange}
+              disabled={userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb}
+            />
+            <span className="field__label-wrap" aria-hidden="true">
+              <span className={`field__label ${addressError && "error-label"}`}>Địa chỉ <span className="text-red-500">*</span></span>
+            </span>
           </div>
-
-          <div className="ml-2 py-2 lg:px-8">
-            <div className="field field_v3">
-              <label className="ha-screen-reader">Ghi chú(Nếu có)</label>
-              <input
-                className="field__input"
-                placeholder="Vd: Note thêm địa chỉ mới hoặc số điện thoại mới."
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-              />
-              <span className="field__label-wrap" aria-hidden="true">
-                <span className="field__label">Ghi chú(Nếu có)</span>
-              </span>
-            </div>
-          </div>
+          {addressError && <p className="text-red-500">{addressError}</p>}
         </div>
-      </form>
+
+        <div className="lg:px-8">
+          <div className="field field_v3">
+            <label className="ha-screen-reader">Địa chỉ khác(Nếu có)</label>
+            <input
+              className="field__input"
+              placeholder="Vd: 4xx Lê Văn Q*"
+              value={addressOther}
+              onChange={handleAdressOtherChange}
+              disabled={userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb}
+            />
+            <span className="field__label-wrap" aria-hidden="true">
+              <span className={`field__label ${addressOtherError && "error-label"}`}>Địa chỉ khác</span>
+            </span>
+          </div>
+          {addressOtherError && (
+            <p className="text-red-500">{addressOtherError}</p>
+          )}
+        </div>
+
+        <div className="ml-2 py-2 lg:px-8">
+          <div className="field field_v3">
+            <label className="ha-screen-reader">Ghi chú(Nếu có)</label>
+            <input
+              className="field__input"
+              placeholder="Vd: Note thêm địa chỉ mới hoặc số điện thoại mới."
+              value={note}
+              onChange={handleNoteChange}
+              disabled={userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb}
+            />
+            <span className="field__label-wrap" aria-hidden="true">
+              <span className={`field__label ${noteError && "error-label"}`}>Ghi chú(Nếu có)</span>
+            </span>
+          </div>
+          {noteError && <p className="text-red-500">{noteError}</p>}
+        </div>
+      </div>
     </div>
   );
 };

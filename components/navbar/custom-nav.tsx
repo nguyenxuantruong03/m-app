@@ -18,7 +18,6 @@ import { useCurrentView } from "@/localStorage/useLocalStorage-currentView";
 
 interface CustomNavProps {
   store: Store[];
-  isGitHubOrGoogleUser: boolean;
   avatarImage: string | null | undefined;
 }
 
@@ -31,7 +30,6 @@ export enum List {
 
 const CustomNav: React.FC<CustomNavProps> = ({
   store,
-  isGitHubOrGoogleUser,
   avatarImage,
 }) => {
   const userId = useCurrentUser();
@@ -109,9 +107,7 @@ const CustomNav: React.FC<CustomNavProps> = ({
               <div className="flex items-center space-x-4 mt-2 justify-center">
                 <div className="group relative">
                   <Avatar>
-                    {isGitHubOrGoogleUser && avatarImage ? (
-                      <AvatarImage src={avatarImage} />
-                    ) : avatarImage ? (
+                    { avatarImage ? (
                       <AvatarImage src={avatarImage} />
                     ) : (
                       <AvatarFallback className="bg-sky-500">

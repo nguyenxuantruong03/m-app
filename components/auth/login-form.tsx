@@ -25,9 +25,10 @@ import MultiInputField from "./field/mutipleinput";
 import { login } from "@/actions/actions-signin-sign-up/login";
 import axios from "axios";
 import ReCAPTCHA from "react-google-recaptcha";
-import { X } from "lucide-react";
+import { ArrowRight, X } from "lucide-react";
 import { Label } from "../ui/label";
 import { useDevice } from "@/providers/device-info-provider";
+import { LoginGuestModal } from "../modals/login-guest-modal";
 
 const getTheme = () => {
   if (
@@ -70,6 +71,7 @@ const LoginForm = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmittedEmail, setIsSubmittedEmail] = useState(false);
   const [loadingResent, setLoadingResent] = useState(false);
+  const [openGuestModal, setOpenGuestModal] = useState(false);
 
   const MAX_RESEND_ATTEMPTS = 5;
 
@@ -152,7 +154,7 @@ const LoginForm = () => {
     setError("");
     setSuccess("");
     if (showCaptcha && !isCaptchaVerified) {
-      return setError("Vui lòng xác minh bạn không phải là robot!");
+      return setError("Vui lòng xác minh tôi không phải là robot!");
     } else {
       startTransition(() => {
         login(values, callbackUrl,deviceInfo)
@@ -195,7 +197,23 @@ const LoginForm = () => {
     setCaptchaVerified(true);
   };
 
+  const handleGuestLogin = () => {
+    const guestValues = {
+      email: "guest@gmail.com",
+      password: "guestguest@123A",
+    };
+    onSubmit(guestValues);
+  };
+
   return (
+    <>
+    <LoginGuestModal
+        isOpen={openGuestModal}
+        onClose={() => setOpenGuestModal(false)}
+        onConfirm={handleGuestLogin}
+        loading={isPending}
+        isCaptchaVerified={isCaptchaVerified}
+      />
     <CardWrapper
       headerLabel="Welcome back"
       backButtonHref="/auth/register"
@@ -357,6 +375,22 @@ const LoginForm = () => {
             {showTwoFacTor ? "Confirm" : "Login"}
           </Button>
 
+          <Button
+            className="w-full my-2 hover:underline"
+            disabled={isPending}
+            variant="link"
+            onClick={() => {
+              if (!isCaptchaVerified) {
+                setError("Vui lòng xác minh tôi không phải là robot trước khi tiếp tục!");
+              } else {
+                setError("")
+                setOpenGuestModal(true);
+              }
+            }}
+          >
+            Đăng nhập tài khoản khách 👉
+          </Button>
+
           {/* Hiển thị lỗi nếu như chưa ghi password và robot */}
           <>
             {loginClicked && !isCaptchaVerified && (
@@ -380,6 +414,7 @@ const LoginForm = () => {
         </div>
       )}
     </CardWrapper>
+    </>
   );
 };
 

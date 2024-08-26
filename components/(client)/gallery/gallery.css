@@ -1,0 +1,5 @@
+.zigzag {
+  border: 20px solid red;
+  border-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><polygon style='fill:red;fill-opacity:0.7;' points='0 -1 13 20 4 32 15 45 2 51 22 63 0 76 19 92 2 108 25 119 -1 130 19 143 7 157 12 166 3 177 19 175 2 197 32 179 47 192 62 177 79 198 103 174 116 196 131 176 152 200 169 182 198 198 184 164 192 151 175 137 190 124 174 109 191 98 172 84 191 70 170 55 190 38 182 24 189 9 192 4 159 17 144 2 127 17 103 -3 93 18 69 2 54 16'></polygon></svg>")
+    45 fill round;
+}

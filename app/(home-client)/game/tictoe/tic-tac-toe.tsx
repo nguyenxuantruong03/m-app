@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { Board } from "./board";
 import axios from "axios";
+import { useParams } from "next/navigation";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 type BoardArray = Array<Array<string | null>>;
 
@@ -43,6 +45,8 @@ const checkWinner = (board: BoardArray): string | null => {
 };
 
 export const TicTacToe = () => {
+	const param = useParams ()
+	const user = useCurrentUser()
 	const initialBoard = Array.from({ length: 9 }, () =>
 		Array.from({ length: 9 }, () => null)
 	);
@@ -80,7 +84,7 @@ export const TicTacToe = () => {
 		  newTotalCoins += reward;
 	  
 		  // Save the new totalCoins to the database
-		  await axios.post("/api/wheelSpin", { coin: `${newTotalCoins} coins` });
+		  await axios.post(`/api/${param.storeId}/wheelSpin`, { userId: user?.id, coin: newTotalCoins });
 	  
 		  // Update the state with the new totalCoins
 		  setTotalCoins(newTotalCoins);

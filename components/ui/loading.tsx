@@ -3,24 +3,9 @@ import Container from "@/components/ui/container";
 const LoadingPageComponent = () => {
   return (
     <Container>
-      <div className="flex flex-col items-center mt-36 mb-8">
-        <p className="text text-5xl font-semibold mb-3">
-          <span className="letter letter1">L</span>
-          <span className="letter letter2">o</span>
-          <span className="letter letter3">a</span>
-          <span className="letter letter4">d</span>
-          <span className="letter letter5">i</span>
-          <span className="letter letter6">n</span>
-          <span className="letter letter7">g</span>
-          <span className="letter letter8">.</span>
-          <span className="letter letter9">.</span>
-          <span className="letter letter10">.</span>
-        </p>
-        <div className="opacity-50 mb-8">
-          Dữ liệu đang được kết nạp hãy đợi trong vài giây.
-        </div>
+      <div className=" mt-36 mb-8">
         <div className="flex items-center justify-center p-1">
-		<svg className="pll" width="60" height="60" viewBox="0 0 240 240">
+          <svg className="pll" width="60" height="60" viewBox="0 0 240 240">
             <circle
               className="pl__ring pl__ring--a"
               cx="120"
@@ -69,6 +54,9 @@ const LoadingPageComponent = () => {
             ></circle>
           </svg>
         </div>
+          <div className="opacity-50 mb-8 flex justify-center">
+            Dữ liệu đang được hệ thống xử lý hãy đợi trong vài giây.
+          </div>
       </div>
     </Container>
   );

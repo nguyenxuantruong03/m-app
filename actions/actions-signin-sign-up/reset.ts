@@ -22,6 +22,10 @@ export const reset = async (values: z.infer<typeof ResetSchema>) =>{
         return {error: "Không tìm thấy Email !"}
     }
 
+    if (existingUser.email === 'guest@gmail.com') {
+      return { error: "Không thể đặt lại mật khẩu cho tài khoản khách. Đây là tài khoản cộng đồng!" }
+    }
+
     // Check if the user is banned
     if (existingUser.ban) {
       return { error: "Tài khoản của bạn đã bị khóa. Không thể thay đổi. Hãy kiểm tra Email để biết thời gian mở khóa!" };

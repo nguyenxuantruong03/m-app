@@ -14,13 +14,11 @@ import {
   User,
 } from "lucide-react";
 import { LogOut } from "lucide-react";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import LogoutButton from "@/components/auth/logout-button";
-import { getAccountByUserId } from "@/data/account";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
 import { Separator } from "../ui/separator";
 import Link from "next/link";
 import { ThemeToggleDrakorLight } from "../ui/theme-toggle";
@@ -48,7 +46,6 @@ export interface AccountItem {
 
 export const UserButton = () => {
   const userId = useCurrentUser();
-  const [account, setAccount] = useState<AccountItem | null>(null);
 
   //Logic dưới đây dùng để kéo phải kéo trái userId.name nếu tên quá dài
   const [isDragging, setIsDragging] = useState(false);
@@ -83,32 +80,16 @@ export const UserButton = () => {
       if (!userId || !userId.id) {
         redirect("/auth/login");
       }
-
-      try {
-        const accountData = await getAccountByUserId(userId.id);
-        setAccount(accountData || null);
-      } catch (error) {
-        toast.error("Invalid Error");
-      }
     };
 
     fetchData();
   }, [userId]);
 
   const imageCredentials = userId?.imageCredential || undefined;
-
-  const isGitHubOrGoogleUser =
-    account?.provider === "github" ||
-    account?.provider === "google" ||
-    account?.provider === "facebook" ||
-    account?.provider === "gitlab" ||
-    account?.provider === "reddit" ||
-    account?.provider === "spotify" ||
-    account?.provider === "twitter";
-  // Use the first image from imageCredential if available, or randomImage if available
+  // Use the first image from imageCredential hoăc ảnh iamge nêu ko có thì dùng deafault
   const avatarImage =
     imageCredentials ||
-    (imageCredentials ? imageCredentials[0] : null) ||
+    (imageCredentials ? imageCredentials : null) ||
     userId?.image;
 
   //Fomat thời gian thành String
@@ -135,7 +116,7 @@ export const UserButton = () => {
       <DropdownMenuContent className="z-[9999] p-5">
         <div className="flex items-center space-x-3">
           <Avatar>
-            {isGitHubOrGoogleUser && avatarImage ? (
+            { avatarImage ? (
               <ImageCellOne
                 imageUrl={avatarImage}
                 createdAt={formatcreatedAt || ""}

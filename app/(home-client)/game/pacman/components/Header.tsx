@@ -5,9 +5,12 @@ import { useGameContext } from "../context/GameContext";
 import { useInterval } from "../hooks/useInterval";
 import { GAME_STATUS } from "@/types/type";
 import axios from "axios";
-import Scene from "./Scene";
+import { useParams } from "next/navigation";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 const Header = () => {
+  const param = useParams()
+  const user = useCurrentUser()
   const { points, foodAmount, gameStatus } = useGameContext();
   const [timeElapsed, setTimeElapsed] = React.useState(0);
   const [totalCoins, setTotalCoins] = useState<number>(0);
@@ -26,7 +29,7 @@ const Header = () => {
  const updateTotalCoinsAndSave = async (newTotalCoins: number) => {
    try {
      // Save the new totalCoins to the database
-     await axios.post("/api/wheelSpin", { coin: `${newTotalCoins} coins` });
+     await axios.post(`/api/${param.storeId}/wheelSpin`, {userId: user?.id, coin: newTotalCoins });
  
      // Update the state with the new totalCoins
      setTotalCoins(newTotalCoins);

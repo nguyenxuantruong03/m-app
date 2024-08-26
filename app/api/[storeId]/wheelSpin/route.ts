@@ -8,29 +8,69 @@ export async function POST(
   { params }: { params: { storeId: string } }
 ) {
   const body = await req.json();
-  const { coin, rotation } = body;
+  const { coin, rotation, userId, isCheckPayment, idOrderItem } = body;
 
   try {
-    const userId = await currentUser();
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
     }
-    const Coin = await prismadb.wheelSpin.create({
-      data: {
-        coin,
-        rotation,
-        userId: userId.id || "",
+
+    // Kiểm tra sự tồn tại của người dùng với userId
+    const existingEntry = await prismadb.wheelSpin.findFirst({
+      where: {
+        userId: userId,
         storeId: params.storeId,
       },
     });
-    await prismadb.wheelSpin.update({
-      where: { id: Coin.id },
-      data: { rotation },
-    });
 
-    return NextResponse.json(Coin);
+    let finalCoin;
+
+    if (isCheckPayment) {
+      // Nếu isCheckPayment, luôn đặt coin là 0
+      finalCoin = 0;
+    } else {
+      // Nếu không có isCheckPayment, cộng giá trị hiện tại với adjustedCoin
+      finalCoin = existingEntry ? existingEntry.coin + coin : coin;
+    }
+
+    let result;
+
+    if (existingEntry) {
+      // Nếu đã tồn tại, cập nhật thông tin
+      result = await prismadb.wheelSpin.update({
+        where: { id: existingEntry.id },
+        data: {
+          coin: finalCoin,
+          rotation: existingEntry.rotation + rotation,
+        },
+      });
+    } else {
+      // Nếu chưa tồn tại, tạo mới
+      result = await prismadb.wheelSpin.create({
+        data: {
+          coin: finalCoin,
+          rotation,
+          userId: userId || "",
+          storeId: params.storeId,
+        },
+      });
+    }
+
+    if(isCheckPayment){
+      //Cập nhật isGiff thành true để khi tránh phát quà liên tục
+      await prismadb.orderItem.update({
+        where: {
+          id: idOrderItem,
+        },
+        data: {
+          isGift: true,
+        },
+      });
+    }
+
+    return NextResponse.json(result);
   } catch (error) {
-    console.error("Error creating comment:", error);
+    console.error("Error processing request:", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }
@@ -38,7 +78,6 @@ export async function POST(
 export async function GET() {
   try {
     const userId = await currentUser();
-
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
     }

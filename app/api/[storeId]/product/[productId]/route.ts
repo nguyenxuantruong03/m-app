@@ -4,7 +4,8 @@ import prismadb from "@/lib/prismadb";
 import { currentRole, currentUser } from "@/lib/auth";
 import { Image, Imagesalientfeatures, ProductDetail, ProductType, UserRole } from "@prisma/client";
 
-type ProductValue = string | boolean | Date | string[] | Imagesalientfeatures[] | Image[] | ProductDetail | undefined ;
+type ProductValue = string | boolean | Date | string[] | number | Imagesalientfeatures[] | Image[] | ProductDetail | null | undefined;
+
 
 interface ChangeRecord {
   oldValue: ProductValue;

@@ -15,16 +15,34 @@ interface SheetSecurityProps {
   isTwoFactorEnabled?: boolean;
   password?: string | null;
   children: React.ReactNode;
+  role: string | undefined;
+  userId: string
+  setAlertGuestModal: React.Dispatch<React.SetStateAction<boolean>>;
   type: "password" | "2FA" 
 }
 
-const SheetSecurity: React.FC<SheetSecurityProps> = ({
+const SheetPassword: React.FC<SheetSecurityProps> = ({
     isTwoFactorEnabled,
   password,
   children,
   type,
+  role,
+  userId,
+  setAlertGuestModal
 }) => {
   const [open, setOpen] = useState(false);
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (isOpen) {
+      if (role !== "GUEST" && userId) {
+        setOpen(true);
+      } else {
+        setAlertGuestModal(true);
+      }
+    } else {
+      setOpen(false);
+    }
+  };
 
   const infoMap = {
     password: {
@@ -43,7 +61,7 @@ const SheetSecurity: React.FC<SheetSecurityProps> = ({
   const { title, description,form } = infoMap[type];
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent className="space-y-4" side="center">
         <SheetHeader>
@@ -56,4 +74,4 @@ const SheetSecurity: React.FC<SheetSecurityProps> = ({
   );
 };
 
-export default SheetSecurity;
+export default SheetPassword;

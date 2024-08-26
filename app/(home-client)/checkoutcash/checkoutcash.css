@@ -145,10 +145,6 @@ CORE STYLES
   transition: height .2s ease-out, opacity .2s ease-out;
 }
 
-.field_v3 .field__input:focus ~ .field__label-wrap::after{
-  height: 100%;
-  border-radius: 5px;
-}
 
 .field__input:focus{
     border-radius: 5px;
@@ -167,4 +163,29 @@ LEVEL 4. SETTINGS
 
 .error-label {
   color: red;
+}
+
+
+
+/* Progress */
+.progress-container {
+  width: 100%;
+  height: 20px;
+  background-color: #f3f3f3;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 10px;
+  position: relative;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #22c55e;
+  transition: width 0.4s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
 }

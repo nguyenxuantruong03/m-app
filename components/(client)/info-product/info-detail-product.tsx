@@ -50,7 +50,7 @@ const InfoProductDetail: React.FC<DetailProductProps> = ({ data }) => {
           </p>
         </div>
         {/* News */}
-        <div className="max-w-[288px] p-2 bg-slate-500 bg-opacity-20 rounded-lg hidden lg:block">
+        <div className="max-w-[288px] max-h-[1200px] p-2 bg-slate-500 bg-opacity-20 rounded-lg hidden lg:block">
           <h1 className="text-center text-lg font-bold text-red-500">
             Tin tức
           </h1>

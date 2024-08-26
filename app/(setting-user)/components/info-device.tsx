@@ -1,5 +1,4 @@
 "use client";
-
 import { ChevronRight, Trash } from "lucide-react";
 import SheetDevice from "../showsheet/sheet-device";
 import Image from "next/image";
@@ -9,6 +8,8 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { AlertModal } from "@/components/modals/alert-modal";
 import { useDevice } from "@/providers/device-info-provider";
+import { User } from "@prisma/client";
+import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
 
 interface InfoUser {
   key: string;   
@@ -176,10 +177,11 @@ interface DeviceInfoData {
 
 interface InfoDeviceProps {
   findDevice: DeviceInfoData[];
+  user: User;
 }
 
 const InfoDevice: React.FC<InfoDeviceProps> = ({
-  findDevice: initialFindDevice,
+  findDevice: initialFindDevice, user
 }) => {
   const deviceInfo = useDevice();
   const checkCurrentDevice = (item: DeviceInfoData): boolean => {
@@ -203,11 +205,10 @@ const InfoDevice: React.FC<InfoDeviceProps> = ({
     return aIsCurrentDevice - bIsCurrentDevice;
   });
 
-  
+  const [alertGuestModal,setAlertGuestModal] = useState(false);
   const [findDevice, setFindDevice] = useState(sortedDevices);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState<string | null>(null);
-
 
   const handleDelete = async (id: string) => {
     setLoading(true);
@@ -321,6 +322,9 @@ const InfoDevice: React.FC<InfoDeviceProps> = ({
         <SheetDevice
           findDevice={findDevice}
           type={infouser.key} // Pass the key as type
+          role={user.role}
+          userId= {user?.id || ""}
+          setAlertGuestModal={setAlertGuestModal}
         >
           {content}
         </SheetDevice>
@@ -331,6 +335,10 @@ const InfoDevice: React.FC<InfoDeviceProps> = ({
 
   return (
     <>
+     <AlertGuestModal
+        isOpen={alertGuestModal}
+        onClose={() => setAlertGuestModal(false)}
+      />
       <div className="dark:bg-white bg-slate-900 rounded-md overflow-hidden my-2">
         {findDevice.length === 0
           ? infoDevices.map((infoDevice) => (

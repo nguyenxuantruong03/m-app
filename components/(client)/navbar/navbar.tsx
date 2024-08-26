@@ -8,23 +8,28 @@ import { Home, AlignLeft, Heart, Gift, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import axios from "axios";
 import { useParams } from "next/navigation";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 const Navbar = () => {
-  const param = useParams()
+  const param = useParams();
+  const user = useCurrentUser();
   const [activeIndex, setActiveIndex] = useState(0);
   const [totalCoins, setTotalCoins] = useState<number>(0);
   const [rotation, setRotation] = useState<number>(0);
   const [isHidden, setIsHidden] = useState(false);
   useEffect(() => {
-    const savedActiveIndex = localStorage.getItem("activeIndex")
+    const savedActiveIndex = localStorage.getItem("activeIndex");
     if (savedActiveIndex) {
       setActiveIndex(Number(savedActiveIndex));
     }
-    // Load totalCoins from the server using GET request
-    axios.get(`/api/${param.storeId}/wheelSpin`).then((response) => {
-      setTotalCoins(response.data.totalCoins);
-      setRotation(response.data.latestRotation)
-    });
+
+    if (user?.role !== "GUEST" && user?.id) {
+      axios.get(`/api/${param.storeId}/wheelSpin`).then((response) => {
+        setTotalCoins(response.data.totalCoins);
+        setRotation(response.data.latestRotation);
+      });
+    }
+    
     // Add scroll event listener
     const handleScroll = () => {
       // Check if the scroll position is greater than or equal to 30
@@ -55,31 +60,32 @@ const Navbar = () => {
   }, []);
 
   const handleItemClick = (index: number) => {
-    setActiveIndex(index);
-
-    localStorage.setItem("activeIndex", index.toString());
+    if (index === 4) {
+      setActiveIndex(index);
+      localStorage.setItem("activeIndex", index.toString());
+    }
   };
   return (
     <>
       <div className=" fixed z-[9998] w-full top-0">
-      {!isHidden && (
-        <div className={navbarcolor.bg_height}>
-          <div className="max-w-[640px] md:max-w-3xl lg:mx-auto lg:max-w-7xl md:p-1 lg:p-0">
-            <div className="md:grid md:grid-cols-3 overflow-hidden overflow-x-auto">
-              <ImageDelivery />
+        {!isHidden && (
+          <div className={navbarcolor.bg_height}>
+            <div className="max-w-[640px] md:max-w-3xl lg:mx-auto lg:max-w-7xl md:p-1 lg:p-0">
+              <div className="md:grid md:grid-cols-3 overflow-hidden overflow-x-auto">
+                <ImageDelivery />
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
         <div className={navbarcolor.bg}>
           <div className="xl:mx-auto xl:max-w-[85rem]">
             <div className="relative flex h-16 items-center justify-between px-1">
-              <Mainnav />
+              <Mainnav role={user?.role || ""} userId={user?.id || ""} />
             </div>
           </div>
         </div>
       </div>
-        {/* Mobile */}
+      {/* Mobile */}
       <div className=" fixed z-[100] w-full bottom-0  md:hidden box-border bg-[#222327] h-[75px] rounded-[5px]">
         <div className="navigation">
           <ul>
@@ -100,7 +106,7 @@ const Navbar = () => {
             >
               <Link href="/home-product">
                 <span className="icon">
-                <ShoppingCart />
+                  <ShoppingCart />
                 </span>
                 <span className="text">Sản phẩm</span>
               </Link>
@@ -127,17 +133,36 @@ const Navbar = () => {
                 <span className="text">Thả tim</span>
               </Link>
             </li>
-            <li
-              className={`list ${activeIndex === 4 ? "active" : ""}`}
-              onClick={() => handleItemClick(4)}
-            >
-              <Link href="/spinlucky">
-                <span className="icon">
-                  <Gift />
-                </span>
-                <span className="text">{rotation} vòng</span>
-              </Link>
-            </li>
+            {(user?.role !== "GUEST" && user?.id) ? (
+              <>
+                <li
+                  className={`list ${activeIndex === 4 ? "active" : ""}`}
+                  onClick={() => handleItemClick(4)}
+                >
+                  <Link href="/spinlucky">
+                    <span className="icon">
+                      <Gift />
+                    </span>
+                    <span className="text">{rotation} vòng</span>
+                  </Link>
+                </li>
+              </>
+            ) : (
+              <>
+                <li
+                  className={`list ${activeIndex === 4 ? "active" : ""}`}
+                  onClick={() => handleItemClick(4)}
+                >
+                  <div>
+                    <span className="icon">
+                      <Gift />
+                    </span>
+                    <span className="text">{rotation} vòng</span>
+                  </div>
+                </li>
+              </>
+            )}
+
             <div className="indicator"></div>
           </ul>
         </div>

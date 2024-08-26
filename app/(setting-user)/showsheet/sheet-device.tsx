@@ -30,14 +30,32 @@ interface SheetInfoDeviceProps {
   findDevice: DeviceInfoData[];
   children: React.ReactNode;
   type: "device";
+  role: string | undefined;
+  userId: string
+  setAlertGuestModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SheetDevice: React.FC<SheetInfoDeviceProps> = ({
   findDevice,
   children,
   type,
+  role,
+  userId,
+  setAlertGuestModal
 }) => {
   const [open, setOpen] = useState(false);
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (isOpen) {
+      if (role !== "GUEST" && userId) {
+        setOpen(true);
+      } else {
+        setAlertGuestModal(true);
+      }
+    } else {
+      setOpen(false);
+    }
+  };
 
   const infoMap = {
     device: {
@@ -50,7 +68,7 @@ const SheetDevice: React.FC<SheetInfoDeviceProps> = ({
   const { title, description, form } = infoMap[type];
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetTrigger asChild>
         {children}
       </SheetTrigger>

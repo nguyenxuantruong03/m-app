@@ -72,7 +72,7 @@ const PasswordSecurity = async () => {
           <div className="text-sm text-gray-500 py-2">
             Quản lý thiết bị đang đăng nhập và giới hạn.
           </div>
-          <InfoDecive findDevice={findDevice} />
+          <InfoDecive user={user! ?? undefined} findDevice={findDevice} />
         </>
       )}
     </div>

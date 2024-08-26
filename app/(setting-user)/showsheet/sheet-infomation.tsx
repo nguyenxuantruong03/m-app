@@ -31,8 +31,11 @@ interface SheetInfomationProps {
   address?: string | null;
   addressother?: string | null;
   children: React.ReactNode;
+  userId: string
   favorite: string[];
   dataallfavorite: Favorite[];
+  role: string | undefined;
+  setAlertGuestModal: React.Dispatch<React.SetStateAction<boolean>>;
   type:
     | "name"
     | "nameuser"
@@ -44,7 +47,7 @@ interface SheetInfomationProps {
     | "addressother"
     | "email"
     | "favorite"
-    | "frame" // Add type to specify the prop to display
+    | "frame"; // Add type to specify the prop to display
 }
 
 const SheetInfomation: React.FC<SheetInfomationProps> = ({
@@ -60,8 +63,23 @@ const SheetInfomation: React.FC<SheetInfomationProps> = ({
   type,
   favorite,
   dataallfavorite,
+  role,
+  userId,
+  setAlertGuestModal,
 }) => {
   const [open, setOpen] = useState(false);
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (isOpen) {
+      if (role !== "GUEST" && userId) {
+        setOpen(true);
+      } else {
+        setAlertGuestModal(true);
+      }
+    } else {
+      setOpen(false);
+    }
+  };
 
   const infoMap = {
     frame: {
@@ -148,7 +166,7 @@ const SheetInfomation: React.FC<SheetInfomationProps> = ({
   const { title, description, form } = infoMap[type];
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent className="space-y-4" side="center">
         <SheetHeader>

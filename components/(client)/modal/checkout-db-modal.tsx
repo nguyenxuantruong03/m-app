@@ -1,12 +1,19 @@
 "use client";
 import { AlertTriangle } from "lucide-react";
-import useCart from "@/hooks/client/use-cart";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import Modal from "@/components/ui/modal";
+import useCartdb from "@/hooks/client/db/use-cart-db";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import {
+  getColorOldPrice,
+  getColorPrice,
+  getSizeOldPrice,
+  getSizePrice,
+} from "@/components/(client)/export-product-compare/size-color/match-color-size";
 
 interface SeePaymentDangerProps {
   isOpen: boolean;
@@ -15,81 +22,70 @@ interface SeePaymentDangerProps {
   title?: string;
 }
 
-const SeePaymentDangerModal: React.FC<SeePaymentDangerProps> = ({
+const CheckoutDbModal: React.FC<SeePaymentDangerProps> = ({
   isOpen,
   onClose,
   message,
   title,
 }) => {
-  const cart = useCart();
-  const searchParams = useSearchParams();
-  const items = useCart((state) => state.items);
-  const [totalCoins, setTotalCoins] = useState<number>(0);
-  const [rotation, setRotation] = useState<number>(0);
+  const user = useCurrentUser();
+  const cartdb = useCartdb();
+  const param = useParams();
   const router = useRouter();
+  const items = useCartdb((state) => state.items);
+  const [totalCoins, setTotalCoins] = useState<number>(0);
+
   const handleCheckoutcash = () => {
     router.push("/checkoutcash");
   };
-  const resetTotalCoins = async () => {
-    try {
-      const response = await axios.get("/api/wheelSpin");
-      const currentRotation = response.data.latestRotation;
-      // await axios.delete("/api/wheelSpin");
-
-      let newRotation = currentRotation;
-      const paymentAmount = totalAmount - totalCoins;
-
-      if (paymentAmount >= 1000000) {
-        newRotation += 2;
-      } else if (paymentAmount >= 500000 && paymentAmount < 1000000) {
-        newRotation += 1;
-      } else {
-        // Less than 500,000, no change in rotation
-        newRotation += 0;
-      }
-      setRotation(newRotation);
-
-      await axios.post("/api/wheelSpin", { coin: "0", rotation: newRotation });
-      setTotalCoins(0);
-    } catch (error) {
-      toast.error("Error resetting total coins");
-    }
-  };
-  useEffect(() => {
-    if (searchParams.get("payment-success")) {
-      toast.success("Payment completed");
-      cart.removeSelectedItems();
-      resetTotalCoins(); // Reset totalCoins on successful payment
-    }
-    if (searchParams.get("payment-fail")) {
-      toast.error("Something went wrong");
-    }
-  }, [searchParams]);
 
   const selectedItems = items.filter((item) =>
-    cart.selectedItems.includes(item.id)
+    cartdb.selectedItems.includes(item.id)
   );
 
   //Total Coins
   useEffect(() => {
     // Load totalCoins from the server using GET request
-    axios.get("/api/wheelSpin").then((response) => {
+    axios.get(`/api/${param.storeId}/wheelSpin`).then((response) => {
       setTotalCoins(response.data.totalCoins);
-      setRotation(response.data.latestRotation);
     });
-  }, []);
+  }, [param.storeId, user?.role]);
 
   const totalAmounts = selectedItems.reduce(
     (total, item) => {
       const itemInCart = items.find((cartItem) => cartItem.id === item.id);
-      const quantity = itemInCart?.productdetail.quantity1 || 1;
+      const quantity = itemInCart?.quantity || 1;
 
-      const itemTotalPrice =
-        ((item.productdetail.price1 *
-          (100 - item.productdetail.percentpromotion1)) /
-          100) *
-        quantity;
-      const itemTotalPriceOld = item.productdetail.price1 * quantity;
+      if (!itemInCart || !itemInCart.product) {
+        // Nếu itemInCart hoặc itemInCart.product là undefined, bỏ qua item này
+        toast.error("Không tìm thấy sản phẩm!");
+        return total;
+      }
+      //GetPrice dựa vào size
+      const getPriceMatchColorandSize = () => {
+        const sizePrice = getSizePrice(
+          itemInCart?.product || "",
+          itemInCart?.size
+        );
+        const colorPrice = getColorPrice(itemInCart.product, itemInCart?.color);
+        return Math.ceil(Math.max(sizePrice, colorPrice));
+      };
+
+      //GetPrice dựa vào color
+      const getPriceOldMatchColorandSize = () => {
+        const sizeOldPrice = getSizeOldPrice(
+          itemInCart?.product,
+          itemInCart?.size
+        );
+        const colorOldPrice = getColorOldPrice(
+          itemInCart.product,
+          itemInCart?.color
+        );
+        return Math.ceil(Math.max(sizeOldPrice, colorOldPrice));
+      };
+
+      const itemTotalPrice = getPriceMatchColorandSize() * quantity;
+      const itemTotalPriceOld = getPriceOldMatchColorandSize() * quantity;
 
       return {
         totalPrice: total.totalPrice + itemTotalPrice,
@@ -101,9 +97,9 @@ const SeePaymentDangerModal: React.FC<SeePaymentDangerProps> = ({
   // Tiền bảo hiểm
   const totalWarrantyAmount = selectedItems.reduce((total, item) => {
     const itemInCart = items.find((cartItem) => cartItem.id === item.id);
-    const quantity = itemInCart?.productdetail.quantity1 || 1;
+    const quantity = itemInCart?.quantity || 1;
+    const selectedWarranty = String(itemInCart?.warranty || "0");
 
-    const selectedWarranty = cart.selectedWarranties[item.id];
     const warrantyAmount = selectedWarranty ? parseFloat(selectedWarranty) : 0;
 
     return total + warrantyAmount * quantity;
@@ -115,13 +111,34 @@ const SeePaymentDangerModal: React.FC<SeePaymentDangerProps> = ({
   const totalAmountOld = totalAmounts.totalPriceOld + totalWarrantyAmount;
   const totalAmountOldCoin = Math.ceil(totalAmountOld - totalCoins);
 
+  // Tạo mảng riêng cho size và color và quantity
+  //size
+  const selectedSizes = selectedItems
+    .map((item) => {
+      const itemInCart = items.find((cartItem) => cartItem.id === item.id);
+      return itemInCart?.size;
+    })
+
+  //color
+  const selectedColors = selectedItems
+    .map((item) => {
+      const itemInCart = items.find((cartItem) => cartItem.id === item.id);
+      return itemInCart?.color;
+    })
+
+  //quantity
   const selectedQuantities = selectedItems.map((item) => {
     const itemInCart = items.find((cartItem) => cartItem.id === item.id);
-    return itemInCart?.productdetail.quantity1 || 1;
+    return itemInCart?.quantity || 1;
+  });
+
+  //Dựa vào cartItemId lấy ra id của sản phẩm
+  const selectedProductIds = selectedItems.map((item) => {
+    const itemInCart = items.find((cartItem) => cartItem.id === item.id);
+    return itemInCart?.product.id || 1;
   });
 
   const onCheckout = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    const selectedProductIds = cart.selectedItems;
     event.preventDefault();
     try {
       const response = await axios.post(
@@ -132,14 +149,32 @@ const SeePaymentDangerModal: React.FC<SeePaymentDangerProps> = ({
           quantity: selectedQuantities,
           priceold: totalAmountOldCoin,
           warranty: totalWarrantyAmount,
+          sizes: selectedSizes,
+          colors: selectedColors,
+          userId: user?.id,
         }
       );
 
       window.location = response.data.url;
     } catch (error) {
-      toast.error("An error occurred during checkout.");
+      if (
+        (error as { response?: { data?: { error?: string } } }).response &&
+        (error as { response: { data?: { error?: string } } }).response.data &&
+        (error as { response: { data: { error?: string } } }).response.data
+          .error
+      ) {
+        // Hiển thị thông báo lỗi cho người dùng
+        toast.error(
+          (error as { response: { data: { error: string } } }).response.data
+            .error
+        );
+      } else {
+        // Hiển thị thông báo lỗi mặc định cho người dùng
+        toast.error("An error occurred during checkout.");
+      }
     }
   };
+
   return (
     <Modal
       title={title || "Thông báo thanh toán online!"}
@@ -185,4 +220,4 @@ const SeePaymentDangerModal: React.FC<SeePaymentDangerProps> = ({
   );
 };
 
-export default SeePaymentDangerModal;
+export default CheckoutDbModal;

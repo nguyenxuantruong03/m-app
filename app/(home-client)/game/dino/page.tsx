@@ -5,13 +5,24 @@ import ChromeDinoGame from 'react-chrome-dino';
 import { useEffect, useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import axios from 'axios';
+import { useParams,useRouter } from 'next/navigation';
+import { useCurrentUser } from "@/hooks/use-current-user";
 export const revalidate = 86400;
 
 const DinoPage = () => {
+  const param = useParams()
+  const user = useCurrentUser()
+  const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
   const [time, setTime] = useState<number>(0);
   const [totalCoins, setTotalCoins] = useState<number>(0);
   const [canGetCoins, setCanGetCoins] = useState<boolean>(false);
+
+  useEffect(() => {
+    if(user?.role === "GUEST" || !user?.id){
+      router.push("/home-product")
+    }
+  }, [router,user?.id,user?.role]);
   // Function to handle page visibility change
   const handleVisibilityChange = () => {
     if (document.hidden) {
@@ -38,7 +49,7 @@ const DinoPage = () => {
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     // Load totalCoins from the server using GET request
-    axios.get("/api/wheelSpin").then((response) => {
+    axios.get(`/api/${param.storeId}/wheelSpin`).then((response) => {
       setTotalCoins(response.data.totalCoins);
     });
 
@@ -63,7 +74,7 @@ const DinoPage = () => {
   const handleGetCoins = async () => {
     try {
       // Make a POST request to add 100 coins
-      await axios.post("/api/wheelSpin", { coin: "100 coins" });
+      await axios.post(`/api/${param.storeId}/wheelSpin`, {userId: user?.id, coin: 100 });
       
       // Reset the timer to 0 seconds when the "Get Coin" button is clicked
       setTime(0);

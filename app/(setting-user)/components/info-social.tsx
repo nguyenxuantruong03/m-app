@@ -1,50 +1,69 @@
-import { ChevronRight,Github, Linkedin,Facebook, Youtube, Dribbble, Twitter, Instagram, CircleFadingPlus, TrendingUp  } from "lucide-react";
+"use client"
+import {
+  ChevronRight,
+  Github,
+  Linkedin,
+  Facebook,
+  Youtube,
+  Dribbble,
+  Twitter,
+  Instagram,
+  CircleFadingPlus,
+  TrendingUp,
+} from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import SheetLinkSocial from "../showsheet/sheet-link-social";
 import Link from "next/link";
-import { SocialLink } from "@prisma/client";
+import { SocialLink, User } from "@prisma/client";
+import { useState } from "react";
+import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
 
 interface InfoSocialProps {
-  user: SocialLink | null;
+  userSocial: SocialLink | null;
+  existingUser: User;
 }
 
 interface InfoUser {
   key: string;
 }
 
-const InfoSocial: React.FC<InfoSocialProps> = ({ user }) => {
-  console.log()
-  const linkwebsite = user?.linkwebsite
-    ? user?.linkwebsite
+const InfoSocial: React.FC<InfoSocialProps> = ({
+  userSocial,
+  existingUser,
+}) => {
+  const [alertGuestModal,setAlertGuestModal] = useState(false);
+
+  const linkwebsite = userSocial?.linkwebsite
+    ? userSocial?.linkwebsite
     : "Chưa cập nhật";
-  const linkgithub = user?.linkgithub
-    ? user.linkgithub
+  const linkgithub = userSocial?.linkgithub
+    ? userSocial.linkgithub
     : "Chưa cập nhật";
-  const linklinkedin = user?.linklinkedin
-    ? user.linklinkedin
+  const linklinkedin = userSocial?.linklinkedin
+    ? userSocial.linklinkedin
     : "Chưa cập nhật";
-  const linkfacebook = user?.linkfacebook
-    ? user.linkfacebook
+  const linkfacebook = userSocial?.linkfacebook
+    ? userSocial.linkfacebook
     : "Chưa cập nhật";
-  const linkyoutube = user?.linkyoutube
-    ? user.linkyoutube
+  const linkyoutube = userSocial?.linkyoutube
+    ? userSocial.linkyoutube
     : "Chưa cập nhật";
-  const linktiktok = user?.linktiktok
-    ? user.linktiktok
+  const linktiktok = userSocial?.linktiktok
+    ? userSocial.linktiktok
     : "Chưa cập nhật";
-  const linkinstagram = user?.linkinstagram
-    ? user.linkinstagram
+  const linkinstagram = userSocial?.linkinstagram
+    ? userSocial.linkinstagram
     : "Chưa cập nhật";
-  const linktwitter = user?.linktwitter
-    ? user.linktwitter
+  const linktwitter = userSocial?.linktwitter
+    ? userSocial.linktwitter
     : "Chưa cập nhật";
-  const linkother = user?.linkother
-    ? user.linkother
+  const linkother = userSocial?.linkother
+    ? userSocial.linkother
     : "Chưa cập nhật";
 
-    const isSecureLink = (link: string) => {
-      return link.startsWith("https://") || link.startsWith("http://");
-    };
+  const isSecureLink = (link: string) => {
+    return link.startsWith("https://") || link.startsWith("http://");
+  };
 
   const generateLinkElement = (link: string) => {
     if (isSecureLink(link)) {
@@ -59,55 +78,100 @@ const InfoSocial: React.FC<InfoSocialProps> = ({ user }) => {
 
   const sosials = [
     {
-      name: <span className="flex items-center"><Dribbble className="h-4 w-4 mr-1"/>Trang web cá nhân</span>,
+      name: (
+        <span className="flex items-center">
+          <Dribbble className="h-4 w-4 mr-1" />
+          Trang web cá nhân
+        </span>
+      ),
       state: linkwebsite,
       separator: <Separator className="border-[1px] border-gray-400" />,
       key: "linkwebsite", // Add a key to identify the item
     },
     {
-      name: <span className="flex items-center"><Github className="h-4 w-4 mr-1"/>GitHub</span>,
+      name: (
+        <span className="flex items-center">
+          <Github className="h-4 w-4 mr-1" />
+          GitHub
+        </span>
+      ),
       state: linkgithub,
       separator: <Separator className="border-[1px] border-gray-400" />,
       key: "linkgithub", // Add a key to identify the item
     },
     {
-      name: <span className="flex items-center"><Linkedin className="h-4 w-4 mr-1"/>LinkedIn</span>,
+      name: (
+        <span className="flex items-center">
+          <Linkedin className="h-4 w-4 mr-1" />
+          LinkedIn
+        </span>
+      ),
       state: linklinkedin,
       separator: <Separator className="border-[1px] border-gray-400" />,
       key: "linklinkedin", // Add a key to identify the item
     },
     {
-      name: <span className="flex items-center"><Facebook className="h-4 w-4 mr-1"/>FaceBook</span>,
+      name: (
+        <span className="flex items-center">
+          <Facebook className="h-4 w-4 mr-1" />
+          FaceBook
+        </span>
+      ),
       state: linkfacebook,
       separator: <Separator className="border-[1px] border-gray-400" />,
       key: "linkfacebook", // Add a key to identify the item
     },
     {
-      name: <span className="flex items-center"><Youtube className="h-4 w-4 mr-1"/>Youtube</span>,
+      name: (
+        <span className="flex items-center">
+          <Youtube className="h-4 w-4 mr-1" />
+          Youtube
+        </span>
+      ),
       state: linkyoutube,
       separator: <Separator className="border-[1px] border-gray-400" />,
       key: "linkyoutube", // Add a key to identify the item
     },
     {
-      name: <span className="flex items-center"><TrendingUp className="h-4 w-4 mr-1"/>Tiktok</span>,
+      name: (
+        <span className="flex items-center">
+          <TrendingUp className="h-4 w-4 mr-1" />
+          Tiktok
+        </span>
+      ),
       state: linktiktok,
       separator: <Separator className="border-[1px] border-gray-400" />,
       key: "linktiktok", // Add a key to identify the item
     },
     {
-      name: <span className="flex items-center"><Instagram className="h-4 w-4 mr-1"/>Instagram</span>,
+      name: (
+        <span className="flex items-center">
+          <Instagram className="h-4 w-4 mr-1" />
+          Instagram
+        </span>
+      ),
       state: linkinstagram,
       separator: <Separator className="border-[1px] border-gray-400" />,
       key: "linkinstagram", // Add a key to identify the item
     },
     {
-      name: <span className="flex items-center"><Twitter className="h-4 w-4 mr-1"/>Twitter</span>,
+      name: (
+        <span className="flex items-center">
+          <Twitter className="h-4 w-4 mr-1" />
+          Twitter
+        </span>
+      ),
       state: linktwitter,
       separator: <Separator className="border-[1px] border-gray-400" />,
       key: "linktwitter", // Add a key to identify the item
     },
     {
-      name: <span className="flex items-center"><CircleFadingPlus className="h-4 w-4 mr-1"/>Other</span>,
+      name: (
+        <span className="flex items-center">
+          <CircleFadingPlus className="h-4 w-4 mr-1" />
+          Other
+        </span>
+      ),
       state: linkother,
       key: "linkother", // Add a key to identify the item
     },
@@ -128,15 +192,18 @@ const InfoSocial: React.FC<InfoSocialProps> = ({ user }) => {
       return (
         <SheetLinkSocial
           linkwebsite={linkwebsite}
-          linkgithub={user?.linkgithub || ""}
-          linklinkedin={user?.linklinkedin || ""}
-          linkfacebook={user?.linkfacebook || ""}
-          linkyoutube={user?.linkyoutube || ""}
-          linktiktok={user?.linktiktok || ""}
-          linkinstagram={user?.linkinstagram || ""}
-          linktwitter={user?.linktwitter || ""}
-          linkother={user?.linkother || ""}
+          linkgithub={userSocial?.linkgithub || ""}
+          linklinkedin={userSocial?.linklinkedin || ""}
+          linkfacebook={userSocial?.linkfacebook || ""}
+          linkyoutube={userSocial?.linkyoutube || ""}
+          linktiktok={userSocial?.linktiktok || ""}
+          linkinstagram={userSocial?.linkinstagram || ""}
+          linktwitter={userSocial?.linktwitter || ""}
+          linkother={userSocial?.linkother || ""}
           type={infouser.key} // Pass the key as type
+          role={existingUser.role}
+          userId={existingUser?.id || ""}
+          setAlertGuestModal={setAlertGuestModal}
         >
           {content}
         </SheetLinkSocial>
@@ -146,31 +213,37 @@ const InfoSocial: React.FC<InfoSocialProps> = ({ user }) => {
   };
 
   return (
-    <div className="bg-white rounded-md overflow-hidden my-2">
-      {sosials.map((sosial) => (
-        <div key={sosial.key}>
-          {wrapWithSheet(
-            sosial,
-            <div className="cursor-pointer hover:bg-slate-300 hover:bg-opacity-40">
-              <div>
-                <div className="flex items-center justify-between px-4 py-2">
-                  <div>
-                    <div className="font-semibold text-white dark:text-slate-900">
-                      {sosial.name}
+    <>
+     <AlertGuestModal
+        isOpen={alertGuestModal}
+        onClose={() => setAlertGuestModal(false)}
+      />
+      <div className="bg-white rounded-md overflow-hidden my-2">
+        {sosials.map((sosial) => (
+          <div key={sosial.key}>
+            {wrapWithSheet(
+              sosial,
+              <div className="cursor-pointer hover:bg-slate-300 hover:bg-opacity-40">
+                <div>
+                  <div className="flex items-center justify-between px-4 py-2">
+                    <div>
+                      <div className="font-semibold text-white dark:text-slate-900">
+                        {sosial.name}
+                      </div>
+                      {generateLinkElement(sosial.state)}
                     </div>
-                    {generateLinkElement(sosial.state)}
-                  </div>
-                  <div>
-                    <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
+                    <div>
+                      <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
-          <Separator className="border-[1px] border-gray-400" />
-        </div>
-      ))}
-    </div>
+            )}
+            <Separator className="border-[1px] border-gray-400" />
+          </div>
+        ))}
+      </div>
+    </>
   );
 };
 

@@ -40,9 +40,9 @@ const FormImageCredential = () => {
     resolver: zodResolver(SettingSchema),
     defaultValues: {
       imageCredential: Array.isArray(user?.imageCredential)
-      ? user.imageCredential
+      ? user?.imageCredential
       : user?.imageCredential
-      ? [user.imageCredential]
+      ? [user?.imageCredential]
       : [],
   },
   });

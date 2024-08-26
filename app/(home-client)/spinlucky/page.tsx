@@ -1,18 +1,33 @@
 "use client"
 import React, { useEffect, useRef, useState } from "react";
 import WheelComponent from "./weel";
-import IMAGES from "./assets";
 import TrPortal from "./portal";
 import Confetti from "react-confetti";
 import Image from "next/image";
 import Container from "@/components/ui/container";
 import axios from "axios";
 import { AlertTriangle } from 'lucide-react';
-import { useParams } from "next/navigation";
+import { useParams,useRouter } from "next/navigation";
+import { useCurrentUser } from "@/hooks/use-current-user";
 export const revalidate = 86400;
+
+const IMAGES = {
+  image1: "/images/gif-lucky1.gif",
+  image2: "/images/gif-lucky.gif",
+  image3: "/images/gif-lucky1.gif",
+  image4: "/images/gif-lucky.gif",
+  image5: "/images/gif-lucky.gif",
+  image6: "/images/gif-lucky.gif",
+  image7: "/images/gif-lucky.gif",
+  image8: "/images/gif-lucky1.gif",
+  image9: "/images/gif-lucky1.gif",
+  image10: "/images/gif-lucky1.gif",
+};
 
 const SpinCoinPage: React.FC = () => {
   const param = useParams()
+  const router = useRouter()
+  const user = useCurrentUser()
   const [portal, setPortal] = useState<boolean>(false);
   const [show, setShow] = useState<string | false>(false);
   const [totalCoins, setTotalCoins] = useState<number>(0);
@@ -21,17 +36,21 @@ const SpinCoinPage: React.FC = () => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    axios.get(`/api/${param.storeId}/wheelSpin`).then((response) => {
-      setTotalCoins(response.data.totalCoins);
-      setRotation(response.data.latestRotation)
-    });
+    if(user?.role === "GUEST" || !user?.id){
+      router.push("/home-product")
+    }else{
+      axios.get(`/api/${param.storeId}/wheelSpin`).then((response) => {
+        setTotalCoins(response.data.totalCoins);
+        setRotation(response.data.latestRotation)
+      });
+    }
 
     document.addEventListener("click", handleDocumentClick);
     // Cleanup the event listener when the component unmounts
     return () => {
       document.removeEventListener("click", handleDocumentClick);
     };
-  }, []);
+  }, [router,user?.id,user?.role,param.storeId]);
 
   const handleDocumentClick = (event: MouseEvent) => {
     // Check if the clicked element is outside the modal
@@ -87,7 +106,7 @@ const SpinCoinPage: React.FC = () => {
     const newRotation = rotation - 1 
     try {
       // Send the winner data to the server using POST request
-      await axios.post(`/api/${param.storeId}/wheelSpin`, { coin:coinsWon,rotation: newRotation });
+      await axios.post(`/api/${param.storeId}/wheelSpin`, { userId: user?.id, coin:coinsWon,rotation: newRotation });
       setTotalCoins(newTotalCoins);
       const response = await axios.get(`/api/${param.storeId}/wheelSpin`);
       setRotation( newRotation);
@@ -126,6 +145,7 @@ const SpinCoinPage: React.FC = () => {
               src={IMAGES[`image${objIndex[show.split("").join("")]}` as keyof typeof IMAGES]}
               alt=""
               width="300"
+              height="50"
             />
           </div>
           <h2 className="text-2xl text-center">

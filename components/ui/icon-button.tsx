@@ -2,12 +2,14 @@
 import { cn } from "@/lib/utils";
 import { MouseEventHandler, useState } from "react";
 import "./style.css";
+import { Button } from "./button";
 
 interface IconButtonProps {
   onClick?: MouseEventHandler<HTMLButtonElement> | undefined;
   icon: React.ReactElement;
   className?: string;
   text?: string;
+  disabled?: boolean;
 }
 
 const IconButton: React.FC<IconButtonProps> = ({
@@ -15,12 +17,16 @@ const IconButton: React.FC<IconButtonProps> = ({
   icon,
   className,
   text,
+  disabled = false,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <button
+    <Button
+      variant="outline" 
+      size="icon"
       onClick={onClick}
+      disabled={disabled}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className={cn(
@@ -34,7 +40,7 @@ const IconButton: React.FC<IconButtonProps> = ({
         </div>
       )}
       {icon}
-    </button>
+    </Button>
   );
 };
 

@@ -42,7 +42,7 @@ const SettingProfile = async () => {
         <div className="text-sm text-gray-500 py-2">
           Quản lý liên kết tới các trang mạng xã hội của bạn.
         </div>
-        <InfoSocial user={user?.socialLink! ?? undefined}/>
+        <InfoSocial existingUser={user! ?? undefined} userSocial={user?.socialLink! ?? undefined}/>
       </div>
       
     </>

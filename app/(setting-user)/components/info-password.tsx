@@ -1,8 +1,11 @@
+"use client"
 import { ChevronRight, Drama, KeyRound } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import SheetSecurity from "../showsheet/sheet-security";
+import SheetPassword from "../showsheet/sheet-password";
 import { User } from "@prisma/client";
+import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
+import { useState } from "react";
 
 interface InfoPasswordProp {
   user: User;
@@ -15,6 +18,8 @@ interface InfoUser {
 
 
 const InfoPassword: React.FC<InfoPasswordProp> = ({ user, password }) => {
+  const [alertGuestModal,setAlertGuestModal] = useState(false);
+
   const infopasswords = [
     {
       name: <span className="flex items-center"><KeyRound className="h-4 w-4 mr-1"/>Đổi mật khẩu</span>,
@@ -39,18 +44,26 @@ const InfoPassword: React.FC<InfoPasswordProp> = ({ user, password }) => {
   const wrapWithSheet = (infouser: InfoUser, content: React.ReactNode) => {
     if (infouser.key === "password" || infouser.key === "2FA") {
       return (
-        <SheetSecurity
+        <SheetPassword
           password={password}
           isTwoFactorEnabled={user?.isTwoFactorEnabled}
           type={infouser.key} // Pass the key as type
+          role={user.role}
+          userId={user?.id || ""}
+          setAlertGuestModal={setAlertGuestModal}
         >
           {content}
-        </SheetSecurity>
+        </SheetPassword>
       );
     }
     return content;
   };
   return (
+    <>
+     <AlertGuestModal
+        isOpen={alertGuestModal}
+        onClose={() => setAlertGuestModal(false)}
+      />
     <div className="dark:bg-white bg-slate-900 rounded-md overflow-hidden my-2">
     {infopasswords.map((infopassword) => (
       <div key={infopassword.key}>
@@ -75,6 +88,7 @@ const InfoPassword: React.FC<InfoPasswordProp> = ({ user, password }) => {
       </div>
     ))}
     </div>
+    </>
   );
 };
 

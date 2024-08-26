@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useTetrisActions, useTetris } from "../../../hooks/useTetris";
 import { GameOverContainer, NameInput, SubmitScoreButton, StatusText } from "./styles";
 import axios from "axios";
+import { useParams } from "next/navigation";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 const GameOver = (): JSX.Element => {
+  const param = useParams()
+  const user = useCurrentUser()
   const gameState = useTetris();
   const [totalCoins, setTotalCoins] = useState<number>(0);
   
-
   useEffect(() => {
       const newTotalCoins = totalCoins + Math.floor(gameState.score / 300);
       updateTotalCoinsAndSave(newTotalCoins);
@@ -15,7 +18,7 @@ const GameOver = (): JSX.Element => {
   const updateTotalCoinsAndSave = async (newTotalCoins: number) => {
     try {
       // Save the new totalCoins to the database
-      await axios.post("/api/wheelSpin", { coin: `${newTotalCoins} coins` });
+      await axios.post(`/api/${param.storeId}/wheelSpin`, {userId: user?.id, coin: newTotalCoins });
   
       // Update the state with the new totalCoins
       setTotalCoins(newTotalCoins);

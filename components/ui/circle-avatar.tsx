@@ -1,12 +1,7 @@
 import Image from "next/image";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { useEffect, useState } from "react";
-import { redirect } from "next/navigation";
-import { getAccountByUserId } from "@/data/account";
-import toast from "react-hot-toast";
 import { User } from "lucide-react";
-import { AccountItem } from "@/components/auth/user-button";
 import { UserRole } from "@prisma/client";
 
 const getFrameDimensions = (frame: string | undefined) => {
@@ -83,35 +78,10 @@ const CircleAvatar = ({
   role,
 }: CircleAvatarProps) => {
   const user = useCurrentUser();
-  const [account, setAccount] = useState<AccountItem | null>(null);
   const { width, height } = getFrameDimensions(user?.frameAvatar);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!user || !user.id) {
-        redirect("/auth/login");
-      }
-      try {
-        const accountData = await getAccountByUserId(user.id);
-        setAccount(accountData || null);
-      } catch (error) {
-        toast.error("Invalid Error");
-      }
-    };
-
-    fetchData();
-  }, [user]);
-
   const imageCredentials = user?.imageCredential || undefined;
-  const isGitHubOrGoogleUser =
-    account?.provider === "github" ||
-    account?.provider === "google" ||
-    account?.provider === "facebook" ||
-    account?.provider === "gitlab" ||
-    account?.provider === "reddit" ||
-    account?.provider === "spotify" ||
-    account?.provider === "twitter";
-  // Use the first image from imageCredential if available, or randomImage if available
+  // Use the first image from imageCredential hoăc ảnh iamge nêu ko có thì dùng deafault
   const avatarImage =
     imageCredentials ||
     (imageCredentials ? imageCredentials : null) ||
@@ -124,10 +94,10 @@ const CircleAvatar = ({
           className={`absolute top-0 left-0 w-full h-full flex items-center justify-center ${classAvatar}`}
         >
           <Avatar>
-            {isGitHubOrGoogleUser && avatarImage ? (
-              <AvatarImage src={srcAvatar || avatarImage} />
+            { srcAvatar ? (
+              <AvatarImage src={srcAvatar} />
             ) : avatarImage ? (
-              <AvatarImage src={srcAvatar || avatarImage} />
+              <AvatarImage src={avatarImage} />
             ) : (
               <AvatarFallback className="bg-sky-500">
                 <User className="text-white" />

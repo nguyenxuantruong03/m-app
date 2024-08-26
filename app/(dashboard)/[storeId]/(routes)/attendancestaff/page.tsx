@@ -19,7 +19,6 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { AlertModal } from "@/components/modals/alert-modal";
 import { Check, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getAccountByUserId } from "@/data/account";
 import viLocale from "date-fns/locale/vi";
 import { CameraModal } from "@/components/modals/camera-modal";
 import { ChooseAttendanceModal } from "@/components/modals/chooseAttendance-modal";
@@ -94,7 +93,6 @@ export default function Home() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isAddingEvent, setIsAddingEvent] = useState(false);
   const [isAttendanceStartCalled, setIsAttendanceStartCalled] = useState(false);
-  const [account, setAccount] = useState<AccountItem | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleString());
   const [isDelayCheckAttendaceText, setDelayCheckAttendaceText] = useState("");
   const [isEnd, setIsEnd] = useState<boolean>(false);
@@ -193,30 +191,15 @@ export default function Home() {
       if (!userId || !userId.id) {
         redirect("/auth/login");
       }
-
-      try {
-        const accountData = await getAccountByUserId(userId.id);
-        setAccount(accountData || null);
-      } catch (error) {
-        toast.error("Invalid Error");
-      }
     };
     fetchData();
   }, [userId]);
   
   const imageCredentials = userId?.imageCredential || undefined;
-  const isGitHubOrGoogleUser =
-    account?.provider === "github" ||
-    account?.provider === "google" ||
-    account?.provider === "facebook" ||
-    account?.provider === "gitlab" ||
-    account?.provider === "reddit" ||
-    account?.provider === "spotify" ||
-    account?.provider === "twitter";
-  // Use the first image from imageCredential if available, or randomImage if available
+  // Use the first image from imageCredential hoăc ảnh iamge nêu ko có thì dùng deafault
   const avatarImage =
     imageCredentials ||
-    (imageCredentials ? imageCredentials[0] : null) ||
+    (imageCredentials ? imageCredentials : null) ||
     userId?.image;
 
   // Use a ref to track whether draggable setup has been done
@@ -418,9 +401,7 @@ export default function Home() {
                     <div className="flex items-start">
                       <div className="flex-shrink-0 pt-0.5">
                         <Avatar>
-                          {isGitHubOrGoogleUser && avatarImage ? (
-                            <AvatarImage src={avatarImage} />
-                          ) : avatarImage ? (
+                          { avatarImage ? (
                             <AvatarImage src={avatarImage} />
                           ) : (
                             <AvatarFallback className="bg-sky-500">
@@ -599,9 +580,7 @@ export default function Home() {
                 <div className="flex items-start">
                   <div className="flex-shrink-0 pt-0.5">
                     <Avatar>
-                      {isGitHubOrGoogleUser && avatarImage ? (
-                        <AvatarImage src={avatarImage} />
-                      ) : avatarImage ? (
+                      { avatarImage ? (
                         <AvatarImage src={avatarImage} />
                       ) : (
                         <AvatarFallback className="bg-sky-500">
@@ -742,9 +721,7 @@ export default function Home() {
                     <div className="flex items-start">
                       <div className="flex-shrink-0 pt-0.5">
                         <Avatar>
-                          {isGitHubOrGoogleUser && avatarImage ? (
-                            <AvatarImage src={avatarImage} />
-                          ) : avatarImage ? (
+                          { avatarImage ? (
                             <AvatarImage src={avatarImage} />
                           ) : (
                             <AvatarFallback className="bg-sky-500">
@@ -916,9 +893,7 @@ export default function Home() {
                 <div className="flex items-start">
                   <div className="flex-shrink-0 pt-0.5">
                     <Avatar>
-                      {isGitHubOrGoogleUser && avatarImage ? (
-                        <AvatarImage src={avatarImage} />
-                      ) : avatarImage ? (
+                      { avatarImage ? (
                         <AvatarImage src={avatarImage} />
                       ) : (
                         <AvatarFallback className="bg-sky-500">

@@ -1,12 +1,23 @@
+"use client"
 import dynamic from 'next/dynamic'
 import Container from "@/components/ui/container";
 // import Game from "./components/game";
 import { AlertTriangle } from "lucide-react";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const GameNossr = dynamic(() => import("./components/game"), {
   ssr: false,
 });
 const Page = () => {
+  const user = useCurrentUser()
+  const router = useRouter();
+  useEffect(() => {
+    if(user?.role === "GUEST" || !user?.id){
+      router.push("/home-product")
+    }
+  }, [router,user?.id,user?.role]);
   return (
     <Container>
     <div className="mt-32 mb-12 ">

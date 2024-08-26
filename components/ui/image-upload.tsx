@@ -7,7 +7,6 @@ import { CldUploadWidget } from "next-cloudinary";
 import toast from "react-hot-toast";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { redirect } from "next/navigation";
-import { getAccountByUserId } from "@/data/account";
 import { Avatar, AvatarFallback } from "./avatar";
 import { utcToZonedTime } from "date-fns-tz";
 import viLocale from "date-fns/locale/vi";
@@ -51,7 +50,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 }) => {
   const [isMounted, setIsMounted] = useState(false);
   const userId = useCurrentUser();
-  const [account, setAccount] = useState<AccountItem | null>(null);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0); // New state variable for selected index
 
@@ -67,31 +65,16 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       if (!userId || !userId.id) {
         redirect("/auth/login");
       }
-
-      try {
-        const accountData = await getAccountByUserId(userId?.id);
-        setAccount(accountData || null);
-      } catch (error) {
-        toast.error("Invalid Error");
-      }
     };
 
     fetchData();
   }, [userId]);
 
-  const imageCredentials = userId?.imageCredential[0] || undefined;
-  const isGitHubOrGoogleUser =
-    account?.provider === "github" ||
-    account?.provider === "google" ||
-    account?.provider === "facebook" ||
-    account?.provider === "gitlab" ||
-    account?.provider === "reddit" ||
-    account?.provider === "spotify" ||
-    account?.provider === "twitter";
-
+  const imageCredentials = userId?.imageCredential || undefined;
+  // Use the first image from imageCredential hoăc ảnh iamge nêu ko có thì dùng deafault
   const avatarImage =
     imageCredentials ||
-    (imageCredentials ? imageCredentials[0] : null) ||
+    (imageCredentials ? imageCredentials : null) ||
     userId?.image;
 
   const onUpload = (result: any) => {
@@ -128,7 +111,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             <>
               {showAvatar && value.length === 0 && (
                 <>
-                  {isGitHubOrGoogleUser && avatarImage ? (
+                  { avatarImage ? (
                     <div className="relative w-[200px] h-[200px] rounded-md overflow-hidden">
                       <Image
                         fill

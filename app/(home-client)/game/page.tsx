@@ -1,13 +1,15 @@
 "use client";
 // Import the required modules from Next.js
 import Container from "@/components/ui/container";
+import { useCurrentUser } from "@/hooks/use-current-user";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 export const revalidate =86400
 const GamePage = () => {
-  const [isMounted, setIsMounted] = useState(false);
+  const user = useCurrentUser()
   const router = useRouter();
+  const [isMounted, setIsMounted] = useState(false);
 
   const handleClick2048 = () => {
     router.push("/game/2048");
@@ -31,8 +33,11 @@ const GamePage = () => {
   };
 
   useEffect(() => {
+    if(user?.role === "GUEST" || !user?.id){
+      router.push("/home-product")
+    }
     setIsMounted(true);
-  }, []);
+  }, [router,user?.id,user?.role]);
 
   if (!isMounted) {
     return null;

@@ -21,6 +21,7 @@ const DatastatisticsPage = async ({ params }: { params: { storeId: string } }) =
           product: true,
         },
       },
+      user: true
     },
     orderBy: {
       createdAt: "desc",
@@ -32,6 +33,10 @@ const DatastatisticsPage = async ({ params }: { params: { storeId: string } }) =
     phone: item.phone.split(",").join(", "),
     address: item.address.split(",").join(", "),
     email: item.email.split(",").join(", "),
+    emailcurrent: item.user?.email,
+    namecurrent: item.user?.name,
+    phonenumbercurrent: item.user?.phonenumber,
+    addresscurrent: item.user?.address,
     products: item.orderItem
       .map((orderItem) => {
         return `Số lượng: ${orderItem.quantity} - Sản phẩm: ${orderItem.product.heading}`;
@@ -42,8 +47,14 @@ const DatastatisticsPage = async ({ params }: { params: { storeId: string } }) =
         return 0 + Number(item.pricesales);
       }, 0)
     ),
+    name: item?.name,
+    note: item?.note,
+    gender: item?.gender,
+    addressOther: item?.addressOther,
+    deliveryMethod: item?.deliveryMethod,
     isPaid: item.isPaid,
-    createdAt: item.createdAt,
+    isGift: item.orderItem.map((item)=> item?.isGift),
+    createdAt: item.createdAt
   }));
   return (
     <div className="w-full">

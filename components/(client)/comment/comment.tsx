@@ -10,6 +10,7 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { useParams } from "next/navigation";
 import { AlertModal } from "@/components/modals/alert-modal";
 import CircleAvatar from "@/components/ui/circle-avatar";
+import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
 
 interface Comment {
   rating: number;
@@ -77,6 +78,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
   const [commentNameToDelete, setCommentNameToDelete] = useState<
     string | undefined
   >("");
+  const [alertGuestModal, setAlertGuestModal] = useState(false);
   const optionRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLDivElement>(null);
   const scrollPositionRef = useRef<number | null>(null);
@@ -117,75 +119,79 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
 
     const timeDifference = Date.now() - parseInt(lastCommentTime, 10);
     const secondsPassed = timeDifference / 1000;
-  
+
     return secondsPassed >= 30; // Check if 30 seconds have passed
   };
 
   const handleResponseSubmit = async (commentId: any) => {
     try {
-      if (
-        responseDescriptions === null ||
-        responseDescriptions === undefined ||
-        !responseDescriptions.trim()
-      ) {
-        setErrorResponse("Nội dung phản hồi không thể trống.");
-        return;
-      }
-      
-      if (responseDescriptions.length >= 121) {
-        setErrorResponse("Bạn đã nhập quá 120 ký tự.");
-        return;
-      }else{
-        setErrorResponse("");
-      }
-
-      if (!canUserCommentResponse()) {
-        setErrorResponse("Bạn có thể đánh giá lại trong 30 giây nữa.");
-        return;
-      }
-  
-      handleTimestampUpdateResponse();
-
-      setLoading(true);
-      const responses = await axios.post(
-        `/api/${param.storeId}/comments/${commentId}/responsecomment`,
-        {
-          description: responseDescriptions,
-          product: data,
-          comment: commentId,
+      if (user?.role !== "GUEST"  && user?.id) {
+        if (
+          responseDescriptions === null ||
+          responseDescriptions === undefined ||
+          !responseDescriptions.trim()
+        ) {
+          setErrorResponse("Nội dung phản hồi không thể trống.");
+          return;
         }
-      );
 
-      // Cập nhật savedComments sau khi thêm phản hồi
-      setSavedComments((prevComments) => {
-        const updatedComments = [...prevComments];
-        const commentToUpdate = updatedComments.find(
-          (comment) => comment.id === commentId
-        );
-        if (commentToUpdate) {
-          // Kiểm tra nếu phản hồi đã tồn tại
-          const existingResponse = commentToUpdate.responses?.find(
-            (response) => response.id === responses.data.id
-          );
-          if (!existingResponse) {
-            commentToUpdate.responses = [
-              ...(commentToUpdate.responses || []),
-              {
-                id: responses.data.id,
-                description: responseDescriptions,
-                commentId: commentId,
-                user: responses.data.user,
-              },
-            ];
+        if (responseDescriptions.length >= 121) {
+          setErrorResponse("Bạn đã nhập quá 120 ký tự.");
+          return;
+        } else {
+          setErrorResponse("");
+        }
+
+        if (!canUserCommentResponse()) {
+          setErrorResponse("Bạn có thể đánh giá lại trong 30 giây nữa.");
+          return;
+        }
+
+        handleTimestampUpdateResponse();
+
+        setLoading(true);
+        const responses = await axios.post(
+          `/api/${param.storeId}/comments/${commentId}/responsecomment`,
+          {
+            description: responseDescriptions,
+            product: data,
+            comment: commentId,
           }
-        }
-        return updatedComments;
-      });
+        );
 
-      setShowResponseForm(null);
-      setResponseDescriptions("");
-      setEditingResponseId(null);
-      toast.success("Phản hồi thành công.");
+        // Cập nhật savedComments sau khi thêm phản hồi
+        setSavedComments((prevComments) => {
+          const updatedComments = [...prevComments];
+          const commentToUpdate = updatedComments.find(
+            (comment) => comment.id === commentId
+          );
+          if (commentToUpdate) {
+            // Kiểm tra nếu phản hồi đã tồn tại
+            const existingResponse = commentToUpdate.responses?.find(
+              (response) => response.id === responses.data.id
+            );
+            if (!existingResponse) {
+              commentToUpdate.responses = [
+                ...(commentToUpdate.responses || []),
+                {
+                  id: responses.data.id,
+                  description: responseDescriptions,
+                  commentId: commentId,
+                  user: responses.data.user,
+                },
+              ];
+            }
+          }
+          return updatedComments;
+        });
+
+        setShowResponseForm(null);
+        setResponseDescriptions("");
+        setEditingResponseId(null);
+        toast.success("Phản hồi thành công.");
+      } else {
+        setAlertGuestModal(true);
+      }
     } catch (error) {
       console.error("Error submitting response:", error);
       toast.error("Hãy thử lại.");
@@ -199,33 +205,37 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
     id: string
   ) => {
     try {
-      setLoading(true);
-      // Send a request to delete the comment
-      await axios.delete(
-        `/api/${param.storeId}/comments/${commentId}/responsecomment`,
-        {
-          data: { id: id },
-        }
-      );
-      // Update the local state to remove the deleted comment
-      setSavedComments((prevComments) =>
-        prevComments.map((comment) => {
-          // Find the comment to update
-          if (comment.id === commentId) {
-            // Remove the response with the specified id
-            comment.responses = comment.responses?.filter(
-              (response) => response.id !== id
-            );
+      if (user?.role !== "GUEST" && user?.id) {
+        setLoading(true);
+        // Send a request to delete the comment
+        await axios.delete(
+          `/api/${param.storeId}/comments/${commentId}/responsecomment`,
+          {
+            data: { id: id },
           }
-          return comment;
-        })
-      );
+        );
+        // Update the local state to remove the deleted comment
+        setSavedComments((prevComments) =>
+          prevComments.map((comment) => {
+            // Find the comment to update
+            if (comment.id === commentId) {
+              // Remove the response with the specified id
+              comment.responses = comment.responses?.filter(
+                (response) => response.id !== id
+              );
+            }
+            return comment;
+          })
+        );
 
-      toast.success("Xóa thành công.");
-      setOpenCommentResponse(false);
-      setEditingResponseId(null);
-      setResponseDescriptions("");
-      setShowResponseForm(null);
+        toast.success("Xóa thành công.");
+        setOpenCommentResponse(false);
+        setEditingResponseId(null);
+        setResponseDescriptions("");
+        setShowResponseForm(null);
+      } else {
+        setAlertGuestModal(true);
+      }
     } catch (error) {
       console.error("Error deleting comment:", error);
       toast.error("Xóa không thành công. Hãy thử lại.");
@@ -238,21 +248,25 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
     commentId: string | undefined,
     responseId: string
   ) => {
-    setEditingResponseId(responseId);
-    // Save the current scroll position
-    scrollPositionResponseRef.current = window.scrollY;
+    if (user?.role !== "GUEST" && user?.id) {
+      setEditingResponseId(responseId);
+      // Save the current scroll position
+      scrollPositionResponseRef.current = window.scrollY;
 
-    // Scroll to the textarea
-    textareaResponseRef.current?.scrollIntoView({ behavior: "smooth" });
-    if (commentId) {
-      const responseToEdit = savedComments
-        .find((comment) => comment.id === commentId)
-        ?.responses?.find((response) => response.id === responseId);
+      // Scroll to the textarea
+      textareaResponseRef.current?.scrollIntoView({ behavior: "smooth" });
+      if (commentId) {
+        const responseToEdit = savedComments
+          .find((comment) => comment.id === commentId)
+          ?.responses?.find((response) => response.id === responseId);
 
-      if (responseToEdit) {
-        setResponseDescriptions(responseToEdit.description);
+        if (responseToEdit) {
+          setResponseDescriptions(responseToEdit.description);
+        }
+        setShowResponseForm(commentId);
       }
-      setShowResponseForm(commentId);
+    } else {
+      setAlertGuestModal(true);
     }
   };
 
@@ -269,67 +283,71 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
 
   const handleResponseUpdate = async (commentId: string | undefined) => {
     try {
-      if (
-        responseDescriptions === null ||
-        responseDescriptions === undefined ||
-        !responseDescriptions.trim()
-      ) {
-        setErrorResponse("Nội dung phản hồi không thể trống.");
-        return;
-      }
-
-      if (responseDescriptions.length >= 121) {
-        setErrorResponse("Bạn đã nhập quá 120 ký tự.");
-        return;
-      }else{
-        setErrorResponse("");
-      }
-
-      setLoading(true);
-      if (commentId) {
-        const response = await axios.patch(
-          `/api/${param.storeId}/comments/${commentId}/responsecomment`,
-          {
-            id: editingResponseId,
-            description: responseDescriptions,
-            changeReview: true,
-          }
-        );
-
-        const updatedCommentData: Comment = response.data;
-
-        // Reset the response description to an empty string
-        setResponseDescriptions("");
-        setEditingResponseId(null);
-
-        // Update the savedComments state to reflect the changes
-        setSavedComments((prevComments) =>
-          prevComments.map((comment) => {
-            // Find the comment to update
-            if (comment.id === commentId) {
-              // Find the response to update
-              comment.responses = comment.responses?.map((response) => {
-                if (response.id === editingResponseId) {
-                  // Update the response description
-                  response.description = responseDescriptions;
-                  response.changeReview = true;
-                  response.totalchange = updatedCommentData.totalchange;
-                }
-                return response;
-              });
-            }
-            return comment;
-          })
-        );
-
-        toast.success("Chỉnh sửa thành công.");
-        if (scrollPositionResponseRef.current !== null) {
-          window.scrollTo({
-            top: scrollPositionResponseRef.current,
-            behavior: "smooth",
-          });
+      if (user?.role !== "GUEST" && user?.id) {
+        if (
+          responseDescriptions === null ||
+          responseDescriptions === undefined ||
+          !responseDescriptions.trim()
+        ) {
+          setErrorResponse("Nội dung phản hồi không thể trống.");
+          return;
         }
-        setShowResponseForm(null);
+
+        if (responseDescriptions.length >= 121) {
+          setErrorResponse("Bạn đã nhập quá 120 ký tự.");
+          return;
+        } else {
+          setErrorResponse("");
+        }
+
+        setLoading(true);
+        if (commentId) {
+          const response = await axios.patch(
+            `/api/${param.storeId}/comments/${commentId}/responsecomment`,
+            {
+              id: editingResponseId,
+              description: responseDescriptions,
+              changeReview: true,
+            }
+          );
+
+          const updatedCommentData: Comment = response.data;
+
+          // Reset the response description to an empty string
+          setResponseDescriptions("");
+          setEditingResponseId(null);
+
+          // Update the savedComments state to reflect the changes
+          setSavedComments((prevComments) =>
+            prevComments.map((comment) => {
+              // Find the comment to update
+              if (comment.id === commentId) {
+                // Find the response to update
+                comment.responses = comment.responses?.map((response) => {
+                  if (response.id === editingResponseId) {
+                    // Update the response description
+                    response.description = responseDescriptions;
+                    response.changeReview = true;
+                    response.totalchange = updatedCommentData.totalchange;
+                  }
+                  return response;
+                });
+              }
+              return comment;
+            })
+          );
+
+          toast.success("Chỉnh sửa thành công.");
+          if (scrollPositionResponseRef.current !== null) {
+            window.scrollTo({
+              top: scrollPositionResponseRef.current,
+              behavior: "smooth",
+            });
+          }
+          setShowResponseForm(null);
+        }
+      } else {
+        setAlertGuestModal(true);
       }
     } catch (error) {
       console.error("Error updating response:", error);
@@ -393,25 +411,29 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
 
   const handleEditClick = (commentId: string | undefined) => {
-    setEditingCommentId(null);
-    setRating(null);
-    setComment("");
-    setCurrentValue(null);
-    setCommentError("");
-    setRatingError("");
-    // Save the current scroll position
-    scrollPositionRef.current = window.scrollY;
+    if (user?.role !== "GUEST" && user?.id) {
+      setEditingCommentId(null);
+      setRating(null);
+      setComment("");
+      setCurrentValue(null);
+      setCommentError("");
+      setRatingError("");
+      // Save the current scroll position
+      scrollPositionRef.current = window.scrollY;
 
-    // Scroll to the textarea
-    textareaRef.current?.scrollIntoView({ behavior: "smooth" });
-    setEditingCommentId(commentId || null);
-    const commentToEdit = savedComments.find(
-      (comment) => comment.id === commentId
-    );
-    if (commentToEdit) {
-      setRating(commentToEdit.rating);
-      setComment(commentToEdit.comment);
-      setCurrentValue(commentToEdit.rating);
+      // Scroll to the textarea
+      textareaRef.current?.scrollIntoView({ behavior: "smooth" });
+      setEditingCommentId(commentId || null);
+      const commentToEdit = savedComments.find(
+        (comment) => comment.id === commentId
+      );
+      if (commentToEdit) {
+        setRating(commentToEdit.rating);
+        setComment(commentToEdit.comment);
+        setCurrentValue(commentToEdit.rating);
+      }
+    } else {
+      setAlertGuestModal(true);
     }
   };
 
@@ -431,59 +453,66 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
 
   const handleUpdate = async () => {
     try {
-      // Add your validation logic here if needed
-      const updatedComment = {
-        id: editingCommentId,
-        rating: rating as number,
-        comment,
-        changeReview: true,
-      };
-      if (updatedComment.comment.length >= 120) {
-        setErrorResponse("Bạn đã nhập quá 120 ký tự.");
-        return;
-      }
-      setLoading(true);
-      const response = await axios.patch(
-        `/api/${param.storeId}/comments`,
-        updatedComment
-      );
-
-      const updatedCommentData: Comment = response.data;
-
-      // Update the comment in the state
-      setSavedComments((prevComments) =>
-        prevComments.map((comment) =>
-          comment.id === updatedCommentData.id
-            ? { ...comment, ...updatedCommentData, changeReview: true }
-            : comment
-        )
-      );
-
-      // Update the commentsByRating state to reflect the changes
-      setCommentsByRating((prevCommentsByRating) => {
-        const updatedCommentsByRating = { ...prevCommentsByRating };
-        const commentToUpdate = updatedCommentsByRating[
-          updatedCommentData.rating
-        ]?.find((comment) => comment.id === updatedCommentData.id);
-        if (commentToUpdate) {
-          // Update the comment in commentsByRating if found
-          commentToUpdate.rating = updatedCommentData.rating;
-          commentToUpdate.comment = updatedCommentData.comment;
-          commentToUpdate.changeReview = updatedCommentData.changeReview;
-          commentToUpdate.totalchange = updatedCommentData.totalchange;
+      if (user?.role !== "GUEST" && user?.id) {
+        // Add your validation logic here if needed
+        const updatedComment = {
+          id: editingCommentId,
+          rating: rating as number,
+          comment,
+          changeReview: true,
+        };
+        if (updatedComment.comment.length >= 120) {
+          setErrorResponse("Bạn đã nhập quá 120 ký tự.");
+          return;
         }
-        return updatedCommentsByRating;
-      });
+        setLoading(true);
+        const response = await axios.patch(
+          `/api/${param.storeId}/comments`,
+          updatedComment
+        );
 
-      setEditingCommentId(null);
-      setRating(null);
-      setCurrentValue(null);
-      setComment("");
-      setCommentError("");
-      setRatingError("");
-      toast.success("Cập nhật thành công.");
-      if (scrollPositionRef.current !== null) {
-        window.scrollTo({ top: scrollPositionRef.current, behavior: "smooth" });
+        const updatedCommentData: Comment = response.data;
+
+        // Update the comment in the state
+        setSavedComments((prevComments) =>
+          prevComments.map((comment) =>
+            comment.id === updatedCommentData.id
+              ? { ...comment, ...updatedCommentData, changeReview: true }
+              : comment
+          )
+        );
+
+        // Update the commentsByRating state to reflect the changes
+        setCommentsByRating((prevCommentsByRating) => {
+          const updatedCommentsByRating = { ...prevCommentsByRating };
+          const commentToUpdate = updatedCommentsByRating[
+            updatedCommentData.rating
+          ]?.find((comment) => comment.id === updatedCommentData.id);
+          if (commentToUpdate) {
+            // Update the comment in commentsByRating if found
+            commentToUpdate.rating = updatedCommentData.rating;
+            commentToUpdate.comment = updatedCommentData.comment;
+            commentToUpdate.changeReview = updatedCommentData.changeReview;
+            commentToUpdate.totalchange = updatedCommentData.totalchange;
+          }
+          return updatedCommentsByRating;
+        });
+
+        setEditingCommentId(null);
+        setRating(null);
+        setCurrentValue(null);
+        setComment("");
+        setCommentError("");
+        setRatingError("");
+        toast.success("Cập nhật thành công.");
+        if (scrollPositionRef.current !== null) {
+          window.scrollTo({
+            top: scrollPositionRef.current,
+            behavior: "smooth",
+          });
+        }
+      } else {
+        setAlertGuestModal(true);
       }
     } catch (error) {
       console.error("Error updating comment:", error);
@@ -495,30 +524,34 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
 
   const handleDeleteComment = async (commentId: string | undefined) => {
     try {
-      setLoading(true);
-      // Send a request to delete the comment
-      await axios.delete(`/api/${param.storeId}/comments/`, {
-        data: { id: commentId },
-      });
-
-      setSavedComments((prevComments) =>
-        prevComments.filter((comment) => comment.id !== commentId)
-      );
-
-      // Update commentsByRating if needed
-      setCommentsByRating((prevCommentsByRating) => {
-        const newCommentsByRating = { ...prevCommentsByRating };
-        Object.keys(newCommentsByRating).forEach((rating) => {
-          newCommentsByRating[rating as any] = newCommentsByRating[
-            rating as any
-          ].filter((comment) => comment.id !== commentId);
+      if (user?.role !== "GUEST" && user?.id) {
+        setLoading(true);
+        // Send a request to delete the comment
+        await axios.delete(`/api/${param.storeId}/comments/`, {
+          data: { id: commentId },
         });
-        return newCommentsByRating;
-      });
 
-      // Show a success toast
-      toast.success("Xóa thành công.");
-      setOpenComment(false);
+        setSavedComments((prevComments) =>
+          prevComments.filter((comment) => comment.id !== commentId)
+        );
+
+        // Update commentsByRating if needed
+        setCommentsByRating((prevCommentsByRating) => {
+          const newCommentsByRating = { ...prevCommentsByRating };
+          Object.keys(newCommentsByRating).forEach((rating) => {
+            newCommentsByRating[rating as any] = newCommentsByRating[
+              rating as any
+            ].filter((comment) => comment.id !== commentId);
+          });
+          return newCommentsByRating;
+        });
+
+        // Show a success toast
+        toast.success("Xóa thành công.");
+        setOpenComment(false);
+      } else {
+        setAlertGuestModal(true);
+      }
     } catch (error) {
       console.error("Error deleting comment:", error);
       toast.error("Xóa không thành công. Hãy thử lại.");
@@ -538,7 +571,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
     }
 
     const timeDifference = Date.now() - parseInt(lastCommentTime, 10);
-    const minutesPassed = timeDifference / (60000); // 10 phút
+    const minutesPassed = timeDifference / 60000; // 10 phút
     // const minutesPassed = timeDifference / 0; // Convert milliseconds to hours
 
     return minutesPassed >= 10;
@@ -563,84 +596,88 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
   const handleResponseCommentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newComment = e.target.value;
     if (newComment.length >= 122) {
-      setErrorResponse("Bạn đã nhập quá 120 ký tự.")
+      setErrorResponse("Bạn đã nhập quá 120 ký tự.");
     } else {
       setComment(newComment);
       setResponseDescriptions(newComment);
-      setErrorResponse("")
+      setErrorResponse("");
     }
   };
 
   const handleSubmit = async () => {
-    if (rating === null) {
-      setRatingError("Hãy lựa chọn sao.");
-      return;
-    }
+    if (user?.role !== "GUEST" && user?.id) {
+      if (rating === null) {
+        setRatingError("Hãy lựa chọn sao.");
+        return;
+      }
 
-    if (comment.trim() === "") {
-      setCommentError("Hãy nhập nội dụng đánh giá.");
-      return;
-    }
+      if (comment.trim() === "") {
+        setCommentError("Hãy nhập nội dụng đánh giá.");
+        return;
+      }
 
-    if (comment.length >= 121) {
-      setCommentError("Bạn đã nhập quá 120 ký tự.");
-      return;
-    }else{
-      setCommentError("");
-    }
+      if (comment.length >= 121) {
+        setCommentError("Bạn đã nhập quá 120 ký tự.");
+        return;
+      } else {
+        setCommentError("");
+      }
 
-    if (!canUserComment()) {
-      setCommentError("Bạn có thể đánh giá lại trong 10 phút nữa.");
-      return;
-    }
+      if (!canUserComment()) {
+        setCommentError("Bạn có thể đánh giá lại trong 10 phút nữa.");
+        return;
+      }
 
-    handleTimestampUpdate();
+      handleTimestampUpdate();
 
-    try {
-      const newComment = {
-        rating: rating as number,
-        comment,
-        productId: data || "Sản phẩm",
-      };
-      setLoading(true);
-      const response = await axios.post(
-        `/api/${param.storeId}{/comments/`,
-        newComment
-      );
+      try {
+        const newComment = {
+          rating: rating as number,
+          comment,
+          productId: data || "Sản phẩm",
+        };
+        setLoading(true);
+        const response = await axios.post(
+          `/api/${param.storeId}{/comments/`,
+          newComment
+        );
 
-      // Tạo bản sao của response.data và thêm thông tin user
-      const savedComment: Comment = {
-        ...response.data,
-        id: response.data.id,
-        user: response.data.user, // Thêm thông tin user vào comment
-        product: response.data.product, // Thêm thông tin user vào comment
-      };
-      // Cập nhật savedComments sau khi thêm phản hồi mới
-      setSavedComments((prevComments) => {
-        const updatedComments = [...prevComments, savedComment];
-        return updatedComments;
-      });
+        // Tạo bản sao của response.data và thêm thông tin user
+        const savedComment: Comment = {
+          ...response.data,
+          id: response.data.id,
+          user: response.data.user, // Thêm thông tin user vào comment
+          product: response.data.product, // Thêm thông tin user vào comment
+        };
+        // Cập nhật savedComments sau khi thêm phản hồi mới
+        setSavedComments((prevComments) => {
+          const updatedComments = [...prevComments, savedComment];
+          return updatedComments;
+        });
 
-      setRating(null);
-      setCurrentValue(null);
-      setComment("");
-      setCommentError("");
-      setRatingError("");
+        setRating(null);
+        setCurrentValue(null);
+        setComment("");
+        setCommentError("");
+        setRatingError("");
 
-      const updatedCommentsByRating: { [key: number]: Comment[] } = {
-        ...commentsByRating,
-        [newComment.rating]: [
-          ...(commentsByRating[newComment.rating] || []),
-          savedComment,
-        ],
-      };
-      setCommentsByRating(updatedCommentsByRating);
-      toast.success("Đánh giá thành công.");
-    } catch (error) {
-      console.error("Error submitting comment:", error);
-      toast.error("Hãy thử lại.");
-    } finally {
-      setLoading(false);
+        const updatedCommentsByRating: { [key: number]: Comment[] } = {
+          ...commentsByRating,
+          [newComment.rating]: [
+            ...(commentsByRating[newComment.rating] || []),
+            savedComment,
+          ],
+        };
+        setCommentsByRating(updatedCommentsByRating);
+        toast.success("Đánh giá thành công.");
+      } catch (error) {
+        console.error("Error submitting comment:", error);
+        toast.error("Hãy thử lại.");
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      setAlertGuestModal(true);
     }
   };
 
@@ -756,12 +793,17 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
     const minuteDifference = Math.floor(timeDifference / (1000 * 60));
     const hourDifference = Math.floor(timeDifference / (1000 * 60 * 60));
     const dayDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-    const monthDifference = Math.floor(
-      timeDifference / (1000 * 60 * 60 * 24 * 30)
-    );
+    const monthDifference = Math.floor(dayDifference / 30);
+    const yearDifference = Math.floor(dayDifference / 365);
 
-    if (monthDifference >= 1) {
-      return createdDate.toLocaleDateString("vi-VN");
+    if (yearDifference >= 1) {
+      return yearDifference === 1
+        ? "1 năm trước"
+        : `${yearDifference} năm trước`;
+    } else if (monthDifference >= 1) {
+      return monthDifference === 1
+        ? "1 tháng trước"
+        : `${monthDifference} tháng trước`;
     } else if (dayDifference >= 2) {
       return `${dayDifference} ngày trước`;
     } else if (dayDifference === 1) {
@@ -786,6 +828,11 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
 
   return (
     <Container>
+      <AlertGuestModal
+        isOpen={alertGuestModal}
+        onClose={() => setAlertGuestModal(false)}
+      />
+
       <AlertModal
         message={`Bạn có chắc chắn xóa đánh giá ${commentNameToDelete}.`}
         isOpen={openComment}
@@ -1255,7 +1302,8 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                                       <CircleAvatar
                                                         srcAvatar={
                                                           response?.user
-                                                            ?.imageCredential[0]?.url ||
+                                                            ?.imageCredential[0]
+                                                            ?.url ||
                                                           response?.user?.image
                                                         }
                                                         srcFrame={
@@ -1281,7 +1329,11 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                                     >
                                                       <div className="font-bold text-gray-600 whitespace-nowrap line-clamp-1">
                                                         <p className="md:hidden">
-                                                          {truncateName(response?.user?.name,10)}
+                                                          {truncateName(
+                                                            response?.user
+                                                              ?.name,
+                                                            10
+                                                          )}
                                                         </p>
                                                         <p className="hidden md:block">
                                                           {response?.user?.name}
@@ -1311,92 +1363,87 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                                       setShowOptions(null)
                                                     }
                                                   >
-                                                      <>
-                                                        <div className="whitespace-pre-wrap break-words max-w-[16rem] md:max-w-2xl lg:max-w-4xl xl:max-w-7xl">
-                                                          <span className="text-blue-500 cursor-pointer">
-                                                            @{comment.user.name}
-                                                          </span>
-                                                          :{" "}
-                                                          <span>
-                                                            {
-                                                              response.description
-                                                            }
-                                                          </span>
-                                                        </div>
-                                                      </>
+                                                    <>
+                                                      <div className="whitespace-pre-wrap break-words max-w-[16rem] md:max-w-2xl lg:max-w-4xl xl:max-w-7xl">
+                                                        <span className="text-blue-500 cursor-pointer">
+                                                          @{comment.user.name}
+                                                        </span>
+                                                        :{" "}
+                                                        <span>
+                                                          {response.description}
+                                                        </span>
+                                                      </div>
+                                                    </>
 
-                                                      <>
-                                                        {user &&
-                                                          user?.id ===
-                                                            response.user
-                                                              ?.id && (
-                                                            <div
-                                                              onClick={() =>
-                                                                handleEllipsisClick(
-                                                                  response.id ||
-                                                                    ""
-                                                                )
-                                                              }
-                                                              className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 relative"
-                                                            >
-                                                              <Ellipsis className="h-5 w-5 text-slate-900 cursor-pointer" />
-                                                              {showOptions ===
-                                                                response.id && (
-                                                                <div
-                                                                  ref={
-                                                                    optionRef
-                                                                  }
-                                                                  className="absolute z-[9999] bg-white shadow-lg rounded-md max-w-xs p-2 right-0"
-                                                                >
-                                                                  <div className="flex flex-col space-y-1">
-                                                                    <button
-                                                                      disabled={
-                                                                        loading
-                                                                      }
-                                                                      onClick={() =>
-                                                                        handleResponseEditClick(
-                                                                          comment.id,
-                                                                          response.id ||
-                                                                            ""
-                                                                        )
-                                                                      }
-                                                                      className="text-gray-800 text-opacity-60 hover:text-gray-900 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1 whitespace-nowrap"
-                                                                    >
-                                                                      <Pencil className="w-5 h-5" />{" "}
-                                                                      Chỉnh sửa
-                                                                    </button>
-                                                                    <button
-                                                                      disabled={
-                                                                        loading
-                                                                      }
-                                                                      onClick={() => {
-                                                                        setCommentResponseIdToDelete(
-                                                                          {
-                                                                            commentId:
-                                                                              comment.id,
-                                                                            id:
-                                                                              response.id ||
-                                                                              "",
-                                                                          }
-                                                                        );
-                                                                        setCommentNameToDelete(
-                                                                          response.description
-                                                                        );
-                                                                        setOpenCommentResponse(
-                                                                          true
-                                                                        );
-                                                                      }}
-                                                                      className="text-gray-800 text-opacity-60 hover:text-gray-900 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1"
-                                                                    >
-                                                                      <Trash2 className="w-5 h-5" />{" "}
-                                                                      Xóa
-                                                                    </button>
-                                                                  </div>
+                                                    <>
+                                                      {user &&
+                                                        user?.id ===
+                                                          response.user?.id && (
+                                                          <div
+                                                            onClick={() =>
+                                                              handleEllipsisClick(
+                                                                response.id ||
+                                                                  ""
+                                                              )
+                                                            }
+                                                            className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 relative"
+                                                          >
+                                                            <Ellipsis className="h-5 w-5 text-slate-900 cursor-pointer" />
+                                                            {showOptions ===
+                                                              response.id && (
+                                                              <div
+                                                                ref={optionRef}
+                                                                className="absolute z-[9999] bg-white shadow-lg rounded-md max-w-xs p-2 right-0"
+                                                              >
+                                                                <div className="flex flex-col space-y-1">
+                                                                  <button
+                                                                    disabled={
+                                                                      loading
+                                                                    }
+                                                                    onClick={() =>
+                                                                      handleResponseEditClick(
+                                                                        comment.id,
+                                                                        response.id ||
+                                                                          ""
+                                                                      )
+                                                                    }
+                                                                    className="text-gray-800 text-opacity-60 hover:text-gray-900 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1 whitespace-nowrap"
+                                                                  >
+                                                                    <Pencil className="w-5 h-5" />{" "}
+                                                                    Chỉnh sửa
+                                                                  </button>
+                                                                  <button
+                                                                    disabled={
+                                                                      loading
+                                                                    }
+                                                                    onClick={() => {
+                                                                      setCommentResponseIdToDelete(
+                                                                        {
+                                                                          commentId:
+                                                                            comment.id,
+                                                                          id:
+                                                                            response.id ||
+                                                                            "",
+                                                                        }
+                                                                      );
+                                                                      setCommentNameToDelete(
+                                                                        response.description
+                                                                      );
+                                                                      setOpenCommentResponse(
+                                                                        true
+                                                                      );
+                                                                    }}
+                                                                    className="text-gray-800 text-opacity-60 hover:text-gray-900 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1"
+                                                                  >
+                                                                    <Trash2 className="w-5 h-5" />{" "}
+                                                                    Xóa
+                                                                  </button>
                                                                 </div>
-                                                              )}
-                                                            </div>
-                                                          )}
-                                                      </>
+                                                              </div>
+                                                            )}
+                                                          </div>
+                                                        )}
+                                                    </>
                                                   </div>
                                                 </>
                                               )}
@@ -1428,7 +1475,11 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                                     >
                                                       <div className="text-end font-bold text-gray-600 whitespace-nowrap line-clamp-1">
                                                         <p className="md:hidden">
-                                                          {truncateName(response?.user?.name,10)}
+                                                          {truncateName(
+                                                            response?.user
+                                                              ?.name,
+                                                            10
+                                                          )}
                                                         </p>
                                                         <p className="hidden md:block">
                                                           {response?.user?.name}
@@ -1449,7 +1500,8 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                                       <CircleAvatar
                                                         srcAvatar={
                                                           response?.user
-                                                            ?.imageCredential[0]?.url ||
+                                                            ?.imageCredential[0]
+                                                            ?.url ||
                                                           response?.user.image
                                                         }
                                                         role={
@@ -1473,92 +1525,87 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                                       setShowOptions(null)
                                                     }
                                                   >
-                                                      <>
-                                                        <div className="whitespace-pre-wrap break-words max-w-[16rem] md:max-w-2xl lg:max-w-4xl xl:max-w-7xl">
-                                                          <span className="text-blue-500 cursor-pointer">
-                                                            @{comment.user.name}
-                                                          </span>
-                                                          :{" "}
-                                                          <span>
-                                                            {
-                                                              response.description
-                                                            }
-                                                          </span>
-                                                        </div>
-                                                      </>
+                                                    <>
+                                                      <div className="whitespace-pre-wrap break-words max-w-[16rem] md:max-w-2xl lg:max-w-4xl xl:max-w-7xl">
+                                                        <span className="text-blue-500 cursor-pointer">
+                                                          @{comment.user.name}
+                                                        </span>
+                                                        :{" "}
+                                                        <span>
+                                                          {response.description}
+                                                        </span>
+                                                      </div>
+                                                    </>
 
-                                                      <>
-                                                        {user &&
-                                                          user?.id ===
-                                                            response.user
-                                                              ?.id && (
-                                                            <div
-                                                              onClick={() =>
-                                                                handleEllipsisClick(
-                                                                  response.id ||
-                                                                    ""
-                                                                )
-                                                              }
-                                                              className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 relative"
-                                                            >
-                                                              <Ellipsis className="h-5 w-5 text-slate-900 cursor-pointer" />
-                                                              {showOptions ===
-                                                                response.id && (
-                                                                <div
-                                                                  ref={
-                                                                    optionRef
-                                                                  }
-                                                                  className="absolute z-[9999] bg-white shadow-lg rounded-md max-w-xs p-2 right-0"
-                                                                >
-                                                                  <div className="flex flex-col space-y-1">
-                                                                    <button
-                                                                      disabled={
-                                                                        loading
-                                                                      }
-                                                                      onClick={() =>
-                                                                        handleResponseEditClick(
-                                                                          comment.id,
-                                                                          response.id ||
-                                                                            ""
-                                                                        )
-                                                                      }
-                                                                      className="text-gray-800 text-opacity-60 hover:text-gray-900 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1 whitespace-nowrap"
-                                                                    >
-                                                                      <Pencil className="w-5 h-5" />{" "}
-                                                                      Chỉnh sửa
-                                                                    </button>
-                                                                    <button
-                                                                      disabled={
-                                                                        loading
-                                                                      }
-                                                                      onClick={() => {
-                                                                        setCommentResponseIdToDelete(
-                                                                          {
-                                                                            commentId:
-                                                                              comment.id,
-                                                                            id:
-                                                                              response.id ||
-                                                                              "",
-                                                                          }
-                                                                        );
-                                                                        setCommentNameToDelete(
-                                                                          response.description
-                                                                        );
-                                                                        setOpenCommentResponse(
-                                                                          true
-                                                                        );
-                                                                      }}
-                                                                      className="text-gray-800 text-opacity-60 hover:text-gray-900 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1"
-                                                                    >
-                                                                      <Trash2 className="w-5 h-5" />{" "}
-                                                                      Xóa
-                                                                    </button>
-                                                                  </div>
+                                                    <>
+                                                      {user &&
+                                                        user?.id ===
+                                                          response.user?.id && (
+                                                          <div
+                                                            onClick={() =>
+                                                              handleEllipsisClick(
+                                                                response.id ||
+                                                                  ""
+                                                              )
+                                                            }
+                                                            className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 relative"
+                                                          >
+                                                            <Ellipsis className="h-5 w-5 text-slate-900 cursor-pointer" />
+                                                            {showOptions ===
+                                                              response.id && (
+                                                              <div
+                                                                ref={optionRef}
+                                                                className="absolute z-[9999] bg-white shadow-lg rounded-md max-w-xs p-2 right-0"
+                                                              >
+                                                                <div className="flex flex-col space-y-1">
+                                                                  <button
+                                                                    disabled={
+                                                                      loading
+                                                                    }
+                                                                    onClick={() =>
+                                                                      handleResponseEditClick(
+                                                                        comment.id,
+                                                                        response.id ||
+                                                                          ""
+                                                                      )
+                                                                    }
+                                                                    className="text-gray-800 text-opacity-60 hover:text-gray-900 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1 whitespace-nowrap"
+                                                                  >
+                                                                    <Pencil className="w-5 h-5" />{" "}
+                                                                    Chỉnh sửa
+                                                                  </button>
+                                                                  <button
+                                                                    disabled={
+                                                                      loading
+                                                                    }
+                                                                    onClick={() => {
+                                                                      setCommentResponseIdToDelete(
+                                                                        {
+                                                                          commentId:
+                                                                            comment.id,
+                                                                          id:
+                                                                            response.id ||
+                                                                            "",
+                                                                        }
+                                                                      );
+                                                                      setCommentNameToDelete(
+                                                                        response.description
+                                                                      );
+                                                                      setOpenCommentResponse(
+                                                                        true
+                                                                      );
+                                                                    }}
+                                                                    className="text-gray-800 text-opacity-60 hover:text-gray-900 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1"
+                                                                  >
+                                                                    <Trash2 className="w-5 h-5" />{" "}
+                                                                    Xóa
+                                                                  </button>
                                                                 </div>
-                                                              )}
-                                                            </div>
-                                                          )}
-                                                      </>
+                                                              </div>
+                                                            )}
+                                                          </div>
+                                                        )}
+                                                    </>
                                                   </div>
                                                 </li>
                                               )}
@@ -1670,8 +1717,10 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                             setResponseDescriptions={setResponseDescriptions}
                             setErrorResponse={setErrorResponse}
                             product={comment?.product?.name}
-                            productId = {comment?.productId}
-                            userId = {user?.id || ""}
+                            productId={comment?.productId}
+                            userId={user?.id || ""}
+                            role={user?.role}
+                            setAlertGuestModal={setAlertGuestModal}
                             responseComment={
                               comment.responses?.filter(
                                 (response) => response.commentId === comment.id

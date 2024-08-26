@@ -1,3 +1,5 @@
+import { string } from "zod";
+
 export interface Store {
   name: string;
 }
@@ -15,6 +17,16 @@ export interface ImageBillboard {
   label: string;
   description: string;
 }
+
+export interface CartItemType  {
+  id: string;
+  warranty: number;
+  quantity: number;
+  size: string;
+  color: string;
+  user: User;
+  product: Product
+};
 
 export enum CategoryType {
   CATEGORY,
@@ -69,7 +81,7 @@ export enum ProductType {
   PRODUCT10,
   PRODUCT11,
 }
-type ProductDetail = {
+export type ProductDetail = {
   id: string;
   storeId: string;
   store: Store;
@@ -168,18 +180,66 @@ export interface Product {
   id: string;
   storeId: string;
   store: Store;
-
   productType: ProductType; // Add this field to distinguish product type (Product1 or Product2)
   name: string;
   heading: string;
   description: string;
+  sold        : number
   isFeatured: Boolean;
   isArchived: Boolean;
   images: Image[];
   imagesalientfeatures: Imagesalientfeaturesproduct[];
+  cartItem: CartItemType
   // CheckoutCashItem: CheckoutcashItem[];
   productdetailId: string;
+  quantity?: number;
   productdetail: ProductDetail;
+}
+
+export interface ProductCartLocal {
+  id: string;
+  storeId: string;
+  store: Store;
+  productType: ProductType; // Add this field to distinguish product type (Product1 or Product2)
+  name: string;
+  heading: string;
+  description: string;
+  sold        : number
+  isFeatured: Boolean;
+  warranty: string;
+  isArchived: Boolean;
+  images: Image[];
+  cartId: string;
+  imagesalientfeatures: Imagesalientfeaturesproduct[];
+  cartItem: CartItemType
+  // CheckoutCashItem: CheckoutcashItem[];
+  productdetailId: string;
+  quantity?: number;
+  productdetail: ProductDetail;
+  size: string
+  color: string
+}
+
+export interface Order {
+  id: string;
+  orderItem: OrderItem[];
+  phone: string
+  address: string
+  adressOther: string
+  name: string
+  note: string
+  gender: string
+  deliveryMethod: string
+  email: string
+  isPaid: boolean;
+  createdAt: Date;
+}
+
+export interface OrderItem {
+  id: string;
+  pricesales: number;
+  isGift: boolean;
+  createdAt: Date;
 }
 
 export interface Size {
@@ -207,7 +267,7 @@ export interface ImageCredential {
   url: string;
 }
 
-interface User {
+export interface User {
   id: string;
   imageCredential: ImageCredential[];
   image: string;
@@ -227,6 +287,11 @@ export interface Emoji {
   createdAt: Date;
   updatedAt: Date;
   user: User;
+}
+
+export interface Provinces {
+  value: string;
+  label: string;
 }
 
 

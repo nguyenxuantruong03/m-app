@@ -6,7 +6,6 @@ import {
   Contact,
   Frame,
   Heart,
-  ImageUp,
   MapPin,
   Phone,
   SquareUser,
@@ -18,14 +17,13 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import { getAccountByUserId } from "@/data/account";
 import { redirect } from "next/navigation";
 import SheetInfomation from "../showsheet/sheet-infomation";
 import { format } from "date-fns";
-import { Favorite, ImageCredential, User as Userdata } from "@prisma/client";
+import { Favorite, User as Userdata } from "@prisma/client";
 import FormImageCredential from "./form/form-infomation/form-imageCredential";
 import Image from "next/image";
+import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
 
 interface InfoUserProps {
   user: Userdata;
@@ -55,9 +53,13 @@ interface AccountItem {
   session_state: string | null;
 }
 
-const InfoUser: React.FC<InfoUserProps> = ({ user, favorite, imageCredential }) => {
+const InfoUser: React.FC<InfoUserProps> = ({
+  user,
+  favorite,
+  imageCredential,
+}) => {
   const [open, setOpen] = useState(false);
-  const [account, setAccount] = useState<AccountItem | null>(null);
+  const [alertGuestModal, setAlertGuestModal] = useState(false);
 
   //Ngăn chặn hành vi scoll down and up khi mở open
   useEffect(() => {
@@ -80,31 +82,16 @@ const InfoUser: React.FC<InfoUserProps> = ({ user, favorite, imageCredential }) 
       if (!user || !user.id) {
         redirect("/auth/login");
       }
-
-      try {
-        const accountData = await getAccountByUserId(user.id);
-        setAccount(accountData || null);
-      } catch (error) {
-        toast.error("Invalid Error");
-      }
     };
 
     fetchData();
   }, [user]);
 
   const imageCredentials = imageCredential || undefined;
-  const isGitHubOrGoogleUser =
-    account?.provider === "github" ||
-    account?.provider === "google" ||
-    account?.provider === "facebook" ||
-    account?.provider === "gitlab" ||
-    account?.provider === "reddit" ||
-    account?.provider === "spotify" ||
-    account?.provider === "twitter";
-
+  // Use the first image from imageCredential hoăc ảnh iamge nêu ko có thì dùng deafault
   const avatarImage =
     imageCredentials ||
-    (imageCredentials ? imageCredentials[0] : null) ||
+    (imageCredentials ? imageCredentials : null) ||
     user?.image;
 
   const formatDate = (dateString: Date | null) => {
@@ -123,9 +110,7 @@ const InfoUser: React.FC<InfoUserProps> = ({ user, favorite, imageCredential }) 
       ),
       state: (
         <Avatar>
-          {isGitHubOrGoogleUser && avatarImage ? (
-            <AvatarImage src={avatarImage} />
-          ) : avatarImage ? (
+          {avatarImage ? (
             <AvatarImage src={avatarImage} />
           ) : (
             <AvatarFallback className="bg-sky-500">
@@ -147,12 +132,12 @@ const InfoUser: React.FC<InfoUserProps> = ({ user, favorite, imageCredential }) 
         </span>
       ),
       state: (
-        <Image 
-        alt="404"
-        width="60"
-        height="60"
-        src={user.frameAvatar || "/avatar-frame/frame-1.png"}
-        loading="lazy"
+        <Image
+          alt="404"
+          width="60"
+          height="60"
+          src={user.frameAvatar || "/avatar-frame/frame-1.png"}
+          loading="lazy"
         />
       ),
       icons: (
@@ -215,7 +200,49 @@ const InfoUser: React.FC<InfoUserProps> = ({ user, favorite, imageCredential }) 
           Giới tính
         </span>
       ),
-      state: user.gender || "Chưa cập nhật",
+      state: (
+        <>
+          {user.gender ? (
+            <span className="flex items-center">
+              {user.gender === "Male" ? (
+                <Image
+                  src="/images/male.png"
+                  width="50"
+                  height="50"
+                  alt="Nam"
+                  className="h-4 w-4 mr-2"
+                  loading="lazy"
+                />
+              ) : user.gender === "Female" ? (
+                <Image
+                  src="/images/female.png"
+                  alt="Nữ"
+                  width="50"
+                  height="50"
+                  className="h-4 w-4 mr-2"
+                  loading="lazy"
+                />
+              ) : user.gender === "None" ? (
+                <Image
+                  src="/images/other.png"
+                  alt="Khác"
+                  width="50"
+                  height="50"
+                  className="h-4 w-4 mr-2"
+                  loading="lazy"
+                />
+              ) : null}
+              {user.gender === "Male"
+                ? "Nam"
+                : user.gender === "Female"
+                ? "Nữ"
+                : "Khác"}
+            </span>
+          ) : (
+            "Chưa cập nhật"
+          )}
+        </>
+      ),
       icons: (
         <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
       ),
@@ -312,7 +339,11 @@ const InfoUser: React.FC<InfoUserProps> = ({ user, favorite, imageCredential }) 
   const wrapWithSheet = (infouser: InfoUser, content: React.ReactNode) => {
     if (infouser.key === "avatar") {
       // Handle click event for avatar
-      return <div onClick={() => setOpen(true)}>{content}</div>;
+      if (user.role !== "GUEST" && user?.id) {
+        return <div onClick={() => setOpen(true)}>{content}</div>;
+      } else {
+        return <div onClick={() => setAlertGuestModal(true)}>{content}</div>;
+      }
     } else if (
       infouser.key === "name" ||
       infouser.key === "nameuser" ||
@@ -339,6 +370,9 @@ const InfoUser: React.FC<InfoUserProps> = ({ user, favorite, imageCredential }) 
           favorite={user.favorite}
           type={infouser.key} // Pass the key as type
           dataallfavorite={favorite}
+          role={user.role}
+          userId={user?.id || ""}
+          setAlertGuestModal={setAlertGuestModal}
         >
           {content}
         </SheetInfomation>
@@ -349,12 +383,14 @@ const InfoUser: React.FC<InfoUserProps> = ({ user, favorite, imageCredential }) 
 
   return (
     <>
+      <AlertGuestModal
+        isOpen={alertGuestModal}
+        onClose={() => setAlertGuestModal(false)}
+      />
       {open && (
         <>
           <div className="fixed inset-0 bg-black/80 h-full w-full " />
-          <div
-            className="absolute inset-0 m-auto h-max w-3/4 max-w-md border rounded-md gap-4 bg-background p-6 shadow-lg transition ease-in-out z-10"
-          >
+          <div className="absolute inset-0 m-auto h-max w-3/4 max-w-md border rounded-md gap-4 bg-background p-6 shadow-lg transition ease-in-out z-10">
             <div className="flex items-center justify-between">
               <span className="text-lg font-semibold text-foreground break-all line-clamp-2">
                 Chỉnh sửa ảnh đại diện{" "}

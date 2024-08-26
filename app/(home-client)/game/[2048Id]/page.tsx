@@ -5,9 +5,14 @@ import { AlertTriangle, ArrowDown, ArrowLeft, ArrowRight, ArrowUp } from "lucide
 import { useState, useEffect, useRef } from "react";
 import "./style.css"
 import axios from "axios";
+import { useParams,useRouter } from "next/navigation";
+import { useCurrentUser } from "@/hooks/use-current-user";
 export const revalidate = 86400;
 
 const IndexPage = () => {
+  const param = useParams()
+  const user = useCurrentUser()
+  const router = useRouter();
   const [board, setBoard] = useState<number[][] | null>(null);
   const [score, setScore] = useState<number>(0);
   const [gameOver, setGameOver] = useState<boolean>(false);
@@ -15,8 +20,13 @@ const IndexPage = () => {
   const [gameState, setGameState] = useState("initial");
   const gameContainerRef = useRef<HTMLDivElement | null>(null);
   const [totalCoins, setTotalCoins] = useState<number>(0);
-  
 
+  useEffect(() => {
+    if(user?.role === "GUEST" || !user?.id){
+      router.push("/home-product")
+    }
+  }, [router,user?.id,user?.role]);
+  
   useEffect(() => {
      const audio = new Audio("/images/game-over.mp3");
     // Check for game over and calculate totalCoins when the game is over
@@ -35,7 +45,7 @@ const IndexPage = () => {
   const updateTotalCoinsAndSave = async (newTotalCoins: number) => {
     try {
       // Save the new totalCoins to the database
-      await axios.post("/api/wheelSpin", { coin: `${newTotalCoins} coins` });
+      await axios.post(`/api/${param.storeId}/wheelSpin`, { userId: user?.id, coin: newTotalCoins });
   
       // Update the state with the new totalCoins
       setTotalCoins(newTotalCoins);

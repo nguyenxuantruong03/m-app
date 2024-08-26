@@ -1,25 +1,40 @@
-import { currentUser } from "@/lib/auth";
-import { Product } from "@/types/type";
+import { ProductCartLocal } from "@/types/type";
 import toast from "react-hot-toast";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-export type ProductUnion =  Product
-
+export type ProductUnion = ProductCartLocal;
 
 interface CartStore {
   items: ProductUnion[];
   userId: string | null;
-  addItem: (data: ProductUnion, quantity: number,userId:any) => void;
-  removeItem: (id: string) => void;
-  removeAll: () => void;
-  updateQuantity: (id: string, quantity: number) => void;
+  addItem: (
+    data: ProductCartLocal,
+    quantity: number,
+    warranty: string | null,
+    userId: string,
+    selectedSize: string,
+    selectedColor: string
+  ) => void;
+  removeItem: (id: string, userId: string) => void;
+  removeAll: (userId: string) => void;
+  updateQuantity: (
+    cartId: string,
+    quantity: number,
+    warranty: string | null,
+    userId: string
+  ) => void;
   selectedItems: string[]; // Array of selected item IDs
   selectAll: boolean; // Flag for "Select All" checkbox
-  toggleSelectItem: (id: string) => void; // New method for toggling item selection
-  toggleSelectAll: () => void; // New method for toggling "Select All" checkbox
-  updateWarrantyOption: (id: string, warrantyOption: string) => void;
+  toggleSelectItem: (
+    cartId: string,
+    userId: string,
+    nonSelectQuantitySold: string,
+    noneSelectQuantityAvailable: string
+  ) => void; // New method for toggling item selection
+  toggleSelectAll: (selectableItems?: string[]) => void; // New method for toggling "Select All" checkbox
   getSelectedItemWarranty: (id: string) => string | null;
+  selectWarranty: (id: string, warrantyOption: string | null) => string | null;
   selectedWarranties: Record<string, string | null>;
   removeSelectedItems: () => void;
 }
@@ -32,87 +47,149 @@ const useCart = create(
       selectedItems: [], // Initialize with an empty array
       selectAll: false, // Initialize as false
       selectedWarranties: {},
-      updateWarrantyOption: (id: string, warrantyOption: string | null) => {
+
+      selectWarranty: (id: string, warrantyOption: string | null) => {
         set((state) => ({
-          items: state.items.map((item) =>
-            item.id === id ? { ...item, selectedWarranty: warrantyOption } : item
-          ),
           selectedWarranties: {
             ...state.selectedWarranties,
             [id]: warrantyOption,
           },
         }));
+        return warrantyOption; // Return the warranty option
       },
 
       getSelectedItemWarranty: (id: string) => {
         return get().selectedWarranties[id] || null;
       },
+      // Toggle selectItem này xử lý nếu sản phẩm có nonSelectQuantitySold và noneSelectQuantityAvailable thì bỏ select
       // Toggle the selection of an individual item
-      toggleSelectItem: (id: string) => {
+      toggleSelectItem: (
+        cartId: string,
+        userId: string,
+        nonSelectQuantitySold: string,
+        noneSelectQuantityAvailable: string
+      ) => {
         set((state) => {
-          const isSelected = state.selectedItems.includes(id);
+          // Determine if the cartId is currently selected
+          const isSelected = state.selectedItems.includes(cartId);
+      
+          // Filter out the items if nonSelectQuantitySold or noneSelectQuantityAvailable are selected
           const updatedSelectedItems = isSelected
-            ? state.selectedItems.filter((itemId) => itemId !== id)
-            : [...state.selectedItems, id];
+            ? state.selectedItems.filter((itemId) => itemId !== cartId)
+            : state.selectedItems.filter((itemId) => 
+                itemId !== nonSelectQuantitySold && itemId !== noneSelectQuantityAvailable
+              ).concat(cartId);
+      
+          // Update the selectAll flag based on whether all items are selected
+          const selectAll = updatedSelectedItems.length === state.items.length;
       
           return {
             selectedItems: updatedSelectedItems,
-            selectAll: updatedSelectedItems.length === state.items.length,
+            selectAll,
           };
         });
       },
+
+      //Logic này thì chưa xử lý nonSelectQuantitySold và noneSelectQuantityAvailable
+      // toggleSelectItem: (
+      //   cartId: string,
+      //   userId: string,
+      //   nonSelectQuantitySold: string,
+      //   noneSelectQuantityAvailable: string
+      // ) => {
+      //   set((state) => {
+      //     const isSelected = state.selectedItems.includes(cartId);
+      //     const updatedSelectedItems = isSelected
+      //       ? state.selectedItems.filter((itemId) => itemId !== cartId)
+      //       : [...state.selectedItems, cartId];
+
+      //     return {
+      //       selectedItems: updatedSelectedItems,
+      //       selectAll: updatedSelectedItems.length === state.items.length,
+      //     };
+      //   });
+      // },
       // Toggle the "Select All" checkbox
-      toggleSelectAll: () => {
+      toggleSelectAll: (selectableItems?: string[]) => {
         set((state) => {
           const updatedSelectedItems = state.selectAll
             ? []
-            : state.items.map((item) => item.id);
-      
+            : selectableItems ?? state.items.map((item) => item.cartId);
           return {
             selectedItems: updatedSelectedItems,
             selectAll: !state.selectAll,
           };
         });
       },
-      
-      addItem: async (data: ProductUnion, quantity: number,userId:any) => {
-        const currentUsser = await currentUser()
-        const currentUserCart = get().items.filter(item => currentUsser?.id === userId);
-        const existingItem = currentUserCart.find((item) => item.id === data.id);
 
-    
-        if (existingItem) {
-          // Update the quantity of the existing item
-          const updatedItems = currentUserCart.map((item) =>
-            item.id === existingItem.id ? { ...item, quantity: item.productdetail.quantity1 + quantity } : item
-          );
-          set({ items: updatedItems });
-          toast.success("Sản phẩm đã được cập nhật số lượng trong giỏ hàng.");
-        } else {
+      addItem: async (
+        data: ProductCartLocal,
+        quantity: number,
+        warranty: string | null,
+        userId: string,
+        size: string,
+        color: string
+      ) => {
+        const validWarranty = warranty ?? ""; // Fallback to an empty string if null+
           // Add the new item to the cart
-          set({ items: [...get().items, { ...data }] });
+          set({
+            items: [
+              ...get().items,
+              {
+                ...data,
+                quantity,
+                warranty: validWarranty,
+                size,
+                color,
+              },
+            ],
+          });
           toast.success("Sản phẩm đã thêm vào giỏ hàng.");
-        }
       },
       removeSelectedItems: () => {
         set((state) => ({
-          items: state.items.filter((item) => !state.selectedItems.includes(item.id)),
+          items: state.items.filter(
+            (item) => !state.selectedItems.includes(item.cartId)
+          ),
           selectedItems: [],
-          selectedWarranties: {}, // Clear selected warranties for removed items
+          selectedWarranties: {}, 
         }));
       },
-      updateQuantity: (id: string, quantity: number) => {
+      updateQuantity: (
+        cartId: string,
+        quantity: number,
+        warranty: string | null,
+        userId: string
+      ) => {
+        const validWarranty = warranty ?? "";
         set((state) => ({
           items: state.items.map((item) =>
-            item.id === id ? { ...item, quantity } : item
+            item.cartId === cartId ? { ...item, quantity, validWarranty } : item
           ),
         }));
       },
-      removeItem: (id: string) => {
-        set({ items: [...get().items.filter((item) => item.id !== id)] });
+      removeItem: (cartId: string, userId: string) => {
+        set((state) => {
+          const newItems = state.items.filter((item) => item.cartId !== cartId);
+          const newSelectedWarranties = { ...state.selectedWarranties };
+          // Xóa thuộc tính: Dòng này sẽ xóa thuộc tính khỏi đối tượng có khóa khớp với mục đang bị xóa.
+          // Điều này đảm bảo rằng bảo hành liên quan đến mặt hàng bị loại bỏ cũng bị xóa khỏi .delete newSelectedWarranties[id];newSelectedWarrantiesid
+          delete newSelectedWarranties[cartId]; // Remove the warranty associated with the removed item
+
+          // Trạng thái cập nhật được trả về với mảng mới và đối tượng được cập nhật.itemsselectedWarranties
+          return {
+            items: newItems,
+            selectedWarranties: newSelectedWarranties,
+            selectedItems: state.selectedItems.filter(
+              (itemId) => itemId !== cartId
+            ), // Remove the item from selectedItems
+          };
+        });
         toast.success("Sản phẩm đã xóa khỏi giỏ hàng.");
       },
-      removeAll: () => set({ items: [] }),
+      removeAll: (userId: string) => {
+        set({ items: [] });
+      },
     }),
     {
       name: "cart-storage",

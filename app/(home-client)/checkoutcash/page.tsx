@@ -1,51 +1,256 @@
 "use client";
 import Currency from "@/components/ui/currency";
-import {Button} from "@/components/ui/button";
-import InfoProduct from "./components/info-product";
+import { Button } from "@/components/ui/button";
+import InfoProductPayment from "./components/info-product-payment";
 import useCart from "@/hooks/client/use-cart";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import Currencyonevalue from "@/components/ui/currencyonevalue";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import "./checkoutcash.css";
-import { Trash } from "lucide-react";
 import toast from "react-hot-toast";
-
-type DeliveryOption = "delivery" | "pickup";
-interface Item {
-  code: string;
-  name: string;
+import { useCurrentUser } from "@/hooks/use-current-user";
+import InfoCustomer from "./components/info-customer";
+import Delivery from "./components/delivery";
+import useCartdb from "@/hooks/client/db/use-cart-db";
+import {
+  getColorOldPrice,
+  getColorPrice,
+  getSizeOldPrice,
+  getSizePrice,
+} from "@/components/(client)/export-product-compare/size-color/match-color-size";
+import { Order, Provinces } from "@/types/type";
+import CryptoJS from "crypto-js";
+import { Check, X } from "lucide-react";
+import cuid from 'cuid';
+import InfoProductPaymentDb from "./components/db/info-product-payment-db";
+import { PaymentSuccessCheckoutCashModal } from "@/components/(client)/modal/payment-success-checkoutCash";
+interface ErrorMessages {
+  gender?: string;
+  email?: string;
+  fullName?: string;
+  phoneNumber?: string;
+  selectedProvince?: string;
+  selectedDistrict?: string;
+  selectedWard?: string;
+  address?: string;
 }
-const host = "https://provinces.open-api.vn/api/";
+
 const CheckoutCash = () => {
   const cart = useCart();
-  const [isMounted, setIsMounted] = useState(false);
+  const cartdb = useCartdb();
+  const param = useParams();
+  const user = useCurrentUser();
+  const router = useRouter();
+  //local
   const items = useCart((state) => state.items);
+  //Database
+  const itemsDb = useCartdb((state) => state.items);
+  const [isMounted, setIsMounted] = useState(false);
   const [totalCoins, setTotalCoins] = useState<number>(0);
+  const [loadingChangeLocal, setLoadingChangeLocal] = useState(false);
+  const [gender, setGender] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [fullName, setFullName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [deliveryOption, setDeliveryOption] = useState("delivery");
+  const [selectedProvince, setSelectedProvince] = useState<Provinces | null>(
+    null
+  );
+  const [selectedDistrict, setSelectedDistrict] = useState<Provinces | null>(
+    null
+  );
+  const [selectedWard, setSelectedWard] = useState<Provinces | null>(null);
+  const [address, setAddress] = useState("");
+  const [addressOther, setAddressOther] = useState("");
+  const [note, setNote] = useState("");
+  //Check Error
+  const [genderError, setGenderError] = useState<string>("");
+  const [phoneNumberError, setPhoneNumberError] = useState<string>("");
+  const [fullNameError, setFullNameError] = useState<string>("");
+  const [emailError, setEmailError] = useState<string>("");
+  const [selectedProvinceError, setSelectedProvinceError] = useState("");
+  const [selectedDistrictError, setSelectedDistrictError] = useState("");
+  const [selectedWardError, setSelectedWardError] = useState("");
+  const [addressError, setAddressError] = useState("");
+  const [addressOtherError, setAddressOtherError] = useState("");
+  const [noteError, setNoteError] = useState("");
+  //BarProcess
+  const [barProcess, setBarProcess] = useState<number>(0);
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [data, setData] = useState<Order | null>(null);
 
   //Total Coins
   useEffect(() => {
-    // Load totalCoins from the server using GET request
-    axios.get("/api/wheelSpin").then((response) => {
-      setTotalCoins(response.data.totalCoins);
-    });
+    if (user?.role !== "GUEST" && user?.id) {
+      // Load totalCoins from the server using GET request
+      axios.get(`/api/${param.storeId}/wheelSpin`).then((response) => {
+        setTotalCoins(response.data.totalCoins);
+      });
+    }
   }, []);
-
-  const router = useRouter();
 
   const handleBuyNow = () => {
     router.push("/home-product");
   };
 
-  const totalAmounts = items.reduce(
-    (total, item) => {
-      const itemInCart = items.find((cartItem) => cartItem.id === item.id);
-      const quantity = itemInCart?.productdetail.quantity1 || 1;
+  //Local
+  const selectedItems = items.filter((item) =>
+    cart.selectedItems.includes(item.cartId)
+  );
 
-      const itemTotalPrice =
-        ((item.productdetail.price1 * (100 - item.productdetail.percentpromotion1)) / 100) * quantity;
-      const itemTotalPriceOld = item.productdetail.price1 * quantity;
+  //Database
+  const selectedItemsDb = itemsDb.filter((item) =>
+    cartdb.selectedItems.includes(item.id)
+  );
+
+  // Check if selectedItems is empty "Local"
+  const isNoneSelect = selectedItems.length === 0;
+
+  // Check if selectedItemsDb is empty "Database"
+  const isNoneSelectDb = selectedItemsDb.length === 0;
+
+  const handleTrackProduct = () => {
+    if (data?.id) {
+      navigator.clipboard
+        .writeText(data.id)
+        .then(() => {
+          console.log("ID copied to clipboard:", data.id);
+        })
+        .catch((error) => {
+          console.error("Failed to copy ID to clipboard:", error);
+        });
+      // Navigate to /delivery
+      router.push("/delivery");
+    }
+  };
+
+  //-------Sort Sản phẩm ------------
+  //Sort Item CartDb nếu quantity nào bằng 0 thì nằm cuối
+  const sortItemCartDb = cartdb.items
+    .filter((item) => cartdb.selectedItems.includes(item.id)) // Filter for selected items
+    .sort((a, b) => {
+      const getQuantityMatchColorandSize = (item: any) => {
+        const sizePrice = getSizePrice(item.product, item.size);
+        const colorPrice = getColorPrice(item.product, item.color);
+        const highestPrice = Math.max(sizePrice, colorPrice);
+
+        if (
+          highestPrice ===
+          item?.product?.productdetail?.price5 *
+            ((100 - item?.product?.productdetail?.percentpromotion5) / 100)
+        ) {
+          return item?.product?.productdetail?.quantity5;
+        }
+        if (
+          highestPrice ===
+          item?.product?.productdetail?.price4 *
+            ((100 - item?.product?.productdetail?.percentpromotion4) / 100)
+        ) {
+          return item?.product?.productdetail?.quantity4;
+        }
+        if (
+          highestPrice ===
+          item?.product?.productdetail?.price3 *
+            ((100 - item?.product?.productdetail?.percentpromotion3) / 100)
+        ) {
+          return item?.product?.productdetail?.quantity3;
+        }
+        if (
+          highestPrice ===
+          item?.product?.productdetail?.price2 *
+            ((100 - item?.product?.productdetail?.percentpromotion2) / 100)
+        ) {
+          return item?.product?.productdetail?.quantity2;
+        }
+        return item?.product?.productdetail?.quantity1;
+      };
+
+      const quantityA = getQuantityMatchColorandSize(a);
+      const quantityB = getQuantityMatchColorandSize(b);
+
+      // Sort by quantity in descending order, keeping original order if quantities are equal
+      return quantityB - quantityA;
+    });
+
+  //Sort Item Cart Local nếu quantity nào bằng 0 thì nằm cuối
+  // Filter and Sort Item Cart Local nếu quantity nào bằng 0 thì nằm cuối và chỉ hiển thị các sản phẩm đã được chọn
+  const sortItemCartLocal = cart.items
+    .filter((item) => cart.selectedItems.includes(item.cartId)) // Filter for selected items
+    .sort((a, b) => {
+      const getQuantityMatchColorandSize = (item: any) => {
+        const sizePrice = getSizePrice(item.product, item.size);
+        const colorPrice = getColorPrice(item.product, item.color);
+        const highestPrice = Math.max(sizePrice, colorPrice);
+
+        if (
+          highestPrice ===
+          item?.product?.productdetail?.price5 *
+            ((100 - item?.product?.productdetail?.percentpromotion5) / 100)
+        ) {
+          return item?.product?.productdetail?.quantity5;
+        }
+        if (
+          highestPrice ===
+          item?.product?.productdetail?.price4 *
+            ((100 - item?.product?.productdetail?.percentpromotion4) / 100)
+        ) {
+          return item?.product?.productdetail?.quantity4;
+        }
+        if (
+          highestPrice ===
+          item?.product?.productdetail?.price3 *
+            ((100 - item?.product?.productdetail?.percentpromotion3) / 100)
+        ) {
+          return item?.product?.productdetail?.quantity3;
+        }
+        if (
+          highestPrice ===
+          item?.product?.productdetail?.price2 *
+            ((100 - item?.product?.productdetail?.percentpromotion2) / 100)
+        ) {
+          return item?.product?.productdetail?.quantity2;
+        }
+        return item?.product?.productdetail?.quantity1;
+      };
+
+      const quantityA = getQuantityMatchColorandSize(a);
+      const quantityB = getQuantityMatchColorandSize(b);
+
+      // Sắp xếp theo số lượng giảm dần, nếu số lượng bằng nhau thì giữ nguyên thứ tự
+      return quantityB - quantityA;
+    });
+
+  //-----------------------Local----------------------
+  const totalAmounts = selectedItems.reduce(
+    (total, item) => {
+      const itemInCart = items.find(
+        (cartItem) => cartItem.cartId === item.cartId
+      );
+      const quantity = itemInCart?.quantity || 1;
+
+      if (!itemInCart || !itemInCart) {
+        // Nếu itemInCart hoặc itemInCart.product là undefined, bỏ qua item này
+        toast.error("Không tìm thấy sản phẩm!");
+        return total;
+      }
+      //GetPrice dựa vào size
+      const getPriceMatchColorandSize = () => {
+        const sizePrice = getSizePrice(itemInCart || "", itemInCart?.size);
+        const colorPrice = getColorPrice(itemInCart, itemInCart?.color);
+        return Math.ceil(Math.max(sizePrice, colorPrice));
+      };
+
+      //GetPriceOld dựa vào color
+      const getPriceOldMatchColorandSize = () => {
+        const sizeOldPrice = getSizeOldPrice(itemInCart, itemInCart?.size);
+        const colorOldPrice = getColorOldPrice(itemInCart, itemInCart?.color);
+        return Math.ceil(Math.max(sizeOldPrice, colorOldPrice));
+      };
+
+      const itemTotalPrice = getPriceMatchColorandSize() * quantity;
+      const itemTotalPriceOld = getPriceOldMatchColorandSize() * quantity;
 
       return {
         totalPrice: total.totalPrice + itemTotalPrice,
@@ -55,213 +260,347 @@ const CheckoutCash = () => {
     { totalPrice: 0, totalPriceOld: 0 }
   );
   // Tiền bảo hiểm
-  const totalWarrantyAmount = items.reduce((total, item) => {
-    const itemInCart = items.find((cartItem) => cartItem.id === item.id);
-    const quantity = itemInCart?.productdetail.quantity1 || 1;
+  const totalWarrantyAmount = selectedItems.reduce((total, item) => {
+    const itemInCart = items.find(
+      (cartItem) => cartItem.cartId === item.cartId
+    );
+    const quantity = itemInCart?.quantity || 1;
 
-    const selectedWarranty = cart.selectedWarranties[item.id];
+    const selectedWarranty = String(itemInCart?.warranty || "0");
     const warrantyAmount = selectedWarranty ? parseFloat(selectedWarranty) : 0;
 
     return total + warrantyAmount * quantity;
   }, 0);
 
   const totalAmount = totalAmounts.totalPrice + totalWarrantyAmount;
-  const TotalAmountCoins = totalAmount - totalCoins;
 
-  const onRemoveAll = () => {
-    cart.removeSelectedItems();
-    toast.success("Tất cả lựa chọn trong giỏ hàng đã được xóa.");
-  };
-
-  const selectedItems = items.filter((item) =>
-    cart.selectedItems.includes(item.id)
-  );
-
-  //Info-Customer
-  const [gender, setGender] = useState<string>("");
-  const [phoneNumber, setPhoneNumber] = useState<string>("");
-  const [fullName, setFullName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [fullNameError, setFullNameError] = useState<string>("");
-  const [phoneNumberError, setPhoneNumberError] = useState<string>("");
-  const [GenderError, setGenderError] = useState<string>("");
-  const [EmailError, setEmailError] = useState<string>("");
-
-  const handlePhoneNumberChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-
-    // Check if the input is empty
-    if (!value) {
-      setPhoneNumber("");
-      setPhoneNumberError("Vui lòng nhập số điện thoại");
-      return;
-    }
-
-    // Check if the input is numeric
-    if (!/^\d+$/.test(value)) {
-      setPhoneNumberError("Vui lòng chỉ nhập số");
-      return;
-    }
-
-    // Kiểm tra số đầu tiên là số 0
-    if (value.length === 1 && value !== "0") {
-      setPhoneNumberError("Số đầu tiên phải là số 0");
-      return;
-    }
-
-    // Giới hạn độ dài của số điện thoại không quá 11 số
-    const limitedPhoneNumber = value.slice(0, 11);
-
-    // Cập nhật giá trị số điện thoại trong state và reset lỗi
-    setPhoneNumber(limitedPhoneNumber);
-    if (!phoneNumber) {
-      setPhoneNumberError("Vui lòng nhập số điện thoại");
-    } else {
-      setPhoneNumberError("");
-    }
-  };
-
-  const handleRadioChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setGender(event.target.value);
-    if (!gender) {
-      setGenderError("Hãy chọn giới tính");
-    } else {
-      setGenderError("");
-    }
-  };
-
-  const handleFullNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    // Check if the input starts with a space
-    if (value.startsWith(" ")) {
-      setFullNameError("Không được space");
-      return;
-    }
-    // Set the full name and reset the error
-    setFullName(value);
-    if (!fullName) {
-      setFullNameError("Vui lòng nhập họ và tên");
-    } else {
-      setFullNameError("");
-    }
-  };
-
-  const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-
-    // Check if the input starts with a space
-    if (value.startsWith(" ")) {
-      setEmailError("Không được cách đầu dòng");
-      return;
-    }
-    // Set the email and reset the error
-    setEmail(value);
-    // Email validation
-    const isValidEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(
-      value
+  // Tạo mảng riêng cho size và color và quantity
+  //size
+  const selectedSizes = selectedItems.map((item) => {
+    const itemInCart = items.find(
+      (cartItem) => cartItem.cartId === item.cartId
     );
+    return itemInCart?.size;
+  });
 
-    if (!isValidEmail) {
-      setEmailError("Email không hợp lệ");
-    } else {
-      setEmailError("");
+  //color
+  const selectedColors = selectedItems.map((item) => {
+    const itemInCart = items.find(
+      (cartItem) => cartItem.cartId === item.cartId
+    );
+    return itemInCart?.color;
+  });
+
+  //quantity
+  const selectedQuantities = selectedItems.map((item) => {
+    const itemInCart = items.find(
+      (cartItem) => cartItem.cartId === item.cartId
+    );
+    return itemInCart?.quantity || 1;
+  });
+  //Dựa vào cartId lấy ra id của sản phẩm
+  const selectedProductIds = selectedItems.map((item) => {
+    const itemInCart = items.find(
+      (cartItem) => cartItem.cartId === item.cartId
+    );
+    return itemInCart?.id || 1;
+  });
+
+  // ----------------------Database---------------------------
+  const totalAmountsDb = selectedItemsDb.reduce(
+    (total, item) => {
+      const itemInCart = itemsDb.find((cartItem) => cartItem.id === item.id);
+      const quantity = itemInCart?.quantity || 1;
+
+      if (!itemInCart || !itemInCart.product) {
+        // Nếu itemInCart hoặc itemInCart.product là undefined, bỏ qua item này
+        toast.error("Không tìm thấy sản phẩm!");
+        return total;
+      }
+      //GetPrice dựa vào size
+      const getPriceMatchColorandSize = () => {
+        const sizePrice = getSizePrice(
+          itemInCart?.product || "",
+          itemInCart?.size
+        );
+        const colorPrice = getColorPrice(itemInCart.product, itemInCart?.color);
+        return Math.ceil(Math.max(sizePrice, colorPrice));
+      };
+
+      //GetPrice dựa vào color
+      const getPriceOldMatchColorandSize = () => {
+        const sizeOldPrice = getSizeOldPrice(
+          itemInCart?.product,
+          itemInCart?.size
+        );
+        const colorOldPrice = getColorOldPrice(
+          itemInCart.product,
+          itemInCart?.color
+        );
+        return Math.ceil(Math.max(sizeOldPrice, colorOldPrice));
+      };
+
+      const itemTotalPrice = getPriceMatchColorandSize() * quantity;
+      const itemTotalPriceOld = getPriceOldMatchColorandSize() * quantity;
+
+      return {
+        totalPrice: total.totalPrice + itemTotalPrice,
+        totalPriceOld: total.totalPriceOld + itemTotalPriceOld,
+      };
+    },
+    { totalPrice: 0, totalPriceOld: 0 }
+  );
+  // Tiền bảo hiểm
+  const totalWarrantyAmountDb = selectedItemsDb.reduce((total, item) => {
+    const itemInCart = itemsDb.find((cartItem) => cartItem.id === item.id);
+    const quantity = itemInCart?.quantity || 1;
+    const selectedWarranty = String(itemInCart?.warranty || "0");
+
+    const warrantyAmount = selectedWarranty ? parseFloat(selectedWarranty) : 0;
+
+    return total + warrantyAmount * quantity;
+  }, 0);
+
+  const totalAmountDb = totalAmountsDb.totalPrice + totalWarrantyAmountDb;
+  const TotalAmountCoins = Math.ceil(totalAmountDb - totalCoins);
+
+  const totalAmountOldDb = totalAmountsDb.totalPriceOld + totalWarrantyAmountDb;
+  const totalAmountOldCoin = Math.ceil(totalAmountOldDb - totalCoins);
+
+  // Tạo mảng riêng cho size và color và quantity
+  //size
+  const selectedSizesDb = selectedItemsDb.map((item) => {
+    const itemInCart = itemsDb.find((cartItem) => cartItem.id === item.id);
+    return itemInCart?.size;
+  });
+
+  //color
+  const selectedColorsDb = selectedItemsDb.map((item) => {
+    const itemInCart = itemsDb.find((cartItem) => cartItem.id === item.id);
+    return itemInCart?.color;
+  });
+
+  //quantity
+  const selectedQuantitiesDb = selectedItemsDb.map((item) => {
+    const itemInCart = itemsDb.find((cartItem) => cartItem.id === item.id);
+    return itemInCart?.quantity || 1;
+  });
+
+  //Dựa vào cartItemId lấy ra id của sản phẩm
+  const selectedProductIdsDb = selectedItemsDb.map((item) => {
+    const itemInCart = itemsDb.find((cartItem) => cartItem.id === item.id);
+    return itemInCart?.product.id || 1;
+  });
+
+  const fetchDataOrder = async (
+    responseIdOrderCurrent: string,
+  ) => {
+    try {
+      // Fetch the order data
+      const response = await axios.patch(
+        `${process.env.NEXT_PUBLIC_API_URL}/checkoutcash`,{responseIdOrderCurrent: responseIdOrderCurrent}
+      );
+
+      // Extract the data from the response
+      const orders = response.data;
+
+      if (orders.id === responseIdOrderCurrent) {
+        // If a matching order is found, update the state
+        setData(orders);
+        toast.success("Thanh toán thành công!");
+
+        if(user?.role === "GUEST" || !user?.id){
+          cart.removeSelectedItems();
+        }else{
+          cartdb.removeSelectedItems(user?.id || "");
+        }
+
+        setOpen(true);
+      } else {
+        // If no matching order is found, show an error
+        toast.error("Error: Mismatched request response.");
+      }
+    } catch (error) {
+      // Handle error
+      toast.error("Error fetching order data.");
     }
   };
-  //Delivery
-  const [deliveryOption, setDeliveryOption] = useState("delivery"); // 'delivery' or 'pickup'
 
-  const handleOptionChange = (option: DeliveryOption) => {
-    setDeliveryOption(option);
-  };
-  //API-Provinces
-  const [provinces, setProvinces] = useState<Item[]>([]);
-  const [districts, setDistricts] = useState<Item[]>([]);
-  const [wards, setWards] = useState<Item[]>([]);
-  const [selectedProvince, setSelectedProvince] = useState("");
-  const [selectedDistrict, setSelectedDistrict] = useState("");
-  const [selectedWard, setSelectedWard] = useState("");
-  const [address, setAddress] = useState("");
-  const [note, setNote] = useState("");
-  const isValidSelection = selectedProvince && selectedDistrict && selectedWard && address;
+  //---------Submit----------
+  const handleSubmitCheckoutCash = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
+    e.preventDefault();
 
-  const callAPI = (api: string) => {
-    return axios.get(api).then((response) => {
-      setProvinces(response.data);
-    });
-  };
+    setGenderError("");
+    setEmailError("");
+    setFullNameError("");
+    setPhoneNumberError("");
+    setSelectedProvinceError("");
+    setSelectedDistrictError("");
+    setSelectedWardError("");
+    setAddressError("");
+    setAddressOtherError("");
+    setNoteError("");
 
-  useEffect(() => {
-    callAPI(`${host}?depth=1`);
-  }, []);
+    const errors: Partial<ErrorMessages> = {};
 
-  const callApiDistrict = (api: string) => {
-    return axios.get(api).then((response) => {
-      setDistricts(response.data.districts);
-    });
-  };
-
-  const callApiWard = (api: string) => {
-    return axios.get(api).then((response) => {
-      setWards(response.data.wards);
-    });
-  };
-  useEffect(() => {
-    if (selectedProvince) {
-      callApiDistrict(`${host}p/${selectedProvince}?depth=2`);
+    // Common validations
+    if (!gender) {
+      errors.gender = "Vui lòng chọn giới tính!";
     }
-  }, [selectedProvince]);
 
-  useEffect(() => {
-    if (selectedDistrict) {
-      callApiWard(`${host}d/${selectedDistrict}?depth=2`);
+    if (!email) {
+      errors.email = "Vui lòng nhập email!";
+    } else if (email.startsWith(" ")) {
+      errors.email = "Không được cách đầu dòng";
+    } else if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+      errors.email = "Email không hợp lệ";
     }
-  }, [selectedDistrict]);
 
-  //Api-Submit
-  // const handleSubmitCheckoutCash = async () => {
-  //   try {
-  //     let requestData = {};
+    if (!fullName) {
+      errors.fullName = "Vui lòng nhập tên!";
+    } else if (fullName.startsWith(" ")) {
+      errors.fullName = "Không được có khoảng trắng ở đầu dòng!";
+    }
 
-  //     // Add common customer information
-  //     requestData = {
-  //       ...requestData,
-  //       gender,
-  //       fullName,
-  //       phoneNumber,
-  //       email,
-  //     };
+    if (!phoneNumber) {
+      errors.phoneNumber = "Vui lòng nhập SĐT!";
+    }
 
-  //     // Add specific information based on different scenarios
-  //     if (deliveryOption) {
-  //       requestData = {
-  //         ...requestData,
-  //         deliveryOption,
-  //       };
-  //     }
+    // Additional validations for non-pickup
+    if (deliveryOption !== "pickup") {
+      if (!selectedProvince?.value || !selectedProvince?.label) {
+        errors.selectedProvince = "Vui lòng chọn Tỉnh!";
+      }
 
-  //     if (isValidSelection) {
-  //       requestData = {
-  //         ...requestData,
-  //         selectedProvince,
-  //         selectedDistrict,
-  //         selectedWard,
-  //         address,
-  //         note,
-  //       };
-  //     }
+      if (!selectedDistrict?.value || !selectedDistrict?.label) {
+        errors.selectedDistrict = "Vui lòng chọn Quận/Huyện!";
+      }
 
-  //     // Send customer information to the backend
-  //     const response = await axios.post('/api/checkout', requestData);
+      if (!selectedWard?.value || !selectedWard?.label) {
+        errors.selectedWard = "Vui lòng chọn Phường!";
+      }
 
-  //     if (response.data.success) {
-  //       console.log('Order placed successfully:', response.data.customer);
-  //     } else {
-  //       console.error('Error placing order:', response.data.error);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error placing order:', error);
-  //   }
-  // };
+      if (!address) {
+        errors.address = "Vui lòng nhập địa chỉ!";
+      }
+    }
+
+    if (Object.keys(errors).length > 0) {
+      // Hiển thị tất cả các lỗi
+      toast.error("Chưa nhập đầy đủ thông tin!");
+
+      // Cập nhật state cho từng lỗi tương ứng
+      setGenderError(errors.gender || "");
+      setEmailError(errors.email || "");
+      setFullNameError(errors.fullName || "");
+      setPhoneNumberError(errors.phoneNumber || "");
+      setSelectedProvinceError(errors.selectedProvince || "");
+      setSelectedDistrictError(errors.selectedDistrict || "");
+      setSelectedWardError(errors.selectedWard || "");
+      setAddressError(errors.address || "");
+
+      // Dừng thực hiện tiếp nếu có lỗi
+      return;
+    }
+
+    // Tạo uuid ở đây thay thế id bên trong data bởi vì làm cách
+    // này để bên client khi response nó sẽ response đúng id này
+    const requestId = cuid(); // Tạo Cuid tạm thời
+
+    const data = {
+      email: email,
+      fullname: fullName,
+      phoneNumber: phoneNumber,
+      gender: gender,
+      address:
+        deliveryOption === "pickup"
+          ? "Trống"
+          : `${selectedProvince?.label || "Không có"}, ${
+              selectedDistrict?.label || "Không có"
+            }, ${selectedWard?.label || "Không có"}, ${address || "Không có"}`,
+      addressOther: addressOther || "Không có",
+      note: note || "Không có",
+      deliveryOption: deliveryOption,
+      pricesales:
+        user?.role === "GUEST" || !user?.id ? totalAmount : TotalAmountCoins,
+      priceold:
+        user?.role === "GUEST" || !user?.id
+          ? totalAmounts.totalPriceOld
+          : totalAmountOldCoin,
+      productIds:
+        user?.role === "GUEST" || !user?.id
+          ? selectedProductIds
+          : selectedProductIdsDb,
+      sizes:
+        user?.role === "GUEST" || !user?.id ? selectedSizes : selectedSizesDb,
+      colors:
+        user?.role === "GUEST" || !user?.id ? selectedColors : selectedColorsDb,
+      quantities:
+        user?.role === "GUEST" || !user?.id
+          ? selectedQuantities
+          : selectedQuantitiesDb,
+      userId: user?.role === "GUEST" || !user?.id ? "" : user?.id,
+      warranty:
+        user?.role === "GUEST" || !user?.id
+          ? totalWarrantyAmount
+          : totalWarrantyAmountDb,
+      requestId: requestId,
+    };
+
+    // Encrypt the data using AES
+    const secretKey = process.env.NEXT_PUBLIC_CRYPTO_PAYMENTCASH_KEY; // Replace with your own secret key
+
+    const encryptedData = CryptoJS.AES.encrypt(
+      JSON.stringify(data),
+      secretKey
+    ).toString();
+
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/checkoutcash`,
+        {
+          encryptedData,
+        },
+        {
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.total !== undefined) {
+              const percentCompleted = Math.round(
+                (progressEvent.loaded / progressEvent.total) * 100
+              );
+              setBarProcess(percentCompleted);
+            } else {
+              console.warn("Upload progress total is undefined.");
+            }
+          },
+        }
+      );
+      //Get dữ liệu ra
+      fetchDataOrder(response.data.id);
+    } catch (error) {
+      setBarProcess(0);
+      setLoading;
+      if (
+        (error as { response?: { data?: { error?: string } } }).response &&
+        (error as { response: { data?: { error?: string } } }).response.data &&
+        (error as { response: { data: { error?: string } } }).response.data
+          .error
+      ) {
+        // Hiển thị thông báo lỗi cho người dùng
+        toast.error(
+          (error as { response: { data: { error: string } } }).response.data
+            .error
+        );
+      } else {
+        // Hiển thị thông báo lỗi mặc định cho người dùng
+        toast.error("An error occurred during checkout.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     setIsMounted(true);
@@ -271,348 +610,235 @@ const CheckoutCash = () => {
     return null;
   }
   return (
-    <div className="mx-auto md:max-w-3xl lg:max-w-3xl">
-      <div className="bg-white rounded-md shadow-lg p-4 mt-32 mb-2 ">
-        {cart.items.length === 0 && (
-          <>
-            <div className="flex justify-center">
-              <Image src="/images/no-cart.png" alt="" width="108" height="98" />
-            </div>
-            <div className="flex justify-center my-2">
-              <p className="text-neutral-500">Giỏ hàng của bạn còn trống</p>
-            </div>
-            <div className="flex justify-center my-2">
-              <Button onClick={handleBuyNow}> Mua ngay</Button>
-            </div>
-          </>
-        )}
-
-        <ul>
-          {cart.items.map((item) => (
-            <InfoProduct key={item.id} data={item} />
-          ))}
-        </ul>
-
-        {cart.items.length > 0 && (
-          <div className="flex items-center justify-between py-4">
-            <div className="flex items-center gap-x-3">
-              <input
-                className="w-4 h-4"
-                type="checkbox"
-                checked={selectedItems.length > 0 && cart.selectAll}
-                onChange={() => cart.toggleSelectAll()}
-              />
-              <h2 className="text-lg font-medium text-gray-900">Chọn tất cả</h2>
-            </div>
-            <Button
-              onClick={onRemoveAll}
-              disabled={selectedItems.length === 0}
-              className="justify-around flex"
-            >
-              <Trash />
-            </Button>
-          </div>
-        )}
-
-        <div className=" flex justify-between border-t border-gray-400 py-4">
-          <div>Tạm tính ({cart.items.length} sản phẩm): </div>
-          <Currency value={totalAmount} valueold={totalAmounts.totalPriceOld} />
-        </div>
-      </div>
-      {/* InfoCustomer */}
-      <>
-        <div className="bg-white rounded-md shadow-lg p-4 mb-2">
-          <h1 className="font-bold text-blue-500">Thông tin khách hàng</h1>
-          <div className="flex mt-4 items-center pl-[30px]">
-            <div>
-              <input
-                type="radio"
-                id="male"
-                value="male"
-                checked={gender === "male"}
-                onChange={handleRadioChange}
-                required
-              />
-              <label
-                htmlFor="male"
-                className={`ml-2 ${!gender && "error-label"}`}
-              >
-                Nam
-              </label>
-            </div>
-            <div className="ml-4">
-              <input
-                type="radio"
-                id="female"
-                value="female"
-                checked={gender === "female"}
-                onChange={handleRadioChange}
-                required
-              />
-              <label
-                htmlFor="female"
-                className={`ml-2 ${!gender && "error-label"}`}
-              >
-                Nữ
-              </label>
-            </div>
-          </div>
-          {GenderError && (
-            <div className="text-red-500 ml-8">{GenderError}</div>
-          )}
-
-          <div className="grid grid-rows-3 md:flex mt-2 items-center">
-            <div className="lg:px-8">
-              <div className="field field_v3">
-                <label className="ha-screen-reader">Họ và tên</label>
-                <input
-                  className="field__input"
-                  placeholder="Ví dụ : Nguyen Van A"
-                  value={fullName}
-                  onChange={handleFullNameChange}
-                />
-                <span className="field__label-wrap" aria-hidden="true">
-                  <span className="field__label">Họ và tên</span>
-                </span>
-              </div>
-              {fullNameError && (
-                <div className="text-red-500">{fullNameError}</div>
-              )}
-            </div>
-
-            <div className="md:ml-2 py-2 lg:px-8">
-              <div className="field field_v3">
-                <label className="ha-screen-reader">Số điện thoại</label>
-                <input
-                  className="field__input "
-                  placeholder="Ví dụ :0912385***"
-                  value={phoneNumber}
-                  onChange={handlePhoneNumberChange}
-                />
-                <span className="field__label-wrap" aria-hidden="true">
-                  <span className="field__label">Số điện thoại</span>
-                </span>
-              </div>
-              {phoneNumberError && (
-                <div className="text-red-500">{phoneNumberError}</div>
-              )}
-            </div>
-
-            <div className="md:ml-2 py-2 lg:px-8">
-              <div className="field field_v3">
-                <label className="ha-screen-reader">Email</label>
-                <input
-                  className="field__input "
-                  placeholder="Ví dụ :truong@gmail.com"
-                  value={email}
-                  onChange={handleEmailChange}
-                  type="email"
-                />
-                <span className="field__label-wrap" aria-hidden="true">
-                  <span className="field__label">Email</span>
-                </span>
-              </div>
-              {EmailError && <div className="text-red-500">{EmailError}</div>}
-            </div>
-          </div>
-        </div>
-      </>
-      {/* Delivery */}
-      <>
-        <div className="bg-white rounded-md shadow-lg p-4 mb-2">
-          <h1 className="font-bold text-blue-500">Hình thức nhận hàng </h1>
-          <div className="flex mt-4 items-center">
-            <div>
-              <input
-                type="radio"
-                id="delivery"
-                name="deliveryOption"
-                value="delivery"
-                checked={deliveryOption === "delivery"}
-                onChange={() => handleOptionChange("delivery")}
-                required
-              />
-              <label htmlFor="male" className="ml-2">
-                Giao hàng tận nơi
-              </label>
-            </div>
-            <div className="ml-4">
-              <input
-                type="radio"
-                id="pickup"
-                name="deliveryOption"
-                value="pickup"
-                checked={deliveryOption === "pickup"}
-                onChange={() => handleOptionChange("pickup")}
-                required
-              />
-              <label htmlFor="female" className="ml-2">
-                Nhận tại cửa hàng
-              </label>
-            </div>
-          </div>
-          {deliveryOption === "delivery" && (
-            // API-Provinces
-            <>
-              <div className=" mx-auto p-4">
-                <div className="mb-4">
-                  <label className=" text-sm font-bold">Chọn Thành phố</label>
-                  <select
-                    id="province"
-                    onChange={(e) => setSelectedProvince(e.target.value)}
-                    className="mt-1  w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 outline-none p-2"
-                  >
-                    <option value="" disabled selected hidden>
-                      Chọn thành phố
-                    </option>
-                    {provinces.map((province) => (
-                      <option key={province.code} value={province.code}>
-                        {province.name}
-                      </option>
-                    ))}
-                  </select>
-                  {!selectedProvince && (
-                    <p className="text-red-500">Vui lòng chọn thành phố</p>
-                  )}
-                </div>
-
-                <div className="mb-4">
-                  <label className=" text-sm font-bold">Chọn Quận/Huyện</label>
-                  <select
-                    id="district"
-                    onChange={(e) => setSelectedDistrict(e.target.value)}
-                    className="mt-1  w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 outline-none p-2"
-                    disabled={!selectedProvince}
-                  >
-                    <option value="" disabled selected hidden>
-                      Chọn Quận/Huyện
-                    </option>
-                    {districts.map((district) => (
-                      <option key={district.code} value={district.code}>
-                        {district.name}
-                      </option>
-                    ))}
-                  </select>
-                  {!selectedDistrict && (
-                    <p className="text-red-500">Vui lòng chọn quận/huyện</p>
-                  )}
-                </div>
-
-                <div className="mb-4">
-                  <label className="block text-sm font-bold">
-                    Chọn Phường Xã
-                  </label>
-                  <select
-                    id="ward"
-                    onChange={(e) => setSelectedWard(e.target.value)}
-                    className="mt-1  w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 outline-none p-2"
-                    disabled={!selectedDistrict}
-                  >
-                    <option value="" disabled selected hidden>
-                      Chọn Phường/Xã
-                    </option>
-                    {wards.map((ward) => (
-                      <option key={ward.code} value={ward.code}>
-                        {ward.name}
-                      </option>
-                    ))}
-                  </select>
-                  {!selectedWard && (
-                    <p className="text-red-500">Vui lòng chọn phường/xã</p>
-                  )}
-                </div>
-
-                <div className="flex items-center">
-                  <div className="lg:px-8">
-                    <div className="field field_v3">
-                      <label className="ha-screen-reader">Địa chỉ</label>
-                      <input
-                        className={`field__input ${
-                          !address && "border-red-500"
-                        }`}
-                        placeholder="Vd: 4xx Lê Văn Q*"
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
+    <>
+      <PaymentSuccessCheckoutCashModal
+        isOpen={open}
+        data={data}
+        loading={loading}
+      />
+      <form onSubmit={handleSubmitCheckoutCash}>
+        <div className="mx-auto md:max-w-3xl lg:max-w-3xl">
+          <div className="bg-white rounded-md shadow-lg p-4 mt-32 mb-2 ">
+            {/* Check Role hiển thị */}
+            {user?.role === "GUEST" || !user?.id ? (
+              <>
+                {cart.items.length === 0 && (
+                  <>
+                    <div className="flex justify-center">
+                      <Image
+                        src="/images/no-cart.png"
+                        alt=""
+                        width="108"
+                        height="98"
                       />
-
-                      <span className="field__label-wrap" aria-hidden="true">
-                        <span className="field__label">Địa chỉ</span>
-                      </span>
                     </div>
-                    {!address && (
-                      <p className="text-red-500">Vui lòng nhập địa chỉ</p>
-                    )}
-                  </div>
-
-                  <div className="ml-2 py-2 lg:px-8">
-                    <div className="field field_v3">
-                      <label className="ha-screen-reader">
-                        Ghi chú(Nếu có)
-                      </label>
-                      <input
-                        className="field__input"
-                        placeholder="Vd: Note thêm địa chỉ mới hoặc số điện thoại mới."
-                        value={note}
-                        onChange={(e) => setNote(e.target.value)}
-                      />
-                      <span className="field__label-wrap" aria-hidden="true">
-                        <span className="field__label">Ghi chú(Nếu có)</span>
-                      </span>
+                    <div className="flex justify-center my-2">
+                      <p className="text-neutral-500">
+                        Giỏ hàng của bạn còn trống
+                      </p>
                     </div>
-                  </div>
+                    <div className="flex justify-center my-2">
+                      <Button onClick={handleBuyNow}> Mua ngay</Button>
+                    </div>
+                  </>
+                )}
+
+                <ul>
+                  <p className="text-blue-500 font-bold">Thông tin sản phẩm</p>
+
+                  {sortItemCartLocal.map((item) => (
+                    <InfoProductPayment
+                      key={item.id}
+                      data={item}
+                      userId={user?.id || ""}
+                      loadingChange={loadingChangeLocal}
+                      setLoadingChange={setLoadingChangeLocal}
+                    />
+                  ))}
+                </ul>
+
+                <div className=" flex justify-between border-t border-gray-400 py-4">
+                  <div>Tạm tính ({sortItemCartLocal.length} sản phẩm): </div>
+                  <Currency
+                    value={totalAmount}
+                    valueold={totalAmounts.totalPriceOld}
+                  />
                 </div>
-              </div>
-            </>
-          )}
-          {deliveryOption === "pickup" && (
-            <div className="bg-gray-300 bg-opacity-30 rounded-md">
-              <p className="p-4 font-bold text-xl">
-                Nhận hàng tại: 457 Lê Văn Quới, Phường Bình Trị Đông A, Quận
-                Bình Tân
-              </p>
-              <p className=" px-4 text-red-500 font-bold text-xl pb-2">
-                Số điện thoại: 0352261103
-              </p>
-            </div>
-          )}
-        </div>
-      </>
-      <>
-        <div className="bg-white rounded-md shadow-lg p-4 mb-2">
-          <h1 className="font-bold text-blue-500"> Thanh toán </h1>
-          <div className="flex justify-around items-center mt-2">
-            <p className="font-bold text-lg">Tổng tiền:</p>
-            <p>
-              <Currency
-                value={totalAmount}
-                valueold={totalAmounts.totalPriceOld}
-              />
-            </p>
-          </div>
-          <div className="flex justify-around items-center mt-2">
-            <p className="text-lg  font-bold"> Tiền giảm:</p>
-            <p>
-              <Currencyonevalue value={-totalCoins} />
-            </p>
-          </div>
-          <div className="flex justify-around items-center mt-6 border-t-2">
-            <p className="text-lg font-bold mt-2"> Số tiền thanh toán:</p>
-            <p>
-              <Currencyonevalue value={TotalAmountCoins} />
-            </p>
-          </div>
-          <div className="mx-auto px-20 mt-10">
-            {cart.items.length > 0 ? (
-              <Button className="w-full">Đặt hàng</Button>
+              </>
             ) : (
-              <Button className="w-full" disabled>
-                Đặt hàng
-              </Button>
+              <>
+                {cartdb.items.length === 0 && (
+                  <>
+                    <div className="flex justify-center">
+                      <Image
+                        src="/images/no-cart.png"
+                        alt=""
+                        width="108"
+                        height="98"
+                      />
+                    </div>
+                    <div className="flex justify-center my-2">
+                      <p className="text-neutral-500">
+                        Giỏ hàng của bạn còn trống
+                      </p>
+                    </div>
+                    <div className="flex justify-center my-2">
+                      <Button onClick={handleBuyNow}> Mua ngay</Button>
+                    </div>
+                  </>
+                )}
+
+                <ul>
+                  <p className="text-blue-500 font-bold">Thông tin sản phẩm</p>
+
+                  {sortItemCartDb.map((item) => (
+                    <InfoProductPaymentDb
+                      key={item.id}
+                      data={item}
+                      userId={user?.id || ""}
+                      loadingChange={loadingChangeLocal}
+                      setLoadingChange={setLoadingChangeLocal}
+                    />
+                  ))}
+                </ul>
+
+                <div className=" flex justify-between border-t border-gray-400 py-4">
+                  <div>Tạm tính ({sortItemCartDb.length} sản phẩm): </div>
+                  <Currency
+                    value={TotalAmountCoins}
+                    valueold={totalAmountOldCoin}
+                  />
+                </div>
+              </>
             )}
           </div>
+
+          {/* InfoCustomer */}
+          <>
+            <InfoCustomer
+              gender={gender}
+              setGender={setGender}
+              phoneNumber={phoneNumber}
+              setPhoneNumber={setPhoneNumber}
+              fullName={fullName}
+              setFullName={setFullName}
+              email={email}
+              setEmail={setEmail}
+              setGenderError={setGenderError}
+              genderError={genderError}
+              setPhoneNumberError={setPhoneNumberError}
+              phoneNumberError={phoneNumberError}
+              setFullNameError={setFullNameError}
+              fullNameError={fullNameError}
+              setEmailError={setEmailError}
+              emailError={emailError}
+              isNoneSelect={isNoneSelect}
+              isNoneSelectDb={isNoneSelectDb}
+              userRole={user?.role || ""}
+              userId={user?.id || ""}
+            />
+          </>
+          {/* Delivery */}
+          <>
+            <Delivery
+              deliveryOption={deliveryOption}
+              setDeliveryOption={setDeliveryOption}
+              selectedProvince={selectedProvince}
+              setSelectedProvince={setSelectedProvince}
+              selectedDistrict={selectedDistrict}
+              setSelectedDistrict={setSelectedDistrict}
+              selectedWard={selectedWard}
+              setSelectedWard={setSelectedWard}
+              address={address}
+              setAddress={setAddress}
+              addressOther={addressOther}
+              setAddressOther={setAddressOther}
+              note={note}
+              setNote={setNote}
+              setSelectedProvinceError={setSelectedProvinceError}
+              selectedProvinceError={selectedProvinceError}
+              setSelectedDistrictError={setSelectedDistrictError}
+              selectedDistrictError={selectedDistrictError}
+              setSelectedWardError={setSelectedWardError}
+              selectedWardError={selectedWardError}
+              setAddressError={setAddressError}
+              addressError={addressError}
+              setAddressOtherError={setAddressOtherError}
+              addressOtherError={addressOtherError}
+              setNoteError={setNoteError}
+              noteError={noteError}
+              isNoneSelect={isNoneSelect}
+              isNoneSelectDb={isNoneSelectDb}
+              userRole={user?.role || ""}
+              userId={user?.id || ""}
+            />
+          </>
+          {/* Process Bar when submit */}
+          <>
+            {barProcess === 100 ? (
+              <>
+                {loading ? (
+                  <>
+                    <Button
+                      disabled={loading || user?.role === "GUEST" || !user?.id ? isNoneSelect : isNoneSelectDb}
+                      onClick={handleTrackProduct}
+                      className="w-full text-center bg-red-500 hover:bg-red-600 text-white rounded-md my-2 cursor-pointer"
+                    >
+                      <p className="h-12 flex justify-center items-center font-bold">
+                        <X className="size-12 mr-2" /> <span>LOADING...</span>
+                      </p>
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      disabled={loading || user?.role === "GUEST" || !user?.id ? isNoneSelect : isNoneSelectDb}
+                      onClick={handleTrackProduct}
+                      className="w-full text-center bg-green-500 hover:bg-green-600 text-white rounded-md my-2 cursor-pointer"
+                    >
+                      <p className="h-12 flex justify-center items-center font-bold">
+                        <Check className="size-12 mr-2" /> <span>SUCCESS</span>
+                      </p>
+                    </Button>
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                {barProcess === 0 && (
+                  <div className="my-2">
+                    <Button
+                      className="w-full text-white"
+                      variant="outline"
+                      type="submit"
+                      disabled={loading || user?.role === "GUEST" || !user?.id ? isNoneSelect : isNoneSelectDb}
+                    >
+                      Đặt Hàng
+                    </Button>
+                  </div>
+                )}
+
+                {barProcess > 0 && (
+                  <>
+                    <p className="font-semibold text-slate-400 text-sm text-center my-2">
+                      Processing payment...
+                    </p>
+                    <div className="progress-container">
+                      <div
+                        className="progress-bar"
+                        style={{ width: `${barProcess}%` }}
+                      >
+                        {barProcess}%
+                      </div>
+                    </div>
+                  </>
+                )}
+              </>
+            )}
+          </>
         </div>
-      </>
-    </div>
+      </form>
+    </>
   );
 };
 

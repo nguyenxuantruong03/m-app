@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 
 const PaymentSuccess = () => {
     const router = useRouter();
-    const [countdown, setCountdown] = useState(10);
+    const [countdown, setCountdown] = useState(120);
   
     useEffect(() => {
       const interval = setInterval(() => {
@@ -36,7 +36,7 @@ const PaymentSuccess = () => {
           </div>
           <div className="text-center text-lg mt-3">
             Đơn hàng của bạn đã thanh toán không thành công. <br />
-            Quý khách vui lòng <span className="text-red-600 font-semibold">KHÔNG</span> tắt trình duyệt.
+            Quý khách vui lòng <span className="text-red-600 font-semibold">KIỂM TRA</span> quá trình thanh toán trước khi tắt trình duyệt.
           </div>
           <div className="text-red-800 mt-10">
             <p className="text-center text-lg font-semibold">
@@ -44,6 +44,7 @@ const PaymentSuccess = () => {
               Xin vui lòng chờ trong giây lát...
             </p>
           </div>
+          <div className="mt-4 flex items-center justify-center hover:underline cursor-pointer" onClick= {()=> router.push("/home-product")}>  Trở về trang chủ 🏠</div>
         </div>
       </Container>
     );

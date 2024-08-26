@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useEffect, useState } from "react";
 import { utcToZonedTime } from "date-fns-tz";
 import { format, subHours } from "date-fns";
@@ -11,7 +11,6 @@ import { Separator } from "@/components/ui/separator";
 import FireworksComponent from "@/components/canvas-confetti";
 import viLocale from "date-fns/locale/vi";
 import "./style.css";
-
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 
 interface NavbarProfileProps {
@@ -61,7 +60,7 @@ const NavbarProfile: React.FC<NavbarProfileProps> = ({ dateofbirth, name }) => {
           particleCount={5}
           colors={["#dc2626", "#facc15", "#22c55e", "#3b82f6", "#9333ea"]}
           zindex={-1}
-          duration= {23 * 1000}
+          duration={23 * 1000}
         />
       );
     } else {
@@ -151,24 +150,81 @@ const NavbarProfile: React.FC<NavbarProfileProps> = ({ dateofbirth, name }) => {
 
       {showBirthdayMessage && isBirthdayToday && (
         <>
-          <BirthdayFireworks isBirthdayToday={isBirthdayToday} />
-          <div className="container left-0 xl:left-12 2xl:left-auto">
-            <p className="container-text-auto-right">
-              Chức mừng sinh nhật{" "}
-              <span className="bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text font-bold">
-                {name}
-              </span>{" "}
-              đã dồng hành cùng chúng tôi. Ngày{" "}
-              <span className="bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text font-bold">
-                {birthday}
-              </span>{" "}
-              là ngày đặc biệt dành cho bạn. Chúc bạn ngày sinh nhật vui vẻ! 🎉🎉🎉
-            </p>
-          </div>
-        </>
+      <BirthdayFireworks isBirthdayToday={isBirthdayToday} />
+      <div className="container left-0 xl:left-12 2xl:left-auto">
+        <p className="container-text-auto-right">
+          Chúc mừng sinh nhật 
+          <span className="inline-block font-bold ml-1">
+            <ColorfulText text={name} />
+          </span>{" "}
+          đã đồng hành cùng chúng tôi. Hôm nay 
+          <span className="inline-block font-bold ml-1">
+            <ColorfulText text={birthday} />
+          </span>{" "}
+          là ngày đặc biệt dành cho bạn. Chúc bạn ngày sinh nhật vui vẻ bên người thân và gia đình! 🎉🎉🎉
+        </p>
+      </div>
+    </>
       )}
     </>
   );
 };
 
 export default NavbarProfile;
+
+const colors = [
+  "text-red-500",
+  "text-yellow-500",
+  "text-green-500",
+  "text-blue-500",
+  "text-purple-500",
+  "text-orange-500",
+  "text-amber-500",
+  "text-lime-500",
+  "text-teal-500",
+  "text-cyan-500",
+  "text-sky-500",
+  "text-indigo-500",
+  "text-fuchsia-500",
+  "text-violet-500",
+  "text-emerald-500",
+  "text-pink-500",
+  "text-purple-500",
+];
+
+// Hàm để lấy màu sắc, đảm bảo không trùng màu trước đó
+const getColor = (index: number, prevColor: string): string => {
+  let newColor = colors[index % colors.length];
+  while (newColor === prevColor) {
+    index++;
+    newColor = colors[index % colors.length];
+  }
+  return newColor;
+};
+
+interface ColorfulTextProps {
+  text: string | null | undefined;
+}
+
+const ColorfulText: React.FC<ColorfulTextProps> = ({ text }) => {
+  let prevColor = "";
+  return (
+    <>
+      {text ? (
+        <span>
+          {text.split("").map((char, index) => {
+            const color = getColor(index, prevColor);
+            prevColor = color;
+            return (
+              <span key={index} className={color}>
+                {char}
+              </span>
+            );
+          })}
+        </span>
+      ) : (
+        ""
+      )}
+    </>
+  );
+};

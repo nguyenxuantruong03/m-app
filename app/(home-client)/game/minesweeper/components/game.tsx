@@ -15,12 +15,16 @@ import Tile from "./Tile";
 import DigitsDisplay from "./DigitsDisplay";
 import Smiley from "./Smiley";
 import axios from "axios";
+import { useParams } from "next/navigation";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 type GameProps = {
   settings: GameSettings;
 };
 
 function Game({ settings }: GameProps) {
+  const param = useParams()
+  const user = useCurrentUser()
   const dispatch = useAppDispatch();
   const grid = useAppSelector(selectGrid);
   const revealedCount = useAppSelector(selectRevealedCount);
@@ -59,7 +63,7 @@ function Game({ settings }: GameProps) {
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     // Load totalCoins from the server using GET request
-    axios.get("/api/wheelSpin").then((response) => {
+    axios.get(`/api/${param.storeId}/wheelSpin`).then((response) => {
       setTotalCoins(response.data.totalCoins);
     });
 
@@ -83,7 +87,7 @@ function Game({ settings }: GameProps) {
   const handleGetCoins = async () => {
     try {
       // Make a POST request to add 100 coins
-      await axios.post("/api/wheelSpin", { coin: "100 coins" });
+      await axios.post(`/api/${param.storeId}/wheelSpin`, {userId:user?.id, coin: 100 });
 
       // Reset the timer to 0 seconds when the "Get Coin" button is clicked
       setTime(0);

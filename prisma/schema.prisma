@@ -316,12 +316,14 @@ model Product {
   description          String                 @db.Text
   isFeatured           Boolean                @default(false)
   isArchived           Boolean                @default(false)
+  sold                 Int?                   @default(0)
   images               Image[]
   imagesalientfeatures Imagesalientfeatures[]
   orderItems           OrderItem[]
   comment              Comment[]
   responsecomment      ResponseComment[]
   emoji                Emoji[]
+  cartItem             CartItem[]
   // CheckoutCashItem            CheckoutcashItem[]
   createdAt            DateTime               @default(now())
   updatedAt            DateTime               @updatedAt
@@ -343,31 +345,60 @@ model Image {
   @@index([productId])
 }
 
-model Order {
-  id        String      @id @default(cuid())
-  storeId   String
-  store     Store       @relation("StoreToOrder", fields: [storeId], references: [id])
-  orderItem OrderItem[]
-  isPaid    Boolean     @default(false)
-  phone     String      @default("")
-  address   String      @default("")
-  email     String      @default("")
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+model CartItem {
+  id        String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  size      String
+  color     String
+  quantity  Int
+  warranty  String?
 
+  @@index([userId])
+  @@index([productId])
+}
+
+model Order {
+  id             String      @id @default(cuid())
+  storeId        String
+  store          Store       @relation("StoreToOrder", fields: [storeId], references: [id])
+  orderItem      OrderItem[]
+  isPaid         Boolean     @default(false)
+  phone          String      @default("")
+  address        String      @default("")
+  addressOther   String?     @default("")
+  name           String?     @default("")
+  note           String?     @default("")
+  gender         String?     @default("")
+  deliveryMethod String     @default("")
+  email          String      @default("")
+  userId         String?     @default("")
+  user           User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
   @@index([storeId])
 }
 
 model OrderItem {
-  id         String  @id @default(cuid())
+  id         String   @id @default(cuid())
   orderId    String
-  order      Order   @relation(fields: [orderId], references: [id])
+  order      Order    @relation(fields: [orderId], references: [id])
   productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+  isGift     Boolean  @default(false)
+  size       String
+  color      String
   quantity   String
   pricesales Int
   warranty   Int
   priceold   Int
-  product    Product @relation(fields: [productId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@index([orderId])
   @@index([productId])
@@ -600,6 +631,8 @@ model User {
   WheelSpin                WheelSpin[]
   deviceInfo               DeviceInfo[]
   emoji                    Emoji[]
+  cartItem                 CartItem[]
+  order                    Order[]
   createdAt                DateTime               @default(now())
   updatedAt                DateTime               @updatedAt
 }

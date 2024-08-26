@@ -17,6 +17,8 @@ interface EmojiProps {
   setEditingResponseId: React.Dispatch<React.SetStateAction<string | null>>;
   setResponseDescriptions: React.Dispatch<React.SetStateAction<string>>;
   setErrorResponse: React.Dispatch<React.SetStateAction<string>>;
+  setAlertGuestModal: React.Dispatch<React.SetStateAction<boolean>>;
+  role: string | undefined;
   showResponseComments: string | null;
   responseComment: number;
   responsesLength: number;
@@ -33,22 +35,22 @@ const EmojiPage: React.FC<EmojiProps> = ({
   setEditingResponseId,
   setResponseDescriptions,
   setErrorResponse,
+  setAlertGuestModal,
   responseComment,
   responsesLength,
   product,
   loading,
   productId,
   userId,
+  role,
 }) => {
   const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
   const [selectedEmojiLength, setSelectedEmojiLength] = useState<number>(0);
   const [aggregatedEmojiArray, setAggregatedEmojiArray] = useState<any[]>([]);
   const [showShareOptions, setShowShareOptions] = useState(false);
-  const [open,setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   const [emojiUserIdModal, setEmojiUserIdModal] = useState<[]>([]); // New state for emoji user ID
   const shareOptionsRef = useRef<HTMLDivElement | null>(null);
-
-  console.log("emojiUserIdModal",emojiUserIdModal)
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -97,10 +99,11 @@ const EmojiPage: React.FC<EmojiProps> = ({
     };
   }, []);
 
+  // Cập nhật trạng thái mới nhất ra UI ngay lập thức khi người dùng thay đổi
   const updateEmojis = async () => {
     try {
       const response = await axios.get("/api/client/emoji");
-  
+
       // Filter and aggregate emoji data
       const userEmojiData = response.data.filter(
         (emoji: any) => emoji.userId === userId
@@ -111,15 +114,15 @@ const EmojiPage: React.FC<EmojiProps> = ({
       const dataEmojilengthAll = response.data.filter(
         (emoji: any) => emoji.commentId === commentId
       );
-  
+
       if (dataEmojilengthAll) {
         setSelectedEmojiLength(dataEmojilengthAll.length);
-  
+
         const aggregatedEmojiLengths: any = {};
-  
+
         dataEmojilengthAll.forEach((emoji: any) => {
           const { commentId } = emoji;
-  
+
           if (!aggregatedEmojiLengths[commentId]) {
             aggregatedEmojiLengths[commentId] = {
               emojilengthLike: 0,
@@ -129,7 +132,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
               emojilengthLove: 0,
             };
           }
-  
+
           aggregatedEmojiLengths[commentId].emojilengthLike +=
             emoji.emojilengthLike || 0;
           aggregatedEmojiLengths[commentId].emojilengthHaha +=
@@ -141,20 +144,23 @@ const EmojiPage: React.FC<EmojiProps> = ({
           aggregatedEmojiLengths[commentId].emojilengthLove +=
             emoji.emojilengthLove || 0;
         });
-  
+
         const aggregatedEmojiArray = Object.keys(aggregatedEmojiLengths).map(
           (commentId) => ({
             commentId,
             ...aggregatedEmojiLengths[commentId],
           })
         );
-  
+
         setAggregatedEmojiArray(aggregatedEmojiArray);
       }
-  
+
       if (emojiData) {
         setSelectedEmoji(emojiData.emoji);
       }
+      
+      //Set cho modal
+      setEmojiUserIdModal(response.data.filter((emoji: any) => emoji.commentId === commentId))
     } catch (error) {
       console.error("Failed to fetch emojis:", error);
     }
@@ -162,43 +168,51 @@ const EmojiPage: React.FC<EmojiProps> = ({
 
   const handleEmojiClick = async (emoji: string) => {
     try {
-      // Toggle selected emoji
-      setSelectedEmoji((prevEmoji) => {
-        const newEmoji = prevEmoji === emoji ? null : emoji;
-        return newEmoji;
-      });
-  
-      // Update emoji on the server
-      await axios.post("/api/client/emoji", {
-        commentId,
-        emoji,
-        userId,
-        productId,
-      });
-  
-      // Fetch updated emoji data
-      await updateEmojis();
+      if (role !== "GUEST" && userId) {
+        // Toggle selected emoji
+        setSelectedEmoji((prevEmoji) => {
+          const newEmoji = prevEmoji === emoji ? null : emoji;
+          return newEmoji;
+        });
+
+        // Update emoji on the server
+        await axios.post("/api/client/emoji", {
+          commentId,
+          emoji,
+          userId,
+          productId,
+        });
+
+        // Cập nhật trạng thái mới nhất ra UI ngay lập thức khi người dùng thay đổi
+        await updateEmojis();
+      } else {
+        setAlertGuestModal(true);
+      }
     } catch (error) {
       console.error("Failed to handle emoji click:", error);
     }
   };
-  
+
   const handleEmojiDelete = async (emoji: string) => {
     try {
-      // Reset selected emoji
-      setSelectedEmoji(null);
-  
-      // Delete emoji from the server
-      await axios.delete("/api/client/emoji", {
-        data: {
-          commentId,
-          emoji,
-          userId,
-        },
-      });
-  
-      // Fetch updated emoji data
-      await updateEmojis();
+      if (role !== "GUEST" && userId) {
+        // Reset selected emoji
+        setSelectedEmoji(null);
+
+        // Delete emoji from the server
+        await axios.delete("/api/client/emoji", {
+          data: {
+            commentId,
+            emoji,
+            userId,
+          },
+        });
+
+        // Cập nhật trạng thái mới nhất ra UI ngay lập thức khi người dùng thay đổi
+        await updateEmojis();
+      } else {
+        setAlertGuestModal(true);
+      }
     } catch (error) {
       console.error("Failed to handle emoji delete:", error);
     }
@@ -224,13 +238,10 @@ const EmojiPage: React.FC<EmojiProps> = ({
         const dataEmojilengthAll = response.data.filter(
           (emoji: any) => emoji.commentId === commentId
         );
-        
-        //Set cho modal
-        setEmojiUserIdModal(dataEmojilengthAll)
 
         if (dataEmojilengthAll) {
           setSelectedEmojiLength(dataEmojilengthAll.length);
-
+          // aggregatedEmojiLengths được sử dụng để tính tổng số emoji của từng loại (Like, Haha, Wow, Angry, Love) theo commentId.
           const aggregatedEmojiLengths: any = {};
 
           // Iterate over each emoji record and aggregate the totals by commentId
@@ -259,7 +270,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
               emoji.emojilengthLove || 0;
           });
 
-          // Transform aggregated results into an array
+          // Chuyển aggregatedEmojiLengths thành Array
           const aggregatedEmojiArray = Object.keys(aggregatedEmojiLengths).map(
             (commentId) => ({
               commentId,
@@ -271,6 +282,10 @@ const EmojiPage: React.FC<EmojiProps> = ({
         if (emojiData) {
           setSelectedEmoji(emojiData.emoji);
         }
+        //Set cho modal
+        setEmojiUserIdModal(response.data.filter(
+          (emoji: any) => emoji.commentId === commentId
+        ));
       } catch (error) {
         console.error("Failed to fetch emojis:", error);
       }
@@ -309,7 +324,10 @@ const EmojiPage: React.FC<EmojiProps> = ({
   };
 
   const mapEmojiToComponent = () => {
-    const emojisForComment = aggregatedEmojiArray.find((emojiData: any) => emojiData.commentId === commentId);
+    //aggregatedEmojiArray lấy ra từng count của emoji để xếp hạng xem emoji nào nhiều nhất thì xếp hạng 1 ... 
+    const emojisForComment = aggregatedEmojiArray.find(
+      (emojiData: any) => emojiData.commentId === commentId
+    );
 
     if (emojisForComment) {
       const emojiCounts = [
@@ -322,11 +340,13 @@ const EmojiPage: React.FC<EmojiProps> = ({
 
       emojiCounts.sort((a, b) => b.count - a.count);
 
-      return emojiCounts.slice(0, 3).map((emojiData, index) => (
-        emojiData.count > 0 ? (
-          <div key={index}>{getEmojiComponent(emojiData.type)}</div>
-        ) : null
-      ));
+      return emojiCounts
+        .slice(0, 3)
+        .map((emojiData, index) =>
+          emojiData.count > 0 ? (
+            <div key={index}>{getEmojiComponent(emojiData.type)}</div>
+          ) : null
+        );
     }
 
     return null;
@@ -490,15 +510,18 @@ const EmojiPage: React.FC<EmojiProps> = ({
 
   return (
     <>
-        <ShowInfoEmojiModal
-          isOpen={open}
-          onClose={() => setOpen(false)}
-          emojiUserIdModal={emojiUserIdModal}
-        />
+      <ShowInfoEmojiModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        emojiUserIdModal={emojiUserIdModal}
+      />
       <div className="flex ml-12 items-center mb-2 border-b-2">
-        <div className="hover:underline flex items-center cursor-pointer" onClick={() => setOpen(true)}>
-        {mapEmojiToComponent()}
-        <p className="ml-1 text-[#7f8286]"> {selectedEmojiLength}</p>
+        <div
+          className="hover:underline flex items-center cursor-pointer"
+          onClick={() => setOpen(true)}
+        >
+          {mapEmojiToComponent()}
+          <p className="ml-1 text-[#7f8286]"> {selectedEmojiLength}</p>
         </div>
         <div className="ml-3 flex item-center text-[#7f8286]">
           {responsesLength} phản hồi

@@ -30,7 +30,7 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { usePathname,useParams } from "next/navigation";
+import { usePathname, useParams } from "next/navigation";
 // import useCart from "@/hooks/use-cart";
 import Menu from "@/components/(client)/slider-item/menu";
 import axios from "axios";
@@ -38,19 +38,26 @@ import { mainnavcolor } from "@/components/(client)/color/color";
 import Image from "next/image";
 import "./mainnav.css";
 import SearchPage from "@/components/(client)/search/search";
-import { useCurrentUser } from "@/hooks/use-current-user";
 import { UserButton } from "@/components/auth/user-button";
 import useLike from "@/hooks/client/use-like";
 import useCart from "@/hooks/client/use-cart";
 import { cn } from "@/lib/utils";
+import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
+import useCartdb from "@/hooks/client/db/use-cart-db";
 
-const MainNav = () => {
+interface mainNavProps {
+  role: string;
+  userId: string;
+}
+
+const MainNav: React.FC<mainNavProps> = ({ role, userId }) => {
   const pathname = usePathname();
-  const param = useParams()
-  const [isMounted, setIsMounted] = useState(false);
-  const userId = useCurrentUser();
+  const param = useParams();
   const cart = useCart();
+  const cartdb = useCartdb();
   const like = useLike();
+  const [isMounted, setIsMounted] = useState(false);
+  const [alertGuestModal, setAlertGuestModal] = useState(false);
   //List-onClick-onBlur click mở blur ra ngoài thì tắt đi
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -62,6 +69,19 @@ const MainNav = () => {
   const handleOutsideClick = useCallback((event: MouseEvent) => {
     if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
       setIsOpen(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (role !== "GUEST" && userId) {
+      const fetchData = async () => {
+        try {
+          await cartdb.fetchCartItems(userId);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      fetchData();
     }
   }, []);
 
@@ -87,19 +107,26 @@ const MainNav = () => {
   const [totalCoins, setTotalCoins] = useState<number>(0);
   const [rotation, setRotation] = useState<number>(0);
 
-    useEffect(() => {
-      // Load totalCoins from the server using GET request
-      axios.get(`/api/${param.storeId}/wheelSpin`).then((response) => {
-        setTotalCoins(response.data.totalCoins);
-        setRotation(response.data.latestRotation);
-      });
-    }, []);
+  useEffect(() => {
+    if (role !== "GUEST" && userId) {
+    // Load totalCoins from the server using GET request
+    axios.get(`/api/${param.storeId}/wheelSpin`).then((response) => {
+      setTotalCoins(response.data.totalCoins);
+      setRotation(response.data.latestRotation);
+    });
+      }
+  }, [param.storeId, role]);
 
   if (!isMounted) {
     return null;
   }
   return (
     <>
+      <AlertGuestModal
+        isOpen={alertGuestModal}
+        onClose={() => setAlertGuestModal(false)}
+      />
+
       <Link href="/home-product">
         <div className="hidden xl:block">
           <div className="bg-[#333]  p-1  rounded-lg">
@@ -155,7 +182,7 @@ const MainNav = () => {
       {/* Menu */}
       {isOpen && (
         <div className="absolute top-[-40px] z-40 " ref={menuRef}>
-          <Menu showCategories={true}/>
+          <Menu showCategories={true} />
         </div>
       )}
 
@@ -172,7 +199,7 @@ const MainNav = () => {
           </div>
         </div>
       </div>
-      
+
       <div className="ml-1.5 md:ml-0">
         <SearchPage />
       </div>
@@ -208,51 +235,102 @@ const MainNav = () => {
                         Mua sắm thỏa ga
                       </div>
                       <p className="text-sm leading-tight text-muted-foreground">
-                        Việc mua sắm sẽ tiết kiệm nhiều chi phí được giảm giá qua từng khung giờ.
+                        Việc mua sắm sẽ tiết kiệm nhiều chi phí được giảm giá
+                        qua từng khung giờ.
                       </p>
                     </a>
                   </NavigationMenuLink>
                 </li>
 
                 <>
-                  <Link href="/spinlucky" className=" hidden md:block">
-                    <div className={mainnavcolor.bghover}>
-                      <div className="flex flex-col md:flex-row items-center">
-                        <div className="basis-1/2 md:flex gap-2">
-                          <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center relative">
-                            <Gift className="w-6 h-6 text-white" />
-                            <span className="w-5 h-5 absolute bg-[#e53350] rounded-full  left-[10px] top-0 -mt[1px] shadow-lg">
-                              <p className="text-[0.75rem] text-center font-semibold text-white">
-                                {rotation}{" "}
-                              </p>
-                            </span>
-                          </div>
-                          <div className="basis-2/3">
-                            <div
-                              className={cn(
-                                "text-xs w-20",
-                                pathname === `/spinlucky`
-                                  ? "text-sky-500"
-                                  : "text-white"
-                              )}
-                            >
-                              Vòng quay
+                  {(role !== "GUEST" && userId) ? (
+                    <>
+                      <Link href="/spinlucky" className=" hidden md:block">
+                        <div className={mainnavcolor.bghover}>
+                          <div className="flex flex-col md:flex-row items-center">
+                            <div className="basis-1/2 md:flex gap-2">
+                              <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center relative">
+                                <Gift className="w-6 h-6 text-white" />
+                                <span className="w-5 h-5 absolute bg-[#e53350] rounded-full  left-[10px] top-0 -mt[1px] shadow-lg">
+                                  <p className="text-[0.75rem] text-center font-semibold text-white">
+                                    {rotation}{" "}
+                                  </p>
+                                </span>
+                              </div>
+                              <div className="basis-2/3">
+                                <div
+                                  className={cn(
+                                    "text-xs w-20",
+                                    pathname === `/spinlucky`
+                                      ? "text-sky-500"
+                                      : "text-white"
+                                  )}
+                                >
+                                  Vòng quay
+                                </div>
+                                <div
+                                  className={cn(
+                                    "text-xs w-20",
+                                    pathname === `/spinlucky`
+                                      ? "text-sky-500"
+                                      : "text-white"
+                                  )}
+                                >
+                                  May Mắn
+                                </div>
+                              </div>
                             </div>
-                            <div
-                              className={cn(
-                                "text-xs w-20",
-                                pathname === `/spinlucky`
-                                  ? "text-sky-500"
-                                  : "text-white"
-                              )}
-                            >
-                              May Mắn
+                          </div>
+                        </div>
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <div
+                        className=" hidden md:block cursor-pointer"
+                        onClick={() => {
+                          setAlertGuestModal(true);
+                        }}
+                      >
+                        <div className={mainnavcolor.bghover}>
+                          <div className="flex flex-col md:flex-row items-center">
+                            <div className="basis-1/2 md:flex gap-2">
+                              <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center relative">
+                                <Gift className="w-6 h-6 text-white" />
+                                <span className="w-5 h-5 absolute bg-[#e53350] rounded-full  left-[10px] top-0 -mt[1px] shadow-lg">
+                                  <p className="text-[0.75rem] text-center font-semibold text-white">
+                                    {rotation}{" "}
+                                  </p>
+                                </span>
+                              </div>
+                              <div className="basis-2/3">
+                                <div
+                                  className={cn(
+                                    "text-xs w-20",
+                                    pathname === `/spinlucky`
+                                      ? "text-sky-500"
+                                      : "text-white"
+                                  )}
+                                >
+                                  Vòng quay
+                                </div>
+                                <div
+                                  className={cn(
+                                    "text-xs w-20",
+                                    pathname === `/spinlucky`
+                                      ? "text-sky-500"
+                                      : "text-white"
+                                  )}
+                                >
+                                  May Mắn
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </Link>
+                    </>
+                  )}
 
                   <Link href="/ticket" className=" hidden md:block">
                     <div className={mainnavcolor.bghover}>
@@ -332,22 +410,50 @@ const MainNav = () => {
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
-
-      <Link href="/game" className="hidden xl:block">
-        <div className={mainnavcolor.bghover}>
-          <div className="flex flex-col md:flex-row justify-center  items-center">
-            <div className="basis-1/2 md:flex gap-2">
-              <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center ">
-                <Gamepad2 className=" text-white w-6 h-6" />
+      {(role !== "GUEST" && userId) ? (
+        <>
+          <Link href="/game" className="hidden xl:block">
+            <div className={mainnavcolor.bghover}>
+              <div className="flex flex-col md:flex-row justify-center  items-center">
+                <div className="basis-1/2 md:flex gap-2">
+                  <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center ">
+                    <Gamepad2 className=" text-white w-6 h-6" />
+                  </div>
+                  <div className="basis-2/3">
+                    <div className="text-xs flex gap-4 text-white">
+                      Trò chơi
+                    </div>
+                    <div className="text-xs w-14 text-white">giải trí</div>
+                  </div>
+                </div>
               </div>
-              <div className="basis-2/3">
-                <div className="text-xs flex gap-4 text-white">Trò chơi</div>
-                <div className="text-xs w-14 text-white">giải trí</div>
+            </div>
+          </Link>
+        </>
+      ) : (
+        <>
+          <div
+            className="hidden xl:block cursor-pointer"
+            onClick={() => setAlertGuestModal(true)}
+          >
+            <div className={mainnavcolor.bghover}>
+              <div className="flex flex-col md:flex-row justify-center  items-center">
+                <div className="basis-1/2 md:flex gap-2">
+                  <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center ">
+                    <Gamepad2 className=" text-white w-6 h-6" />
+                  </div>
+                  <div className="basis-2/3">
+                    <div className="text-xs flex gap-4 text-white">
+                      Trò chơi
+                    </div>
+                    <div className="text-xs w-14 text-white">giải trí</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </Link>
+        </>
+      )}
 
       <Link href="/like-product" className="hidden md:flex">
         <button>
@@ -373,30 +479,34 @@ const MainNav = () => {
       </Link>
 
       <Link href="/cart">
-      <button>
-        <div className={mainnavcolor.bghover_gio_hang}>
-          <div className="flex flex-col md:flex-row justify-center  items-center relative">
-            <div className="basis-1/2 md:flex gap-2">
-              <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center ">
-                <ShoppingBag className="w-6 h-6 text-white" />
-                <span className="w-5 h-5 absolute bg-[#e53350] rounded-full left-[10px] -top-[5px] md:top-0 bg-opacity-90 -mt[1px] shadow-lg">
-                  <p className="text-[0.75rem] m-auto text-white font-semibold">
-                    {cart.items.length}
-                  </p>
-                </span>
-              </div>
-              <div className="basis-2/3 hidden md:block">
-                <div className="text-xs flex gap-4 text-white">Giỏ</div>
-                <div className="text-xs text-white">hàng</div>
+        <button>
+          <div className={mainnavcolor.bghover_gio_hang}>
+            <div className="flex flex-col md:flex-row justify-center  items-center relative">
+              <div className="basis-1/2 md:flex gap-2">
+                <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center ">
+                  <ShoppingBag className="w-6 h-6 text-white" />
+                  <span className="w-5 h-5 absolute bg-[#e53350] rounded-full left-[10px] -top-[5px] md:top-0 bg-opacity-90 -mt[1px] shadow-lg">
+                    <p className="text-[0.75rem] m-auto text-white font-semibold">
+                      {(role !== "GUEST" && userId) ? (
+                        <>{cartdb.items.length || "0"}</>
+                      ) : (
+                        <>{cart.items.length}</>
+                      )}
+                    </p>
+                  </span>
+                </div>
+                <div className="basis-2/3 hidden md:block">
+                  <div className="text-xs flex gap-4 text-white">Giỏ</div>
+                  <div className="text-xs text-white">hàng</div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </button>
+        </button>
       </Link>
 
       <div className="flex items-center justify-between">
-        {userId?.id && userId?.email ? (
+        {userId ? (
           <div className="flex items-center space-x-2">
             <div className="p-2 rounded-full hover:bg-gray-300 hover:bg-opacity-50 cursor-pointer">
               <Bell className="size-5 text-amber-400" />

@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import prismadb from "@/lib/prismadb";
-import { v4 as uuidv4 } from "uuid";
+import cuid from 'cuid';
 import { getVerificationTokenByEmail } from "@/data/verification-token";
 import { getPasswordResetTokenByEmail } from "@/data/password-reset-token";
 import { getTwoFactorTokenByEmail } from "@/data/two-factor-token";
@@ -32,7 +32,8 @@ export const genearteTwoFactorToken = async (email: string) => {
 };
 
 export const generatePasswordResetToken = async (email: string) => {
-  const token = uuidv4();
+  //Token = với cuid là token sẽ được tạo theo phương thúc CUID tạo ra 1 id 25 ký tự
+  const token = cuid();
   const expires = new Date(new Date().getTime() + 5 *60 * 1000);
 
   const exitstingToken = await getPasswordResetTokenByEmail(email);
@@ -57,7 +58,8 @@ export const generatePasswordResetToken = async (email: string) => {
 };
 
 export const generateVerificationToken = async (email: string) => {
-  const token = uuidv4();
+  //Token = với cuid là token sẽ được tạo theo phương thúc CUID tạo ra 1 id 25 ký tự
+  const token = cuid();
   const expires = new Date(new Date().getTime() + 5 *60 * 1000);
 
   const exitstingToken = await getVerificationTokenByEmail(email);

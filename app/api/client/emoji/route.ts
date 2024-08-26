@@ -132,7 +132,15 @@ export async function GET(req: Request) {
   try {
     const emojidata = await prismadb.emoji.findMany({
       include: {
-        user: true
+        user: {
+          include: {
+            imageCredential: {
+              orderBy: {
+                createdAt: 'desc',
+              },
+            },
+          },
+        },
       }
     });
 
