@@ -51,9 +51,9 @@ const CheckoutLocalModal: React.FC<SeePaymentDangerProps> = ({
       }
       //GetPrice dựa vào size
       const getPriceMatchColorandSize = () => {
-        const sizePrice = getSizePrice(itemInCart || "", itemInCart?.size);
-        const colorPrice = getColorPrice(itemInCart, itemInCart?.color);
-        return Math.ceil(Math.max(sizePrice, colorPrice));
+        const { price: priceSize, percentpromotion: percentpromotionSize } = getSizePrice(itemInCart || "", itemInCart?.size);
+        const { price: priceColor, percentpromotion: percentpromotionColor } = getColorPrice(itemInCart, itemInCart?.color);
+        return Math.ceil(Math.max(priceSize, priceColor));
       };
 
       //GetPrice dựa vào color

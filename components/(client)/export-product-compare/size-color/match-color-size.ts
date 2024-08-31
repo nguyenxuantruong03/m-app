@@ -1,66 +1,68 @@
 import { Product } from "@/types/type";
 
- //PriceSale: Dụa vào select size mà lấy ra price có giảm percentpromotion
- export const getSizePrice = (data:Product, size: string | null) => {
-    switch (size) {
-      case data?.productdetail?.size5?.value:
-        return (
-          data?.productdetail?.price5 *
-          ((100 - data?.productdetail?.percentpromotion5) / 100)
-        );
-      case data?.productdetail?.size4?.value:
-        return (
-          data?.productdetail?.price4 *
-          ((100 - data?.productdetail?.percentpromotion4) / 100)
-        );
-      case data?.productdetail?.size3?.value:
-        return (
-          data?.productdetail?.price3 *
-          ((100 - data?.productdetail?.percentpromotion3) / 100)
-        );
-      case data?.productdetail?.size2?.value:
-        return (
-          data?.productdetail?.price2 *
-          ((100 - data?.productdetail?.percentpromotion2) / 100)
-        );
-      default:
-        return (
-          data?.productdetail?.price1 *
-          ((100 - data?.productdetail?.percentpromotion1) / 100)
-        );
-    }
-  };
+ //PriceSale: Dụa vào select size mà lấy ra price có giảm percentpromotion và lấy ra percentpromotion
+ export const getSizePrice = (data: Product, size: string | null) => {
+  switch (size) {
+    case data?.productdetail?.size5?.value:
+      return {
+        price: data?.productdetail?.price5 * ((100 - data?.productdetail?.percentpromotion5) / 100),
+        percentpromotion: data?.productdetail?.percentpromotion5
+      };
+    case data?.productdetail?.size4?.value:
+      return {
+        price: data?.productdetail?.price4 * ((100 - data?.productdetail?.percentpromotion4) / 100),
+        percentpromotion: data?.productdetail?.percentpromotion4
+      };
+    case data?.productdetail?.size3?.value:
+      return {
+        price: data?.productdetail?.price3 * ((100 - data?.productdetail?.percentpromotion3) / 100),
+        percentpromotion: data?.productdetail?.percentpromotion3
+      };
+    case data?.productdetail?.size2?.value:
+      return {
+        price: data?.productdetail?.price2 * ((100 - data?.productdetail?.percentpromotion2) / 100),
+        percentpromotion: data?.productdetail?.percentpromotion2
+      };
+    default:
+      return {
+        price: data?.productdetail?.price1 * ((100 - data?.productdetail?.percentpromotion1) / 100),
+        percentpromotion: data?.productdetail?.percentpromotion1
+      };
+  }
+};
 
-  //ColorSale: Dụa vào select color mà lấy ra price có giảm percentpromotion
-  export const getColorPrice = (data:Product, color: string | null) => {
+
+  //ColorSale: Dụa vào select color mà lấy ra price có giảm percentpromotion và lấy ra percentpromotion
+  export const getColorPrice = (data: Product, color: string | null) => {
     switch (color) {
       case data?.productdetail?.color5?.value:
-        return (
-          data?.productdetail?.price5 *
-          ((100 - data?.productdetail?.percentpromotion5) / 100)
-        );
+        return {
+          price: data?.productdetail?.price5 * ((100 - data?.productdetail?.percentpromotion5) / 100),
+          percentpromotion: data?.productdetail?.percentpromotion5
+        };
       case data?.productdetail?.color4?.value:
-        return (
-          data?.productdetail?.price4 *
-          ((100 - data?.productdetail?.percentpromotion4) / 100)
-        );
+        return {
+          price: data?.productdetail?.price4 * ((100 - data?.productdetail?.percentpromotion4) / 100),
+          percentpromotion: data?.productdetail?.percentpromotion4
+        };
       case data?.productdetail?.color3?.value:
-        return (
-          data?.productdetail?.price3 *
-          ((100 - data?.productdetail?.percentpromotion3) / 100)
-        );
+        return {
+          price: data?.productdetail?.price3 * ((100 - data?.productdetail?.percentpromotion3) / 100),
+          percentpromotion: data?.productdetail?.percentpromotion3
+        };
       case data?.productdetail?.color2?.value:
-        return (
-          data?.productdetail?.price2 *
-          ((100 - data?.productdetail?.percentpromotion2) / 100)
-        );
+        return {
+          price: data?.productdetail?.price2 * ((100 - data?.productdetail?.percentpromotion2) / 100),
+          percentpromotion: data?.productdetail?.percentpromotion2
+        };
       default:
-        return (
-          data?.productdetail?.price1 *
-          ((100 - data?.productdetail?.percentpromotion1) / 100)
-        );
+        return {
+          price: data?.productdetail?.price1 * ((100 - data?.productdetail?.percentpromotion1) / 100),
+          percentpromotion: data?.productdetail?.percentpromotion1
+        };
     }
   };
+  
 
   //PriceOle: Đây là dựa vào select size để lấy là price nhưng ko có giảm percentpromotion
   export const getSizeOldPrice = (data:Product, size: string | null) => {

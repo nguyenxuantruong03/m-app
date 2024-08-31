@@ -130,6 +130,7 @@ const useCartdb = create<CartStore>((set, get) => ({
   addItem: async (data: Product, quantity: number, warranty: string | null, userId: string,selectedSize: string,selectedColor: string) => {
     const response = await axios.post("/api/client/cart/addItem", {
       productId: data.id,
+      productName: data.name,
       quantity,
       userId,
       size: selectedSize,
@@ -156,8 +157,6 @@ const useCartdb = create<CartStore>((set, get) => ({
     set((state) => ({
       items: [...state.items, cartItem],
     }));
-
-    toast.success("Sản phẩm đã thêm vào giỏ hàng.");
   },
 
   removeSelectedItems: async (userId: string) => {
@@ -222,7 +221,6 @@ const useCartdb = create<CartStore>((set, get) => ({
           item.id === id ? { ...item, quantity: updatedItem.quantity } : item
         ),
       }));
-  
     } catch (error) {
       // Rollback the optimistic update if there was an error
       set((state) => ({

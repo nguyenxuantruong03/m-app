@@ -193,6 +193,8 @@ export async function GET(
         productdetailId
       },
       include:{
+        imagesalientfeatures: true,
+        images: true,
         productdetail: {
           include: {
             category: true,
@@ -208,8 +210,7 @@ export async function GET(
             size5: true,
           }
         },
-        imagesalientfeatures: true,
-        images: true
+        
       }
     });
 

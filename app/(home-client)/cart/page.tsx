@@ -34,9 +34,9 @@ const CartPage = () => {
   //Sort Item CartDb nếu quantity nào bằng 0 thì nằm cuối
   const sortItemCartDb = cartdb.items.sort((a, b) => {
     const getQuantityMatchColorandSize = (item: any) => {
-      const sizePrice = getSizePrice(item.product, item.size);
-      const colorPrice = getColorPrice(item.product, item.color);
-      const highestPrice = Math.max(sizePrice, colorPrice);
+      const { price: priceSize, percentpromotion: percentpromotionSize } = getSizePrice(item.product, item.size);
+      const { price: priceColor, percentpromotion: percentpromotionColor } = getColorPrice(item.product, item.color);
+      const highestPrice = Math.max(priceSize, priceColor);
 
       if (
         highestPrice ===
@@ -79,9 +79,9 @@ const CartPage = () => {
   //Sort Item Cart Local nếu quantity nào bằng 0 thì nằm cuối
   const sortItemCartLocal = cart.items.sort((a, b) => {
     const getQuantityMatchColorandSize = (item: any) => {
-      const sizePrice = getSizePrice(item.product, item.size);
-      const colorPrice = getColorPrice(item.product, item.color);
-      const highestPrice = Math.max(sizePrice, colorPrice);
+      const { price: priceSize, percentpromotion: percentpromotionSize } = getSizePrice(item.product, item.size);
+      const { price: priceColor, percentpromotion: percentpromotionColor } = getColorPrice(item.product, item.color);
+      const highestPrice = Math.max(priceSize, priceColor);
 
       if (
         highestPrice ===

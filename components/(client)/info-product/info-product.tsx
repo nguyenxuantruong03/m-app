@@ -1,5 +1,5 @@
 "use client";
-import { Product } from "@/types/type";
+import { CartItemType, FavoriteProduct, Product } from "@/types/type";
 import Currency from "@/components/ui/currency";
 import {
   Banknote,
@@ -20,7 +20,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { Infoproductcolor } from "@/components/(client)/color/color";
 import Image from "next/image";
-import useLike from "@/hooks/client/use-like";
+import useFavorite from "@/hooks/client/db/use-favorite";
 import "./info-product.css";
 import { debounce } from "lodash";
 import { Button } from "@/components/ui/button";
@@ -33,7 +33,8 @@ import {
   getSizeOldPrice,
   getSizePrice,
 } from "../export-product-compare/size-color/match-color-size";
-import cuid from 'cuid';
+import cuid from "cuid";
+import axios from "axios";
 
 interface InfoProductProps {
   data: Product;
@@ -43,8 +44,8 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
   const cartdb = useCartdb();
   const router = useRouter();
   const user = useCurrentUser();
-  const like = useLike();
-  const { addItem, removeItem, items } = useLike();
+  const favorite = useFavorite();
+  const { addItem, removeItem, items } = useFavorite();
   const [quantity, setQuantity] = useState(1);
   const [isEditingQuantity, setIsEditingQuantity] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -55,7 +56,26 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
   const [errorColor, setErrorColor] = useState("");
   const [errorQuantityInventory, setErrorsetQuantityInventory] = useState("");
   const [loadingLimitQuantity, setLoadingLimitQuantity] = useState(false);
+  const [loadingRetchdataFavorite, setLoadingFetchDataFavorite] =
+    useState(false);
+
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (user?.role !== "GUEST" && user?.id) {
+      const fetchData = async () => {
+        try {
+          setLoadingFetchDataFavorite(true);
+          await favorite.fetchFavoriteItems(user?.id || "");
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setLoadingFetchDataFavorite(false);
+        }
+      };
+      fetchData();
+    }
+  }, []);
 
   const sizes = [
     data.productdetail.size1,
@@ -78,9 +98,9 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
 
   //Quantity: Thêm hàm để lấy số lượng dựa trên giá cao nhất
   const getQuantityMatchColorandSize = () => {
-    const sizePrice = getSizePrice(data, selectedSize);
-    const colorPrice = getColorPrice(data, selectedColor);
-    const highestPrice = Math.max(sizePrice, colorPrice);
+    const { price: priceSize } = getSizePrice(data, selectedSize);
+    const { price: priceColor } = getColorPrice(data, selectedColor);
+    const highestPrice = Math.max(priceSize, priceColor);
 
     switch (highestPrice) {
       case data.productdetail.price5 *
@@ -108,9 +128,11 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
 
   //Sau đó check dựa trên 2 select đã chọn xem size và color đã chọn cái này giá cao thì lấy
   const getPriceMatchColorandSize = () => {
-    const sizePrice = getSizePrice(data, selectedSize);
-    const colorPrice = getColorPrice(data, selectedColor);
-    return Math.ceil(Math.max(sizePrice, colorPrice));
+    const { price: priceSize, percentpromotion: percentpromotionSize } =
+      getSizePrice(data, selectedSize);
+    const { price: priceColor, percentpromotion: percentpromotionColor } =
+      getColorPrice(data, selectedColor);
+    return Math.ceil(Math.max(priceSize, priceColor));
   };
 
   //Dụa vào select lấy ra ra chưa sale
@@ -120,22 +142,100 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
     return Math.ceil(Math.max(sizeOldPrice, colorOldPrice));
   };
 
-  //Handle add like và sử dụng debounce sau 1 giay mới được add được thêm vào giỏ hàng ngăn chặn hành vi spam
-  const debouncedHandleIconClick = debounce((productId: string) => {
-    const isLiked = items.some((item) => item.id === productId);
+  //-------------------Favorite Product-----------------------
+  //Handle add favorite và sử dụng debounce sau 1 giay mới được add được thêm vào giỏ hàng ngăn chặn hành vi spam
+  const debouncedHandleIconClick = debounce(
+    async (
+      productId: string,
+      productName: string,
+      selectedSize: string | null,
+      selectedColor: string | null
+    ) => {
+      //Check favorite coi tất cả giá trị so sánh có tìm ra được được favoriteProduct không nếu có thì lấy id của favorite.
+      const favoriteData = favorite.items.find(
+        (item) =>
+          item.productName === productName &&
+          item.productId === productId &&
+          (selectedSize
+            ? item.selectedSize === selectedSize
+            : item.selectedSize === data.productdetail.size1.value) &&
+          (selectedColor
+            ? item.selectedColor === selectedColor
+            : item.selectedColor === data.productdetail.color1.value)
+      );
+      try {
+        setLoadingFetchDataFavorite(true);
+        setErrorSize("");
+        setErrorColor("");
+        if (favoriteData && favoriteData.id) {
+          //Khi remove đảm bảo phải có Selectedsize và Selectedcolor nếu không thì ko có select nào hết auto chọn cái đầu tiên
+          if (!selectedSize && selectedColor) {
+            setErrorSize("Hãy chọn size sản phẩm cần xóa!");
+            return;
+          }
 
-    if (isLiked) {
-      removeItem(productId);
-    } else {
-      addItem(data, user?.id);
-    }
-  }, 1000);
+          if (selectedSize && !selectedColor) {
+            setErrorColor("Hãy chọn color sản phẩm cần xóa!");
+            return;
+          }
+          //remove favoriteProduct
+          await removeItem(favoriteData.id, user?.id || "");
+        } else {
+          //Khi add đảm bảo phải có Selectedsize và Selectedcolor nếu không thì ko có select nào hết auto chọn cái đầu tiên
+          if (!selectedSize && selectedColor) {
+            setErrorSize("Hãy chọn size sản phẩm cần lưu!");
+            return;
+          }
 
-  const handleIconClick = (productId: string) => {
-    debouncedHandleIconClick(productId);
+          if (selectedSize && !selectedColor) {
+            setErrorColor("Hãy chọn color sản phẩm cần lưu!");
+            return;
+          }
+          
+          //CUID: tạo ra một 1 id theo CUID tránh checked trùng với nhau
+          const idFavorite = cuid();
+          const favoriteProduct: FavoriteProduct = {
+            id: idFavorite,
+            productId: productId,
+            productName: data.name,
+            product: data,
+            userId: user?.id || "",
+            selectedSize: selectedSize || data.productdetail.size1.value,
+            selectedColor: selectedColor || data.productdetail.color1.value,
+          };
+
+          //add favoriteProduct
+          await addItem(favoriteProduct);
+        }
+      } catch (error) {
+        toast.error(
+          favoriteData
+            ? `Không thể xóa lưu sản phẩm!`
+            : `Không thể lưu sản phẩm!`
+        );
+      } finally {
+        setLoadingFetchDataFavorite(false);
+      }
+    },
+    1000
+  );
+
+  const handleIconClick = (
+    productId: string,
+    productName: string,
+    selectedSize: string | null,
+    selectedColor: string | null
+  ) => {
+    debouncedHandleIconClick(
+      productId,
+      productName,
+      selectedSize,
+      selectedColor
+    );
   };
 
-  const onAddtoCart: MouseEventHandler<HTMLButtonElement> = (event) => {
+  //-------------------Add Cart-----------------------
+  const onAddtoCart: MouseEventHandler<HTMLButtonElement> = async (event) => {
     if (user?.role !== "GUEST" && user?.id) {
       //CheckError
       if (!selectedSize && !selectedColor) {
@@ -154,41 +254,85 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
       }
       // Ngặn chặn sự kiện Click liên tục
       event.stopPropagation();
-      //GetraWarantity đã chọn
-      const warranty = cartdb.getSelectedItemWarranty(data.id);
 
-      const productWithQuantity = {
-        ...data,
-        quantity,
-      };
+      // Use toast.promise to handle the async operation
+      await toast.promise(
+        axios.post("/api/client/cart/get-items", {
+          userId: user?.id || "",
+        }),
+        {
+          loading: "Loading...",
+          success: (response) => {
+            const cartItemData = response.data;
 
-      //Tìm Kiếm trong cardb lấy ra data.id === item.id bởi vì data.id tôi truyền vào là product.id.  Và phải cần giống color và size nữa thì mới tìm ra
-      const existingCartItem = cartdb.items.find(
-        (item) =>
-          item.id === data.id &&
-          item.size === selectedSize &&
-          item.color === selectedColor
+            const matchingItem = cartItemData.find(
+              (item: CartItemType) =>
+                item.product.name === data.name &&
+                item.product.id === data.id &&
+                item.size === selectedSize &&
+                item.color === selectedColor
+            );
+
+            const matchingQuantity = matchingItem ? matchingItem.quantity : 0;
+
+            const compareQuantityExistingAndAvailable =
+              matchingQuantity >= maxQuantity && maxQuantity > 0;
+
+            if (compareQuantityExistingAndAvailable) {
+              throw new Error("Số lượng sản phẩm trong kho không đủ!");
+            }
+
+            //GetraWarantity đã chọn
+            const warranty = cartdb.getSelectedItemWarranty(data.id);
+
+            const productWithQuantity = {
+              ...data,
+              quantity,
+            };
+
+            //Tìm Kiếm trong cardb lấy ra data.id === item.id bởi vì data.id tôi truyền vào là product.id.  Và phải cần giống color và size nữa thì mới tìm ra
+            const existingCartItem = cartdb.items.find(
+              (item) =>
+                item.product.name === data.name &&
+                item.product.id === data.id &&
+                item.size === selectedSize &&
+                item.color === selectedColor
+            );
+            try {
+              setLoading(true);
+              if (existingCartItem) {
+                //Nếu sản phẩm hiện tại đã có thì chỉ việc update
+                cartdb.updateQuantity(
+                  existingCartItem.id,
+                  existingCartItem.quantity + quantity,
+                  warranty,
+                  user?.id || ""
+                );
+              } else {
+                //Thêm sản phẩm
+                cartdb.addItem(
+                  productWithQuantity,
+                  quantity,
+                  warranty,
+                  user?.id || "",
+                  selectedSize,
+                  selectedColor
+                ); // Pass the user here
+              }
+            } catch (error) {
+              toast.error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
+            } finally {
+              setLoading(false);
+            }
+            return existingCartItem
+              ? "Sản phẩm đã được cập nhật số lượng trong giỏ hàng."
+              : "Sản phẩm đã thêm vào giỏ hàng.";
+          },
+          error: (error) => {
+            return error.message || "Failed to add product to cart!";
+          },
+        }
       );
-      if (existingCartItem) {
-        //Nếu sản phẩm hiện tại đã có thì chỉ việc update
-        cartdb.updateQuantity(
-          existingCartItem.id,
-          existingCartItem.quantity + quantity,
-          warranty,
-          user?.id || ""
-        );
-        toast.success("Sản phẩm đã được cập nhật số lượng trong giỏ hàng.");
-      } else {
-        //Thêm sản phẩm
-        cartdb.addItem(
-          productWithQuantity,
-          quantity,
-          warranty,
-          user?.id || "",
-          selectedSize,
-          selectedColor
-        ); // Pass the user here
-      }
     } else {
       //CheckError
       if (!selectedSize && !selectedColor) {
@@ -210,8 +354,8 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
       //GetraWarantity đã chọn
       const warrantySelect = cart.getSelectedItemWarranty(data.id);
       const warranty = warrantySelect ?? "";
-      const size = selectedSize
-      const color = selectedColor
+      const size = selectedSize;
+      const color = selectedColor;
       // Ngặn chặn sự kiện Click liên tục
       event.stopPropagation();
       const productWithQuantity = {
@@ -230,32 +374,40 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
           item.size === selectedSize &&
           item.color === selectedColor
       );
-
-      if (existingCartItem) {
-        //Nếu sản phẩm hiện tại đã có thì chỉ việc update
-        const existingQuantity = existingCartItem.quantity ?? 0;
-        cart.updateQuantity(
-          existingCartItem.cartId,
-          existingQuantity + quantity,
-          warranty,
-          user?.id || ""
-        );
-        toast.success("Sản phẩm đã được cập nhật số lượng trong giỏ hàng.");
-      } else {
-        //Thêm sản phẩm
-        cart.addItem(
-          productWithQuantity || "",
-          quantity,
-          warranty,
-          user?.id || "",
-          selectedSize,
-          selectedColor
-        );
+      try {
+        setLoading(true);
+        if (existingCartItem) {
+          //Nếu sản phẩm hiện tại đã có thì chỉ việc update
+          const existingQuantity = existingCartItem.quantity ?? 0;
+          await cart.updateQuantity(
+            existingCartItem.cartId,
+            existingQuantity + quantity,
+            warranty,
+            user?.id || ""
+          );
+          toast.success("Sản phẩm đã được cập nhật số lượng trong giỏ hàng.");
+        } else {
+          //Thêm sản phẩm
+          await cart.addItem(
+            productWithQuantity || "",
+            quantity,
+            warranty,
+            user?.id || "",
+            selectedSize,
+            selectedColor
+          );
+        }
+      } catch (error) {
+        toast.error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
+      } finally {
+        setLoading(false);
       }
     }
   };
 
-  const onAddtoPushCart: MouseEventHandler<HTMLButtonElement> = (event) => {
+  const onAddtoPushCart: MouseEventHandler<HTMLButtonElement> = async (
+    event
+  ) => {
     setLoading(true);
     if (user?.role !== "GUEST" && user?.id) {
       //CheckError
@@ -275,42 +427,85 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
       }
       // Ngặn chặn sự kiện Click liên tục
       event.stopPropagation();
-      //GetraWarantity đã chọn
-      const warranty = cartdb.getSelectedItemWarranty(data.id);
-      const productWithQuantity = {
-        ...data,
-        quantity,
-      };
+      // Use toast.promise to handle the async operation
+      await toast.promise(
+        axios.post("/api/client/cart/get-items", {
+          userId: user?.id || "",
+        }),
+        {
+          loading: "Loading...",
+          success: (response) => {
+            const cartItemData = response.data;
 
-      //Tìm Kiếm trong cardb lấy ra data.id === item.id bởi vì data.id tôi truyền vào là product.id. Và phải cần giống color và size nữa thì mới tìm ra
-      const existingCartItem = cartdb.items.find(
-        (item) =>
-          item.id === data.id &&
-          item.size === selectedSize &&
-          item.color === selectedColor
+            const matchingItem = cartItemData.find(
+              (item: CartItemType) =>
+                item.product.name === data.name &&
+                item.product.id === data.id &&
+                item.size === selectedSize &&
+                item.color === selectedColor
+            );
+
+            const matchingQuantity = matchingItem ? matchingItem.quantity : 0;
+
+            const compareQuantityExistingAndAvailable =
+              matchingQuantity >= maxQuantity && maxQuantity > 0;
+
+            if (compareQuantityExistingAndAvailable) {
+              throw new Error("Số lượng sản phẩm trong kho không đủ!");
+            }
+
+            //GetraWarantity đã chọn
+            const warranty = cartdb.getSelectedItemWarranty(data.id);
+
+            const productWithQuantity = {
+              ...data,
+              quantity,
+            };
+
+            //Tìm Kiếm trong cardb lấy ra data.id === item.id bởi vì data.id tôi truyền vào là product.id.  Và phải cần giống color và size nữa thì mới tìm ra
+            const existingCartItem = cartdb.items.find(
+              (item) =>
+                item.product.name === data.name &&
+                item.product.id === data.id &&
+                item.size === selectedSize &&
+                item.color === selectedColor
+            );
+            try {
+              setLoading(true);
+              if (existingCartItem) {
+                //Nếu sản phẩm hiện tại đã có thì chỉ việc update
+                cartdb.updateQuantity(
+                  existingCartItem.id,
+                  existingCartItem.quantity + quantity,
+                  warranty,
+                  user?.id || ""
+                );
+              } else {
+                //Thêm sản phẩm
+                cartdb.addItem(
+                  productWithQuantity,
+                  quantity,
+                  warranty,
+                  user?.id || "",
+                  selectedSize,
+                  selectedColor
+                ); // Pass the user here
+              }
+            } catch (error) {
+              toast.error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
+            } finally {
+              setLoading(false);
+              router.push("/cart");
+            }
+            return existingCartItem
+              ? "Sản phẩm đã được cập nhật số lượng trong giỏ hàng."
+              : "Sản phẩm đã thêm vào giỏ hàng.";
+          },
+          error: (error) => {
+            return error.message || "Failed to add product to cart!";
+          },
+        }
       );
-
-      if (existingCartItem) {
-        //Nếu sản phẩm hiện tại đã có thì chỉ việc update
-        cartdb.updateQuantity(
-          existingCartItem.id,
-          existingCartItem.quantity + quantity,
-          warranty,
-          user?.id || ""
-        );
-        toast.success("Sản phẩm đã được cập nhật số lượng trong giỏ hàng.");
-      } else {
-        //Thêm sản phẩm
-        cartdb.addItem(
-          productWithQuantity,
-          quantity,
-          warranty,
-          user?.id || "",
-          selectedSize,
-          selectedColor
-        ); // Pass the user here
-      }
-      router.push("/cart");
     } else {
       //CheckError
       if (!selectedSize && !selectedColor) {
@@ -327,23 +522,23 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
         setErrorsetQuantityInventory("Sản phẩm đã hết hàng trong kho!");
         return;
       }
-       //Tạo ra CUID để có thể những sản phẩm khác nhau sẽ ko bị checked chung
-       const cartId = cuid();
-       //GetraWarantity đã chọn
-       const warrantySelect = cart.getSelectedItemWarranty(data.id);
-       const warranty = warrantySelect ?? "";
-       const size = selectedSize
-       const color = selectedColor
-       // Ngặn chặn sự kiện Click liên tục
-       event.stopPropagation();
-       const productWithQuantity = {
-         ...data,
-         quantity,
-         size,
-         color,
-         warranty,
-         cartId
-       };
+      //Tạo ra CUID để có thể những sản phẩm khác nhau sẽ ko bị checked chung
+      const cartId = cuid();
+      //GetraWarantity đã chọn
+      const warrantySelect = cart.getSelectedItemWarranty(data.id);
+      const warranty = warrantySelect ?? "";
+      const size = selectedSize;
+      const color = selectedColor;
+      // Ngặn chặn sự kiện Click liên tục
+      event.stopPropagation();
+      const productWithQuantity = {
+        ...data,
+        quantity,
+        size,
+        color,
+        warranty,
+        cartId,
+      };
       //Tìm Kiếm trong cart lấy ra data.id === item.id bởi vì data.id tôi truyền vào là product.id. Và phải cần giống color và size nữa thì mới tìm ra
       const existingCartItem = cart.items.find(
         (item) =>
@@ -468,6 +663,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
                 setSelectedSize(
                   selectedSize === size?.value ? "" : size?.value
                 );
+                setLoading(false);
                 setErrorSize("");
                 setQuantity(1);
                 setLoadingLimitQuantity(false);
@@ -504,7 +700,9 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
                 setSelectedColor(
                   selectedColor === color?.value ? "" : color?.value
                 );
+                setLoading(false);
                 setErrorColor("");
+                setErrorSize("");
                 setQuantity(1);
                 setLoadingLimitQuantity(false);
               }}
@@ -543,7 +741,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp} // Handle mouse leaving the button
           onClick={() => handleClick(decrementQuantity)} // Single click to decrement
-          className="w-10 h-10 flex justify-center items-center border rounded-md border-gray-300 bg-white hover:bg-gray-200 hover:bg-opacity-50 hover:text-slate-900"
+          className="w-10 h-10 flex justify-center items-center text-black border rounded-md border-gray-300 bg-white hover:bg-gray-200 hover:bg-opacity-50 hover:text-slate-900"
         >
           -
         </Button>
@@ -551,7 +749,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
           <Input
             disabled={loading || quantityInventory}
             type="number"
-            className="text-xl mx-1 border rounded-md border-gray-300 w-20 text-center bg-white focus:bg-white hover:bg-white"
+            className="text-xl mx-1 border rounded-md border-gray-300 w-20 text-center bg-white focus:bg-white hover:bg-white text-black"
             value={quantity}
             onChange={handleQuantityChange}
             onBlur={() => setIsEditingQuantity(false)}
@@ -559,7 +757,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
           />
         ) : (
           <span
-            className="text-xl mx-1 border rounded-md border-gray-300 w-20 py-1.5 text-center bg-white cursor-pointer"
+            className="text-xl mx-1 border rounded-md border-gray-300 w-20 py-1.5 text-center bg-white cursor-pointer text-black"
             onClick={() => setIsEditingQuantity(true)}
           >
             {quantity}
@@ -572,7 +770,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp} // Handle mouse leaving the button
           onClick={() => handleClick(incrementQuantity)} // Single click to decrement
-          className="w-10 h-10 flex justify-center items-center border rounded-md border-gray-300 bg-white hover:bg-gray-200 hover:bg-opacity-50 hover:text-slate-900"
+          className="w-10 h-10 flex text-black justify-center items-center border rounded-md border-gray-300 bg-white hover:bg-gray-200 hover:bg-opacity-50 hover:text-slate-900"
         >
           +
         </Button>
@@ -609,7 +807,28 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
             disabled={quantityInventory || loading}
             className="gap-x-2 hover:text-yellow-500 bg-red-600 hover:bg-red-500"
           >
-            <ShoppingBasket />
+            <ShoppingBasket
+              className={`${
+                user?.role !== "GUEST" && user?.id
+                  ? cartdb.items.some(
+                      (item) =>
+                        item.product.name === data.name &&
+                        item.product.id === data.id &&
+                        item.size === selectedSize &&
+                        item.color === selectedColor
+                    )
+                    ? "active-cart"
+                    : ""
+                  : cart.items.some(
+                      (item) =>
+                        item.id === data.id &&
+                        item.size === selectedSize &&
+                        item.color === selectedColor
+                    )
+                  ? "active-cart"
+                  : ""
+              }`}
+            />
           </Button>
         ) : (
           <Button
@@ -617,19 +836,58 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
             disabled={quantityInventory || loading}
             className="gap-x-2 hover:text-yellow-500 bg-gray-300 hover:bg-gray-200"
           >
-            <ShoppingBasket />
+            <ShoppingBasket
+              className={`${
+                user?.role !== "GUEST" && user?.id
+                  ? cartdb.items.some(
+                      (item) =>
+                        item.product.name === data.name &&
+                        item.product.id === data.id &&
+                        item.size === selectedSize &&
+                        item.color === selectedColor
+                    )
+                    ? "active-cart"
+                    : ""
+                  : cart.items.some(
+                      (item) =>
+                        item.id === data.id &&
+                        item.size === selectedSize &&
+                        item.color === selectedColor
+                    )
+                  ? "active-cart"
+                  : ""
+              }`}
+            />
           </Button>
         )}
 
         <Button
-          disabled={loading}
-          className="gap-x-2 bg-gray-300 text-gray-600 hover:bg-gray-200 hover:text-red-500"
+          disabled={loading || loadingRetchdataFavorite}
+          className={`${
+            user?.role === "GUEST" || !user?.id
+              ? "hidden"
+              : "gap-x-2 bg-gray-300 text-gray-600 hover:bg-gray-200 hover:text-red-500"
+          }`}
         >
           <Heart
             className={` ${
-              like.items.some((item) => item.id === data.id) ? "active" : ""
+              favorite.items.some(
+                (item) =>
+                  item.productName === data.name &&
+                  item.productId === data.id &&
+                  (selectedSize
+                    ? item.selectedSize === selectedSize
+                    : item.selectedSize === data.productdetail.size1.value) &&
+                  (selectedColor
+                    ? item.selectedColor === selectedColor
+                    : item.selectedColor === data.productdetail.color1.value)
+              )
+                ? "active"
+                : ""
             }`}
-            onClick={() => handleIconClick(data.id)}
+            onClick={() =>
+              handleIconClick(data.id, data.name, selectedSize, selectedColor)
+            }
           />
         </Button>
         {/* Check xem quantity đó còn hàng ko */}
@@ -640,7 +898,28 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
           >
             <div className="flex text-lg items-center gap-x-2 pl-[2.25] md:w-full justify-center">
               Hết hàng
-              <ShoppingCart />
+              <ShoppingCart
+                className={`${
+                  user?.role !== "GUEST" && user?.id
+                    ? cartdb.items.some(
+                        (item) =>
+                          item.product.name === data.name &&
+                          item.product.id === data.id &&
+                          item.size === selectedSize &&
+                          item.color === selectedColor
+                      )
+                      ? "active-cart"
+                      : ""
+                    : cart.items.some(
+                        (item) =>
+                          item.id === data.id &&
+                          item.size === selectedSize &&
+                          item.color === selectedColor
+                      )
+                    ? "active-cart"
+                    : ""
+                }`}
+              />
             </div>
           </Button>
         ) : (
@@ -651,7 +930,28 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
           >
             <div className="flex text-lg items-center gap-x-2 pl-[2.25] md:w-full justify-center">
               Mua ngay
-              <ShoppingCart />
+              <ShoppingCart
+                className={`${
+                  user?.role !== "GUEST" && user?.id
+                    ? cartdb.items.some(
+                        (item) =>
+                          item.product.name === data.name &&
+                          item.product.id === data.id &&
+                          item.size === selectedSize &&
+                          item.color === selectedColor
+                      )
+                      ? "active-cart"
+                      : ""
+                    : cart.items.some(
+                        (item) =>
+                          item.id === data.id &&
+                          item.size === selectedSize &&
+                          item.color === selectedColor
+                      )
+                    ? "active-cart"
+                    : ""
+                }`}
+              />
             </div>
           </Button>
         )}

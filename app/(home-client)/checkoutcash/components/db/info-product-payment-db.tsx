@@ -41,9 +41,9 @@ const InfoProductPaymentDb: React.FC<CartItemProps> = ({
 
   //GetPrice dựa vào size
   const getPriceMatchColorandSize = () => {
-    const sizePrice = getSizePrice(data.product, data.size);
-    const colorPrice = getColorPrice(data.product, data.color);
-    return Math.ceil(Math.max(sizePrice, colorPrice));
+    const { price: priceSize, percentpromotion: percentpromotionSize } = getSizePrice(data.product, data.size);
+    const { price: priceColor, percentpromotion: percentpromotionColor } = getColorPrice(data.product, data.color);
+    return Math.ceil(Math.max(priceSize, priceColor));
   };
 
   //GetPrice dựa vào color
@@ -55,9 +55,9 @@ const InfoProductPaymentDb: React.FC<CartItemProps> = ({
 
   //Quantity: Thêm hàm để lấy số lượng dựa trên giá cao nhất
   const getQuantityMatchColorandSize = () => {
-    const sizePrice = getSizePrice(data.product, data.size);
-    const colorPrice = getColorPrice(data.product, data.color);
-    const highestPrice = Math.max(sizePrice, colorPrice);
+    const { price: priceSize, percentpromotion: percentpromotionSize } = getSizePrice(data.product, data.size);
+    const { price: priceColor, percentpromotion: percentpromotionColor } = getColorPrice(data.product, data.color);
+    const highestPrice = Math.max(priceSize, priceColor);
 
     switch (highestPrice) {
       case data.product.productdetail.price5 *

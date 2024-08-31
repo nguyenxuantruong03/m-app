@@ -126,7 +126,7 @@ const Navbar = () => {
               className={`list ${activeIndex === 3 ? "active" : ""}`}
               onClick={() => handleItemClick(3)}
             >
-              <Link href="/like-product">
+              <Link href="/favorite-product">
                 <span className="icon">
                   <Heart />
                 </span>

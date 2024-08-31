@@ -30,7 +30,7 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { usePathname, useParams } from "next/navigation";
+import { usePathname, useParams, useRouter } from "next/navigation";
 // import useCart from "@/hooks/use-cart";
 import Menu from "@/components/(client)/slider-item/menu";
 import axios from "axios";
@@ -39,7 +39,7 @@ import Image from "next/image";
 import "./mainnav.css";
 import SearchPage from "@/components/(client)/search/search";
 import { UserButton } from "@/components/auth/user-button";
-import useLike from "@/hooks/client/use-like";
+import useFavorite from "@/hooks/client/db/use-favorite";
 import useCart from "@/hooks/client/use-cart";
 import { cn } from "@/lib/utils";
 import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
@@ -53,9 +53,10 @@ interface mainNavProps {
 const MainNav: React.FC<mainNavProps> = ({ role, userId }) => {
   const pathname = usePathname();
   const param = useParams();
+  const router = useRouter();
   const cart = useCart();
   const cartdb = useCartdb();
-  const like = useLike();
+  const favorite = useFavorite();
   const [isMounted, setIsMounted] = useState(false);
   const [alertGuestModal, setAlertGuestModal] = useState(false);
   //List-onClick-onBlur click mở blur ra ngoài thì tắt đi
@@ -72,11 +73,16 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId }) => {
     }
   }, []);
 
+  const handleOpenAlertGuest = () => {
+    setAlertGuestModal(true);
+  };
+
   useEffect(() => {
     if (role !== "GUEST" && userId) {
       const fetchData = async () => {
         try {
           await cartdb.fetchCartItems(userId);
+          await favorite.fetchFavoriteItems(userId);
         } catch (error) {
           console.error(error);
         }
@@ -109,12 +115,12 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId }) => {
 
   useEffect(() => {
     if (role !== "GUEST" && userId) {
-    // Load totalCoins from the server using GET request
-    axios.get(`/api/${param.storeId}/wheelSpin`).then((response) => {
-      setTotalCoins(response.data.totalCoins);
-      setRotation(response.data.latestRotation);
-    });
-      }
+      // Load totalCoins from the server using GET request
+      axios.get(`/api/${param.storeId}/wheelSpin`).then((response) => {
+        setTotalCoins(response.data.totalCoins);
+        setRotation(response.data.latestRotation);
+      });
+    }
   }, [param.storeId, role]);
 
   if (!isMounted) {
@@ -243,94 +249,53 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId }) => {
                 </li>
 
                 <>
-                  {(role !== "GUEST" && userId) ? (
-                    <>
-                      <Link href="/spinlucky" className=" hidden md:block">
-                        <div className={mainnavcolor.bghover}>
-                          <div className="flex flex-col md:flex-row items-center">
-                            <div className="basis-1/2 md:flex gap-2">
-                              <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center relative">
-                                <Gift className="w-6 h-6 text-white" />
-                                <span className="w-5 h-5 absolute bg-[#e53350] rounded-full  left-[10px] top-0 -mt[1px] shadow-lg">
-                                  <p className="text-[0.75rem] text-center font-semibold text-white">
-                                    {rotation}{" "}
-                                  </p>
-                                </span>
-                              </div>
-                              <div className="basis-2/3">
-                                <div
-                                  className={cn(
-                                    "text-xs w-20",
-                                    pathname === `/spinlucky`
-                                      ? "text-sky-500"
-                                      : "text-white"
-                                  )}
-                                >
-                                  Vòng quay
-                                </div>
-                                <div
-                                  className={cn(
-                                    "text-xs w-20",
-                                    pathname === `/spinlucky`
-                                      ? "text-sky-500"
-                                      : "text-white"
-                                  )}
-                                >
-                                  May Mắn
-                                </div>
-                              </div>
-                            </div>
+                  <div
+                    onClick={() => {
+                      if (role !== "GUEST" && userId) {
+                        router.push("/spinlucky");
+                      } else {
+                        handleOpenAlertGuest();
+                      }
+                    }}
+                    className=" hidden md:block"
+                  >
+                    <div className={mainnavcolor.bghover}>
+                      <div className="flex flex-col md:flex-row items-center">
+                        <div className="basis-1/2 md:flex gap-2">
+                          <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center relative">
+                            <Gift className="w-6 h-6 text-white" />
+                            <span className="w-5 h-5 absolute bg-[#e53350] rounded-full  left-[10px] top-0 -mt[1px] shadow-lg">
+                              <p className="text-[0.75rem] text-center font-semibold text-white">
+                                {rotation}{" "}
+                              </p>
+                            </span>
                           </div>
-                        </div>
-                      </Link>
-                    </>
-                  ) : (
-                    <>
-                      <div
-                        className=" hidden md:block cursor-pointer"
-                        onClick={() => {
-                          setAlertGuestModal(true);
-                        }}
-                      >
-                        <div className={mainnavcolor.bghover}>
-                          <div className="flex flex-col md:flex-row items-center">
-                            <div className="basis-1/2 md:flex gap-2">
-                              <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center relative">
-                                <Gift className="w-6 h-6 text-white" />
-                                <span className="w-5 h-5 absolute bg-[#e53350] rounded-full  left-[10px] top-0 -mt[1px] shadow-lg">
-                                  <p className="text-[0.75rem] text-center font-semibold text-white">
-                                    {rotation}{" "}
-                                  </p>
-                                </span>
-                              </div>
-                              <div className="basis-2/3">
-                                <div
-                                  className={cn(
-                                    "text-xs w-20",
-                                    pathname === `/spinlucky`
-                                      ? "text-sky-500"
-                                      : "text-white"
-                                  )}
-                                >
-                                  Vòng quay
-                                </div>
-                                <div
-                                  className={cn(
-                                    "text-xs w-20",
-                                    pathname === `/spinlucky`
-                                      ? "text-sky-500"
-                                      : "text-white"
-                                  )}
-                                >
-                                  May Mắn
-                                </div>
-                              </div>
+                          <div className="basis-2/3">
+                            <div
+                              className={cn(
+                                "text-xs w-20",
+                                pathname === `/spinlucky`
+                                  ? "text-sky-500"
+                                  : "text-white"
+                              )}
+                            >
+                              Vòng quay
+                            </div>
+                            <div
+                              className={cn(
+                                "text-xs w-20",
+                                pathname === `/spinlucky`
+                                  ? "text-sky-500"
+                                  : "text-white"
+                              )}
+                            >
+                              May Mắn
                             </div>
                           </div>
                         </div>
                       </div>
-                    </>
-                  )}
+                    </div>
+                  </div>
 
                   <Link href="/ticket" className=" hidden md:block">
                     <div className={mainnavcolor.bghover}>
@@ -410,52 +375,42 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId }) => {
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
-      {(role !== "GUEST" && userId) ? (
-        <>
-          <Link href="/game" className="hidden xl:block">
-            <div className={mainnavcolor.bghover}>
-              <div className="flex flex-col md:flex-row justify-center  items-center">
-                <div className="basis-1/2 md:flex gap-2">
-                  <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center ">
-                    <Gamepad2 className=" text-white w-6 h-6" />
-                  </div>
-                  <div className="basis-2/3">
-                    <div className="text-xs flex gap-4 text-white">
-                      Trò chơi
-                    </div>
-                    <div className="text-xs w-14 text-white">giải trí</div>
-                  </div>
-                </div>
+
+      <div
+        onClick={() => {
+          if (role !== "GUEST" && userId) {
+            router.push("/game");
+          } else {
+            handleOpenAlertGuest();
+          }
+        }}
+        className="hidden xl:block"
+      >
+        <div className={mainnavcolor.bghover}>
+          <div className="flex flex-col md:flex-row justify-center  items-center">
+            <div className="basis-1/2 md:flex gap-2">
+              <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center ">
+                <Gamepad2 className=" text-white w-6 h-6" />
               </div>
-            </div>
-          </Link>
-        </>
-      ) : (
-        <>
-          <div
-            className="hidden xl:block cursor-pointer"
-            onClick={() => setAlertGuestModal(true)}
-          >
-            <div className={mainnavcolor.bghover}>
-              <div className="flex flex-col md:flex-row justify-center  items-center">
-                <div className="basis-1/2 md:flex gap-2">
-                  <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center ">
-                    <Gamepad2 className=" text-white w-6 h-6" />
-                  </div>
-                  <div className="basis-2/3">
-                    <div className="text-xs flex gap-4 text-white">
-                      Trò chơi
-                    </div>
-                    <div className="text-xs w-14 text-white">giải trí</div>
-                  </div>
-                </div>
+              <div className="basis-2/3">
+                <div className="text-xs flex gap-4 text-white">Trò chơi</div>
+                <div className="text-xs w-14 text-white">giải trí</div>
               </div>
             </div>
           </div>
-        </>
-      )}
+        </div>
+      </div>
 
-      <Link href="/like-product" className="hidden md:flex">
+      <div
+        onClick={() => {
+          if (role !== "GUEST" && userId) {
+            router.push("/favorite-product");
+          } else {
+            handleOpenAlertGuest();
+          }
+        }}
+        className={`${role === "GUEST" || !userId ? "hidden" : "hidden md:flex"}`}
+      >
         <button>
           <div className={mainnavcolor.bghover_gio_hang}>
             <div className="flex flex-col md:flex-row justify-center  items-center relative">
@@ -464,7 +419,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId }) => {
                   <Heart className="w-6 h-6 text-white" />
                   <span className="w-5 h-5 absolute bg-[#e53350] rounded-full left-[10px] -top-[5px] md:top-0 bg-opacity-90 -mt[1px] shadow-lg">
                     <p className="text-[0.75rem] m-auto text-white font-semibold">
-                      {like.items.length}
+                      {favorite.items.length}
                     </p>
                   </span>
                 </div>
@@ -476,7 +431,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId }) => {
             </div>
           </div>
         </button>
-      </Link>
+      </div>
 
       <Link href="/cart">
         <button>
@@ -487,7 +442,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId }) => {
                   <ShoppingBag className="w-6 h-6 text-white" />
                   <span className="w-5 h-5 absolute bg-[#e53350] rounded-full left-[10px] -top-[5px] md:top-0 bg-opacity-90 -mt[1px] shadow-lg">
                     <p className="text-[0.75rem] m-auto text-white font-semibold">
-                      {(role !== "GUEST" && userId) ? (
+                      {role !== "GUEST" && userId ? (
                         <>{cartdb.items.length || "0"}</>
                       ) : (
                         <>{cart.items.length}</>

@@ -83,12 +83,12 @@ const PaymentSuccess = () => {
       }
       //GetPrice dựa vào size
       const getPriceMatchColorandSize = () => {
-        const sizePrice = getSizePrice(
+        const { price: priceSize, percentpromotion: percentpromotionSize } = getSizePrice(
           itemInCart?.product || "",
           itemInCart?.size
         );
-        const colorPrice = getColorPrice(itemInCart.product, itemInCart?.color);
-        return Math.ceil(Math.max(sizePrice, colorPrice));
+        const { price: priceColor, percentpromotion: percentpromotionColor } = getColorPrice(itemInCart.product, itemInCart?.color);
+        return Math.ceil(Math.max(priceSize, priceColor));
       };
 
       const itemTotalPrice = getPriceMatchColorandSize() * quantity;

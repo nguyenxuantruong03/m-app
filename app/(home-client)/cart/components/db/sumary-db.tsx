@@ -44,7 +44,7 @@ const SumaryDb: React.FC<SumaryProps> = ({
     try {
       setLoadingChange(true);
       await cartdb.removeSelectedItems(userId);
-        // Sau khi xóa, đảm bảo rằng các trạng thái được cập nhật
+      // Sau khi xóa, đảm bảo rằng các trạng thái được cập nhật
       await cartdb.fetchCartItems(userId); // Làm mới dữ liệu giỏ hàng
       toast.success("Tất cả lựa chọn trong giỏ hàng đã được xóa.");
     } catch (error) {
@@ -63,33 +63,51 @@ const SumaryDb: React.FC<SumaryProps> = ({
   //Trả về item.id và quantity của sản phẩm
   const getItemQuantities = cartdb.items.reduce((acc, item) => {
     const getQuantityMatchColorandSize = () => {
-      const sizePrice = getSizePrice(item.product, item.size);
-      const colorPrice = getColorPrice(item.product, item.color);
-      const highestPrice = Math.max(sizePrice, colorPrice);
-  
-      if (highestPrice === item.product.productdetail.price5 * ((100 - item.product.productdetail.percentpromotion5) / 100)) {
+      const { price: priceSize, percentpromotion: percentpromotionSize } =
+        getSizePrice(item.product, item.size);
+      const { price: priceColor, percentpromotion: percentpromotionColor } =
+        getColorPrice(item.product, item.color);
+      const highestPrice = Math.max(priceSize, priceColor);
+
+      if (
+        highestPrice ===
+        item.product.productdetail.price5 *
+          ((100 - item.product.productdetail.percentpromotion5) / 100)
+      ) {
         return item.product.productdetail.quantity5;
       }
-      if (highestPrice === item.product.productdetail.price4 * ((100 - item.product.productdetail.percentpromotion4) / 100)) {
+      if (
+        highestPrice ===
+        item.product.productdetail.price4 *
+          ((100 - item.product.productdetail.percentpromotion4) / 100)
+      ) {
         return item.product.productdetail.quantity4;
       }
-      if (highestPrice === item.product.productdetail.price3 * ((100 - item.product.productdetail.percentpromotion3) / 100)) {
+      if (
+        highestPrice ===
+        item.product.productdetail.price3 *
+          ((100 - item.product.productdetail.percentpromotion3) / 100)
+      ) {
         return item.product.productdetail.quantity3;
       }
-      if (highestPrice === item.product.productdetail.price2 * ((100 - item.product.productdetail.percentpromotion2) / 100)) {
+      if (
+        highestPrice ===
+        item.product.productdetail.price2 *
+          ((100 - item.product.productdetail.percentpromotion2) / 100)
+      ) {
         return item.product.productdetail.quantity2;
       }
       return item.product.productdetail.quantity1;
     };
-    
+
     const quantity = getQuantityMatchColorandSize();
-    
+
     if (quantity > 0) {
       acc[item.id] = quantity;
     }
     return acc;
   }, {} as Record<string, number>);
-  
+
   // Total Coins
   useEffect(() => {
     // Load totalCoins from the server using GET request
@@ -128,12 +146,15 @@ const SumaryDb: React.FC<SumaryProps> = ({
       }
       //GetPrice dựa vào size
       const getPriceMatchColorandSize = () => {
-        const sizePrice = getSizePrice(
+        const { price: priceSize, percentpromotion: percentpromotionSize } = getSizePrice(
           itemInCart?.product || "",
           itemInCart?.size
         );
-        const colorPrice = getColorPrice(itemInCart.product, itemInCart?.color);
-        return Math.ceil(Math.max(sizePrice, colorPrice));
+        const { price: priceColor, percentpromotion: percentpromotionColor } = getColorPrice(
+          itemInCart.product,
+          itemInCart?.color
+        );
+        return Math.ceil(Math.max(priceSize, priceColor));
       };
 
       //GetPriceOld dựa vào color
@@ -209,25 +230,31 @@ const SumaryDb: React.FC<SumaryProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-x-3">
             {/* Input ngăn chặn sản phẩm "hết hàng" quantity ===0 và "Không đủ hàng" nếu quantity hiện tại lớn hơn quantity trong kho  */}
-          <input
+            <input
               className="w-4 h-4"
               type="checkbox"
               checked={
                 cartdb.items.length > 0 &&
-                cartdb.selectedItems.length === cartdb.items
-                  .filter(item => getItemQuantities[item.id] !== undefined && getItemQuantities[item.id] >= (item.quantity || 0))
-                  .length
+                cartdb.selectedItems.length ===
+                  cartdb.items.filter(
+                    (item) =>
+                      getItemQuantities[item.id] !== undefined &&
+                      getItemQuantities[item.id] >= (item.quantity || 0)
+                  ).length
               }
               onChange={() => {
                 const selectableItems = cartdb.items
-                  .filter(item => getItemQuantities[item.id] !== undefined && getItemQuantities[item.id] >= (item.quantity || 0))
-                  .map(item => item.id);
+                  .filter(
+                    (item) =>
+                      getItemQuantities[item.id] !== undefined &&
+                      getItemQuantities[item.id] >= (item.quantity || 0)
+                  )
+                  .map((item) => item.id);
 
                 cartdb.toggleSelectAll(selectableItems);
               }}
               disabled={loadingChange}
             />
-
 
             <h2 className="text-lg font-medium text-gray-900">
               Chọn tất cả{" "}

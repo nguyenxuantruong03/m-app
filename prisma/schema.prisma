@@ -324,7 +324,7 @@ model Product {
   responsecomment      ResponseComment[]
   emoji                Emoji[]
   cartItem             CartItem[]
-  // CheckoutCashItem            CheckoutcashItem[]
+  favoriteProduct      FavoriteProduct[]
   createdAt            DateTime               @default(now())
   updatedAt            DateTime               @updatedAt
   productdetailId      String
@@ -346,15 +346,15 @@ model Image {
 }
 
 model CartItem {
-  id        String  @id @default(cuid())
-  userId    String
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  productId String
-  product   Product @relation(fields: [productId], references: [id])
-  size      String
-  color     String
-  quantity  Int
-  warranty  String?
+  id          String  @id @default(cuid())
+  userId      String
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product @relation(fields: [productId], references: [id])
+  size        String
+  color       String
+  quantity    Int
+  warranty    String?
 
   @@index([userId])
   @@index([productId])
@@ -372,7 +372,7 @@ model Order {
   name           String?     @default("")
   note           String?     @default("")
   gender         String?     @default("")
-  deliveryMethod String     @default("")
+  deliveryMethod String      @default("")
   email          String      @default("")
   userId         String?     @default("")
   user           User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -401,6 +401,22 @@ model OrderItem {
   updatedAt  DateTime @updatedAt
 
   @@index([orderId])
+  @@index([productId])
+}
+
+model FavoriteProduct {
+  id            String   @id
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id])
+  productName   String
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  selectedSize  String
+  selectedColor String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
   @@index([productId])
 }
 
@@ -633,6 +649,7 @@ model User {
   emoji                    Emoji[]
   cartItem                 CartItem[]
   order                    Order[]
+  favoritePoroduct         FavoriteProduct[]
   createdAt                DateTime               @default(now())
   updatedAt                DateTime               @updatedAt
 }

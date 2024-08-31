@@ -5,11 +5,14 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
+
 export const revalidate =86400
 const GamePage = () => {
   const user = useCurrentUser()
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
+  const [alertGuestModal, setAlertGuestModal] = useState(false);
 
   const handleClick2048 = () => {
     router.push("/game/2048");
@@ -34,6 +37,7 @@ const GamePage = () => {
 
   useEffect(() => {
     if(user?.role === "GUEST" || !user?.id){
+      setAlertGuestModal(true)
       router.push("/home-product")
     }
     setIsMounted(true);
@@ -45,6 +49,10 @@ const GamePage = () => {
 
   return (
     <Container>
+      <AlertGuestModal
+        isOpen={alertGuestModal}
+        onClose={() => setAlertGuestModal(false)}
+      />
       <div className="mt-40"> 
         <h1 className="text-center text-4xl font-bold my-5"> Trò Chơi nhận xu </h1>
       <div className="my-8 space-x-5 flex">

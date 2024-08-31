@@ -132,9 +132,9 @@ const CheckoutCash = () => {
     .filter((item) => cartdb.selectedItems.includes(item.id)) // Filter for selected items
     .sort((a, b) => {
       const getQuantityMatchColorandSize = (item: any) => {
-        const sizePrice = getSizePrice(item.product, item.size);
-        const colorPrice = getColorPrice(item.product, item.color);
-        const highestPrice = Math.max(sizePrice, colorPrice);
+        const { price: priceSize, percentpromotion: percentpromotionSize } = getSizePrice(item.product, item.size);
+        const { price: priceColor, percentpromotion: percentpromotionColor } = getColorPrice(item.product, item.color);
+        const highestPrice = Math.max(priceSize, priceColor);
 
         if (
           highestPrice ===
@@ -180,9 +180,9 @@ const CheckoutCash = () => {
     .filter((item) => cart.selectedItems.includes(item.cartId)) // Filter for selected items
     .sort((a, b) => {
       const getQuantityMatchColorandSize = (item: any) => {
-        const sizePrice = getSizePrice(item.product, item.size);
-        const colorPrice = getColorPrice(item.product, item.color);
-        const highestPrice = Math.max(sizePrice, colorPrice);
+        const { price: priceSize, percentpromotion: percentpromotionSize } = getSizePrice(item.product, item.size);
+        const { price: priceColor, percentpromotion: percentpromotionColor } = getColorPrice(item.product, item.color);
+        const highestPrice = Math.max(priceSize, priceColor);
 
         if (
           highestPrice ===
@@ -237,9 +237,9 @@ const CheckoutCash = () => {
       }
       //GetPrice dựa vào size
       const getPriceMatchColorandSize = () => {
-        const sizePrice = getSizePrice(itemInCart || "", itemInCart?.size);
-        const colorPrice = getColorPrice(itemInCart, itemInCart?.color);
-        return Math.ceil(Math.max(sizePrice, colorPrice));
+        const { price: priceSize, percentpromotion: percentpromotionSize } = getSizePrice(itemInCart || "", itemInCart?.size);
+        const { price: priceColor, percentpromotion: percentpromotionColor } = getColorPrice(itemInCart, itemInCart?.color);
+        return Math.ceil(Math.max(priceSize, priceColor));
       };
 
       //GetPriceOld dựa vào color
@@ -319,12 +319,12 @@ const CheckoutCash = () => {
       }
       //GetPrice dựa vào size
       const getPriceMatchColorandSize = () => {
-        const sizePrice = getSizePrice(
+        const { price: priceSize, percentpromotion: percentpromotionSize } = getSizePrice(
           itemInCart?.product || "",
           itemInCart?.size
         );
-        const colorPrice = getColorPrice(itemInCart.product, itemInCart?.color);
-        return Math.ceil(Math.max(sizePrice, colorPrice));
+        const { price: priceColor, percentpromotion: percentpromotionColor } = getColorPrice(itemInCart.product, itemInCart?.color);
+        return Math.ceil(Math.max(priceSize, priceColor));
       };
 
       //GetPrice dựa vào color

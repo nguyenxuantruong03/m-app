@@ -52,9 +52,9 @@ const Sumary: React.FC<SumaryProps> = ({
   //Trả về item.id và quantity của sản phẩm
   const getItemQuantities = cart.items.reduce((acc, item) => {
     const getQuantityMatchColorandSize = () => {
-      const sizePrice = getSizePrice(item, item.size);
-      const colorPrice = getColorPrice(item, item.color);
-      const highestPrice = Math.max(sizePrice, colorPrice);
+      const { price: priceSize, percentpromotion: percentpromotionSize } = getSizePrice(item, item.size);
+      const { price: priceColor, percentpromotion: percentpromotionColor } = getColorPrice(item, item.color);
+      const highestPrice = Math.max(priceSize, priceColor);
 
       if (
         highestPrice ===
@@ -107,9 +107,9 @@ const Sumary: React.FC<SumaryProps> = ({
       }
       //GetPrice dựa vào size
       const getPriceMatchColorandSize = () => {
-        const sizePrice = getSizePrice(itemInCart || "", itemInCart?.size);
-        const colorPrice = getColorPrice(itemInCart, itemInCart?.color);
-        return Math.ceil(Math.max(sizePrice, colorPrice));
+        const { price: priceSize, percentpromotion: percentpromotionSize } = getSizePrice(itemInCart || "", itemInCart?.size);
+        const { price: priceColor, percentpromotion: percentpromotionColor } = getColorPrice(itemInCart, itemInCart?.color);
+        return Math.ceil(Math.max(priceSize, priceColor));
       };
 
       //GetPriceOld dựa vào color

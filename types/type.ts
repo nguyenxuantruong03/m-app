@@ -18,15 +18,15 @@ export interface ImageBillboard {
   description: string;
 }
 
-export interface CartItemType  {
+export interface CartItemType {
   id: string;
   warranty: number;
   quantity: number;
   size: string;
   color: string;
   user: User;
-  product: Product
-};
+  product: Product;
+}
 
 export enum CategoryType {
   CATEGORY,
@@ -180,17 +180,16 @@ export interface Product {
   id: string;
   storeId: string;
   store: Store;
-  productType: ProductType; // Add this field to distinguish product type (Product1 or Product2)
+  productType: ProductType;
   name: string;
   heading: string;
   description: string;
-  sold        : number
+  sold: number;
   isFeatured: Boolean;
   isArchived: Boolean;
   images: Image[];
   imagesalientfeatures: Imagesalientfeaturesproduct[];
-  cartItem: CartItemType
-  // CheckoutCashItem: CheckoutcashItem[];
+  cartItem: CartItemType;
   productdetailId: string;
   quantity?: number;
   productdetail: ProductDetail;
@@ -204,33 +203,42 @@ export interface ProductCartLocal {
   name: string;
   heading: string;
   description: string;
-  sold        : number
+  sold: number;
   isFeatured: Boolean;
   warranty: string;
   isArchived: Boolean;
   images: Image[];
   cartId: string;
   imagesalientfeatures: Imagesalientfeaturesproduct[];
-  cartItem: CartItemType
-  // CheckoutCashItem: CheckoutcashItem[];
+  cartItem: CartItemType;
   productdetailId: string;
   quantity?: number;
   productdetail: ProductDetail;
-  size: string
-  color: string
+  size: string;
+  color: string;
+}
+
+export interface FavoriteProduct {
+  id: string;
+  productId: string;
+  product: Product;
+  productName: string;
+  userId: string;
+  selectedColor: string;
+  selectedSize: string;
 }
 
 export interface Order {
   id: string;
   orderItem: OrderItem[];
-  phone: string
-  address: string
-  adressOther: string
-  name: string
-  note: string
-  gender: string
-  deliveryMethod: string
-  email: string
+  phone: string;
+  address: string;
+  adressOther: string;
+  name: string;
+  note: string;
+  gender: string;
+  deliveryMethod: string;
+  email: string;
   isPaid: boolean;
   createdAt: Date;
 }
@@ -293,7 +301,6 @@ export interface Provinces {
   value: string;
   label: string;
 }
-
 
 //-------------------------Pacman---------------------------
 export type Character = {
