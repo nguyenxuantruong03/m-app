@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const formatter = new Intl.NumberFormat("de-DE",{
   style: 'currency',
-  currency: 'VND'
+  currency: 'VND',
 })
 
 

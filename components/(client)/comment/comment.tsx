@@ -12,7 +12,7 @@ import { AlertModal } from "@/components/modals/alert-modal";
 import CircleAvatar from "@/components/ui/circle-avatar";
 import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
 
-interface Comment {
+export interface Comment {
   rating: number;
   comment: string;
   productId: string;
@@ -1153,8 +1153,8 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                             <>
                               <CircleAvatar
                                 srcAvatar={
-                                  comment.user?.imageCredential[0]?.url ||
-                                  comment?.user?.image
+                                  comment?.user?.image ||
+                                  comment.user?.imageCredential[0]?.url 
                                 }
                                 srcFrame={comment?.user?.frameAvatar}
                                 isCitizen={comment?.user?.isCitizen}

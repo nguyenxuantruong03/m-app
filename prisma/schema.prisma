@@ -25,16 +25,15 @@ model Store {
   coupon         Coupon[]         @relation("StoreToCoupon")
   taxrate        TaxRate[]        @relation("StoreToTaxRate")
   shippingrates  ShippingRates[]  @relation("StoreToShippingRates")
-  // checkoutcash  Checkoutcash[]  @relation("StoreToCheckoutcash")
   productdetail  ProductDetail[]  @relation("StoreToDetailProductDetail")
   eventcalendar  EventCalendar[]  @relation("StoreToEventCalendar")
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
   sentEmailUser  SentEmailUser[]  @relation("StoreToSentEmailUser")
   caculateSalary CaculateSalary[] @relation("StoreCaculateSalary")
   wheelspin      WheelSpin[]      @relation("StoreToWheelSpin")
   system         System[]         @relation("StoreToSystem")
   favorite       Favorite[]       @relation("StoreToFavorite")
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
 }
 
 model Billboard {
@@ -346,42 +345,97 @@ model Image {
 }
 
 model CartItem {
-  id          String  @id @default(cuid())
-  userId      String
-  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  productId   String
-  product     Product @relation(fields: [productId], references: [id])
-  size        String
-  color       String
-  quantity    Int
-  warranty    String?
+  id        String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  size      String
+  color     String
+  quantity  Int
+  warranty  String?
 
   @@index([userId])
   @@index([productId])
 }
 
+enum StatusOrder {
+  Cho_xac_nhan
+  Soan_hang
+  Cho_lay_hang
+  Dang_giao
+  Giao_lai_hang
+  Danh_gia
+  Hoan_thanh
+  Da_giao
+  Da_huy
+  Tra_hang
+  Shipper_chuan_bi
+  Shipper_dang_den
+  Da_nhan_tra_hang
+  Nhan_tai_cua_hang
+  Soan_hang_nhan_tai_cua_hang
+  Da_soan_hang_xong
+  Da_nhan_tai_cua_hang
+}
+
 model Order {
-  id             String      @id @default(cuid())
-  storeId        String
-  store          Store       @relation("StoreToOrder", fields: [storeId], references: [id])
-  orderItem      OrderItem[]
-  isPaid         Boolean     @default(false)
-  phone          String      @default("")
-  address        String      @default("")
-  addressOther   String?     @default("")
-  name           String?     @default("")
-  note           String?     @default("")
-  gender         String?     @default("")
-  deliveryMethod String      @default("")
-  email          String      @default("")
-  userId         String?     @default("")
-  user           User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                 String               @id @default(cuid())
+  storeId            String
+  store              Store                @relation("StoreToOrder", fields: [storeId], references: [id])
+  orderItem          OrderItem[]
+  isPaid             Boolean              @default(false)
+  receiveCash        Boolean              @default(false)
+  phone              String               @default("")
+  address            String               @default("")
+  addressOther       String?              @default("")
+  name               String?              @default("")
+  note               String?              @default("")
+  gender             String?              @default("")
+  deliveryMethod     String               @default("")
+  email              String               @default("")
+  userId             String?              @default("")
+  user               User?                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status             StatusOrder          @default(Cho_xac_nhan)
+  statusOther        String?              @default("")
+  userIdStaff        String?              @default("")
+  userIdShipper      String?              @default("")
+  userIdRecieveDebt  String?              @default("")
+  debtShipper        Boolean              @default(false)
+  imagereturnProduct ImageReturnProduct[]
+  imageCustomer      CustomerImage[]
+  destiontionReturnProduct String?
+  returnProduct      Boolean?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([userId])
   @@index([storeId])
+}
+
+model CustomerImage {
+  id String @id @default(cuid())
+
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  url         String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([orderId])
+}
+
+model ImageReturnProduct {
+  id String @id @default(cuid())
+
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  url         String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([orderId])
 }
 
 model OrderItem {

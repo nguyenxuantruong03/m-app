@@ -234,18 +234,27 @@ export interface Order {
   phone: string;
   address: string;
   adressOther: string;
+  status: string;
   name: string;
   note: string;
+  userId: string;
   gender: string;
   deliveryMethod: string;
   email: string;
   isPaid: boolean;
+  returnProduct: boolean;
+  updatedAt: Date;
   createdAt: Date;
 }
 
 export interface OrderItem {
   id: string;
   pricesales: number;
+  product?: Product
+  size?: string;
+  color?: string;
+  quantity?: string;
+  warranty?: string
   isGift: boolean;
   createdAt: Date;
 }
@@ -300,6 +309,20 @@ export interface Emoji {
 export interface Provinces {
   value: string;
   label: string;
+}
+
+export interface Coupon {
+  id: string;
+  name: string
+  percent: number;
+  redeemby: Date;
+  maxredemptions: number;
+  imagecoupon : ImageCoupon[]
+}
+
+export interface ImageCoupon {
+  id: string;
+  url: string;
 }
 
 //-------------------------Pacman---------------------------

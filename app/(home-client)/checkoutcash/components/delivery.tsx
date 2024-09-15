@@ -35,6 +35,7 @@ interface DeliveryProps {
   isNoneSelectDb: boolean;
   userRole: string;
   userId: string;
+  loading: boolean;
 }
 const Delivery: React.FC<DeliveryProps> = ({
   deliveryOption,
@@ -66,7 +67,8 @@ const Delivery: React.FC<DeliveryProps> = ({
   isNoneSelect,
   isNoneSelectDb,
   userRole,
-  userId
+  userId,
+  loading
 }) => {
   const handleOptionChange = (option: DeliveryOption) => {
     setDeliveryOption(option);
@@ -85,7 +87,7 @@ const Delivery: React.FC<DeliveryProps> = ({
             checked={deliveryOption === "delivery"}
             onChange={() => handleOptionChange("delivery")}
             required
-            disabled={userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb}
+            disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
           />
           <label htmlFor="male" className="ml-2">
             Giao hàng tận nơi
@@ -100,7 +102,7 @@ const Delivery: React.FC<DeliveryProps> = ({
             checked={deliveryOption === "pickup"}
             onChange={() => handleOptionChange("pickup")}
             required
-            disabled={userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb}
+            disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
           />
           <label htmlFor="female" className="ml-2">
             Nhận tại cửa hàng
@@ -137,6 +139,7 @@ const Delivery: React.FC<DeliveryProps> = ({
           isNoneSelectDb={isNoneSelectDb}
           userRole={userRole}
           userId={userId}
+          loading={loading}
         />
       )}
       {deliveryOption === "pickup" && (

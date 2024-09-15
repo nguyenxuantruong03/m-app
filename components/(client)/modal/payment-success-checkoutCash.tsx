@@ -44,8 +44,8 @@ export const PaymentSuccessCheckoutCashModal: React.FC<
         .catch((error) => {
           toast.error(error);
         });
-      // Navigate to /delivery
-      router.push("/delivery");
+      // Navigate to /warehouse/package-product
+      router.push("/warehouse/package-product");
     }
   };
 

@@ -5,7 +5,9 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
     const body = await req.json();
+    const userId = await currentUser();
     const { rating, comment,productId  } = body;
+    
     if (!rating) {
       return new NextResponse(
         JSON.stringify({ error: "Rating is required!" }),
@@ -25,10 +27,10 @@ export async function POST(req: Request) {
       );
     }
     try {
-      const userId = await currentUser();
     if (!userId?.id) {
       return new NextResponse("Unauthenticated", { status: 403 });
     }
+
       const newComment = await prismadb.comment.create({
         data: {
           rating,

@@ -21,7 +21,9 @@ const OrderPage = async ({ params }: { params: { storeId: string } }) => {
           product: true,
         },
       },
-      user: true
+      user: true,
+      imagereturnProduct: true,
+      imageCustomer: true
     },
     orderBy: {
       createdAt: "desc",
@@ -36,7 +38,19 @@ const OrderPage = async ({ params }: { params: { storeId: string } }) => {
     emailcurrent: item.user?.email,
     namecurrent: item.user?.name,
     phonenumbercurrent: item.user?.phonenumber,
+    emailStaff: item.user?.id === item.userIdStaff ? item.user?.email : undefined,
+    emailShipper: item.user?.id === item.userIdShipper ? item.user?.email : undefined,
+    emailUserGetDebt: item.user?.id === item.userIdRecieveDebt ? item.user?.email : undefined,
+    nameStaff: item.user?.id === item.userIdStaff ? item.user?.name : undefined,
+    nameShipper: item.user?.id === item.userIdShipper ? item.user?.name : undefined,
+    nameUserGetDebt: item.user?.id === item.userIdRecieveDebt ? item.user?.name : undefined,
     addresscurrent: item.user?.address,
+    destiontionReturnProduct: item.destiontionReturnProduct,
+    imagereturnProduct: item.imagereturnProduct,
+    imagereturnProductUrl: item.imagereturnProduct.map((item)=> item.url),
+    imageCustomer: item.imageCustomer,
+    imageCustomerUrl: item.imageCustomer.map((item)=> item.url),
+    returnProduct: item.returnProduct,
     products: item.orderItem
       .map((orderItem) => {
         return `Số lượng: ${orderItem.quantity} - Sản phẩm: ${orderItem.product.heading}`;
@@ -50,15 +64,20 @@ const OrderPage = async ({ params }: { params: { storeId: string } }) => {
     name: item?.name,
     note: item?.note,
     gender: item?.gender,
+    status: item?.status,
+    statusOther: item.statusOther,
     addressOther: item?.addressOther,
     deliveryMethod: item?.deliveryMethod,
+    receiveCash: item.receiveCash,
+    debtShipper: item.debtShipper,
     isPaid: item.isPaid,
     isGift: item.orderItem.map((item)=> item?.isGift),
-    createdAt: item.createdAt
+    createdAt: item.createdAt,
+    updatedAt: item.updatedAt
   }));
   return (
     <div className="w-full">
-      <div className={`flex-1 space-y-4 p-8 pt-6 ${showOrderRole}`}>
+      <div className={`flex-1 space-y-4 ${showOrderRole}`}>
         {showOrderRole && <OrderClient data={formattedOrder} />}
       </div>
       <RoleGate allowedRole={UserRole.ADMIN || UserRole.STAFF}>

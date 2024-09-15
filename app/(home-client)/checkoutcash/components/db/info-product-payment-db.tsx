@@ -23,6 +23,7 @@ interface CartItemProps {
   userId: string;
   setLoadingChange: Dispatch<SetStateAction<boolean>>;
   loadingChange: boolean;
+  loading: boolean
 }
 
 const InfoProductPaymentDb: React.FC<CartItemProps> = ({
@@ -30,6 +31,7 @@ const InfoProductPaymentDb: React.FC<CartItemProps> = ({
   userId,
   setLoadingChange,
   loadingChange,
+  loading
 }) => {
   const cartdb = useCartdb();
   const router = useRouter();
@@ -272,7 +274,7 @@ const InfoProductPaymentDb: React.FC<CartItemProps> = ({
       <div className="relative ml-4 flex flex-1 flex-col justify-between sm:ml-6">
         <div className="absolute z-10 right-4 md:right-0 top-0">
           <IconButton
-            disabled={loadingChange}
+            disabled={loading || loadingChange}
             onClick={onRemove}
             icon={<X size={15} />}
           />
@@ -317,7 +319,7 @@ const InfoProductPaymentDb: React.FC<CartItemProps> = ({
           <div className="mt-1 flex text-sm">
             {/* Quantity increment and decrement buttons */}
             <Button
-              disabled={productQuantityAll || quantityInventory}
+              disabled={loading || productQuantityAll || quantityInventory}
               variant="outline"
               onClick={decrementQuantity} // Single click to decrement
               className="w-10 h-10 flex justify-center items-center border rounded-md border-gray-300 bg-white hover:bg-gray-200 hover:bg-opacity-50 hover:text-slate-900"
@@ -326,7 +328,7 @@ const InfoProductPaymentDb: React.FC<CartItemProps> = ({
             </Button>
             {isEditingQuantity || maxQuantity === 0 ? (
               <Input
-                disabled={productQuantityAll || quantityInventory}
+                disabled={loading || productQuantityAll || quantityInventory}
                 type="number"
                 className="text-xl mx-1 border rounded-md border-gray-300 w-20 text-center bg-white focus:bg-white hover:bg-white"
                 value={quantity}
@@ -344,6 +346,7 @@ const InfoProductPaymentDb: React.FC<CartItemProps> = ({
             )}
             <Button
               disabled={
+                loading ||
                 loadingLimitQuantity ||
                 productQuantityAll ||
                 quantityInventory ||

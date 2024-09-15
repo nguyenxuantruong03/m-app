@@ -568,15 +568,18 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      type="date"
+                      type="datetime-local"
                       disabled={loading || isEditing}
                       value={
                         field.value // Kiểm tra nếu field.value không phải là null
                           ? isEditing
                             ? field.value instanceof Date
-                              ? field.value.toISOString().split("T")[0] // Cho patch
+                              ? field.value.toISOString().slice(0, 16) // Cắt bỏ phần giây và nano giây
                               : field.value // Nếu không phải Date, trả về giá trị hiện tại
-                            : format(new Date(field.value), "yyyy-MM-dd") // Cho post
+                            : format(
+                                new Date(field.value),
+                                "yyyy-MM-dd'T'HH:mm"
+                              ) // Định dạng ngày và giờ cho post
                           : "" // Giá trị mặc định nếu field.value là null
                       }
                       onChange={(e) => {

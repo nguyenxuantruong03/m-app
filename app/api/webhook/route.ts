@@ -8,6 +8,7 @@ import twilio from "twilio";
 import { formatter } from "@/lib/utils";
 import viLocale from "date-fns/locale/vi";
 import { format } from "date-fns";
+import { StatusOrder } from "@prisma/client";
 
 export async function POST(req: Request) {
   const body = await req.text();
@@ -28,8 +29,8 @@ export async function POST(req: Request) {
   const session = event.data.object as Stripe.Checkout.Session;
   const address = session?.customer_details?.address;
   const addressComponents = [
-    address?.line1,
-    address?.line2,
+    address?.line1 ? `Địa chỉ 1: ${address.line1}` : null,
+    address?.line2 ? `Địa chỉ 2: ${address.line2}` : null,
     address?.city,
     address?.state,
     address?.postal_code,
@@ -48,6 +49,7 @@ export async function POST(req: Request) {
         id: session?.metadata?.orderId,
       },
       data: {
+        status: StatusOrder.Cho_lay_hang,
         isPaid: true,
         address: addressString,
         phone: session?.customer_details?.phone || "",
@@ -418,7 +420,7 @@ export async function POST(req: Request) {
 </a>
   <a href="${
     process.env.NEXT_PUBLIC_URL
-  }/delivery" style="text-decoration: none; color: #dc2626; cursor: pointer;" target="_blank">
+  }/warehouse/package-product" style="text-decoration: none; color: #dc2626; cursor: pointer;" target="_blank">
   <button style="padding: 12px; margin-left: 10px; border-radius: 5px; border: 1px solid #dc2626; background: transparent;">
   Chi tiết đơn hàng
   </button>

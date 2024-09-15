@@ -61,22 +61,6 @@ const InfoUser: React.FC<InfoUserProps> = ({
   const [open, setOpen] = useState(false);
   const [alertGuestModal, setAlertGuestModal] = useState(false);
 
-  //Ngăn chặn hành vi scoll down and up khi mở open
-  useEffect(() => {
-    if (open) {
-      // Disable scroll on body
-      document.body.style.overflow = "hidden";
-    } else {
-      // Enable scroll on body when modal is closed
-      document.body.style.overflow = "auto";
-    }
-
-    return () => {
-      // Clean up: enable scroll on body when component unmounts
-      document.body.style.overflow = "auto";
-    };
-  }, [open]);
-
   useEffect(() => {
     const fetchData = async () => {
       if (!user || !user.id) {
@@ -389,24 +373,25 @@ const InfoUser: React.FC<InfoUserProps> = ({
       />
       {open && (
         <>
-          <div className="fixed inset-0 bg-black/80 h-full w-full " />
-          <div className="absolute inset-0 m-auto h-max w-3/4 max-w-md border rounded-md gap-4 bg-background p-6 shadow-lg transition ease-in-out z-10">
-            <div className="flex items-center justify-between">
-              <span className="text-lg font-semibold text-foreground break-all line-clamp-2">
-                Chỉnh sửa ảnh đại diện{" "}
-              </span>
-              <span
-                onClick={() => setOpen(false)}
-                className="cursor-pointer rounded-sm hover:rounded-full hover:bg-gray-500 hover:bg-opacity-50 p-3 opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none "
-              >
-                <X className="h-5 w-5 " />
-              </span>
+          <div className="fixed inset-0 bg-black/80 h-full w-full z-40 flex items-center justify-center">
+            <div className="h-max w-3/4 max-w-md border rounded-md gap-4 bg-slate-900 p-6 shadow-lg transition ease-in-out z-50">
+              <div className="flex items-center justify-between">
+                <span className="text-lg font-semibold text-foreground break-all line-clamp-2">
+                  Chỉnh sửa ảnh đại diện{" "}
+                </span>
+                <span
+                  onClick={() => setOpen(false)}
+                  className="cursor-pointer rounded-sm hover:rounded-full hover:bg-gray-500 hover:bg-opacity-50 p-3 opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none "
+                >
+                  <X className="h-5 w-5 " />
+                </span>
+              </div>
+              <div className="text-sm text-muted-foreground break-all line-clamp-3">
+                Ảnh đại diện giúp mọi người nhận biết bạn dễ dàng hơn qua các
+                bài viết, bình luận, tin nhắn...
+              </div>
+              <FormImageCredential />
             </div>
-            <div className="text-sm text-muted-foreground break-all line-clamp-3">
-              Ảnh đại diện giúp mọi người nhận biết bạn dễ dàng hơn qua các bài
-              viết, bình luận, tin nhắn...
-            </div>
-            <FormImageCredential />
           </div>
         </>
       )}

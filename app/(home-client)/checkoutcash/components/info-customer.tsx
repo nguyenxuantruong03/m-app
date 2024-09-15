@@ -23,6 +23,7 @@ interface InfoCustomerProps {
   isNoneSelectDb: boolean;
   userRole: string;
   userId: string;
+  loading: boolean
 }
 
 const InfoCustomer: React.FC<InfoCustomerProps> = ({
@@ -45,7 +46,8 @@ const InfoCustomer: React.FC<InfoCustomerProps> = ({
   isNoneSelect,
   isNoneSelectDb,
   userRole,
-  userId
+  userId,
+  loading
 }) => {
   const handlePhoneNumberChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -149,7 +151,7 @@ const InfoCustomer: React.FC<InfoCustomerProps> = ({
             checked={gender === "male"}
             onChange={handleRadioChange}
             required
-            disabled={userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb}
+            disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
           />
           <label htmlFor="male" className={`ml-2 ${genderError && "error-label"}`}>
             Nam
@@ -163,7 +165,7 @@ const InfoCustomer: React.FC<InfoCustomerProps> = ({
             checked={gender === "female"}
             onChange={handleRadioChange}
             required
-            disabled={userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb}
+            disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
           />
           <label
             htmlFor="female"
@@ -181,7 +183,7 @@ const InfoCustomer: React.FC<InfoCustomerProps> = ({
             checked={gender === "other"}
             onChange={handleRadioChange}
             required
-            disabled={userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb}
+            disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
           />
           <label
             htmlFor="other"
@@ -203,7 +205,7 @@ const InfoCustomer: React.FC<InfoCustomerProps> = ({
               value={email}
               onChange={handleEmailChange}
               type="email"
-              disabled={userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb}
+              disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
             />
             <span className="field__label-wrap" aria-hidden="true">
               <span className={`field__label ${emailError && "error-label"}`}>
@@ -222,7 +224,7 @@ const InfoCustomer: React.FC<InfoCustomerProps> = ({
               placeholder="Ví dụ : Nguyen Van A"
               value={fullName}
               onChange={handleFullNameChange}
-              disabled={userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb}
+              disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
             />
             <span className="field__label-wrap" aria-hidden="true">
               <span className={`field__label ${fullNameError && "error-label"}`}>
@@ -243,7 +245,7 @@ const InfoCustomer: React.FC<InfoCustomerProps> = ({
               value={phoneNumber}
               pattern="0[0-9]{9,10}"
               onChange={handlePhoneNumberChange}
-              disabled={userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb}
+              disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
             />
             <span className="field__label-wrap" aria-hidden="true">
               <span className={`field__label ${phoneNumberError && "error-label"}`}>

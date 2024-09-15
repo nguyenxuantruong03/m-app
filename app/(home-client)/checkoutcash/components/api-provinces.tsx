@@ -40,6 +40,7 @@ interface DeliveryProps {
   isNoneSelectDb: boolean;
   userRole: string;
   userId: string;
+  loading: boolean
 }
 
 const host = "https://provinces.open-api.vn/api/";
@@ -71,7 +72,8 @@ const ApiProvinces: React.FC<DeliveryProps> = ({
   isNoneSelect,
   isNoneSelectDb,
   userRole,
-  userId
+  userId,
+  loading
 }) => {
   const [provinces, setProvinces] = useState<Provinces[]>([]);
   const [districts, setDistricts] = useState<Provinces[]>([]);
@@ -190,7 +192,7 @@ const ApiProvinces: React.FC<DeliveryProps> = ({
           className="react-select-container"
           classNamePrefix="react-select"
           noOptionsMessage={() => "Không tìm thấy!"}
-          isDisabled={userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb}
+          isDisabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
         />
         {selectedProvinceError && (
           <p className="text-red-500">{selectedProvinceError}</p>
@@ -207,7 +209,7 @@ const ApiProvinces: React.FC<DeliveryProps> = ({
           placeholder="Chọn Quận/Huyện"
           className="react-select-container"
           classNamePrefix="react-select"
-          isDisabled={!selectedProvince || userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb}
+          isDisabled={loading || !selectedProvince || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
           noOptionsMessage={() => "Không tìm thấy!"}
         />
         {selectedDistrictError && (
@@ -225,7 +227,7 @@ const ApiProvinces: React.FC<DeliveryProps> = ({
           placeholder="Chọn Phường/Xã"
           className="react-select-container"
           classNamePrefix="react-select"
-          isDisabled={!selectedDistrict || userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb}
+          isDisabled={loading || !selectedDistrict || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
           noOptionsMessage={() => "Không tìm thấy!"}
         />
         {selectedWardError && (
@@ -242,7 +244,7 @@ const ApiProvinces: React.FC<DeliveryProps> = ({
               placeholder="Vd: 4xx Lê Văn Q*"
               value={address}
               onChange={handleAdressChange}
-              disabled={userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb}
+              disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
             />
             <span className="field__label-wrap" aria-hidden="true">
               <span className={`field__label ${addressError && "error-label"}`}>Địa chỉ <span className="text-red-500">*</span></span>
@@ -259,7 +261,7 @@ const ApiProvinces: React.FC<DeliveryProps> = ({
               placeholder="Vd: 4xx Lê Văn Q*"
               value={addressOther}
               onChange={handleAdressOtherChange}
-              disabled={userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb}
+              disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
             />
             <span className="field__label-wrap" aria-hidden="true">
               <span className={`field__label ${addressOtherError && "error-label"}`}>Địa chỉ khác</span>
@@ -278,7 +280,7 @@ const ApiProvinces: React.FC<DeliveryProps> = ({
               placeholder="Vd: Note thêm địa chỉ mới hoặc số điện thoại mới."
               value={note}
               onChange={handleNoteChange}
-              disabled={userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb}
+              disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
             />
             <span className="field__label-wrap" aria-hidden="true">
               <span className={`field__label ${noteError && "error-label"}`}>Ghi chú(Nếu có)</span>

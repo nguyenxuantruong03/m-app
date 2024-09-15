@@ -24,10 +24,10 @@ import Link from "next/link";
 import { ThemeToggleDrakorLight } from "../ui/theme-toggle";
 import ImageCellOne from "../image-cell-one";
 import { utcToZonedTime } from "date-fns-tz";
-import viLocale from "date-fns/locale/vi";
-const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 import { format } from "date-fns";
 import CircleAvatar from "../ui/circle-avatar";
+import viLocale from "date-fns/locale/vi";
+const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 
 export interface AccountItem {
   id: string;

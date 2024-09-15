@@ -254,7 +254,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                       }
                     }}
                     variant="outline"
-                    className="mt-3 flex items-center justify-center w-full max-w-sm"
+                    className="mt-3 text-slate-500 flex items-center justify-center w-full max-w-sm"
                   >
                     <ImagePlus className="w-4 h-4" />
                     Upload an Image

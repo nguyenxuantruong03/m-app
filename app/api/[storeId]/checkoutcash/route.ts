@@ -6,6 +6,7 @@ import twilio from "twilio";
 import { formatter } from "@/lib/utils";
 import viLocale from "date-fns/locale/vi";
 import { format } from "date-fns";
+import { StatusOrder } from "@prisma/client";
 
 export async function POST(
   req: Request,
@@ -296,12 +297,12 @@ export async function POST(
       }
     }
 
-    const joinSizes = sizes.join(" ");
-    const joinColors = colors.join(" ");
+    const statisDelivery = deliveryOption === "pickup" ? StatusOrder.Nhan_tai_cua_hang : StatusOrder.Cho_xac_nhan
 
     const order = await prismadb.order.create({
       data: {
         id: requestId,
+        status: statisDelivery,
         storeId: params.storeId,
         isPaid: false,
         userId: userId || "",
@@ -324,8 +325,8 @@ export async function POST(
             quantity: quantities[index].toString(),
             priceold: priceold,
             warranty: warranty,
-            size: joinSizes,
-            color: joinColors,
+            size: sizes[index],
+            color: colors[index],
           })),
         },
       },
@@ -422,7 +423,7 @@ export async function POST(
 </a>
   <a href="${
     process.env.NEXT_PUBLIC_URL
-  }/delivery" style="text-decoration: none; color: #dc2626; cursor: pointer;" target="_blank">
+  }/warehouse/package-product" style="text-decoration: none; color: #dc2626; cursor: pointer;" target="_blank">
   <button style="padding: 12px; margin-left: 10px; border-radius: 5px; border: 1px solid #dc2626; background: transparent;">
   Chi tiết đơn hàng
   </button>

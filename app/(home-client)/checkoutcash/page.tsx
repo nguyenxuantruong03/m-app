@@ -121,8 +121,8 @@ const CheckoutCash = () => {
         .catch((error) => {
           console.error("Failed to copy ID to clipboard:", error);
         });
-      // Navigate to /delivery
-      router.push("/delivery");
+      // Navigate to /warehouse/package-product
+      router.push("/warehouse/package-product");
     }
   };
 
@@ -396,7 +396,7 @@ const CheckoutCash = () => {
     responseIdOrderCurrent: string,
   ) => {
     try {
-      // Fetch the order data
+      // Fetch the order data patch đây không phải là cập nhật mà nó là get bởi vì get ko thể trả dữ liệu về bên server nên phải dùng patch
       const response = await axios.patch(
         `${process.env.NEXT_PUBLIC_API_URL}/checkoutcash`,{responseIdOrderCurrent: responseIdOrderCurrent}
       );
@@ -407,12 +407,11 @@ const CheckoutCash = () => {
       if (orders.id === responseIdOrderCurrent) {
         // If a matching order is found, update the state
         setData(orders);
-        toast.success("Thanh toán thành công!");
 
-        if(user?.role === "GUEST" || !user?.id){
-          cart.removeSelectedItems();
+        if(user?.role === "GUEST" && !user?.id){
+          await cart.removeSelectedItems();
         }else{
-          cartdb.removeSelectedItems(user?.id || "");
+          await cartdb.removeSelectedItems(user?.id || "");
         }
 
         setOpen(true);
@@ -423,6 +422,8 @@ const CheckoutCash = () => {
     } catch (error) {
       // Handle error
       toast.error("Error fetching order data.");
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -581,7 +582,7 @@ const CheckoutCash = () => {
       fetchDataOrder(response.data.id);
     } catch (error) {
       setBarProcess(0);
-      setLoading;
+      setLoading(false);
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
         (error as { response: { data?: { error?: string } } }).response.data &&
@@ -597,8 +598,6 @@ const CheckoutCash = () => {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error("An error occurred during checkout.");
       }
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -698,6 +697,7 @@ const CheckoutCash = () => {
                       userId={user?.id || ""}
                       loadingChange={loadingChangeLocal}
                       setLoadingChange={setLoadingChangeLocal}
+                      loading={loading}
                     />
                   ))}
                 </ul>
@@ -736,6 +736,7 @@ const CheckoutCash = () => {
               isNoneSelectDb={isNoneSelectDb}
               userRole={user?.role || ""}
               userId={user?.id || ""}
+              loading={loading}
             />
           </>
           {/* Delivery */}
@@ -771,6 +772,7 @@ const CheckoutCash = () => {
               isNoneSelectDb={isNoneSelectDb}
               userRole={user?.role || ""}
               userId={user?.id || ""}
+              loading={loading}
             />
           </>
           {/* Process Bar when submit */}
@@ -785,7 +787,7 @@ const CheckoutCash = () => {
                       className="w-full text-center bg-red-500 hover:bg-red-600 text-white rounded-md my-2 cursor-pointer"
                     >
                       <p className="h-12 flex justify-center items-center font-bold">
-                        <X className="size-12 mr-2" /> <span>LOADING...</span>
+                        <X className="size-12 mr-2" /> <span>Hãy đợi trong giây lát...</span>
                       </p>
                     </Button>
                   </>

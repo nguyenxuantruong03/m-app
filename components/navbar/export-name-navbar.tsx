@@ -44,7 +44,8 @@ import {
   Banknote,
   Settings2,
   BookHeart,
-  MessageSquareText 
+  MessageSquareText,
+  Truck
 } from "lucide-react";
 
 export const route = (params: string, pathname: string) => [
@@ -340,11 +341,18 @@ export const product = (params: string, pathname: string) => [
 
 export const order = (params: string, pathname: string) => [
   {
-    href: `/${params}/orders`,
+    href: `/${params}/orders/order-confirmation`,
     label: "Đơn hàng",
     icon: <PackageOpen className="size-5" />,
     content: "Quản lý đơn hàng của người dùng đặt hàng.",
-    active: pathname === `/${params}/orders`,
+    active: pathname === `/${params}/orders/order-confirmation`,
+  },
+  {
+    href: `/${params}/delivery`,
+    label: "Giao hàng",
+    icon: <Truck className="size-5" />,
+    content: "Quản lý đơn hàng giành cho shipper.",
+    active: pathname === `/${params}/delivery`,
   },
 ];
 

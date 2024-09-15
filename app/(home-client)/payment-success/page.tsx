@@ -199,38 +199,44 @@ const PaymentSuccess = () => {
   };
 
   useEffect(() => {
-    const success = searchParams.get("success");
-    const canceled = searchParams.get("canceled");
-    if (success) {
-      if (
-        user?.role !== "GUEST" &&
-        user?.id &&
-        success &&
-        !hasRunToastRef.current
-      ) {
-        //hasRunToastRef: Ngăn chặn chỉ cho API chạy 1 lần nếu ko có nó call liên tục bên ngoài
-        hasRunToastRef.current = true;  
-        cartdb.removeSelectedItems(user?.id || "");
-        toast.success("Thanh toán thành công!");
-      } else if (success && !hasRunToastRef.current) {
-        //hasRunToastRef: Ngăn chặn chỉ cho API chạy 1 lần nếu ko có nó call liên tục bên ngoài
-        hasRunToastRef.current = true;
-        setLoading(false);
-        cart.removeSelectedItems();
-        toast.success("Thanh toán thành công!");
-      }
-      if (dataOrderItem.length > 0) {
-        resetTotalCoins(totalAmount, totalCoins);
-      }
-    }
+    const handlePaymentStatus = async () => {
+      const success = searchParams.get("success");
+      const canceled = searchParams.get("canceled");
 
-    if (canceled) {
-      if (canceled && !hasRunToastRef.current) {
-        //hasRunToastRef: Ngăn chặn chỉ cho API chạy 1 lần nếu ko có nó call liên tục bên ngoài
-        hasRunToastRef.current = true;
-        toast.error("Thanh toán thất bại!");
+      if (success) {
+          if (user?.role !== "GUEST" && user?.id && !hasRunToastRef.current) {
+              //hasRunToastRef: Ngăn chặn chỉ cho API chạy 1 lần nếu ko có nó call liên tục bên ngoài
+              hasRunToastRef.current = true;  
+              try {
+                  await cartdb.removeSelectedItems(user?.id || "");
+                  toast.success("Thanh toán thành công!");
+              } catch (error) {
+                  console.error("Error removing selected items:", error);
+              }
+          } else if (!hasRunToastRef.current) {
+              //hasRunToastRef: Ngăn chặn chỉ cho API chạy 1 lần nếu ko có nó call liên tục bên ngoài
+              hasRunToastRef.current = true;
+              setLoading(false);
+              try {
+                  await cart.removeSelectedItems();
+                  toast.success("Thanh toán thành công!");
+              } catch (error) {
+                  console.error("Error removing selected items:", error);
+              }
+          }
+          if (dataOrderItem.length > 0) {
+              resetTotalCoins(totalAmount, totalCoins);
+          }
       }
-    }
+
+      if (canceled && !hasRunToastRef.current) {
+          //hasRunToastRef: Ngăn chặn chỉ cho API chạy 1 lần nếu ko có nó call liên tục bên ngoài
+          hasRunToastRef.current = true;
+          toast.error("Thanh toán thất bại!");
+      }
+  };
+
+  handlePaymentStatus();
   }, [searchParams, totalAmount, totalCoins]);
 
   useEffect(() => {

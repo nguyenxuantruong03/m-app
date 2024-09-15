@@ -257,7 +257,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId }) => {
                         handleOpenAlertGuest();
                       }
                     }}
-                    className=" hidden md:block"
+                    className=" hidden md:block cursor-pointer"
                   >
                     <div className={mainnavcolor.bghover}>
                       <div className="flex flex-col md:flex-row items-center">
@@ -336,7 +336,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId }) => {
                     </div>
                   </Link>
 
-                  <Link href="/shippingcode" className=" hidden md:block">
+                  <Link href="/warehouse/package-product" className=" hidden md:block">
                     <div className={mainnavcolor.bghover}>
                       <div className="flex flex-col md:flex-row items-center">
                         <div className="basis-1/2 md:flex gap-2">
@@ -347,22 +347,22 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId }) => {
                             <div
                               className={cn(
                                 "text-xs flex gap-4 text-white",
-                                pathname === `/shippingcode`
+                                pathname === `/warehouse/package-product`
                                   ? "text-sky-500"
                                   : "text-white"
                               )}
                             >
-                              Mã vận
+                              Vận chuyển
                             </div>
                             <div
                               className={cn(
                                 "text-xs w-20",
-                                pathname === `/shippingcode`
+                                pathname === `/warehouse/package-product`
                                   ? "text-sky-500"
                                   : "text-white"
                               )}
                             >
-                              chuyển hàng
+                              đơn hàng
                             </div>
                           </div>
                         </div>

@@ -168,7 +168,7 @@ const CartPage = () => {
                   <p className="text-neutral-500">Giỏ hàng của bạn còn trống</p>
                 </div>
                 <div className="flex justify-center my-2">
-                  <Button onClick={handleBuyNow}> Mua ngay</Button>
+                  <Button onClick={handleBuyNow} className="hover:underline"> Mua ngay</Button>
                 </div>
               </>
             )}
@@ -189,7 +189,7 @@ const CartPage = () => {
                   <p className="text-neutral-500">Giỏ hàng của bạn còn trống</p>
                 </div>
                 <div className="flex justify-center my-2">
-                  <Button onClick={handleBuyNow}> Mua ngay</Button>
+                  <Button onClick={handleBuyNow} className="hover:underline"> Mua ngay</Button>
                 </div>
               </>
             )}

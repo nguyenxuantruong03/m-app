@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import prismadb from "@/lib/prismadb";
 import { formatter } from "@/lib/utils";
+import { StatusOrder } from "@prisma/client";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -279,11 +280,9 @@ export async function POST(
     },
   });
 
-  const joinSizes = sizes.join(" ")
-  const joinColors = colors.join(" ")
-
   const order = await prismadb.order.create({
     data: {
+      status: StatusOrder.Cho_xac_nhan,
       deliveryMethod: "online",
       storeId: params.storeId,
       isPaid: false,
@@ -299,8 +298,8 @@ export async function POST(
           quantity: quantity[index].toString(),
           priceold: priceold,
           warranty: warranty,
-          size: joinSizes,
-          color: joinColors,
+          size: sizes[index],
+          color: colors[index],
         })),
       },
     }

@@ -176,6 +176,9 @@ const useCartdb = create<CartStore>((set, get) => ({
       const updatedSelectedItems = state.selectedItems.filter(
         itemId => !get().selectedItems.includes(itemId)
       );
+      const updatedItems = state.items.filter(
+        (item) => !state.selectedItems.includes(item.id)
+      );
     if (typeof window !== 'undefined') {
       localStorage.setItem('selectedItems', JSON.stringify(updatedSelectedItems));
     }
@@ -186,9 +189,7 @@ const useCartdb = create<CartStore>((set, get) => ({
         //  - Hàm callback này kiểm tra từng phần tử bên trong trong . Nó trả về nếu không tồn tại bên trong .
         // - Dấu phủ định kết quả . Nếu không có bên trong ,=> kết quả là true
         // Nếu mà là true thì nó sẽ xóa cái đó đi
-        items: state.items.filter(
-          (item) => !state.selectedItems.includes(item.id)
-        ),
+        items: updatedItems,
         selectedItems: [],
         selectedWarranties: {},
       };
