@@ -130,6 +130,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
               emojilengthWow: 0,
               emojilengthAngry: 0,
               emojilengthLove: 0,
+              emojilengthSad:0,
             };
           }
 
@@ -143,6 +144,8 @@ const EmojiPage: React.FC<EmojiProps> = ({
             emoji.emojilengthAngry || 0;
           aggregatedEmojiLengths[commentId].emojilengthLove +=
             emoji.emojilengthLove || 0;
+            aggregatedEmojiLengths[commentId].emojilengthSad +=
+            emoji.emojilengthSad || 0;
         });
 
         const aggregatedEmojiArray = Object.keys(aggregatedEmojiLengths).map(
@@ -255,19 +258,22 @@ const EmojiPage: React.FC<EmojiProps> = ({
                 emojilengthWow: 0,
                 emojilengthAngry: 0,
                 emojilengthLove: 0,
+                emojilengthSad:0,
               };
             }
 
             aggregatedEmojiLengths[commentId].emojilengthLike +=
-              emoji.emojilengthLike || 0;
-            aggregatedEmojiLengths[commentId].emojilengthHaha +=
-              emoji.emojilengthHaha || 0;
-            aggregatedEmojiLengths[commentId].emojilengthWow +=
-              emoji.emojilengthWow || 0;
-            aggregatedEmojiLengths[commentId].emojilengthAngry +=
-              emoji.emojilengthAngry || 0;
-            aggregatedEmojiLengths[commentId].emojilengthLove +=
-              emoji.emojilengthLove || 0;
+            emoji.emojilengthLike || 0;
+          aggregatedEmojiLengths[commentId].emojilengthHaha +=
+            emoji.emojilengthHaha || 0;
+          aggregatedEmojiLengths[commentId].emojilengthWow +=
+            emoji.emojilengthWow || 0;
+          aggregatedEmojiLengths[commentId].emojilengthAngry +=
+            emoji.emojilengthAngry || 0;
+          aggregatedEmojiLengths[commentId].emojilengthLove +=
+            emoji.emojilengthLove || 0;
+            aggregatedEmojiLengths[commentId].emojilengthSad +=
+            emoji.emojilengthSad || 0;
           });
 
           // Chuyển aggregatedEmojiLengths thành Array
@@ -336,6 +342,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
         { type: "wow", count: emojisForComment.emojilengthWow },
         { type: "angry", count: emojisForComment.emojilengthAngry },
         { type: "love", count: emojisForComment.emojilengthLove },
+        { type: "sad", count: emojisForComment.emojilengthSad },
       ];
 
       emojiCounts.sort((a, b) => b.count - a.count);
@@ -613,7 +620,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
           <button
             disabled={loading}
             onClick={handleShareClick}
-            className="flex items-center whitespace-nowrap text-gray-800 text-opacity-60 mx-1 hover:text-gray-900 hover:bg-[#a9a9a94d] hover:rounded-md hover:py-2 px-8"
+            className="flex items-center cursor-pointer whitespace-nowrap text-gray-800 text-opacity-60 mx-1 hover:text-gray-900 hover:bg-[#a9a9a94d] hover:rounded-md hover:py-2 px-8"
           >
             <Share className="w-5 h-5 mr-1" /> Chia sẻ
           </button>

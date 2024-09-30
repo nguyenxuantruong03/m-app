@@ -3,7 +3,13 @@
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTransition, useState, useEffect } from "react";
+import {
+  useTransition,
+  useState,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import { useSession } from "next-auth/react";
 import {
   Form,
@@ -21,9 +27,14 @@ import FormSuccess from "@/components/form-success";
 import FormError from "@/components/form-error";
 import { useRouter } from "next/navigation";
 
-const FormLinkInstagram = () => {
+interface FormLinkInstagramProps {
+  classNames?: string;
+  setOpen?: Dispatch<SetStateAction<boolean>>;
+}
+
+const FormLinkInstagram = ({ classNames, setOpen }: FormLinkInstagramProps) => {
   const user = useCurrentUser();
-  const router = useRouter()
+  const router = useRouter();
   const { update } = useSession();
   const [error, setError] = useState<string>();
   const [success, setSuccess] = useState<string>();
@@ -32,7 +43,7 @@ const FormLinkInstagram = () => {
 
   useEffect(() => {
     // Kiểm tra xem input đã được render chưa và focus vào nó
-    const inputElement = document.getElementById('linkinstagram-input');
+    const inputElement = document.getElementById("linkinstagram-input");
     if (inputElement) {
       inputElement.focus();
     }
@@ -48,11 +59,13 @@ const FormLinkInstagram = () => {
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
     // Kiểm tra giá trị linkinstagram nhập vào và user?.linkinstagram
     if (values.linkinstagram === user?.linkinstagram) {
-      setError("Hãy thay đổi link Instagram mới link Instagram trên đang được sử dụng.");
+      setError(
+        "Hãy thay đổi link Instagram mới link Instagram trên đang được sử dụng."
+      );
       return;
     }
-    setSuccess("")
-    setError("")
+    setSuccess("");
+    setError("");
     startTransition(() => {
       setting(values)
         .then((data) => {
@@ -61,8 +74,9 @@ const FormLinkInstagram = () => {
           }
           if (data.success) {
             update();
-            router.refresh()
+            router.refresh();
             setSuccess(data.success);
+            setOpen?.(false);
           }
         })
         .catch(() => {
@@ -71,37 +85,64 @@ const FormLinkInstagram = () => {
     });
   };
   return (
-        <Form {...form}>
-          <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="space-y-4">
-              <FormField
-                control={form.control}
-                name="linkinstagram"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Link Instagram</FormLabel>
-                    <FormControl>
-                      <Input
-                        id="linkinstagram-input"
-                        {...field}
-                        placeholder="https://www.instagram.com/ ..."
-                        disabled={isPending}
-                        className={
-                          form.formState.errors.linkinstagram
-                            ? "border-2 border-red-500 border-opacity-50"
-                            : ""
-                        }
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
-            <FormError message={error || form.formState.errors.linkinstagram?.message} />
+    <Form {...form}>
+      <form
+        className={`space-y-6 ${classNames}`}
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
+        <div className="space-y-4">
+          <FormField
+            control={form.control}
+            name="linkinstagram"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Link Instagram</FormLabel>
+                <FormControl>
+                  <Input
+                    id="linkinstagram-input"
+                    {...field}
+                    placeholder="https://www.instagram.com/ ..."
+                    disabled={isPending}
+                    className={
+                      form.formState.errors.linkinstagram
+                        ? "border-2 border-red-500 border-opacity-50"
+                        : ""
+                    }
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        {!setOpen && (
+          <>
+            <FormError
+              message={error || form.formState.errors.linkinstagram?.message}
+            />
             <FormSuccess message={success} />
-            <Button type="submit" disabled={isPending}>Save</Button>
-          </form>
-        </Form>
+          </>
+        )}
+        <div>
+          {setOpen && (
+            <Button
+              className="mr-2"
+              onClick={() => setOpen?.(false)}
+              disabled={isPending}
+            >
+              Cancel
+            </Button>
+          )}
+          <Button
+            className="text-white"
+            variant="primary"
+            type="submit"
+            disabled={isPending}
+          >
+            Save
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 };
 

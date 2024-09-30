@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Modal from "../ui/modal";
 import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from "lucide-react";
 import { Button } from "../ui/button";
+import Image from "next/image";
 
 interface ZoomModalProps {
   isOpen: boolean;
@@ -170,11 +171,13 @@ export const ZoomImageModal: React.FC<ZoomModalProps> = ({
           <ChevronLeft className="size-5" />
         </Button>
         <div className="relative overflow-hidden">
-          <img
+          <Image
             ref={imageRef}
-            src={imageUrl[currentIndex].url}
+            src={imageUrl[currentIndex]?.url}
             alt={`Image ${currentIndex + 1}`}
             className="max-w-6xl max-h-screen rounded-md z-50"
+            width={1000} // Set a default width value (adjust as needed)
+            height={600} // Set a default height value (adjust as needed)
             style={{
               width: "40vw",
               height: "auto",

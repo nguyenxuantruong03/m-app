@@ -324,6 +324,7 @@ model Product {
   emoji                Emoji[]
   cartItem             CartItem[]
   favoriteProduct      FavoriteProduct[]
+  review               Review[]
   createdAt            DateTime               @default(now())
   updatedAt            DateTime               @updatedAt
   productdetailId      String
@@ -380,32 +381,32 @@ enum StatusOrder {
 }
 
 model Order {
-  id                 String               @id @default(cuid())
-  storeId            String
-  store              Store                @relation("StoreToOrder", fields: [storeId], references: [id])
-  orderItem          OrderItem[]
-  isPaid             Boolean              @default(false)
-  receiveCash        Boolean              @default(false)
-  phone              String               @default("")
-  address            String               @default("")
-  addressOther       String?              @default("")
-  name               String?              @default("")
-  note               String?              @default("")
-  gender             String?              @default("")
-  deliveryMethod     String               @default("")
-  email              String               @default("")
-  userId             String?              @default("")
-  user               User?                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  status             StatusOrder          @default(Cho_xac_nhan)
-  statusOther        String?              @default("")
-  userIdStaff        String?              @default("")
-  userIdShipper      String?              @default("")
-  userIdRecieveDebt  String?              @default("")
-  debtShipper        Boolean              @default(false)
-  imagereturnProduct ImageReturnProduct[]
-  imageCustomer      CustomerImage[]
+  id                       String               @id @default(cuid())
+  storeId                  String
+  store                    Store                @relation("StoreToOrder", fields: [storeId], references: [id])
+  orderItem                OrderItem[]
+  isPaid                   Boolean              @default(false)
+  receiveCash              Boolean              @default(false)
+  phone                    String               @default("")
+  address                  String               @default("")
+  addressOther             String?              @default("")
+  name                     String?              @default("")
+  note                     String?              @default("")
+  gender                   String?              @default("")
+  deliveryMethod           String               @default("")
+  email                    String               @default("")
+  userId                   String?              @default("")
+  user                     User?                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status                   StatusOrder          @default(Cho_xac_nhan)
+  statusOther              String?              @default("")
+  userIdStaff              String?              @default("")
+  userIdShipper            String?              @default("")
+  userIdRecieveDebt        String?              @default("")
+  debtShipper              Boolean              @default(false)
+  imagereturnProduct       ImageReturnProduct[]
+  imageCustomer            CustomerImage[]
   destiontionReturnProduct String?
-  returnProduct      Boolean?
+  returnProduct            Boolean?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -417,11 +418,11 @@ model Order {
 model CustomerImage {
   id String @id @default(cuid())
 
-  orderId     String
-  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  url         String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([orderId])
 }
@@ -429,11 +430,11 @@ model CustomerImage {
 model ImageReturnProduct {
   id String @id @default(cuid())
 
-  orderId     String
-  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  url         String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([orderId])
 }
@@ -626,7 +627,7 @@ enum WorkingTime {
 model User {
   id              String            @id @default(cuid())
   name            String?
-  nameuser        String?
+  nameuser        String?           @unique
   favorite        String[]
   bio             String?
   email           String?           @unique
@@ -704,8 +705,30 @@ model User {
   cartItem                 CartItem[]
   order                    Order[]
   favoritePoroduct         FavoriteProduct[]
+  review                   Review[]
+  showInfomation           ShowInfomation?
   createdAt                DateTime               @default(now())
   updatedAt                DateTime               @updatedAt
+}
+
+model ShowInfomation {
+  id            String  @id @default(cuid())
+  userId        String
+  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isEmail       Boolean @default(false)
+  isGender      Boolean @default(false)
+  isPhone       Boolean @default(false)
+  isDateofBirth Boolean @default(false)
+  isAddress     Boolean @default(false)
+  isAdressOther Boolean @default(false)
+  isFavorite    Boolean @default(false)
+  isSocial      Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId])
+  @@index([userId])
 }
 
 model Password {
@@ -939,8 +962,10 @@ model ResponseComment {
 
 model Emoji {
   id               String   @id @default(cuid())
-  commentId        String
-  comment          Comment  @relation(fields: [commentId], references: [id])
+  commentId        String?
+  comment          Comment? @relation(fields: [commentId], references: [id])
+  reviewId         String?
+  review           Review?  @relation(fields: [reviewId], references: [id])
   userId           String
   user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   productId        String
@@ -951,9 +976,11 @@ model Emoji {
   emojilengthWow   Int      @default(0)
   emojilengthAngry Int      @default(0)
   emojilengthLike  Int      @default(0)
+  emojilengthSad   Int      @default(0)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
+  @@index([reviewId])
   @@index([commentId])
   @@index([productId])
   @@index([userId])
@@ -987,4 +1014,37 @@ model System {
   updatedAt DateTime @updatedAt
 
   @@index([storeId])
+}
+
+model Review {
+  id String @id @default(cuid())
+
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  imageReview  ImageReview[]
+  emoji        Emoji[]
+  isPublic     Boolean       @default(false)
+  content      String
+  rating       Int
+  productId    String
+  product      Product       @relation(fields: [productId], references: [id])
+  categoryName String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([productId])
+}
+
+model ImageReview {
+  id       String @id @default(cuid())
+  reviewId String
+  review   Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([reviewId])
 }

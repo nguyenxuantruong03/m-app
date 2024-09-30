@@ -1,4 +1,4 @@
-import { Gender } from "@prisma/client";
+import { Gender, ImageReview, Review } from "@prisma/client";
 import NextAuth, { type DefaultSession } from "next-auth";
 
 export type ExtendedUser = DefaultSession["user"] & {

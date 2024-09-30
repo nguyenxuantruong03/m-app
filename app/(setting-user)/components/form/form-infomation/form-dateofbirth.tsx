@@ -3,7 +3,7 @@
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTransition, useState} from "react";
+import { useTransition, useState, Dispatch, SetStateAction } from "react";
 import { useSession } from "next-auth/react";
 import {
   Form,
@@ -20,8 +20,14 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import FormSuccess from "@/components/form-success";
 import FormError from "@/components/form-error";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
-const FormDateOfBirth = () => {
+interface FormDateOfBirthProps {
+  classNames?: string;
+  setOpen?: Dispatch<SetStateAction<boolean>>;
+}
+
+const FormDateOfBirth = ({ classNames, setOpen }: FormDateOfBirthProps) => {
   const user = useCurrentUser();
   const router = useRouter();
   const { update } = useSession();
@@ -33,7 +39,7 @@ const FormDateOfBirth = () => {
   const form = useForm<z.infer<typeof SettingSchema>>({
     resolver: zodResolver(SettingSchema),
     defaultValues: {
-      dateofbirth: new Date(user?.dateofbirth) || undefined,
+      dateofbirth: user?.dateofbirth ? new Date(user?.dateofbirth) : undefined,
     },
   });
 
@@ -55,6 +61,7 @@ const FormDateOfBirth = () => {
             update();
             router.refresh();
             setSuccess(data.success);
+            setOpen?.(false);
           }
         })
         .catch(() => {
@@ -64,7 +71,10 @@ const FormDateOfBirth = () => {
   };
   return (
     <Form {...form}>
-      <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+      <form
+        className={`space-y-6 ${classNames}`}
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
         <div className="space-y-4">
           <FormField
             control={form.control}
@@ -93,6 +103,21 @@ const FormDateOfBirth = () => {
                     onChange={(e) => {
                       const dateValue = e.target.value;
                       const parsedDate = Date.parse(dateValue);
+                      
+                      // Check if the selected date is greater than the current date
+                      if (parsedDate > Date.now()) {
+                        toast.error("Ngày chọn không được lớn hơn ngày hiện tại!"); // Show error message for future date
+                        field.onChange(""); // Return value ""
+                        return;
+                      }
+                  
+                      // Check if the selected date is earlier than January 1, 1900
+                      if (parsedDate < new Date(1900, 0, 1).getTime()) {
+                        toast.error("Ngày chọn không được nhỏ hơn ngày 01/01/1900!"); // Show error message for dates before 1900
+                        field.onChange(""); // Return value ""
+                        return;
+                      }
+                  
                       field.onChange(
                         isNaN(parsedDate) ? dateValue : new Date(parsedDate)
                       );
@@ -103,13 +128,35 @@ const FormDateOfBirth = () => {
             )}
           />
         </div>
-        <FormError
-          message={error || form.formState.errors.dateofbirth?.message}
-        />
-        <FormSuccess message={success} />
-        <Button type="submit" disabled={isPending}>
-          Save
-        </Button>
+        {!setOpen && (
+          <>
+            <FormError
+              message={error || form.formState.errors.dateofbirth?.message}
+            />
+            <FormSuccess message={success} />
+          </>
+        )}
+        <div>
+          {setOpen && (
+            <Button
+              className="mr-2"
+              onClick={() => {
+                setOpen?.(false);
+              }}
+              disabled={isPending}
+            >
+              Cancel
+            </Button>
+          )}
+          <Button
+            className="text-white"
+            variant="primary"
+            type="submit"
+            disabled={isPending}
+          >
+            Save
+          </Button>
+        </div>
       </form>
     </Form>
   );

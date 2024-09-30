@@ -22,6 +22,7 @@ import { ReviewModal } from "@/components/(client)/modal/review-product-packageP
 import { PackageModal } from "@/components/(client)/modal/packageProdct-modal";
 import { ReturnProduct } from "@/components/(client)/modal/returnProduct-modal";
 import StatusProduct from "../../components/ui/statusProduct";
+import "../../components/style.css";
 
 const PrepareProduct = () => {
   const router = useRouter();

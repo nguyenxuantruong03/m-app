@@ -1,16 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Modal from "../ui/modal";
 import { Button } from "../ui/button";
 import { ZoomIn, ZoomOut } from "lucide-react";
+import Image from "next/image";
 
 interface ZoomModalProps {
   isOpen: boolean;
   onClose: () => void;
   imageUrl: string;
-  createdAt: string | null | undefined;
-  email: string | null | undefined;
+  createdAt?: string | null | undefined;
+  email?: string | null | undefined;
 }
 
 export const ZoomImageAttendanceModal: React.FC<ZoomModalProps> = ({
@@ -146,20 +147,24 @@ export const ZoomImageAttendanceModal: React.FC<ZoomModalProps> = ({
 
   return (
     <Modal
-        title={email ? `Người dùng: ${email}` : undefined}
-        description={createdAt ? `Tài khoản đã thành lập ngày - ${createdAt}` : undefined}
-        isOpen={isOpen}
-        onClose={onClose}
-        maxWidth="4xl"
-        textCenter={true}
-      >
-    <div className="flex items-center justify-center">
+      title={email ? `Người dùng: ${email}` : undefined}
+      description={
+        createdAt ? `Tài khoản đã thành lập ngày - ${createdAt}` : undefined
+      }
+      isOpen={isOpen}
+      onClose={onClose}
+      maxWidth="4xl"
+      textCenter={true}
+    >
+      <div className="flex items-center justify-center">
         <div className="relative overflow-hidden">
-          <img
+          <Image
             ref={imageRef}
             src={imageUrl}
             alt={`404`}
             className="max-w-6xl max-h-screen rounded-md z-50"
+            width={1000} // Set a default width value (adjust as needed)
+            height={600} // Set a default height value (adjust as needed)
             style={{
               width: "40vw",
               height: "auto",
@@ -189,7 +194,7 @@ export const ZoomImageAttendanceModal: React.FC<ZoomModalProps> = ({
             </Button>
           </div>
         </div>
-        </div>
-      </Modal>
+      </div>
+    </Modal>
   );
 };

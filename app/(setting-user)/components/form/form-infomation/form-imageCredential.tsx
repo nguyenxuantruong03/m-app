@@ -3,7 +3,7 @@
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTransition, useState } from "react";
+import { useTransition, useState, Dispatch, SetStateAction } from "react";
 import { useSession } from "next-auth/react";
 import {
   Form,
@@ -24,7 +24,11 @@ import Image from "next/image";
 import { useCurrentRole } from "@/hooks/use-current-role";
 import { UserRole } from "@prisma/client";
 
-const FormImageCredential = () => {
+interface FormImageCredentialProps{
+  setOpen: Dispatch<SetStateAction<boolean>>
+}
+
+const FormImageCredential = ({setOpen}:FormImageCredentialProps) => {
   const user = useCurrentUser();
   const router = useRouter();
   const { update } = useSession();
@@ -35,7 +39,6 @@ const FormImageCredential = () => {
   const [selectedAvatar, setSelectedAvatar] = useState<string>("");
   const role = useCurrentRole() || UserRole.GUEST;
 
-  console.log("user", user)
   const form = useForm<z.infer<typeof SettingSchema>>({
     resolver: zodResolver(SettingSchema),
     defaultValues: {
@@ -82,6 +85,7 @@ const FormImageCredential = () => {
             update();
             router.refresh();
             setSuccess(data.success);
+            setOpen(false)
           }
         })
         .catch(() => {
@@ -149,7 +153,7 @@ const FormImageCredential = () => {
           /> 
         </div>
         <div className="space-y-4">
-          <FormLabel>Chọn ảnh đại diện (Nếu bạn không có ảnh)</FormLabel>
+          <FormLabel className="text-white">Chọn ảnh đại diện (Nếu bạn không có ảnh)</FormLabel>
           <div className="grid grid-cols-5 gap-2 h-8 md:h-16 lg:h-32 overflow-y-auto">
             {avatars.map((avatar, index) => (
               <Image
@@ -171,7 +175,7 @@ const FormImageCredential = () => {
         </div>
         {(role === UserRole.ADMIN || role === UserRole.STAFF) && (
           <div className="space-y-4">
-            <FormLabel>Chọn ảnh đại diện VIP</FormLabel>
+            <FormLabel className="text-white">Chọn ảnh đại diện VIP</FormLabel>
             <div className="grid grid-cols-5 gap-2 h-8 md:h-16 lg:h-32 overflow-y-auto">
               {AvatarVIP.map((avatar, index) => (
                 <Image
@@ -194,7 +198,7 @@ const FormImageCredential = () => {
         )}
         <FormError message={error} />
         <FormSuccess message={success} />
-        <Button type="submit" disabled={isPending} className="w-full">
+        <Button type="submit" disabled={isPending} className="w-full" variant="secondary">
           Save
         </Button>
       </form>

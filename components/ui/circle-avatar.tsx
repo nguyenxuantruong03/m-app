@@ -86,7 +86,6 @@ const CircleAvatar = ({
     imageCredentials ||
     (imageCredentials ? imageCredentials : null) ||
     user?.image;
-
   return (
     <>
       <div className="relative">

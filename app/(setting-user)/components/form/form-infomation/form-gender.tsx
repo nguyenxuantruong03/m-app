@@ -3,7 +3,7 @@
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTransition, useState } from "react";
+import { useTransition, useState, Dispatch, SetStateAction } from "react";
 import { useSession } from "next-auth/react";
 import {
   Form,
@@ -22,7 +22,12 @@ import { useRouter } from "next/navigation";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Image from "next/image";
 
-const FormGender = () => {
+interface FormGenderProps {
+  classNames?: string;
+  setOpen?: Dispatch<SetStateAction<boolean>>;
+}
+
+const FormGender = ({ classNames, setOpen }: FormGenderProps) => {
   const user = useCurrentUser();
   const router = useRouter();
   const { update } = useSession();
@@ -49,7 +54,7 @@ const FormGender = () => {
     },
     None: {
       label: "Khác",
-      image: "/images/other.png", 
+      image: "/images/other.png",
     },
   };
 
@@ -72,6 +77,7 @@ const FormGender = () => {
             update();
             router.refresh();
             setSuccess(data.success);
+            setOpen?.(false);
           }
         })
         .catch(() => {
@@ -82,7 +88,10 @@ const FormGender = () => {
 
   return (
     <Form {...form}>
-      <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+      <form
+        className={`space-y-6 ${classNames}`}
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
         <div className="space-y-4">
           <FormField
             control={form.control}
@@ -98,25 +107,56 @@ const FormGender = () => {
                   value={field.value}
                   className="flex space-x-4"
                 >
-                  {Object.entries(genderOptions).map(([value, { label, image }]) => (
-                    <div key={value} className="flex items-center space-x-2">
-                      <RadioGroupItem value={value} id={value} />
-                      <label htmlFor={value} className="flex items-center space-x-2">
-                        <Image src={image} alt={label} width="20" height="20" /> {/* Adjust size as needed */}
-                        <span>{label}</span>
-                      </label>
-                    </div>
-                  ))}
+                  {Object.entries(genderOptions).map(
+                    ([value, { label, image }]) => (
+                      <div key={value} className="flex items-center space-x-2">
+                        <RadioGroupItem value={value} id={value} />
+                        <label
+                          htmlFor={value}
+                          className="flex items-center space-x-2"
+                        >
+                          <Image
+                            src={image}
+                            alt={label}
+                            width="20"
+                            height="20"
+                          />{" "}
+                          {/* Adjust size as needed */}
+                          <span>{label}</span>
+                        </label>
+                      </div>
+                    )
+                  )}
                 </RadioGroup>
               </FormItem>
             )}
           />
         </div>
-        <FormError message={error} />
-        <FormSuccess message={success} />
-        <Button type="submit" disabled={isPending}>
-          Save
-        </Button>
+        {!setOpen && (
+          <>
+            <FormError message={error} />
+            <FormSuccess message={success} />
+          </>
+        )}
+        <div>
+          {setOpen && (
+            <Button
+              className="mr-2"
+              disabled={isPending}
+              onClick={() => setOpen?.(false)}
+            >
+              Cancel
+            </Button>
+          )}
+          <Button
+            variant="primary"
+            className="text-white"
+            type="submit"
+            disabled={isPending}
+          >
+            Save
+          </Button>
+        </div>
       </form>
     </Form>
   );

@@ -39,7 +39,15 @@ export async function POST(req: Request) {
           userId: userId.id || "",
         },
         include: {
-          user: true,
+          user: {
+            include: {
+              imageCredential: {
+                orderBy: {
+                  createdAt: 'desc',
+                },
+              },
+            }
+          },
           product: true
         },
       });
@@ -140,6 +148,9 @@ export async function PATCH(req: Request,
 export async function GET() {
   try {
     const responseComment = await prismadb.comment.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
       include: {
         responsecomment: true,
         user: {

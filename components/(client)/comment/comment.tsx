@@ -107,25 +107,55 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
     };
   }, []);
 
-  const handleTimestampUpdateResponse = () => {
-    localStorage.setItem("lastCommentTime", Date.now().toString());
-  };
-
-  const canUserCommentResponse = () => {
-    const lastCommentTime = localStorage.getItem("lastCommentTime");
-    if (!lastCommentTime) {
-      return true; // User hasn't commented before
-    }
-
-    const timeDifference = Date.now() - parseInt(lastCommentTime, 10);
-    const secondsPassed = timeDifference / 1000;
-
-    return secondsPassed >= 30; // Check if 30 seconds have passed
-  };
-
   const handleResponseSubmit = async (commentId: any) => {
-    try {
-      if (user?.role !== "GUEST"  && user?.id) {
+    if (user?.role !== "GUEST" && user?.id) {
+      try {
+        //Logic này đùng để giới hạn thời gian responsecomment
+        const now = new Date();
+        const firstCreatedAt = savedComments
+          .filter((comment) => {
+            // Ensure responsecomment is defined and filter based on user ID
+            const responsecomment = comment.responses || []; // Use an empty array if undefined
+            return responsecomment.some(
+              (response) => user?.id === response.user.id
+            );
+          })
+          .flatMap((comment) => {
+            // Get all createdAt from responsecomment
+            const responsecomment = comment.responses || [];
+            return responsecomment
+              .filter(
+                (response) =>
+                  response.user.id === user?.id && response.createdAt
+              ) // Check if createdAt is defined
+              .map((response) => response.createdAt!); // Use non-null assertion since we've filtered undefined
+          })
+          .sort((a, b) => {
+            // Sort by createdAt in descending order
+            return new Date(b).getTime() - new Date(a).getTime();
+          })[0]; // Get the latest createdAt
+
+        if (firstCreatedAt) {
+          const createdAtDate = new Date(firstCreatedAt);
+
+          // Cộng thêm 30 giây vào createdAt
+          const futureTime = new Date(createdAtDate.getTime() + 30 * 1000); // Cộng thêm 30 giây
+
+          // Tính số thời gian còn lại giữa now và futureTime
+          const diffMilliseconds = futureTime.getTime() - now.getTime(); // Sự chênh lệch tính bằng milliseconds
+          const diffSeconds = Math.floor(diffMilliseconds / 1000); // Tính số giây còn lại
+
+          // Kiểm tra nếu thời gian hiện tại chưa vượt quá futureTime
+          if (now < futureTime) {
+            if (diffSeconds > 0) {
+              setErrorResponse(
+                `Bạn có thể đánh giá lại trong ${diffSeconds} giây nữa.`
+              );
+              return;
+            }
+          }
+        }
+
         if (
           responseDescriptions === null ||
           responseDescriptions === undefined ||
@@ -141,13 +171,6 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
         } else {
           setErrorResponse("");
         }
-
-        if (!canUserCommentResponse()) {
-          setErrorResponse("Bạn có thể đánh giá lại trong 30 giây nữa.");
-          return;
-        }
-
-        handleTimestampUpdateResponse();
 
         setLoading(true);
         const responses = await axios.post(
@@ -174,10 +197,12 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
               commentToUpdate.responses = [
                 ...(commentToUpdate.responses || []),
                 {
+                  ...responses.data,
                   id: responses.data.id,
                   description: responseDescriptions,
                   commentId: commentId,
                   user: responses.data.user,
+                  createdAt: responses.data.createdAt,
                 },
               ];
             }
@@ -189,14 +214,14 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
         setResponseDescriptions("");
         setEditingResponseId(null);
         toast.success("Phản hồi thành công.");
-      } else {
-        setAlertGuestModal(true);
+      } catch (error) {
+        console.error("Error submitting response:", error);
+        toast.error("Hãy thử lại.");
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error submitting response:", error);
-      toast.error("Hãy thử lại.");
-    } finally {
-      setLoading(false);
+    } else {
+      setAlertGuestModal(true);
     }
   };
 
@@ -560,23 +585,6 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
     }
   };
 
-  const handleTimestampUpdate = () => {
-    localStorage.setItem("lastCommentTime", Date.now().toString());
-  };
-
-  const canUserComment = () => {
-    const lastCommentTime = localStorage.getItem("lastCommentTime");
-    if (!lastCommentTime) {
-      return true; // User hasn't commented before
-    }
-
-    const timeDifference = Date.now() - parseInt(lastCommentTime, 10);
-    const minutesPassed = timeDifference / 60000; // 10 phút
-    // const minutesPassed = timeDifference / 0; // Convert milliseconds to hours
-
-    return minutesPassed >= 10;
-  };
-
   const handleRatingChange = (newRating: number) => {
     setRating(newRating);
     setCurrentValue(newRating);
@@ -598,7 +606,6 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
     if (newComment.length >= 122) {
       setErrorResponse("Bạn đã nhập quá 120 ký tự.");
     } else {
-      setComment(newComment);
       setResponseDescriptions(newComment);
       setErrorResponse("");
     }
@@ -606,6 +613,42 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
 
   const handleSubmit = async () => {
     if (user?.role !== "GUEST" && user?.id) {
+      //Logic này đùng để giới hạn thời gian comment
+      const now = new Date();
+      const firstCreatedAt = savedComments
+        .filter((comment) => comment.user.id === user?.id && comment.createdAt) // Lọc bình luận của user hiện tại và kiểm tra createdAt không undefined
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime() // Sắp xếp theo thứ tự giảm dần
+        )[0]?.createdAt; // Lấy phần tử đầu tiên (thời gian mới nhất)
+
+      if (firstCreatedAt) {
+        const createdAtDate = new Date(firstCreatedAt);
+
+        // Cộng thêm 10 phút vào createdAt
+        const futureTime = new Date(createdAtDate.getTime() + 10 * 60 * 1000); // Cộng thêm 10 phút
+
+        // Tính số thời gian còn lại giữa now và futureTime
+        const diffMilliseconds = futureTime.getTime() - now.getTime(); // Sự chênh lệch tính bằng milliseconds
+        const diffMinutes = Math.floor(diffMilliseconds / (1000 * 60)); // Tính số phút còn lại
+        const diffSeconds = Math.floor((diffMilliseconds % (1000 * 60)) / 1000); // Tính số giây còn lại
+
+        // Kiểm tra nếu thời gian hiện tại chưa vượt quá futureTime
+        if (now < futureTime) {
+          if (diffMinutes > 0) {
+            setCommentError(
+              `Bạn có thể đánh giá lại trong ${diffMinutes} phút nữa.`
+            );
+            return;
+          } else {
+            setCommentError(
+              `Bạn có thể đánh giá lại trong ${diffSeconds} giây nữa.`
+            );
+            return;
+          }
+        }
+      }
+
       if (rating === null) {
         setRatingError("Hãy lựa chọn sao.");
         return;
@@ -622,13 +665,6 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
       } else {
         setCommentError("");
       }
-
-      if (!canUserComment()) {
-        setCommentError("Bạn có thể đánh giá lại trong 10 phút nữa.");
-        return;
-      }
-
-      handleTimestampUpdate();
 
       try {
         const newComment = {
@@ -1154,7 +1190,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                               <CircleAvatar
                                 srcAvatar={
                                   comment?.user?.image ||
-                                  comment.user?.imageCredential[0]?.url 
+                                  comment?.user?.imageCredential[0]?.url
                                 }
                                 srcFrame={comment?.user?.frameAvatar}
                                 isCitizen={comment?.user?.isCitizen}
@@ -1251,7 +1287,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                           onClick={() =>
                                             handleEditClick(comment.id)
                                           }
-                                          className="text-gray-800 text-opacity-60 hover:text-gray-900 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1 whitespace-nowrap"
+                                          className="text-gray-900 hover:text-opacity-60 hover:text-gray-800 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1 whitespace-nowrap"
                                         >
                                           <Pencil className="w-5 h-5" />
                                           Chỉnh sửa
@@ -1265,7 +1301,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                             );
                                             setOpenComment(true);
                                           }}
-                                          className="text-gray-800 text-opacity-60 hover:text-gray-900 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1"
+                                          className="text-gray-900 hover:text-opacity-60 hover:text-gray-800 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1"
                                         >
                                           <Trash2 className="w-5 h-5" /> Xóa
                                         </button>
@@ -1282,14 +1318,22 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                               <>
                                 {showResponseComments === comment.id && (
                                   <ul>
-                                    {comment.responses.map(
+                                    {comment.responses
+                                    .filter(response => response.createdAt !== undefined) // Lọc các phản hồi có createdAt hợp lệ
+                                    .sort((a, b) => {
+                                      // Chuyển đổi createdAt thành Date và so sánh
+                                      const dateA = new Date(a.createdAt!); // Sử dụng ! để xác nhận rằng createdAt không phải là undefined
+                                      const dateB = new Date(b.createdAt!);
+                                      //Sắp xếp mới nhất sẽ nằm ở dưới.
+                                      return dateA.getTime() - dateB.getTime(); // Trả về hiệu số thời gian để sắp xếp
+                                    })
+                                    .map(
                                       (response, responseIndex) => (
                                         <li
                                           key={responseIndex}
                                           className="w-[90%] mx-auto"
                                         >
-                                          {user &&
-                                          user.id === response?.user.id ? (
+                                          {comment.user.id === response?.user.id ? (
                                             <>
                                               {response.commentId ===
                                                 comment.id && (
@@ -1407,7 +1451,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                                                           ""
                                                                       )
                                                                     }
-                                                                    className="text-gray-800 text-opacity-60 hover:text-gray-900 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1 whitespace-nowrap"
+                                                                    className="text-gray-900 hover:text-opacity-60 hover:text-gray-800 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1 whitespace-nowrap"
                                                                   >
                                                                     <Pencil className="w-5 h-5" />{" "}
                                                                     Chỉnh sửa
@@ -1433,7 +1477,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                                                         true
                                                                       );
                                                                     }}
-                                                                    className="text-gray-800 text-opacity-60 hover:text-gray-900 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1"
+                                                                    className="text-gray-900 hover:text-opacity-60 hover:text-gray-800 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1"
                                                                   >
                                                                     <Trash2 className="w-5 h-5" />{" "}
                                                                     Xóa
@@ -1569,7 +1613,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                                                           ""
                                                                       )
                                                                     }
-                                                                    className="text-gray-800 text-opacity-60 hover:text-gray-900 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1 whitespace-nowrap"
+                                                                    className="text-gray-900 hover:text-opacity-60 hover:text-gray-800 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1 whitespace-nowrap"
                                                                   >
                                                                     <Pencil className="w-5 h-5" />{" "}
                                                                     Chỉnh sửa
@@ -1595,7 +1639,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                                                         true
                                                                       );
                                                                     }}
-                                                                    className="text-gray-800 text-opacity-60 hover:text-gray-900 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1"
+                                                                    className="text-gray-900 hover:text-opacity-60 hover:text-gray-800 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1"
                                                                   >
                                                                     <Trash2 className="w-5 h-5" />{" "}
                                                                     Xóa

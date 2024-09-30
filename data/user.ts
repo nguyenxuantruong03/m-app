@@ -17,7 +17,7 @@ export const getUserById = async (id:string | undefined) => {
                 orderBy: {
                     createdAt: 'desc'
                 }
-            }
+            },
         }})
         return user
     } catch (error) {

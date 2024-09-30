@@ -25,16 +25,15 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import "../../components/style.css";
 import StatusProduct from "../../components/ui/statusProduct";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import "../../components/style.css";
 import useCartdb from "@/hooks/client/db/use-cart-db";
 import { PackageModal } from "@/components/(client)/modal/packageProdct-modal";
 import { ReturnProduct } from "@/components/(client)/modal/returnProduct-modal";
 import { ReviewModal } from "@/components/(client)/modal/review-product-packageProduct-modal";
 import FormatDate from "@/components/format-Date";
+import "../../components/style.css";
 
 const WareHouseDetail = ({
   params,

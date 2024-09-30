@@ -197,3 +197,10 @@ body,
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+
+#content-input:focus {
+  outline: none !important; /* Bỏ outline khi focus */
+  box-shadow: none !important; /* Bỏ shadow khi focus */
+  --tw-ring-offset-width: 0px !important; /* Bỏ offset */
+}

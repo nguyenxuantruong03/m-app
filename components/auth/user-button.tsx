@@ -116,7 +116,7 @@ export const UserButton = () => {
       <DropdownMenuContent className="z-[9999] p-5">
         <div className="flex items-center space-x-3">
           <Avatar>
-            { avatarImage ? (
+            {avatarImage ? (
               <ImageCellOne
                 imageUrl={avatarImage}
                 createdAt={formatcreatedAt || ""}
@@ -150,10 +150,12 @@ export const UserButton = () => {
             </p>
           </div>
         </div>
-
+        
+        <Link href={`/u/${userId?.nameuser?.replace(/^@/, "")}`}>
         <DropdownMenuItem className="mt-4 mb-2 flex items-center">
           <User className="h-5 w-5 mr-2" /> Trang cá nhân
         </DropdownMenuItem>
+            </Link>
 
         <Separator />
         <DropdownMenuItem className="my-2 flex items-center">
@@ -163,29 +165,35 @@ export const UserButton = () => {
         <DropdownMenuItem className="flex items-center">
           <NotepadText className="h-5 w-5 mr-2" /> Bài đánh giá của tôi
         </DropdownMenuItem>
-        <Separator />
 
         <DropdownMenuItem className="my-2 flex items-center">
           <Bookmark className="h-5 w-5 mr-2" /> Bài viết đã lưu
         </DropdownMenuItem>
-        <Separator />
 
         <DropdownMenuItem className="flex items-center cursor-pointer">
           <ThemeToggleDrakorLight dropdown={false} />
         </DropdownMenuItem>
 
-        <DropdownMenuItem className="my-2 flex items-center">
-          <Package className="h-5 w-5 mr-2" /> Sản phẩm đã mua
-        </DropdownMenuItem>
-
-        <DropdownMenuItem className="my-2 flex items-center">
-          <Package className="h-5 w-5 mr-2" /> Đơn vận chuyển
-        </DropdownMenuItem>
-
-        <DropdownMenuItem className="my-2 flex items-center">
-          <Package className="h-5 w-5 mr-2" /> Kho voucher
-        </DropdownMenuItem>
         <Separator />
+
+        <Link href="/warehouse/package-product/delivered-product">
+          <DropdownMenuItem className="my-2 flex items-center">
+            <Package className="h-5 w-5 mr-2" /> Sản phẩm đã mua
+          </DropdownMenuItem>
+        </Link>
+
+        <Link href="/warehouse/package-product">
+          <DropdownMenuItem className="my-2 flex items-center">
+            <Package className="h-5 w-5 mr-2" /> Đơn vận chuyển
+          </DropdownMenuItem>
+        </Link>
+
+        <Link href="/warehouse">
+          <DropdownMenuItem className="my-2 flex items-center">
+            <Package className="h-5 w-5 mr-2" /> Kho voucher
+          </DropdownMenuItem>
+          <Separator />
+        </Link>
 
         <Separator />
         <Link href="/setting-profile">

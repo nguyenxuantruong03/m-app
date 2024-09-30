@@ -112,64 +112,71 @@ export const setting = async (values: z.infer<typeof SettingSchema>) => {
     ? Array.from(new Set([...values.favorite, "phobien"]))
     : ["phobien"];
 
-  await prismadb.user.update({
-    where: { id: dbUser.id },
-    data: {
-      password: {
-        create: {
-          password: values.password || "", // Cập nhật mật khẩu mới
-        },
-      },
-      socialLink: {
-        upsert: {
-          where: { userId: dbUser.id }, // Điều kiện để kiểm tra sự tồn tại
-          create: {
-            // Dữ liệu sẽ được tạo mới nếu chưa tồn tại
-            linkyoutube: values.linkyoutube || "",
-            linkfacebook: values.linkfacebook || "",
-            linkinstagram: values.linkinstagram || "",
-            linktwitter: values.linktwitter || "",
-            linklinkedin: values.linklinkedin || "",
-            linkgithub: values.linkgithub || "",
-            linktiktok: values.linktiktok || "",
-            linkwebsite: values.linkwebsite || "",
-            linkother: values.linkother || "",
+    await prismadb.user.update({
+      where: { id: dbUser.id },
+      data: {
+        password: values.password
+          ? {
+              create: {
+                password: values.password, // Update with new password
+              },
+            }
+          : undefined,
+    
+        // Update social links only if any values are provided
+        socialLink: {
+          upsert: {
+            where: { userId: dbUser.id },
+            create: {
+              linkyoutube: values.linkyoutube || undefined,
+              linkfacebook: values.linkfacebook || undefined,
+              linkinstagram: values.linkinstagram || undefined,
+              linktwitter: values.linktwitter || undefined,
+              linklinkedin: values.linklinkedin || undefined,
+              linkgithub: values.linkgithub || undefined,
+              linktiktok: values.linktiktok || undefined,
+              linkwebsite: values.linkwebsite || undefined,
+              linkother: values.linkother || undefined,
+            },
+            update: {
+              linkyoutube: values.linkyoutube || undefined,
+              linkfacebook: values.linkfacebook || undefined,
+              linkinstagram: values.linkinstagram || undefined,
+              linktwitter: values.linktwitter || undefined,
+              linklinkedin: values.linklinkedin || undefined,
+              linkgithub: values.linkgithub || undefined,
+              linktiktok: values.linktiktok || undefined,
+              linkwebsite: values.linkwebsite || undefined,
+              linkother: values.linkother || undefined,
+            },
           },
-          update: {
-            // Dữ liệu sẽ được cập nhật nếu đã tồn tại
-            linkyoutube: values.linkyoutube || "",
-            linkfacebook: values.linkfacebook || "",
-            linkinstagram: values.linkinstagram || "",
-            linktwitter: values.linktwitter || "",
-            linklinkedin: values.linklinkedin || "",
-            linkgithub: values.linkgithub || "",
-            linktiktok: values.linktiktok || "",
-            linkwebsite: values.linkwebsite || "",
-            linkother: values.linkother || "",
-          },
         },
-      },
-      imageCredential:
-        values.imageCredential && values.imageCredential.length > 0
+    
+        // Update imageCredential only if values.imageCredential is provided
+        imageCredential: values.imageCredential && values.imageCredential.length > 0
           ? {
               create: {
                 url: values.imageCredential[0], // Select the first URL if available
               },
             }
           : undefined,
-      favorite: favoriteWithPhobien,
-      bio: values.bio,
-      address: values.address,
-      addressother: values.addressother,
-      nameuser: values.nameuser,
-      gender: values.gender as Gender,
-      phonenumber: values.phonenumber,
-      dateofbirth: values.dateofbirth,
-
-      frameAvatar: values.frame,
-      email: undefined,
-      isTwoFactorEnabled: values.isTwoFactorEnabled,
-    },
-  });
+    
+        // Other user attributes can be updated directly
+        favorite: favoriteWithPhobien,
+        bio: values.bio,
+        address: values.address,
+        addressother: values.addressother,
+        nameuser: values.nameuser,
+        gender: values.gender as Gender,
+        phonenumber: values.phonenumber,
+        dateofbirth: values.dateofbirth,
+        frameAvatar: values.frame,
+        
+        // Do not update email and isTwoFactorEnabled if they are not provided
+        email: undefined,
+        isTwoFactorEnabled: values.isTwoFactorEnabled,
+      },
+    });
+    
   return { success: "Thay đổi thành công!" };
 };

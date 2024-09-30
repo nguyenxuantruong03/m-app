@@ -26,7 +26,15 @@ export async function POST(req:Request, { params }: { params?: { commentId?: str
           userId: userId?.id || "",
       },
       include: {
-        user: true,
+        user: {
+          include: {
+            imageCredential: {
+              orderBy: {
+                createdAt: 'desc',
+              },
+            },
+          }
+        },
       },
     });
 
@@ -46,17 +54,6 @@ export async function DELETE(
 
     if (!userId?.id) {
       return new NextResponse("Unauthenticated", { status: 403 });
-    }
-
-    const commentById = await prismadb.comment.findFirst({
-      where: {
-        userId: userId?.id || "",
-        id: params?.commentId,
-      }
-    });
-
-    if (!commentById) {
-      return new NextResponse("Unauthorized", { status: 405 });
     }
 
     const comment = await prismadb.responseComment.delete({

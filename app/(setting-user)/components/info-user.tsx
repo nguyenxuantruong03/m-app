@@ -376,21 +376,21 @@ const InfoUser: React.FC<InfoUserProps> = ({
           <div className="fixed inset-0 bg-black/80 h-full w-full z-40 flex items-center justify-center">
             <div className="h-max w-3/4 max-w-md border rounded-md gap-4 bg-slate-900 p-6 shadow-lg transition ease-in-out z-50">
               <div className="flex items-center justify-between">
-                <span className="text-lg font-semibold text-foreground break-all line-clamp-2">
+                <span className="text-lg font-semibold text-foreground break-all line-clamp-2 text-white">
                   Chỉnh sửa ảnh đại diện{" "}
                 </span>
                 <span
                   onClick={() => setOpen(false)}
                   className="cursor-pointer rounded-sm hover:rounded-full hover:bg-gray-500 hover:bg-opacity-50 p-3 opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none "
                 >
-                  <X className="h-5 w-5 " />
+                  <X className="h-5 w-5 text-white" />
                 </span>
               </div>
               <div className="text-sm text-muted-foreground break-all line-clamp-3">
                 Ảnh đại diện giúp mọi người nhận biết bạn dễ dàng hơn qua các
                 bài viết, bình luận, tin nhắn...
               </div>
-              <FormImageCredential />
+              <FormImageCredential setOpen={setOpen}/>
             </div>
           </div>
         </>

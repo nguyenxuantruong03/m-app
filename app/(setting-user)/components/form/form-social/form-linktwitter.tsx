@@ -3,7 +3,13 @@
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTransition, useState, useEffect } from "react";
+import {
+  useTransition,
+  useState,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import { useSession } from "next-auth/react";
 import {
   Form,
@@ -21,9 +27,14 @@ import FormSuccess from "@/components/form-success";
 import FormError from "@/components/form-error";
 import { useRouter } from "next/navigation";
 
-const FormLinkTwitter = () => {
+interface FormLinkTwitterProps {
+  classNames?: string;
+  setOpen?: Dispatch<SetStateAction<boolean>>;
+}
+
+const FormLinkTwitter = ({ classNames, setOpen }: FormLinkTwitterProps) => {
   const user = useCurrentUser();
-  const router = useRouter()
+  const router = useRouter();
   const { update } = useSession();
   const [error, setError] = useState<string>();
   const [success, setSuccess] = useState<string>();
@@ -32,7 +43,7 @@ const FormLinkTwitter = () => {
 
   useEffect(() => {
     // Kiểm tra xem input đã được render chưa và focus vào nó
-    const inputElement = document.getElementById('linktwitter-input');
+    const inputElement = document.getElementById("linktwitter-input");
     if (inputElement) {
       inputElement.focus();
     }
@@ -48,11 +59,13 @@ const FormLinkTwitter = () => {
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
     // Kiểm tra giá trị linktwitter nhập vào và user?.linktwitter
     if (values.linktwitter === user?.linktwitter) {
-      setError("Hãy thay đổi link Twitter mới link Twitter trên đang được sử dụng.");
+      setError(
+        "Hãy thay đổi link Twitter mới link Twitter trên đang được sử dụng."
+      );
       return;
     }
-    setSuccess("")
-    setError("")
+    setSuccess("");
+    setError("");
     startTransition(() => {
       setting(values)
         .then((data) => {
@@ -61,8 +74,9 @@ const FormLinkTwitter = () => {
           }
           if (data.success) {
             update();
-            router.refresh()
+            router.refresh();
             setSuccess(data.success);
+            setOpen?.(false);
           }
         })
         .catch(() => {
@@ -71,37 +85,64 @@ const FormLinkTwitter = () => {
     });
   };
   return (
-        <Form {...form}>
-          <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="space-y-4">
-              <FormField
-                control={form.control}
-                name="linktwitter"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Link Twitter</FormLabel>
-                    <FormControl>
-                      <Input
-                        id="linktwitter-input"
-                        {...field}
-                        placeholder="https://www.twitter.com/ ..."
-                        disabled={isPending}
-                        className={
-                          form.formState.errors.linktwitter
-                            ? "border-2 border-red-500 border-opacity-50"
-                            : ""
-                        }
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
-            <FormError message={error || form.formState.errors.linktwitter?.message} />
+    <Form {...form}>
+      <form
+        className={`space-y-6 ${classNames}`}
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
+        <div className="space-y-4">
+          <FormField
+            control={form.control}
+            name="linktwitter"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Link Twitter</FormLabel>
+                <FormControl>
+                  <Input
+                    id="linktwitter-input"
+                    {...field}
+                    placeholder="https://www.twitter.com/ ..."
+                    disabled={isPending}
+                    className={
+                      form.formState.errors.linktwitter
+                        ? "border-2 border-red-500 border-opacity-50"
+                        : ""
+                    }
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        {!setOpen && (
+          <>
+            <FormError
+              message={error || form.formState.errors.linktwitter?.message}
+            />
             <FormSuccess message={success} />
-            <Button type="submit" disabled={isPending}>Save</Button>
-          </form>
-        </Form>
+          </>
+        )}
+        <div>
+          {setOpen && (
+            <Button
+              className="mr-2"
+              onClick={() => setOpen?.(false)}
+              disabled={isPending}
+            >
+              Cancel
+            </Button>
+          )}
+          <Button
+            className="text-white"
+            variant="primary"
+            type="submit"
+            disabled={isPending}
+          >
+            Save
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 };
 

@@ -3,7 +3,13 @@
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTransition, useState, useEffect } from "react";
+import {
+  useTransition,
+  useState,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import { useSession } from "next-auth/react";
 import {
   Form,
@@ -24,13 +30,14 @@ import { Favorite } from "@prisma/client";
 
 interface FormFavoriteProps {
   dataallfavorite: Favorite[];
+  classNames?: string;
+  setOpen?: Dispatch<SetStateAction<boolean>>;
 }
 
 interface OptionType {
   label: string;
   value: string;
 }
-
 
 const getRandomColor = () => {
   const r = Math.floor(Math.random() * 256);
@@ -43,7 +50,11 @@ const getRandomColor = () => {
   };
 };
 
-const FormFavorite: React.FC<FormFavoriteProps> = ({ dataallfavorite }) => {
+const FormFavorite: React.FC<FormFavoriteProps> = ({
+  dataallfavorite,
+  classNames,
+  setOpen,
+}) => {
   const user = useCurrentUser();
   const router = useRouter();
   const { update } = useSession();
@@ -72,8 +83,10 @@ const FormFavorite: React.FC<FormFavoriteProps> = ({ dataallfavorite }) => {
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
     setSuccess("");
     setError("");
-    const filteredUserFavorites = user?.favorite?.filter(fav => fav !== 'phobien') || [];
-    const filteredValuesFavorites = values.favorite?.filter(fav => fav !== 'phobien') || [];
+    const filteredUserFavorites =
+      user?.favorite?.filter((fav) => fav !== "phobien") || [];
+    const filteredValuesFavorites =
+      values.favorite?.filter((fav) => fav !== "phobien") || [];
 
     const valuesString = JSON.stringify(filteredValuesFavorites);
     const userString = JSON.stringify(filteredUserFavorites);
@@ -82,7 +95,7 @@ const FormFavorite: React.FC<FormFavoriteProps> = ({ dataallfavorite }) => {
       setError("Hãy thay đổi ưa thích mới ưa thích trên đang được sử dụng.");
       return;
     }
-    
+
     startTransition(() => {
       setting(values)
         .then((data) => {
@@ -93,6 +106,7 @@ const FormFavorite: React.FC<FormFavoriteProps> = ({ dataallfavorite }) => {
             update();
             router.refresh();
             setSuccess(data.success);
+            setOpen?.(false);
           }
         })
         .catch(() => {
@@ -126,7 +140,10 @@ const FormFavorite: React.FC<FormFavoriteProps> = ({ dataallfavorite }) => {
 
   return (
     <Form {...form}>
-      <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+      <form
+        className={`space-y-6 ${classNames}`}
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
         <div className="space-y-4">
           <FormField
             control={form.control}
@@ -154,11 +171,33 @@ const FormFavorite: React.FC<FormFavoriteProps> = ({ dataallfavorite }) => {
             )}
           />
         </div>
-        <FormError message={error || form.formState.errors.favorite?.message} />
-        <FormSuccess message={success} />
-        <Button type="submit" disabled={isPending}>
-          Save
-        </Button>
+        {!setOpen && (
+          <>
+            <FormError
+              message={error || form.formState.errors.favorite?.message}
+            />
+            <FormSuccess message={success} />
+          </>
+        )}
+        <div>
+          {setOpen && (
+            <Button
+              className="mr-2"
+              onClick={() => setOpen?.(false)}
+              disabled={isPending}
+            >
+              Cancel
+            </Button>
+          )}
+          <Button
+            variant="primary"
+            className="text-white"
+            type="submit"
+            disabled={isPending}
+          >
+            Save
+          </Button>
+        </div>
       </form>
     </Form>
   );

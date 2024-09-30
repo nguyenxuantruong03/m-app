@@ -106,3 +106,53 @@ export const getProductSearchAll11 =async():Promise<Product> =>{
     return res.json();
 }
 
+
+const fetchProduct = async (url: string): Promise<Product[]> => {
+    const res = await fetch(url);
+    return res.json();
+}
+
+export const getAllProduct = async () => {
+    const [
+        product,
+        product1,
+        product2,
+        product3,
+        product4,
+        product5,
+        product6,
+        product7,
+        product8,
+        product9,
+        product10,
+        product11
+    ] = await Promise.all([
+        fetchProduct(URLProduct),
+        fetchProduct(URLProduct1),
+        fetchProduct(URLProduct2),
+        fetchProduct(URLProduct3),
+        fetchProduct(URLProduct4),
+        fetchProduct(URLProduct5),
+        fetchProduct(URLProduct6),
+        fetchProduct(URLProduct7),
+        fetchProduct(URLProduct8),
+        fetchProduct(URLProduct9),
+        fetchProduct(URLProduct10),
+        fetchProduct(URLProduct11)
+    ]);
+
+    return {
+        product,
+        product1,
+        product2,
+        product3,
+        product4,
+        product5,
+        product6,
+        product7,
+        product8,
+        product9,
+        product10,
+        product11
+    }
+}
