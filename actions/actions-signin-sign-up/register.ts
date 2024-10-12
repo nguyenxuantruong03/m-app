@@ -38,7 +38,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
 
   // Xử lý tạo nameuser từ email
   const atIndex = email.indexOf("@");
-  const nameuser = "@" + email.slice(0, atIndex).toLowerCase();
+  const nameuser = email.slice(0, atIndex).toLowerCase();
 
 // Tạo người dùng mới
   await prismadb.user.create({

@@ -330,6 +330,9 @@ model Product {
   productdetailId      String
   productdetail        ProductDetail          @relation("ProductDetailToProduct", fields: [productdetailId], references: [id])
 
+  isProductShowLive    Boolean                @default(false)
+  isProductLivePin     Boolean                @default(false)
+
   @@index([storeId])
   @@index([productdetailId])
 }
@@ -643,72 +646,138 @@ model User {
   //Ban user
   ban                      Boolean?
   banExpires               DateTime?
-  isbanforever             Boolean?               @default(false)
+  isbanforever             Boolean?       @default(false)
   timebanforever           DateTime?
   //Làm mới lại số lần gửi mã xác thực 2FA
-  resendCount              Int?                   @default(0)
+  resendCount              Int?           @default(0)
   //resetresendToken xem người dùng đã gửi lại bao nhiêu lần 
-  resendTokenVerify        Int?                   @default(0)
+  resendTokenVerify        Int?           @default(0)
   //resendResetPassword xem người dùng đã gửi lại bao nhiêu lần 
-  resendTokenResetPassword Int?                   @default(0)
+  resendTokenResetPassword Int?           @default(0)
   //resendEmailResetPassword xem người dùng đã gửi lại bao nhiêu lần 
-  resendEmailResetPassword Int?                   @default(0)
+  resendEmailResetPassword Int?           @default(0)
   //Chỉ gửi mail 2 lần cho người dùng
-  resendBanUserNotStart    Int?                   @default(0)
+  resendBanUserNotStart    Int?           @default(0)
   //Chỉ gửi mail 2 lần cho người dùng
-  resendUnBanUser          Int?                   @default(0)
+  resendUnBanUser          Int?           @default(0)
   // Xác thực 2 yếu tố
-  isTwoFactorEnabled       Boolean                @default(false)
+  isTwoFactorEnabled       Boolean        @default(false)
   //------------------------Nhân viên------------------------------
   //Xác thực User có câp nhật chứng minh nhân dân chưa 
-  isCitizen                Boolean?               @default(false)
+  isCitizen                Boolean?       @default(false)
   //Sô chúng minh nhân dân 
   numberCCCD               String?
   //Ngày cấp CMND
   dateRange                DateTime?
   //Cấp ở đầu
   issued                   String?
-  gender                   Gender?                @default(None)
+  gender                   Gender?        @default(None)
   //Bằng cấp
-  degree                   Degree?                @default(None)
+  degree                   Degree?        @default(None)
   //Tình trạng hôn nhân 
-  maritalStatus            MaritalStatus?         @default(None)
+  maritalStatus            MaritalStatus? @default(None)
   // Số điện thoại
   phonenumber              String?
   //Thời gian làm việc 
-  workingTime              WorkingTime?           @default(None)
+  workingTime              WorkingTime?   @default(None)
   //Ngày sinh
   dateofbirth              DateTime?
   //Thời gian bắt đầu làm việc
   timestartwork            String?
   //Veiryfi email đã gửi chưa
-  sentVeirifi              Boolean?               @default(false)
+  sentVeirifi              Boolean?       @default(false)
   //url đi làm của nhân viên
   urlimageCheckAttendance  String?
   //Mã nfc của nhân viên
   codeNFC                  String?
   //--------------Các thứ làm việc của  nhân viên------------------
   daywork                  String[]
+
+  //Stream
+  following      Follow[] @relation("Following")
+  followedBy     Follow[] @relation("FollowedBy")
+
+  blocking Block[] @relation("Blocking")
+  blocked  Block[] @relation("Blocked")
+
+  stream                Stream?
   //----------------Other-------------------
-  role                     UserRole               @default(USER)
-  accounts                 Account[]
-  eventcalendar            EventCalendar[]
-  sentEmailUser            SentEmailUser[]
-  twoFactorConfirmation    TwoFactorConfirmation?
-  socialLink               SocialLink?
-  CaculateSalary           CaculateSalary[]
-  Comment                  Comment[]
-  ResponseComment          ResponseComment[]
-  WheelSpin                WheelSpin[]
-  deviceInfo               DeviceInfo[]
-  emoji                    Emoji[]
-  cartItem                 CartItem[]
-  order                    Order[]
-  favoritePoroduct         FavoriteProduct[]
-  review                   Review[]
-  showInfomation           ShowInfomation?
-  createdAt                DateTime               @default(now())
-  updatedAt                DateTime               @updatedAt
+  role                  UserRole               @default(USER)
+  accounts              Account[]
+  eventcalendar         EventCalendar[]
+  sentEmailUser         SentEmailUser[]
+  twoFactorConfirmation TwoFactorConfirmation?
+  socialLink            SocialLink?
+  CaculateSalary        CaculateSalary[]
+  Comment               Comment[]
+  ResponseComment       ResponseComment[]
+  WheelSpin             WheelSpin[]
+  deviceInfo            DeviceInfo[]
+  emoji                 Emoji[]
+  cartItem              CartItem[]
+  order                 Order[]
+  favoritePoroduct      FavoriteProduct[]
+  review                Review[]
+  showInfomation        ShowInfomation?
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+}
+
+model Stream {
+  id           String  @id @default(cuid())
+  name         String  @db.Text
+  thumbnailUrl String? @db.Text
+
+  ingressId String? @unique
+  serverUrl String? @db.Text
+  streamKey String? @db.Text
+
+  isLive              Boolean @default(false)
+  isChatEnabled       Boolean @default(true)
+  isChatDelayed       Boolean @default(false)
+  timeDelay           Int     @default(3000)
+  isChatFollowersOnly Boolean @default(false)
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([ingressId])
+}
+
+model Follow {
+  id          String @id @default(cuid())
+  followerId  String
+  followingId String
+
+  follower  User @relation("Following", fields: [followerId], references: [id])
+  following User @relation("FollowedBy", fields: [followingId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+}
+
+model Block {
+  id        String @id @default(cuid())
+  blockerId String
+  blockedId String
+
+  blocker User @relation("Blocking", fields: [blockerId], references: [id])
+  blocked User @relation("Blocked", fields: [blockedId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([blockerId, blockedId])
+  @@index([blockerId])
+  @@index([blockedId])
 }
 
 model ShowInfomation {
@@ -723,6 +792,7 @@ model ShowInfomation {
   isAdressOther Boolean @default(false)
   isFavorite    Boolean @default(false)
   isSocial      Boolean @default(false)
+  isCreatedAt   Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1023,7 +1093,7 @@ model Review {
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   imageReview  ImageReview[]
   emoji        Emoji[]
-  isPublic     Boolean       @default(false)
+  isPublic     String      
   content      String
   rating       Int
   productId    String

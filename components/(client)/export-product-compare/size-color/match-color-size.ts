@@ -1,7 +1,7 @@
 import { Product } from "@/types/type";
 
  //PriceSale: Dụa vào select size mà lấy ra price có giảm percentpromotion và lấy ra percentpromotion
- export const getSizePrice = (data: Product, size: string | null) => {
+ export const getSizePrice = (data: Product , size: string | null) => {
   switch (size) {
     case data?.productdetail?.size5?.value:
       return {

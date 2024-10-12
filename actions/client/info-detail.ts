@@ -30,6 +30,7 @@ export const updateInfoDetail = async (values: Partial<ShowInfomation>) => {
         isAdressOther: values.isAdressOther,
         isFavorite: values.isFavorite,
         isSocial: values.isSocial,
+        isCreatedAt: values.isCreatedAt
     };
 
     let infoDetail;
@@ -53,7 +54,7 @@ export const updateInfoDetail = async (values: Partial<ShowInfomation>) => {
       });
     }
 
-        revalidatePath(`/u/${userExiting.nameuser}`)
+        revalidatePath(`/me/${userExiting.nameuser}`)
         revalidatePath(`/${userExiting.nameuser}`)
 
     return infoDetail;

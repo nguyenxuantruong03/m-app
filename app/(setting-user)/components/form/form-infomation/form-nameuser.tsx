@@ -38,24 +38,19 @@ const FormNameUser = () => {
     }
   }, []);
   
-  // Ensure the default value always starts with "@"
-  const defaultNameuser = user?.nameuser ? (user.nameuser.startsWith("@") ? user.nameuser : `@${user.nameuser}`) : "@";
-
   const form = useForm<z.infer<typeof SettingSchema>>({
     resolver: zodResolver(SettingSchema),
     defaultValues: {
-      nameuser: defaultNameuser,
+      nameuser:  user?.nameuser,
     },
   });
 
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
-    const nameuser = values.nameuser || "";
-    const trimmedNameuser = nameuser.startsWith('@') ? nameuser.slice(1) : nameuser;
-
-    if (trimmedNameuser === user?.nameuser) {
+    if (values.nameuser === user?.nameuser) {
       setError("Hãy thay đổi tên mới tên trên đang được sử dụng.");
       return;
     }
+    
     setSuccess("");
     setError("");
     startTransition(() => {
@@ -78,29 +73,9 @@ const FormNameUser = () => {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    if (!value.startsWith("@")) {
-      form.setValue("nameuser", `@${value.replace(/^@*/, "")}`);
-    } else {
-      form.setValue("nameuser", value);
-    }
+    form.setValue("nameuser", value);
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    // Check if the "@" is at the beginning and prevent deleting it
-    const nameuserValue = form.getValues("nameuser");
-    if (nameuserValue && event.key === "Backspace" && nameuserValue.indexOf("@") === 0 && event.currentTarget.selectionStart === 0) {
-      event.preventDefault();
-    }
-  };
-
-  const handleSelect = (event: React.SyntheticEvent<HTMLInputElement>) => {
-    const input = event.currentTarget;
-    // Check if the "@" is at the beginning and prevent selecting it
-    if (input.selectionStart === 0 && input.value.startsWith("@")) {
-      input.selectionStart = 1;
-    }
-  };
-  
   return (
     <Form {...form}>
       <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
@@ -124,8 +99,6 @@ const FormNameUser = () => {
                     }
                     
                     onChange={handleInputChange}
-                    onKeyDown={handleKeyDown}
-                    onSelect={handleSelect}
                   />
                 </FormControl>
               </FormItem>
@@ -136,7 +109,7 @@ const FormNameUser = () => {
         <FormSuccess message={success} />
         <Button type="submit" disabled={isPending}>Save</Button>
         <div className="text-sm text-gray-500 select-none mt-3">
-          URL: {process.env.NEXT_PUBLIC_URL}/{(form.getValues("nameuser") || "").replace(/^@/, "")}
+          URL: {process.env.NEXT_PUBLIC_URL}/me/{(form.getValues("nameuser") || "")}
         </div>
       </form>
     </Form>

@@ -69,6 +69,19 @@ const Delivery = () => {
     fetchData();
   }, [user?.id]);
 
+  useEffect(() => {
+    if (openReview) {
+      document.body.style.overflow = 'hidden'; // Ngăn chặn cuộn
+    } else {
+      document.body.style.overflow = 'auto'; // Khôi phục cuộn
+    }
+
+    // Clean up function to reset overflow when component unmounts
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [openReview]);
+
   // Sorting function to sort orders based on status
   const sortOrders = (orders: Order[]) => {
     const orderPriority = {

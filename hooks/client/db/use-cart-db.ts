@@ -128,6 +128,7 @@ const useCartdb = create<CartStore>((set, get) => ({
   ,
 
   addItem: async (data: Product, quantity: number, warranty: string | null, userId: string,selectedSize: string,selectedColor: string) => {
+    console.log("active")
     const response = await axios.post("/api/client/cart/addItem", {
       productId: data.id,
       productName: data.name,
@@ -138,7 +139,9 @@ const useCartdb = create<CartStore>((set, get) => ({
       warranty: warranty
     });
 
+    
     const newItem = response.data;
+    console.log("newItem",newItem)
 
     const cartItem: CartItemType = {
       id: newItem.id,

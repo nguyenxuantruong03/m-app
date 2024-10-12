@@ -33,6 +33,11 @@ export async function POST(req:Request, { params }: { params?: { commentId?: str
                 createdAt: 'desc',
               },
             },
+            stream: {
+              select: {
+                isLive: true,
+              },
+            },
           }
         },
       },
@@ -119,6 +124,11 @@ export async function GET(req: Request, { params }: { params?: { commentId?: str
             imageCredential: {
               orderBy: {
                 createdAt: 'desc',
+              },
+            },
+            stream: {
+              select: {
+                isLive: true,
               },
             },
           },

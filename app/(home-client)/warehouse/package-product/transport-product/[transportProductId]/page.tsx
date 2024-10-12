@@ -74,6 +74,19 @@ const WareHouseDetail = ({
   }, [user?.id]);
 
   useEffect(() => {
+    if (openReview || openReturnProduct) {
+      document.body.style.overflow = 'hidden'; // Ngăn chặn cuộn
+    } else {
+      document.body.style.overflow = 'auto'; // Khôi phục cuộn
+    }
+
+    // Clean up function to reset overflow when component unmounts
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [openReview, openReturnProduct]);
+
+  useEffect(() => {
     if (data.length > 0) {
       const order = data.find((item) => item.id === params.transportProductId);
       if (order) {

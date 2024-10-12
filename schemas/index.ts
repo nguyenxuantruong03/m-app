@@ -88,11 +88,8 @@ export const SettingSchema = z
         .string()
         .min(6, { message: "Vui lòng nhập ít nhất 6 ký tự." })
         .max(20, { message: "Vui lòng không nhập quá 20 ký tự." })
-        .refine((value) => value.startsWith("@"), {
-          message: "Tên người dùng phải bắt đầu với '@'.",
-        })
         .refine((value) => noLeadingWhitespacebeforNameUser(value.slice(1)), {
-          message: "Không được phép có khoảng trắng đầu dòng sau '@'.",
+          message: "Không được phép có khoảng trắng đầu dòng sau.",
         })
         .refine((value) => noSpecialCharactersforNameUser(value.slice(1)), {
           message:
@@ -298,7 +295,7 @@ export const PostSchema = z.object({
   productId: z.optional(z.string()),
   categoryName: z.optional(z.string()),
   rating: z.optional(z.coerce.number()),
-  isPublic: z.optional(z.boolean()),
+  isPublic: z.optional(z.string()),
 });
 
 export const NewPasswordSchema = z.object({
@@ -330,3 +327,13 @@ export const RegisterSchema = z.object({
     message: "Yêu cầu nhập tên ít nhất 4 ký tự!",
   }),
 });
+
+
+export const DelayForm = z.object ({
+  timeDelay: z.optional(z.coerce.number()),
+})
+
+export const ToogleCardForm =z.object({
+  isProductShowLive: z.optional(z.boolean()),
+  isProductLivePin: z.optional(z.boolean()),
+})

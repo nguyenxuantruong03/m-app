@@ -6,9 +6,10 @@ import { useEffect, useState } from "react";
 interface CurrencyProps {
   value?: string | number;
   valueold?: string | number;
+  textSize?: string
 }
 
-const Currency: React.FC<CurrencyProps> = ({ value, valueold }) => {
+const Currency: React.FC<CurrencyProps> = ({ value, valueold,textSize }) => {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -29,12 +30,12 @@ const Currency: React.FC<CurrencyProps> = ({ value, valueold }) => {
 
   return (
     <div className="flex space-x-4">
-      <div className="font-bold text-red-500 text-xs md:text-base">
+      <div className={`font-bold text-red-500 text-xs ${textSize ? `${textSize}` : " md:text-base"}`}>
         {formatter.format(numericValue)}
       </div>
 
       {shouldDisplayOldValue && (
-        <div className="font-bold text-gray-500 line-through text-xs md:text-base">
+        <div className={`font-bold text-gray-500 line-through text-xs ${textSize ? `${textSize}` : " md:text-base"}`}>
           {formatter.format(numericValueOld)}
         </div>
       )}

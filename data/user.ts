@@ -18,6 +18,11 @@ export const getUserById = async (id:string | undefined) => {
                     createdAt: 'desc'
                 }
             },
+            stream: {
+                select: {
+                    isLive: true
+                }
+            }
         }})
         return user
     } catch (error) {

@@ -6,10 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Bookmark,
-  NotepadText,
   Package,
-  PencilLine,
   Settings,
   User,
 } from "lucide-react";
@@ -110,6 +107,8 @@ export const UserButton = () => {
           classAvatar="z-10"
           isCitizen={userId?.isCitizen}
           role={userId?.role}
+          isLive={userId?.isLive}
+          nameuser={userId?.nameuser}
         />
       </DropdownMenuTrigger>
 
@@ -150,25 +149,13 @@ export const UserButton = () => {
             </p>
           </div>
         </div>
-        
-        <Link href={`/u/${userId?.nameuser?.replace(/^@/, "")}`}>
-        <DropdownMenuItem className="mt-4 mb-2 flex items-center">
-          <User className="h-5 w-5 mr-2" /> Trang cá nhân
-        </DropdownMenuItem>
-            </Link>
 
+        <Link href={`/me/${userId?.nameuser}`}>
+          <DropdownMenuItem className="mt-4 mb-2 flex items-center">
+            <User className="h-5 w-5 mr-2" /> Trang cá nhân
+          </DropdownMenuItem>
+        </Link>
         <Separator />
-        <DropdownMenuItem className="my-2 flex items-center">
-          <PencilLine className="h-5 w-5 mr-2" /> Viết đánh giá
-        </DropdownMenuItem>
-
-        <DropdownMenuItem className="flex items-center">
-          <NotepadText className="h-5 w-5 mr-2" /> Bài đánh giá của tôi
-        </DropdownMenuItem>
-
-        <DropdownMenuItem className="my-2 flex items-center">
-          <Bookmark className="h-5 w-5 mr-2" /> Bài viết đã lưu
-        </DropdownMenuItem>
 
         <DropdownMenuItem className="flex items-center cursor-pointer">
           <ThemeToggleDrakorLight dropdown={false} />

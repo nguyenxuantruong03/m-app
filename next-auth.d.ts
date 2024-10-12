@@ -32,6 +32,7 @@ export type ExtendedUser = DefaultSession["user"] & {
   linktiktok: string;
   linkwebsite: string;
   linkother: string;
+  isLive: boolean;
 };
 
 declare module "next-auth" {

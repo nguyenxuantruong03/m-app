@@ -68,7 +68,7 @@ export const post = async (
           categoryName: values.categoryName || "",
           productId: values.productId || "",
           userId: user.id || "",
-          isPublic: values.isPublic,
+          isPublic: values.isPublic || "individual",
           imageReview: {
             createMany: {
               data: [...imageReview.map((image: { url: string }) => image)],

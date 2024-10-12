@@ -69,6 +69,19 @@ const ReturnProdcut = () => {
     fetchData();
   }, [user?.id]);
 
+  useEffect(() => {
+    if (openReturnProduct) {
+      document.body.style.overflow = 'hidden'; // Ngăn chặn cuộn
+    } else {
+      document.body.style.overflow = 'auto'; // Khôi phục cuộn
+    }
+
+    // Clean up function to reset overflow when component unmounts
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [openReturnProduct]);
+
   const matchId = data.filter((order: Order) => order.status === "Tra_hang");
 
   const handleBuyAgainClick = (order: Order) => {

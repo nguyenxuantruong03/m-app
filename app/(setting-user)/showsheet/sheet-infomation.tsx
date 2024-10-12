@@ -98,7 +98,7 @@ const SheetInfomation: React.FC<SheetInfomationProps> = ({
       title: `URL trang cá nhân VLXD Xuân Trường của bạn sẽ bị thay đổi: ${
         nameuser || "Chưa thay đổi"
       }`,
-      description: `Chỉnh sửa tên người dùng bắt buộc có @: ${
+      description: `Tên người dùng hiện tại: ${
         nameuser || "Chưa thay đổi"
       }`,
       form: <FormNameUser />,

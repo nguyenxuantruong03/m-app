@@ -11,6 +11,7 @@ import { useParams } from "next/navigation";
 import { AlertModal } from "@/components/modals/alert-modal";
 import CircleAvatar from "@/components/ui/circle-avatar";
 import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
+import Link from "next/link";
 
 export interface Comment {
   rating: number;
@@ -1185,7 +1186,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                       .sort((a, b) => b.rating - a.rating)
                       .map((comment, index) => (
                         <li key={comment.id} className="mb-8">
-                          <div className=" flex items-center relative">
+                          <div className={`flex items-center relative ${comment?.user?.stream?.isLive ? "ml-8" : ""}`}>
                             <>
                               <CircleAvatar
                                 srcAvatar={
@@ -1195,6 +1196,8 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                 srcFrame={comment?.user?.frameAvatar}
                                 isCitizen={comment?.user?.isCitizen}
                                 role={comment?.user?.role}
+                                isLive={comment?.user?.stream?.isLive}
+                                nameuser={comment?.user?.nameuser}
                                 classAvatar="z-10"
                               />
                             </>
@@ -1203,8 +1206,8 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                 comment?.totalchange ? "grid grid-rows-2" : ""
                               }`}
                             >
-                              <>
-                                <p className="ml-3 font-bold flex items-center text-gray-600 line-clamp-1">
+                              <Link href={`${comment?.user?.stream?.isLive ? `/live/${comment?.user?.nameuser}` : `/user/${comment?.user?.nameuser}`}`}>
+                                <p className={`font-bold flex items-center text-gray-600 line-clamp-1 ${comment?.user?.stream?.isLive ? "ml-10" : "ml-3"}`}>
                                   <span className=" md:hidden">
                                     {truncateName(comment.user.name, 10)}
                                   </span>
@@ -1215,7 +1218,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                     -{comment.product.heading}
                                   </p>
                                 </p>
-                              </>
+                              </Link>
                               {comment.changeReview ? (
                                 <span className="ml-3 text-sm text-gray-400 items-center font-normal line-clamp-1">
                                   (
@@ -1234,7 +1237,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                           </div>
 
                           <div
-                            className="group flex items-center justify-between bg-gray-100 mt-4 mb-2 rounded-md p-3 text-sm ml-12"
+                            className={`group flex items-center justify-between bg-gray-100 mb-2 rounded-md p-3 text-sm ml-12 ${comment?.user?.stream?.isLive ? "mt-8" : "mt-4"}`}
                             onMouseLeave={() => setShowOptions(null)}
                           >
                             <div>
@@ -1340,7 +1343,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                                 <>
                                                   <div
                                                     ref={textareaResponseRef}
-                                                    className="flex items-center relative"
+                                                    className={`flex items-center relative ${response?.user?.stream?.isLive ? "ml-8 my-4" : ""}`}
                                                   >
                                                     <>
                                                       <CircleAvatar
@@ -1350,6 +1353,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                                             ?.url ||
                                                           response?.user?.image
                                                         }
+                                                        
                                                         srcFrame={
                                                           response?.user
                                                             ?.frameAvatar
@@ -1361,6 +1365,10 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                                           response?.user
                                                             ?.isCitizen
                                                         }
+                                                        isLive={
+                                                          response?.user?.stream?.isLive
+                                                        }
+                                                        nameuser={response?.user?.nameuser}
                                                         classAvatar="z-10"
                                                       />
                                                     </>
@@ -1371,20 +1379,22 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                                           : ""
                                                       }`}
                                                     >
-                                                      <div className="font-bold text-gray-600 whitespace-nowrap line-clamp-1">
-                                                        <p className="md:hidden">
-                                                          {truncateName(
-                                                            response?.user
-                                                              ?.name,
-                                                            10
-                                                          )}
-                                                        </p>
-                                                        <p className="hidden md:block">
-                                                          {response?.user?.name}
-                                                        </p>
-                                                      </div>
+                                                      <Link href={`${response?.user?.stream?.isLive ? `/live/${response?.user?.nameuser}` : `/user/${response?.user?.nameuser}`}`}>
+                                                        <div className={`font-bold text-gray-600 whitespace-nowrap line-clamp-1 ${response?.user?.stream?.isLive ? "ml-10" : "ml-3"}`}>
+                                                          <p className="md:hidden">
+                                                            {truncateName(
+                                                              response?.user
+                                                                ?.name,
+                                                              10
+                                                            )}
+                                                          </p>
+                                                          <p className="hidden md:block">
+                                                            {response?.user?.name}
+                                                          </p>
+                                                        </div>
+                                                      </Link>
                                                       {response.changeReview ? (
-                                                        <span className="text-sm text-gray-400 items-center font-normal line-clamp-1 whitespace-nowrap">
+                                                        <span className={`text-sm text-gray-400 items-center font-normal line-clamp-1 whitespace-nowrap ${response?.user?.stream?.isLive ? "ml-10" : "ml-3"}`}>
                                                           {(response.totalchange ??
                                                             0) === 0
                                                             ? ""
@@ -1502,7 +1512,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                                 >
                                                   <div
                                                     ref={textareaResponseRef}
-                                                    className="flex justify-end items-center relative"
+                                                    className={`flex justify-end items-center relative ${response?.user?.stream?.isLive ? "mr-6 mt-6 mb-8" : ""}`}
                                                   >
                                                     <div className="absolute left-0 text-sm font-bold text-gray-800 text-opacity-60">
                                                       {formatTimestamp(
@@ -1517,20 +1527,22 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                                           : ""
                                                       }`}
                                                     >
-                                                      <div className="text-end font-bold text-gray-600 whitespace-nowrap line-clamp-1">
-                                                        <p className="md:hidden">
-                                                          {truncateName(
-                                                            response?.user
-                                                              ?.name,
-                                                            10
-                                                          )}
-                                                        </p>
-                                                        <p className="hidden md:block">
-                                                          {response?.user?.name}
-                                                        </p>
-                                                      </div>
+                                                      <Link href={`${response?.user?.stream?.isLive ? `/live/${response?.user?.nameuser}` : `/user/${response?.user?.nameuser}`}`}>
+                                                        <div className={`text-end font-bold text-gray-600 whitespace-nowrap line-clamp-1 ${response?.user?.stream?.isLive ? "mr-8" : ""}`}>
+                                                          <p className="md:hidden">
+                                                            {truncateName(
+                                                              response?.user
+                                                                ?.name,
+                                                              10
+                                                            )}
+                                                          </p>
+                                                          <p className="hidden md:block">
+                                                            {response?.user?.name}
+                                                          </p>
+                                                        </div>
+                                                      </Link>
                                                       {response.changeReview ? (
-                                                        <span className="text-sm text-gray-400 line-clamp-1 items-center font-normal whitespace-nowrap">
+                                                        <span className={`text-sm text-gray-400 line-clamp-1 items-center font-normal whitespace-nowrap ${response?.user?.stream?.isLive ? "mr-10" : ""}`}>
                                                           {(response.totalchange ??
                                                             0) === 0
                                                             ? ""
@@ -1559,6 +1571,10 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                                           response?.user
                                                             ?.frameAvatar
                                                         }
+                                                        isLive={
+                                                          response?.user?.stream?.isLive
+                                                        }
+                                                        nameuser={response?.user?.nameuser}
                                                         classAvatar="z-10"
                                                       />
                                                     </>

@@ -45,12 +45,11 @@ export async function POST(req: Request) {
 
       // Delete the existing emoji if found
       if (existingEmoji) {
-        const deleteEmoji = await prismadb.emoji.delete({
+         await prismadb.emoji.delete({
           where: {
             id: existingEmoji.id,
           },
         });
-        return NextResponse.json(deleteEmoji);
       }
 
       // Xác định giá trị emojilength dựa trên loại emoji
@@ -103,12 +102,11 @@ export async function POST(req: Request) {
 
       // Delete the existing emoji if found
       if (existingEmoji) {
-        const deleteEmoji = await prismadb.emoji.delete({
+        await prismadb.emoji.delete({
           where: {
             id: existingEmoji.id,
           },
         });
-        return NextResponse.json(deleteEmoji);
       }
 
       // Xác định giá trị emojilength dựa trên loại emoji

@@ -71,6 +71,19 @@ const InfoUser: React.FC<InfoUserProps> = ({
     fetchData();
   }, [user]);
 
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden'; // Ngăn chặn cuộn
+    } else {
+      document.body.style.overflow = 'auto'; // Khôi phục cuộn
+    }
+
+    // Clean up function to reset overflow when component unmounts
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [open]);
+
   const imageCredentials = imageCredential || undefined;
   // Use the first image from imageCredential hoăc ảnh iamge nêu ko có thì dùng deafault
   const avatarImage =

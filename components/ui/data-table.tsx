@@ -32,11 +32,12 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   searchKey: string;
-  onDelete: (rows: Row<TData>[]) => void;
-  onSelect: (rows: Row<TData>[]) => void;
+  onDelete?: (rows: Row<TData>[]) => void;
+  onSelect?: (rows: Row<TData>[]) => void;
   disable?: boolean;
-  open: boolean;
-  setOpen: (open: boolean) => void;
+  open?: boolean;
+  setOpen?: (open: boolean) => void;
+  showSelected?: boolean
 }
 
 export function DataTable<TData, TValue>({
@@ -48,6 +49,7 @@ export function DataTable<TData, TValue>({
   disable,
   open,
   setOpen,
+  showSelected = true
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -85,7 +87,7 @@ export function DataTable<TData, TValue>({
   useEffect(() => {
     if (prevRowSelection.current !== rowSelection) {
       const selectedRows = table.getSelectedRowModel().rows;
-      onSelect(selectedRows); // Ensure onSelect is called with the correct rows
+      onSelect?.(selectedRows); // Ensure onSelect is called with the correct rows
       prevRowSelection.current = rowSelection; // Update the ref
     }
   }, [rowSelection, onSelect, table]);
@@ -107,37 +109,39 @@ export function DataTable<TData, TValue>({
   return (
     <div>
       <AlertModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
+        isOpen={open ?? false}
+        onClose={() => setOpen?.(false)}
         onConfirm={() => {
-          onDelete(table.getSelectedRowModel().rows);
+          onDelete?.(table.getSelectedRowModel().rows);
           table.resetRowSelection();
         }}
         loading={disable}
       />
-      <div className="lg:flex items-center py-4 space-y-2 lg:space-y-0 lg:space-x-3 grid grid-rows-2">
-        <Input
-          placeholder="Search"
-          value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn(searchKey)?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        {Object.keys(rowSelection).length > 0 && (
-          <Button
-            size="sm"
-            disabled={disable}
-            variant="outline"
-            className="ml-auto font-normal text-xs"
-            onClick={() => setOpen(true)}
-          >
-            <Trash className="size-4 mr-2" />
-            Delete ({Object.keys(rowSelection).length})
-          </Button>
-        )}
-        <DatePickerWithRange onDateChange={handleDateChange} data={data} />
-      </div>
+          <div className="lg:flex items-center py-4 space-y-2 lg:space-y-0 lg:space-x-3 grid grid-rows-2">
+            <Input
+              placeholder="Search"
+              value={
+                (table.getColumn(searchKey || "")?.getFilterValue() as string) ?? ""
+              }
+              onChange={(event) =>
+                table.getColumn(searchKey || "")?.setFilterValue(event.target.value)
+              }
+              className="max-w-sm"
+            />
+            {Object.keys(rowSelection).length > 0 && (
+              <Button
+                size="sm"
+                disabled={disable}
+                variant="outline"
+                className="ml-auto font-normal text-xs"
+                onClick={() => setOpen?.(true)}
+              >
+                <Trash className="size-4 mr-2" />
+                Delete ({Object.keys(rowSelection).length})
+              </Button>
+            )}
+            <DatePickerWithRange onDateChange={handleDateChange} data={data} />
+          </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -189,10 +193,14 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
+        {
+          showSelected && (
         <div className="flex-1 text-sm text-muted-foreground">
           {Object.keys(rowSelection).length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
+          )
+        }
         <Button
           variant="outline"
           size="sm"
