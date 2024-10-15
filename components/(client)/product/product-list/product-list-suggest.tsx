@@ -561,7 +561,8 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
                     )}
                   </div>
                 )}
-                <CommentStar data={product.id} />
+               
+                      <CommentStar data={product.id} comment={product.comment}/>
               </div>
               <div className="home-product-item__favorite">
                 <span className="mr-1">

@@ -80,7 +80,7 @@ const Navbar = () => {
         <div className={navbarcolor.bg}>
           <div className="xl:mx-auto xl:max-w-[85rem]">
             <div className="relative flex h-16 items-center justify-between px-1">
-              <Mainnav role={user?.role || ""} userId={user?.id || ""} />
+              <Mainnav role={user?.role || ""} userId={user?.id || ""} isLive={user?.isLive}/>
             </div>
           </div>
         </div>

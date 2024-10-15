@@ -176,6 +176,7 @@ export async function GET(
     const isFeatured = searchParams.get("isFeatured");
     const productdetailId = searchParams.get("productdetailId") || undefined;
     const productType = ProductType.PRODUCT;
+    const productType7 = ProductType.PRODUCT7;
     if (!params.storeId) {
       return new NextResponse(
         JSON.stringify({ error: "Store id is required!" }),
@@ -188,12 +189,15 @@ export async function GET(
         storeId: params.storeId,
         isFeatured: isFeatured ? true : undefined,
         isArchived: false,
-        productType: productType,
+        productType: {
+          in: [productType, productType7],
+        },
         productdetailId,
       },
       include: {
         images: true,
         imagesalientfeatures: true,
+        comment: true,
         productdetail: {
           include: {
             category: true,

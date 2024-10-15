@@ -70,7 +70,7 @@ const DetailProduct: React.FC<ProductDetailProps> = ({
       )}
       <hr className="my-8" />
       <InfoProductDetail data={data} />
-      <Comment data={data.id} nameProduct={data.heading}/>
+      <Comment data={data.id} nameProduct={data.heading} commentData={data.comment} responsecommentData={data.responsecomment}/>
     </>
   );
 };

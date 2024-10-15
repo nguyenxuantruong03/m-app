@@ -11,11 +11,14 @@ interface PropductPageProps {
   };
 }
 const ProductPage: React.FC<PropductPageProps> = async ({ params }) => {
-  const [product, suggestedProducts, suggestedProducts8] = await Promise.all([
-    getProducts10(params.productId),
-    getProduct10({}),
-    getProduct8({})
-  ]);
+  const product = await getProducts10(params.productId);
+  const suggestedProducts = await getProduct10({ isFeatured: true });
+  const suggestedProduct10 = suggestedProducts.filter(
+    (product: any) => product.productType === "PRODUCT10"
+  );
+  const suggestedProduct8 = suggestedProducts.filter(
+    (product: any) => product.productType === "PRODUCT8"
+  );
 
   if (!product) {
     return null;
@@ -27,10 +30,10 @@ const ProductPage: React.FC<PropductPageProps> = async ({ params }) => {
         <DetailProduct
           data={product}
           images={product.images}
-          otherSuggestions={suggestedProducts}
-          routeOtherSuggestions="product9"
+          otherSuggestions={suggestedProduct10}
+          routeOtherSuggestions="product10"
           productlistsuggest2={true}
-          other={suggestedProducts8}
+          other={suggestedProduct8}
           routeOther="son"
         />
       </Container>

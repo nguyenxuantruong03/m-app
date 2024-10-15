@@ -17,7 +17,7 @@ export const Search = () => {
 
     const url = qs.stringifyUrl(
       {
-        url: "/user/search",
+        url: "/search",
         query: { term: value },
       },
       { skipEmptyString: true }
@@ -48,7 +48,7 @@ export const Search = () => {
       )}
       <Button
         type="submit"
-        size="sm"
+        size="default"
         variant="secondary"
         className="rounded-l-none h-10"
       >

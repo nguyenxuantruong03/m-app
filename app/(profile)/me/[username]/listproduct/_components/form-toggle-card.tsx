@@ -71,11 +71,11 @@ export const FormToggleCard = ({
     try {
       setLoading(true);
       await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/getAllProduct`,
+        `${process.env.NEXT_PUBLIC_API_URL}/getAllProductNotQuery`,
         updatedData
       );
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/getAllProduct`
+        `${process.env.NEXT_PUBLIC_API_URL}/getAllProductNotQuery`
       );
       setData(response.data);
       toast.success("Product updated.");

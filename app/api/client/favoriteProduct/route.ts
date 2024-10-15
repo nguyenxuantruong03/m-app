@@ -122,6 +122,7 @@ export async function DELETE(req: Request) {
           product: {
             include: {
               images: true,
+              comment: true,
               productdetail: {
                 include: {
                   size1: true,

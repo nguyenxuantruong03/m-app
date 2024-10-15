@@ -7,7 +7,6 @@ import {
   Coins,
   Gamepad2,
   Heart,
-  Bell,
   CircleUser,
   UserRoundPlus,
   Blocks,
@@ -37,20 +36,22 @@ import axios from "axios";
 import { mainnavcolor } from "@/components/(client)/color/color";
 import Image from "next/image";
 import "./mainnav.css";
-import SearchPage from "@/components/(client)/search/search";
 import { UserButton } from "@/components/auth/user-button";
 import useFavorite from "@/hooks/client/db/use-favorite";
 import useCart from "@/hooks/client/use-cart";
 import { cn } from "@/lib/utils";
 import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
 import useCartdb from "@/hooks/client/db/use-cart-db";
+import { SearchPage } from "./search";
+import SearchItem from "./_components/search-item";
 
 interface mainNavProps {
   role: string;
   userId: string;
+  isLive: boolean | undefined;
 }
 
-const MainNav: React.FC<mainNavProps> = ({ role, userId }) => {
+const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
   const pathname = usePathname();
   const param = useParams();
   const router = useRouter();
@@ -190,7 +191,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId }) => {
         <div className="absolute top-[-40px] z-40 " ref={menuRef}>
           <Menu showCategories={true} />
         </div>
-      )}
+      )} 
 
       <div className={mainnavcolor.bgroundedmd}>
         <div className=" flex-col md:flex-row justify-center  items-center  py-[2px] hidden md:flex">
@@ -207,7 +208,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId }) => {
       </div>
 
       <div className="ml-1.5 md:ml-0">
-        <SearchPage />
+        <SearchPage /> 
       </div>
 
       <NavigationMenu className="hidden md:block">
@@ -463,10 +464,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId }) => {
       <div className="flex items-center justify-between">
         {userId ? (
           <div className="flex items-center space-x-2">
-            <div className="p-2 rounded-full hover:bg-gray-300 hover:bg-opacity-50 cursor-pointer">
-              <Bell className="size-5 text-amber-400" />
-            </div>
-            <div>
+            <div className={`${isLive && "mr-8 ml-6 mb-6"}`}>
               <UserButton />
             </div>
           </div>

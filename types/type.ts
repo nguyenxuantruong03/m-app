@@ -1,5 +1,3 @@
-import { string } from "zod";
-
 export interface Store {
   name: string;
 }
@@ -176,6 +174,29 @@ export type ProductDetail = {
   color5: Color;
 };
 
+export interface Comment {
+  rating: number;
+  comment: string;
+  productId: string;
+  product: any;
+  id?: string;
+  responses?: ResponseComment[];
+  createdAt?: Date;
+  user?: any;
+  changeReview?: boolean;
+  totalchange?: number | undefined;
+}
+
+export interface ResponseComment {
+  id?: string;
+  commentId: string;
+  description: string;
+  changeReview?: boolean;
+  totalchange?: number | undefined;
+  user?: any;
+  createdAt?: Date;
+}
+
 export interface Product {
   id: string;
   storeId: string;
@@ -189,6 +210,8 @@ export interface Product {
   isArchived: Boolean;
   images: Image[];
   imagesalientfeatures: Imagesalientfeaturesproduct[];
+  comment?: Comment[]
+  responsecomment?: ResponseComment[]
   cartItem: CartItemType;
   productdetailId: string;
   quantity?: number;
@@ -223,6 +246,7 @@ export interface FavoriteProduct {
   productId: string;
   product: Product;
   productName: string;
+  comment?: Comment[];
   userId: string;
   selectedColor: string;
   selectedSize: string;
@@ -289,6 +313,7 @@ export interface User {
   imageCredential: ImageCredential[];
   image: string;
   name: string;
+  nameuser: string;
 }
 export interface Emoji {
   id: string;

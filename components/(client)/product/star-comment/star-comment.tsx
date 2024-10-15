@@ -1,54 +1,20 @@
 "use client";
-import axios from "axios";
-import React, { useState, useEffect } from "react";
 import { commentcolor } from "@/components/(client)/color/color";
+import { Comment } from "@/types/type";
 import { Star } from "lucide-react";
-import { useParams } from "next/navigation";
-
-interface Comment {
-  rating: number;
-  comment: string;
-  productId: string;
-  product: any;
-  id?: string;
-  responses?: ResponseComment[];
-  createdAt?: Date;
-  user?: any;
-  changeReview?: boolean;
-  totalchange?: number | undefined;
-}
-
-interface ResponseComment {
-  id?: string;
-  commentId: string;
-  description: string;
-  changeReview?: boolean;
-  totalchange?: number | undefined;
-  user?: any;
-  createdAt?: Date;
-}
 
 interface CommentProps {
   data: string;
+  comment?: Comment[];
 }
-const CommentStar: React.FC<CommentProps> = ({ data },) => {
-  const params = useParams()
-  const [savedComments, setSavedComments] = useState<Comment[]>([]);
-  useEffect(() => {
-    const fetchComments = async () => {
-        try {
-            const response = await axios.get(`/api/${params.storeId}/comments`);
-            const fetchedComments: Comment[] = response.data;
-            setSavedComments(fetchedComments);
-        } catch (error) {
-            console.error("Error fetching comments:", error);
-        }
-    };
-    fetchComments();
-}, [params.storeId]);
+const CommentStar: React.FC<CommentProps> = ({ data,comment },) => {
+
+  if(!comment){
+    return null;
+  }
 
 const calculateTotalReviews = () => {
-  return savedComments.filter((comment) => comment.productId === data).length;
+  return comment.filter((comment) => comment.productId === data).length;
 };
 
   // Use the calculateTotalReviews function to get the total reviews for the current product
@@ -56,7 +22,7 @@ const calculateTotalReviews = () => {
 
   const starReviewCounts: number[] = [0, 0, 0, 0, 0];
 
-  savedComments
+  comment
     .filter((comment) => comment.productId === data)
     .forEach((savedComment) => {
       if (savedComment.rating >= 1 && savedComment.rating <= 5) {
@@ -65,7 +31,7 @@ const calculateTotalReviews = () => {
     });
 
   const calculateAverageRating = (productName: string) => {
-    const productComments = savedComments.filter(
+    const productComments = comment.filter(
       (comment) => comment.productId === productName
     );
 

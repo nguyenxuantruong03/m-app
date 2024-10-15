@@ -48,7 +48,7 @@ const ShoppingCardInLive = ({ isPin = true }: ShippingCartInLiveProps) => {
       try {
         setLoading(true);
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/getAllProduct`
+          `${process.env.NEXT_PUBLIC_API_URL}/getAllProductNotQuery`
         );
         setData(response.data);
       } catch (error) {

@@ -30,13 +30,13 @@ import { Button } from "@/components/ui/button";
 import { PostSchema } from "@/schemas";
 import { useRouter } from "next/navigation";
 import { post } from "@/actions/client/post";
-import { getAllCategories } from "@/actions/client/categories/get-categories";
-import { getAllProduct } from "@/actions/client/products/get-product-search";
 import { Category, Product } from "@/types/type";
 import ImageUpload from "@/components/ui/image-upload";
 import toast from "react-hot-toast";
 import { Loader, Earth, Lock, User } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import { getAllCategory } from "@/actions/client/categories/get-all-category";
+import { getAllProductNotQuery } from "@/actions/client/products/get-products";
 
 interface FormPostProps {
   setOpen?: Dispatch<SetStateAction<boolean>>;
@@ -83,9 +83,8 @@ const FormPost = ({ setOpen, self, id, userId }: FormPostProps) => {
         setLoadingCategory(true);
 
         // Lấy categories
-        const allCategories = await getAllCategories();
-        const combinedCategories = Object.values(allCategories).flat();
-        setCategories(combinedCategories);
+        const allCategories = await getAllCategory();
+        setCategories(allCategories);
       } catch {
         toast.error("Dữ liệu hệ thống không tìm thấy!");
       } finally {
@@ -109,7 +108,7 @@ const FormPost = ({ setOpen, self, id, userId }: FormPostProps) => {
         setLoadingProduct(true);
 
         // Lấy products
-        const allProducts = await getAllProduct();
+        const allProducts = await getAllProductNotQuery();
         setProducts(allProducts);
       } catch {
         toast.error("Dữ liệu hệ thống không tìm thấy!");

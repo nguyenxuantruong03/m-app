@@ -107,3 +107,12 @@ export const getProducts11 =async(name:string):Promise<Product> =>{
     return res.json();
 }
 
+
+
+const URLPRODUCTNOTQUERY = `${process.env.NEXT_PUBLIC_API_URL}/getAllProductNotQuery`
+
+export const getAllProductNotQuery = async ():Promise<Product[]> =>{
+    const res = await fetch(URLPRODUCTNOTQUERY)
+
+    return res.json()
+} 

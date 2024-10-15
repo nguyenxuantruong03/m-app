@@ -52,8 +52,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
         const billboardData = await getBillboard(
           `${process.env.BILLBOARD_API_KEY}`
         );
-        const productData = await getProduct1({
-        });
+        const productData = await getProduct1({isFeatured: true});
         const sizeData = await getSizes();
         const colorData = await getColors();
         

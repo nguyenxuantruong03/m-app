@@ -176,6 +176,7 @@ export async function GET(
     const isFeatured = searchParams.get("isFeatured");
     const productdetailId = searchParams.get("productdetailId") || undefined;
     const productType = ProductType.PRODUCT1;
+    const productType10 = ProductType.PRODUCT10;
 
     if (!params.storeId) {
       return new NextResponse(
@@ -187,7 +188,9 @@ export async function GET(
     const product = await prismadb.product.findMany({
       where: {
         storeId: params.storeId,
-        productType: productType,
+        productType: {
+          in: [productType, productType10],
+        },
         isFeatured: isFeatured ? true : undefined,
         isArchived: false,
         productdetailId
@@ -195,6 +198,7 @@ export async function GET(
       include:{
         imagesalientfeatures: true,
         images: true,
+        comment: true,
         productdetail: {
           include: {
             category: true,

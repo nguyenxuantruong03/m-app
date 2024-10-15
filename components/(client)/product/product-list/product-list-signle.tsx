@@ -536,7 +536,9 @@ const ProductListSingle: React.FC<ProductListProps> = ({ data, route }) => {
                     )}
                   </div>
                 )}
-                <CommentStar data={product.id} />
+                
+                      <CommentStar data={product.id} comment={product.comment}/>
+                      
               </div>
               <div className="home-product-item__favorite">
                 <span className="ml-1">

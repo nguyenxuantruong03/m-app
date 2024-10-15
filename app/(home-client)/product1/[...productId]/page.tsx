@@ -11,11 +11,15 @@ interface PropductPageProps {
   };
 }
 const ProductPage: React.FC<PropductPageProps> = async ({ params }) => {
-  const [product, suggestedProducts, suggestedProducts10] = await Promise.all([
-    getProducts1(params.productId),
-    getProduct1({}),
-    getProduct10({})
-  ]);
+  const product = await getProducts1(params.productId);
+  const suggestedProducts = await getProduct1({ isFeatured: true });
+  const suggestedProduct1 = suggestedProducts.filter(
+    (product: any) => product.productType === "PRODUCT1"
+  );
+  const suggestedProduct10 = suggestedProducts.filter(
+    (product: any) => product.productType === "PRODUCT10"
+  );
+
   if (!product) {
     return null;
   }
@@ -26,9 +30,9 @@ const ProductPage: React.FC<PropductPageProps> = async ({ params }) => {
         <DetailProduct
           data={product}
           images={product.images}
-          otherSuggestions={suggestedProducts}
+          otherSuggestions={suggestedProduct1}
           routeOtherSuggestions="product1"
-          other={suggestedProducts10}
+          other={suggestedProduct10}
           routeOther="product10"
         />
       </Container>
@@ -38,13 +42,15 @@ const ProductPage: React.FC<PropductPageProps> = async ({ params }) => {
 
 export default ProductPage;
 
-export async function generateMetadata({params :{productId}}:PropductPageProps ) {
+export async function generateMetadata({
+  params: { productId },
+}: PropductPageProps) {
   const post = await getProducts1(`${productId}`); //deduped!
-//deduped loại bỏ trùng lặp trong quá trình xây dựng 
+  //deduped loại bỏ trùng lặp trong quá trình xây dựng
   if (!post) {
     return {
       title: "Product Not Found",
-    }
+    };
   }
   return {
     title: post.heading,

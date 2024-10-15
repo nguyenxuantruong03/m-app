@@ -458,7 +458,7 @@ const LikeItem: React.FC<LikeItemProps> = ({ data, loading, setLoading }) => {
               />
             </div>
           </div>
-          <CommentStar data={data.product.id} />
+          <CommentStar data={data.product.id} comment={data.product.comment}/>
         </div>
         <div className="home-product-item__favorite">
           <span className="ml-1">

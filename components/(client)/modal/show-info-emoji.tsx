@@ -4,6 +4,7 @@ import { Emoji } from "@/types/type";
 import Image from "next/image";
 import { AvatarFallback, Avatar } from "@/components/ui/avatar";
 import { User } from "lucide-react";
+import Link from "next/link";
 interface PreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -102,30 +103,32 @@ const ShowInfoEmojiModal: React.FC<PreviewModalProps> = ({
     >
         <div className="space-y-2">
           {emojiUserIdModal?.map((item) => (
-            <div key={item?.user?.id} className="flex items-center justify-between">
-              <div className="space-x-2 flex items-center">
-                {
-                  (item?.user?.image ||item?.user?.imageCredential[0]?.url) ? (
-                    <Image
-                    className="rounded-full"
-                    width={35}
-                    height={35}
-                    src={item?.user?.image ||item?.user?.imageCredential[0]?.url || ""}
-                    alt="404"
-                  />
-                  ): (
-                    <Avatar>
-                    <AvatarFallback className="bg-sky-500">
-                    <User className="text-white" />
-                  </AvatarFallback>
-                  </Avatar>
-                  )
-                }
-              <span className="text-xs">{item.user?.name} </span>
-              </div>
-              <div>
-              {getEmojiChangeText(item?.emoji) || item?.emoji}
-            </div>
+            <div key={item?.user?.id} >
+              <Link href={`/user/${item.user?.nameuser}`} className="flex items-center justify-between">
+                <div className="space-x-2 flex items-center">
+                    {
+                      (item?.user?.image ||item?.user?.imageCredential[0]?.url) ? (
+                        <Image
+                        className="rounded-full"
+                        width={35}
+                        height={35}
+                        src={item?.user?.image ||item?.user?.imageCredential[0]?.url || ""}
+                        alt="404"
+                      />
+                      ): (
+                        <Avatar>
+                        <AvatarFallback className="bg-sky-500">
+                        <User className="text-white" />
+                      </AvatarFallback>
+                      </Avatar>
+                      )
+                    }
+                  <span className="text-xs">{item.user?.name} </span>
+                  </div>
+                  <div>
+                  {getEmojiChangeText(item?.emoji) || item?.emoji}
+                </div>
+              </Link>
             </div>
           ))}
         </div>

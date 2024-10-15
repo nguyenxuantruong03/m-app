@@ -31,6 +31,34 @@ export async function GET(
       include: {
         images: true,
         imagesalientfeatures: true,
+        comment: {
+          include: {
+            user: {
+              include: {
+                imageCredential: {
+                  orderBy: {
+                    createdAt: "desc", // Assuming 'createdAt' is the field that stores the creation date
+                  },
+                  take: 1, // Take only the most recent entry
+                },
+              }
+            },
+          }
+        },
+        responsecomment: {
+          include: {
+            user: {
+              include: {
+                imageCredential: {
+                  orderBy: {
+                    createdAt: "desc", // Assuming 'createdAt' is the field that stores the creation date
+                  },
+                  take: 1, // Take only the most recent entry
+                },
+              }
+            },
+          }
+        },
         productdetail: {
           include: {
             category: true,

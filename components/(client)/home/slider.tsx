@@ -4,7 +4,7 @@ const Slider = () => {
     return ( 
         <div>
             <Video 
-            url="/video/slider-video.mp4"
+                url="/video/slider-video.mp4"
             />
         </div>
      );

@@ -8,7 +8,7 @@ const Story = () => {
     <div className={root.bgwhite}>
       <Container>
         <div className="mx:auto xl:grid xl:grid-cols-2 ">
-          <div className="my-2 md:my-20">
+          <div className="my-2 md:my-20 relative">
             <Image
               className="hidden xl:block bg-cover bg-center relative z-10 ml-24 "
               src="/images/vlxd.jpg"
@@ -17,7 +17,7 @@ const Story = () => {
               height="606"
             />
             <Image
-              className="hidden xl:block xl:-bottom-[545px] xl:left-[165px] 2xl:-bottom-[525px] 2xl:left-[350px] absolute "
+              className="hidden xl:block -top-10 left-10 z-0 absolute "
               src="/images/coating.png"
               alt="image"
               width="471"

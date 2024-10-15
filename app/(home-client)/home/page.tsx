@@ -2,6 +2,7 @@ import BuyProduct from "@/components/(client)/home/buy-product";
 import IntroductProduct from "@/components/(client)/home/introduct-product";
 import News from "@/components/(client)/home/news";
 import OurProject from "@/components/(client)/home/our-project";
+import OverViewStore from "@/components/(client)/home/overview-store";
 import SellingProduct from "@/components/(client)/home/selling-product";
 import Service from "@/components/(client)/home/service";
 import Slider from "@/components/(client)/home/slider";
@@ -21,6 +22,7 @@ const HomePage = async () => {
       <IntroductProduct />
       <SellingProduct />
       <OurProject />
+      <OverViewStore />
       <BuyProduct />
       <News />
       <MapAPI />

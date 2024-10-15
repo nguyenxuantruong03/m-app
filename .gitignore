@@ -34,8 +34,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-#image and video
-/public
-
 # tex
 /navbar-mutiple.tex

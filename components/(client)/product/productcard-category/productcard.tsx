@@ -416,16 +416,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ data, route }) => {
         onClose={() => setOpenPreviewModal(false)}
         product={data}
       />
-      <div className="relative overflow-hidden">
-        <div className="bg-white group cursor-pointer rounded-xl border p-3 space-y-4">
+      <div className="overflow-hidden">
+        <div className="bg-white group cursor-pointer rounded-xl border p-3 space-y-4 relative">
           {productQuantityAll && (
             <>
               {/* Overlay mờ và text "Hết hàng" */}
               <div
                 onClick={handleClick}
-                className="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-[9998]"
+                className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center z-[9998]"
               >
-                <div className="fixed z-[9999] top-[3px] right-[-95px] bg-red-500 text-white py-[15px] w-[350px] text-center transform rotate-[45deg] font-bold text-lg tracking-[2px] overflow-hidden">
+                <div className="absolute z-[9999] top-[3px] right-[-95px] bg-red-500 text-white py-[15px] w-[350px] text-center transform rotate-[45deg] font-bold text-lg tracking-[2px] overflow-hidden">
                   <span className="inline-block duration-500 ease-in-out transform transition-transform w-full absolute left-[13%] top-1/2 translate-y-[-50%]">
                     Hết hàng
                   </span>
@@ -434,7 +434,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ data, route }) => {
             </>
           )}
           {/* Images and actions */}
-          <div className="aspect-square rounded-xl bg-gray-100">
+          <div className="aspect-square rounded-xl bg-gray-100" onClick={handleClick}>
             <Image
               src={data?.images?.[0].url}
               width="500"
@@ -553,7 +553,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ data, route }) => {
               )}
             </div>
           )}
-          <CommentStar data={data.id} />
+          <CommentStar data={data.id} comment={data.comment}/>
         </div>
         <div className="home-product-item__favorite">
           <span className="ml-1">

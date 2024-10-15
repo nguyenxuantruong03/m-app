@@ -47,8 +47,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
         const billboardData = await getBillboard(
           "02e5b508-c778-4399-8e58-8efdef089328"
         );
-        const productData = await getProduct8({
-        });
+        const productData = await getProduct8({isFeatured: true});
         const sizeData = await getSizes();
         const colorData = await getColors();
 

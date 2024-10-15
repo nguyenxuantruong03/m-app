@@ -12,45 +12,26 @@ import { AlertModal } from "@/components/modals/alert-modal";
 import CircleAvatar from "@/components/ui/circle-avatar";
 import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
 import Link from "next/link";
+import { ResponseComment, Comment as CommentType } from "@/types/type";
 
-export interface Comment {
-  rating: number;
-  comment: string;
-  productId: string;
-  product: any;
-  id?: string;
-  responses?: ResponseComment[];
-  createdAt?: Date;
-  user?: any;
-  changeReview?: boolean;
-  totalchange?: number | undefined;
-}
-
-interface ResponseComment {
-  id?: string;
-  commentId: string;
-  description: string;
-  changeReview?: boolean;
-  totalchange?: number | undefined;
-  user?: any;
-  createdAt?: Date;
-}
 interface CommentProps {
   data: string;
   nameProduct: string;
+  commentData?: CommentType[]
+  responsecommentData?: ResponseComment[]
 }
-const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
+const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, responsecommentData }) => {
   const param = useParams();
   const [loading, setLoading] = useState(false);
   const [rating, setRating] = useState<number | null>(null);
   const [comment, setComment] = useState<string>("");
-  const [savedComments, setSavedComments] = useState<Comment[]>([]);
+  const [savedComments, setSavedComments] = useState<CommentType[]>([]);
   const [commentError, setCommentError] = useState<string>("");
   const [ratingError, setRatingError] = useState<string>("");
   const [currentValue, setCurrentValue] = useState<number | null>(null);
   const [hoverValue, setHoverValue] = useState<number | null>(null);
   const [commentsByRating, setCommentsByRating] = useState<{
-    [key: number]: Comment[];
+    [key: number]: CommentType[];
   }>({});
   const [collapsedComments, setCollapsedComments] = useState<boolean>(false);
   const stars = Array(5).fill(0);
@@ -337,7 +318,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
             }
           );
 
-          const updatedCommentData: Comment = response.data;
+          const updatedCommentData: CommentType = response.data;
 
           // Reset the response description to an empty string
           setResponseDescriptions("");
@@ -387,19 +368,21 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
+        if(!commentData){
+          return null;
+        }
+      
+        if(!responsecommentData){
+          return null;
+        }
         setLoading(true);
-        const response = await axios.get(`/api/${param.storeId}/comments`);
-        const fetchedComments: Comment[] = response.data;
+        const fetchedComments: CommentType[] = commentData;
 
         const updatedComments = await Promise.all(
           fetchedComments.map(async (comment) => {
             try {
               setLoading(true);
-              const responseCommentResponse = await axios.get(
-                `/api/${param.storeId}/comments/${comment.id}/responsecomment`
-              );
-              const responseComments: ResponseComment[] =
-                responseCommentResponse.data;
+              const responseComments: ResponseComment[] = responsecommentData
               return { ...comment, responses: responseComments };
             } catch (error) {
               console.error(
@@ -414,7 +397,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
         );
         setSavedComments(updatedComments);
 
-        const commentsByRating: { [key: number]: Comment[] } =
+        const commentsByRating: { [key: number]: CommentType[] } =
           updatedComments.reduce((acc, comment) => {
             if (acc[comment.rating]) {
               acc[comment.rating].push(comment);
@@ -422,7 +405,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
               acc[comment.rating] = [comment];
             }
             return acc;
-          }, {} as { [key: number]: Comment[] });
+          }, {} as { [key: number]: CommentType[] });
 
         setCommentsByRating(commentsByRating);
       } catch (error) {
@@ -497,7 +480,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
           updatedComment
         );
 
-        const updatedCommentData: Comment = response.data;
+        const updatedCommentData: CommentType = response.data;
 
         // Update the comment in the state
         setSavedComments((prevComments) =>
@@ -680,7 +663,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
         );
 
         // Tạo bản sao của response.data và thêm thông tin user
-        const savedComment: Comment = {
+        const savedComment: CommentType = {
           ...response.data,
           id: response.data.id,
           user: response.data.user, // Thêm thông tin user vào comment
@@ -698,7 +681,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
         setCommentError("");
         setRatingError("");
 
-        const updatedCommentsByRating: { [key: number]: Comment[] } = {
+        const updatedCommentsByRating: { [key: number]: CommentType[] } = {
           ...commentsByRating,
           [newComment.rating]: [
             ...(commentsByRating[newComment.rating] || []),
@@ -1215,7 +1198,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct }) => {
                                     {comment.user.name}
                                   </span>
                                   <p className="text-sm text-gray-400 items-center font-normal line-clamp-1 hidden lg:flex">
-                                    -{comment.product.heading}
+                                    -{nameProduct}
                                   </p>
                                 </p>
                               </Link>

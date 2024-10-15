@@ -1,9 +1,5 @@
-import getProduct1 from "@/actions/client/product/get-product1";
-import getProduct10 from "@/actions/client/product/get-product10";
-import getProduct2 from "@/actions/client/product/get-product2";
-import getProduct3 from "@/actions/client/product/get-product3";
-import getProduct7 from "@/actions/client/product/get-product7";
-import getProduct8 from "@/actions/client/product/get-product8";
+import getAllProduct from "@/actions/client/product/get-all-product";
+import { Product } from "@/types/type";
 import dynamic from "next/dynamic";
 const MainProduct = dynamic(() => import("@/components/(client)/product/mainproduct"), {
   ssr: false,
@@ -24,27 +20,14 @@ const MapAPI = dynamic(() => import("@/components/(client)/leaflet-map/leaflet-m
 
 export const revalidate = 86400;
 const HomePage = async () => {
-  const quat = await getProduct1({ isFeatured: true });
-  const daydien = await getProduct3({ isFeatured: true });
-  const ongnhua = await getProduct2({ isFeatured: true });
-  const bongden = await getProduct10({ isFeatured: true });
-  const ocam = await getProduct7({ isFeatured: true });
-  const son = await getProduct8({ isFeatured: true });
-  // const [
-  //   quat,
-  //   daydien,
-  //   ongnhua,
-  //   bongden,
-  //   ocam,
-  //   son
-  // ] = await Promise.all([
-  //   getProduct1({ isFeatured: true }),
-  //   getProduct3({ isFeatured: true }),
-  //   getProduct2({ isFeatured: true }),
-  //   getProduct10({ isFeatured: true }),
-  //   getProduct7({ isFeatured: true }),
-  //   getProduct8({ isFeatured: true })
-  // ]);
+  const products = await getAllProduct({ isFeatured: true })
+  const quat = products.filter((product: any) => product.productType === "PRODUCT1");
+  const ongnhua = products.filter((product: any) => product.productType === "PRODUCT2");
+  const daydien = products.filter((product: any) => product.productType === "PRODUCT3");
+  const ocam = products.filter((product: any) => product.productType === "PRODUCT7");
+  const son = products.filter((product: any) => product.productType === "PRODUCT8");
+  const bongden = products.filter((product: any) => product.productType === "PRODUCT10");
+
   return (
     <>
         <SlideItem />
