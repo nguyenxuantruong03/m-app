@@ -16,7 +16,6 @@ model Store {
   name           String
   userId         String
   billboard      Billboard[]      @relation("StoreToBillboard")
-  billboardtime  BillboardTime[]  @relation("StoreToBillboardTime")
   categories     Category[]       @relation("StoreToCategory")
   sizes          Size[]           @relation("StoreToSize")
   colors         Color[]          @relation("StoreToColor")
@@ -61,36 +60,6 @@ model ImageBillboard {
   updatedAt   DateTime  @updatedAt
 
   @@index([billboardId])
-}
-
-model BillboardTime {
-  id                 String               @id @default(cuid())
-  storeId            String
-  store              Store                @relation("StoreToBillboardTime", fields: [storeId], references: [id])
-  label              String
-  description        String
-  isTimeout          Boolean?             @default(false)
-  end                Int?
-  timeout            Int
-  imagebillboardtime ImageBillboardTime[]
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @updatedAt
-
-  @@index([storeId])
-}
-
-model ImageBillboardTime {
-  id String @id @default(cuid())
-
-  billboardTimeId String
-  billboard       BillboardTime @relation(fields: [billboardTimeId], references: [id], onDelete: Cascade)
-  label           String?
-  description     String?
-  url             String
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-
-  @@index([billboardTimeId])
 }
 
 model Favorite {
@@ -332,6 +301,9 @@ model Product {
 
   isProductShowLive    Boolean                @default(false)
   isProductLivePin     Boolean                @default(false)
+
+  timeSale             DateTime?
+  isSale               Boolean                @default(false)
 
   @@index([storeId])
   @@index([productdetailId])

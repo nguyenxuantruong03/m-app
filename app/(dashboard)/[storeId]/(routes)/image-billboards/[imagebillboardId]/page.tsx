@@ -18,14 +18,7 @@ const BillboardPage = async ({
       id: params.imagebillboardId,
     },
   });
-
-  const billboardTime = await prismadb.imageBillboardTime.findUnique({
-    where: {
-      id: params.imagebillboardId,
-    },
-  });
-
-  const initialData = billboard || billboardTime;
+  const initialData = billboard;
 
   return (
     <div className="flex-col">

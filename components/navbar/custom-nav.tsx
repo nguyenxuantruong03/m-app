@@ -91,8 +91,8 @@ const CustomNav: React.FC<CustomNavProps> = ({
 
   return (
     <>
-      <div className="hidden xl:block xl:w-12">
-        <Button className="m-2" onClick={toggleView}>
+      <div className="hidden xl:block fixed top-[4.5rem] z-[9999]">
+        <Button className="my-2" onClick={toggleView}>
           <LayoutDashboard className="size-5" />
         </Button>
       </div>

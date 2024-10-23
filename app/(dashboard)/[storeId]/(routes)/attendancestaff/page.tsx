@@ -129,6 +129,10 @@ export default function Home() {
   //Check  nếu như trễ hơn 2 tiếng sẽ bị disable Button
   useEffect(() => {
     if (userId) {
+      if(!userId.timestartwork){
+        toast.error("Bạn không có thời gian làm việc!")
+        throw new Error("Missing Working Time!")
+      }
       const now = new Date();
       const [hours, minutes] = userId.timestartwork.split(":");
       const currentDate = new Date();
@@ -824,11 +828,13 @@ export default function Home() {
   };
 
   function handleDeleteModal(data: { event: { id: string; title: string } }) {
-    // Check if the event title is "✅" or "❎"
-    if (data.event.title === "✅" || data.event.title === "❎") {
+    // Check if the event title is "✅"
+    if (data.event.title === "✅") {
         handleOpenChooseModal();
         setDataEventCamera(data.event.id);
         return;
+    }else if(data.event.title === "❎"){
+      return;
     }
     // Nếu title không phải là "✅" hoặc "❎", tiếp tục hiển thị AlertModal
     setShowDeleteModal(true);
@@ -977,67 +983,70 @@ export default function Home() {
 
   return (
     <>
-      <nav className="flex justify-between mb-12 p-4">
+      <nav className="flex justify-between mb-12 p-8">
         <h1 className="font-bold text-2xl text-gray-700 absolute dark:text-slate-400">
           Nhân viên điểm danh
         </h1>
       </nav>
-      <main className="flex min-h-screen flex-col items-center justify-between p-24">
-        <div className="grid grid-cols-10">
-          <div className="col-span-8">
-            <FullCalendar
-              plugins={[
-                dayGridPlugin,
-                interactionPlugin,
-                timeGridPlugin,
-                multiMonthPlugin,
-              ]}
-              headerToolbar={{
-                left: "prevYear,prev,next,nextYear today",
-                center: "title",
-                right: "timeGridWeek,dayGridMonth,multiMonthYear",
-              }}
-              events={allEvents as EventSourceInput}
-              nowIndicator={true}
-              editable={false}
-              droppable={true}
-              selectable={true}
-              selectMirror={true}
-              dateClick={handleDateClick}
-              drop={(data) => addEvent(data)}
-              eventClick={(data) => handleDeleteModal(data)}
-              timeZone="Asia/Ho_Chi_Minh"
-              locale="vi"
-              eventDidMount={function(info) {
-                // Kiểm tra nếu tiêu đề là "✅" hoặc "❎"
-                if (info.event.title === "✅" || info.event.title === "❎") {
-                  info.event.setProp('editable', false); // Không thể chỉnh sửa
-                } else {
-                  info.event.setProp('editable', true); // Có thể chỉnh sửa
-                }
-              }}
-            />
-          </div>
-          <div
-            id="draggable-el"
-            className="ml-8 w-full border-2 p-2 rounded-md mt-16 xl:h-[55%] 2xl:h-[35%] bg-violet-50 dark:bg-[#2a3e4f]"
-          >
-            <h1 className="font-bold text-lg text-center dark:text-black">
-              Drag Event
-            </h1>
-            {events.map((event) => (
-              <div
-                className={`fc-event border-2 p-1 m-2 w-full rounded-md ml-auto text-center bg-white cursor-pointer dark:text-black ${
-                  isAddingEvent ? "pointer-events-none opacity-50" : "" // Disable khi đang xử lý
-                }`}
-                title={event.title}
-                key={event.id}
-              >
-                {event.title}
-              </div>
-            ))}
-          </div>
+      <main className="flex flex-col items-center justify-between">
+      <div className="grid grid-cols-1 xl:grid-cols-10 w-full">
+        <div
+      id="draggable-el"
+      className="grid grid-rows-[auto,1fr] ml-0 mb-8 xl:mb-0 w-full border-2 p-2 rounded-md xl:-ml-8 xl:h-[55%] 2xl:h-[35%] bg-violet-50 dark:bg-[#2a3e4f]"
+    >
+        <h1 className="font-bold text-lg mb-2 text-center text-black dark:text-white">
+        Drag Event
+      </h1>
+      <div className="flex items-center justify-between md:block space-x-3 xl:space-x-0">
+      {events.map((event) => (
+        <div
+          className={`fc-event border-2 p-1 mb-2 w-full rounded-md text-center bg-white dark:text-black ${
+            isAddingEvent ? "pointer-events-none opacity-50" : "" // Disable khi đang xử lý
+          }`}
+          title={event.title}
+          key={event.id}
+        >
+          {event.title}
         </div>
+      ))}
+      </div>
+    </div>
+
+    <div className="col-span-1 xl:col-span-8">
+      <FullCalendar
+        plugins={[
+          dayGridPlugin,
+          interactionPlugin,
+          timeGridPlugin,
+          multiMonthPlugin,
+        ]}
+        headerToolbar={{
+          left: "prevYear,prev,next,nextYear today",
+          center: "title",
+          right: "timeGridWeek,dayGridMonth,multiMonthYear",
+        }}
+        events={allEvents as EventSourceInput}
+        nowIndicator={true}
+        editable={false}
+        droppable={true}
+        selectable={true}
+        selectMirror={true}
+        dateClick={handleDateClick}
+        drop={(data) => addEvent(data)}
+        eventClick={(data) => handleDeleteModal(data)}
+        timeZone="Asia/Ho_Chi_Minh"
+        locale="vi"
+        eventDidMount={function (info) {
+          // Kiểm tra nếu tiêu đề là "✅" hoặc "❎"
+          if (info.event.title === "✅" || info.event.title === "❎") {
+            info.event.setProp("editable", false); // Không thể chỉnh sửa
+          } else {
+            info.event.setProp("editable", true); // Có thể chỉnh sửa
+          }
+        }}
+      />
+    </div>
+  </div>
 
         <AlertModal
           isOpen={showDeleteModal}
@@ -1081,7 +1090,7 @@ export default function Home() {
           handleOpenNFCModal={handleOpenNFCModal}
         />
 
-        <div className="fixed bottom-4 right-32">
+        <div className="xl:fixed bottom-4 right-0 z-[9999] my-3 mr-5 w-full flex item-center justify-end space-x-5">
           <Button
             onClick={handleCheckAttendanceStart}
             className="px-4 py-2 rounded-md"
@@ -1089,9 +1098,7 @@ export default function Home() {
           >
             Điểm danh
           </Button>
-        </div>
 
-        <div className="fixed bottom-4 right-4">
           <Button
             onClick={handleCheckAttendanceEnd}
             className="px-4 py-2 rounded-md"

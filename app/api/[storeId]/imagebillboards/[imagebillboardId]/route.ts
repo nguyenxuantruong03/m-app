@@ -84,7 +84,6 @@ export async function DELETE(
     });
 
     const imageBillboardData = await prismadb.imageBillboard.findMany();
-    const imageBillboardTimeData = await prismadb.imageBillboardTime.findMany();
 
     let billboard;
     if (imageBillboardData.some(billboard => billboard.id === params.imagebillboardId)) {
@@ -93,13 +92,7 @@ export async function DELETE(
           id: params.imagebillboardId,
         },
       });
-    } else if (imageBillboardTimeData.some(billboardTime => billboardTime.id === params.imagebillboardId)) {
-      billboard = await prismadb.imageBillboardTime.delete({
-        where: {
-          id: params.imagebillboardId,
-        },
-      });
-    } else {
+    }  else {
       return new NextResponse(
         JSON.stringify({ error: "Billboard id not found in either table!" }),
         { status: 404 }
@@ -162,9 +155,7 @@ export async function PATCH(
     if (!description) {
       return new NextResponse(
         JSON.stringify({ error: "Description is required!" }),
-        {
-          status: 400,
-        }
+        { status: 400 }
       );
     }
 
@@ -189,49 +180,27 @@ export async function PATCH(
       }
     });
 
-    let updatedBillboard, existingBillboardTime;
-
-    if (existingBillboard) {
-      // Nếu tồn tại trong bảng imageBillboard, thực hiện cập nhật trong bảng này
-      updatedBillboard = await prismadb.imageBillboard.update({
-        where: {
-          id: params.imagebillboardId,
-        },
-        data: {
-          url: url,
-          label: label,
-          description: description,
-        },
-      });
-    } else {
-      // Nếu không tồn tại trong bảng imageBillboard, kiểm tra trong bảng imageBillboardTime
-      existingBillboardTime = await prismadb.imageBillboardTime.findUnique({
-        where: {
-          id: params.imagebillboardId,
-        }
-      });
-
-      if (existingBillboardTime) {
-        updatedBillboard = await prismadb.imageBillboardTime.update({
-          where: {
-            id: params.imagebillboardId,
-          },
-          data: {
-            url: url,
-            label: label,
-            description: description,
-          },
-        });
-      } else {
-        return new NextResponse(
-          JSON.stringify({ error: "Billboard id not found in either table!" }),
-          { status: 404 }
-        );
-      }
+    if (!existingBillboard) {
+      return new NextResponse(
+        JSON.stringify({ error: "Billboard not found!" }),
+        { status: 404 }
+      );
     }
 
+    // Update existing billboard
+    const updatedBillboard = await prismadb.imageBillboard.update({
+      where: {
+        id: params.imagebillboardId,
+      },
+      data: {
+        url: url,
+        label: label,
+        description: description,
+      },
+    });
+
     // Xác định bản ghi ban đầu
-    const originalBillboard = existingBillboard || existingBillboardTime;
+    const originalBillboard = existingBillboard;
 
     // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
     const ignoredFields = ["createdAt", "updatedAt"];
@@ -239,19 +208,16 @@ export async function PATCH(
     for (const key in originalBillboard) {
       if (
         originalBillboard.hasOwnProperty(key) &&
-        updatedBillboard.hasOwnProperty(key)
+        updatedBillboard[key as keyof typeof updatedBillboard] !== undefined &&
+        originalBillboard[key as keyof typeof originalBillboard] !==
+        updatedBillboard[key as keyof typeof updatedBillboard]
       ) {
-        if (
-          originalBillboard[key as keyof typeof originalBillboard] !==
-          updatedBillboard[key as keyof typeof updatedBillboard]
-        ) {
-          // Kiểm tra xem trường hiện tại có trong danh sách loại bỏ không
-          if (!ignoredFields.includes(key)) {
-            changes[key] = {
-              oldValue: originalBillboard[key as keyof typeof originalBillboard],
-              newValue: updatedBillboard[key as keyof typeof updatedBillboard],
-            };
-          }
+        // Kiểm tra xem trường hiện tại có trong danh sách loại bỏ không
+        if (!ignoredFields.includes(key)) {
+          changes[key] = {
+            oldValue: originalBillboard[key as keyof typeof originalBillboard],
+            newValue: updatedBillboard[key as keyof typeof updatedBillboard],
+          };
         }
       }
     }

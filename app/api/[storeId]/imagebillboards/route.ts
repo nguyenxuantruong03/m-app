@@ -65,14 +65,6 @@ export async function DELETE(
       }
     });
 
-    const imageBillboardTimesToDelete = await prismadb.imageBillboardTime.findMany({
-      where: {
-        id: {
-          in: ids,
-        },
-      }
-    });
-
     // Create an array of changes for logging
     const changesArray = [
       ...imageBillboardsToDelete.map(billboard => ({
@@ -80,23 +72,10 @@ export async function DELETE(
         description: billboard.description,
         valueImage: billboard.url,
       })),
-      ...imageBillboardTimesToDelete.map(billboardTime => ({
-        label: billboardTime.label,
-        description: billboardTime.description,
-        valueImage: billboardTime.url,
-      })),
     ];
 
     // Delete all the billboards in both tables
     await prismadb.imageBillboard.deleteMany({
-      where: {
-        id: {
-          in: ids,
-        },
-      },
-    });
-
-    await prismadb.imageBillboardTime.deleteMany({
       where: {
         id: {
           in: ids,

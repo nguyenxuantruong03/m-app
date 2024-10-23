@@ -26,6 +26,8 @@ export async function GET(
         heading: true,
         name: true,
         sold: true,
+        timeSale: true,
+        isSale: true,
         productdetail: {
           include: {
             category: true,

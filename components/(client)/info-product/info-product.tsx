@@ -12,6 +12,8 @@ import {
   BadgePercent,
   Heart,
   Check,
+  Zap,
+  Clock5,
 } from "lucide-react";
 import useCart from "@/hooks/client/use-cart";
 import { MouseEventHandler, useEffect, useRef } from "react";
@@ -35,6 +37,8 @@ import {
 } from "../export-product-compare/size-color/match-color-size";
 import cuid from "cuid";
 import axios from "axios";
+import FlipClockCountdown from "@leenguyen/react-flip-clock-countdown";
+import "@leenguyen/react-flip-clock-countdown/dist/index.css";
 
 interface InfoProductProps {
   data: Product;
@@ -191,7 +195,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
             setErrorColor("Hãy chọn color sản phẩm cần lưu!");
             return;
           }
-          
+
           //CUID: tạo ra một 1 id theo CUID tránh checked trùng với nhau
           const idFavorite = cuid();
           const favoriteProduct: FavoriteProduct = {
@@ -649,6 +653,43 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
     <div>
       <h1 className="text-3xl font-bold text-gray-500">{data.heading} </h1>
       <hr className="my-4" />
+      {data.timeSale ? (
+        <div className="relative w-full h-10">
+        <Image 
+          src="/images/banner-sale.jpg"
+          className="object-cover max-w-3xl w-full h-full"
+          fill
+          alt="404"
+        />
+        <div className="absolute inset-0 flex items-center justify-between px-1.5 py-2">
+          <div className="flex items-center">
+            <span className="hidden xl:flex items-center text-xl font-black text-white mr-1">
+              F<span><Zap fill="#fff" className="w-7 h-7"/></span>ash
+            </span>
+            <span className="text-xl text-white font-bold  ml-1">Sale:</span>
+          </div>
+          <div className="flex items-center space-x-2 bg-transparent xl:bg-black xl:bg-opacity-50 px-0 xl:px-2 py-1 rounded-lg">
+            <div className="hidden xl:flex items-center space-x-1">
+              <Clock5 className="w-5 h-5 text-white"/> 
+              <span className="uppercase text-white">kết thúc trong:</span>
+            </div>
+            <FlipClockCountdown
+              to={new Date(data.timeSale)}
+              renderMap={[true, true, true, true]} // Hiển thị giờ, phút, giây nhưng không hiển thị ngày
+              showLabels={false}
+              digitBlockStyle={{
+                width: 20,
+                height: 20,
+                fontSize: 14,
+                color: "white",
+                background: "black",
+              }}
+              separatorStyle={{ color: "white", size: "2px" }}
+            />
+          </div>
+        </div>
+      </div>
+      ) : null}
       {/* Description */}
       <div className="my-5">{data?.description}</div>
       {/* Size */}

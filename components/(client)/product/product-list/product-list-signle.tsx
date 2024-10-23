@@ -74,7 +74,7 @@ const ProductListSingle: React.FC<ProductListProps> = ({ data, route }) => {
   }, []);
 
   return (
-    <>
+    <div className="relative">
       {currentProduct && ( // Only render PreviewModal if currentProduct is set
         <PreviewModal
           isOpen={openPreviewModal}
@@ -477,7 +477,7 @@ const ProductListSingle: React.FC<ProductListProps> = ({ data, route }) => {
           );
 
           return (
-            <SwiperSlide key={product.id} className="overflow-hidden">
+            <SwiperSlide key={product.id} className={`${productQuantityAll && "overflow-hidden"}`}>
               <div
                 onClick={() => handleClick(product.productdetail.name1)}
                 className="px-3 bg-white group cursor-pointer rounded-xl border space-y-4 shadow-inner relative "
@@ -628,11 +628,13 @@ const ProductListSingle: React.FC<ProductListProps> = ({ data, route }) => {
             </SwiperSlide>
           );
         })}
-        <div className="absolute -top-[2rem] md:-top-32 z-10 ">
-          <PrevNextSwiper />
-        </div>
       </Swiper>
-    </>
+      {
+        data.length > 5 && (
+          <PrevNextSwiper />
+        )
+      }
+    </div>
   );
 };
 

@@ -36,10 +36,11 @@ import {
   getSizePrice,
 } from "../../export-product-compare/size-color/match-color-size";
 import axios from "axios";
+import PrevNextSwiper from "./prevnextswiper";
 
 interface ProductListProps {
   data: Product[];
-  productType: "ongnhua" | "quat" | "bongden" | "daydien";
+  productType: "ongnhua" | "bongden" | "daydien";
 }
 
 const ProductListSuggest: React.FC<ProductListProps> = ({
@@ -80,9 +81,6 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
       case "ongnhua":
         router.push(`/ongnhua/${productId}`);
         break;
-      case "quat":
-        router.push(`/quat/${productId}`);
-        break;
       case "bongden":
         router.push(`/bongden/${productId}`);
         break;
@@ -95,7 +93,7 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
   };
 
   return (
-    <>
+    <div className="relative">
       {currentProduct && ( // Only render PreviewModal if currentProduct is set
         <PreviewModal
           isOpen={openPreviewModal}
@@ -505,7 +503,7 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
           );
 
           return (
-            <SwiperSlide key={product.id} className="overflow-hidden">
+            <SwiperSlide key={product.id} className={`${productQuantityAll && "overflow-hidden"}`}>
               <div
                 onClick={() => handleClick(product.name)}
                 className="px-3 bg-white group cursor-pointer rounded-xl border space-y-4 shadow-inner relative"
@@ -653,7 +651,12 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
           );
         })}
       </Swiper>
-    </>
+      {
+        data.length > 10 && (
+         <PrevNextSwiper />
+        )
+      }
+    </div>
   );
 };
 

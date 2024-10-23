@@ -39,7 +39,7 @@ import {
 
 interface ProductListProps {
   data: Product[];
-  productType: "ongnhua" | "quat" | "bongden" | "daydien";
+  productType: "ongnhua" | "bongden" | "daydien";
 }
 
 const ProductList: React.FC<ProductListProps> = ({ data, productType }) => {
@@ -77,9 +77,6 @@ const ProductList: React.FC<ProductListProps> = ({ data, productType }) => {
       case "ongnhua":
         router.push(`/ongnhua/${productId}`);
         break;
-      case "quat":
-        router.push(`/quat/${productId}`);
-        break;
       case "bongden":
         router.push(`/bongden/${productId}`);
         break;
@@ -92,7 +89,7 @@ const ProductList: React.FC<ProductListProps> = ({ data, productType }) => {
   };
 
   return (
-    <>
+    <div className="relative">
       {currentProduct && ( // Only render PreviewModal if currentProduct is set
         <PreviewModal
           isOpen={openPreviewModal}
@@ -502,7 +499,7 @@ const ProductList: React.FC<ProductListProps> = ({ data, productType }) => {
           );
 
           return (
-            <SwiperSlide key={product.id} className="overflow-hidden">
+            <SwiperSlide key={product.id} className={`${productQuantityAll && "overflow-hidden"}`}>
               <div
                 onClick={() => handleClick(product.name)}
                 className="px-3 bg-white overflow-hidden group cursor-pointer rounded-xl border space-y-4 shadow-inner relative"
@@ -646,11 +643,13 @@ const ProductList: React.FC<ProductListProps> = ({ data, productType }) => {
             </SwiperSlide>
           );
         })}
-        <div className="absolute top-[11.5rem] md:top-16 z-10 ">
-          <PrevNextSwiper />
-        </div>
       </Swiper>
-    </>
+      {
+        data.length > 10 && (
+          <PrevNextSwiper />
+        )
+      }
+    </div>
   );
 };
 

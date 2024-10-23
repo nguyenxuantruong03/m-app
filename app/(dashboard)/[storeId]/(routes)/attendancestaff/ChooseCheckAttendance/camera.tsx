@@ -251,11 +251,11 @@ const Camera: React.FC<CameraPorps> = ({
       {showVideo && (
         <div className="relative">
           <video
-            className="xl:w-9/12 2xl:w-10/12 mx-auto"
+            className="w-full mx-auto"
             ref={videoRef}
           ></video>
           <Button
-            className="absolute bottom-12 lg:bottom-8 left-8 xl:left-52 z-20"
+            className="absolute bottom-2 left-8 xl:left-5 z-20"
             variant="outline"
             onClick={() => {
               if (isCheckAttendanceImages[0] === false) {
@@ -275,12 +275,12 @@ const Camera: React.FC<CameraPorps> = ({
             variant="outline"
             onClick={switchCamera}
             disabled={loadingfetch || isLoadingData}
-            className="absolute bottom-12 lg:bottom-8 left-32 xl:left-[19rem]  z-20"
+            className="absolute bottom-2 left-32 xl:left-28 z-20"
           >
             <SwitchCamera className="w-5 h-5" />
           </Button>
           <Button
-            className="absolute bottom-12 lg:bottom-8 left-56 xl:left-[25rem]  z-20"
+            className="absolute bottom-2 left-56 xl:left-52 z-20"
             disabled={loading || isLoadingData}
             variant="outline"
             onClick={onClose}
@@ -289,29 +289,31 @@ const Camera: React.FC<CameraPorps> = ({
           </Button>
           {showMessage && (
             // Sử dụng showMessage để kiểm soát việc hiển thị thông báo
-            <p className=" absolute bottom-12 lg:bottom-8 left-[62%] xl:left-1/2  transform -translate-x-1/2 border-yellow-400 border-2 flex items-center p-3">
+            <p className=" absolute top-2 left-1/2  transform -translate-x-1/2 border-yellow-400 border-2 flex items-center p-3">
               <TriangleAlert className="w-4 h-4 text-yellow-400 mr-3" /> Ngày
               hôm nay bạn đã checkin. Hãy quay lại ngày sau!
             </p>
           )}
           {showMessageNFC && (
             // Sử dụng showMessage để kiểm soát việc hiển thị thông báo
-            <p className=" absolute bottom-12 lg:bottom-8 left-[62%] xl:left-1/2  transform -translate-x-1/2 border-yellow-400 border-2 flex items-center p-3">
+            <p className=" absolute top-2 left-1/2  transform -translate-x-1/2 border-yellow-400 border-2 flex items-center p-3">
               <TriangleAlert className="w-4 h-4 text-yellow-400 mr-3" /> Bạn đã
               checkin bằng NFC!
             </p>
           )}
         </div>
       )}
-      <div className={"result " + (hasPhoto ? "hasPhoto" : "")}>
+      <div className="result">
         <canvas
-          className="w-full h-auto fixed xl:-bottom-96 2xl:-bottom-[30rem] right-0 z-10"
+          className={`${
+            hasPhoto ? "w-full mx-auto" : "hidden"
+          }`}
           ref={photoRef}
-        ></canvas>
-        {hasPhoto && (
+          ></canvas>
+          {hasPhoto && (
           <>
             <Button
-              className="absolute -bottom-[28rem] lg:-bottom-[34rem] xl:-bottom-72 2xl:-bottom-96 left-28 z-10"
+              className="absolute bottom-2 left-8 xl:left-5 z-20"
               onClick={updatePhoto}
               variant="outline"
               disabled={loadingfetch || isLoadingData}
@@ -319,7 +321,7 @@ const Camera: React.FC<CameraPorps> = ({
               <SendHorizontal className="w-5 h-5" />
             </Button>
             <Button
-              className="absolute -bottom-[28rem] lg:-bottom-[34rem] xl:-bottom-72 2xl:-bottom-96 left-5 z-10"
+              className="absolute bottom-2 left-32 xl:left-28 z-20"
               onClick={closePhoto}
               variant="outline"
               disabled={loadingfetch || isLoadingData}
@@ -327,7 +329,7 @@ const Camera: React.FC<CameraPorps> = ({
               <Trash2 className="w-5 h-5" />
             </Button>
             <Button
-              className="absolute -bottom-[28rem] lg:-bottom-[34rem] xl:-bottom-72 2xl:-bottom-96 left-52 z-10"
+              className="absolute bottom-2 left-56 xl:left-52 z-20"
               disabled={loading || loadingfetch || isLoadingData}
               variant="outline"
               onClick={onClose}
@@ -336,7 +338,7 @@ const Camera: React.FC<CameraPorps> = ({
             </Button>
             {qrCodeValid !== null && (
               <p
-                className={`absolute -bottom-[28rem] lg:-bottom-[34rem] xl:-bottom-72 2xl:-bottom-96 left-[55%] xl:left-1/2 transform -translate-x-1/2 z-10 border-${
+                className={`absolute top-4 xl:top-auto xl:bottom-2 left-1/2 transform -translate-x-1/2 z-10 border-${
                   qrCodeValid ? "green" : "red"
                 }-500 border-2 p-3 flex items-center`}
               >

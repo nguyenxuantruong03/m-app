@@ -337,3 +337,8 @@ export const ToogleCardForm =z.object({
   isProductShowLive: z.optional(z.boolean()),
   isProductLivePin: z.optional(z.boolean()),
 })
+
+export const SaleProduct =z.object({
+  timeSale: z.date().nullable(),
+  isSale: z.optional(z.boolean()),
+})

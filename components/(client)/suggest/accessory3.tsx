@@ -105,8 +105,9 @@ const Secondhand = () => {
         </div>
         <div className={secondhandcolor.bg_h_w_rounded}>
         <Link href="https://vlxdxuantruong.vercel.app/category11/2753cd9a-f2bd-446c-9abc-bb35a8bbf272">
-        <span className="text-white font-bold p-2"> Máy bơm nước </span>
-        <span className="text-white font-bold p-2"> Panasonic </span>
+        <div className="px-2 pt-1">
+        <span className="text-white font-bold break-words"> Máy bơm Panasonic</span>
+        </div>
         <div className=" ml-1">
         <Image 
         width="150"

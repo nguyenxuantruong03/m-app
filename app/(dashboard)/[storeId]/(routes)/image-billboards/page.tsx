@@ -12,13 +12,8 @@ const ImageBillboardsPage = async ({ params }: { params: { storeId: string } }) 
   const showBillboardRole = isRole;
 
   // Fetch data from both tables
-  const [imageBillboards, imageBillboardTimes] = await Promise.all([
+  const [imageBillboards] = await Promise.all([
     prismadb.imageBillboard.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-    }),
-    prismadb.imageBillboardTime.findMany({
       orderBy: {
         createdAt: "desc",
       },
@@ -28,13 +23,6 @@ const ImageBillboardsPage = async ({ params }: { params: { storeId: string } }) 
   // Combine and format the results from both tables
   const formattedImageBillboards: BillboardColumn[] = [
     ...imageBillboards.map((item) => ({
-      id: item.id,
-      label: item.label,
-      description: item.description,
-      url: item.url,
-      createdAt: item.createdAt,
-    })),
-    ...imageBillboardTimes.map((item) => ({
       id: item.id,
       label: item.label,
       description: item.description,

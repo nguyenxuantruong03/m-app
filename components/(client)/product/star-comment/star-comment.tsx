@@ -108,10 +108,10 @@ const calculateTotalReviews = () => {
   };
 
     return (
-      <div className="flex items-center justify-center px-1 pb-2">
+      <div className="flex items-center justify-center pb-2">
         {totalReviews > 0 ? (
           <>
-          <span className="text-xs font-semibold md:text-base md:mr-2">Đánh giá: </span>
+          <span className="text-xs font-semibold md:text-sm md:mr-1">Đánh giá: </span>
           {renderStars(
             Math.floor(calculateAverageRating(data)),
             calculateAverageRating(data) % 1

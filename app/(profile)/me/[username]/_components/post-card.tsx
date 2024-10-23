@@ -146,8 +146,6 @@ const PostCard = ({
     switch (productType.toLowerCase()) {
       case "ongnhua":
         return "ongnhua";
-      case "quat":
-        return "quat";
       case "bongden":
         return "bongden";
       case "daydien":

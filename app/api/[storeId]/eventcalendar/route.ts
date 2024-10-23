@@ -143,25 +143,22 @@ export async function POST(
         { status: 500 }
       );
     }
-    console.log("currentTime", currentTime);
-    console.log("user.timestartwork", user.timestartwork);
-    console.log("currentDate", currentDate);
-    console.log(
-      "delayTime:",
-      Math.floor(delayTime / (1000 * 60 * 60)) +
-        " hours " +
-        Math.floor((delayTime % (1000 * 60 * 60)) / (1000 * 60)) +
-        " minutes " +
-        Math.floor((delayTime % (1000 * 60)) / 1000) +
-        " seconds"
-    );
-    console.log(
-      "delayHours:",
-      Math.floor(delayHours) +
-        " hours " +
-        Math.floor((delayHours % 1) * 60) +
-        " minutes"
-    );
+    // console.log(
+    //   "delayTime:",
+    //   Math.floor(delayTime / (1000 * 60 * 60)) +
+    //     " hours " +
+    //     Math.floor((delayTime % (1000 * 60 * 60)) / (1000 * 60)) +
+    //     " minutes " +
+    //     Math.floor((delayTime % (1000 * 60)) / 1000) +
+    //     " seconds"
+    // );
+    // console.log(
+    //   "delayHours:",
+    //   Math.floor(delayHours) +
+    //     " hours " +
+    //     Math.floor((delayHours % 1) * 60) +
+    //     " minutes"
+    // );
 
     // Tìm và cập nhật bản ghi tồn tại nếu có, nếu không, tạo mới
     let existingSalary = await prismadb.caculateSalary.findFirst({

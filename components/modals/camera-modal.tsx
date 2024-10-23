@@ -73,13 +73,12 @@ const end = isCheckAttendanceEnd
 
   return (
     <Modal
-    title={`Chụp ảnh điểm danh - Tên:${userId} - Sự kiện:${isCheckAttendanceTitle} - ${isCheckAttendanceTitle === "✅" ? "Kết thúc" : "Bắt đầu"}: ${start || ""}${end ? ` - Kết thúc: ${end}` : ""}`}
+      title={`Chụp ảnh điểm danh - Tên: ${userId} - Sự kiện:${isCheckAttendanceTitle} - ${isCheckAttendanceTitle === "✅" ? "Kết thúc" : "Bắt đầu"}: ${start || ""}${end ? ` - Kết thúc: ${end}` : ""}`}
       description="Nhân viên sẽ được trả lương thông qua việc điểm danh khuôn mặt để hệ thống quét Qrcode."
       isOpen={isOpen}
       onClose={onClose}
       maxWidth="5xl"
       textCenter={true}
-      top={true}
     >
       <Camera
         onClose={onClose}

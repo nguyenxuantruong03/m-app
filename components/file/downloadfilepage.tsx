@@ -29,7 +29,6 @@ import { TaxRateColumn } from "@/app/(dashboard)/[storeId]/(routes)/taxrate/comp
 import { CouponColumn } from "@/app/(dashboard)/[storeId]/(routes)/coupon/components/columns";
 import { ManageAttendancesColumn } from "@/app/(dashboard)/[storeId]/(routes)/manageattendance/components/column";
 import { ManageStaffsColumn } from "@/app/(dashboard)/[storeId]/(routes)/managestaff/components/column";
-import { BillboardTimeColumn } from "@/app/(dashboard)/[storeId]/(routes)/billboardstime/components/columns";
 import { WheelSpinColumn } from "@/app/(dashboard)/[storeId]/(routes)/wheelSpin/components/column";
 import { CommentColumn } from "@/app/(dashboard)/[storeId]/(routes)/comment/components/column";
 import { SystemsColumn } from "@/app/(dashboard)/[storeId]/(routes)/system/components/column";
@@ -39,7 +38,6 @@ interface DownloadfileProps {
     | BillboardColumn[]
     | WheelSpinColumn[]
     | CommentColumn[]
-    | BillboardTimeColumn[]
     | CategoriesColumn[]
     | ProductColumn[]
     | OrderColumn[]

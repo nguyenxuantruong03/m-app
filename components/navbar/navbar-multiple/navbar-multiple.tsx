@@ -15,7 +15,6 @@ import { UserButton } from "../../auth/user-button";
 import NavbarMultipleResponsive from "./navbar-multiple-resposive";
 import {
   route,
-  datastatistic,
   staff,
   billboard,
   categories,
@@ -27,7 +26,6 @@ import {
   setting,
   routeTitle,
   staffTitle,
-  datastatisticTitle,
   billboardTitle,
   categoryTitle,
   parameterTitle,
@@ -65,7 +63,6 @@ const NavbarMultiple = () => {
     : params.storeId;
 
   const routes = route(storeId, pathname);
-  const datastatistics = datastatistic(storeId, pathname);
   const staffs = staff(storeId, pathname);
   const billboards = billboard(storeId, pathname);
   const category = categories(storeId, pathname);
@@ -80,7 +77,7 @@ const NavbarMultiple = () => {
     <>
       {/* This example requires Tailwind CSS v2.0+ */}
       <div className="fixed dark:bg-slate-200 bg-slate-900 w-full top-0 z-[999]">
-        <div className="mx-auto px-2 2xl:px-5 lg:px-2 sm:px-4">
+        <div className="mx-auto p-2">
           <div className="flex justify-between items-center py-2">
             <div className="flex justify-start">
               <Link href="/">
@@ -148,67 +145,6 @@ const NavbarMultiple = () => {
                                 )}
                               >
                                 {route.content}
-                              </span>
-                            </ListItem>
-                          </>
-                        ))}
-                      </ul>
-                    </NavigationMenuContent>
-                  </NavigationMenuItem>
-                </NavigationMenuList>
-              </NavigationMenu>
-              {/* datastatistic */}
-              <NavigationMenu>
-                <NavigationMenuList>
-                  <NavigationMenuItem>
-                    <NavigationMenuTrigger className="text-slate-900">
-                      {datastatisticTitle.map((datastatistic) => (
-                        <>{datastatistic.mainicon}</>
-                      ))}
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                      <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                        <li className="row-span-3">
-                          <NavigationMenuLink asChild>
-                            <a
-                              className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-                              href="/"
-                            >
-                              <BadgeDollarSign className="h-6 w-6" />
-                              <div className="mb-2 mt-4 text-lg font-medium">
-                                shadcn/ui
-                              </div>
-                              <p className="text-sm leading-tight text-muted-foreground">
-                                Beautifully designed components that you can
-                                copy and paste into your apps. Accessible.
-                                Customizable. Open Source.
-                              </p>
-                            </a>
-                          </NavigationMenuLink>
-                        </li>
-                        {datastatistics.map((datastatistic) => (
-                          <>
-                            <ListItem
-                              active={cn(
-                                "text-md font-medium transition-colors hover:text-primary",
-                                datastatistic.active
-                                  ? "text-sky-500"
-                                  : "text-muted-foreground"
-                              )}
-                              key={datastatistic.href}
-                              href={datastatistic.href}
-                              title={datastatistic.label}
-                              icon={datastatistic.icon}
-                            >
-                              <span
-                                className={cn(
-                                  "text-md font-medium transition-colors hover:text-primary",
-                                  datastatistic.active
-                                    ? "text-sky-500"
-                                    : "text-muted-foreground"
-                                )}
-                              >
-                                {datastatistic.content}
                               </span>
                             </ListItem>
                           </>
@@ -695,9 +631,9 @@ const NavbarMultiple = () => {
               {userId?.id && userId?.email ? (
                 <div className="flex px-8 xl:px-12">
                   <div className="flex items-center space-x-8">
-                    <div className="p-2 rounded-full hover:bg-gray-300 hover:bg-opacity-50 cursor-pointer">
+                    {/* <div className="p-2 rounded-full hover:bg-gray-300 hover:bg-opacity-50 cursor-pointer">
                       <Bell className="size-5 text-amber-400" />
-                    </div>
+                    </div> */}
                     <UserButton />
                   </div>
                 </div>

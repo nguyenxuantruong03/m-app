@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/hover-card";
 import {
   route,
-  datastatistic,
   staff,
   billboard,
   categories,
@@ -29,7 +28,6 @@ import {
   setting,
   routeTitle,
   staffTitle,
-  datastatisticTitle,
   billboardTitle,
   categoryTitle,
   parameterTitle,
@@ -51,7 +49,6 @@ const NavbarIcon = ({
     : params.storeId;
 
   const routes = route(storeId, pathname);
-  const datastatistics = datastatistic(storeId, pathname);
   const staffs = staff(storeId, pathname);
   const billboards = billboard(storeId, pathname);
   const category = categories(storeId, pathname);
@@ -82,46 +79,6 @@ const NavbarIcon = ({
             </AccordionTrigger>
             <AccordionContent>
               {routes.map((route) => (
-                <Link
-                  key={route.href}
-                  href={route.href}
-                  title={route.label}
-                  className={cn(
-                    "text-md font-medium transition-colors hover:text-primary grid grid-rows-1",
-                    route.active
-                      ? "text-black dark:text-white"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  {route.icon}
-                </Link>
-              ))}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </nav>
-      {/* Data statistics */}
-      <nav
-        className={cn(
-          "flex items-center space-x-4 lg:space-x-6 space-y-4",
-          className
-        )}
-      >
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-1">
-            <AccordionTrigger className="accordion-trigger">
-              {" "}
-              <HoverCard>
-                <HoverCardTrigger>
-                  {datastatisticTitle.map(
-                    (datastatistic) => datastatistic.icon
-                  )}
-                </HoverCardTrigger>
-                <HoverCardContent>Thống kê dữ liệu</HoverCardContent>
-              </HoverCard>
-            </AccordionTrigger>
-            <AccordionContent>
-              {datastatistics.map((route) => (
                 <Link
                   key={route.href}
                   href={route.href}

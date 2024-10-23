@@ -66,18 +66,18 @@ export type Categories = {
 };
 
 export enum ProductType {
-  PRODUCT,
-  PRODUCT1,
-  PRODUCT2,
-  PRODUCT3,
-  PRODUCT4,
-  PRODUCT5,
-  PRODUCT6,
-  PRODUCT7,
-  PRODUCT8,
-  PRODUCT9,
-  PRODUCT10,
-  PRODUCT11,
+  PRODUCT = "PRODUCT",
+  PRODUCT1 = "PRODUCT1",
+  PRODUCT2 = "PRODUCT2",
+  PRODUCT3 = "PRODUCT3",
+  PRODUCT4 = "PRODUCT4",
+  PRODUCT5 = "PRODUCT5",
+  PRODUCT6 = "PRODUCT6",
+  PRODUCT7 = "PRODUCT7",
+  PRODUCT8 = "PRODUCT8",
+  PRODUCT9 = "PRODUCT9",
+  PRODUCT10 = "PRODUCT10",
+  PRODUCT11 = "PRODUCT11",
 }
 export type ProductDetail = {
   id: string;
@@ -215,6 +215,8 @@ export interface Product {
   cartItem: CartItemType;
   productdetailId: string;
   quantity?: number;
+  isSale?: boolean;
+  timeSale?: Date;
   productdetail: ProductDetail;
 }
 

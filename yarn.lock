@@ -701,6 +701,13 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@leenguyen/react-flip-clock-countdown@^1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@leenguyen/react-flip-clock-countdown/-/react-flip-clock-countdown-1.6.0.tgz#e99c0843d25b1336c99ee304c0b657a6cb1a1077"
+  integrity sha512-tmpYvI2tw/LcE5z2ubMycNdhMbM6049i6cicEFlsFoAzPKF4x/5aU1i/VfnCQGKEC4iOvPN4dGONTL2WR7Yy/A==
+  dependencies:
+    clsx "^1.1.1"
+
 "@livekit/components-core@0.8.3":
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/@livekit/components-core/-/components-core-0.8.3.tgz#631994f21245e892bd155296ff381796095a3b17"

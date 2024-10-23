@@ -70,7 +70,7 @@ const formSchema = z.object({
   timestartwork: z.string().min(1, { message: "Hãy nhập giờ bắt đầu làm việc." }),
   urlimageCheckAttendance: z.optional(z.string().min(2,{message: "Nhập ít nhất 2 ký tự."})),
   codeNFC: z.optional(z.string().min(2,{message: "Nhập ít nhất 2 ký tự."})),
-  image: z.optional(z.string().min(1,{message: "Hãy chọn 1 ảnh."})),
+  image: z.optional(z.string().min(0,{message: "Hãy chọn 1 ảnh."})),
   daywork: z.array(z.string()),
   createdAt: z.date().nullable(),
 });
@@ -121,7 +121,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
       urlimageCheckAttendance: initialData?.urlimageCheckAttendance ?? null!,
       codeNFC: initialData?.codeNFC ?? null!,
       daywork: initialData?.daywork ?? null!,
-      image: initialData?.image ?? null!,
+      image: initialData?.image || undefined,
       dateRange: initialData?.dateRange
         ? new Date(initialData?.dateRange)
         : null,
@@ -740,7 +740,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                     <Recommend message="Lưu ý: Chọn đúng thứ ngày làm việc để nhân viên điểm danh. Nếu chọn sai nhân viên không thể điểm danh." />
                   </FormLabel>
                   <FormControl>
-                   <MutipleSelectOption selectedOption={selectedOption} setSelectedOption={setSelectedOption} field={field} disabled={loading}/>
+                    <MutipleSelectOption selectedOption={selectedOption} setSelectedOption={setSelectedOption} field={field} disabled={loading}/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

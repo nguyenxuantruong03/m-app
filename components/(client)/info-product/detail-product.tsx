@@ -17,7 +17,7 @@ interface ProductDetailProps {
   routeOtherSuggestions?: string;
   other: Product[];
   routeOther?: string;
-  routeProductType?: "ongnhua" | "quat" | "bongden" | "daydien"
+  routeProductType?: "ongnhua" | "bongden" | "daydien"
 }
 
 const DetailProduct: React.FC<ProductDetailProps> = ({
@@ -51,7 +51,7 @@ const DetailProduct: React.FC<ProductDetailProps> = ({
       <hr className="my-10" />
       <h1 className="font-bold text-3xl my-3">Gợi ý khác </h1>
       {productlistsuggest ? (
-        <ProductListSuggest data={otherSuggestions} productType={routeProductType as "ongnhua" | "quat" | "bongden" | "daydien"} />
+        <ProductListSuggest data={otherSuggestions} productType={routeProductType as "ongnhua" | "bongden" | "daydien"} />
       ) : (
         <ProductListSingleSuggest
           data={otherSuggestions}
@@ -61,7 +61,7 @@ const DetailProduct: React.FC<ProductDetailProps> = ({
       <h1 className="font-bold text-3xl my-3">Loại khác </h1>
       {/* Kiểm tra giá trị của suggest để hiển thị component phù hợp */}
       {productlistsuggest2 ? (
-        <ProductListSuggest data={other} productType={routeProductType as "ongnhua" | "quat" | "bongden" | "daydien"} />
+        <ProductListSuggest data={other} productType={routeProductType as "ongnhua" | "bongden" | "daydien"} />
       ) : (
         <ProductListSingleSuggest
           data={other}

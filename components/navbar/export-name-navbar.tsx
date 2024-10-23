@@ -1,7 +1,4 @@
 import {
-  AppWindow,
-  AppWindowMac,
-  AreaChart,
   Boxes,
   Cable,
   CalendarDays,
@@ -33,7 +30,6 @@ import {
   Battery,
   Pipette,
   AlignJustify,
-  LineChart,
   Users,
   Construction,
   Layers3,
@@ -55,15 +51,6 @@ export const route = (params: string, pathname: string) => [
     icon: <Gauge className="size-5" />,
     content: "Tổng quan dữ liệu dữ liệu bán hàng.",
     active: pathname === `/${params}`,
-  },
-];
-export const datastatistic = (params: string, pathname: string) => [
-  {
-    href: `/${params}/datastatistics`,
-    label: "Thống kê dữ liệu",
-    icon: <AreaChart className="size-5" />,
-    content: "Tổng quan dữ liệu trang bán hàng.",
-    active: pathname === `/${params}/datastatistics`,
   },
 ];
 export const staff = (params: string, pathname: string) => [
@@ -117,13 +104,6 @@ export const billboard = (params: string, pathname: string) => [
     icon: <MessageSquareMore  className="size-5" />,
     content: "Quản lý ảnh quảng cáo trên trang bán hàng.",
     active: pathname === `/${params}/billboards`,
-  },
-  {
-    href: `/${params}/billboardstime`,
-    label: "Thời gian hiển thị",
-    icon: <AppWindow className="size-5" />,
-    content: "Quản lý thời gian hiển thị ảnh quảng cáo.",
-    active: pathname === `/${params}/billboardstime`,
   },
   {
     href: `/${params}/image-billboards`,
@@ -337,6 +317,13 @@ export const product = (params: string, pathname: string) => [
     content: "Sản phẩm Đồ thường dùng.",
     active: pathname === `/${params}/product11`,
   },
+  {
+    href: `/${params}/saleproduct`,
+    label: "Giảm giá",
+    icon: <TicketPercent className="size-5" />,
+    content: "Giảm giá sản phẩm.",
+    active: pathname === `/${params}/saleproduct`,
+  },
 ];
 
 export const order = (params: string, pathname: string) => [
@@ -423,18 +410,6 @@ export const routeTitle = [
       </span>
     ),
     icon: <AlignJustify className="size-5" />,
-  },
-];
-
-export const datastatisticTitle = [
-  {
-    mainicon: (
-      <span className="flex items-center 2xl:text-base lg:text-sm">
-        <LineChart className="size-3 lg:h-5 lg:w-5 2xl:size-4 mr-1" />
-        Thống kê
-      </span>
-    ),
-    icon: <LineChart className="size-5" />,
   },
 ];
 

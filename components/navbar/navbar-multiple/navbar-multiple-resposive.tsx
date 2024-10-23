@@ -2,7 +2,6 @@
 import Link from "next/link";
 import {
   route,
-  datastatistic,
   staff,
   billboard,
   categories,
@@ -14,7 +13,6 @@ import {
   setting,
   routeTitle,
   staffTitle,
-  datastatisticTitle,
   billboardTitle,
   categoryTitle,
   parameterTitle,
@@ -49,7 +47,6 @@ const NavbarMultipleResponsive = () => {
   };
 
   const routes = route(storeId, pathname);
-  const datastatistics = datastatistic(storeId, pathname);
   const staffs = staff(storeId, pathname);
   const billboards = billboard(storeId, pathname);
   const category = categories(storeId, pathname);
@@ -92,42 +89,6 @@ const NavbarMultipleResponsive = () => {
                   <div className="ml-4">
                     <p className="text-base font-medium text-slate-900">
                       {route.label}
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </AccordionContent>
-        </AccordionItem>
-        {/* Data Statistic */}
-        <AccordionItem value="item-2">
-          <AccordionTrigger
-            className="text-gray-400 dark:text-slate-900"
-            onClick={() => handleAccordionToggle("item-2")}
-          >
-            {datastatisticTitle.map((datastatistic) => (
-              <>{datastatistic.mainicon}</>
-            ))}
-          </AccordionTrigger>
-          <AccordionContent>
-            {datastatistics.map((datastatistic) => (
-              <Link
-                key={datastatistic.href}
-                href={datastatistic.href}
-                className={cn(
-                  "text-md font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
-                  datastatistic.active
-                    ? "text-gray-400 dark:text-slate-900"
-                    : "text-red-500"
-                )}
-              >
-                <div className="flex items-center space-x-3">
-                  <span className="flex-shrink-0 h-6 w-6 text-indigo-600">
-                    {datastatistic.icon}
-                  </span>
-                  <div className="ml-4">
-                    <p className="text-base font-medium text-slate-900">
-                      {datastatistic.label}
                     </p>
                   </div>
                 </div>

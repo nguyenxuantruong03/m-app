@@ -33,6 +33,7 @@ import {
   getColorPrice,
   getSizePrice,
 } from "../../export-product-compare/size-color/match-color-size";
+import PrevNextSwiper from "./prevnextswiper";
 
 interface ProductListProps {
   data: Product[];
@@ -76,7 +77,7 @@ const ProductListSingleSuggest: React.FC<ProductListProps> = ({
   };
 
   return (
-    <>
+    <div className="relative">
       {currentProduct && ( // Only render PreviewModal if currentProduct is set
         <PreviewModal
           isOpen={openPreviewModal}
@@ -479,7 +480,7 @@ const ProductListSingleSuggest: React.FC<ProductListProps> = ({
           );
 
           return (
-            <SwiperSlide key={product.id} className="overflow-hidden">
+            <SwiperSlide key={product.id} className={`${productQuantityAll && "overflow-hidden"}`}>
               <div
                 onClick={() => handleClick(product.name)}
                 className="px-3 bg-white group cursor-pointer rounded-xl border space-y-4 shadow-inner relative "
@@ -631,7 +632,12 @@ const ProductListSingleSuggest: React.FC<ProductListProps> = ({
           );
         })}
       </Swiper>
-    </>
+      {
+        data.length > 5 && (
+            <PrevNextSwiper />
+        )
+      }
+    </div>
   );
 };
 

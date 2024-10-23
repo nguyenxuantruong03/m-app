@@ -58,7 +58,6 @@
   }
 }
 .content__container__list {
-  margin-left: 44px;
   text-align: left;
   list-style: none;
 }
@@ -907,9 +906,13 @@
 
 
 .single-line-ellipsis {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2; /* Giới hạn hiển thị 2 dòng */
+  overflow: hidden; /* Ẩn phần văn bản vượt quá */
+  text-overflow: ellipsis; /* Thêm dấu '...' khi vượt quá */
+  word-break: break-word; /* Ngắt dòng khi cần */
+  white-space: normal;
 }
 
 

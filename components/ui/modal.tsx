@@ -25,7 +25,7 @@ const Modal:React.FC<ModalProps> = ({title,description,isOpen,onClose,children,m
 
     return (  
         <Dialog open={isOpen} onOpenChange={onChange} >
-              <DialogContent customWidth={customWidth} showCloseButton={showCloseButton} className={`max-w-${maxWidth || "xl"}  ${top ? 'dialog-content-camera' : ''} ${customClass}`} >
+              <DialogContent customWidth={customWidth} showCloseButton={showCloseButton} className={`max-w-${maxWidth || "xl"} ${customClass}  ${top ? 'dialog-content-camera' : ''}`} >
                 <DialogHeader>
                     <DialogTitle className={textCenter ? "text-center" : ""}>{title}</DialogTitle>
                     <DialogDescription className={textCenter ? "text-center" : ""}>{description}</DialogDescription>

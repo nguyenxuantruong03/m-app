@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/accordion";
 import {
   route,
-  datastatistic,
   staff,
   billboard,
   categories,
@@ -33,7 +32,6 @@ const MainNav = ({
     : params.storeId;
 
   const routes = route(storeId, pathname);
-  const datastatistics = datastatistic(storeId, pathname);
   const staffs = staff(storeId, pathname);
   const billboards = billboard(storeId, pathname);
   const category = categories(storeId, pathname);
@@ -51,26 +49,6 @@ const MainNav = ({
           <AccordionTrigger>Tổng quan</AccordionTrigger>
           <AccordionContent>
             {routes.map((route) => (
-              <Link
-                key={route.href}
-                href={route.href}
-                className={cn(
-                  "text-md font-medium transition-colors hover:text-primary grid grid-rows-1 mb-2",
-                  route.active
-                    ? "text-black dark:text-white"
-                    : "text-muted-foreground"
-                )}
-              >
-                {route.label}
-              </Link>
-            ))}
-          </AccordionContent>
-        </AccordionItem>
-        {/* Data statistics */}
-        <AccordionItem value="item-2">
-          <AccordionTrigger>Thống kê dữ liệu</AccordionTrigger>
-          <AccordionContent>
-            {datastatistics.map((route) => (
               <Link
                 key={route.href}
                 href={route.href}

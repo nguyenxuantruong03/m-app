@@ -137,9 +137,9 @@ const CircleAvatar = ({
 
   return (
     <>
-      <div className={`relative ${notLink && "W-"}`}>
+      <div className={`relative`}>
         <div
-           className={cn(
+            className={cn(
             "absolute w-full h-full flex items-center justify-center",
             classAvatar,
             isVideoCustom ? "-top-12 left-2" : "top-0 left-0",

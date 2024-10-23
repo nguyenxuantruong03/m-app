@@ -246,8 +246,6 @@ const LikeItem: React.FC<LikeItemProps> = ({ data, loading, setLoading }) => {
     switch (productType) {
       case "ongnhua":
         return "ongnhua";
-      case "quat":
-        return "quat";
       case "bongden":
         return "bongden";
       case "daydien":

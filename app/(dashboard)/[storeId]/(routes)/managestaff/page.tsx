@@ -80,7 +80,7 @@ const ManageStaff = async ({ params }: { params: { storeId: string } }) => {
 
 
   return (
-    <div className="w-full">
+    <div >
       <div className={`space-y-4 p-8 pt-6 ${showOrderRole}`}>
           {showOrderRole && <ManageStaffClient data={formattedUser} />}
       </div>

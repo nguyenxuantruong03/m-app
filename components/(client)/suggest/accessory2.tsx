@@ -23,8 +23,9 @@ const computerComponentSmall = () => {
 
         <div className={computerComponentSmallcolor.bg_height_width_rounded_overflowhidden}>
         <Link href="https://vlxdxuantruong.vercel.app/category2/388fcfa8-720d-4ca5-ace8-45370235e6eb">
-        <span className="text-white font-bold p-2">Ống nhựa</span>
-        <span className="text-white font-bold p-2">PVC </span>
+        <div className="px-2 pt-1">
+        <span className="text-white font-bold break-words">Ống nhựa PVC </span>
+        </div>
         <div className="mt-1">
         <Image 
         width="120"

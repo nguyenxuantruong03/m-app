@@ -168,8 +168,6 @@ export const PackageModal: React.FC<AlertModalProps> = ({
                   switch (productType.toLowerCase()) {
                     case "ongnhua":
                       return "ongnhua";
-                    case "quat":
-                      return "quat";
                     case "bongden":
                       return "bongden";
                     case "daydien":
