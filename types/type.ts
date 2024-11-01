@@ -216,7 +216,8 @@ export interface Product {
   productdetailId: string;
   quantity?: number;
   isSale?: boolean;
-  timeSale?: Date;
+  timeSaleStart?: Date;
+  timeSaleEnd?: Date;
   productdetail: ProductDetail;
 }
 

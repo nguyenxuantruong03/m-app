@@ -92,9 +92,16 @@ const CustomNav: React.FC<CustomNavProps> = ({
   return (
     <>
       <div className="hidden xl:block fixed top-[4.5rem] z-[9999]">
-        <Button className="my-2" onClick={toggleView}>
+      <button 
+        className="my-2 inline-flex items-center justify-center 
+        text-sm font-medium ring-offset-background transition-colors 
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring 
+        focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-5 
+        dark:bg-slate-200 bg-slate-900 text-primary-foreground hover:bg-slate-300 h-10 px-4 py-2" 
+        style={{ borderRadius: '0 0 8px 0' }}
+        onClick={toggleView}>
           <LayoutDashboard className="size-5" />
-        </Button>
+      </button>
       </div>
 
       {currentView === List.LIST && (

@@ -30,19 +30,18 @@ const Navbar = () => {
       });
     }
     
-    // Add scroll event listener
+  }, [param.storeId, user]);
+
+  useEffect(() => {
     const handleScroll = () => {
-      // Check if the scroll position is greater than or equal to 30
       setIsHidden(window.scrollY >= 30);
     };
 
     window.addEventListener("scroll", handleScroll);
-
-    // Clean up the event listener on component unmount
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, []); // Empty dependency array to ensure this only registers once
 
   useEffect(() => {
     const path = window.location.pathname;
@@ -68,15 +67,13 @@ const Navbar = () => {
   return (
     <>
       <div className=" fixed z-[9998] w-full top-0">
-        {!isHidden && (
-          <div className={navbarcolor.bg_height}>
-            <div className="max-w-[640px] md:max-w-3xl lg:mx-auto lg:max-w-7xl md:p-1 lg:p-0">
-              <div className="md:grid md:grid-cols-3 overflow-hidden overflow-x-auto">
-                <ImageDelivery />
-              </div>
+          <div className={`${isHidden ? 'hidden' : ''} ${navbarcolor.bg_height}`}>
+          <div className="max-w-[640px] md:max-w-3xl lg:mx-auto lg:max-w-7xl md:p-1 lg:p-0">
+            <div className="md:grid md:grid-cols-3 overflow-hidden overflow-x-auto">
+              <ImageDelivery />
             </div>
           </div>
-        )}
+        </div>
         <div className={navbarcolor.bg}>
           <div className="xl:mx-auto xl:max-w-[85rem]">
             <div className="relative flex h-16 items-center justify-between px-1">

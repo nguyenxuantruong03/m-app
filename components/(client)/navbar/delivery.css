@@ -6,26 +6,36 @@
   animation: typewriter 2s steps(10)  infinite alternate , blink 0.5s steps(10) infinite;
 }
 
+.loader-disabled {
+  position: relative;
+  overflow: hidden;
+  border-right: 3px solid;
+  width: 0px;
+  animation: loaderdisabledtypewriter 2s steps(10)  infinite alternate , blink 0.5s steps(10) infinite;
+}
+
 .loaderproductsale {
   position: relative;
   overflow: hidden;
   border-right: 3px solid;
   width: 0px;
-  animation: typewriterr 2s steps(10)  infinite alternate , blink 0.5s steps(10) infinite;
+  animation: loadersoldtypewriter 2s steps(10)  infinite alternate , blink 0.5s steps(10) infinite;
 }
 
 .loader-text {
   background: linear-gradient(to right,#da4453, #89216b);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  white-space: nowrap; /* Prevents text from wrapping to the next line */
+  display: inline; /* Keeps the loader-text on the same line */
 }
-@keyframes typewriterr {
+@keyframes loadersoldtypewriter {
   0% {
     width: 0px;
   }
 
   100% {
-    width: 120px;
+    width: 150px;
   }
 }
 
@@ -35,7 +45,17 @@
   }
 
   100% {
-    width: 80px;
+    width: 220px;
+  }
+}
+
+@keyframes loaderdisabledtypewriter {
+  0% {
+    width: 0px;
+  }
+
+  100% {
+    width: 110px;
   }
 }
 

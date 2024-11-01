@@ -30,30 +30,36 @@ const MapAPI = dynamic(
 export const revalidate = 86400;
 const HomePage = async () => {
   const products = await getAllProduct({ isFeatured: true });
-  // Lọc sản phẩm có `isSale` là true và có `timeSale`
+
+  // Lọc sản phẩm có `isSale` là true và có `timeSaleEnd` và `timeSaleStart`  
   const saleProduct = products
   .filter((product: any) => {
-    return product.isSale === true && new Date(product.timeSale) > new Date();
+    const now = new Date();
+    const nowPlus7Hours = new Date(now.getTime() + 7 * 60 * 60 * 1000); // Thêm 7 tiếng
+    return (
+      product.isSale === true && 
+      new Date(product.timeSaleStart) < nowPlus7Hours &&
+      new Date(product.timeSaleEnd) > nowPlus7Hours 
+    );
   })
-  // Sắp xếp theo số lượng `sold` từ cao đến thấp
+  // Sắp xếp theo số lượng sold từ cao đến thấp
   .sort((a: any, b: any) => b.sold - a.sold);
 
-
-  // Lọc sản phẩm có `isSale` là true và có `timeSale`
+  // Lọc sản phẩm có `isSale` là true và có `timeSaleStart và `timeSaleEnd`
   const saleProducts = products.filter(
-    (product: any) => product.isSale === true && product.timeSale
+    (product: any) => product.isSale === true && product.timeSaleStart && product.timeSaleEnd
   );
-  // Tìm sản phẩm có `timeSale` lớn nhất
+  // Tìm sản phẩm có `timeSaleEnd` lớn nhất
   const maxTimeSaleProduct = saleProducts.reduce((max, product) => {
-    const maxTimeSale = max.timeSale ?? 0; // Nếu max.timeSale là undefined, sử dụng 0
-    const currentTimeSale = product.timeSale ?? 0; // Nếu product.timeSale là undefined, sử dụng 0
+    const maxTimeSale = max.timeSaleEnd ?? 0; // Nếu max.timeSaleEnd là undefined, sử dụng 0
+    const currentTimeSale = product.timeSaleEnd ?? 0; // Nếu product.timeSaleEnd là undefined, sử dụng 0
     return maxTimeSale > currentTimeSale ? max : product;
   }, saleProducts[0]); // Khởi tạo với sản phẩm đầu tiên trong danh sách
 
   // Alternatively, if you want to default to the current date:
   const maxTimeSale =
-    maxTimeSaleProduct && maxTimeSaleProduct.timeSale !== undefined
-      ? new Date(maxTimeSaleProduct.timeSale)
+    maxTimeSaleProduct && maxTimeSaleProduct.timeSaleEnd !== undefined
+      ? new Date(maxTimeSaleProduct.timeSaleEnd)
       : null; // Handle undefined properly
 
   const ongnhua = products.filter(

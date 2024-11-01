@@ -537,10 +537,18 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({ data }) => {
               product.productdetail[`quantity${i}` as keyof ProductDetail] === 0
           );
 
-          const totalProductAll = product.productdetail.quantity1 + product.productdetail.quantity2 + product.productdetail.quantity3 + product.productdetail.quantity4 + product.productdetail.quantity5;
+          const totalProductAll =
+            product.productdetail.quantity1 +
+            product.productdetail.quantity2 +
+            product.productdetail.quantity3 +
+            product.productdetail.quantity4 +
+            product.productdetail.quantity5;
           const percentSold = (product.sold / totalProductAll) * 100;
           return (
-            <SwiperSlide key={product.id} className={`${productQuantityAll && "overflow-hidden"}`}>
+            <SwiperSlide
+              key={product.id}
+              className={`${productQuantityAll && "overflow-hidden"}`}
+            >
               <div
                 onClick={() => handleClick(product.name, product.productType)}
                 className="px-3 bg-white overflow-hidden group cursor-pointer rounded-xl border space-y-4 shadow-inner relative"
@@ -579,24 +587,52 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({ data }) => {
                   </p>
                 </div>
 
-                {/* Kiểm tra xemn nếu như ko có đã bán thì hiển thị value old nếu có thì ẩn valueold */}
-                <div
-                  className="rounded-md px-2"
-                  style={{
-                    background: `linear-gradient(
+                {totalProductAll === 0 ? (
+                  <>
+                    <div
+                      className="rounded-md py-0.5 px-2"
+                      style={{
+                        background: `linear-gradient(
+                        to right, 
+                        #de2f4b, 
+                        rgba(229, 51, 80, 1) , 
+                        rgba(255, 0, 0, 0.3) )`, // Tùy chỉnh gradient với nhiều màu
+                      }}
+                    >
+                      <div className="flex items-center justify-between text-white">
+                        <span className="text-sm font-medium">Hết hàng</span>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Kiểm tra xemn nếu như ko có đã bán thì hiển thị value old nếu có thì ẩn valueold */}
+                    <div
+                      className="rounded-md px-2"
+                      style={{
+                        background: `linear-gradient(
                       to right, 
                       #de2f4b ${percentSold - 10}%, 
                       rgba(229, 51, 80, 1) ${percentSold}%, 
                       rgba(255, 0, 0, 0.3) ${percentSold + 20}%)`, // Tùy chỉnh gradient với nhiều màu
-                  }}
-                >
-                  <div className="flex items-center justify-between text-white">
-                    {
-                      product.sold > 0 && <span>Đã bán</span>
-                    }
-                    <span>{product.sold === 0 ? <span className="text-sm font-medium">Đang bán chạy</span> : <span>{formatSoldValue(product.sold) || 0}</span>}</span>
-                  </div>
-                </div>
+                      }}
+                    >
+                      <div className="flex items-center justify-between text-white">
+                        {product.sold > 0 && <span>Đã bán</span>}
+                        <span>
+                          {product.sold === 0 ? (
+                            <span className="text-sm font-medium">
+                              Đang bán chạy
+                            </span>
+                          ) : (
+                            <span>{formatSoldValue(product.sold) || 0}</span>
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                  </>
+                )}
+
                 <CommentStar data={product.id} comment={product.comment} />
               </div>
 
@@ -689,11 +725,7 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({ data }) => {
           );
         })}
       </Swiper>
-      {
-        data.length > 10 && (
-          <PrevNextSwiper />
-        )
-      }
+      {data.length > 10 && <PrevNextSwiper />}
     </div>
   );
 };

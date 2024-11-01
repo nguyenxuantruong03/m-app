@@ -45,13 +45,16 @@ const SliderSwiper: React.FC<SliderSwiperProps> = ({ data }) => {
       <button
         key={index}
         onClick={() => handleLabelClick(index)}
-        className={`p-4 cursor-pointer hover:bg-gray-300 hover:bg-opacity-30 ${activeIndex === index ? "text-gray-900 font-semibold border-b-2 border-red-500" : "text-gray-500"}`}
+        className={`flex-grow p-4 cursor-pointer hover:bg-gray-300 hover:bg-opacity-30 ${activeIndex === index ? "text-gray-900 font-semibold border-b-2 border-red-500" : "text-gray-500"}`}
       >
-        <p>{image.label}</p>
-        <p>{image.description}</p>
+        <div className="flex flex-col items-center">
+          <p className="text-center">{image.label}</p>
+          <p className="text-center">{image.description}</p>
+        </div>
       </button>
     ));
   };
+  
 
   return (
     <div className="w-[90vw] md:w-[70vw] lg:w-[750px] rounded-md shadow-md">
@@ -75,9 +78,10 @@ const SliderSwiper: React.FC<SliderSwiperProps> = ({ data }) => {
           <SwiperButtons />
         </div>
       </Swiper>
-      <div className="text-center text-gray-700 flex flex-col">
-        <div className="flex overflow-x-auto whitespace-nowrap">{renderLabels()}</div>
-      </div>
+      <div className="text-center text-gray-700 flex overflow-x-auto">
+  <div className="flex w-full">{renderLabels()}</div>
+</div>
+
     </div>
   );
 };

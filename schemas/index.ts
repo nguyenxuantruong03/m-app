@@ -339,6 +339,7 @@ export const ToogleCardForm =z.object({
 })
 
 export const SaleProduct =z.object({
-  timeSale: z.date().nullable(),
+  timeSaleStart:z.union([z.date().nullable(), z.string().nullable()]),
+  timeSaleEnd: z.union([z.date().nullable(), z.string().nullable()]),
   isSale: z.optional(z.boolean()),
 })

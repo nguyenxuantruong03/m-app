@@ -76,20 +76,30 @@ const NavbarMultiple = () => {
   return (
     <>
       {/* This example requires Tailwind CSS v2.0+ */}
-      <div className="fixed dark:bg-slate-200 bg-slate-900 w-full top-0 z-[999]">
-        <div className="mx-auto p-2">
-          <div className="flex justify-between items-center py-2">
+      <div className="fixed dark:bg-slate-200 bg-slate-900 w-full top-0 z-[9999]">
+        <div className={`mx-auto ${userId ? "p-2" : "p-2 xl:p-4"}`}>
+          <div className="flex justify-between items-center">
             <div className="flex justify-start">
-              <Link href="/">
-                <span className="sr-only">Workflow</span>
-                <Image
-                  className="h-8 w-auto sm:h-12"
-                  src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
+            <Link href="/">
+              <div className="hidden xl:block">
+              <Image
                   alt=""
-                  width="50"
-                  height="50"
+                  src="/images/logo-custom.png"
+                  width="155"
+                  height="30"
+                  className="rounded-sm"
                 />
-              </Link>
+              </div>
+              <div className="block xl:hidden">
+                <Image
+                  alt=""
+                  src="/images/logo-mini.png"
+                  width="45"
+                  height="30"
+                  className="rounded-sm bg-[#c3c3c3] py-1.5 px-2.5"
+                />
+              </div>
+            </Link>
             </div>
 
             <nav className="hidden xl:flex space-x-1 z-[999]">
@@ -97,7 +107,7 @@ const NavbarMultiple = () => {
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="text-slate-900">
+                    <NavigationMenuTrigger className="dark:text-slate-900 text-slate-200">
                       {routeTitle.map((route) => (
                         <>{route.mainicon}</>
                       ))}
@@ -158,7 +168,7 @@ const NavbarMultiple = () => {
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="text-slate-900">
+                    <NavigationMenuTrigger className="dark:text-slate-900 text-slate-200">
                       {staffTitle.map((staff) => (
                         <>{staff.mainicon}</>
                       ))}
@@ -199,7 +209,7 @@ const NavbarMultiple = () => {
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="text-slate-900">
+                    <NavigationMenuTrigger className="dark:text-slate-900 text-slate-200">
                       {billboardTitle.map((billboard) => (
                         <>{billboard.mainicon}</>
                       ))}
@@ -260,7 +270,7 @@ const NavbarMultiple = () => {
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="text-slate-900">
+                    <NavigationMenuTrigger className="dark:text-slate-900 text-slate-200">
                       {categoryTitle.map((categories) => (
                         <>{categories.mainicon}</>
                       ))}
@@ -301,7 +311,7 @@ const NavbarMultiple = () => {
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="text-slate-900">
+                    <NavigationMenuTrigger className="dark:text-slate-900 text-slate-200">
                       {parameterTitle.map((parameter) => (
                         <>{parameter.mainicon}</>
                       ))}
@@ -362,7 +372,7 @@ const NavbarMultiple = () => {
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="text-slate-900">
+                    <NavigationMenuTrigger className="dark:text-slate-900 text-slate-200">
                       {productTitle.map((product) => (
                         <>{product.mainicon}</>
                       ))}
@@ -403,7 +413,7 @@ const NavbarMultiple = () => {
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="text-slate-900">
+                    <NavigationMenuTrigger className="dark:text-slate-900 text-slate-200">
                       {orderTitle.map((order) => (
                         <>{order.mainicon}</>
                       ))}
@@ -464,7 +474,7 @@ const NavbarMultiple = () => {
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="text-slate-900">
+                    <NavigationMenuTrigger className="dark:text-slate-900 text-slate-200">
                       {userTitle.map((user) => (
                         <>{user.mainicon}</>
                       ))}
@@ -525,7 +535,7 @@ const NavbarMultiple = () => {
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="text-slate-900">
+                    <NavigationMenuTrigger className="dark:text-slate-900 text-slate-200">
                       {checkoutTitle.map((checkout) => (
                         <>{checkout.mainicon}</>
                       ))}
@@ -586,7 +596,7 @@ const NavbarMultiple = () => {
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="text-slate-900">
+                    <NavigationMenuTrigger className="dark:text-slate-900 text-slate-200">
                       {settingTitle.map((setting) => (
                         <>{setting.mainicon}</>
                       ))}
@@ -638,31 +648,31 @@ const NavbarMultiple = () => {
                   </div>
                 </div>
               ) : (
-                <div className="hidden md:flex items-center justify-end md:flex-1">
+                <div className="flex items-center justify-end md:flex-1">
                   <Link
                     href="/auth/login"
-                    className="whitespace-nowrap 2xl:px-4 2xl:py-2 lg:py-2 lg:px-2 border-slate-300 shadow-sm rounded-md border-2 2xl:text-base lg:text-sm font-medium text-gray-500 dark:hover:text-slate-900 hover:text-white"
+                    className="whitespace-nowrap px-1 py-2 lg:py-2 lg:px-2 2xl:px-4 2xl:py-2  border-slate-300 shadow-sm rounded-md border-2 2xl:text-base lg:text-sm font-medium text-gray-500 dark:hover:text-slate-500 hover:text-white"
                   >
                     <span className="flex items-center 2xl:text-base lg:text-sm">
-                      <CircleUser className="size-3 lg:h-5 lg:w-5 2xl:size-4 mr-1" />
+                      <CircleUser className="h-4 w-4 lg:h-5 lg:w-5 2xl:size-4 mr-1" />
                       Login
                     </span>
                   </Link>
                   <Link
                     href="/auth/register"
-                    className="ml-3 whitespace-nowrap inline-flex items-center justify-center 2xl:px-4 2xl:py-2 lg:py-2 lg:px-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+                    className="ml-1 whitespace-nowrap inline-flex items-center justify-center px-1 py-2 lg:py-2 lg:px-2 2xl:px-4 2xl:py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700"
                   >
                     <span className="flex items-center 2xl:text-base lg:text-sm">
-                      <UserRoundPlus className="size-3 lg:h-5 lg:w-5 2xl:size-4 mr-1" />
+                      <UserRoundPlus className="h-4 w-4 lg:h-5 lg:w-5 2xl:size-4 mr-1" />
                       Register
                     </span>
                   </Link>
                 </div>
               )}
-              <div className="mr-2 -my-2 xl:hidden z-[99]">
+              <div className="ml-2 xl:ml-0 mr-2 -my-2 xl:hidden z-[9999]">
                 <button
                   type="button"
-                  className="z-[999] dark:bg-slate-200 bg-slate-900 rounded-md p-2 inline-flex items-center justify-center dark:text-gray-400 text-white hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+                  className="dark:bg-slate-900 bg-slate-200 rounded-md p-2 inline-flex items-center justify-center text-gray-400  hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
                   onClick={() => setOpen(!open)}
                 >
                   <span className="sr-only">Open menu</span>
@@ -701,30 +711,43 @@ const NavbarMultiple = () => {
         <div
           className={
             open
-              ? "opacity-100 h-[750px] overflow-y-auto scale-100 animate-fade-down animate-duration-[300ms] animate-ease-linear absolute top-0 inset-x-0 p-2 transform origin-top-right xl:hidden "
+              ? "opacity-100 z-[99999] h-[500px] overflow-y-auto scale-100 animate-fade-down animate-duration-[300ms] animate-ease-linear absolute top-0 inset-x-0 p-2 transform origin-top-right xl:hidden "
               : "hidden scale-95 absolute top-0 inset-x-0 p-2 transition transform origin-top-right xl:hidden"
           }
         >
           <div className="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-white bg-slate-900 divide-y-2 divide-gray-50 z-[999]">
             <div className="pt-5 pb-6 px-5">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Image
-                    className="h-8 w-auto"
-                    src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
-                    alt="Workflow"
-                    width="50"
-                    height="50"
+              <div className="flex xl:hidden items-center justify-between">
+                <Image
+                    alt=""
+                    src="/images/logo-mini.png"
+                    width="45"
+                    height="30"
+                    className="rounded-sm bg-[#c3c3c3] py-1.5 px-2.5"
                   />
-                </div>
                 <div className="-mr-2">
                   <button
                     type="button"
-                    className="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+                    className="dark:bg-slate-900 bg-slate-200 rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
                     onClick={() => setOpen(!open)}
                   >
                     <span className="sr-only">Close menu</span>
                     {/* Heroicon name: outline/x */}
+                    <svg
+                    className="h-6 w-6"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  </svg>
                   </button>
                 </div>
               </div>
@@ -739,42 +762,42 @@ const NavbarMultiple = () => {
               <div className="grid grid-cols-2 gap-y-4 gap-x-8">
                 <Link
                   href="#"
-                  className="flex items-center text-base font-medium text-slate-900 hover:text-gray-700"
+                  className="flex items-center text-base font-medium dark:text-slate-900 text-slate-200 hover:text-gray-700"
                 >
                   Enterprise
                   <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
-                  className="flex items-center text-base font-medium text-slate-900 hover:text-gray-700"
+                  className="flex items-center text-base font-medium dark:text-slate-900 text-slate-200 hover:text-gray-700"
                 >
                   Blog
                   <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
-                  className="flex items-center text-base font-medium text-slate-900 hover:text-gray-700"
+                  className="flex items-center text-base font-medium dark:text-slate-900 text-slate-200 hover:text-gray-700"
                 >
                   Help Center
                   <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
-                  className="flex items-center text-base font-medium text-slate-900 hover:text-gray-700"
+                  className="flex items-center text-base font-medium dark:text-slate-900 text-slate-200 hover:text-gray-700"
                 >
                   Guides
                   <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
-                  className="flex items-center text-base font-medium text-slate-900 hover:text-gray-700"
+                  className="flex items-center text-base font-medium dark:text-slate-900 text-slate-200 hover:text-gray-700"
                 >
                   Security
                   <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
-                  className="flex items-center text-base font-medium text-slate-900 hover:text-gray-700"
+                  className="flex items-center text-base font-medium dark:text-slate-900 text-slate-200 hover:text-gray-700"
                 >
                   Events
                   <ArrowUpRight className="h-5 w-5 ml-1" />

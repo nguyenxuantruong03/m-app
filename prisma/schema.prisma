@@ -302,7 +302,8 @@ model Product {
   isProductShowLive    Boolean                @default(false)
   isProductLivePin     Boolean                @default(false)
 
-  timeSale             DateTime?
+  timeSaleStart        DateTime?
+  timeSaleEnd          DateTime?
   isSale               Boolean                @default(false)
 
   @@index([storeId])

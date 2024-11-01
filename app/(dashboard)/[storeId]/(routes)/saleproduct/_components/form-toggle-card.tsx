@@ -32,7 +32,8 @@ interface ProductWithImages extends Product {
 interface SalProductProps {
   id: string;
   label: string;
-  valueTimeSale?: Date | null;
+  valueTimeSaleStart?: Date | null;
+  valueTimeSaleEnd?: Date | null;
   valueIsSale?: boolean;
   disabled: boolean;
   totalQuantity: number;
@@ -46,7 +47,8 @@ export const FormSaleProduct = ({
   label,
   disabled,
   setLoading,
-  valueTimeSale,
+  valueTimeSaleStart,
+  valueTimeSaleEnd,
   valueIsSale = false,
   setData,
   loading,
@@ -55,7 +57,8 @@ export const FormSaleProduct = ({
   const form = useForm<SaleProductFormValues>({
     resolver: zodResolver(SaleProduct),
     defaultValues: {
-      timeSale: valueTimeSale ? new Date(valueTimeSale) : null,
+      timeSaleStart: valueTimeSaleStart ? new Date(valueTimeSaleStart) : null,
+      timeSaleEnd: valueTimeSaleEnd ? new Date(valueTimeSaleEnd) : null,
       isSale: valueIsSale,
     },
   });
@@ -65,11 +68,24 @@ export const FormSaleProduct = ({
   // Hàm kiểm tra thay đổi giá trị
   const checkIfModified = (newValues: SaleProductFormValues) => {
     const isSaleChanged = newValues.isSale !== valueIsSale;
-    const timeSaleChanged = newValues.timeSale?.toString() !== valueTimeSale?.toString();
-    return isSaleChanged || timeSaleChanged;
+    const timeSaleStartChanged =
+      newValues.timeSaleStart?.toString() !== valueTimeSaleStart?.toString();
+    const timeSaleEndChanged =
+      newValues.timeSaleEnd?.toString() !== valueTimeSaleEnd?.toString();
+    return isSaleChanged || timeSaleStartChanged || timeSaleEndChanged;
   };
 
   const onSubmit = async (data: SaleProductFormValues) => {
+    if (!data.timeSaleStart || !data.timeSaleEnd) {
+      toast.error("Start time and end time are required.");
+      return;
+    }
+
+    if (data.timeSaleEnd < data.timeSaleStart) {
+      toast.error("End time must be after start time.");
+      return;
+    }
+
     try {
       setLoading(true);
       await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/saleProduct`, {
@@ -88,19 +104,69 @@ export const FormSaleProduct = ({
     }
   };
 
+  const onClear = async () => {
+    try {
+      setLoading(true);
+      // Call the API to clear the sale for the product (if needed)
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_URL}/saleProduct/clear`,
+        {
+          data: { id },
+        }
+      );
+
+      // Reset the form fields to their initial state
+      form.reset({
+        timeSaleStart: null,
+        timeSaleEnd: null,
+        isSale: false,
+      });
+
+      // Reset isModified state
+      setIsModified(false);
+
+      toast.success("Cleared.");
+    } catch (error) {
+      if (
+        (error as { response?: { data?: { error?: string } } }).response &&
+        (error as { response: { data?: { error?: string } } }).response.data &&
+        (error as { response: { data: { error?: string } } }).response.data
+          .error
+      ) {
+        // Hiển thị thông báo lỗi cho người dùng
+        toast.error(
+          (error as { response: { data: { error: string } } }).response.data
+            .error
+        );
+      } else {
+        // Hiển thị thông báo lỗi mặc định cho người dùng
+        toast.error("Something went wrong!");
+      }
+    } finally{
+      setLoading(false);
+    }
+  };
+
   // Theo dõi sự thay đổi của form
   useEffect(() => {
     const subscription = form.watch((newValues) => {
-      // Đảm bảo rằng `timeSale` không phải là `undefined`
+      // Đảm bảo rằng `timeSaleStart` và `timeSaleEnd` không phải là `undefined`
       const checkedValues = {
         ...newValues,
-        timeSale: newValues.timeSale ?? null, // Gán null nếu timeSale là undefined
+        timeSaleStart: newValues.timeSaleStart ?? null, // Gán null nếu timeSaleStart là undefined
+        timeSaleEnd: newValues.timeSaleEnd ?? null, // Gán null nếu timeSaleEnd là undefined
       };
       setIsModified(checkIfModified(checkedValues));
     });
     return () => subscription.unsubscribe();
   }, [form.watch]);
-  
+
+  // Inside your FormSaleProduct component
+  useEffect(() => {
+    // Update the form state whenever valueIsSale changes
+    form.setValue("isSale", valueIsSale);
+  }, [valueIsSale, form]);
+
   return (
     <>
       {totalQuantity === 0 ? (
@@ -110,7 +176,7 @@ export const FormSaleProduct = ({
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
             <div className="rounded-xl p-2 bg-slate-900 bg-opacity-30">
               <div className="flex items-center justify-between">
-                <p className="font-semibold shrink-0 text-white">{label}</p>
+                <p className="font-semibold text-slate-900 shrink-0">{label}</p>
                 <FormField
                   control={form.control}
                   name="isSale"
@@ -129,11 +195,11 @@ export const FormSaleProduct = ({
 
             <FormField
               control={form.control}
-              name="timeSale"
+              name="timeSaleStart"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex space-x-3 items-center">
-                    Sale Time <span className="text-red-600 pl-1">(*)</span>
+                  <FormLabel className="flex space-x-3 items-center text-slate-900">
+                    Sale Start <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -142,18 +208,41 @@ export const FormSaleProduct = ({
                       value={
                         field.value
                           ? field.value instanceof Date
-                            ? new Date(
-                                field.value.getTime() - field.value.getTimezoneOffset() * 60000
-                              )
-                                .toISOString()
-                                .slice(0, 16)
+                            ? field.value.toISOString().slice(0, 16)
                             : field.value
                           : ""
                       }
                       onChange={(e) => {
-                        const dateValue = e.target.value;
-                        const parsedDate = Date.parse(dateValue);
-                        field.onChange(isNaN(parsedDate) ? dateValue : new Date(parsedDate));
+                        field.onChange(e.target.value);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="timeSaleEnd"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex space-x-3 items-center text-slate-900">
+                    Sale End <span className="text-red-600 pl-1">(*)</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="datetime-local"
+                      disabled={loading}
+                      value={
+                        field.value
+                          ? field.value instanceof Date
+                            ? field.value.toISOString().slice(0, 16)
+                            : field.value
+                          : ""
+                      }
+                      onChange={(e) => {
+                        field.onChange(e.target.value);
                       }}
                     />
                   </FormControl>
@@ -163,9 +252,19 @@ export const FormSaleProduct = ({
             />
 
             {isModified && (
-              <Button type="submit" disabled={loading}>
-                {loading ? "Saving..." : "Save Changes"}
-              </Button>
+              <div className="flex items-center space-x-2">
+                <Button type="submit" variant="secondary" disabled={loading}>
+                  {loading ? "Waiting..." : "Save Changes"}
+                </Button>
+                <Button
+                  type="button"
+                  onClick={onClear}
+                  variant="destructive"
+                  disabled={loading}
+                >
+                  {loading ? "Waiting..." : "Clear"}
+                </Button>
+              </div>
             )}
           </form>
         </Form>

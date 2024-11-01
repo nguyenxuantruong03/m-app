@@ -26,7 +26,8 @@ export async function GET(
         heading: true,
         name: true,
         sold: true,
-        timeSale: true,
+        timeSaleStart: true,
+        timeSaleEnd: true,
         isSale: true,
         productdetail: {
           include: {

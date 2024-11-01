@@ -653,7 +653,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
     <div>
       <h1 className="text-3xl font-bold text-gray-500">{data.heading} </h1>
       <hr className="my-4" />
-      {data.timeSale ? (
+      {(data.timeSaleEnd && data.timeSaleStart) ? (
         <div className="relative w-full h-10">
         <Image 
           src="/images/banner-sale.jpg"
@@ -674,7 +674,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
               <span className="uppercase text-white">kết thúc trong:</span>
             </div>
             <FlipClockCountdown
-              to={new Date(data.timeSale)}
+              to={new Date(data.timeSaleEnd)}
               renderMap={[true, true, true, true]} // Hiển thị giờ, phút, giây nhưng không hiển thị ngày
               showLabels={false}
               digitBlockStyle={{

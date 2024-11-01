@@ -8,7 +8,8 @@ import { useRouter } from "next/navigation";
 import LoadingPageComponent from "@/components/ui/loading";
 import { Hint } from "@/components/ui/hint";
 import Currency from "@/components/ui/currency";
-import { SquarePen } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import toast from "react-hot-toast";
 
 interface ProductWithImages extends Product {
   images: ImageData[];
@@ -20,7 +21,7 @@ const ListProductItem = () => {
   const router = useRouter();
   const [data, setData] = useState<ProductWithImages[]>([]);
   const [loading, setLoading] = useState(false);
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -190,6 +191,38 @@ const ListProductItem = () => {
     }
   };
 
+  const onClickSaleAll = async () =>{
+    try {
+      setLoading(true);
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/saleProduct`);
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/getAllProductNotQuery`
+      );
+      setData(response.data)
+      toast.success("Product updated.");
+    } catch (error: unknown) {
+      toast.error("Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const onClickRemoveSaleAll = async () =>{
+    try {
+      setLoading(true);
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/saleProduct`);
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/getAllProductNotQuery`
+      );
+      setData(response.data)
+      toast.success("Product updated.");
+    } catch (error: unknown) {
+      toast.error("Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   if (!data.length) {
     return (
       <div>
@@ -199,151 +232,163 @@ const ListProductItem = () => {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Hiển thị từng nhóm sản phẩm */}
-      {sortedProductTypes.map((productType) => (
-        <div key={productType}>
-          {/* Heading productType */}
-          <h2 className="text-2xl font-bold my-2 text-blue-600">
-            {productTypeDisplayNames[productType] || productType}
-          </h2>
+    <div>
+      <div className="flex items-center space-x-2">
+        <Button className="w-full" onClick={onClickSaleAll} disabled={loading}>
+          Sale All
+        </Button>
+        <Button variant="destructive" className="w-full" onClick={onClickRemoveSaleAll} disabled={loading}>
+          Remove Sale All
+        </Button>
+      </div>
 
-          {/* Các sản phẩm thuộc productType */}
-          <div className="flex flex-wrap gap-3">
-            {groupedProducts[productType].map(
-              (product: ProductWithImages, index) => {
-                // Hàm tìm giá thấp nhất và khuyến mãi dựa trên số lượng có sẵn
-                const findLowestPriceAndPromotion = (productDetail: any) => {
-                  // Khởi tạo giá thấp nhất là vô cực và khuyến mãi tốt nhất là 0
-                  let lowestPrice = Infinity;
-                  let bestPromotion = 0;
+      <div className="space-y-6">
+        {/* Hiển thị từng nhóm sản phẩm */}
+        {sortedProductTypes.map((productType) => (
+          <div key={productType}>
+            {/* Heading productType */}
+            <h2 className="text-2xl font-bold my-2 text-blue-600">
+              {productTypeDisplayNames[productType] || productType}
+            </h2>
 
-                  // Duyệt qua các giá trị từ 1 đến 5
-                  for (let i = 1; i <= 5; i++) {
-                    // Lấy số lượng, giá và khuyến mãi tương ứng của từng biến thể
-                    const quantity = productDetail[`quantity${i}`];
+            {/* Các sản phẩm thuộc productType */}
+            <div className="flex flex-wrap gap-3">
+              {groupedProducts[productType].map(
+                (product: ProductWithImages, index) => {
+                  // Hàm tìm giá thấp nhất và khuyến mãi dựa trên số lượng có sẵn
+                  const findLowestPriceAndPromotion = (productDetail: any) => {
+                    // Khởi tạo giá thấp nhất là vô cực và khuyến mãi tốt nhất là 0
+                    let lowestPrice = Infinity;
+                    let bestPromotion = 0;
 
-                    // Nếu số lượng lớn hơn 0 (còn hàng)
-                    if (quantity !== 0) {
-                      const price = productDetail[`price${i}`];
-                      const percentPromotion =
-                        productDetail[`percentpromotion${i}`];
+                    // Duyệt qua các giá trị từ 1 đến 5
+                    for (let i = 1; i <= 5; i++) {
+                      // Lấy số lượng, giá và khuyến mãi tương ứng của từng biến thể
+                      const quantity = productDetail[`quantity${i}`];
 
-                      // Cập nhật giá thấp nhất và khuyến mãi tốt nhất nếu giá hiện tại thấp hơn giá thấp nhất đã lưu
-                      if (price < lowestPrice) {
-                        lowestPrice = price;
-                        bestPromotion = percentPromotion;
+                      // Nếu số lượng lớn hơn 0 (còn hàng)
+                      if (quantity !== 0) {
+                        const price = productDetail[`price${i}`];
+                        const percentPromotion =
+                          productDetail[`percentpromotion${i}`];
+
+                        // Cập nhật giá thấp nhất và khuyến mãi tốt nhất nếu giá hiện tại thấp hơn giá thấp nhất đã lưu
+                        if (price < lowestPrice) {
+                          lowestPrice = price;
+                          bestPromotion = percentPromotion;
+                        }
                       }
                     }
-                  }
 
-                  // Nếu tất cả số lượng đều bằng 0 (hết hàng), quay lại lấy giá trị đầu tiên
-                  if (lowestPrice === Infinity) {
-                    lowestPrice = productDetail.price1;
-                    bestPromotion = productDetail.percentpromotion1;
-                  }
+                    // Nếu tất cả số lượng đều bằng 0 (hết hàng), quay lại lấy giá trị đầu tiên
+                    if (lowestPrice === Infinity) {
+                      lowestPrice = productDetail.price1;
+                      bestPromotion = productDetail.percentpromotion1;
+                    }
 
-                  // Trả về giá thấp nhất và khuyến mãi tốt nhất
-                  return {
-                    price: lowestPrice,
-                    percentPromotion: bestPromotion,
+                    // Trả về giá thấp nhất và khuyến mãi tốt nhất
+                    return {
+                      price: lowestPrice,
+                      percentPromotion: bestPromotion,
+                    };
                   };
-                };
 
-                // Tìm giá và khuyến mãi hợp lệ từ chi tiết sản phẩm
-                const validPriceAndPromotion = findLowestPriceAndPromotion(
-                  product.productdetail
-                );
+                  // Tìm giá và khuyến mãi hợp lệ từ chi tiết sản phẩm
+                  const validPriceAndPromotion = findLowestPriceAndPromotion(
+                    product.productdetail
+                  );
 
-                // Tính giá sau khuyến mãi
-                const discountedPrice = validPriceAndPromotion
-                  ? validPriceAndPromotion.price *
-                    ((100 - validPriceAndPromotion.percentPromotion) / 100)
-                  : null;
+                  // Tính giá sau khuyến mãi
+                  const discountedPrice = validPriceAndPromotion
+                    ? validPriceAndPromotion.price *
+                      ((100 - validPriceAndPromotion.percentPromotion) / 100)
+                    : null;
 
-                // Giá gốc (trước khuyến mãi)
-                const discountedPriceOld = validPriceAndPromotion.price;
+                  // Giá gốc (trước khuyến mãi)
+                  const discountedPriceOld = validPriceAndPromotion.price;
 
-                const quantities = [
-                  product.productdetail.quantity1 ?? 0,
-                  product.productdetail.quantity2 ?? 0,
-                  product.productdetail.quantity3 ?? 0,
-                  product.productdetail.quantity4 ?? 0,
-                  product.productdetail.quantity5 ?? 0,
-                ];
+                  const quantities = [
+                    product.productdetail.quantity1 ?? 0,
+                    product.productdetail.quantity2 ?? 0,
+                    product.productdetail.quantity3 ?? 0,
+                    product.productdetail.quantity4 ?? 0,
+                    product.productdetail.quantity5 ?? 0,
+                  ];
 
-                const totalQuantity = quantities.reduce(
-                  (total, qty) => total + qty,
-                  0
-                );
+                  const totalQuantity = quantities.reduce(
+                    (total, qty) => total + qty,
+                    0
+                  );
 
-                return (
-                  <div
-                    key={product.id}
-                    className="bg-white p-2 max-w-xl rounded-md shadow-xl"
-                  >
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="relative">
-                        <Hint label="View product" side="bottom">
-                          <Image
-                            width={200}
-                            height={200}
-                            className="object-cover rounded-md cursor-pointer"
-                            src={product.images[0].url}
-                            onClick={() =>
-                              handleClick(product.name, product.productType)
-                            }
-                            alt="404"
-                          />
-                        </Hint>
-                        {product.originalIndex !== undefined && (
-                          <span className="absolute bg-slate-300 top-0 left-0 text-white text-xs font-bold py-1 px-2">
-                            {product.originalIndex + 1}
-                          </span>
-                        )}
-                      </div>
+                  return (
+                    <div
+                      key={product.id}
+                      className="bg-white p-2 max-w-xl rounded-md shadow-xl"
+                    >
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="relative">
+                          <Hint label="View product" side="bottom">
+                            <Image
+                              width={200}
+                              height={200}
+                              className="object-cover rounded-md cursor-pointer"
+                              src={product.images[0].url}
+                              onClick={() =>
+                                handleClick(product.name, product.productType)
+                              }
+                              alt="404"
+                            />
+                          </Hint>
+                          {product.originalIndex !== undefined && (
+                            <span className="absolute bg-slate-300 top-0 left-0 text-white text-xs font-bold py-1 px-2">
+                              {product.originalIndex + 1}
+                            </span>
+                          )}
+                        </div>
 
-                      <div className="space-y-2">
-                        <p className="text-lg font-semibold truncate w-44">
-                          {product.heading}
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <Currency
-                            value={discountedPrice || 0}
-                            valueold={discountedPriceOld}
+                        <div className="space-y-2">
+                          <p className="text-lg text-slate-500 font-semibold truncate w-44">
+                            {product.heading}
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <Currency
+                              value={discountedPrice || 0}
+                              valueold={discountedPriceOld}
+                            />
+                          </div>
+                          <p className="text-lg text-gray-300 font-semibold truncate w-44">
+                            Đã bán: <span>{product.sold}</span>
+                          </p>
+                          <p className="text-lg text-gray-300 font-semibold truncate w-44">
+                            Tồn kho: <span>{totalQuantity}</span>
+                          </p>
+                          <p className="text-lg text-gray-300 font-semibold truncate w-44">
+                            Giảm giá:{" "}
+                            <span>{validPriceAndPromotion.percentPromotion}%</span>
+                          </p>
+
+                          <FormSaleProduct
+                            id={product.id}
+                            label="ProductSale"
+                            valueTimeSaleStart={product.timeSaleStart}
+                            valueTimeSaleEnd={product.timeSaleEnd}
+                            valueIsSale={product.isSale}
+                            disabled={totalQuantity === 0 || loading}
+                            totalQuantity={totalQuantity}
+                            setLoading={setLoading}
+                            setData={setData}
+                            loading={loading}
                           />
                         </div>
-                        <p className="text-lg text-gray-300 font-semibold truncate w-44">
-                          Đã bán: <span>{product.sold}</span>
-                        </p>
-                        <p className="text-lg text-gray-300 font-semibold truncate w-44">
-                          Tồn kho: <span>{totalQuantity}</span>
-                        </p>
-                        <p className="text-lg text-gray-300 font-semibold truncate w-44">
-                          Giảm giá:{" "}
-                          <span>{validPriceAndPromotion.percentPromotion}</span>
-                        </p>
-
-                        <FormSaleProduct
-                          id={product.id}
-                          label="ProductSale"
-                          valueTimeSale={product.timeSale}
-                          valueIsSale={product.isSale}
-                          disabled={totalQuantity === 0 || loading}
-                          totalQuantity={totalQuantity}
-                          setLoading={setLoading}
-                          setData={setData}
-                          loading={loading}
-                        />
                       </div>
                     </div>
-                  </div>
-                );
-              }
-            )}
+                  );
+                }
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };

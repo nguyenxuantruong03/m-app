@@ -8,6 +8,7 @@ export const ToasterProvider = () => {
       toastOptions={{
         duration: 8000,
       }}
+      containerStyle={{ zIndex: 99999 }}
     />
   );
 };

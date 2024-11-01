@@ -35,7 +35,6 @@ import Menu from "@/components/(client)/slider-item/menu";
 import axios from "axios";
 import { mainnavcolor } from "@/components/(client)/color/color";
 import Image from "next/image";
-import "./mainnav.css";
 import { UserButton } from "@/components/auth/user-button";
 import useFavorite from "@/hooks/client/db/use-favorite";
 import useCart from "@/hooks/client/use-cart";
@@ -43,7 +42,6 @@ import { cn } from "@/lib/utils";
 import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
 import useCartdb from "@/hooks/client/db/use-cart-db";
 import { SearchPage } from "./search";
-import SearchItem from "./_components/search-item";
 
 interface mainNavProps {
   role: string;
@@ -136,35 +134,21 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
 
       <Link href="/home-product">
         <div className="hidden xl:block">
-          <div className="bg-[#333]  p-1  rounded-lg">
-            <svg
-              width="120"
-              height="35"
-              viewBox="0 0 512 52"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <text x="20" y="10" className="text1">
-                Xuân
-              </text>
-              <text x="160" y="10" className="text2">
-                Trường
-              </text>
-              <text x="32" y="72" className="text1">
-                vật liệu
-              </text>
-              <text x="245" y="72" className="text3">
-                xây dựng
-              </text>
-            </svg>
-          </div>
+          <Image
+            alt=""
+            src="/images/logo-custom.png"
+            width="140"
+            height="30"
+            className="rounded-sm"
+          />
         </div>
         <div className="block xl:hidden">
           <Image
             alt=""
-            src="/images/logo.ico"
+            src="/images/logo-mini.png"
             width="45"
-            height="45"
-            className="rounded-md m-[6.5px] border border-white"
+            height="30"
+            className="rounded-sm bg-[#c3c3c3] py-1.5 px-2.5"
           />
         </div>
       </Link>
@@ -191,7 +175,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
         <div className="absolute top-[-40px] z-40 " ref={menuRef}>
           <Menu showCategories={true} />
         </div>
-      )} 
+      )}
 
       <div className={mainnavcolor.bgroundedmd}>
         <div className=" flex-col md:flex-row justify-center  items-center  py-[2px] hidden md:flex">
@@ -208,7 +192,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
       </div>
 
       <div className="ml-1.5 md:ml-0">
-        <SearchPage /> 
+        <SearchPage />
       </div>
 
       <NavigationMenu className="hidden md:block">
@@ -337,7 +321,10 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
                     </div>
                   </Link>
 
-                  <Link href="/warehouse/package-product" className=" hidden md:block">
+                  <Link
+                    href="/warehouse/package-product"
+                    className=" hidden md:block"
+                  >
                     <div className={mainnavcolor.bghover}>
                       <div className="flex flex-col md:flex-row items-center">
                         <div className="basis-1/2 md:flex gap-2">
@@ -410,7 +397,9 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
             handleOpenAlertGuest();
           }
         }}
-        className={`${role === "GUEST" || !userId ? "hidden" : "hidden md:flex"}`}
+        className={`${
+          role === "GUEST" || !userId ? "hidden" : "hidden md:flex"
+        }`}
       >
         <button>
           <div className={mainnavcolor.bghover_gio_hang}>
