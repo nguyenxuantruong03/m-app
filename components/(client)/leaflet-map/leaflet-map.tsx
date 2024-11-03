@@ -190,7 +190,7 @@ const LeafletMap = () => {
     <div className="w-full hidden md:flex justify-center item-center bg-white py-4 px-12 ">
       <div id="map" className="w-full h-[500px] relative rounded-md"></div>
       <div
-        className={`arrow absolute md:left-[0%] lg:left-[0%] z-[9999] mt-[100px] flex shake text-red-500 ${!isVisible ? 'hidden' : ''}`}
+        className={`arrow absolute md:left-[0%] lg:left-[0%] z-[1000] mt-[100px] flex shake text-red-500 ${!isVisible ? 'hidden' : ''}`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >

@@ -278,7 +278,7 @@ const PostCard = ({
                 name={self.stream.name}
                 followedByCount={self.stream.user._count.followedBy}
                 imageUrl={
-                  self.stream.user.imageCredential[0].url ||
+                  self.stream.user.imageCredential[0]?.url ||
                   self.stream.user.image ||
                   ""
                 }

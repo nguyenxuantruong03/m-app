@@ -6,7 +6,7 @@ import OverViewStore from "@/components/(client)/home/overview-store";
 import SellingProduct from "@/components/(client)/home/selling-product";
 import Service from "@/components/(client)/home/service";
 import Slider from "@/components/(client)/home/slider";
-import Sponsor from "@/components/(client)/home/sponsor";
+import Marquees from "@/components/(client)/home/marquee";
 import Story from "@/components/(client)/home/story";
 import dynamic from "next/dynamic";
 
@@ -26,7 +26,7 @@ const HomePage = async () => {
       <BuyProduct />
       <News />
       <MapAPI />
-      <Sponsor />
+      <Marquees />
     </>
   );
 };

@@ -23,7 +23,10 @@ const nextConfig = {
           },
           {
             hostname:"https://user-images.githubusercontent.com/43953425/166269493-acd08ccb-4df3-4474-95c7-ad1034d3c070.svg",
-          }
+          },
+          {
+            hostname:"secure.gravatar.com",
+          },
         ],
     },
 }

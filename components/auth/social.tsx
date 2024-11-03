@@ -27,9 +27,9 @@ const Social = () => {
                 <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("github")}}>
                 <Github className="h-5 w-5"/>
                 </Button>
-                <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("facebook")}}>
+                {/* <Button size="lg" variant="outline" className="w-full" onClick={()=>{onClick("facebook")}}>
                 <Image src="/images-icon/facebook-icon.png" alt="404" width="50" height="50" className='h-9 w-9'/>
-                </Button>
+                </Button> */}
             </div>
 
             <div className="flex items-center space-x-1 space-y-1">

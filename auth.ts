@@ -39,7 +39,7 @@ export const {
       const atIndex = existingUser?.email?.indexOf("@");
       const nameuser = existingUser?.email?.slice(0, atIndex).toLowerCase();
 
-      if (!existingUser?.nameuser) {
+      if (existingUser && !existingUser.nameuser) {
         await prismadb.user.update({
           where: { id: existingUser?.id },
           data: {
@@ -49,7 +49,7 @@ export const {
       }
 
       //--Bước1--Check người dùng có bị ban
-      if (existingUser?.ban === true) {
+      if (existingUser && existingUser.ban === true) {
         const banExpiresAt = existingUser.banExpires
           ? new Date(existingUser.banExpires)
           : null;
@@ -206,10 +206,74 @@ export const {
         session.user.createdAt = token.createdAt as Date;
         session.user.isLive = token.isLive as boolean;
         const existingUser = await getUserById(token.sub);
-        if (existingUser) {
-          const now = new Date();
-          now.setHours(now.getHours() + 7);
+        //--Bước1--Check người dùng có bị ban
+        const now = new Date();
+        now.setHours(now.getHours() + 7);
 
+        if (existingUser && existingUser.ban === true) {
+          const banExpiresAt = existingUser.banExpires
+            ? new Date(existingUser.banExpires)
+            : null;
+          if (banExpiresAt && banExpiresAt > now) {
+            const timeBan = existingUser.banExpires
+              ? format(existingUser.banExpires, "dd/MM/yyyy '-' HH:mm:ss a")
+              : "";
+            // Kiểm tra giá trị hiện tại của resendBanUserNotStart
+            let resendCount = existingUser.resendBanUserNotStart || 0;
+            if (resendCount < 2) {
+              // Nếu giá trị nhỏ hơn 2, tăng lên 1
+              await sendBanUserNotStart(
+                existingUser.email,
+                existingUser.name,
+                timeBan
+              );
+              resendCount++; // Tăng giá trị lên 1
+              // Cập nhật giá trị mới cho resendBanUserNotStart
+              await prismadb.user.update({
+                where: { id: existingUser.id },
+                data: {
+                  resendBanUserNotStart: resendCount,
+                },
+              });
+            }
+            throw new Error("You have been banned!");
+          }
+
+          //Nếu người dùng bị cấm nhưng thời gian cấm đã hết hạn, chương trình sẽ vào đây.
+          else if (banExpiresAt) {
+            // Ban period has expired, unban the user
+            const unbanUser = await prismadb.user.update({
+              where: { id: existingUser.id },
+              data: {
+                ban: false,
+                banExpires: null,
+                resendCount: 0,
+                resendTokenVerify: 0,
+                resendEmailResetPassword: 0,
+                resendTokenResetPassword: 0,
+                resendBanUserNotStart: 0,
+                resendUnBanUser: 0,
+              },
+            });
+            // Kiểm tra giá trị hiện tại của resendUnBanUser
+            let resendCount = existingUser.resendUnBanUser || 0;
+
+            if (resendCount < 2) {
+              // Nếu giá trị nhỏ hơn 2, tăng lên 1
+              await sendUnBanUser(unbanUser.email, unbanUser.name);
+              resendCount++; // Tăng giá trị lên 1
+              // Cập nhật giá trị mới cho resendUnBanUser
+              await prismadb.user.update({
+                where: { id: existingUser.id },
+                data: {
+                  resendUnBanUser: resendCount,
+                },
+              });
+            }
+          }
+        }
+
+        if (existingUser) {
           //Cập nhật lại thời gian mỗi khi đăng nhập
           await prismadb.user.update({
             where: { id: existingUser.id },
@@ -218,9 +282,41 @@ export const {
             },
           });
         }
+
+        // --Bước bắt buộc-- Nếu không có nameuser se tự động update
+        const atIndex = existingUser?.email?.indexOf("@");
+        const nameuser = existingUser?.email?.slice(0, atIndex).toLowerCase();
+
+        if (existingUser && !existingUser.nameuser) {
+          await prismadb.user.update({
+            where: { id: existingUser?.id },
+            data: {
+              nameuser: nameuser,
+            },
+          });
+        }
+        // -- Bước kiểm tra favorite -- Nếu ko có tự update
+        if (existingUser && existingUser.favorite.length <= 0) {
+          // Cast favorite to string[] if necessary
+          const favorites: string[] = existingUser.favorite as string[];
+          const hasPhobien = favorites.includes("phobien");
+
+          if (!hasPhobien) {
+            await prismadb.user.update({
+              where: { id: existingUser.id },
+              data: {
+                favorite: [...favorites, "phobien"],
+              },
+            });
+          }
+        }
       }
-      return session;
+      return {
+        ...session,
+        redirect: "/auth/errorban",
+      };
     },
+
     async jwt({ token, user, account }) {
       if (!token.sub) return token;
 

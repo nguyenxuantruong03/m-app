@@ -604,7 +604,7 @@ model User {
   id              String            @id @default(cuid())
   name            String?
   nameuser        String?           @unique
-  favorite        String[]
+  favorite        String[]          
   bio             String?
   email           String?           @unique
   address         String?

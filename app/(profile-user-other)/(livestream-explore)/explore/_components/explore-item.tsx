@@ -251,7 +251,7 @@ const ExploreItem = ({ streams, review }: ExploreCardProps) => {
                       name={stream.name}
                       followedByCount={stream.user._count.followedBy}
                       imageUrl={
-                        stream.user.imageCredential[0].url ||
+                        stream.user.imageCredential[0]?.url ||
                         stream.user.image ||
                         ""
                       }

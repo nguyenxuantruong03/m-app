@@ -42,7 +42,7 @@ export const ResultCard = ({ data }: ResultCardProps) => {
           fallback={
             data.user.image ||
             (data.user.imageCredential && data.user.imageCredential.length > 0
-              ? data.user.imageCredential[0].url
+              ? data.user.imageCredential[0]?.url
               : "") // Check if imageCredential is defined and has items
           }
           isLive={data.isLive}
@@ -56,7 +56,7 @@ export const ResultCard = ({ data }: ResultCardProps) => {
             nameuser={data.user.nameuser || ""}
             srcAvatar={
               (data.user.imageCredential && data.user.imageCredential.length > 0
-                ? data.user.imageCredential[0].url
+                ? data.user.imageCredential[0]?.url
                 : data.user.image) || ""
             }
             isLive={data.isLive}
