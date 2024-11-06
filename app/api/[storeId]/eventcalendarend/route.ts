@@ -20,6 +20,13 @@ export async function GET(
         { status: 403 }
       );
     }
+    
+    if (userId.role === UserRole.GUEST || userId.role === UserRole.USER) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xem attendance!" }),
+        { status: 403 }
+      );
+    }
 
     if (!params.storeId) {
       return new NextResponse(
@@ -31,9 +38,6 @@ export async function GET(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId: {
-          equals: UserRole.USER,
-        },
       },
     });
 
@@ -119,9 +123,7 @@ export async function POST(
 ) {
   try {
     const userId = await currentUser();
-
     const body = await req.json();
-
     const { title, start, allDay, attendancestart, attendanceend } = body;
 
     if (!params.storeId) {
@@ -131,12 +133,23 @@ export async function POST(
       );
     }
 
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role === UserRole.GUEST || userId.role === UserRole.USER) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền check attendance!" }),
+        { status: 403 }
+      );
+    }
+
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId: {
-          equals: UserRole.USER,
-        },
       },
     });
 

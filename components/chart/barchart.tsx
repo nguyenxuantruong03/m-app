@@ -34,7 +34,7 @@ export const BarChart: React.FC<OverViewProps> = ({ data, loading }) => {
   if (!data) {
     return (
       <div className="w-full h-[350px] flex items-center justify-center">
-        <span className="text-center">Please select date to find data...</span>
+        <span className="text-center dark:text-slate-500 text-slate-900">Please select date to find data...</span>
       </div>
     );
   }
@@ -49,7 +49,7 @@ export const BarChart: React.FC<OverViewProps> = ({ data, loading }) => {
           axisLine={false}
           tickFormatter={(value) => `${value}`}
         />
-        <Tooltip />
+        <Tooltip labelClassName="dark:text-slate-500 text-salte-900"/>
         <Legend />
         <Bar dataKey="total" fill="#3498db" radius={[4, 4, 0, 0]} />
       </ChartBar>

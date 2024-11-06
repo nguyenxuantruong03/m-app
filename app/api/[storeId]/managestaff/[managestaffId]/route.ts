@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
-import { currentRole, currentUser } from "@/lib/auth";
+import { currentUser } from "@/lib/auth";
 import { sendUpdateManageStaff } from "@/lib/mail-sendUpdate-Staff";
 import { sendDismissal } from "@/lib/mail";
 import { format } from "date-fns";
@@ -19,11 +19,26 @@ export async function GET(
   req: Request,
   { params }: { params: { managestaffId: string } }
 ) {
+  const userId = await currentUser();
   try {
     if (!params.managestaffId) {
       return new NextResponse(
         JSON.stringify({ error: "Managestaff id is required!" }),
         { status: 400 }
+      );
+    }
+
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xem Manage Staff!" }),
+        { status: 403 }
       );
     }
 
@@ -48,11 +63,17 @@ export async function DELETE(
 ) {
   try {
     const userId = await currentUser();
-    const role = await currentRole();
 
     if (!userId) {
       return new NextResponse(
         JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xóa Manage Staff!" }),
         { status: 403 }
       );
     }
@@ -67,9 +88,6 @@ export async function DELETE(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId: {
-          equals: UserRole.USER,
-        },
       },
     });
 
@@ -77,13 +95,6 @@ export async function DELETE(
       return new NextResponse(
         JSON.stringify({ error: "Không tìm thấy store id!" }),
         { status: 405 }
-      );
-    }
-
-    if (role !== UserRole.ADMIN) {
-      return new NextResponse(
-        JSON.stringify({ error: "Vai trò hiện tại của bạn không được quyền!" }),
-        { status: 403 }
       );
     }
 
@@ -177,6 +188,13 @@ export async function PATCH(
       );
     }
 
+    if (userId.role !== UserRole.ADMIN) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền cập nhật Manage Staff!" }),
+        { status: 403 }
+      );
+    }
+
     if (!name) {
       return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
         status: 400,
@@ -256,9 +274,6 @@ export async function PATCH(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId: {
-          equals: UserRole.USER,
-        },
       },
     });
 

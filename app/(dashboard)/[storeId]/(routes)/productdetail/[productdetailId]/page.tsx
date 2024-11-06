@@ -1,7 +1,6 @@
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
 import { currentRole } from "@/lib/auth";
-import FormSuccess from "@/components/form-success";
 import { RoleGate } from "@/components/auth/role-gate";
 import { ProductDetailForm } from "./components/productdetailform";
 
@@ -15,8 +14,8 @@ const ProductDetailPage = async ({
   const showProductDetailRole = isRole;
   const productDetail = await prismadb.productDetail.findUnique({
     where: {
-        id: params.productdetailId,
-    }
+      id: params.productdetailId,
+    },
   });
   const categories = await prismadb.category.findMany({
     where: {
@@ -37,21 +36,20 @@ const ProductDetailPage = async ({
   });
 
   return (
-    <div className="flex-col">
-      <div className={`flex-1 space-y-4 p-8 pt-6 ${showProductDetailRole}`}>
-      {showProductDetailRole && (
-          <ProductDetailForm
-            initialData={productDetail}
-            categories={categories}
-            sizes={sizes}
-            colors={colors}
-          />
-        )}
+    <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>
+      <div className="flex-col">
+        <div className={`flex-1 space-y-4 p-8 pt-6 ${showProductDetailRole}`}>
+          {showProductDetailRole && (
+            <ProductDetailForm
+              initialData={productDetail}
+              categories={categories}
+              sizes={sizes}
+              colors={colors}
+            />
+          )}
+        </div>
       </div>
-      <RoleGate allowedRole={UserRole.ADMIN || UserRole.STAFF}>
-        <FormSuccess message="Bạn có thể xem được nội dung này!" />
-      </RoleGate>
-    </div>
+    </RoleGate>
   );
 };
 

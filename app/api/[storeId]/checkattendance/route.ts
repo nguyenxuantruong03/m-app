@@ -6,6 +6,21 @@ import { NextResponse } from "next/server";
 export async function GET(req: Request) {
   try {
     const userId = await currentUser();
+
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role === UserRole.GUEST || userId.role === UserRole.USER) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xem attendance!" }),
+        { status: 403 }
+      );
+    }
+
     const eventCalendar = await prismadb.eventCalendar.findMany({
       where: {
         userId: userId?.id,
@@ -26,10 +41,22 @@ export async function POST(
 ) {
   try {
     const userId = await currentUser();
-
     const body = await req.json();
-
     const { photo, qrResult, datacamera } = body;
+
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role === UserRole.GUEST || userId.role === UserRole.USER) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền check attendance!" }),
+        { status: 403 }
+      );
+    }
 
     if (!params.storeId) {
       return new NextResponse(
@@ -41,9 +68,6 @@ export async function POST(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId: {
-          equals: UserRole.USER,
-        },
       },
     });
 
@@ -240,9 +264,7 @@ export async function PATCH(
 ) {
   try {
     const userId = await currentUser();
-
     const body = await req.json();
-
     const { serialNumber, dataEventNFC } = body;
 
     if (!params.storeId) {
@@ -251,13 +273,23 @@ export async function PATCH(
         { status: 400 }
       );
     }
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role === UserRole.GUEST || userId.role === UserRole.USER) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền cập nhật check attendance!" }),
+        { status: 403 }
+      );
+    }
 
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId: {
-          equals: UserRole.USER,
-        },
       },
     });
 

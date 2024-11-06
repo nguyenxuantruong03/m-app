@@ -2,7 +2,6 @@ import prismadb from "@/lib/prismadb";
 import { CategoryForm } from "./components/category-form";
 import { CategoryType, UserRole } from "@prisma/client";
 import { RoleGate } from "@/components/auth/role-gate";
-import FormSuccess from "@/components/form-success";
 import { currentRole } from "@/lib/auth";
 
 const CategoryPage = async ({
@@ -22,14 +21,13 @@ const CategoryPage = async ({
   });
 
   return (
-    <div className="flex-col">
-      <div className={`flex-1 space-y-4 p-8 pt-6 ${showCategoryRole}`}>
-        {showCategoryRole && <CategoryForm initialData={categorys} />}
+    <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>
+      <div className="flex-col">
+        <div className={`flex-1 space-y-4 p-8 pt-6 ${showCategoryRole}`}>
+          {showCategoryRole && <CategoryForm initialData={categorys} />}
+        </div>
       </div>
-      <RoleGate allowedRole={UserRole.ADMIN || UserRole.STAFF}>
-        <FormSuccess message="Bạn có thể xem được nội dung này!" />
-      </RoleGate>
-    </div>
+    </RoleGate>
   );
 };
 

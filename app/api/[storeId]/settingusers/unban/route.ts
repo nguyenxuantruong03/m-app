@@ -2,6 +2,7 @@ import { sendUnBanUser } from "@/lib/mail";
 import prismadb from "@/lib/prismadb";
 import { NextResponse } from "next/server";
 import { currentUser } from "@/lib/auth";
+import { UserRole } from "@prisma/client";
 
 type SettingUserUnbanValue = string | number | boolean | Date | string[] | null | undefined;
 
@@ -20,6 +21,20 @@ export async function POST(
   const { userId } = body;
 
   try {
+    if (!user) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền cập nhật settinguser!" }),
+        { status: 403 }
+      );
+    }
+
     const existingUser = await prismadb.user.findUnique({
       where: { id: userId },
     });

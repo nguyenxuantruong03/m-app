@@ -4,7 +4,6 @@ import { SizeColumn } from "./components/columns";
 import { UserRole } from "@prisma/client";
 import { currentRole } from "@/lib/auth";
 import { RoleGate } from "@/components/auth/role-gate";
-import FormSuccess from "@/components/form-success";
 
 const SizePage = async ({ params }: { params: { storeId: string } }) => {
   const role = await currentRole();
@@ -26,14 +25,13 @@ const SizePage = async ({ params }: { params: { storeId: string } }) => {
     createdAt: item.createdAt,
   }));
   return (
-    <div className="w-full">
-      <div className={`space-y-4 p-8 pt-6 ${showSizeRole}`}>
-        {showSizeRole && <SizeClient data={formattedSize} />}
+    <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>
+      <div className="w-full">
+        <div className={`space-y-4 p-8 pt-6 ${showSizeRole}`}>
+          {showSizeRole && <SizeClient data={formattedSize} />}
+        </div>
       </div>
-      <RoleGate allowedRole={UserRole.ADMIN || UserRole.STAFF}>
-        <FormSuccess message="Bạn có thể xem được nội dung này!" />
-      </RoleGate>
-    </div>
+    </RoleGate>
   );
 };
 

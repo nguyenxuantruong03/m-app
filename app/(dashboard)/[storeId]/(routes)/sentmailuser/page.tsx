@@ -3,7 +3,6 @@ import SentEmailUserClient from "./components/client";
 import { UserRole } from "@prisma/client";
 import { currentRole } from "@/lib/auth";
 import { RoleGate } from "@/components/auth/role-gate";
-import FormSuccess from "@/components/form-success";
 
 const SentEmailUserPage = async ({
   params,
@@ -52,22 +51,21 @@ const SentEmailUserPage = async ({
         sentemailuser: sentEmailUsers,
         user: item.user.email,
         isSent: item.isSent,
-        createdAt: item.createdAt
+        createdAt: item.createdAt,
       };
     })
   );
 
   return (
-    <div className="w-full">
-      <div className={`space-y-4 p-8 pt-6 ${showSentEmailUserRole}`}>
-        {showSentEmailUserRole && (
-          <SentEmailUserClient data={formattedSentEmailUser} />
-        )}
+    <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>
+      <div className="w-full">
+        <div className={`space-y-4 p-8 pt-6 ${showSentEmailUserRole}`}>
+          {showSentEmailUserRole && (
+            <SentEmailUserClient data={formattedSentEmailUser} />
+          )}
+        </div>
       </div>
-      <RoleGate allowedRole={UserRole.ADMIN || UserRole.STAFF}>
-        <FormSuccess message="Bạn có thể xem được nội dung này!" />
-      </RoleGate>
-    </div>
+    </RoleGate>
   );
 };
 

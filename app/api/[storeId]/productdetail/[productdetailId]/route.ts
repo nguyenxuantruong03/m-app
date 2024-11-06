@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
 import { Category, Color, Size, UserRole } from "@prisma/client";
-import { currentRole, currentUser } from "@/lib/auth";
+import { currentUser } from "@/lib/auth";
 import { Decimal } from "@prisma/client/runtime/library";
 
 type ProductDetailValue = string | number | Date | Decimal | undefined | Category | Size | Color |null;
@@ -58,11 +58,17 @@ export async function DELETE(
 ) {
   try {
     const userId = await currentUser();
-    const role = await currentRole();
 
     if (!userId) {
       return new NextResponse(
         JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xóa product detail!" }),
         { status: 403 }
       );
     }
@@ -77,9 +83,6 @@ export async function DELETE(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId: {
-          equals: UserRole.USER,
-        },
       },
     });
 
@@ -87,13 +90,6 @@ export async function DELETE(
       return new NextResponse(
         JSON.stringify({ error: "Không tìm thấy store id!" }),
         { status: 405 }
-      );
-    }
-
-    if (role !== UserRole.ADMIN) {
-      return new NextResponse(
-        JSON.stringify({ error: "Vai trò hiện tại của bạn không được quyền!" }),
-        { status: 403 }
       );
     }
 
@@ -217,6 +213,13 @@ export async function PATCH(
     if (!userId) {
       return new NextResponse(
         JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền cập nhật product detail!" }),
         { status: 403 }
       );
     }
@@ -381,9 +384,6 @@ export async function PATCH(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId: {
-          equals: UserRole.USER,
-        },
       },
     });
 

@@ -16,11 +16,26 @@ export async function GET(
   req: Request,
   { params }: { params: { sentmailuserId: string } }
 ) {
+  const userId = await currentUser();
   try {
     if (!params.sentmailuserId) {
       return new NextResponse(
         JSON.stringify({ error: "Sentmailuser id is required!" }),
         { status: 400 }
+      );
+    }
+
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xem sent Email!" }),
+        { status: 403 }
       );
     }
 
@@ -57,6 +72,13 @@ export async function DELETE(
       );
     }
 
+    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xóa sent Email!" }),
+        { status: 403 }
+      );
+    }
+
     if (!params.sentmailuserId) {
       return new NextResponse(
         JSON.stringify({ error: "Sentmailuser id is required!" }),
@@ -67,9 +89,6 @@ export async function DELETE(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId: {
-          equals: UserRole.USER,
-        },
       },
     });
 
@@ -140,6 +159,13 @@ export async function PATCH(
       );
     }
 
+    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền cập nhật sent Email!" }),
+        { status: 403 }
+      );
+    }
+
     if (!subject) {
       return new NextResponse(
         JSON.stringify({ error: "Subject is required!" }),
@@ -171,9 +197,6 @@ export async function PATCH(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId: {
-          equals: UserRole.USER,
-        },
       },
     });
 
@@ -266,16 +289,23 @@ export async function POST(
 ) {
   try {
     const userId = await currentUser();
-
     const body = await req.json();
-
     const { sentuser } = body;
+
     if (!userId) {
       return new NextResponse(
         JSON.stringify({ error: "Không tìm thấy id người dùng!" }),
         { status: 404 }
       );
     }
+
+    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền cập nhật sent Email!" }),
+        { status: 403 }
+      );
+    }
+
     const cleanedStrsentuser = sentuser.join(", ").replace(/@\[(.*?)\]\(.*?\)/g, '$1');
 
     if (!sentuser || !cleanedStrsentuser) {
@@ -295,9 +325,6 @@ export async function POST(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId: {
-          equals: UserRole.USER,
-        },
       },
     });
 

@@ -1,10 +1,10 @@
 import Link from "next/link";
 
-const NoResults = () => {
-    return ( 
-        <section className="bg-white py-10">
+const NoResultsStore = () => {
+  return (
+    <section className="bg-white rounded-md">
         <div className=" max-w-7xl mx-auto">
-          <div className="flex justify-center">
+          <div className="flex justify-center p-2">
             <div className="w-full sm:w-10/12 text-center">
               <div
                 className="bg-cover bg-center h-40 xl:h-80"
@@ -13,11 +13,10 @@ const NoResults = () => {
                     'url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif)',
                 }}
               >
-                <h1 className="text-xl xl:text-5xl">NOT FOUND!</h1>
               </div>
               <div className="mt-5">
-                <h3 className="text-3xl xl:text-8xl font-bold text-slate-900">Chưa có sản phẩm!</h3>
-                <p className="mt-5 text-slate-900">Bạn có thể chuyển qua sản phẩm khác.</p>
+                <h3 className="text-3xl xl:text-8xl font-bold text-slate-900">Something went wrong!</h3>
+                <p className="mt-5 text-slate-900">Bạn không có quyền truy cập.</p>
                 <Link
                   href="/home-product"
                   className="text-white bg-green-500 px-8 py-4 rounded-full inline-block mt-5"
@@ -29,7 +28,7 @@ const NoResults = () => {
           </div>
         </div>
       </section>
-     );
-}
+  );
+};
 
-export default NoResults;
+export default NoResultsStore;

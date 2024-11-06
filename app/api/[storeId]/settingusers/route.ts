@@ -1,4 +1,4 @@
-import { currentRole, currentUser } from "@/lib/auth";
+import { currentUser } from "@/lib/auth";
 import {
   sendBanUser,
   sendDeleteUser,
@@ -25,15 +25,36 @@ interface ChangeRecord {
 }
 
 export async function GET(req: Request) {
+  const userId = await currentUser();
   try {
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xem settinguser!" }),
+        { status: 403 }
+      );
+    }
+
+    const isAdmin = userId.role === UserRole.ADMIN;
+    const userCondition = isAdmin ? {} : UserRole.USER;
+
     const settinguser = await prismadb.user.findMany({
-      include:{
+      where: {
+        role: userCondition,
+      },
+      include: {
         imageCredential: {
           orderBy: {
-              createdAt: 'desc'
-          }
-        }
-      }
+            createdAt: "desc",
+          },
+        },
+      },
     });
 
     return NextResponse.json(settinguser);
@@ -50,10 +71,27 @@ export async function PATCH(
 ) {
   const body = await req.json();
   const { userId, newRole } = body;
+  const user = await currentUser();
+
   try {
+    if (!user) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền cập nhật settinguser!" }),
+        { status: 403 }
+      );
+    }
+
     const existingUser = await prismadb.user.findUnique({
       where: { id: userId },
     });
+
     const adminCount = await prismadb.user.count({
       where: { role: "ADMIN" },
     });
@@ -157,14 +195,28 @@ export async function DELETE(
   { params }: { params: { storeId: string } }
 ) {
   const userId = await currentUser();
-  const role = await currentRole()
   const body = await req.json();
   const { id } = body;
 
   try {
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền cập nhật settinguser!" }),
+        { status: 403 }
+      );
+    }
+
     const existingUser = await prismadb.user.findUnique({
       where: { id: id },
     });
+
     const adminCount = await prismadb.user.count({
       where: { role: "ADMIN" },
     });
@@ -188,7 +240,7 @@ export async function DELETE(
       );
     }
 
-    if(userId?.id === id) {
+    if (userId?.id === id) {
       return new NextResponse(
         JSON.stringify({
           error: "Bạn không thể tự ban bản thân!",
@@ -197,19 +249,10 @@ export async function DELETE(
       );
     }
 
-    if (role !== UserRole.ADMIN) {
-      return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền để ban." }),
-        {
-          status: 404,
-        }
-      );
-    }
-
     const dateNow = new Date();
     dateNow.setHours(dateNow.getHours() + 7);
 
-   const banforeverUser = await prismadb.user.update({
+    const banforeverUser = await prismadb.user.update({
       where: {
         id: existingUser?.id || "",
       },
@@ -259,9 +302,22 @@ export async function POST(
   const body = await req.json();
   const user = await currentUser();
   const userCheck = await currentUser();
-  const role = await currentRole();
   const { userId, descriptionBan, time } = body;
   try {
+    if (!user) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền cập nhật settinguser!" }),
+        { status: 403 }
+      );
+    }
+
     const existingUser = await prismadb.user.findUnique({
       where: { id: userId },
     });
@@ -284,21 +340,12 @@ export async function POST(
       );
     }
 
-    if(user?.id === userId) {
+    if (user?.id === userId) {
       return new NextResponse(
         JSON.stringify({
           error: "Bạn không thể tự ban bản thân!",
         }),
         { status: 400 }
-      );
-    }
-
-    if (role !== UserRole.ADMIN) {
-      return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền để ban." }),
-        {
-          status: 404,
-        }
       );
     }
 

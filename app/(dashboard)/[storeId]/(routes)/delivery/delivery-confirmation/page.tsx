@@ -4,7 +4,6 @@ import { formatter } from "@/lib/utils";
 import { RoleGate } from "@/components/auth/role-gate";
 import { currentRole } from "@/lib/auth";
 import { StatusOrder, UserRole } from "@prisma/client";
-import FormSuccess from "@/components/form-success";
 import { OrderColumn } from "./components/columns";
 
 const OrderComfirmation = async ({
@@ -13,13 +12,17 @@ const OrderComfirmation = async ({
   params: { storeId: string };
 }) => {
   const role = await currentRole();
-  const isRole = role === UserRole.ADMIN || role === UserRole.SHIPPER;
+  const isRole = role === UserRole.ADMIN || role === UserRole.SHIPPER || role === UserRole.STAFF;
   const showOrderRole = isRole;
   const order = await prismadb.order.findMany({
     where: {
       storeId: params.storeId,
       status: {
-        in: [StatusOrder.Dang_giao, StatusOrder.Giao_lai_hang, StatusOrder.Shipper_dang_den],
+        in: [
+          StatusOrder.Dang_giao,
+          StatusOrder.Giao_lai_hang,
+          StatusOrder.Shipper_dang_den,
+        ],
       },
     },
     include: {
@@ -30,7 +33,7 @@ const OrderComfirmation = async ({
       },
       user: true,
       imagereturnProduct: true,
-      imageCustomer: true
+      imageCustomer: true,
     },
     orderBy: {
       createdAt: "desc",
@@ -47,18 +50,24 @@ const OrderComfirmation = async ({
       emailcurrent: item.user?.email,
       namecurrent: item.user?.name,
       phonenumbercurrent: item.user?.phonenumber,
-      emailStaff: item.user?.id === item.userIdStaff ? item.user?.email : undefined,
-      emailShipper: item.user?.id === item.userIdShipper ? item.user?.email : undefined,
-      emailUserGetDebt: item.user?.id === item.userIdRecieveDebt ? item.user?.email : undefined,
-      nameStaff: item.user?.id === item.userIdStaff ? item.user?.name : undefined,
-      nameShipper: item.user?.id === item.userIdShipper ? item.user?.name : undefined,
-      nameUserGetDebt: item.user?.id === item.userIdRecieveDebt ? item.user?.name : undefined,
+      emailStaff:
+        item.user?.id === item.userIdStaff ? item.user?.email : undefined,
+      emailShipper:
+        item.user?.id === item.userIdShipper ? item.user?.email : undefined,
+      emailUserGetDebt:
+        item.user?.id === item.userIdRecieveDebt ? item.user?.email : undefined,
+      nameStaff:
+        item.user?.id === item.userIdStaff ? item.user?.name : undefined,
+      nameShipper:
+        item.user?.id === item.userIdShipper ? item.user?.name : undefined,
+      nameUserGetDebt:
+        item.user?.id === item.userIdRecieveDebt ? item.user?.name : undefined,
       addresscurrent: item.user?.address,
       destiontionReturnProduct: item.destiontionReturnProduct,
       imagereturnProduct: item.imagereturnProduct,
-      imagereturnProductUrl: item.imagereturnProduct.map((item)=> item.url),
+      imagereturnProductUrl: item.imagereturnProduct.map((item) => item.url),
       imageCustomer: item.imageCustomer,
-      imageCustomerUrl: item.imageCustomer.map((item)=> item.url),
+      imageCustomerUrl: item.imageCustomer.map((item) => item.url),
       returnProduct: item.returnProduct,
       products: item.orderItem
         .map((orderItem) => {
@@ -80,20 +89,19 @@ const OrderComfirmation = async ({
       receiveCash: item.receiveCash,
       debtShipper: item.debtShipper,
       isPaid: item.isPaid,
-      isGift: item.orderItem.map((item)=> item?.isGift),
+      isGift: item.orderItem.map((item) => item?.isGift),
       createdAt: item.createdAt,
-      updatedAt: item.updatedAt
+      updatedAt: item.updatedAt,
     }));
 
   return (
-    <div className="w-full">
-      <div className={`flex-1 space-y-4 ${showOrderRole}`}>
-        {showOrderRole && <OrderClient data={formattedOrder} />}
+    <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF, UserRole.SHIPPER]}>
+      <div className="w-full">
+        <div className={`flex-1 space-y-4 ${showOrderRole}`}>
+          {showOrderRole && <OrderClient data={formattedOrder} />}
+        </div>
       </div>
-      <RoleGate allowedRole={UserRole.ADMIN || UserRole.SHIPPER}>
-        <FormSuccess message="Bạn có thể xem được nội dung này!" />
-      </RoleGate>
-    </div>
+    </RoleGate>
   );
 };
 

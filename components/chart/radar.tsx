@@ -56,7 +56,7 @@ const RadarChart = ({ radarChartData, loading }: RadarChartProps) => {
   if (!radarChartData) {
     return (
       <div className="w-full h-[350px] flex items-center justify-center">
-        <span className="text-center">Please select date to find data...</span>
+        <span className="text-center dark:text-slate-500 text-slate-900">Please select date to find data...</span>
       </div>
     );
   }
@@ -93,7 +93,7 @@ const RadarChart = ({ radarChartData, loading }: RadarChartProps) => {
           fill="#82ca9d"
           fillOpacity={0.6}
         />
-        <Tooltip /> {/* Add Tooltip here */}
+        <Tooltip labelClassName="dark:text-slate-500 text-salte-900"/>
         <Legend />
       </ChartRadar>
     </ResponsiveContainer>

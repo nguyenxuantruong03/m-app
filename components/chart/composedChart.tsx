@@ -42,7 +42,7 @@ export const ComposedChart: React.FC<ComposedChartProps> = ({
   if (!data) {
     return (
       <div className="w-full h-[350px] flex items-center justify-center">
-        <span className="text-center">Please select date to find data...</span>
+        <span className="text-center dark:text-slate-500 text-slate-900">Please select date to find data...</span>
       </div>
     );
   }
@@ -58,7 +58,7 @@ export const ComposedChart: React.FC<ComposedChartProps> = ({
           axisLine={false}
           tickFormatter={(value) => `${value}`}
         />
-        <Tooltip />
+        <Tooltip labelClassName="dark:text-slate-500 text-salte-900"/>
         <Legend />
         <CartesianGrid stroke="#f5f5f5" />
         <Area

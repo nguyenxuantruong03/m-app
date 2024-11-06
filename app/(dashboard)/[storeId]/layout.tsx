@@ -13,33 +13,44 @@ export default async function SetupLayout({
   params: { storeId: string };
 }) {
   const user = await currentUser();
-  const userId = await prismadb.user.findFirst({ where: { id: user?.id } });
-  if (!userId || !user) {
+  let checkRole = false;
+
+  if (!user) {
     redirect("/auth/login");
   }
-  if (userId?.ban === true) {
+  if (user?.ban === true) {
     redirect("/auth/login");
   }
+
   const store = await prismadb.store.findFirst({
     where: {
       id: params.storeId,
-      userId: {
-        equals: UserRole.USER,
-      },
     },
   });
 
   if (!store) {
     redirect("/");
   }
+
+  if (
+    user.role === UserRole.ADMIN ||
+    user.role === UserRole.STAFF ||
+    user.role === UserRole.MARKETING ||
+    user.role === UserRole.SHIPPER
+  ) {
+    checkRole = true;
+  }
+
   return (
-      <GetLocalStorage>
-        <div className="flex">
+    <GetLocalStorage>
+      <div className="flex">
+        {checkRole && (
           <div>
             <Navbar />
           </div>
-          <div className="w-full">{children}</div>
-        </div>
-      </GetLocalStorage>
+        )}
+        <div className="w-full">{children}</div>
+      </div>
+    </GetLocalStorage>
   );
 }

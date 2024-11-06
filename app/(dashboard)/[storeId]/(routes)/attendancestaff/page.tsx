@@ -17,12 +17,15 @@ import { utcToZonedTime } from "date-fns-tz";
 import { Button } from "@/components/ui/button";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { AlertModal } from "@/components/modals/alert-modal";
-import { Check, User } from "lucide-react";
+import { Check, Info, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import viLocale from "date-fns/locale/vi";
 import { CameraModal } from "@/components/modals/camera-modal";
 import { ChooseAttendanceModal } from "@/components/modals/chooseAttendance-modal";
 import { NfcModal } from "@/components/modals/nfc-modal";
+import { Hint } from "@/components/ui/hint";
+import { RoleGate } from "@/components/auth/role-gate";
+import { UserRole } from "@prisma/client";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 
 interface Event {
@@ -129,9 +132,9 @@ export default function Home() {
   //Check  nếu như trễ hơn 2 tiếng sẽ bị disable Button
   useEffect(() => {
     if (userId) {
-      if(!userId.timestartwork){
-        toast.error("Bạn không có thời gian làm việc!")
-        throw new Error("Missing Working Time!")
+      if (!userId.timestartwork) {
+        toast.error("Bạn không có thời gian làm việc!");
+        throw new Error("Missing Working Time!");
       }
       const now = new Date();
       const [hours, minutes] = userId.timestartwork.split(":");
@@ -198,7 +201,7 @@ export default function Home() {
     };
     fetchData();
   }, [userId]);
-  
+
   const imageCredentials = userId?.imageCredential || undefined;
   // Use the first image from imageCredential hoăc ảnh iamge nêu ko có thì dùng deafault
   const avatarImage =
@@ -291,7 +294,7 @@ export default function Home() {
       setIsDeleting(false);
       const today = new Date();
       const dayName = format(today, "EEEE"); // 'EEEE' là định dạng để lấy tên của thứ trong tiếng Anh
-      
+
       const isToday =
         today.getDate() === selectedDate.getDate() &&
         today.getMonth() === selectedDate.getMonth() &&
@@ -405,7 +408,7 @@ export default function Home() {
                     <div className="flex items-start">
                       <div className="flex-shrink-0 pt-0.5">
                         <Avatar>
-                          { avatarImage ? (
+                          {avatarImage ? (
                             <AvatarImage src={avatarImage} />
                           ) : (
                             <AvatarFallback className="bg-sky-500">
@@ -584,7 +587,7 @@ export default function Home() {
                 <div className="flex items-start">
                   <div className="flex-shrink-0 pt-0.5">
                     <Avatar>
-                      { avatarImage ? (
+                      {avatarImage ? (
                         <AvatarImage src={avatarImage} />
                       ) : (
                         <AvatarFallback className="bg-sky-500">
@@ -725,7 +728,7 @@ export default function Home() {
                     <div className="flex items-start">
                       <div className="flex-shrink-0 pt-0.5">
                         <Avatar>
-                          { avatarImage ? (
+                          {avatarImage ? (
                             <AvatarImage src={avatarImage} />
                           ) : (
                             <AvatarFallback className="bg-sky-500">
@@ -830,10 +833,10 @@ export default function Home() {
   function handleDeleteModal(data: { event: { id: string; title: string } }) {
     // Check if the event title is "✅"
     if (data.event.title === "✅") {
-        handleOpenChooseModal();
-        setDataEventCamera(data.event.id);
-        return;
-    }else if(data.event.title === "❎"){
+      handleOpenChooseModal();
+      setDataEventCamera(data.event.id);
+      return;
+    } else if (data.event.title === "❎") {
       return;
     }
     // Nếu title không phải là "✅" hoặc "❎", tiếp tục hiển thị AlertModal
@@ -899,7 +902,7 @@ export default function Home() {
                 <div className="flex items-start">
                   <div className="flex-shrink-0 pt-0.5">
                     <Avatar>
-                      { avatarImage ? (
+                      {avatarImage ? (
                         <AvatarImage src={avatarImage} />
                       ) : (
                         <AvatarFallback className="bg-sky-500">
@@ -979,74 +982,75 @@ export default function Home() {
     setIdToDelete(null);
   }
 
-
-
   return (
-    <>
-      <nav className="flex justify-between mb-12 p-8">
+    <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>
+      <nav className="flex justify-center xl:justify-between mb-12 xl:mb-0 p-8">
         <h1 className="font-bold text-2xl text-gray-700 absolute dark:text-slate-400">
           Nhân viên điểm danh
         </h1>
       </nav>
       <main className="flex flex-col items-center justify-between">
-      <div className="grid grid-cols-1 xl:grid-cols-10 w-full">
-        <div
-      id="draggable-el"
-      className="grid grid-rows-[auto,1fr] ml-0 mb-8 xl:mb-0 w-full border-2 p-2 rounded-md xl:-ml-8 xl:h-[55%] 2xl:h-[35%] bg-violet-50 dark:bg-[#2a3e4f]"
-    >
-        <h1 className="font-bold text-lg mb-2 text-center text-black dark:text-white">
-        Drag Event
-      </h1>
-      <div className="flex items-center justify-between md:block space-x-3 xl:space-x-0">
-      {events.map((event) => (
-        <div
-          className={`fc-event border-2 p-1 mb-2 w-full rounded-md text-center bg-white dark:text-black ${
-            isAddingEvent ? "pointer-events-none opacity-50" : "" // Disable khi đang xử lý
-          }`}
-          title={event.title}
-          key={event.id}
-        >
-          {event.title}
-        </div>
-      ))}
-      </div>
-    </div>
+        <div className="grid grid-cols-1 xl:grid-cols-10 w-full xl:p-12">
+          <div
+            id="draggable-el"
+            className="grid grid-rows-[auto,1fr] ml-0 mb-8 xl:mb-0 w-full border-2 p-2 rounded-md xl:-ml-8 xl:h-[55%] 2xl:h-[35%] bg-violet-50 dark:bg-[#2a3e4f]"
+          >
+            <h1 className="flex items-center justify-center gap-x-1 font-bold text-lg mb-2 text-center text-black dark:text-white">
+              Drag Event
+              <Hint label="Drag and drop events onto the date." side="top">
+                <Info className="w-4 h-4" />
+              </Hint>
+            </h1>
+            <div className="flex items-center justify-between md:block gap-3 xl:space-x-0">
+              {events.map((event) => (
+                <div
+                  className={`fc-event border-2 p-1 mb-2 w-full rounded-md text-center bg-white dark:text-black ${
+                    isAddingEvent ? "pointer-events-none opacity-50" : "" // Disable khi đang xử lý
+                  }`}
+                  title={event.title}
+                  key={event.id}
+                >
+                  {event.title}
+                </div>
+              ))}
+            </div>
+          </div>
 
-    <div className="col-span-1 xl:col-span-8">
-      <FullCalendar
-        plugins={[
-          dayGridPlugin,
-          interactionPlugin,
-          timeGridPlugin,
-          multiMonthPlugin,
-        ]}
-        headerToolbar={{
-          left: "prevYear,prev,next,nextYear today",
-          center: "title",
-          right: "timeGridWeek,dayGridMonth,multiMonthYear",
-        }}
-        events={allEvents as EventSourceInput}
-        nowIndicator={true}
-        editable={false}
-        droppable={true}
-        selectable={true}
-        selectMirror={true}
-        dateClick={handleDateClick}
-        drop={(data) => addEvent(data)}
-        eventClick={(data) => handleDeleteModal(data)}
-        timeZone="Asia/Ho_Chi_Minh"
-        locale="vi"
-        eventDidMount={function (info) {
-          // Kiểm tra nếu tiêu đề là "✅" hoặc "❎"
-          if (info.event.title === "✅" || info.event.title === "❎") {
-            info.event.setProp("editable", false); // Không thể chỉnh sửa
-          } else {
-            info.event.setProp("editable", true); // Có thể chỉnh sửa
-          }
-        }}
-      />
-    </div>
-  </div>
+          <div className="col-span-1 xl:col-span-8">
+            <FullCalendar
+              plugins={[
+                dayGridPlugin,
+                interactionPlugin,
+                timeGridPlugin,
+                multiMonthPlugin,
+              ]}
+              headerToolbar={{
+                left: "prevYear,prev,next,nextYear today",
+                center: "title",
+                right: "timeGridWeek,dayGridMonth,multiMonthYear",
+              }}
+              events={allEvents as EventSourceInput}
+              nowIndicator={true}
+              editable={false}
+              droppable={true}
+              selectable={true}
+              selectMirror={true}
+              dateClick={handleDateClick}
+              drop={(data) => addEvent(data)}
+              eventClick={(data) => handleDeleteModal(data)}
+              timeZone="Asia/Ho_Chi_Minh"
+              locale="vi"
+              eventDidMount={function (info) {
+                // Kiểm tra nếu tiêu đề là "✅" hoặc "❎"
+                if (info.event.title === "✅" || info.event.title === "❎") {
+                  info.event.setProp("editable", false); // Không thể chỉnh sửa
+                } else {
+                  info.event.setProp("editable", true); // Có thể chỉnh sửa
+                }
+              }}
+            />
+          </div>
+        </div>
 
         <AlertModal
           isOpen={showDeleteModal}
@@ -1112,6 +1116,6 @@ export default function Home() {
           </Button>
         </div>
       </main>
-    </>
+    </RoleGate>
   );
 }

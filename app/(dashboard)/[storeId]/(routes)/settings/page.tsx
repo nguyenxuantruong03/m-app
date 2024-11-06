@@ -4,7 +4,6 @@ import { SettingsForm } from "./components/setting-form";
 import { currentRole, currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
 import { RoleGate } from "@/components/auth/role-gate";
-import FormSuccess from "@/components/form-success";
 
 interface SettingProps {
   params: {
@@ -14,7 +13,7 @@ interface SettingProps {
 
 const SettingsPage: React.FC<SettingProps> = async ({ params }) => {
   const role = await currentRole();
-  const isRole = role === UserRole.ADMIN
+  const isRole = role === UserRole.ADMIN;
   const showSettingRole = isRole;
   const user = await currentUser();
   const userId = await prismadb.user.findFirst({ where: { id: user?.id } });
@@ -25,9 +24,6 @@ const SettingsPage: React.FC<SettingProps> = async ({ params }) => {
   const store = await prismadb.store.findFirst({
     where: {
       id: params.storeId,
-      userId: {
-        equals: UserRole.USER,
-      },
     },
   });
 
@@ -36,14 +32,13 @@ const SettingsPage: React.FC<SettingProps> = async ({ params }) => {
   }
 
   return (
-    <div className="w-full">
-      <div className={`space-y-4 p-8 pt-6 ${showSettingRole}`}>
-        {showSettingRole && <SettingsForm initialData={store} />}
+    <RoleGate allowedRole={[UserRole.ADMIN]}>
+      <div className="w-full">
+        <div className={`space-y-4 p-8 pt-6 ${showSettingRole}`}>
+          {showSettingRole && <SettingsForm initialData={store} />}
+        </div>
       </div>
-      <RoleGate allowedRole={UserRole.ADMIN}>
-        <FormSuccess message="Bạn có thể xem được nội dung này!" />
-      </RoleGate>
-    </div>
+    </RoleGate>
   );
 };
 

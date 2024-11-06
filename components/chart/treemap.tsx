@@ -45,7 +45,7 @@ const TreeMap = ({ data, loading }: TreeMapProps) => {
     if (!data) {
         return (
             <div className="w-full h-[350px] flex items-center justify-center">
-                <span className="text-center">Please select date to find data...</span>
+                <span className="text-center dark:text-slate-500 text-slate-900">Please select date to find data...</span>
             </div>
         );
     }
@@ -75,10 +75,10 @@ const TreeMap = ({ data, loading }: TreeMapProps) => {
 
         return (
             <div style={{ backgroundColor: '#fff', padding: '10px', border: '1px solid #ccc' }}>
-                <p><strong>Name:</strong> {name}</p>
-                <p><strong>Email:</strong> {email}</p>
-                <p><strong>Role:</strong> {role}</p>
-                <p><strong>Created At:</strong> {createdAt ? format(new Date(createdAt), "E '-' dd/MM/yyyy '-' HH:mm:ss a") : 'N/A'}</p>
+                <p className="dark:text-slate-500 text-slate-900"><strong className="dark:text-slate-500 text-slate-900">Name:</strong> {name}</p>
+                <p className="dark:text-slate-500 text-slate-900"><strong className="dark:text-slate-500 text-slate-900">Email:</strong> {email}</p>
+                <p className="dark:text-slate-500 text-slate-900"><strong className="dark:text-slate-500 text-slate-900">Role:</strong> {role}</p>
+                <p className="dark:text-slate-500 text-slate-900"><strong className="dark:text-slate-500 text-slate-900">Created At:</strong> {createdAt ? format(new Date(createdAt), "E '-' dd/MM/yyyy '-' HH:mm:ss a") : 'N/A'}</p>
             </div>
         );
     };

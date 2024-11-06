@@ -2,7 +2,7 @@ import { currentUser } from "@/lib/auth";
 import { sendBonus, sendunBonus } from "@/lib/mail";
 import prismadb from "@/lib/prismadb";
 import { formatter } from "@/lib/utils";
-import { EventCalendar, User } from "@prisma/client";
+import { EventCalendar, User, UserRole } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/library";
 import { format } from "date-fns";
 import { NextResponse } from "next/server";
@@ -15,7 +15,23 @@ interface ChangeRecord {
 }
 
 export async function GET(req: Request) {
+  const userId = await currentUser();
+
   try {
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xem salarystaff!" }),
+        { status: 403 }
+      );
+    }
+
     const salarystaff = await prismadb.caculateSalary.findMany();
     return NextResponse.json(salarystaff);
   } catch (error) {
@@ -39,6 +55,13 @@ export async function PATCH(
     if (!userId) {
       return new NextResponse(
         JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền cập nhật salarystaff!" }),
         { status: 403 }
       );
     }
@@ -171,6 +194,13 @@ export async function POST(
     if (!userId) {
       return new NextResponse(
         JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền tạo mới salarystaff!" }),
         { status: 403 }
       );
     }

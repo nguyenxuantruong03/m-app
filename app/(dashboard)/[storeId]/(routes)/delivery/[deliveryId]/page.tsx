@@ -8,7 +8,6 @@ import { formatter } from "@/lib/utils";
 import { UserRole } from "@prisma/client";
 import { currentRole } from "@/lib/auth";
 import { RoleGate } from "@/components/auth/role-gate";
-import FormSuccess from "@/components/form-success";
 
 const OrderPage = async ({
   params,
@@ -30,7 +29,7 @@ const OrderPage = async ({
       },
       user: true,
       imagereturnProduct: true,
-      imageCustomer: true
+      imageCustomer: true,
     },
     orderBy: {
       createdAt: "desc",
@@ -45,18 +44,23 @@ const OrderPage = async ({
     emailcurrent: item.user?.email,
     namecurrent: item.user?.name,
     phonenumbercurrent: item.user?.phonenumber,
-    emailStaff: item.user?.id === item.userIdStaff ? item.user?.email : undefined,
-    emailShipper: item.user?.id === item.userIdShipper ? item.user?.email : undefined,
-    emailUserGetDebt: item.user?.id === item.userIdRecieveDebt ? item.user?.email : undefined,
+    emailStaff:
+      item.user?.id === item.userIdStaff ? item.user?.email : undefined,
+    emailShipper:
+      item.user?.id === item.userIdShipper ? item.user?.email : undefined,
+    emailUserGetDebt:
+      item.user?.id === item.userIdRecieveDebt ? item.user?.email : undefined,
     nameStaff: item.user?.id === item.userIdStaff ? item.user?.name : undefined,
-    nameShipper: item.user?.id === item.userIdShipper ? item.user?.name : undefined,
-    nameUserGetDebt: item.user?.id === item.userIdRecieveDebt ? item.user?.name : undefined,
+    nameShipper:
+      item.user?.id === item.userIdShipper ? item.user?.name : undefined,
+    nameUserGetDebt:
+      item.user?.id === item.userIdRecieveDebt ? item.user?.name : undefined,
     addresscurrent: item.user?.address,
     destiontionReturnProduct: item.destiontionReturnProduct,
     imagereturnProduct: item.imagereturnProduct,
-    imagereturnProductUrl: item.imagereturnProduct.map((item)=> item.url),
+    imagereturnProductUrl: item.imagereturnProduct.map((item) => item.url),
     imageCustomer: item.imageCustomer,
-    imageCustomerUrl: item.imageCustomer.map((item)=> item.url),
+    imageCustomerUrl: item.imageCustomer.map((item) => item.url),
     returnProduct: item.returnProduct,
     products: item.orderItem
       .map((orderItem) => {
@@ -78,19 +82,16 @@ const OrderPage = async ({
     receiveCash: item.receiveCash,
     debtShipper: item.debtShipper,
     isPaid: item.isPaid,
-    isGift: item.orderItem.map((item)=> item?.isGift),
+    isGift: item.orderItem.map((item) => item?.isGift),
     createdAt: item.createdAt,
-    updatedAt: item.updatedAt
+    updatedAt: item.updatedAt,
   }));
   return (
-    <>
+    <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>
       <div className={` ${showOrderRole}`}>
         {showOrderRole && <OrderForm data={formattedOrder} />}
       </div>
-      <RoleGate allowedRole={UserRole.ADMIN || UserRole.STAFF}>
-        <FormSuccess message="Bạn có thể xem được nội dung này!" />
-      </RoleGate>
-    </>
+    </RoleGate>
   );
 };
 

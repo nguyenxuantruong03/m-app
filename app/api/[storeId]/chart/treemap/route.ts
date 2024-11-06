@@ -1,4 +1,6 @@
+import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
+import { UserRole } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 // Định nghĩa kiểu cho người dùng
@@ -17,8 +19,23 @@ interface GroupedUser {
 export async function POST(req: Request) {
   const body = await req.json();
   const { dateRange } = body; // Chỉ lấy dateRange từ body
+  const userId = await currentUser();
 
   try {
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xem chart!" }),
+        { status: 403 }
+      );
+    }
+
     // Lấy tất cả người dùng
     const users = await prismadb.user.findMany({
       where: {

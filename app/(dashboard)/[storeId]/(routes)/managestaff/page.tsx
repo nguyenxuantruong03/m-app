@@ -1,9 +1,8 @@
 import prismadb from "@/lib/prismadb";
 import { format } from "date-fns";
 import { RoleGate } from "@/components/auth/role-gate";
-import { currentRole} from "@/lib/auth";
+import { currentRole } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
-import FormSuccess from "@/components/form-success";
 import { ManageStaffsColumn } from "./components/column";
 import ManageStaffClient from "./components/client";
 import { utcToZonedTime } from "date-fns-tz";
@@ -17,15 +16,15 @@ const ManageStaff = async ({ params }: { params: { storeId: string } }) => {
   const user = await prismadb.user.findMany({
     where: {
       role: {
-        in: ["ADMIN", "STAFF"]
-      }
+        in: ["ADMIN", "STAFF"],
+      },
     },
     include: {
       imageCredential: {
         orderBy: {
-            createdAt: 'desc'
-        }
-      }
+          createdAt: "desc",
+        },
+      },
     },
     orderBy: [
       {
@@ -33,7 +32,6 @@ const ManageStaff = async ({ params }: { params: { storeId: string } }) => {
       },
     ],
   });
-  
 
   const formattedUser: ManageStaffsColumn[] = user.map((item) => ({
     id: item.id,
@@ -46,7 +44,7 @@ const ManageStaff = async ({ params }: { params: { storeId: string } }) => {
     email: item.email,
     issued: item.issued,
     gender: item.gender,
-    degree:  item.degree,
+    degree: item.degree,
     maritalStatus: item.maritalStatus,
     phonenumber: item.phonenumber,
     workingTime: item.workingTime,
@@ -56,38 +54,29 @@ const ManageStaff = async ({ params }: { params: { storeId: string } }) => {
     timestartwork: item.timestartwork,
     urlimageCheckAttendance: item.urlimageCheckAttendance,
     codeNFC: item.codeNFC,
-    daywork:item.daywork,
-    dateRange: item.dateRange
-    ? format(item.dateRange, "dd/MM/yyyy")
-    : null,
+    daywork: item.daywork,
+    dateRange: item.dateRange ? format(item.dateRange, "dd/MM/yyyy") : null,
     dateRangepatch: item.dateRange,
     dateofbirthpatach: item.dateofbirth,
     dateofbirth: item.dateofbirth
-    ? format(item.dateofbirth, "dd/MM/yyyy")
-    : null,
+      ? format(item.dateofbirth, "dd/MM/yyyy")
+      : null,
     createdAt: item.createdAt,
     createdAtString: item.createdAt
-    ? format(
-        utcToZonedTime(
-          new Date(new Date(item.createdAt)),
-          vietnamTimeZone
-        ),
-        "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-        { locale: viLocale }
-      )
-    : null,
+      ? format(
+          utcToZonedTime(new Date(new Date(item.createdAt)), vietnamTimeZone),
+          "E '-' dd/MM/yyyy '-' HH:mm:ss a",
+          { locale: viLocale }
+        )
+      : null,
   }));
 
-
   return (
-    <div >
+    <RoleGate allowedRole={[UserRole.ADMIN]}>
       <div className={`space-y-4 p-8 pt-6 ${showOrderRole}`}>
-          {showOrderRole && <ManageStaffClient data={formattedUser} />}
+        {showOrderRole && <ManageStaffClient data={formattedUser} />}
       </div>
-      <RoleGate allowedRole={UserRole.ADMIN}>
-        <FormSuccess message="Bạn có thể xem được nội dung này!" />
-      </RoleGate>
-    </div>
+    </RoleGate>
   );
 };
 

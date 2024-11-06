@@ -30,9 +30,9 @@ const renderCustomizedLabel = ({ x, y, name, value }: any) => {
       <text
         x={x}
         y={y}
-        fill="black"
         textAnchor="middle"
         dominantBaseline="central"
+         fill="#6b7280"
         style={{ fontSize: "10px", fontWeight: "bold" }}
       >
         {`${name}: ${value}`}
@@ -62,7 +62,7 @@ const activeShape = (props: any) => {
 
   return (
     <g>
-      <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>
+      <text x={cx} y={cy} dy={8} textAnchor="middle"  fill="#6b7280" style={{ fontSize: "10px", fontWeight: "bold" }}>
         {`${payload.name}: ${value}`}
       </text>
       <Sector
@@ -101,7 +101,7 @@ const PieChart = ({ pieChartData, loading }: PieChartProps) => {
   if (!pieChartData) {
     return (
       <div className="w-full h-[350px] flex items-center justify-center">
-        <span className="text-center">Please select date to find data...</span>
+        <span className="text-center dark:text-slate-500 text-slate-900">Please select date to find data...</span>
       </div>
     );
   }
@@ -146,7 +146,7 @@ const PieChart = ({ pieChartData, loading }: PieChartProps) => {
                 <Cell key={`cell-${index}`} fill={COLORS[0][index]} />
               ))}
             </Pie>
-            <Tooltip />
+            <Tooltip labelClassName="dark:text-slate-500 text-salte-900"/>
           </ChartPie>
         </ResponsiveContainer>
 
@@ -169,7 +169,7 @@ const PieChart = ({ pieChartData, loading }: PieChartProps) => {
                 <Cell key={`cell-${index}`} fill={COLORS[1][index]} />
               ))}
             </Pie>
-            <Tooltip />
+            <Tooltip labelClassName="dark:text-slate-500 text-salte-900"/>
           </ChartPie>
         </ResponsiveContainer>
 
@@ -191,7 +191,7 @@ const PieChart = ({ pieChartData, loading }: PieChartProps) => {
                 <Cell key={`cell-${index}`} fill={COLORS[2][index]} />
               ))}
             </Pie>
-            <Tooltip />
+            <Tooltip labelClassName="dark:text-slate-500 text-salte-900"/>
           </ChartPie>
         </ResponsiveContainer>
       </div>

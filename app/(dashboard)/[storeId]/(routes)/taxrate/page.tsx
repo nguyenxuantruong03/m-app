@@ -4,7 +4,6 @@ import { TaxRateColumn } from "./components/columns";
 import { UserRole } from "@prisma/client";
 import { currentRole } from "@/lib/auth";
 import { RoleGate } from "@/components/auth/role-gate";
-import FormSuccess from "@/components/form-success";
 
 const TaxRatePage = async ({ params }: { params: { storeId: string } }) => {
   const role = await currentRole();
@@ -30,14 +29,13 @@ const TaxRatePage = async ({ params }: { params: { storeId: string } }) => {
     createdAt: item.createdAt,
   }));
   return (
-    <div className="w-full">
-      <div className={`space-y-4 p-8 pt-6 ${showTaxRateRole}`}>
-        {showTaxRateRole && <TaxRateClient data={formattedTaxRate} />}
+    <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>
+      <div className="w-full">
+        <div className={`space-y-4 p-8 pt-6 ${showTaxRateRole}`}>
+          {showTaxRateRole && <TaxRateClient data={formattedTaxRate} />}
+        </div>
       </div>
-      <RoleGate allowedRole={UserRole.ADMIN || UserRole.STAFF}>
-        <FormSuccess message="Bạn có thể xem được nội dung này!" />
-      </RoleGate>
-    </div>
+    </RoleGate>
   );
 };
 

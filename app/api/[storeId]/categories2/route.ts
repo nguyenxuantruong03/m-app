@@ -1,9 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
-import prismadb from '@/lib/prismadb';
-import { CategoryType, UserRole } from '@prisma/client';
-import { currentRole, currentUser } from '@/lib/auth';
- 
+import prismadb from "@/lib/prismadb";
+import { CategoryType, UserRole } from "@prisma/client";
+import { currentUser } from "@/lib/auth";
+
 export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
@@ -14,7 +14,7 @@ export async function POST(
 
     const body = await req.json();
 
-    const { name,  } = body;
+    const { name } = body;
 
     if (!userId) {
       return new NextResponse(
@@ -23,11 +23,17 @@ export async function POST(
       );
     }
 
-    if (!name) {
+    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Name is required!" }),
-        { status: 400 }
+        JSON.stringify({ error: "Bạn không có quyền tạo mới categories!" }),
+        { status: 403 }
       );
+    }
+
+    if (!name) {
+      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+        status: 400,
+      });
     }
 
     if (!params.storeId) {
@@ -39,10 +45,7 @@ export async function POST(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId: {
-          equals: UserRole.USER,
-        },
-      }
+      },
     });
 
     if (!storeByUserId) {
@@ -56,13 +59,13 @@ export async function POST(
       data: {
         name,
         storeId: params.storeId,
-        categoryType:categoryType
-      }
+        categoryType: categoryType,
+      },
     });
 
     const sentCategory = {
       name: category?.name,
-      CategoryType: category.categoryType
+      CategoryType: category.categoryType,
     };
 
     // Log sự thay đổi của billboard
@@ -76,7 +79,7 @@ export async function POST(
         storeId: params.storeId,
         type: "CREATEỐNGNHỰA-CATEGORY",
         newChange: changes,
-        user: userId?.email || ""
+        user: userId?.email || "",
       },
     });
 
@@ -87,28 +90,43 @@ export async function POST(
       { status: 500 }
     );
   }
-};
+}
 
 export async function GET(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
   const categoryType = CategoryType.CATEGORY2;
+  const userId = await currentUser();
   try {
-   if (!params.storeId) {
+    if (!params.storeId) {
       return new NextResponse(
         JSON.stringify({ error: "Store id is required!" }),
         { status: 400 }
       );
     }
 
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xem categories!" }),
+        { status: 403 }
+      );
+    }
+
     const category = await prismadb.category.findMany({
       where: {
         storeId: params.storeId,
-        categoryType:categoryType
-      }
+        categoryType: categoryType,
+      },
     });
-  
+
     return NextResponse.json(category);
   } catch (error) {
     return new NextResponse(
@@ -116,8 +134,7 @@ export async function GET(
       { status: 500 }
     );
   }
-};
-
+}
 
 export async function DELETE(
   req: Request,
@@ -125,7 +142,6 @@ export async function DELETE(
 ) {
   try {
     const userId = await currentUser();
-    const role = await currentRole();
     const body = await req.json();
     const categoryType = CategoryType.CATEGORY2;
 
@@ -134,6 +150,13 @@ export async function DELETE(
     if (!userId) {
       return new NextResponse(
         JSON.stringify({ error: "Không tìm thấy userId!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xóa categories!" }),
         { status: 403 }
       );
     }
@@ -148,9 +171,6 @@ export async function DELETE(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId: {
-          equals: UserRole.USER,
-        },
       },
     });
 
@@ -160,17 +180,11 @@ export async function DELETE(
         { status: 405 }
       );
     }
-    if (role !== UserRole.ADMIN) {
-      return new NextResponse(
-        JSON.stringify({ error: "Vai trò hiện tại của bạn không được quyền!" }),
-        { status: 403 }
-      );
-    }
 
     // Fetch all cartegories to delete, including their images
     const CategoryToDelete = await prismadb.category.findMany({
       where: {
-      categoryType: categoryType,
+        categoryType: categoryType,
         id: {
           in: ids,
         },
@@ -178,7 +192,7 @@ export async function DELETE(
     });
 
     // Create an array of changes for logging
-    const changesArray = CategoryToDelete.map(category => ({
+    const changesArray = CategoryToDelete.map((category) => ({
       name: category.name,
     }));
 
@@ -196,7 +210,7 @@ export async function DELETE(
     await prismadb.system.create({
       data: {
         storeId: params.storeId,
-        delete: changesArray.map(change => `DeleteName: ${change.name}`),
+        delete: changesArray.map((change) => `DeleteName: ${change.name}`),
         type: "DELETEMANYỐNGNHỰA-CATEGORY",
         user: userId?.email || "",
       },

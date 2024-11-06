@@ -51,7 +51,7 @@ const RadialChart = ({ radialChartData, loading }: RadialChartProps) => {
   if (!radialChartData) {
     return (
       <div className="w-full h-[350px] flex items-center justify-center">
-        <span className="text-center">Please select date to find data...</span>
+        <span className="text-center dark:text-slate-500 text-slate-900">Please select date to find data...</span>
       </div>
     );
   }
@@ -97,81 +97,80 @@ const RadialChart = ({ radialChartData, loading }: RadialChartProps) => {
   if (!data) {
     return (
       <div className="w-full h-[350px] flex items-center justify-center">
-        <span className="text-center">Please select date to find data...</span>
+        <span className="text-center dark:text-slate-500 text-slate-900">Please select date to find data...</span>
       </div>
     );
   }
 
   return (
     <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "flex-start",
-      }}
-    >
-      <div style={{ width: "50%", paddingRight: "10px" }}>
-        <ResponsiveContainer width="100%" height={350}>
-          <RadialBarChart
-            innerRadius="10%"
-            outerRadius="80%"
-            data={data}
-            startAngle={180}
-            endAngle={0}
-          >
-            <RadialBar
-              label={{ fill: "#666", position: "insideStart" }}
-              background
-              dataKey="totalSold" // Biểu đồ cho totalSold
-            />
-            <Legend
-              iconSize={10}
-              width={120}
-              height={140}
-              layout="vertical"
-              verticalAlign="middle"
-              align="right"
-            />
-            <Tooltip
-              formatter={(value, name, props) => [props.payload.name, value]}
-            />
-          </RadialBarChart>
-        </ResponsiveContainer>
-        <h4 className="text-center font-semibold text-red-500">Total Sold</h4>
-      </div>
-
-      <div style={{ width: "50%", paddingLeft: "10px" }}>
-        <ResponsiveContainer width="100%" height={350}>
-          <RadialBarChart
-            innerRadius="10%"
-            outerRadius="80%"
-            data={data}
-            startAngle={180}
-            endAngle={0}
-          >
-            <RadialBar
-              label={{ fill: "#666", position: "insideStart" }}
-              background
-              dataKey="totalOrderItems" // Biểu đồ cho totalOrderItems
-            />
-            <Legend
-              iconSize={10}
-              width={120}
-              height={140}
-              layout="vertical"
-              verticalAlign="middle"
-              align="left"
-            />
-            <Tooltip
-              formatter={(value, name, props) => [props.payload.name, value]}
-            />
-          </RadialBarChart>
-        </ResponsiveContainer>
-        <h4 className="text-center font-semibold text-green-500">
-          Total Order Items
-        </h4>
-      </div>
+    style={{
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+    }}
+  >
+    <div style={{ width: "50%", paddingRight: "10px" }}>
+      <ResponsiveContainer width="100%" height={350}>
+        <RadialBarChart
+          innerRadius="10%"
+          outerRadius="80%"
+          data={data}
+          startAngle={180}
+          endAngle={0}
+        >
+          <RadialBar
+            label={{ fill: "#666", position: "insideStart" }}
+            background
+            dataKey="totalSold" // Biểu đồ cho totalSold
+          />
+          <Legend
+            iconSize={10}
+            layout="horizontal"
+            verticalAlign="bottom"
+            align="center"
+          />
+          <Tooltip
+            labelClassName="dark:text-slate-500 text-salte-900"
+            formatter={(value, name, props) => [props.payload.name, value]}
+          />
+        </RadialBarChart>
+      </ResponsiveContainer>
+      <h4 className="text-center font-semibold text-red-500">Total Sold</h4>
     </div>
+  
+    <div style={{ width: "50%", paddingLeft: "10px" }}>
+      <ResponsiveContainer width="100%" height={350}>
+        <RadialBarChart
+          innerRadius="10%"
+          outerRadius="80%"
+          data={data}
+          startAngle={180}
+          endAngle={0}
+        >
+          <RadialBar
+            label={{ fill: "#666", position: "insideStart" }}
+            background
+            dataKey="totalOrderItems" // Biểu đồ cho totalOrderItems
+          />
+          <Legend
+            iconSize={10}
+            layout="horizontal"
+            verticalAlign="bottom"
+            align="center"
+          />
+          <Tooltip
+            labelClassName="dark:text-slate-500 text-salte-900"
+            formatter={(value, name, props) => [props.payload.name, value]}
+          />
+        </RadialBarChart>
+      </ResponsiveContainer>
+      <h4 className="text-center font-semibold text-green-500">
+        Total Order Items
+      </h4>
+    </div>
+  </div>
+  
   );
 };
 

@@ -76,7 +76,7 @@ const NavbarMultiple = () => {
   return (
     <>
       {/* This example requires Tailwind CSS v2.0+ */}
-      <div className="fixed dark:bg-slate-200 bg-slate-900 w-full top-0 z-[9999]">
+      <div className="fixed bg-slate-200 dark:bg-slate-900 w-full top-0 z-[9999]">
         <div className={`mx-auto ${userId ? "p-2" : "p-2 xl:p-4"}`}>
           <div className="flex justify-between items-center">
             <div className="flex justify-start">
@@ -96,7 +96,7 @@ const NavbarMultiple = () => {
                   src="/images/logo-mini.png"
                   width="45"
                   height="30"
-                  className="rounded-sm bg-[#c3c3c3] py-1.5 px-2.5"
+                  className="rounded-sm bg-[#c3c3c3] dark:bg-slate-700 py-1.5 px-2.5"
                 />
               </div>
             </Link>
@@ -107,7 +107,7 @@ const NavbarMultiple = () => {
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="dark:text-slate-900 text-slate-200">
+                    <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
                       {routeTitle.map((route) => (
                         <>{route.mainicon}</>
                       ))}
@@ -168,7 +168,7 @@ const NavbarMultiple = () => {
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="dark:text-slate-900 text-slate-200">
+                    <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
                       {staffTitle.map((staff) => (
                         <>{staff.mainicon}</>
                       ))}
@@ -209,7 +209,7 @@ const NavbarMultiple = () => {
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="dark:text-slate-900 text-slate-200">
+                    <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
                       {billboardTitle.map((billboard) => (
                         <>{billboard.mainicon}</>
                       ))}
@@ -270,7 +270,7 @@ const NavbarMultiple = () => {
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="dark:text-slate-900 text-slate-200">
+                    <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
                       {categoryTitle.map((categories) => (
                         <>{categories.mainicon}</>
                       ))}
@@ -311,7 +311,7 @@ const NavbarMultiple = () => {
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="dark:text-slate-900 text-slate-200">
+                    <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
                       {parameterTitle.map((parameter) => (
                         <>{parameter.mainicon}</>
                       ))}
@@ -372,7 +372,7 @@ const NavbarMultiple = () => {
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="dark:text-slate-900 text-slate-200">
+                    <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
                       {productTitle.map((product) => (
                         <>{product.mainicon}</>
                       ))}
@@ -413,7 +413,7 @@ const NavbarMultiple = () => {
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="dark:text-slate-900 text-slate-200">
+                    <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
                       {orderTitle.map((order) => (
                         <>{order.mainicon}</>
                       ))}
@@ -474,7 +474,7 @@ const NavbarMultiple = () => {
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="dark:text-slate-900 text-slate-200">
+                    <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
                       {userTitle.map((user) => (
                         <>{user.mainicon}</>
                       ))}
@@ -535,7 +535,7 @@ const NavbarMultiple = () => {
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="dark:text-slate-900 text-slate-200">
+                    <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
                       {checkoutTitle.map((checkout) => (
                         <>{checkout.mainicon}</>
                       ))}
@@ -596,7 +596,7 @@ const NavbarMultiple = () => {
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="dark:text-slate-900 text-slate-200">
+                    <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
                       {settingTitle.map((setting) => (
                         <>{setting.mainicon}</>
                       ))}
@@ -715,7 +715,7 @@ const NavbarMultiple = () => {
               : "hidden scale-95 absolute top-0 inset-x-0 p-2 transition transform origin-top-right xl:hidden"
           }
         >
-          <div className="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-white bg-slate-900 divide-y-2 divide-gray-50 z-[999]">
+          <div className="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 bg-slate-200 dark:bg-slate-900 divide-y-2 divide-gray-50 z-[999]">
             <div className="pt-5 pb-6 px-5">
               <div className="flex xl:hidden items-center justify-between">
                 <Image
@@ -723,12 +723,12 @@ const NavbarMultiple = () => {
                     src="/images/logo-mini.png"
                     width="45"
                     height="30"
-                    className="rounded-sm bg-[#c3c3c3] py-1.5 px-2.5"
+                    className="rounded-sm bg-[#c3c3c3] dark:bg-slate-700 py-1.5 px-2.5"
                   />
                 <div className="-mr-2">
                   <button
                     type="button"
-                    className="dark:bg-slate-900 bg-slate-200 rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+                    className="bg-[#c3c3c3] dark:bg-slate-700 rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
                     onClick={() => setOpen(!open)}
                   >
                     <span className="sr-only">Close menu</span>
@@ -762,42 +762,42 @@ const NavbarMultiple = () => {
               <div className="grid grid-cols-2 gap-y-4 gap-x-8">
                 <Link
                   href="#"
-                  className="flex items-center text-base font-medium dark:text-slate-900 text-slate-200 hover:text-gray-700"
+                  className="flex items-center text-base font-medium text-slate-700 dark:text-slate-300 hover:text-gray-700"
                 >
                   Enterprise
                   <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
-                  className="flex items-center text-base font-medium dark:text-slate-900 text-slate-200 hover:text-gray-700"
+                  className="flex items-center text-base font-medium text-slate-700 dark:text-slate-300 hover:text-gray-700"
                 >
                   Blog
                   <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
-                  className="flex items-center text-base font-medium dark:text-slate-900 text-slate-200 hover:text-gray-700"
+                  className="flex items-center text-base font-medium text-slate-700 dark:text-slate-300 hover:text-gray-700"
                 >
                   Help Center
                   <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
-                  className="flex items-center text-base font-medium dark:text-slate-900 text-slate-200 hover:text-gray-700"
+                  className="flex items-center text-base font-medium text-slate-700 dark:text-slate-300 hover:text-gray-700"
                 >
                   Guides
                   <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
-                  className="flex items-center text-base font-medium dark:text-slate-900 text-slate-200 hover:text-gray-700"
+                  className="flex items-center text-base font-medium text-slate-700 dark:text-slate-300 hover:text-gray-700"
                 >
                   Security
                   <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
-                  className="flex items-center text-base font-medium dark:text-slate-900 text-slate-200 hover:text-gray-700"
+                  className="flex items-center text-base font-medium text-slate-700 dark:text-slate-300 hover:text-gray-700"
                 >
                   Events
                   <ArrowUpRight className="h-5 w-5 ml-1" />

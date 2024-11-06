@@ -12,16 +12,28 @@ export async function POST(req: Request) {
     const { name } = body;
 
     if (!userId) {
-      return new NextResponse("Unauthorizd ", { status: 403 });
+      return new NextResponse(JSON.stringify({ error: "Unauthorizd" }), {
+        status: 403,
+      });
     }
+
+    if (userId.role !== UserRole.ADMIN) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền để tạo cửa hàng mới!" }),
+        { status: 403 }
+      );
+    }
+
     if (!name) {
-      return new NextResponse("Name is required", { status: 400 });
+      return new NextResponse(JSON.stringify({ error: "Name is required" }), {
+        status: 400,
+      });
     }
 
     const store = await prismadb.store.create({
       data: {
         name,
-        userId: userId.role as UserRole,
+        userId: userId.id || "",
       },
     });
 
@@ -30,7 +42,7 @@ export async function POST(req: Request) {
         email: "guest@gmail.com",
       },
     });
-    
+
     if (!existingUser) {
       const hashPassword = await bcrypt.hash("guestguest@123", 10);
       await prismadb.user.create({
@@ -42,7 +54,8 @@ export async function POST(req: Request) {
           favorite: ["phobien"],
           bio: "Xin chào bạn đã tìm đến trang của khách hỗ trợ đăng nhập nhanh cho mọi người mua hàng và giúp người dùng lộ thông tin khi mua sản phẩm.",
           address: "457 Lê Văn Quới, Phường Bình Trị Đông A, Quận Bình Tân.",
-          addressother: "457 Lê Văn Quới, Phường Bình Trị Đông A, Quận Bình Tân (Cửa hàng Trường Đạt).",
+          addressother:
+            "457 Lê Văn Quới, Phường Bình Trị Đông A, Quận Bình Tân (Cửa hàng Trường Đạt).",
           socialLink: {
             create: {
               linkyoutube: "https://www.youtube.com/@nguyenxuantruong03",
@@ -52,9 +65,11 @@ export async function POST(req: Request) {
               linklinkedin: "https://www.linkedin.com/in/xuantruong03",
               linkgithub: "https://github.com/nguyenxuantruong03",
               linktiktok: "https://www.tiktok.com/@ngxuantruong03",
-              linkwebsite: "https://dashboadvdxdxuantruong.vercel.app/setting-user",
-              linkother: "https://dashboadvdxdxuantruong.vercel.app/home-product",
-            }
+              linkwebsite:
+                "https://dashboadvdxdxuantruong.vercel.app/setting-user",
+              linkother:
+                "https://dashboadvdxdxuantruong.vercel.app/home-product",
+            },
           },
           frameAvatar: "/avatar-frame/frame-0.png",
           image: "/avatar/avatar-default.jpg",
@@ -71,7 +86,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json(store);
   } catch (error) {
-    console.log("[STORES_POST]", error);
     return new NextResponse("POST failed", { status: 500 });
   }
 }

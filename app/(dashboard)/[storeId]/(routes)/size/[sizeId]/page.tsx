@@ -1,7 +1,6 @@
 import prismadb from "@/lib/prismadb";
 import { SizeForm } from "./components/size-form";
 import { RoleGate } from "@/components/auth/role-gate";
-import FormSuccess from "@/components/form-success";
 import { UserRole } from "@prisma/client";
 import { currentRole } from "@/lib/auth";
 
@@ -20,14 +19,13 @@ const SizePage = async ({
   });
 
   return (
-    <div className="flex-col">
-      <div className={`flex-1 space-y-4 p-8 pt-6 ${showSizeRole}`}>
-        {showSizeRole && <SizeForm initialData={size} />}
+    <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>
+      <div className="flex-col">
+        <div className={`flex-1 space-y-4 p-8 pt-6 ${showSizeRole}`}>
+          {showSizeRole && <SizeForm initialData={size} />}
+        </div>
       </div>
-      <RoleGate allowedRole={UserRole.ADMIN || UserRole.STAFF}>
-        <FormSuccess message="Bạn có thể xem được nội dung này!" />
-      </RoleGate>
-    </div>
+    </RoleGate>
   );
 };
 

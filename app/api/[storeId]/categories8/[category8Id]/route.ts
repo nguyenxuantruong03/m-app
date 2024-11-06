@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
 import { CategoryType, UserRole } from "@prisma/client";
-import { currentRole, currentUser } from "@/lib/auth";
+import { currentUser } from "@/lib/auth";
 
 type CategoryValue = string | CategoryType | Date | undefined;
 
@@ -16,11 +16,26 @@ export async function GET(
   { params }: { params: { category8Id: string } }
 ) {
   const categoryType = CategoryType.CATEGORY8;
+  const userId = await currentUser();
   try {
     if (!params.category8Id) {
       return new NextResponse(
         JSON.stringify({ error: "Category8 id is required!" }),
         { status: 400 }
+      );
+    }
+
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xem categories!" }),
+        { status: 403 }
       );
     }
 
@@ -47,11 +62,17 @@ export async function DELETE(
   const categoryType = CategoryType.CATEGORY8;
   try {
     const userId = await currentUser();
-    const role = await currentRole();
 
     if (!userId) {
       return new NextResponse(
         JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xóa categories!" }),
         { status: 403 }
       );
     }
@@ -66,9 +87,6 @@ export async function DELETE(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId: {
-          equals: UserRole.USER,
-        },
       },
     });
 
@@ -76,13 +94,6 @@ export async function DELETE(
       return new NextResponse(
         JSON.stringify({ error: "Không tìm thấy store id!" }),
         { status: 405 }
-      );
-    }
-
-    if (role !== UserRole.ADMIN) {
-      return new NextResponse(
-        JSON.stringify({ error: "Vai trò hiện tại của bạn không được quyền!" }),
-        { status: 403 }
       );
     }
 
@@ -141,6 +152,13 @@ export async function PATCH(
       );
     }
 
+    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền cập nhật categories!" }),
+        { status: 403 }
+      );
+    }
+
     if (!name) {
       return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
         status: 400,
@@ -157,9 +175,6 @@ export async function PATCH(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId: {
-          equals: UserRole.USER,
-        },
       },
     });
 

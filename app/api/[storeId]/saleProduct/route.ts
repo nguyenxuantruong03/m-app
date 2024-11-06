@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { currentUser } from "@/lib/auth";
+import { UserRole } from "@prisma/client";
 
 export async function PATCH(req: Request) {
   try {
@@ -16,19 +17,34 @@ export async function PATCH(req: Request) {
       );
     }
 
+    if (
+      userId.role !== UserRole.ADMIN &&
+      userId.role !== UserRole.STAFF &&
+      userId.role !== UserRole.MARKETING
+    ) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền cập nhật product!" }),
+        { status: 403 }
+      );
+    }
+
     const timeSaleStartUTC = new Date(timeSaleStart!);
     const timeSaleEndUTC = new Date(timeSaleEnd!);
 
     // Thêm 7 tiếng vào thời gian UTC
-    const timeSaleStartLocal = new Date(timeSaleStartUTC.getTime() + 7 * 60 * 60 * 1000);
-    const timeSaleEndLocal = new Date(timeSaleEndUTC.getTime() + 7 * 60 * 60 * 1000);
+    const timeSaleStartLocal = new Date(
+      timeSaleStartUTC.getTime() + 7 * 60 * 60 * 1000
+    );
+    const timeSaleEndLocal = new Date(
+      timeSaleEndUTC.getTime() + 7 * 60 * 60 * 1000
+    );
 
     const product = await prismadb.product.update({
       where: {
         id: id,
       },
       data: {
-        timeSaleStart: timeSaleStartLocal, 
+        timeSaleStart: timeSaleStartLocal,
         timeSaleEnd: timeSaleEndLocal,
         isSale: isSale,
       },
@@ -43,7 +59,6 @@ export async function PATCH(req: Request) {
   }
 }
 
-
 export async function POST(req: Request) {
   try {
     const userId = await currentUser();
@@ -51,6 +66,17 @@ export async function POST(req: Request) {
     if (!userId) {
       return new NextResponse(
         JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (
+      userId.role !== UserRole.ADMIN &&
+      userId.role !== UserRole.STAFF &&
+      userId.role !== UserRole.MARKETING
+    ) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền cập nhật product!" }),
         { status: 403 }
       );
     }
@@ -65,14 +91,14 @@ export async function POST(req: Request) {
           not: null, // Ensure timeSaleEnd is not null
         },
         isSale: {
-        not: true
-        }
+          not: true,
+        },
       },
     });
 
     // Update isSale to true for each product found
     const updatedProducts = await Promise.all(
-      productsToUpdate.map(product =>
+      productsToUpdate.map((product) =>
         prismadb.product.update({
           where: {
             id: product.id,
@@ -105,6 +131,17 @@ export async function DELETE(req: Request) {
       );
     }
 
+    if (
+      userId.role !== UserRole.ADMIN &&
+      userId.role !== UserRole.STAFF &&
+      userId.role !== UserRole.MARKETING
+    ) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền cập nhật product!" }),
+        { status: 403 }
+      );
+    }
+
     // Retrieve all products with timeSaleStart and timeSaleEnd defined
     const productsToUpdate = await prismadb.product.findMany({
       where: {
@@ -114,15 +151,15 @@ export async function DELETE(req: Request) {
         timeSaleEnd: {
           not: null, // Ensure timeSaleEnd is not null
         },
-        isSale:{
-          not: false
-        }
+        isSale: {
+          not: false,
+        },
       },
     });
 
     // Update isSale to true for each product found
     const updatedProducts = await Promise.all(
-      productsToUpdate.map(product =>
+      productsToUpdate.map((product) =>
         prismadb.product.update({
           where: {
             id: product.id,

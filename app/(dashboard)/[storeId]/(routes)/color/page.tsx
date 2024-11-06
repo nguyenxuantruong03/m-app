@@ -4,7 +4,7 @@ import { ColorColumn } from "./components/columns";
 import { currentRole } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
 import { RoleGate } from "@/components/auth/role-gate";
-import FormSuccess from "@/components/form-success";
+
 const ColorPage = async ({ params }: { params: { storeId: string } }) => {
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN || role === UserRole.STAFF;
@@ -25,14 +25,13 @@ const ColorPage = async ({ params }: { params: { storeId: string } }) => {
     createdAt: item.createdAt
   }));
   return (
+      <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>
     <div className="w-full">
       <div className={`flex-1 space-y-4 p-8 pt-6 ${showColorRole}`}>
         {showColorRole && <ColorClient data={formattedColor} />}
       </div>
-      <RoleGate allowedRole={UserRole.ADMIN || UserRole.STAFF}>
-        <FormSuccess message="Bạn có thể xem được nội dung này!" />
-      </RoleGate>
     </div>
+      </RoleGate>
   );
 };
 

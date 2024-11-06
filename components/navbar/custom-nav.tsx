@@ -28,10 +28,7 @@ export enum List {
   NAVBAR = "NAVBAR",
 }
 
-const CustomNav: React.FC<CustomNavProps> = ({
-  store,
-  avatarImage,
-}) => {
+const CustomNav: React.FC<CustomNavProps> = ({ store, avatarImage }) => {
   const userId = useCurrentUser();
   const [isMounted, setIsMounted] = useState(false);
   const { currentView, setCurrentView } = useCurrentView() || {
@@ -91,18 +88,27 @@ const CustomNav: React.FC<CustomNavProps> = ({
 
   return (
     <>
-      <div className="hidden xl:block fixed top-[4.5rem] z-[9999]">
-      <button 
-        className="my-2 inline-flex items-center justify-center 
+      {currentView !== List.NAVBAR ? (
+        <div className="hidden xl:block xl:w-12">
+          <Button className="m-2" onClick={toggleView}>
+            <LayoutDashboard className="size-5" />
+          </Button>
+        </div>
+      ) : (
+        <div className="hidden xl:block fixed top-[4.5rem] z-[9999] group">
+          <button
+            className="my-2 inline-flex items-center justify-center 
         text-sm font-medium ring-offset-background transition-colors 
         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring 
         focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-5 
-        dark:bg-slate-200 bg-slate-900 text-primary-foreground hover:bg-slate-300 h-10 px-4 py-2" 
-        style={{ borderRadius: '0 0 8px 0' }}
-        onClick={toggleView}>
-          <LayoutDashboard className="size-5" />
-      </button>
-      </div>
+        bg-slate-200 dark:bg-slate-900 text-primary-foreground group-hover:bg-slate-300 dark:group-hover:bg-slate-700 h-10 px-4 py-2"
+            style={{ borderRadius: "0 0 8px 0" }}
+            onClick={toggleView}
+          >
+            <LayoutDashboard className="size-5 text-slate-700 dark:text-slate-300 dark:group-hover:text-white group-hover:text-slate-900" />
+          </button>
+        </div>
+      )}
 
       {currentView === List.LIST && (
         <div className="bg-red-300 rounded-md bg-opacity-50 pt-1 w-[280px] ml-2">
@@ -114,7 +120,7 @@ const CustomNav: React.FC<CustomNavProps> = ({
               <div className="flex items-center space-x-4 mt-2 justify-center">
                 <div className="group relative">
                   <Avatar>
-                    { avatarImage ? (
+                    {avatarImage ? (
                       <AvatarImage src={avatarImage} />
                     ) : (
                       <AvatarFallback className="bg-sky-500">

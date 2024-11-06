@@ -3,7 +3,6 @@ import { format, subHours } from "date-fns";
 import { RoleGate } from "@/components/auth/role-gate";
 import { currentRole } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
-import FormSuccess from "@/components/form-success";
 import { ManageAttendancesColumn } from "./components/column";
 import ManageAttendanceClient from "./components/client";
 import { utcToZonedTime } from "date-fns-tz";
@@ -46,7 +45,7 @@ const ManageAttendance = async ({
       title: item.title,
       urlImageAttendance: item.urlImageAttendance,
       qrcodeCheckAttendance: item.qrcodeCheckAttendance,
-      delayTime:item.delayTime,
+      delayTime: item.delayTime,
       isCheckAttendanceImage: item.isCheckAttendanceImage,
       updateNFC: item.updateNFC
         ? format(
@@ -87,15 +86,15 @@ const ManageAttendance = async ({
   );
 
   return (
-    <div className="w-full">
-      <div className={`space-y-4 p-8 pt-6 ${showOrderRole}`}>
-        {showOrderRole && <ManageAttendanceClient data={formattedAttendance} />}
+    <RoleGate allowedRole={[UserRole.ADMIN]}>
+      <div className="w-full">
+        <div className={`space-y-4 p-8 pt-6 ${showOrderRole}`}>
+          {showOrderRole && (
+            <ManageAttendanceClient data={formattedAttendance} />
+          )}
+        </div>
       </div>
-
-      <RoleGate allowedRole={UserRole.ADMIN}>
-        <FormSuccess message="Bạn có thể xem được nội dung này!" />
-      </RoleGate>
-    </div>
+    </RoleGate>
   );
 };
 

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { sendVerifyAccountisCitizen } from "@/lib/mail";
 import { currentUser } from "@/lib/auth";
+import { UserRole } from "@prisma/client";
 
 type ManageStaffValue = boolean | undefined | null;
 
@@ -12,7 +13,22 @@ interface ChangeRecord {
 }
 
 export async function GET(req: Request) {
+  const userId = await currentUser();
   try {
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xem Manage Staff!" }),
+        { status: 403 }
+      );
+    }
+
     const managestaff = await prismadb.user.findMany();
 
     return NextResponse.json(managestaff);
@@ -36,6 +52,13 @@ export async function PATCH(
     if (!userId) {
       return new NextResponse(
         JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền cập nhật Manage Staff!" }),
         { status: 403 }
       );
     }
@@ -101,14 +124,20 @@ export async function POST(
 ) {
   const userId = await currentUser();
 
-  if (!userId) {
-    return new NextResponse(
-      JSON.stringify({ error: "Không tìm thấy user id!" }),
-      { status: 403 }
-    );
-  }
-  
   try {
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+  
+    if (userId.role !== UserRole.ADMIN) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền tạo mới Manage Staff!" }),
+        { status: 403 }
+      );
+    }
     // Khởi tạo một mảng để lưu trữ email đã gửi
     const sentEmails = [];
     //Khỏi tạo một Object để lưu trữ changes

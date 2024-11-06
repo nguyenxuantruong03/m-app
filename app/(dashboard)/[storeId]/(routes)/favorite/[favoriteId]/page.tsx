@@ -2,7 +2,6 @@ import prismadb from "@/lib/prismadb";
 import { FavoriteForm } from "./components/favorite-form";
 import { UserRole } from "@prisma/client";
 import { RoleGate } from "@/components/auth/role-gate";
-import FormSuccess from "@/components/form-success";
 import { currentRole } from "@/lib/auth";
 
 const FavoritePage = async ({
@@ -19,14 +18,13 @@ const FavoritePage = async ({
     },
   });
   return (
-    <div className="flex-col">
-      <div className={`flex-1 space-y-4 p-8 pt-6 ${showFavoriteRole}`}>
-        {showFavoriteRole && <FavoriteForm initialData={favorite} />}
+    <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>
+      <div className="flex-col">
+        <div className={`flex-1 space-y-4 p-8 pt-6 ${showFavoriteRole}`}>
+          {showFavoriteRole && <FavoriteForm initialData={favorite} />}
+        </div>
       </div>
-      <RoleGate allowedRole={UserRole.ADMIN || UserRole.STAFF}>
-        <FormSuccess message="Bạn có thể xem được nội dung này!" />
-      </RoleGate>
-    </div>
+    </RoleGate>
   );
 };
 

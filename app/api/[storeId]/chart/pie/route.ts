@@ -1,4 +1,6 @@
+import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
+import { UserRole } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 interface GraphData {
@@ -23,8 +25,23 @@ interface GraphData {
 export async function POST(req: Request) {
   const body = await req.json();
   const { storeId, dateRange } = body;
+  const userId = await currentUser();
 
   try {
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xem chart!" }),
+        { status: 403 }
+      );
+    }
+
     // Lấy tất cả đơn hàng
     const orders = await prismadb.order.findMany({
       where: {

@@ -2,7 +2,6 @@ import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
 import { currentRole } from "@/lib/auth";
 import { RoleGate } from "@/components/auth/role-gate";
-import FormSuccess from "@/components/form-success";
 import { TaxrateForm } from "./components/taxrate-form";
 
 const TaxRatePage = async ({
@@ -19,18 +18,13 @@ const TaxRatePage = async ({
     },
   });
   return (
-    <div className="flex-col">
-      <div className={`flex-1 space-y-4 p-8 pt-6 ${showTaxRateRole}`}>
-        {showTaxRateRole && (
-          <TaxrateForm
-            initialData={taxrate}
-          />
-        )}
+    <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>
+      <div className="flex-col">
+        <div className={`flex-1 space-y-4 p-8 pt-6 ${showTaxRateRole}`}>
+          {showTaxRateRole && <TaxrateForm initialData={taxrate} />}
+        </div>
       </div>
-      <RoleGate allowedRole={UserRole.ADMIN || UserRole.STAFF}>
-        <FormSuccess message="Bạn có thể xem được nội dung này!" />
-      </RoleGate>
-    </div>
+    </RoleGate>
   );
 };
 

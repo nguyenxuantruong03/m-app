@@ -3,7 +3,6 @@ import { SentEmailUserForm } from "./components/sentmailuser-form";
 import { UserRole } from "@prisma/client";
 import { currentRole } from "@/lib/auth";
 import { RoleGate } from "@/components/auth/role-gate";
-import FormSuccess from "@/components/form-success";
 
 const SentmailUserPage = async ({
   params,
@@ -41,20 +40,19 @@ const SentmailUserPage = async ({
   const MappedFavorites = associatedFavorites.map((item) => item.value);
 
   return (
-    <div className="flex-col">
-      <div className={`flex-1 space-y-4 p-8 pt-6 ${showSentmailUserRole}`}>
-        {showSentmailUserRole && (
-          <SentEmailUserForm
-            initialData={sentmailuser}
-            associatedUser={MappedUsers}
-            associatedFavorite={MappedFavorites}
-          />
-        )}
+    <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>
+      <div className="flex-col">
+        <div className={`flex-1 space-y-4 p-8 pt-6 ${showSentmailUserRole}`}>
+          {showSentmailUserRole && (
+            <SentEmailUserForm
+              initialData={sentmailuser}
+              associatedUser={MappedUsers}
+              associatedFavorite={MappedFavorites}
+            />
+          )}
+        </div>
       </div>
-      <RoleGate allowedRole={UserRole.ADMIN || UserRole.STAFF}>
-        <FormSuccess message="Bạn có thể xem được nội dung này!" />
-      </RoleGate>
-    </div>
+    </RoleGate>
   );
 };
 

@@ -96,7 +96,7 @@ const FunnelChart: React.FC<FunnelChartProps> = ({
   if (!funnelChartData) {
     return (
       <div className="w-full h-[350px] flex items-center justify-center">
-        <span className="text-center">Please select date to find data...</span>
+        <span className="text-center dark:text-slate-500 text-slate-900">Please select date to find data...</span>
       </div>
     );
   }

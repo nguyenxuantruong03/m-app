@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
 import { TaxType, UserRole } from "@prisma/client";
-import { currentRole, currentUser } from "@/lib/auth";
+import { currentUser } from "@/lib/auth";
 
 export async function POST(
   req: Request,
@@ -12,14 +12,19 @@ export async function POST(
 ) {
   try {
     const userId = await currentUser();
-
     const body = await req.json();
-
     const { name, description, percentage, inclusive, active, taxtype } = body;
 
     if (!userId) {
       return new NextResponse(
         JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền tạo mới taxrate!" }),
         { status: 403 }
       );
     }
@@ -48,9 +53,6 @@ export async function POST(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId: {
-          equals: UserRole.USER,
-        },
       },
     });
 
@@ -123,11 +125,26 @@ export async function GET(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const userId = await currentUser();
   try {
     if (!params.storeId) {
       return new NextResponse(
         JSON.stringify({ error: "Store id is required!" }),
         { status: 400 }
+      );
+    }
+
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xem taxrate!" }),
+        { status: 403 }
       );
     }
 
@@ -148,7 +165,6 @@ export async function DELETE(
 ) {
   try {
     const userId = await currentUser();
-    const role = await currentRole();
     const body = await req.json();
 
     const { ids } = body;
@@ -156,6 +172,13 @@ export async function DELETE(
     if (!userId) {
       return new NextResponse(
         JSON.stringify({ error: "Không tìm thấy userId!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xóa taxrate!" }),
         { status: 403 }
       );
     }
@@ -170,9 +193,6 @@ export async function DELETE(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId: {
-          equals: UserRole.USER,
-        },
       },
     });
 
@@ -180,12 +200,6 @@ export async function DELETE(
       return new NextResponse(
         JSON.stringify({ error: "Không tìm thấy store id!" }),
         { status: 405 }
-      );
-    }
-    if (role !== UserRole.ADMIN) {
-      return new NextResponse(
-        JSON.stringify({ error: "Vai trò hiện tại của bạn không được quyền!" }),
-        { status: 403 }
       );
     }
 

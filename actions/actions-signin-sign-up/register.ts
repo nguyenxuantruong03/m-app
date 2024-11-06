@@ -28,8 +28,11 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
 
   const existingUser = await getUserByEmail(email);
 
-  if(existingUser?.isbanforever){
-    return { error: "Tài khoản của bạn đã bị ban vĩnh viên do vi phạm chính sách có thể liên hệ chúng tôi để biết thêm lý do 0352261103." }; 
+  if (existingUser?.isbanforever) {
+    return {
+      error:
+        "Tài khoản của bạn đã bị ban vĩnh viên do vi phạm chính sách có thể liên hệ chúng tôi để biết thêm lý do 0352261103.",
+    };
   }
 
   if (existingUser) {
@@ -40,18 +43,24 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
   const atIndex = email.indexOf("@");
   const nameuser = email.slice(0, atIndex).toLowerCase();
 
-// Tạo người dùng mới
+  // Kiểm tra trong dữ liệu nếu chưa có người dùng nào hết thì
+  //  mặc định cho người dùng đầu tiên role ADMIN
+  const userCount = await prismadb.user.count();
+  const role = userCount === 0 ? "ADMIN" : "USER";
+
+  // Tạo người dùng mới
   await prismadb.user.create({
-  data: {
-    name,
-    email,
-    nameuser:nameuser,
-    favorite: ["phobien"],
-    password: { 
-      create: [{ password: hashPassword }]
+    data: {
+      name,
+      email,
+      nameuser: nameuser,
+      favorite: ["phobien"],
+      password: {
+        create: [{ password: hashPassword }],
+      },
+      role,
     },
-  },
-});
+  });
 
   //Send verification token email
   const verificationToken = await generateVerificationToken(email);

@@ -1,14 +1,9 @@
 import prismadb from "@/lib/prismadb";
 import CategoriesClient from "./components/client";
 import { CategoriesColumn } from "./components/columns";
-import { format } from "date-fns";
 import { CategoryType, UserRole } from "@prisma/client";
 import { currentRole } from "@/lib/auth";
 import { RoleGate } from "@/components/auth/role-gate";
-import FormSuccess from "@/components/form-success";
-import { utcToZonedTime } from "date-fns-tz";
-import viLocale from "date-fns/locale/vi";
-const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 
 const CategoriesPage = async ({ params }: { params: { storeId: string } }) => {
   const role = await currentRole();
@@ -31,14 +26,13 @@ const CategoriesPage = async ({ params }: { params: { storeId: string } }) => {
     createdAt: item.createdAt,
   }));
   return (
-    <div className="w-full">
-      <div className={`flex-1 space-y-4 p-8 pt-6 ${showCategoryRole}`}>
-        {showCategoryRole && <CategoriesClient data={formattedCategories} />}
+    <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>
+      <div className="w-full">
+        <div className={`flex-1 space-y-4 p-8 pt-6 ${showCategoryRole}`}>
+          {showCategoryRole && <CategoriesClient data={formattedCategories} />}
+        </div>
       </div>
-      <RoleGate allowedRole={UserRole.ADMIN || UserRole.STAFF}>
-        <FormSuccess message="Bạn có thể xem được nội dung này!" />
-      </RoleGate>
-    </div>
+    </RoleGate>
   );
 };
 

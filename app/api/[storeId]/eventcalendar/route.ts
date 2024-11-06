@@ -10,6 +10,21 @@ import viLocale from "date-fns/locale/vi";
 export async function GET(req: Request) {
   try {
     const userId = await currentUser();
+
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role === UserRole.GUEST || userId.role === UserRole.USER) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xem attendance!" }),
+        { status: 403 }
+      );
+    }
+
     const eventCalendar = await prismadb.eventCalendar.findMany({
       where: {
         userId: userId?.id,
@@ -45,10 +60,22 @@ export async function POST(
 ) {
   try {
     const userId = await currentUser();
-
     const body = await req.json();
-
     const { title, start, allDay, attendancestart, attendanceend } = body;
+
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role === UserRole.GUEST || userId.role === UserRole.USER) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền check attendance!" }),
+        { status: 403 }
+      );
+    }
 
     if (!start) {
       return new NextResponse(JSON.stringify({ error: "Start is required!" }), {
@@ -66,9 +93,6 @@ export async function POST(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId: {
-          equals: UserRole.USER,
-        },
       },
     });
 
@@ -286,10 +310,22 @@ export async function PATCH(
 ) {
   try {
     const userId = await currentUser();
-
     const body = await req.json();
-
     const { title, start, allDay, attendancestart, attendanceend } = body;
+
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role === UserRole.GUEST || userId.role === UserRole.USER) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền cập nhật attendance!" }),
+        { status: 403 }
+      );
+    }
 
     if (!start) {
       return new NextResponse(JSON.stringify({ error: "Start is required!" }), {
@@ -307,9 +343,6 @@ export async function PATCH(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId: {
-          equals: UserRole.USER,
-        },
       },
     });
 
@@ -348,9 +381,22 @@ export async function DELETE(
 ) {
   try {
     const userId = await currentUser();
-
     // Extract event ID from the request body
     const { eventId } = await req.json();
+
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role === UserRole.GUEST || userId.role === UserRole.USER) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xóa attendance!" }),
+        { status: 403 }
+      );
+    }
 
     if (!eventId) {
       return new NextResponse("Event id is required!", { status: 403 });
@@ -367,9 +413,6 @@ export async function DELETE(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId: {
-          equals: UserRole.USER,
-        },
       },
     });
 

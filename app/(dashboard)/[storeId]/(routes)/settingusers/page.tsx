@@ -2,24 +2,29 @@ import prismadb from "@/lib/prismadb";
 import { RoleGate } from "@/components/auth/role-gate";
 import { currentRole } from "@/lib/auth";
 import { Account, UserRole } from "@prisma/client";
-import FormSuccess from "@/components/form-success";
 import { SettingUsersColumn } from "./components/column";
 import SettingUserClient from "./components/client";
 
 const SettingUser = async ({ params }: { params: { storeId: string } }) => {
   const role = await currentRole();
-  const isRole = role === UserRole.ADMIN;
+  const isRole = role === UserRole.ADMIN || UserRole.STAFF;
   const showOrderRole = isRole;
+  const isAdmin = role === UserRole.ADMIN;
+  const userCondition = isAdmin ? {} : UserRole.USER; // Nếu là admin thì không có điều kiện, ngược lại thì chỉ get USER
+
   const users = await prismadb.user.findMany({
+    where: {
+      role: userCondition
+    },
     include: {
       accounts: true,
       twoFactorConfirmation: true,
       password: true,
       imageCredential: {
         orderBy: {
-            createdAt: 'desc'
-        }
-      }
+          createdAt: "desc",
+        },
+      },
     },
     orderBy: [
       {
@@ -41,10 +46,9 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
 
     // Kiểm tra nếu hôm nay là sinh nhật của người dùng
     const isBirthdayToday =
-    birthdayDate &&
-    birthdayDate.getDate() === today.getDate() &&
-    birthdayDate.getMonth() === today.getMonth();
-
+      birthdayDate &&
+      birthdayDate.getDate() === today.getDate() &&
+      birthdayDate.getMonth() === today.getMonth();
 
     return {
       id: item.id,
@@ -92,15 +96,14 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
   });
 
   return (
-    <div className="w-full">
-      <div className={`space-y-4 p-8 pt-6 ${showOrderRole ? '' : 'hidden'}`}>
-        {showOrderRole && <SettingUserClient data={formattedUser} />}
+    <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>
+      <div className="w-full">
+        <div className={`space-y-4 p-8 pt-6 ${showOrderRole ? "" : "hidden"}`}>
+          {showOrderRole && <SettingUserClient data={formattedUser} />}
+        </div>
       </div>
-      <RoleGate allowedRole={UserRole.ADMIN}>
-        <FormSuccess message="Bạn có thể xem được nội dung này!" />
-      </RoleGate>
-    </div>
+    </RoleGate>
   );
 };
 
-export default SettingUser
+export default SettingUser;

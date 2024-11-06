@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { NextResponse } from "next/server";
 import { formatter } from "@/lib/utils";
 import { Decimal } from "@prisma/client/runtime/library";
+import { UserRole } from "@prisma/client";
 
 type SalaryStaffValue =string | number | boolean | Date | Decimal | null | undefined;
 
@@ -14,8 +15,23 @@ interface ChangeRecord {
 }
 
 export async function GET(req: Request) {
+  const userId = await currentUser();
   try {
-    const userId = await currentUser();
+
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xem salarystaff!" }),
+        { status: 403 }
+      );
+    }
+
     const eventcalendar = await prismadb.eventCalendar.findUnique({
       where: { id: userId?.id },
     });
@@ -49,6 +65,20 @@ export async function PATCH(
 ) {
   const userId = await currentUser();
   try {
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền cập nhật salarystaff!" }),
+        { status: 403 }
+      );
+    }
+
     const eventcalendar = await prismadb.eventCalendar.findUnique({
       where: { id: userId?.id },
     });
@@ -140,6 +170,20 @@ export async function POST(
 ) {
   const userId = await currentUser();
   try {
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền tạo mới salarystaff!" }),
+        { status: 403 }
+      );
+    }
+
     const eventcalendar = await prismadb.eventCalendar.findUnique({
       where: { id: userId?.id },
     });

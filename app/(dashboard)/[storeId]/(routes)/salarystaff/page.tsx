@@ -2,7 +2,6 @@ import prismadb from "@/lib/prismadb";
 import { RoleGate } from "@/components/auth/role-gate";
 import { currentRole } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
-import FormSuccess from "@/components/form-success";
 import { SalaryStaffsColumn } from "./components/column";
 import SalaryStaffClient from "./components/client";
 import { formatter } from "@/lib/utils";
@@ -39,14 +38,13 @@ const SalaryStaff = async () => {
   });
 
   return (
-    <div className="w-full">
-      <div className={`space-y-4 p-8 pt-6 ${showOrderRole}`}>
-        {showOrderRole && <SalaryStaffClient data={formattedUser} />}
+    <RoleGate allowedRole={[UserRole.ADMIN]}>
+      <div className="w-full">
+        <div className={`space-y-4 p-8 pt-6 ${showOrderRole}`}>
+          {showOrderRole && <SalaryStaffClient data={formattedUser} />}
+        </div>
       </div>
-      <RoleGate allowedRole={UserRole.ADMIN}>
-        <FormSuccess message="Bạn có thể xem được nội dung này!" />
-      </RoleGate>
-    </div>
+    </RoleGate>
   );
 };
 

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
-import { currentRole, currentUser } from "@/lib/auth";
+import { currentUser } from "@/lib/auth";
 import { ImageBillboard, UserRole } from "@prisma/client";
 
 // Update the BillboardValue type to include the new types
@@ -25,11 +25,26 @@ export async function GET(
   req: Request,
   { params }: { params: { imagebillboardId: string } }
 ) {
+  const userId = await currentUser();
   try {
     if (!params.imagebillboardId) {
       return new NextResponse(
         JSON.stringify({ error: "Billboard id is required!" }),
         { status: 400 }
+      );
+    }
+
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xem imagebillboard!" }),
+        { status: 403 }
       );
     }
 
@@ -54,7 +69,6 @@ export async function DELETE(
 ) {
   try {
     const userId = await currentUser();
-    const role = await currentRole();
 
     if (!userId) {
       return new NextResponse(
@@ -63,17 +77,17 @@ export async function DELETE(
       );
     }
 
+    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xóa imagebillboard!" }),
+        { status: 403 }
+      );
+    }
+
     if (!params.imagebillboardId) {
       return new NextResponse(
         JSON.stringify({ error: "Billboard id is required!" }),
         { status: 400 }
-      );
-    }
-
-    if (role !== UserRole.ADMIN) {
-      return new NextResponse(
-        JSON.stringify({ error: "Vai trò hiện tại của bạn không được quyền!" }),
-        { status: 403 }
       );
     }
 
@@ -136,12 +150,18 @@ export async function PATCH(
   try {
     const userId = await currentUser();
     const body = await req.json();
-
     const { label, url, description } = body;
 
     if (!userId) {
       return new NextResponse(
         JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền cập nhật imagebillboard!" }),
         { status: 403 }
       );
     }

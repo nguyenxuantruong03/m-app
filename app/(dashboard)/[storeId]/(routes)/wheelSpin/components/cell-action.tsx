@@ -140,7 +140,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           return (
             <p>
               {" "}
-              Đã thêm <span className="font-bold">{bonusTitle}</span>.Đã cộng
+              Đã thêm <span className="font-bold">{bonusTitle}</span>. Đã cộng
               thêm <span className="font-bold">+{newBonus}vòng quay</span> và{" "}
               <span className="font-bold">+{newCoins}xu</span>. Tổng{" "}
               <span className="font-bold pr-1">{updatedBonus}vòng quay</span>

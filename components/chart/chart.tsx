@@ -263,15 +263,15 @@ const Chart = ({ storeId }: ChartProps) => {
   return (
     <div className="flex flex-col space-y-6">
       {/* Flexbox container */}
-      <div className="flex flex-wrap justify-between space-y-6 lg:space-y-0 lg:space-x-6">
+      <div className="flex flex-wrap justify-between space-x-2 lg:space-y-0 lg:space-x-6">
         {/* Left column for basic charts */}
         <div className="flex-1 min-w-[300px]">
-          <div className="flex items-center space-x-4">
+          <div className="flex flex-wrap xl:flex-nowrap gap-2">
             <Select
               onValueChange={(value) => setSelectedBasicChart(value)}
               defaultValue="barchart"
             >
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="md:w-[300px]">
                 <SelectValue placeholder="Chọn biểu đồ cơ bản" />
               </SelectTrigger>
               <SelectContent>
@@ -328,7 +328,7 @@ const Chart = ({ storeId }: ChartProps) => {
               <CardHeader>
                 <CardTitle>Biểu đồ cột tổng tiền tháng</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-2 xl:p-6">
                 <BarChart data={barChartData} loading={loadingBarChart} />
               </CardContent>
             </Card>
@@ -341,7 +341,7 @@ const Chart = ({ storeId }: ChartProps) => {
                   Biểu đồ tổng hợp bảo hành, doanh thu, tiền sale tháng
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-2 xl:p-6">
                 <ComposedChart
                   data={composedChartData}
                   loading={loadingComposed}
@@ -355,7 +355,7 @@ const Chart = ({ storeId }: ChartProps) => {
               <CardHeader>
                 <CardTitle>Biểu đồ đường doanh thu ngày</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-2 xl:p-6">
                 <LineChart data={lineChartData} loading={loadingLine} />
               </CardContent>
             </Card>
@@ -366,7 +366,7 @@ const Chart = ({ storeId }: ChartProps) => {
               <CardHeader>
                 <CardTitle> Biểu đồ map tổng người dùng</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-2 xl:p-6">
                 <TreeMap data={treemapData} loading={loadingTreeMap} />
               </CardContent>
             </Card>
@@ -375,12 +375,12 @@ const Chart = ({ storeId }: ChartProps) => {
 
         {/* Right column for advanced charts */}
         <div className="flex-1 min-w-[300px]">
-          <div className="flex items-center space-x-4">
+          <div className="flex flex-wrap xl:flex-nowrap gap-2">
             <Select
               onValueChange={(value) => setSelectedAdvancedChart(value)}
               defaultValue="pie"
             >
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="md:w-[300px]">
                 <SelectValue placeholder="Chọn biểu đồ nâng cao" />
               </SelectTrigger>
               <SelectContent>
@@ -433,7 +433,7 @@ const Chart = ({ storeId }: ChartProps) => {
               <CardHeader>
                 <CardTitle>Biểu đồ tròn</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-2 xl:p-6">
                 <PieChart pieChartData={pieChartData} loading={loadingPie} />
               </CardContent>
             </Card>
@@ -444,7 +444,7 @@ const Chart = ({ storeId }: ChartProps) => {
               <CardHeader>
                 <CardTitle>Biểu đồ bán kính</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-2 xl:p-6">
                 <RadialChart
                   radialChartData={radialChartData}
                   loading={loadingRadial}
@@ -458,7 +458,7 @@ const Chart = ({ storeId }: ChartProps) => {
               <CardHeader>
                 <CardTitle>Biểu đồ funnel</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-2 xl:p-6">
                 <FunnelChart
                   funnelChartData={funnelChartData}
                   loading={loadingFunnel}
@@ -472,7 +472,7 @@ const Chart = ({ storeId }: ChartProps) => {
               <CardHeader>
                 <CardTitle>Biểu đồ radar</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-2 xl:p-6">
                 <RadarChart
                   radarChartData={radarChartData}
                   loading={loadingRadar}

@@ -1,26 +1,26 @@
-"use client"
+"use client";
 
 import { useCurrentRole } from "@/hooks/use-current-role";
 import { UserRole } from "@prisma/client";
-import FormError from "@/components/form-error";
+import ErrorComponent from "../ui/error";
+import NoResultsStore from "../ui/no-result-store";
 
-interface RoleGateProps{
-    children: React.ReactNode
-    allowedRole: UserRole;
+interface RoleGateProps {
+  children: React.ReactNode;
+  allowedRole: UserRole[];
 }
 
-export const RoleGate = ({children, allowedRole}:RoleGateProps) =>{
-    const role = useCurrentRole()
+export const RoleGate = ({ children, allowedRole }: RoleGateProps) => {
+  const role = useCurrentRole();
 
-    if(role !== allowedRole){
-        return (
-            <FormError message="Bạn không thể xem được nội dung này!"/>
-        )
-    }
+  // Check if the current role is included in the allowed roles
+  if (role === undefined || !allowedRole.includes(role)) {
     return (
-        <>
-        {children}
-        </>
-    )
+      <div className="flex items-center justify-center">
+        <NoResultsStore />
+      </div>
+    );
+  }
 
-}
+  return <>{children}</>;
+};

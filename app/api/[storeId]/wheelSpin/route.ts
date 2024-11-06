@@ -1,5 +1,6 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
+import { UserRole } from "@prisma/client";
 
 import { NextResponse } from "next/server";
 
@@ -13,6 +14,13 @@ export async function POST(
   try {
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
+    }
+
+    if (userId.role !== UserRole.ADMIN) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền tạo mới wheel spin!" }),
+        { status: 403 }
+      );
     }
 
     // Kiểm tra sự tồn tại của người dùng với userId
@@ -80,6 +88,13 @@ export async function GET() {
     const userId = await currentUser();
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
+    }
+
+    if (userId.role !== UserRole.ADMIN) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xem wheel spin!" }),
+        { status: 403 }
+      );
     }
 
     const coins = await prismadb.wheelSpin.findMany({

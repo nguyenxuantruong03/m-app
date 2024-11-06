@@ -1,11 +1,24 @@
 import { currentUser } from "@/lib/auth";
 import { sendSpin, sendUnSpin } from "@/lib/mail";
 import prismadb from "@/lib/prismadb";
+import { UserRole } from "@prisma/client";
 import { format } from "date-fns";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   try {
+    const userId = await currentUser();
+    if (!userId) {
+      return new NextResponse("Unauthenticated", { status: 403 });
+    }
+
+    if (userId.role !== UserRole.ADMIN) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xem wheel spin!" }),
+        { status: 403 }
+      );
+    }
+
     const WheelSpin = await prismadb.user.findMany({
       include: {
         WheelSpin: true,
@@ -26,13 +39,19 @@ export async function PATCH(
 ) {
   const userId = await currentUser();
   const body = await req.json();
-
   const { bonusAmount, bonusTitle, bonus, coinAmount, coinbonus, data } = body;
 
   try {
     if (!userId) {
       return new NextResponse(
         JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền cập nhật wheel spin!" }),
         { status: 403 }
       );
     }
@@ -186,6 +205,13 @@ export async function POST(
     if (!userId) {
       return new NextResponse(
         JSON.stringify({ error: "Không tìm thấy user id!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền cập nhật wheel spin!" }),
         { status: 403 }
       );
     }

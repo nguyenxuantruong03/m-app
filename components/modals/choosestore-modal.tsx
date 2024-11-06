@@ -39,8 +39,20 @@ export const ChoosestoreModal = () => {
       setLoading(true);
       const response = await axios.post("/api/stores", values);
       window.location.assign(`/${response.data.id}`);
-    } catch (error) {
-      toast.error("Somthing went wrong");
+    } catch (error: unknown) {
+      if (
+        (error as { response?: { data?: { error?: string } } }).response &&
+        (error as { response: { data?: { error?: string } } }).response.data &&
+        (error as { response: { data: { error?: string } } }).response.data.error
+      ) {
+        // Hiển thị thông báo lỗi cho người dùng
+        toast.error((error as { response: { data: { error: string } } }).response.data.error);
+      } else {
+        // Hiển thị thông báo lỗi mặc định cho người dùng
+        toast.error(
+          "Something went wrong!"
+        );
+      }
     } finally {
       setLoading(false);
     }

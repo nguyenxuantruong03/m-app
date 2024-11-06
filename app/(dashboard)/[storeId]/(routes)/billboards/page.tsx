@@ -2,7 +2,6 @@ import prismadb from "@/lib/prismadb";
 import BillboardClient from "./components/client";
 import { BillboardColumn } from "./components/columns";
 import { RoleGate } from "@/components/auth/role-gate";
-import FormSuccess from "@/components/form-success";
 import { UserRole } from "@prisma/client";
 import { currentRole } from "@/lib/auth";
 
@@ -14,8 +13,8 @@ const BillboardsPage = async ({ params }: { params: { storeId: string } }) => {
     where: {
       storeId: params.storeId,
     },
-    include:{
-      imagebillboard: true
+    include: {
+      imagebillboard: true,
     },
     orderBy: {
       createdAt: "desc",
@@ -26,20 +25,19 @@ const BillboardsPage = async ({ params }: { params: { storeId: string } }) => {
     id: item.id,
     label: item.label,
     description: item.description,
-    imagebillboard:item.imagebillboard.map((item) =>item.url),
+    imagebillboard: item.imagebillboard.map((item) => item.url),
     imagebillboardpatch: item.imagebillboard,
     createdAt: item.createdAt,
   }));
 
   return (
-    <div className="w-full">
-      <div className={`flex-1 space-y-4 p-8 pt-6 ${showBillboardRole}`}>
-        {showBillboardRole && <BillboardClient data={formattedBillboards} />}
+    <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>
+      <div className="w-full">
+        <div className={`flex-1 space-y-4 p-8 pt-6 ${showBillboardRole}`}>
+          {showBillboardRole && <BillboardClient data={formattedBillboards} />}
+        </div>
       </div>
-      <RoleGate allowedRole={UserRole.ADMIN || UserRole.STAFF}>
-        <FormSuccess message="Bạn có thể xem được nội dung này!" />
-      </RoleGate>
-    </div>
+    </RoleGate>
   );
 };
 

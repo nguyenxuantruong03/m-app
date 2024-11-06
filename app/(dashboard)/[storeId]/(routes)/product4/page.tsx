@@ -4,7 +4,6 @@ import { ProductColumn } from "./components/columns";
 import { ProductType, UserRole } from "@prisma/client";
 import { currentRole } from "@/lib/auth";
 import { RoleGate } from "@/components/auth/role-gate";
-import FormSuccess from "@/components/form-success";
 
 const ProductPage = async ({ params }: { params: { storeId: string } }) => {
   const role = await currentRole();
@@ -17,9 +16,9 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
       productType: productType,
     },
     include: {
-    productdetail: true,
-    imagesalientfeatures: true,
-    images: true
+      productdetail: true,
+      imagesalientfeatures: true,
+      images: true,
     },
     orderBy: {
       createdAt: "desc",
@@ -31,9 +30,9 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
     name: item.name,
     heading: item.heading,
     description: item.description,
-    imagesalientfeatures: item.imagesalientfeatures.map((item)=> item.url),
+    imagesalientfeatures: item.imagesalientfeatures.map((item) => item.url),
     imagesalientfeaturesUrl: item.imagesalientfeatures,
-    images: item.images.map((item)=> item.url),
+    images: item.images.map((item) => item.url),
     imagesUrl: item.images,
     isFeatured: item.isFeatured,
     isArchived: item.isArchived,
@@ -42,14 +41,13 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
     createdAt: item.createdAt,
   }));
   return (
-    <div className="w-full">
-      <div className={`space-y-4 p-8 pt-6 ${showProductRole}`}>
-        {showProductRole && <ProductClient data={formattedProduct} />}
+    <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>
+      <div className="w-full">
+        <div className={`space-y-4 p-8 pt-6 ${showProductRole}`}>
+          {showProductRole && <ProductClient data={formattedProduct} />}
+        </div>
       </div>
-      <RoleGate allowedRole={UserRole.ADMIN || UserRole.STAFF}>
-        <FormSuccess message="Bạn có thể xem được nội dung này!" />
-      </RoleGate>
-    </div>
+    </RoleGate>
   );
 };
 
