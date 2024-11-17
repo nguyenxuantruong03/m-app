@@ -14,6 +14,7 @@ const Footer = dynamic(() => import("@/components/(client)/footer/footer"), {
   ssr: false,
 });
 import type { Metadata } from "next";
+import DropMenuHint from "@/components/(client)/dropmenu-hint";
 
 export const metadata: Metadata & { image: string } = {
   title: "VLXD Xuân Trường",
@@ -34,6 +35,7 @@ export default function RootLayout({
       {children}
       <ScrollButton />
       <Footer />
+      <DropMenuHint />
     </div>
   );
 }

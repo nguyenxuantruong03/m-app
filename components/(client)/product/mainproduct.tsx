@@ -23,29 +23,48 @@ import { useEffect, useState } from "react";
 import "./product-list/product-list.css";
 import ProductListSale from "./product-list/product-list-sale";
 import { Zap } from "lucide-react";
+import RelatedTagPin from "./list-related-tag/related-tag-pin";
+import RelatedTagDaCat from "./list-related-tag/related-tag-dacat";
+import RelatedTagOkhoa from "./list-related-tag/related-tag-okhoa";
+import RelatedTagKeo from "./list-related-tag/related-tag-keo";
+import RelatedTagVatlieunhatam from "./list-related-tag/related-tag-vatlieunhatam";
+import RelatedTagDothuongdung from "./list-related-tag/related-tag-dothuongdung";
+import RelatedTagQuat from "./list-related-tag/related-tag-quat";
 
 interface ProductMainListProps {
   saleProduct: Product[];
-  daydien: Product[];
-  ocam: Product[];
+  pin: Product[];
+  quat: Product[];
   ongnhua: Product[];
-  bongden: Product[];
+  daydien: Product[];
+  dacat: Product[];
+  okhoa: Product[];
+  keo: Product[];
+  ocam: Product[];
   son: Product[];
+  vatlieunhatam: Product[];
+  bongden: Product[];
+  dothuongdung: Product[];
   maxTimeSale: Date | null;
   aggregatedProductTypes: { productType: string; count: number }[];
 }
 const MainProduct: React.FC<ProductMainListProps> = ({
   saleProduct,
-  daydien,
-  ocam,
+  pin,
+  quat,
   ongnhua,
-  bongden,
+  daydien,
+  dacat,
+  okhoa,
+  keo,
+  ocam,
   son,
+  vatlieunhatam,
+  bongden,
+  dothuongdung,
   maxTimeSale,
   aggregatedProductTypes,
 }) => {
-  const [isVisible, setIsVisible] = useState(true);
-
   const productTypeDisplayNames: Record<string, string> = {
     PRODUCT: "Pin",
     PRODUCT1: "Quạt",
@@ -61,35 +80,23 @@ const MainProduct: React.FC<ProductMainListProps> = ({
     PRODUCT11: "Đồ thường dùng",
   };
 
-  useEffect(() => {
-    const showTimeout = 5 * 24 * 60 * 60 * 1000; // 5 days in milliseconds
-    const hideTimeout = 2 * 24 * 60 * 60 * 1000; // 2 days in milliseconds
-
-    const interval = setInterval(
-      () => {
-        setIsVisible((prevVisible) => !prevVisible);
-      },
-      isVisible ? hideTimeout : showTimeout
-    );
-
-    return () => clearInterval(interval);
-  }, [isVisible]);
-
   return (
     <div className="mx-auto max-w-7xl">
       {saleProduct.length > 0 && (
         <>
           <div
-            className={`bg-black bg-opacity-90 rounded-md p-3 ${
-              isVisible ? "block" : "hidden"
-            }`}
+            className="bg-black bg-opacity-90 rounded-md p-3"
           >
             <div className="flex item-center justify-between">
               {maxTimeSale ? (
                 <div className="flex items-center space-x-1 mb-3 xl:mb-0">
                   <div className="flex items-center">
                     <span className="hidden xl:flex items-center text-3xl font-black text-[#de0024] mr-0.5">
-                      F<span><Zap fill="#de0024" className="w-7 h-7"/></span>ash
+                      F
+                      <span>
+                        <Zap fill="#de0024" className="w-7 h-7" />
+                      </span>
+                      ash
                     </span>
                     <span className="text-3xl font-bold text-[#de0024] mr-1">
                       Sale:
@@ -102,7 +109,7 @@ const MainProduct: React.FC<ProductMainListProps> = ({
                     digitBlockStyle={{
                       width: 24,
                       height: 24,
-                      fontSize:24,
+                      fontSize: 24,
                       color: "black",
                       background: "white",
                     }}
@@ -114,16 +121,11 @@ const MainProduct: React.FC<ProductMainListProps> = ({
               <div>
                 <div className="content text-[16px] md:text-[30px] hidden xl:block">
                   <div className="content__container h-[51px] pl-11 pr-[28rem] mt-2.5">
-                    <p className="content__container__text">
-                      Bán chạy
-                    </p>
+                    <p className="content__container__text">Bán chạy</p>
 
                     <ul className="content__container__list pl-[8.5rem] text-[30px] mt-0">
                       {aggregatedProductTypes.map(({ productType, count }) => (
-                        <li
-                          key={productType}
-                          className="m-0 leading-[50px]"
-                        >
+                        <li key={productType} className="m-0 leading-[50px]">
                           {productTypeDisplayNames[productType] || productType}
                         </li>
                       ))}
@@ -254,49 +256,120 @@ const MainProduct: React.FC<ProductMainListProps> = ({
       )}
 
       <>
-        <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0">
+        <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
+          Quạt
+        </h1>
+        <RelatedTagQuat />
+        {quat.length === 0 && <NoResults />}
+        <ProductList data={quat} route="product1" />
+      </>
+
+      <>
+        <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
           Dây điện
         </h1>
         <RelatedTagDaydien />
         {daydien.length === 0 && <NoResults />}
-        <ProductList data={daydien} productType="daydien" />
+        <ProductList data={daydien} route="product3" />
       </>
 
       <>
-        <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0">
+        <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
           Ổ cắm,mặt ổ cắm
         </h1>
         <RelatedTagOcam />
         {ocam.length === 0 && <NoResults />}
-        <ProductListSingle data={ocam} route="ocam" />
+        <ProductListSingle data={ocam} route="product7" />
       </>
 
       <>
-        <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0">
+        <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
           Ống nhựa, Ống lưới xanh
         </h1>
         <RelatedTagOngnhua />
         {ongnhua.length === 0 && <NoResults />}
-        <ProductList data={ongnhua} productType="ongnhua" />
+        <ProductListSingle data={ongnhua} route="product2" />
       </>
 
       <>
-        <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0">
+        <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
           Bóng đèn
         </h1>
         <RelatedTagBongden />
         {bongden.length === 0 && <NoResults />}
-        <ProductList data={bongden} productType="bongden" />
+        <ProductList data={bongden} route="product10" />
       </>
 
-      <>
-        <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0">
-          Sơn
-        </h1>
-        <RelatedTagSon />
-        {son.length === 0 && <NoResults />}
-        <ProductListSingle data={son} route="son" />
-      </>
+      {/* ------Không được ưa tiên hiển thị nếu ko có isFeatured--------- */}
+      {pin.length > 0 && (
+        <>
+          <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
+            Pin
+          </h1>
+          <RelatedTagPin />
+          <ProductListSingle data={pin} route="product0" />
+        </>
+      )}
+
+      {son.length > 0 && (
+        <>
+          <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
+            Sơn
+          </h1>
+          <RelatedTagSon />
+          <ProductListSingle data={son} route="son" />
+        </>
+      )}
+
+      {dacat.length > 0 && (
+        <>
+          <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
+            Đá cắt
+          </h1>
+          <RelatedTagDaCat />
+          <ProductListSingle data={dacat} route="product4" />
+        </>
+      )}
+
+      {okhoa.length > 0 && (
+        <>
+          <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
+            Ổ khóa
+          </h1>
+          <RelatedTagOkhoa />
+          <ProductListSingle data={okhoa} route="product5" />
+        </>
+      )}
+
+      {keo.length > 0 && (
+        <>
+          <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
+            Keo
+          </h1>
+          <RelatedTagKeo />
+          <ProductListSingle data={keo} route="product6" />
+        </>
+      )}
+
+      {vatlieunhatam.length > 0 && (
+        <>
+          <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
+            Vật liệu nhà tắm
+          </h1>
+          <RelatedTagVatlieunhatam />
+          <ProductListSingle data={vatlieunhatam} route="product9" />
+        </>
+      )}
+
+      {dothuongdung.length > 0 && (
+        <>
+          <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
+            Đồ thường dùng
+          </h1>
+          <RelatedTagDothuongdung />
+          <ProductListSingle data={dothuongdung} route="product11" />
+        </>
+      )}
     </div>
   );
 };

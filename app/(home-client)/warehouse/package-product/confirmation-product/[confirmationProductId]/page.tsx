@@ -19,7 +19,7 @@ import {
   ChevronsRight,
   Truck,
   Repeat,
-  ChevronLeft
+  ChevronLeft,
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -75,20 +75,22 @@ const WareHouseDetail = ({
 
   useEffect(() => {
     if (openReview || openReturnProduct) {
-      document.body.style.overflow = 'hidden'; // Ngăn chặn cuộn
+      document.body.style.overflow = "hidden"; // Ngăn chặn cuộn
     } else {
-      document.body.style.overflow = 'auto'; // Khôi phục cuộn
+      document.body.style.overflow = "auto"; // Khôi phục cuộn
     }
 
     // Clean up function to reset overflow when component unmounts
     return () => {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = "auto";
     };
   }, [openReview, openReturnProduct]);
 
   useEffect(() => {
     if (data.length > 0) {
-      const order = data.find((item) => item.id === params.confirmationProductId);
+      const order = data.find(
+        (item) => item.id === params.confirmationProductId
+      );
       if (order) {
         const navbarOrder = generateNavbarOrder(order);
         const activeItem = navbarOrder.findIndex((item) => item.active);
@@ -173,16 +175,6 @@ const WareHouseDetail = ({
 
   const getRouteBasedOnProductType = (productType: any) => {
     switch (productType.toLowerCase()) {
-      case "ongnhua":
-        return "ongnhua";
-      case "bongden":
-        return "bongden";
-      case "daydien":
-        return "daydien";
-      case "ocam":
-        return "ocam";
-      case "son":
-        return "son";
       case "product":
         return "product0";
       case "product1":
@@ -430,174 +422,177 @@ const WareHouseDetail = ({
 
       {loading && <LoadingPageComponent />}
 
-      {
-        matchId.map((order:Order) =>(
-          <div key={order.id} className="bg-zinc-400 bg-opacity-10 rounded-b-md mb-0.5 p-3">
-<div className="flex items-center justify-between">
-                  <div className="text-sm flex items-center">
-                  <ChevronLeft className="w-5 h-5 mr-1"/> TRỞ LẠI
-                  </div>
-                  <div className="flex items-center">
-                    <span className="text-sm">MÃ ĐƠN HÀNG: {order.id}</span>
-                    <Separator
-                      orientation="vertical"
-                      className="border-gray-300 h-5 mx-2"
-                    />
-                    {order.status === "Cho_xac_nhan" && (
-                      <StatusProduct
-                        updatedAt={order.updatedAt}
-                        titleStatus="Chờ xác nhận"
-                        noneTitleStatus={false}
-                        classTitleStatus="text-yellow-600"
-                        status="ĐANG XỬ LÝ"
-                        classStatus="text-red-500"
-                      />
-                    )}
-                    {order.status === "Soan_hang" && (
-                      <StatusProduct
-                        updatedAt={order.updatedAt}
-                        titleStatus="Chuẩn bị hàng"
-                        noneTitleStatus={false}
-                        classTitleStatus="text-yellow-600"
-                        status="SOẠN HÀNG"
-                        classStatus="text-red-500"
-                      />
-                    )}
-                    {order.status === "Cho_lay_hang" && (
-                      <StatusProduct
-                        updatedAt={order.updatedAt}
-                        titleStatus="Chuyển hàng cho shipper"
-                        noneTitleStatus={false}
-                        classTitleStatus="text-yellow-600"
-                        status="BÀN GIAO SHIPPER"
-                        classStatus="text-red-500"
-                      />
-                    )}
-                    {order.status === "Dang_giao" && (
-                      <StatusProduct
-                        updatedAt={order.updatedAt}
-                        titleStatus="Đơn hàng đang giao"
-                        noneTitleStatus={false}
-                        classTitleStatus="text-yellow-600"
-                        status="ĐANG GIAO"
-                        classStatus="text-red-500"
-                      />
-                    )}
-                    {order.status === "Giao_lai_hang" && (
-                      <StatusProduct
-                        updatedAt={order.updatedAt}
-                        titleStatus="Giao lại hàng"
-                        noneTitleStatus={false}
-                        classTitleStatus="text-yellow-600"
-                        status="ĐANG GIAO LẠI HÀNG"
-                        classStatus="text-red-500"
-                      />
-                    )}
-                    {order.status === "Da_giao" && (
-                      <StatusProduct
-                        updatedAt={order.updatedAt}
-                        titleStatus="Giao hàng thành công"
-                        noneTitleStatus={false}
-                        classTitleStatus="text-green-600"
-                        status="HOÀN THÀNH"
-                        classStatus="text-red-500"
-                      />
-                    )}
-                    {order.status === "Da_huy" && (
-                      <StatusProduct
-                        updatedAt={order.updatedAt}
-                        titleStatus="Đơn hơn đã hủy"
-                        noneTitleStatus={false}
-                        classTitleStatus="text-red-600"
-                        status="HỦY ĐƠN HÀNG"
-                        classStatus="text-red-500"
-                      />
-                    )}
-                    {order.status === "Tra_hang" && (
-                      <StatusProduct
-                        updatedAt={order.updatedAt}
-                        titleStatus="Trả hàng lại shop"
-                        noneTitleStatus={false}
-                        classTitleStatus="text-red-600"
-                        status="TRẢ HÀNG"
-                        classStatus="text-red-500"
-                      />
-                    )}
-                    {order.status === "Shipper_chuan_bi" && (
-                      <StatusProduct
-                        updatedAt={order.updatedAt}
-                        titleStatus="Shipper đang xác nhận đơn hàng"
-                        noneTitleStatus={false}
-                        classTitleStatus="text-red-600"
-                        status="SHIPPER CHUẨN BỊ ĐẾN"
-                        classStatus="text-red-500"
-                      />
-                    )}
-                    {order.status === "Shipper_dang_den" && (
-                      <StatusProduct
-                        updatedAt={order.updatedAt}
-                        titleStatus="Shipper đang đến nhận lại hàng"
-                        noneTitleStatus={false}
-                        classTitleStatus="text-red-600"
-                        status="NHẬN HÀNG"
-                        classStatus="text-red-500"
-                      />
-                    )}
-                    {order.status === "Da_nhan_tra_hang" && (
-                      <StatusProduct
-                        updatedAt={order.updatedAt}
-                        titleStatus="Đã nhận lại hàng có vấn đề"
-                        noneTitleStatus={false}
-                        classTitleStatus="text-red-600"
-                        status="TRẢ HÀNG THÀNH CÔNG"
-                        classStatus="text-red-500"
-                      />
-                    )}
-                    {order.status === "Nhan_tai_cua_hang" && (
-                      <StatusProduct
-                        updatedAt={order.updatedAt}
-                        titleStatus="Nhận tại cửa hàng"
-                        noneTitleStatus={false}
-                        classTitleStatus="text-yellow-600"
-                        status="NHẬN HÀNG TẠI CỬA HÀNG"
-                        classStatus="text-red-500"
-                      />
-                    )}
-                    {order.status === "Soan_hang_nhan_tai_cua_hang" && (
-                      <StatusProduct
-                        updatedAt={order.updatedAt}
-                        titleStatus="Đang soạn hàng"
-                        noneTitleStatus={false}
-                        classTitleStatus="text-yellow-600"
-                        status="SOẠN HÀNG"
-                        classStatus="text-red-500"
-                      />
-                    )}
-                    {order.status === "Da_soan_hang_xong" && (
-                      <StatusProduct
-                        updatedAt={order.updatedAt}
-                        titleStatus="Đã soạn hàng xong"
-                        noneTitleStatus={false}
-                        classTitleStatus="text-yellow-600"
-                        status="KHÁCH HÀNG ĐẾN NHẬN"
-                        classStatus="text-red-500"
-                      />
-                    )}
-                    {order.status === "Da_nhan_tai_cua_hang" && (
-                      <StatusProduct
-                        updatedAt={order.updatedAt}
-                        titleStatus="Giao hàng thành công"
-                        noneTitleStatus={false}
-                        classTitleStatus="text-green-600"
-                        status="HOÀN THÀNH"
-                        classStatus="text-red-500"
-                      />
-                    )}
-                  </div>
-                </div>
-                </div>
-        ))
-      }
+      {matchId.map((order: Order) => (
+        <div
+          key={order.id}
+          className="bg-zinc-400 bg-opacity-10 rounded-b-md mb-0.5 p-3"
+        >
+          <div className="flex items-center justify-between">
+            <Link href="/warehouse/package-product/confirmation-product" className="text-sm flex items-center text-slate-900 dark:text-slate-300 hover:text-slate-800 dark:hover:text-slate-200">
+            <ChevronLeft className="w-7 h-7 md:w-5 md:h-5 mr-1" /> <span className="hidden md:block">TRỞ LẠI</span>
+            </Link>
+            <div className="flex items-center">
+              <span className="w-9/12 md:w-6/12 lg:w-full text-sm text-slate-900 dark:text-slate-200">
+                <span className="font-semibold">MÃ ĐƠN HÀNG:</span> {order.id}
+              </span>
+              <Separator
+                orientation="vertical"
+                className="border-gray-300 h-5 mx-2"
+              />
+              {order.status === "Cho_xac_nhan" && (
+                <StatusProduct
+                  updatedAt={order.updatedAt}
+                  titleStatus="Chờ xác nhận"
+                  noneTitleStatus={false}
+                  classTitleStatus="text-yellow-600"
+                  status="ĐANG XỬ LÝ"
+                  classStatus="text-red-500"
+                />
+              )}
+              {order.status === "Soan_hang" && (
+                <StatusProduct
+                  updatedAt={order.updatedAt}
+                  titleStatus="Chuẩn bị hàng"
+                  noneTitleStatus={false}
+                  classTitleStatus="text-yellow-600"
+                  status="SOẠN HÀNG"
+                  classStatus="text-red-500"
+                />
+              )}
+              {order.status === "Cho_lay_hang" && (
+                <StatusProduct
+                  updatedAt={order.updatedAt}
+                  titleStatus="Chuyển hàng cho shipper"
+                  noneTitleStatus={false}
+                  classTitleStatus="text-yellow-600"
+                  status="BÀN GIAO SHIPPER"
+                  classStatus="text-red-500"
+                />
+              )}
+              {order.status === "Dang_giao" && (
+                <StatusProduct
+                  updatedAt={order.updatedAt}
+                  titleStatus="Đơn hàng đang giao"
+                  noneTitleStatus={false}
+                  classTitleStatus="text-yellow-600"
+                  status="ĐANG GIAO"
+                  classStatus="text-red-500"
+                />
+              )}
+              {order.status === "Giao_lai_hang" && (
+                <StatusProduct
+                  updatedAt={order.updatedAt}
+                  titleStatus="Giao lại hàng"
+                  noneTitleStatus={false}
+                  classTitleStatus="text-yellow-600"
+                  status="ĐANG GIAO LẠI HÀNG"
+                  classStatus="text-red-500"
+                />
+              )}
+              {order.status === "Da_giao" && (
+                <StatusProduct
+                  updatedAt={order.updatedAt}
+                  titleStatus="Giao hàng thành công"
+                  noneTitleStatus={false}
+                  classTitleStatus="text-green-600"
+                  status="HOÀN THÀNH"
+                  classStatus="text-red-500"
+                />
+              )}
+              {order.status === "Da_huy" && (
+                <StatusProduct
+                  updatedAt={order.updatedAt}
+                  titleStatus="Đơn hàng đã hủy"
+                  noneTitleStatus={false}
+                  classTitleStatus="text-red-600"
+                  status="HỦY ĐƠN HÀNG"
+                  classStatus="text-red-500"
+                />
+              )}
+              {order.status === "Tra_hang" && (
+                <StatusProduct
+                  updatedAt={order.updatedAt}
+                  titleStatus="Trả hàng lại shop"
+                  noneTitleStatus={false}
+                  classTitleStatus="text-red-600"
+                  status="TRẢ HÀNG"
+                  classStatus="text-red-500"
+                />
+              )}
+              {order.status === "Shipper_chuan_bi" && (
+                <StatusProduct
+                  updatedAt={order.updatedAt}
+                  titleStatus="Shipper đang xác nhận đơn hàng"
+                  noneTitleStatus={false}
+                  classTitleStatus="text-red-600"
+                  status="SHIPPER CHUẨN BỊ ĐẾN"
+                  classStatus="text-red-500"
+                />
+              )}
+              {order.status === "Shipper_dang_den" && (
+                <StatusProduct
+                  updatedAt={order.updatedAt}
+                  titleStatus="Shipper đang đến nhận lại hàng"
+                  noneTitleStatus={false}
+                  classTitleStatus="text-red-600"
+                  status="NHẬN HÀNG"
+                  classStatus="text-red-500"
+                />
+              )}
+              {order.status === "Da_nhan_tra_hang" && (
+                <StatusProduct
+                  updatedAt={order.updatedAt}
+                  titleStatus="Đã nhận lại hàng có vấn đề"
+                  noneTitleStatus={false}
+                  classTitleStatus="text-red-600"
+                  status="TRẢ HÀNG THÀNH CÔNG"
+                  classStatus="text-red-500"
+                />
+              )}
+              {order.status === "Nhan_tai_cua_hang" && (
+                <StatusProduct
+                  updatedAt={order.updatedAt}
+                  titleStatus="Nhận tại cửa hàng"
+                  noneTitleStatus={false}
+                  classTitleStatus="text-yellow-600"
+                  status="NHẬN TẠI CỬA HÀNG"
+                  classStatus="text-red-500"
+                />
+              )}
+              {order.status === "Soan_hang_nhan_tai_cua_hang" && (
+                <StatusProduct
+                  updatedAt={order.updatedAt}
+                  titleStatus="Đang soạn hàng"
+                  noneTitleStatus={false}
+                  classTitleStatus="text-yellow-600"
+                  status="SOẠN HÀNG"
+                  classStatus="text-red-500"
+                />
+              )}
+              {order.status === "Da_soan_hang_xong" && (
+                <StatusProduct
+                  updatedAt={order.updatedAt}
+                  titleStatus="Đã soạn hàng xong"
+                  noneTitleStatus={false}
+                  classTitleStatus="text-yellow-600"
+                  status="KHÁCH HÀNG ĐẾN NHẬN"
+                  classStatus="text-red-500"
+                />
+              )}
+              {order.status === "Da_nhan_tai_cua_hang" && (
+                <StatusProduct
+                  updatedAt={order.updatedAt}
+                  titleStatus="Giao hàng thành công"
+                  noneTitleStatus={false}
+                  classTitleStatus="text-green-600"
+                  status="HOÀN THÀNH"
+                  classStatus="text-red-500"
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      ))}
 
       {matchId.map((order: Order) => {
         const navbarOrder = generateNavbarOrder(order);
@@ -623,7 +618,7 @@ const WareHouseDetail = ({
                     } ${i + 1 < currentStep && "complete"} `}
                   >
                     <div className="step">{item.icon}</div>
-                    <p className="text-slate-900 text-sm">{item.label}</p>
+                    <p className="text-slate-900 dark:text-slate-200 text-sm">{item.label}</p>
                   </div>
                 ))}
               </div>
@@ -645,18 +640,18 @@ const WareHouseDetail = ({
             {!isOverThreeDays &&
               !order.returnProduct &&
               (order.status === "Da_giao" ||
-                order.status === "Nhan_tai_cua_hang") && (
+                order.status === "Da_nhan_tai_cua_hang") && (
                 <>
-                  <div className="bg-[#fbf5e8] rounded-t-md mt-px px-5 py-3">
+                  <div className="bg-[#fbf5e8] dark:bg-slate-700 rounded-t-md mt-px px-5 py-3">
                     <div className="flex">
                       <div className="w-3/4">
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-gray-400 dark:text-slate-200">
                           Nếu hàng nhận được có vấn đề, bạn có thể gửi yêu cầu
                           Trả hàng/Hoàn tiền trước trước 3 ngày kể từ ngày bạn
                           nhận.
                         </p>
                         <p className="text-xs text-gray-400">
-                          Giải quết đơn hàng trước{" "}
+                          Giải quyết đơn hàng trước{" "}
                           {
                             <FormatDate
                               subtractiontime={true}
@@ -665,17 +660,17 @@ const WareHouseDetail = ({
                           }
                           .
                         </p>
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-gray-400 dark:text-slate-200">
                           Có vấn đề về đơn hàng liên hệ số điện thoại{" "}
                           <Link href="tel:0352261103" className="underline">
                             0352261103
                           </Link>{" "}
                         </p>
                       </div>
-                      <div className="w-1/4">
+                      <div className="w-[40%] md:w-1/4">
                         <Button
                           disabled={loading}
-                          className="bg-red-500"
+                          className="bg-red-500 text-slate-900 dark:text-slate-200 dark:hover:text-slate-900"
                           onClick={() => setOpenReview(true)}
                         >
                           Đánh giá
@@ -684,44 +679,44 @@ const WareHouseDetail = ({
                     </div>
                   </div>
                   <div
-                    className="bg-[#fbf5e8] rounded-t-md mt-px px-5 py-3"
+                    className="bg-[#fbf5e8] dark:bg-slate-700 rounded-t-md mt-px px-2 md:px-5 py-3"
                     onClick={() => setOpenReturnProduct(true)}
                   >
                     <div className="flex">
                       <div className="w-3/4"></div>
-                      <div className="w-1/4">
+                      <div className="w-[40%] md:w-1/4">
                         <Button
                           disabled={loading}
                           variant="outline"
-                          className="bg-transparent"
+                          className="bg-transparent text-slate-900 dark:text-slate-200 dark:border px-1 dark:border-white text-xs md:text-sm"
                         >
-                          Yêu cầu Trả Hàng/Hoàn Tiền
+                          Trả Hàng/Hoàn Tiền
                         </Button>
                       </div>
                     </div>
                   </div>
-                  <div className="bg-[#fbf5e8] rounded-t-md mt-px px-5 py-3">
+                  <div className="bg-[#fbf5e8] dark:bg-slate-700 rounded-t-md mt-px px-2 md:px-5 py-3">
                     <div className="flex">
                       <div className="w-3/4"></div>
-                      <div className="w-1/4">
+                      <div className="w-[40%] md:w-1/4">
                         <Button
                           disabled={loading}
                           variant="outline"
-                          className="bg-transparent"
+                          className="bg-transparent text-slate-900 dark:text-slate-200 dark:border dark:border-white text-xs md:text-sm"
                         >
-                          <Link href="tel:0352261103">Liên hệ của hàng</Link>
+                          <Link href="tel:0352261103">Liên hệ cửa hàng</Link>
                         </Button>
                       </div>
                     </div>
                   </div>
-                  <div className="bg-[#fbf5e8] rounded-t-md mt-px px-5 py-3">
+                  <div className="bg-[#fbf5e8] dark:bg-slate-700 rounded-t-md mt-px px-2 md:px-5 py-3">
                     <div className="flex">
                       <div className="w-3/4"></div>
-                      <div className="w-1/4">
+                      <div className="w-[40%] md:w-1/4">
                         <Button
                           disabled={loading}
                           variant="outline"
-                          className="bg-transparent"
+                          className="bg-transparent text-slate-900 dark:text-slate-200 dark:border dark:border-white text-xs md:text-sm"
                           onClick={() => handleBuyAgainClick(order)}
                         >
                           Mua lại
@@ -733,16 +728,16 @@ const WareHouseDetail = ({
                   <div className="separatorCustom" />
                   <div className="bg-zinc-400 bg-opacity-10 px-5 py-3">
                     <div className="flex">
-                      <div className="w-1/4 space-y-2">
-                        <p className="font-semibold">Địa chỉ nhận hàng</p>
-                        <p className="text-sm">{order.name}</p>
+                      <div className="w-1/2 space-y-2">
+                        <p className="font-semibold text-slate-900 dark:text-slate-200">Địa chỉ nhận hàng</p>
+                        <p className="text-sm text-slate-900 dark:text-slate-200">{order.name}</p>
                         <p className="text-gray-400 text-xs">{order.phone}</p>
                         <p className="text-gray-400 text-xs">{order.address}</p>
                         <p className="text-gray-400 text-xs">
                           {order.adressOther}
                         </p>
                       </div>
-                      <div className="w-3/4">
+                      <div className="w-1/2">
                         {/* TODO: Làm google map hiển thị vị trí hiện tại của shipper hoặc ẩn  */}
                       </div>
                     </div>
@@ -796,7 +791,7 @@ const WareHouseDetail = ({
                   }}
                   className="flex items-center cursor-pointer"
                 >
-                  <div className="w-1/12">
+                  <div className="w-3/12 md:w-1/6 lg:w-1/12">
                     {typeof imageUrl === "string" ? (
                       <Image
                         src={imageUrl}
@@ -815,22 +810,22 @@ const WareHouseDetail = ({
                     )}
                   </div>
                   <div className="w-3/4 pl-3">
-                    <p className="truncate max-w-xl">
+                    <p className="truncate max-w-[8rem] md:max-w-xs lg:max-w-lg xl:max-w-xl text-slate-900 dark:text-slate-200">
                       {orderItem.product?.heading}
                     </p>
-                    <p className="flex text-xs text-gray-500">
+                    <p className="flex text-xs text-gray-500 dark:text-gray-400">
                       Phân loại màu:
                       <div
                         className="h-4 w-4 rounded-full ml-2"
                         style={{ backgroundColor: orderItem.color }}
                       />
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
                       Phân loại kích thước: {orderItem.size}
                     </p>
-                    <p>x{orderItem.quantity}</p>
+                    <p className="text-slate-900 dark:text-slate-200">x{orderItem.quantity}</p>
                   </div>
-                  <div className="w-1/5 text-end">
+                  <div className="w-4/12 md:w-1/5 text-end text-slate-900 dark:text-slate-200">
                     {formatter.format(getPriceMatchColorandSize())}
                   </div>
                 </div>
@@ -842,18 +837,18 @@ const WareHouseDetail = ({
 
           {/* Đây là return ngoài order còn bên trong kia orderItem nó sẽ lặp lại trên mỗi Item còn đây chỉ lặp trên 1 order 1 cái*/}
           <div className="flex items-center justify-between mt-8">
-            <span>Thành tiền:</span>{" "}
+            <span className="text-slate-900 dark:text-slate-200 text-sm md:text-base">Thành tiền:</span>{" "}
             <Currency value={calculateTotalPrice(order)} />
           </div>
           <div>
             <Separator className="my-2 bg-gray-300" />
             <div className="flex items-center justify-between">
-              <div>Phương thức thanh toán:</div>
+              <div className="text-slate-900 dark:text-slate-200 text-sm md:text-base">Phương thức thanh toán:</div>
               <div>
                 {order.isPaid === false ? (
-                  <span>Thanh toán tiền mặt</span>
+                  <span className="text-yellow-500 text-sm md:text-base">Thanh toán tiền mặt</span>
                 ) : (
-                  <span>Thanh toán online</span>
+                  <span  className="text-green-500 text-sm md:text-base">Thanh toán online</span>
                 )}
               </div>
             </div>

@@ -38,9 +38,9 @@ export default class TrPortal extends Component<{}, TrPortalState> {
         <Segment
           style={{ left: "40%", position: "fixed", top: "60%", zIndex: 1000 }}
         >
-          <Header>This is an example portal</Header>
-          <p>Portals have tons of great callback functions to hook into.</p>
-          <p>To close, simply click the close button or click away</p>
+          <Header className="text-slate-900 dark:text-slate-200">This is an example portal</Header>
+          <p className="text-slate-900 dark:text-slate-200">Portals have tons of great callback functions to hook into.</p>
+          <p className="text-slate-900 dark:text-slate-200">To close, simply click the close button or click away</p>
         </Segment>
       </TransitionablePortal>
     );

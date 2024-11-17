@@ -32,7 +32,7 @@ export default async function NewsPage() {
     </ul>
     </section>
     <section className="mt-6 max-w-3xl mx-auto hidden md:block lg:hidden">
-    <h2 className="text-4xl font-bold "> Tin tức</h2>
+    <h2 className="text-4xl font-bold dark:text-slate-200 text-slate-900"> Tin tức</h2>
     <ul className=" gap-3 grid grid-cols-3">
     {displayedPostsinfoproduct3.map(post => (
         <ListItem key={post.id} post={post} />
@@ -40,7 +40,7 @@ export default async function NewsPage() {
     </ul>
     </section>
     <section className="mt-6 max-w-3xl mx-auto md:hidden">
-    <h2 className="text-4xl font-bold "> Tin tức</h2>
+    <h2 className="text-4xl font-bold dark:text-slate-200 text-slate-900"> Tin tức</h2>
     <ul className="grid grid-cols-1">
     {displayedPostsinfoproduct1.map(post => (
         <ListItem key={post.id} post={post} />

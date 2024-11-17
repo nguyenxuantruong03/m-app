@@ -15,7 +15,7 @@ const SlideItem = () => {
 
   useEffect(() => {
     const fetchBillboards = async () => {
-      const billboardData = await getBillboard("clwhlmp7n00018fr35xftz3jk");
+      const billboardData = await getBillboard(`${process.env.NEXT_PUBLIC_BILLBOARD_API_KEY}`);
       setBillboard(billboardData);
       setBillboardMini({ ...billboardData, id: `${process.env.NEXT_PUBLIC_BILLBOARD_API_KEY}` });
       setBillboardSale({ ...billboardData, id: `${ process.env.NEXT_PUBLIC_BILLBOARD_MINI_API_KEY}` });

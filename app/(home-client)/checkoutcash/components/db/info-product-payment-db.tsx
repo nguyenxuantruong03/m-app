@@ -204,16 +204,6 @@ const InfoProductPaymentDb: React.FC<CartItemProps> = ({
 
   const getRouteBasedOnProductType = (productType: any) => {
     switch (productType.toLowerCase()) {
-      case "ongnhua":
-        return "ongnhua";
-      case "bongden":
-        return "bongden";
-      case "daydien":
-        return "daydien";
-      case "ocam":
-        return "ocam";
-      case "son":
-        return "son";
       case "product":
         return "product0";
       case "product1":
@@ -307,10 +297,10 @@ const InfoProductPaymentDb: React.FC<CartItemProps> = ({
               className="h-6 w-6 rounded-full"
               style={{ backgroundColor: data.color }}
             />
-            <p className="text-gray-500 ml-4 border-1 border-gray-200">
+            <p className="text-gray-500 dark:text-slate-200 ml-4 border-1 border-gray-200">
               {data.size}
             </p>
-            <p className="text-gray-500 ml-4 border-1 border-gray-200">
+            <p className="text-gray-500 dark:text-slate-200 ml-4 border-1 border-gray-200">
               {data.product.productdetail.category?.name}
             </p>
           </div>
@@ -320,7 +310,7 @@ const InfoProductPaymentDb: React.FC<CartItemProps> = ({
               disabled={loading || productQuantityAll || quantityInventory}
               variant="outline"
               onClick={decrementQuantity} // Single click to decrement
-              className="w-10 h-10 flex justify-center items-center border rounded-md border-gray-300 bg-white hover:bg-gray-200 hover:bg-opacity-50 hover:text-slate-900"
+              className="w-7 h-7 md:w-10 md:h-10 flex justify-center items-center border rounded-md border-gray-300 bg-white hover:bg-gray-200 hover:bg-opacity-50 hover:text-slate-900"
             >
               -
             </Button>
@@ -328,7 +318,7 @@ const InfoProductPaymentDb: React.FC<CartItemProps> = ({
               <Input
                 disabled={loading || productQuantityAll || quantityInventory}
                 type="number"
-                className="text-xl mx-1 border rounded-md border-gray-300 w-20 text-center bg-white focus:bg-white hover:bg-white"
+                className="text-base md:text-xl mx-1 border rounded-md border-gray-300 w-12 md:w-20 h-7 md:h-10 text-center bg-white focus:bg-white hover:bg-white"
                 value={quantity}
                 onChange={handleQuantityChange}
                 onBlur={() => setIsEditingQuantity(false)}
@@ -336,7 +326,7 @@ const InfoProductPaymentDb: React.FC<CartItemProps> = ({
               />
             ) : (
               <span
-                className="text-xl mx-1 border rounded-md border-gray-300 w-20 py-1.5 text-center bg-white cursor-pointer"
+                className="text-base md:text-xl mx-1 border rounded-md border-gray-300 w-12 md:w-20 md:pt-1.5 text-center bg-white cursor-pointer"
                 onClick={() => setIsEditingQuantity(true)}
               >
                 {quantity}
@@ -352,7 +342,7 @@ const InfoProductPaymentDb: React.FC<CartItemProps> = ({
               }
               variant="outline"
               onClick={incrementQuantity} // Single click to decrement
-              className="w-10 h-10 flex justify-center items-center border rounded-md border-gray-300 bg-white hover:bg-gray-200 hover:bg-opacity-50 hover:text-slate-900"
+              className="w-7 h-7 md:w-10 md:h-10 flex justify-center items-center border rounded-md border-gray-300 bg-white hover:bg-gray-200 hover:bg-opacity-50 hover:text-slate-900"
             >
               +
             </Button>
@@ -367,7 +357,7 @@ const InfoProductPaymentDb: React.FC<CartItemProps> = ({
           <div className="text-red-500">Còn {maxQuantity} sản phẩm</div>
         )}
 
-        <div className="mt-1 text-sm text-gray-500">
+        <div className="mt-1 text-sm text-gray-500 dark:text-slate-200">
           Giá tiền bảo hành cho {data.product.heading}:
           {data.warranty ? (
             <span>

@@ -1,5 +1,5 @@
 export const root={
-  bgwhite: "bg-white"
+  bgwhite: "dark:bg-gradient-to-r from-slate-800 to-slate-900 bg-white"
 }
 //// ----------comment ---------////
 export const commentcolor = {
@@ -7,23 +7,23 @@ export const commentcolor = {
     grey: "#a9a9a9",
     gradient: "linear-gradient(135deg, #CC0000, #FF0000)",
     gradienthover: " linear-gradient(135deg,#880000, #ec2f4b)",
-    text: "text-[#CC0000]"
+    text: "text-slate-900 dark:text-slate-200 text-end"
   };
 
 //// ----------footer ---------////
 export const footercolor ={
-  text: "text-lg ml-3 md:ml-0 text-[#4a4a4a] underline md:no-underline",
-  textmt: "text-lg text-[#4a4a4a] mt-6 underline md:no-underline",
-  textml: "text-lg text-[#4a4a4a] ml-3 underline md:no-underline",
-  gridrows3: "grid grid-row-3 m-2 text-sm space-y-1 text-[#4a4a4a]",
-  gridcols5:"grid grid-cols-5 m-2 text-sm space-y-1 text-[#4a4a4a] md:-ml-16 lg:ml-0 mb-8 md:mb-0",
-  gridrows8:"grid grid-rows-8 m-2 text-sm space-y-1 text-[#4a4a4a]",
-  gridrows10:"grid grid-rows-10 m-2 text-sm space-y-1 text-[#4a4a4a]"
+  text: "text-lg ml-3 md:ml-0 text-[#4a4a4a] dark:text-slate-200 underline md:no-underline",
+  textmt: "text-lg text-[#4a4a4a] dark:text-slate-200 mt-6 underline md:no-underline",
+  textml: "text-lg text-[#4a4a4a] dark:text-slate-200 ml-3 underline md:no-underline",
+  gridrows3: "grid grid-row-3 m-2 text-sm space-y-1 text-[#4a4a4a] dark:text-slate-200",
+  gridcols5:"grid grid-cols-5 m-2 text-sm  text-[#4a4a4a] dark:text-slate-200 md:-ml-16 lg:ml-0 mb-8 md:mb-0",
+  gridrows8:"grid grid-rows-8 m-2 text-sm space-y-1 text-[#4a4a4a] dark:text-slate-200",
+  gridrows10:"grid grid-rows-10 m-2 text-sm space-y-1 text-[#4a4a4a] dark:text-slate-200"
   }
 
 export const freeSupportHotlinecolor ={
-  text: " text-sm text-[#4a4a4a]",
-  textfont: "font-extrabold text-[#585858]"
+  text: " text-sm text-[#4a4a4a] dark:text-slate-200",
+  textfont: "font-extrabold text-[#585858] dark:text-white"
 }
 
 export const InformationCompanyFootercolor ={
@@ -31,7 +31,7 @@ textflex: "flex items-center justify-center text-[#a6a6a6] space-y-2"
 }
 
 export const InfomationWebsitecolor={
-  textfont: "font-extrabold text-[#585858]"
+  textfont: "font-extrabold text-[#585858] dark:text-white"
 }
 //// ----------infoproduct ---------////
 
@@ -45,7 +45,7 @@ export const mainnavcolor={
   bg_rounded_cursor: "bg-[#e53350]  px-2  rounded-lg ",
   bgrounded:"bg-[#e53350]  px-2  rounded-lg ",
   bgroundedmd:"bg-[#e53350] px-1 m-0  md:px-2  rounded-lg md:m-1.5",
-  bghover: "rounded-lg p-2 hover:bg-[#e53350] ",
+  bghover: "rounded-lg p-2 hover:bg-[#e53350] dark:hover:bg-[#e53350]",
   bg_dang_nhap:"bg-[#e53350]  px-2 py-1  rounded-lg ",
   bghover_gio_hang:" rounded-lg p-2 md:p-2 md:hover:bg-[#e53350] ",
   bg_list:"bg-[#e53350] p-2 rounded-lg cursor-pointer pr-2.5"
@@ -88,8 +88,8 @@ export const relatedTagWatchcolor ={
 
 //// ----------slider-item ---------////
 export const menutreecolor ={
-  texthover:"hover:text-red-500",
-  flex_hover_bg:"flex relative cursor-pointer rounded-sm px-2 hover:bg-slate-200 pt-1.5 pb-1"
+  texthover:"hover:text-red-500 text-slate-900 dark:text-slate-200 dark:hover:text-red-500",
+  flex_hover_bg:"flex items-center justify-between cursor-pointer rounded-sm px-2 hover:bg-gray-400 hover:bg-opacity-20 pt-1.5 pb-1"
 }
 
 //// ----------suggest ---------////
@@ -118,5 +118,5 @@ export const secondhandcolor = {
 } 
 
 export const suggestcolor ={
-textcolor: "text-3xl font-bold my-2 text-[#444444] md:ml-6 lg:ml-0"
+textcolor: "text-3xl font-bold my-2 text-[#444444] dark:text-slate-200 md:ml-6 lg:ml-0"
 }

@@ -31,6 +31,7 @@ model Store {
   wheelspin      WheelSpin[]      @relation("StoreToWheelSpin")
   system         System[]         @relation("StoreToSystem")
   favorite       Favorite[]       @relation("StoreToFavorite")
+  feedBack       FeedBack[]       @relation("StoreToFeedBack")
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 }
@@ -56,6 +57,7 @@ model ImageBillboard {
   label       String?
   description String?
   url         String
+  link        String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -299,12 +301,12 @@ model Product {
   productdetailId      String
   productdetail        ProductDetail          @relation("ProductDetailToProduct", fields: [productdetailId], references: [id])
 
-  isProductShowLive    Boolean                @default(false)
-  isProductLivePin     Boolean                @default(false)
+  isProductShowLive Boolean @default(false)
+  isProductLivePin  Boolean @default(false)
 
-  timeSaleStart        DateTime?
-  timeSaleEnd          DateTime?
-  isSale               Boolean                @default(false)
+  timeSaleStart DateTime?
+  timeSaleEnd   DateTime?
+  isSale        Boolean   @default(false)
 
   @@index([storeId])
   @@index([productdetailId])
@@ -604,7 +606,7 @@ model User {
   id              String            @id @default(cuid())
   name            String?
   nameuser        String?           @unique
-  favorite        String[]          
+  favorite        String[]
   bio             String?
   email           String?           @unique
   address         String?
@@ -667,8 +669,8 @@ model User {
   daywork                  String[]
 
   //Stream
-  following      Follow[] @relation("Following")
-  followedBy     Follow[] @relation("FollowedBy")
+  following  Follow[] @relation("Following")
+  followedBy Follow[] @relation("FollowedBy")
 
   blocking Block[] @relation("Blocking")
   blocked  Block[] @relation("Blocked")
@@ -691,6 +693,8 @@ model User {
   order                 Order[]
   favoritePoroduct      FavoriteProduct[]
   review                Review[]
+  leaderboard           Leaderboard[]
+  feedback              FeedBack[]
   showInfomation        ShowInfomation?
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
@@ -1066,7 +1070,7 @@ model Review {
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   imageReview  ImageReview[]
   emoji        Emoji[]
-  isPublic     String      
+  isPublic     String
   content      String
   rating       Int
   productId    String
@@ -1090,4 +1094,34 @@ model ImageReview {
   updatedAt DateTime @updatedAt
 
   @@index([reviewId])
+}
+
+model Leaderboard {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  score  Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model FeedBack {
+  id      String  @id @default(cuid())
+  userId  String
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  storeId String?
+  store   Store?  @relation("StoreToFeedBack", fields: [storeId], references: [id])
+
+  emotion          Int
+  category         Int
+  content          String   
+  timeNextResponse DateTime @default(now())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([userId])
+  @@index([storeId])
 }

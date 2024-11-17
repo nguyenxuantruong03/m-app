@@ -8,6 +8,7 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import { Autoplay, Pagination, Scrollbar } from "swiper/modules";
 import { Billboard } from "@/types/type";
+import Link from "next/link";
 
 interface SliderSwiperProps {
   data: Billboard | null;
@@ -20,17 +21,19 @@ const SliderSwiper: React.FC<SliderSwiperProps> = ({ data }) => {
   const renderSlides = () => {
     return data?.imagebillboard?.map((image, index) => (
       <SwiperSlide key={index}>
-        <div className="overflow-hidden rounded-xl md:aspect-[1/1] bg-cover">
-          <Image
-            src={image.url}
-            fill
-            alt="Image"
-            className="aspect-square object-cover rounded-md"
-            placeholder="blur"
-            blurDataURL="/images/signup-ipad.png"
-            loading="lazy"
-          />
-        </div>
+        <Link href={`${image.link ? `${image.link}` : `/home-product`} `}>
+          <div className="overflow-hidden rounded-xl md:aspect-[1/1] bg-cover">
+            <Image
+              src={image.url}
+              fill
+              alt="Image"
+              className="aspect-square object-cover rounded-t-md"
+              placeholder="blur"
+              blurDataURL="/images/signup-ipad.png"
+              loading="lazy"
+            />
+          </div>
+        </Link>
       </SwiperSlide>
     ));
   };
@@ -45,7 +48,7 @@ const SliderSwiper: React.FC<SliderSwiperProps> = ({ data }) => {
       <button
         key={index}
         onClick={() => handleLabelClick(index)}
-        className={`flex-grow p-4 cursor-pointer hover:bg-gray-300 hover:bg-opacity-30 ${activeIndex === index ? "text-gray-900 font-semibold border-b-2 border-red-500" : "text-gray-500"}`}
+        className={`flex-grow p-4 cursor-pointer hover:bg-gray-300 hover:bg-opacity-30 ${activeIndex === index ? "text-red-500 font-semibold border-b-2 border-red-500" : "text-gray-500 dark:text-slate-200"}`}
       >
         <div className="flex flex-col items-center">
           <p className="text-center">{image.label}</p>
@@ -57,7 +60,7 @@ const SliderSwiper: React.FC<SliderSwiperProps> = ({ data }) => {
   
 
   return (
-    <div className="w-[90vw] md:w-[70vw] lg:w-[750px] rounded-md shadow-md">
+    <div className="w-[90vw] md:w-[70vw] lg:w-[750px] rounded-md shadow-md dark:bg-slate-700">
       <Swiper
         ref={swiperRef}
         spaceBetween={20}
@@ -71,7 +74,7 @@ const SliderSwiper: React.FC<SliderSwiperProps> = ({ data }) => {
         }}
         onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
         modules={[Autoplay, Pagination, Scrollbar]}
-        className="h-[330px] md:h-[350px] lg:h-[324px] relative group"
+        className="h-[330px] md:h-[350px] relative group"
       >
         {renderSlides()}
         <div className="absolute top-10 z-10 hidden group-hover:block">

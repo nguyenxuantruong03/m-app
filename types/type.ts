@@ -13,6 +13,7 @@ export interface ImageBillboard {
   id: string;
   url: string;
   label: string;
+  link: string | null;
   description: string;
 }
 
@@ -352,6 +353,19 @@ export interface ImageCoupon {
   id: string;
   url: string;
 }
+
+export interface Leaderboard {
+  id:string; 
+  score: number
+  user: User
+}
+
+export type ChatMessage = {
+  type: "user" | "bot";
+  message: string;
+  timestamp: string;
+};
+
 
 //-------------------------Pacman---------------------------
 export type Character = {

@@ -75,7 +75,7 @@ const Delivery: React.FC<DeliveryProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-md shadow-lg p-4 mb-2">
+    <div className="bg-gray-50 dark:bg-slate-600 rounded-md shadow-lg p-4 mb-2">
       <h1 className="font-bold text-blue-500">Hình thức nhận hàng </h1>
       <div className="flex mt-4 items-center">
         <div>

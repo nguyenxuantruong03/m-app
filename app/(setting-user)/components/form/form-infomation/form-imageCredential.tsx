@@ -154,7 +154,7 @@ const FormImageCredential = ({setOpen}:FormImageCredentialProps) => {
         </div>
         <div className="space-y-4">
           <FormLabel className="text-white">Chọn ảnh đại diện (Nếu bạn không có ảnh)</FormLabel>
-          <div className="grid grid-cols-5 gap-2 h-8 md:h-16 lg:h-32 overflow-y-auto">
+          <div className="grid grid-cols-5 gap-2 h-32 overflow-y-auto">
             {avatars.map((avatar, index) => (
               <Image
                 key={index}
@@ -176,7 +176,7 @@ const FormImageCredential = ({setOpen}:FormImageCredentialProps) => {
         {(role === UserRole.ADMIN || role === UserRole.STAFF) && (
           <div className="space-y-4">
             <FormLabel className="text-white">Chọn ảnh đại diện VIP</FormLabel>
-            <div className="grid grid-cols-5 gap-2 h-8 md:h-16 lg:h-32 overflow-y-auto">
+            <div className="grid grid-cols-5 gap-2 h-32 overflow-y-auto">
               {AvatarVIP.map((avatar, index) => (
                 <Image
                   key={index}

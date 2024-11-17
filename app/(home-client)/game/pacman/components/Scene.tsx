@@ -1,12 +1,12 @@
-'use client'
+"use client";
 import React, { useState } from "react";
 import Pacman from "./Pacman";
 import Ghost from "./Ghost";
 import Food from "./Food";
 import styled from "styled-components";
 import { useGameContext } from "../context/GameContext";
-import { DIFFICULTY, Difficulty,COLOR,GAME_STATUS } from "@/types/type";
-import { Volume2 } from 'lucide-react';
+import { DIFFICULTY, Difficulty, COLOR, GAME_STATUS } from "@/types/type";
+import { Volume2 } from "lucide-react";
 
 type SceneProps = {
   foodSize: number;
@@ -72,11 +72,11 @@ const generateFoodMatrix = (props: SceneProps, amountOfFood: number) => {
       }
     }
   }
-  
+
   return foods;
 };
 
- const audio = new Audio("/images/gamepacman.mp3");
+const audio = new Audio("/images/gamepacman.mp3");
 
 const Scene = (props: SceneProps) => {
   const {
@@ -100,26 +100,28 @@ const Scene = (props: SceneProps) => {
     }
   };
   React.useEffect(() => {
-    const handleKeyDown = (event:any) => {
+    const handleKeyDown = (event: any) => {
       // Check if the pressed key is an arrow key
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
+      if (
+        ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)
+      ) {
         // Prevent the default scrolling behavior
         event.preventDefault();
-  
+
         // Handle your custom logic for arrow key presses here
         // For example, you can move a character or trigger an action.
       }
     };
-  
+
     // Attach the event listener to the window
-    window.addEventListener('keydown', handleKeyDown);
-  
+    window.addEventListener("keydown", handleKeyDown);
+
     // Clean up the event listener when the component unmounts
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, []); // Empty dependency array means this effect runs once on component mount
-  
+
   React.useEffect(() => {
     if (difficulty === DIFFICULTY.EASY) {
       setGhostVelocity(100);
@@ -141,7 +143,6 @@ const Scene = (props: SceneProps) => {
       audio.currentTime = 0; // Reset audio to the beginning
     }
   }, [gameStatus]);
-
 
   React.useEffect(() => {
     const amountOfFood =
@@ -174,15 +175,23 @@ const Scene = (props: SceneProps) => {
                   <strong>GAME OVER :(</strong>
                   <div>Xu đã được cộng nếu chưa thấy bạn có thể F5 lại.</div>
                 </div>
-                <StyledButton onClick={() => restartGame()}>
-                  Try Again
-                </StyledButton>
+                <StyledButton
+  onClick={() => {
+    restartGame();
+    window.scrollTo({ top: 110, behavior: 'smooth' }); // Scroll to Y = 110
+  }}
+>
+  Try Again
+</StyledButton>
+
               </CenterContainer>
             )}
           </OverlayContent>
         )}
-        <div className="absolute z-50 -top-[1.5rem] flex">
-        <label htmlFor="volume"><Volume2 className="w-5 h-5 text-gray-500 font-semibold"/></label>
+      <div className="absolute z-50 -top-[1.5rem] flex">
+        <label htmlFor="volume">
+          <Volume2 className="w-5 h-5 text-gray-500 font-semibold" />
+        </label>
         <input
           type="range"
           id="volume"
@@ -200,18 +209,23 @@ const Scene = (props: SceneProps) => {
               <span>Chế Độ</span>
             </div>
             <div>
-              <select
-                value={difficulty}
-                onChange={(e) => setDifficulty(e.target.value as Difficulty)}
-              >
-                <option value={DIFFICULTY.EASY}>Dễ</option>
-                <option value={DIFFICULTY.MEDIUM}>Trung bình</option>
-                <option value={DIFFICULTY.ADVANCED}>Khó</option>
-              </select>
+            <select
+  value={difficulty}
+  onChange={(e) => setDifficulty(e.target.value as Difficulty)}
+  style={{ color: 'rgb(255, 233, 80)' }} // Change text color for <select>
+>
+  <option value={DIFFICULTY.EASY} style={{ color: 'rgb(255, 233, 80)' }}>Dễ</option>
+  <option value={DIFFICULTY.MEDIUM} style={{ color: 'rgb(255, 233, 80)' }}>Trung bình</option>
+  <option value={DIFFICULTY.ADVANCED} style={{ color: 'rgb(255, 233, 80)' }}>Khó</option>
+</select>
+
             </div>
 
             <StyledButton
-              onClick={() => setGameStatus(GAME_STATUS.IN_PROGRESS)}
+              onClick={() => {
+                setGameStatus(GAME_STATUS.IN_PROGRESS);
+                window.scrollTo({ top: 110, behavior: "smooth" }); // Scroll to Y = 110
+              }}
             >
               Play!
             </StyledButton>
@@ -296,14 +310,13 @@ const OverlayContent = styled.div`
 `;
 
 const StyledScene = styled.div`
-position:relative;
+  position: relative;
   --container-width: 100%;
   height: calc(100vh - 120px);
   width: calc(var(--container-width));
   background-color: ${colors.color1};
   position: relative;
   border: 10px ${colors.color3} solid;
-
 `;
 
 const StyledButton = styled.button`

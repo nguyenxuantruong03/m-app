@@ -51,23 +51,23 @@ export default async function Post({params :{postId}}:Props) {
   return (
     <>
     <div className="mt-28 mx-auto max-w-7xl">
-    <h2 className="text-4xl font-bold" >{meta.title}</h2>
-    <p className="mt-0 text-sm mb-5 text-gray-700 text-opacity-50">
+    <h2 className="text-4xl font-bold text-slate-900 dark:text-slate-200" >{meta.title}</h2>
+    <p className="mt-0 text-sm mb-5 text-gray-400">
         {pubDate}
     </p>
-    <article className="text-2xl">
+    <article className="text-2xl text-slate-900 dark:text-slate-200">
         {content}
     </article>
     <section>
-        <h3 className="text-4xl font-bold">Related:</h3>
-        <div className="flex flex-row gap-4 text-lg font-semibold mt-2">
+        <h3 className="text-4xl font-bold text-slate-900 dark:text-slate-200 underline">Related:</h3>
+        <div className="flex flex-row gap-4 text-lg font-semibold mt-2 text-slate-900 dark:text-slate-200">
             {tags}
         </div>
     </section>
-    <Link className="text-lg " href="/">
-    <div className="my-5 flex bg-gray-900 text-white w-40 rounded-md h-10 items-center hover:underline">
+    <Link className="text-lg " href="/home">
+    <div className="my-5 flex bg-slate-900 dark:bg-slate-300 text-slate-200 dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-200 w-40 rounded-md h-10 items-center">
     <span className="mx-auto">🏠
-     Back to home </span>
+       Back to home </span>
     </div>
     </Link>
     </div>

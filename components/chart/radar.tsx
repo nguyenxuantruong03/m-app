@@ -93,7 +93,7 @@ const RadarChart = ({ radarChartData, loading }: RadarChartProps) => {
           fill="#82ca9d"
           fillOpacity={0.6}
         />
-        <Tooltip labelClassName="dark:text-slate-500 text-salte-900"/>
+        <Tooltip labelClassName="dark:text-slate-500 text-slate-900"/>
         <Legend />
       </ChartRadar>
     </ResponsiveContainer>

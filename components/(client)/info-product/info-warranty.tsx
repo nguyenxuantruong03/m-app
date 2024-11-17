@@ -157,7 +157,7 @@ const InfoWarranty: React.FC<InfoWarrantyProps> = ({ data }) => {
             </span>
           </div>
         </div>
-        <p className="text-sm mx-4 my-2">
+        <p className="text-sm mx-4 my-2 text-slate-900 dark:text-slate-200">
           (Khách hàng đăng ký thông tin để được hỗ trợ tư vấn và thanh toán tại
           cửa hàng nhanh nhất, số tiền phải thanh toán chưa bao gồm giá trị của
           gói bảo hành mở rộng)
@@ -184,7 +184,7 @@ const InfoWarranty: React.FC<InfoWarrantyProps> = ({ data }) => {
                       <div
                         className={`font-medium  ${
                           selectedWarranty === option.heading
-                            ? "text-white"
+                            ? "text-red-500"
                             : "text-gray-900"
                         }`}
                       >
@@ -193,7 +193,7 @@ const InfoWarranty: React.FC<InfoWarrantyProps> = ({ data }) => {
                       <div
                         className={`inline ${
                           selectedWarranty === option.heading
-                            ? "text-gray-900"
+                            ? "text-slate-900 dark:text-slate-200"
                             : "text-gray-500"
                         }`}
                       >

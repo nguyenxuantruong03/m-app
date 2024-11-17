@@ -116,25 +116,10 @@ export async function GET(
   { params }: { params: { storeId: string } }
 ) {
   try {
-    const userId = await currentUser();
     if (!params.storeId) {
       return new NextResponse(
         JSON.stringify({ error: "Store id is required!" }),
         { status: 400 }
-      );
-    }
-
-    if (!userId) {
-      return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
-        { status: 403 }
-      );
-    }
-
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
-      return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền để xem billboard!" }),
-        { status: 403 }
       );
     }
 

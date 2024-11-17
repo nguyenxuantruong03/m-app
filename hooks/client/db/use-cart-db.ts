@@ -72,13 +72,11 @@ const useCartdb = create<CartStore>((set, get) => ({
   
         // Remove nonSelectQuantitySold item if it is present
         if (nonSelectQuantitySold && currentItems.includes(nonSelectQuantitySold)) {
-          console.log("Removing nonSelectQuantitySold", nonSelectQuantitySold);
           currentItems = currentItems.filter((item: string) => item !== nonSelectQuantitySold);
         }
   
         // Remove noneSelectQuantityAvailable item if it is present
         if (noneSelectQuantityAvailable && currentItems.includes(noneSelectQuantityAvailable)) {
-          console.log("Removing noneSelectQuantityAvailable", noneSelectQuantityAvailable);
           currentItems = currentItems.filter((item: string) => item !== noneSelectQuantityAvailable);
         }
 
@@ -128,7 +126,6 @@ const useCartdb = create<CartStore>((set, get) => ({
   ,
 
   addItem: async (data: Product, quantity: number, warranty: string | null, userId: string,selectedSize: string,selectedColor: string) => {
-    console.log("active")
     const response = await axios.post("/api/client/cart/addItem", {
       productId: data.id,
       productName: data.name,
@@ -138,10 +135,8 @@ const useCartdb = create<CartStore>((set, get) => ({
       color: selectedColor,
       warranty: warranty
     });
-
     
     const newItem = response.data;
-    console.log("newItem",newItem)
 
     const cartItem: CartItemType = {
       id: newItem.id,

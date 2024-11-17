@@ -26,7 +26,7 @@ import { ChromePicker } from "react-color";
 import Recommend from "@/components/ui/recommend";
 
 const formSchema = z.object({
-  name: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
+  name: z.string().min(2,{message: "Nhập ít nhất 2 ký tự."}),
   value: z.string().min(1).regex(/^#/, {
     message: "Hãy nhập mã hex hợp lệ.",
   }),

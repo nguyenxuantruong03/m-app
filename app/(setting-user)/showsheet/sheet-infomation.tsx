@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Sheet,
   SheetContent,
@@ -31,10 +31,11 @@ interface SheetInfomationProps {
   address?: string | null;
   addressother?: string | null;
   children: React.ReactNode;
-  userId: string
+  userId: string;
   favorite: string[];
   dataallfavorite: Favorite[];
   role: string | undefined;
+  isCustomWarehouse: boolean | undefined;
   setAlertGuestModal: React.Dispatch<React.SetStateAction<boolean>>;
   type:
     | "name"
@@ -66,8 +67,10 @@ const SheetInfomation: React.FC<SheetInfomationProps> = ({
   role,
   userId,
   setAlertGuestModal,
+  isCustomWarehouse,
 }) => {
   const [open, setOpen] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
 
   const handleOpenChange = (isOpen: boolean) => {
     if (isOpen) {
@@ -98,9 +101,7 @@ const SheetInfomation: React.FC<SheetInfomationProps> = ({
       title: `URL trang cá nhân VLXD Xuân Trường của bạn sẽ bị thay đổi: ${
         nameuser || "Chưa thay đổi"
       }`,
-      description: `Tên người dùng hiện tại: ${
-        nameuser || "Chưa thay đổi"
-      }`,
+      description: `Tên người dùng hiện tại: ${nameuser || "Chưa thay đổi"}`,
       form: <FormNameUser />,
     },
     bio: {
@@ -165,10 +166,32 @@ const SheetInfomation: React.FC<SheetInfomationProps> = ({
 
   const { title, description, form } = infoMap[type];
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsHidden(window.scrollY >= 30);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []); // Empty dependency array to ensure this only registers once
+
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetTrigger asChild>{children}</SheetTrigger>
-      <SheetContent className="space-y-4" side="center">
+      <SheetContent
+        className={`${
+          isCustomWarehouse
+            ? `${
+                isHidden
+                  ? "w-full md:w-3/4 max-h-[82%] md:max-h-max space-y-4"
+                  : "w-full md:w-3/4 max-h-[75%] md:max-h-max space-y-4"
+              }`
+            : "w-full md:w-3/4 max-h-[80%] md:max-h-max space-y-4"
+        }`}
+        side="center"
+      >
         <SheetHeader>
           <SheetTitle>{title}</SheetTitle>
           <SheetDescription>{description}</SheetDescription>

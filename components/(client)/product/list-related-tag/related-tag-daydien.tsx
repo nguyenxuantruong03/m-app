@@ -1,7 +1,7 @@
 import Link from "next/link";
 import {relatedTagWatchcolor} from "@/components/(client)/color/color"
 
-const RelatedTagWatch= () => {
+const RelatedTagDaydien= () => {
     return ( 
         <div className=" my-2 relative">
             <div className="absolute hidden md:flex bottom-4 md:left-[16rem] xl:left-[48.2rem] space-x-4 ">
@@ -40,4 +40,4 @@ const RelatedTagWatch= () => {
      );
 }
  
-export default RelatedTagWatch;
+export default RelatedTagDaydien;

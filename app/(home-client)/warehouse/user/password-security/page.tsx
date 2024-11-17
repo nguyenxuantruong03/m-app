@@ -2,7 +2,7 @@ import PasswordSecurityPage from "@/app/(setting-user)/components/page/password-
 
 const PasswordSecurity = () => {
     return ( 
-        <PasswordSecurityPage />
+        <PasswordSecurityPage isCustomWarehouse={true}/>
      );
 }
  

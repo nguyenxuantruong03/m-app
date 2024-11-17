@@ -617,7 +617,7 @@ const CheckoutCash = () => {
       />
       <form onSubmit={handleSubmitCheckoutCash}>
         <div className="mx-auto md:max-w-3xl lg:max-w-3xl">
-          <div className="bg-white rounded-md shadow-lg p-4 mt-32 mb-2 ">
+          <div className="bg-gray-50 dark:bg-slate-600 rounded-md shadow-lg p-4 mt-32 mb-2 ">
             {/* Check Role hiển thị */}
             {user?.role === "GUEST" || !user?.id ? (
               <>
@@ -632,12 +632,12 @@ const CheckoutCash = () => {
                       />
                     </div>
                     <div className="flex justify-center my-2">
-                      <p className="text-neutral-500">
+                      <p className="text-gray-500 dark:text-slate-200">
                         Giỏ hàng của bạn còn trống
                       </p>
                     </div>
                     <div className="flex justify-center my-2">
-                      <Button onClick={handleBuyNow}> Mua ngay</Button>
+                      <Button onClick={handleBuyNow} className="bg-red-500 text-white dark:text-slate-900"> Mua ngay</Button>
                     </div>
                   </>
                 )}
@@ -677,12 +677,12 @@ const CheckoutCash = () => {
                       />
                     </div>
                     <div className="flex justify-center my-2">
-                      <p className="text-neutral-500">
+                      <p className="text-gray-500 dark:text-slate-200">
                         Giỏ hàng của bạn còn trống
                       </p>
                     </div>
                     <div className="flex justify-center my-2">
-                      <Button onClick={handleBuyNow}> Mua ngay</Button>
+                      <Button onClick={handleBuyNow} className="bg-red-500 text-white dark:text-slate-900"> Mua ngay</Button>
                     </div>
                   </>
                 )}
@@ -810,8 +810,7 @@ const CheckoutCash = () => {
                 {barProcess === 0 && (
                   <div className="my-2">
                     <Button
-                      className="w-full text-white"
-                      variant="outline"
+                      className="w-full bg-red-500 text-white dark:text-slate-900"
                       type="submit"
                       disabled={loading || user?.role === "GUEST" || !user?.id ? isNoneSelect : isNoneSelectDb}
                     >

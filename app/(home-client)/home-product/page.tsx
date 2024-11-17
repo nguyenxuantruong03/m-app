@@ -61,21 +61,41 @@ const HomePage = async () => {
     maxTimeSaleProduct && maxTimeSaleProduct.timeSaleEnd !== undefined
       ? new Date(maxTimeSaleProduct.timeSaleEnd)
       : null; // Handle undefined properly
-
+  const pin = products.filter(
+    (product: any) => product.productType === "PRODUCT" && product.isFeatured === true
+  );
+  const quat = products.filter(
+    (product: any) => product.productType === "PRODUCT1"
+  );
   const ongnhua = products.filter(
     (product: any) => product.productType === "PRODUCT2"
   );
   const daydien = products.filter(
     (product: any) => product.productType === "PRODUCT3"
   );
+  const dacat = products.filter(
+    (product: any) => product.productType === "PRODUCT4" && product.isFeatured === true
+  );
+  const okhoa = products.filter(
+    (product: any) => product.productType === "PRODUCT5" && product.isFeatured === true
+  );
+  const keo = products.filter(
+    (product: any) => product.productType === "PRODUCT6" && product.isFeatured === true
+  );
   const ocam = products.filter(
     (product: any) => product.productType === "PRODUCT7"
   );
   const son = products.filter(
-    (product: any) => product.productType === "PRODUCT8"
+    (product: any) => product.productType === "PRODUCT8" && product.isFeatured === true
+  );
+  const vatlieunhatam = products.filter(
+    (product: any) => product.productType === "PRODUCT9" && product.isFeatured === true
   );
   const bongden = products.filter(
     (product: any) => product.productType === "PRODUCT10"
+  );
+  const dothuongdung = products.filter(
+    (product: any) => product.productType === "PRODUCT11" && product.isFeatured === true
   );
 
   // Sắp xếp sản phẩm theo số lượng đã bán
@@ -106,11 +126,18 @@ const HomePage = async () => {
       <SlideItem />
       <MainProduct
         saleProduct={saleProduct}
-        daydien={daydien}
+        pin={pin}
+        quat={quat}
         ongnhua={ongnhua}
+        daydien={daydien}
+        dacat={dacat}
+        okhoa={okhoa}
+        keo={keo}
         ocam={ocam}
-        bongden={bongden}
         son={son}
+        vatlieunhatam={vatlieunhatam}
+        bongden={bongden}
+        dothuongdung={dothuongdung}
         maxTimeSale={maxTimeSale}
         aggregatedProductTypes={aggregatedProductTypes}
       />

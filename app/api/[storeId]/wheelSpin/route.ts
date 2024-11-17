@@ -9,19 +9,24 @@ export async function POST(
   { params }: { params: { storeId: string } }
 ) {
   const body = await req.json();
-  const { coin, rotation, userId, isCheckPayment, idOrderItem } = body;
+  let { coin, rotation, userId, isCheckPayment, idOrderItem } = body;
 
   try {
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
     }
+    // Convert coin and rotation to numbers if they are strings representing numbers or set to 0 if invalid
+    // Check and convert coin to number if it is a string
+    coin =
+      typeof coin === "number" ? coin : isNaN(Number(coin)) ? 0 : Number(coin);
 
-    if (userId.role !== UserRole.ADMIN) {
-      return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền tạo mới wheel spin!" }),
-        { status: 403 }
-      );
-    }
+    // Check and convert rotation to number if it is a string
+    rotation =
+      typeof rotation === "number"
+        ? rotation
+        : isNaN(Number(rotation))
+        ? 0
+        : Number(rotation);
 
     // Kiểm tra sự tồn tại của người dùng với userId
     const existingEntry = await prismadb.wheelSpin.findFirst({
@@ -64,8 +69,8 @@ export async function POST(
       });
     }
 
-    if(isCheckPayment){
-      //Cập nhật isGiff thành true để khi tránh phát quà liên tục
+    if (isCheckPayment) {
+      // Cập nhật isGift thành true để tránh phát quà liên tục
       await prismadb.orderItem.update({
         where: {
           id: idOrderItem,
@@ -88,13 +93,6 @@ export async function GET() {
     const userId = await currentUser();
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
-    }
-
-    if (userId.role !== UserRole.ADMIN) {
-      return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xem wheel spin!" }),
-        { status: 403 }
-      );
     }
 
     const coins = await prismadb.wheelSpin.findMany({

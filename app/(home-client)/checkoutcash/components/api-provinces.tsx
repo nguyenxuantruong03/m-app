@@ -193,6 +193,49 @@ const ApiProvinces: React.FC<DeliveryProps> = ({
           classNamePrefix="react-select"
           noOptionsMessage={() => "Không tìm thấy!"}
           isDisabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
+          styles={{
+            control: (base, state) => {
+              const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+              return {
+                ...base,
+                backgroundColor: state.isFocused
+                  ? (isDarkMode ? "#0f172a" : base.backgroundColor)
+                  : (isDarkMode ? "#0f172a" : "#ffffff"), // Nền tối cho dark, nền sáng cho light
+                color: isDarkMode ? "#e2e8f0" : base.color, // Màu chữ sáng tối
+                borderColor: isDarkMode ? "#4b5563" : base.borderColor, // Màu viền cho dark/light mode
+              };
+            },
+            singleValue: (base) => {
+              const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+              return {
+                ...base,
+                color: isDarkMode ? "#e2e8f0" : base.color, // Màu chữ của giá trị đã chọn
+              };
+            },
+            menu: (base) => {
+              const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+              return {
+                ...base,
+                backgroundColor: isDarkMode ? "#0f172a" : "#ffffff", // Nền của menu
+              };
+            },
+            option: (base, state) => {
+              const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+              return {
+                ...base,
+                backgroundColor: isDarkMode
+                  ? (state.isSelected ? "#1e293b" : "#0f172a")
+                  : (state.isSelected ? "#f0f0f0" : "#ffffff"), // Màu nền tùy chọn
+                color: isDarkMode ? "#e2e8f0" : "#333", // Màu chữ
+                "&:hover": {
+                  backgroundColor: isDarkMode ? "#1e293b" : "#f0f0f0", // Màu nền khi hover
+                },
+                "&:active": {
+                  backgroundColor: "#1e293b", // Màu nền khi được chọn
+                },
+              };
+            },
+          }}
         />
         {selectedProvinceError && (
           <p className="text-red-500">{selectedProvinceError}</p>
@@ -211,6 +254,49 @@ const ApiProvinces: React.FC<DeliveryProps> = ({
           classNamePrefix="react-select"
           isDisabled={loading || !selectedProvince || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
           noOptionsMessage={() => "Không tìm thấy!"}
+          styles={{
+            control: (base, state) => {
+              const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+              return {
+                ...base,
+                backgroundColor: state.isFocused
+                  ? (isDarkMode ? "#0f172a" : base.backgroundColor)
+                  : (isDarkMode ? "#0f172a" : "#ffffff"), // Nền tối cho dark, nền sáng cho light
+                color: isDarkMode ? "#e2e8f0" : base.color, // Màu chữ sáng tối
+                borderColor: isDarkMode ? "#4b5563" : base.borderColor, // Màu viền cho dark/light mode
+              };
+            },
+            singleValue: (base) => {
+              const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+              return {
+                ...base,
+                color: isDarkMode ? "#e2e8f0" : base.color, // Màu chữ của giá trị đã chọn
+              };
+            },
+            menu: (base) => {
+              const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+              return {
+                ...base,
+                backgroundColor: isDarkMode ? "#0f172a" : "#ffffff", // Nền của menu
+              };
+            },
+            option: (base, state) => {
+              const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+              return {
+                ...base,
+                backgroundColor: isDarkMode
+                  ? (state.isSelected ? "#1e293b" : "#0f172a")
+                  : (state.isSelected ? "#f0f0f0" : "#ffffff"), // Màu nền tùy chọn
+                color: isDarkMode ? "#e2e8f0" : "#333", // Màu chữ
+                "&:hover": {
+                  backgroundColor: isDarkMode ? "#1e293b" : "#f0f0f0", // Màu nền khi hover
+                },
+                "&:active": {
+                  backgroundColor: "#1e293b", // Màu nền khi được chọn
+                },
+              };
+            },
+          }}
         />
         {selectedDistrictError && (
           <p className="text-red-500">{selectedDistrictError}</p>
@@ -229,6 +315,49 @@ const ApiProvinces: React.FC<DeliveryProps> = ({
           classNamePrefix="react-select"
           isDisabled={loading || !selectedDistrict || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
           noOptionsMessage={() => "Không tìm thấy!"}
+          styles={{
+            control: (base, state) => {
+              const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+              return {
+                ...base,
+                backgroundColor: state.isFocused
+                  ? (isDarkMode ? "#0f172a" : base.backgroundColor)
+                  : (isDarkMode ? "#0f172a" : "#ffffff"), // Nền tối cho dark, nền sáng cho light
+                color: isDarkMode ? "#e2e8f0" : base.color, // Màu chữ sáng tối
+                borderColor: isDarkMode ? "#4b5563" : base.borderColor, // Màu viền cho dark/light mode
+              };
+            },
+            singleValue: (base) => {
+              const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+              return {
+                ...base,
+                color: isDarkMode ? "#e2e8f0" : base.color, // Màu chữ của giá trị đã chọn
+              };
+            },
+            menu: (base) => {
+              const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+              return {
+                ...base,
+                backgroundColor: isDarkMode ? "#0f172a" : "#ffffff", // Nền của menu
+              };
+            },
+            option: (base, state) => {
+              const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+              return {
+                ...base,
+                backgroundColor: isDarkMode
+                  ? (state.isSelected ? "#1e293b" : "#0f172a")
+                  : (state.isSelected ? "#f0f0f0" : "#ffffff"), // Màu nền tùy chọn
+                color: isDarkMode ? "#e2e8f0" : "#333", // Màu chữ
+                "&:hover": {
+                  backgroundColor: isDarkMode ? "#1e293b" : "#f0f0f0", // Màu nền khi hover
+                },
+                "&:active": {
+                  backgroundColor: "#1e293b", // Màu nền khi được chọn
+                },
+              };
+            },
+          }}
         />
         {selectedWardError && (
           <p className="text-red-500">{selectedWardError}</p>
@@ -247,15 +376,15 @@ const ApiProvinces: React.FC<DeliveryProps> = ({
               disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
             />
             <span className="field__label-wrap" aria-hidden="true">
-              <span className={`field__label ${addressError && "error-label"}`}>Địa chỉ <span className="text-red-500">*</span></span>
+              <span className={`field__label  ${addressError && "error-label"}`}>Địa chỉ <span className="text-red-500">*</span></span>
             </span>
           </div>
-          {addressError && <p className="text-red-500">{addressError}</p>}
+          {addressError && <p className="text-red-500 ">{addressError}</p>}
         </div>
 
         <div className="lg:px-8">
           <div className="field field_v3">
-            <label className="ha-screen-reader">Địa chỉ khác(Nếu có)</label>
+            <label className="ha-screen-reader ">Địa chỉ khác</label>
             <input
               className="field__input"
               placeholder="Vd: 4xx Lê Văn Q*"
@@ -264,17 +393,17 @@ const ApiProvinces: React.FC<DeliveryProps> = ({
               disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
             />
             <span className="field__label-wrap" aria-hidden="true">
-              <span className={`field__label ${addressOtherError && "error-label"}`}>Địa chỉ khác</span>
+              <span className={`field__label  ${addressOtherError && "error-label"}`}>Địa chỉ khác</span>
             </span>
           </div>
           {addressOtherError && (
-            <p className="text-red-500">{addressOtherError}</p>
+            <p className="text-red-500 ">{addressOtherError}</p>
           )}
         </div>
 
         <div className="ml-2 py-2 lg:px-8">
           <div className="field field_v3">
-            <label className="ha-screen-reader">Ghi chú(Nếu có)</label>
+            <label className="ha-screen-reader ">Ghi chú</label>
             <input
               className="field__input"
               placeholder="Vd: Note thêm địa chỉ mới hoặc số điện thoại mới."
@@ -283,10 +412,10 @@ const ApiProvinces: React.FC<DeliveryProps> = ({
               disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
             />
             <span className="field__label-wrap" aria-hidden="true">
-              <span className={`field__label ${noteError && "error-label"}`}>Ghi chú(Nếu có)</span>
+              <span className={`field__label  ${noteError && "error-label"}`}>Ghi chú</span>
             </span>
           </div>
-          {noteError && <p className="text-red-500">{noteError}</p>}
+          {noteError && <p className="text-red-500 ">{noteError}</p>}
         </div>
       </div>
     </div>

@@ -7,6 +7,7 @@ import { getAllProductNotQuery } from "@/actions/client/products/get-products";
 import { Product, User } from "@/types/type";
 import { getAllUser } from "@/actions/client/get-user";
 import ShowInfoUserModal from "./show-user-modal";
+import { root } from "@/components/(client)/color/color";
 
 const OverViewStore = () => {
   const [allProduct, setDataAllProduct] = useState<Product[]>([]);
@@ -56,7 +57,7 @@ const OverViewStore = () => {
         onClose={() => setOpen(false)}
         staffUsers={staffUsers}
       />
-      <div className="pb-16 bg-white">
+      <div className={` pb-16 ${root.bgwhite}`}>
     <div className="relative">
       {/* Outer element with responsive width and center alignment */}
       <div className="bg-[#372f6a] rounded-md bg-opacity-50 shadow-[0_0_20px_rgba(0,0,0,0.2)] w-[90%] md:w-[80%] lg:w-[75%] mx-auto flex items-center justify-center min-h-[550px] lg:min-h-[450px]">
@@ -75,7 +76,7 @@ const OverViewStore = () => {
                   adjustments, as they are entirely based on data stored in the
                   cloud.
                 </p>
-                <Button className="bg-[#372f6a] hover:bg-[#372f6a] hover:bg-opacity-50">
+                <Button className="bg-[#372f6a] hover:bg-[#372f6a] hover:bg-opacity-50 text-white">
                   Explore
                 </Button>
               </div>

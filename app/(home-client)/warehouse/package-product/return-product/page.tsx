@@ -71,18 +71,20 @@ const ReturnProdcut = () => {
 
   useEffect(() => {
     if (openReturnProduct) {
-      document.body.style.overflow = 'hidden'; // Ngăn chặn cuộn
+      document.body.style.overflow = "hidden"; // Ngăn chặn cuộn
     } else {
-      document.body.style.overflow = 'auto'; // Khôi phục cuộn
+      document.body.style.overflow = "auto"; // Khôi phục cuộn
     }
 
     // Clean up function to reset overflow when component unmounts
     return () => {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = "auto";
     };
   }, [openReturnProduct]);
 
-  const matchId = data.filter((order: Order) => order.status === "Tra_hang");
+  const matchId = data.filter(
+    (order: Order) => order.status === "Tra_hang" || order.status === "Da_huy"
+  );
 
   const handleBuyAgainClick = (order: Order) => {
     // Helper function to get the quantity based on the highest price
@@ -314,7 +316,7 @@ const ReturnProdcut = () => {
                       key={orderItem.id}
                       className="flex items-center cursor-pointer"
                       onClick={() =>
-                        router.push(`/warehouse/package-product/${order.id}`)
+                        router.push(`/warehouse/package-product/return-product/${order.id}`)
                       }
                     >
                       {openReturnProduct && (
@@ -346,7 +348,7 @@ const ReturnProdcut = () => {
                         onClose={() => setOpen(false)}
                         user={user}
                       />
-                      <div className="w-1/12">
+                      <div className="w-3/12 md:w-1/6 lg:w-1/12">
                         {typeof imageUrl === "string" ? (
                           <Image
                             src={imageUrl}
@@ -365,22 +367,24 @@ const ReturnProdcut = () => {
                         )}
                       </div>
                       <div className="w-3/4 pl-3">
-                        <p className="truncate max-w-xl">
+                        <p className="truncate max-w-[8rem] md:max-w-xs lg:max-w-lg xl:max-w-xl text-slate-900 dark:text-slate-200">
                           {orderItem.product?.heading}
                         </p>
-                        <p className="flex text-xs text-gray-500">
+                        <p className="flex text-xs text-gray-500 dark:text-gray-400">
                           Phân loại màu:
                           <div
                             className="h-4 w-4 rounded-full ml-2"
                             style={{ backgroundColor: selectedColor }}
                           />
                         </p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
                           Phân loại kích thước: {selectedSize}
                         </p>
-                        <p>x{orderItem.quantity}</p>
+                        <p className="text-slate-900 dark:text-slate-200">
+                          x{orderItem.quantity}
+                        </p>
                       </div>
-                      <div className="w-1/5 text-end">
+                      <div className="w-4/12 md:w-1/5 text-end text-slate-900 dark:text-slate-200">
                         {formatter.format(getPriceMatchColorandSize())}
                       </div>
                     </div>
@@ -403,9 +407,23 @@ const ReturnProdcut = () => {
                       classStatus="text-red-500"
                     />
                   )}
+
+                  {order.status === "Da_huy" && (
+                    <StatusProduct
+                      updatedAt={order.updatedAt}
+                      titleStatus="Đơn hàng đã hủy"
+                      classTitleStatus="text-red-600"
+                      noneTitleStatus={true}
+                      status="HỦY ĐƠN HÀNG"
+                      classStatus="text-red-500"
+                    />
+                  )}
+
                 </div>
                 <div className="flex items-center space-x-2">
-                  <span>Thành tiền:</span>{" "}
+                  <span className="text-slate-900 dark:text-slate-200 text-sm md:text-base">
+                    Thành tiền:
+                  </span>{" "}
                   <Currency value={calculateTotalPrice(order)} />
                 </div>
               </div>
@@ -414,18 +432,18 @@ const ReturnProdcut = () => {
             {!isOverThreeDays &&
               !order.returnProduct &&
               (order.status === "Da_giao" ||
-                order.status === "Nhan_tai_cua_hang") && (
+                order.status === "Da_nhan_tai_cua_hang") && (
                 <>
-                  <div className="bg-[#fbf5e8] rounded-t-md mt-px px-5 py-3">
+                  <div className="bg-[#fbf5e8] dark:bg-slate-700 rounded-t-md mt-px px-5 py-3">
                     <div className="flex">
                       <div className="w-3/4">
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-gray-400 dark:text-slate-200">
                           Nếu hàng nhận được có vấn đề, bạn có thể gửi yêu cầu
                           Trả hàng/Hoàn tiền trước trước 3 ngày kể từ ngày bạn
                           nhận.
                         </p>
                         <p className="text-xs text-gray-400">
-                          Giải quết đơn hàng trước{" "}
+                          Giải quyết đơn hàng trước{" "}
                           {
                             <FormatDate
                               subtractiontime={true}
@@ -434,17 +452,17 @@ const ReturnProdcut = () => {
                           }
                           .
                         </p>
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-gray-400 dark:text-slate-200">
                           Có vấn đề về đơn hàng liên hệ số điện thoại{" "}
                           <Link href="tel:0352261103" className="underline">
                             0352261103
                           </Link>{" "}
                         </p>
                       </div>
-                      <div className="w-1/4">
+                      <div className="w-[40%] md:w-1/4">
                         <Button
                           disabled={loading}
-                          className="bg-red-500"
+                          className="bg-red-500 text-slate-900 dark:text-slate-200 dark:hover:text-slate-900"
                           onClick={() => handleOpenReview(order)}
                         >
                           Đánh giá
@@ -452,43 +470,43 @@ const ReturnProdcut = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="bg-[#fbf5e8] rounded-t-md mt-px px-5 py-3">
+                  <div className="bg-[#fbf5e8] dark:bg-slate-700 rounded-t-md mt-px px-2 md:px-5 py-3">
                     <div className="flex">
                       <div className="w-3/4"></div>
-                      <div className="w-1/4">
+                      <div className="w-[40%] md:w-1/4">
                         <Button
                           disabled={loading}
                           variant="outline"
-                          className="bg-transparent"
+                          className="bg-transparent text-slate-900 dark:text-slate-200 dark:border px-1 dark:border-white text-xs md:text-sm"
                           onClick={() => handleOpenReturnProduct(order)}
                         >
-                          Yêu cầu Trả Hàng/Hoàn Tiền
+                          Trả Hàng/Hoàn Tiền
                         </Button>
                       </div>
                     </div>
                   </div>
-                  <div className="bg-[#fbf5e8] rounded-t-md mt-px px-5 py-3">
+                  <div className="bg-[#fbf5e8] dark:bg-slate-700 rounded-t-md mt-px px-2 md:px-5 py-3">
                     <div className="flex">
                       <div className="w-3/4"></div>
-                      <div className="w-1/4">
+                      <div className="w-[40%] md:w-1/4">
                         <Button
                           disabled={loading}
                           variant="outline"
-                          className="bg-transparent"
+                          className="bg-transparent text-slate-900 dark:text-slate-200 dark:border dark:border-white text-xs md:text-sm"
                         >
-                          <Link href="tel:0352261103">Liên hệ của hàng</Link>
+                          <Link href="tel:0352261103">Liên hệ cửa hàng</Link>
                         </Button>
                       </div>
                     </div>
                   </div>
-                  <div className="bg-[#fbf5e8] rounded-t-md mt-px px-5 py-3">
+                  <div className="bg-[#fbf5e8] dark:bg-slate-700 rounded-t-md mt-px px-2 md:px-5 py-3">
                     <div className="flex">
                       <div className="w-3/4"></div>
-                      <div className="w-1/4">
+                      <div className="w-[40%] md:w-1/4">
                         <Button
                           disabled={loading}
                           variant="outline"
-                          className="bg-transparent"
+                          className="bg-transparent text-slate-900 dark:text-slate-200 dark:border dark:border-white text-xs md:text-sm"
                           onClick={() => handleBuyAgainClick(order)}
                         >
                           Mua lại

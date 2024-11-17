@@ -195,13 +195,13 @@ const MenuTree:React.FC<menuTreeProps> = ({data,categories1,categories2,categori
   };
 
   return (
-    <div className="rounded-md shadow-md hidden md:block">
+    <div className="rounded-md shadow-md hidden md:block dark:bg-slate-700">
       <div className=" md:w-[185px] lg:w-[205px] ">
       <div onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
         <div className={menutreecolor.flex_hover_bg}>
-          <p className={`${menutreecolor.texthover} text-slate-900`}>Pin</p>
+          <p className={`${menutreecolor.texthover}`}>Pin</p>
           <p>
-            <ChevronRight className="absolute md:left-[165px] lg:left-[185px]" />
+            <ChevronRight className=" text-slate-900 dark:text-slate-200" />
           </p>
         </div>
 
@@ -246,9 +246,9 @@ const MenuTree:React.FC<menuTreeProps> = ({data,categories1,categories2,categori
 
       <div onMouseOver={handleMouseOver1} onMouseOut={handleMouseOut1}>
         <div className={menutreecolor.flex_hover_bg}>
-          <p className={`${menutreecolor.texthover} text-slate-900`}>Quạt </p>
+          <p className={`${menutreecolor.texthover}`}>Quạt </p>
           <p>
-            <ChevronRight className="absolute md:left-[165px] lg:left-[185px]" />
+            <ChevronRight className="text-slate-900 dark:text-slate-200" />
           </p>
         </div>
 
@@ -293,9 +293,9 @@ const MenuTree:React.FC<menuTreeProps> = ({data,categories1,categories2,categori
 
       <div onMouseOver={handleMouseOver2} onMouseOut={handleMouseOut2}>
         <div className={menutreecolor.flex_hover_bg}>
-          <p className={`${menutreecolor.texthover} text-slate-900`}>Ống nhựa, Ống lưới xanh</p>
+          <p className={`${menutreecolor.texthover}`}>Ống nhựa, Ống lưới xanh</p>
           <p>
-            <ChevronRight className="absolute md:left-[165px] lg:left-[185px]" />
+            <ChevronRight className="text-slate-900 dark:text-slate-200" />
           </p>
         </div>
 
@@ -340,9 +340,9 @@ const MenuTree:React.FC<menuTreeProps> = ({data,categories1,categories2,categori
 
       <div onMouseOver={handleMouseOver3} onMouseOut={handleMouseOut3}>
         <div className={menutreecolor.flex_hover_bg}>
-          <p className={`${menutreecolor.texthover} text-slate-900`}>Dây điện </p>
+          <p className={`${menutreecolor.texthover}`}>Dây điện </p>
           <p>
-            <ChevronRight className="absolute md:left-[165px] lg:left-[185px]" />
+            <ChevronRight className="text-slate-900 dark:text-slate-200" />
           </p>
         </div>
 
@@ -387,9 +387,9 @@ const MenuTree:React.FC<menuTreeProps> = ({data,categories1,categories2,categori
 
       <div onMouseOver={handleMouseOver4} onMouseOut={handleMouseOut4}>
         <div className={menutreecolor.flex_hover_bg}>
-          <p className={`${menutreecolor.texthover} text-slate-900`}>Đá cắt</p>
+          <p className={`${menutreecolor.texthover}`}>Đá cắt</p>
           <p>
-            <ChevronRight className="absolute md:left-[165px] lg:left-[185px]" />
+            <ChevronRight className="text-slate-900 dark:text-slate-200" />
           </p>
         </div>
 
@@ -434,9 +434,9 @@ const MenuTree:React.FC<menuTreeProps> = ({data,categories1,categories2,categori
 
       <div onMouseOver={handleMouseOver5} onMouseOut={handleMouseOut5}>
         <div className={menutreecolor.flex_hover_bg}>
-          <p className={`${menutreecolor.texthover} text-slate-900`}>Ổ khóa </p>
+          <p className={`${menutreecolor.texthover}`}>Ổ khóa </p>
           <p>
-            <ChevronRight className="absolute md:left-[165px] lg:left-[185px]" />
+            <ChevronRight className="text-slate-900 dark:text-slate-200" />
           </p>
         </div>
 
@@ -481,9 +481,9 @@ const MenuTree:React.FC<menuTreeProps> = ({data,categories1,categories2,categori
 
       <div onMouseOver={handleMouseOver6} onMouseOut={handleMouseOut6}>
         <div className={menutreecolor.flex_hover_bg}>
-          <p className={`${menutreecolor.texthover} text-slate-900`}>Keo </p>
+          <p className={`${menutreecolor.texthover}`}>Keo </p>
           <p>
-            <ChevronRight className="absolute md:left-[165px] lg:left-[185px]" />
+            <ChevronRight className="text-slate-900 dark:text-slate-200" />
           </p>
         </div>
 
@@ -528,9 +528,9 @@ const MenuTree:React.FC<menuTreeProps> = ({data,categories1,categories2,categori
 
       <div onMouseOver={handleMouseOver7} onMouseOut={handleMouseOut7}>
         <div className={menutreecolor.flex_hover_bg}>
-          <p className={`${menutreecolor.texthover} text-slate-900`}>Ổ cắm,mặt ổ cắm </p>
+          <p className={`${menutreecolor.texthover}`}>Ổ cắm,mặt ổ cắm </p>
           <p>
-            <ChevronRight className="absolute md:left-[165px] lg:left-[185px]" />
+            <ChevronRight className="text-slate-900 dark:text-slate-200" />
           </p>
         </div>
 
@@ -575,9 +575,9 @@ const MenuTree:React.FC<menuTreeProps> = ({data,categories1,categories2,categori
 
       <div onMouseOver={handleMouseOver8} onMouseOut={handleMouseOut8}>
         <div className={menutreecolor.flex_hover_bg}>
-          <p className={`${menutreecolor.texthover} text-slate-900`}>Sơn </p>
+          <p className={`${menutreecolor.texthover} `}>Sơn </p>
           <p>
-            <ChevronRight className="absolute md:left-[165px] lg:left-[185px]" />
+            <ChevronRight className="text-slate-900 dark:text-slate-200" />
           </p>
         </div>
 
@@ -622,9 +622,9 @@ const MenuTree:React.FC<menuTreeProps> = ({data,categories1,categories2,categori
 
       <div onMouseOver={handleMouseOver9} onMouseOut={handleMouseOut9}>
         <div className={menutreecolor.flex_hover_bg}>
-          <p className={`${menutreecolor.texthover} text-slate-900`}>Vật liệu nhà tắm</p>
+          <p className={`${menutreecolor.texthover}`}>Vật liệu nhà tắm</p>
           <p>
-            <ChevronRight className="absolute md:left-[165px] lg:left-[185px]" />
+            <ChevronRight className="text-slate-900 dark:text-slate-200" />
           </p>
         </div>
 
@@ -669,9 +669,9 @@ const MenuTree:React.FC<menuTreeProps> = ({data,categories1,categories2,categori
 
       <div onMouseOver={handleMouseOver10} onMouseOut={handleMouseOut10}>
         <div className={menutreecolor.flex_hover_bg}>
-          <p className={`${menutreecolor.texthover} text-slate-900`}>Bóng đèn </p>
+          <p className={`${menutreecolor.texthover}`}>Bóng đèn </p>
           <p>
-            <ChevronRight className="absolute md:left-[165px] lg:left-[185px]" />
+            <ChevronRight className="text-slate-900 dark:text-slate-200" />
           </p>
         </div>
 
@@ -716,9 +716,9 @@ const MenuTree:React.FC<menuTreeProps> = ({data,categories1,categories2,categori
 
       <div onMouseOver={handleMouseOver11} onMouseOut={handleMouseOut11}>
         <div className={menutreecolor.flex_hover_bg}>
-          <p className={`${menutreecolor.texthover} text-slate-900`}>Đồ thường dùng </p>
+          <p className={`${menutreecolor.texthover}`}>Đồ thường dùng </p>
           <p>
-            <ChevronRight className="absolute md:left-[165px] lg:left-[185px]" />
+            <ChevronRight className="text-slate-900 dark:text-slate-200" />
           </p>
         </div>
 

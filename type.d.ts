@@ -7,20 +7,7 @@ declare module "react-sound";
 declare module "lodash";
 declare module "react-helmet";
 declare module "crypto-js";
-declare module "react-chrome-dino" {
-  import React from "react";
-
-  interface ChromeDinoGameProps {
-    width?: number;
-    height?: number;
-    onRestart?: () => void;
-  }
-
-  const ChromeDinoGame: React.FC<ChromeDinoGameProps>;
-
-  export default ChromeDinoGame;
-}
-
+declare module 'react-copy-to-clipboard';
 declare module "use-sound" {
   const useSound: any;
   useSound;

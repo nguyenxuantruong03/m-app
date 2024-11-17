@@ -30,6 +30,7 @@ const ImageBillboardsPage = async ({
       label: item.label,
       description: item.description,
       url: item.url,
+      link: item.link,
       createdAt: item.createdAt,
     })),
   ];

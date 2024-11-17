@@ -18,6 +18,16 @@
         border-right: 2px solid #333;
 		transform: rotate(-45deg);
 	}
+	
+	// Change border color in dark mode
+	@media (prefers-color-scheme: dark) {
+		border-color: white;
+
+		&::before {
+			border-top-color: white;
+			border-right-color: white;
+		}
+	}
 }
 
 @keyframes down {

@@ -19,7 +19,9 @@ const ImageCellOne: React.FC<{
   showUpload?: boolean;
   user?: any;
   self?: any;
-  showImage?: boolean
+  showImage?: boolean;
+  isClient?: boolean;
+  customClassFeedBack?: string
 }> = ({
   imageUrl,
   createdAt,
@@ -30,7 +32,9 @@ const ImageCellOne: React.FC<{
   showUpload = false,
   user,
   self,
-  showImage
+  showImage,
+  isClient= false,
+  customClassFeedBack
 }) => {
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
@@ -160,6 +164,8 @@ const ImageCellOne: React.FC<{
           email={email}
           onClose={closeImageModal}
           isOpen={true}
+          isClient={isClient}
+          customClassFeedBack={customClassFeedBack}
         />
       )}
     </div>

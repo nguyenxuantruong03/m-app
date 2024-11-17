@@ -11,6 +11,7 @@ import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { MousePointerClick } from "lucide-react";
 import "./style.css"
+import { root } from "../color/color";
 
 //Customer Tiếng Việt
 L.Routing.Localization["vi"] = {
@@ -187,10 +188,10 @@ const LeafletMap = () => {
 
   
   return (
-    <div className="w-full hidden md:flex justify-center item-center bg-white py-4 px-12 ">
-      <div id="map" className="w-full h-[500px] relative rounded-md"></div>
+    <div className={`w-full flex justify-center item-center bg-white py-4 px-2 md:px-12 ${root.bgwhite}`}>
+      <div id="map" className="w-full h-[300px] md:h-[500px] relative rounded-md"></div>
       <div
-        className={`arrow absolute md:left-[0%] lg:left-[0%] z-[1000] mt-[100px] flex shake text-red-500 ${!isVisible ? 'hidden' : ''}`}
+        className={`arrow absolute md:left-[0%] lg:left-[0%] z-[1000] mt-[100px] hidden md:flex shake text-red-500 ${!isVisible ? 'hidden' : ''}`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >

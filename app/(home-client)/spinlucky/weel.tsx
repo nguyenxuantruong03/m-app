@@ -1,7 +1,5 @@
-"use client";
 import SeeWarningSpinModal from "@/components/(client)/modal/see-warning-spin-model7";
 import React, { useEffect, useRef, useState } from "react";
-
 interface Segment {
   value: string;
   probability: number;
@@ -39,16 +37,53 @@ const WheelComponent: React.FC<WheelProps> = ({
   const timerDelay = segments.length;
   let angleCurrent = 0;
   let angleDelta = 0;
-  const size = 290;
+  const [size, setSize] = useState(180); // Default size for mobile
+  const [centerX, setCenterX] = useState(185); // Default centerX for mobile
+  const [centerY, setCenterY] = useState(200); // Default centerY for mobile
+  const [canvasWidth, setCanvasWidth] = useState(180); // state to manage canvas width
+  const [canvasHeight, setCanvasHeight] = useState(180); // state to manage canvas height
+
   let canvasContext: CanvasRenderingContext2D | null = null;
   let maxSpeed = Math.PI / segments.length;
   const upTime = segments.length * 100;
   const downTime = segments.length * 1000;
   let spinStart = 0;
   let frames = 0;
-  const centerX = 300;
-  const centerY = 300;
 
+  useEffect(() => {
+    const handleResize = () => {
+      const windowWidth = window.innerWidth;
+      if (windowWidth < 768) { // Mobile size
+        setSize(170);
+        setCenterX(185);
+        setCenterY(200);
+        setCanvasWidth(375);
+        setCanvasHeight(400);
+      } else { // Tablet or Desktop size
+        setSize(290);
+        setCenterX(300);
+        setCenterY(300);
+        setCanvasWidth(600);
+        setCanvasHeight(600);
+      }
+    };
+  
+    // Initial size setup
+    handleResize();
+  
+    // Add resize event listener
+    window.addEventListener("resize", handleResize);
+  
+    // Cleanup on unmount
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  
+  useEffect(() => {
+    // Update canvas when any of the size-related states change
+    wheelInit();
+  }, [size, centerX, centerY, canvasWidth, canvasHeight]);
+  
+  
   useEffect(() => {
     wheelInit();
     setTimeout(() => {
@@ -56,11 +91,11 @@ const WheelComponent: React.FC<WheelProps> = ({
     }, 0);
   }, []);
 
-  const wheelInit = () => {
+   const wheelInit = () => {
     initCanvas();
     wheelDraw();
   };
-
+  
   const initCanvas = () => {
     let canvas = document.getElementById("canvas") as HTMLCanvasElement;
     if (navigator.appVersion.indexOf("MSIE") !== -1) {
@@ -74,9 +109,9 @@ const WheelComponent: React.FC<WheelProps> = ({
     canvasContext = canvas.getContext("2d");
   };
 
-  // -------------Xử lý vòng quay nếu như ===0 thì không thể quay được phải sử dụng useRef--------------------
-  const rotationRef = useRef(rotation);
-  useEffect(() => {
+ // -------------Xử lý vòng quay nếu như ===0 thì không thể quay được phải sử dụng useRef--------------------  
+ const rotationRef = useRef(rotation);
+   useEffect(() => {
     rotationRef.current = rotation;
   }, [rotation]);
 
@@ -220,15 +255,14 @@ const WheelComponent: React.FC<WheelProps> = ({
     ctx.fill();
     const change = angleCurrent + Math.PI / 2;
     let i =
-      segments.length -
-      Math.floor((change / (Math.PI * 2)) * segments.length) -
-      1;
+      segments.length - 
+      Math.floor((change / (Math.PI * 2)) * segments.length) - 1;
     if (i < 0) i = i + segments.length;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillStyle = primaryColor || "black";
     ctx.font = "20px Nunito";
-    currentSegment = segments[i].value; // Access the 'value' property
+    currentSegment = segments[i].value;
     isFinished &&
       ctx.fillText(currentSegment, centerX + 10, centerY + size + 50);
   };
@@ -244,15 +278,15 @@ const WheelComponent: React.FC<WheelProps> = ({
         isOpen={openWarningSpin}
         onClose={() => setOpenWarningSpin(false)}
       />
-      <canvas
-        id="canvas"
-        width="600"
-        height="600"
-        style={{
-          pointerEvents: isFinished && !isOnlyOnce ? "none" : "auto",
-        }}
-      />
-    </>
+     <canvas
+      id="canvas"
+      width={canvasWidth}
+      height={canvasHeight}
+      style={{
+        pointerEvents: isFinished && !isOnlyOnce ? "none" : "auto",
+      }}
+    />
+          </>
   );
 };
 

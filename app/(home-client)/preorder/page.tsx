@@ -7,7 +7,7 @@ const hai = () => {
         <h1 className="text-center text-3xl text-red-600 uppercase">
           Đặt hàng trước trả tiền khi nhận
         </h1>
-        <span className="font-semibold">
+        <span className="font-semibold text-slate-900 dark:text-slate-200">
           Đặt hàng trước và trả tiền khi nhận là một mô hình mua sắm phổ biến và
           linh hoạt mà nhiều người tiêu dùng lựa chọn. Thực tế, đây là một xu
           hướng mà nhiều doanh nghiệp và cửa hàng đã áp dụng để tối ưu hóa trải
@@ -15,8 +15,8 @@ const hai = () => {
           đến thanh toán và đảm bảo sự hài lòng của người tiêu dùng.
         </span>
         <div className="flex space-x-2">
-          <h1 className="text-red-600 font-semibold"> Giảm rủi ro: </h1>
-          <span>
+          <h1 className="text-green-600 font-semibold"> Giảm rủi ro: </h1>
+          <span className="text-slate-900 dark:text-slate-200">
             Việc thanh toán khi nhận hàng giúp tránh những tình huống không mong
             muốn, như sản phẩm không đúng mẫu mã, không đủ chất lượng hoặc không
             đúng yêu cầu của khách hàng. Người mua chỉ trả tiền khi thực sự hài
@@ -24,13 +24,13 @@ const hai = () => {
           </span>
         </div>
         <h1 className="text-red-600 font-semibold"> Tăng độ tin cậy: </h1>
-        <span>
+        <span className="text-slate-900 dark:text-slate-200">
           Mô hình này tạo sự tin cậy cho khách hàng vì họ có thể kiểm tra sản
           phẩm trước khi trả tiền. Điều này đặc biệt quan trọng đối với các sản
           phẩm có giá trị lớn hoặc khi mua từ các nhà cung cấp mới.
         </span>
         <h1 className="text-red-600 font-semibold"> Xác nhận đơn hàng: </h1>
-        <span>
+        <span className="text-slate-900 dark:text-slate-200">
           Cửa hàng xác nhận đơn hàng và tiến hành giao hàng đến địa chỉ khách
           hàng chỉ định. Khách hàng kiểm tra sản phẩm hoặc dịch vụ sau khi nhận
           hàng. Sau khi kiểm tra và hài lòng, khách hàng thanh toán tiền cho đơn

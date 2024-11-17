@@ -12,7 +12,7 @@ export async function PATCH(
     const body = await req.json();
 
     const { name } = body;
-
+    
     if (!userId) {
       return new NextResponse(JSON.stringify({ error: "Unauthenticated" }), {
         status: 403,
@@ -81,7 +81,16 @@ export async function DELETE(
       );
     }
 
-    const store = await prismadb.store.deleteMany({
+     // Kiểm tra tổng số cửa hàng hiện tại
+     const totalStores = await prismadb.store.count();
+     if (totalStores <= 1) {
+       return new NextResponse(
+         JSON.stringify({ error: "Không thể xóa cửa hàng. Hệ thống cần ít nhất 1 cửa hàng." }),
+         { status: 400 }
+       );
+     }
+
+    const store = await prismadb.store.delete({
       where: {
         id: params.storeId,
       },

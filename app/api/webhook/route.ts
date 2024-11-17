@@ -49,7 +49,7 @@ export async function POST(req: Request) {
         id: session?.metadata?.orderId,
       },
       data: {
-        status: StatusOrder.Cho_lay_hang,
+        status: StatusOrder.Soan_hang,
         isPaid: true,
         address: addressString,
         phone: session?.customer_details?.phone || "",

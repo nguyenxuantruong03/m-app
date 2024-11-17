@@ -177,7 +177,8 @@ export async function GET(
 ) {
   try {
     const { searchParams } = new URL(req.url);
-    const isFeatured = searchParams.get("isFeatured");
+    const isFeaturedParam = searchParams.get("isFeatured");
+    const isFeatured = isFeaturedParam === null ? undefined : isFeaturedParam === 'true';
     const productdetailId = searchParams.get("productdetailId") || undefined;
     const productType = ProductType.PRODUCT1;
     const productType10 = ProductType.PRODUCT10;
@@ -195,7 +196,7 @@ export async function GET(
         productType: {
           in: [productType, productType10],
         },
-        isFeatured: isFeatured ? true : undefined,
+        isFeatured,
         isArchived: false,
         productdetailId
       },

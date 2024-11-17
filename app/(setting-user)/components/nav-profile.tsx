@@ -26,11 +26,13 @@ const NavbarProfile: React.FC<NavbarProfileProps> = ({ dateofbirth, name }) => {
   const mainnavs = [
     {
       name: "Thông tin cá nhân",
+      nameMobile: "Thông tin",
       href: `/setting-profile`,
       icon: User,
     },
     {
       name: "Mật khẩu và bảo mật",
+      nameMobile: "Bảo mật",
       href: `/password-security`,
       icon: Shield,
     },
@@ -86,16 +88,27 @@ const NavbarProfile: React.FC<NavbarProfileProps> = ({ dateofbirth, name }) => {
     <>
       <div className="relative w-1/2 md:w-[45%]">
         <div className="pr-4 lg:pr-12 my-8">
-          <Link href="/" className="cursor-pointer flex">
-            <Image
-              className="h-8 w-auto sm:h-12 mb-5"
-              src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
-              alt="404"
-              width="50"
-              height="50"
-            />
-          </Link>
-          <Link href="/" className="cursor-pointer">
+        <Link href="/home-product">
+        <div className="hidden xl:block">
+          <Image
+            alt=""
+            src="/images/logo-custom.png"
+            width="140"
+            height="30"
+            className="rounded-sm"
+          />
+        </div>
+        <div className="block xl:hidden">
+          <Image
+            alt=""
+            src="/images/logo-mini.png"
+            width="45"
+            height="30"
+            className="rounded-sm bg-[#c3c3c3] py-1.5 px-2.5"
+          />
+        </div>
+      </Link>
+          <Link href="/home-product" className="cursor-pointer">
             <div className="fixed right-4 top-4 xl:right-12 xl:top-8 rounded-full p-2 bg-slate-300 bg-opacity-30 shadow-lg hover:bg-slate-500">
               <X className="h-6 w-6 font-bold dark:text-slate-900 text-white" />
             </div>
@@ -132,7 +145,8 @@ const NavbarProfile: React.FC<NavbarProfileProps> = ({ dateofbirth, name }) => {
                         : "text-slate-800 dark:text-white"
                     )}
                   />
-                  <span>{mainnav.name}</span>
+                  <span className="hidden md:block">{mainnav.name}</span>
+                  <span className="block md:hidden">{mainnav.nameMobile}</span>
                 </div>
               </Link>
             );

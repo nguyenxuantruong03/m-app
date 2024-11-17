@@ -205,6 +205,7 @@ export const {
         session.user.isCitizen = token.isCitizen as boolean;
         session.user.createdAt = token.createdAt as Date;
         session.user.isLive = token.isLive as boolean;
+        session.user.feedbackTimeNextResonse = token.feedbackTimeNextResonse as Date;
         const existingUser = await getUserById(token.sub);
         //--Bước1--Check người dùng có bị ban
         const now = new Date();
@@ -363,6 +364,7 @@ export const {
       token.frameAvatar = existingUser.frameAvatar;
       token.isCitizen = existingUser.isCitizen;
       token.createdAt = existingUser.createdAt;
+      token.feedbackTimeNextResonse = existingUser?.feedback?.[0]?.timeNextResponse;
       if (existingUser.stream) {
         token.isLive = existingUser.stream.isLive;
       } else {

@@ -49,7 +49,7 @@ export const BarChart: React.FC<OverViewProps> = ({ data, loading }) => {
           axisLine={false}
           tickFormatter={(value) => `${value}`}
         />
-        <Tooltip labelClassName="dark:text-slate-500 text-salte-900"/>
+        <Tooltip labelClassName="dark:text-slate-500 text-slate-900"/>
         <Legend />
         <Bar dataKey="total" fill="#3498db" radius={[4, 4, 0, 0]} />
       </ChartBar>

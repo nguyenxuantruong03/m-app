@@ -41,7 +41,9 @@ import {
   Settings2,
   BookHeart,
   MessageSquareText,
-  Truck
+  Truck,
+  Store,
+  MessageSquareReply
 } from "lucide-react";
 
 export const route = (params: string, pathname: string) => [
@@ -51,6 +53,20 @@ export const route = (params: string, pathname: string) => [
     icon: <Gauge className="size-5" />,
     content: "Tổng quan dữ liệu dữ liệu bán hàng.",
     active: pathname === `/${params}`,
+  },
+  {
+    href: `/store`,
+    label: "Cửa hàng",
+    icon: <Store className="size-5" />,
+    content: "Danh sách các cửa hàng các địa điểm.",
+    active: pathname === `/store`,
+  },
+  {
+    href: `/${params}/feedback`,
+    label: "FeedBack",
+    icon: <MessageSquareReply className="size-5" />,
+    content: "Danh sách các đánh giá về cửa hàng.",
+    active: pathname === `/${params}/feedback`,
   },
 ];
 export const staff = (params: string, pathname: string) => [

@@ -213,16 +213,6 @@ const CartItem: React.FC<CartItemProps> = ({
 
   const getRouteBasedOnProductType = (productType: any) => {
     switch (productType.toLowerCase()) {
-      case "ongnhua":
-        return "ongnhua";
-      case "bongden":
-        return "bongden";
-      case "daydien":
-        return "daydien";
-      case "ocam":
-        return "ocam";
-      case "son":
-        return "son";
       case "product":
         return "product0";
       case "product1":
@@ -268,7 +258,7 @@ const CartItem: React.FC<CartItemProps> = ({
   };
   return (
     <li
-      className={`flex items-center py-6 border-b ${
+      className={`flex items-center py-6 border-b border-slate-600 ${
         selected ? "selected" : ""
       }`}
     >
@@ -316,7 +306,7 @@ const CartItem: React.FC<CartItemProps> = ({
         <div className="relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-6">
           <div className="flex justify-between">
             <div className="max-w-40">
-              <p className="text-lg font-semibold text-black">{data.heading}</p>
+              <p className="text-lg font-semibold text-slate-900 dark:text-slate-200">{data.heading}</p>
               {/* Check nếu có isOutOfStock thì hiển theo quantityInventory lên khi hàng hết hoặc ko đủ số lượng */}
               {isOutOfStock && (
                 <div>
@@ -355,7 +345,7 @@ const CartItem: React.FC<CartItemProps> = ({
               disabled={productQuantityAll || quantityInventory}
               variant="outline"
               onClick={decrementQuantity} // Single click to decrement
-              className="w-10 h-10 flex justify-center items-center border rounded-md border-gray-300 bg-white hover:bg-gray-200 hover:bg-opacity-50 hover:text-slate-900"
+              className="w-7 h-7 md:w-10 md:h-10 flex justify-center items-center border rounded-md border-gray-300 bg-white hover:bg-gray-200 hover:bg-opacity-50 hover:text-slate-900"
             >
               -
             </Button>
@@ -363,7 +353,7 @@ const CartItem: React.FC<CartItemProps> = ({
               <Input
                 disabled={productQuantityAll || quantityInventory}
                 type="number"
-                className="text-xl mx-1 border rounded-md border-gray-300 w-20 text-center bg-white focus:bg-white hover:bg-white"
+                className="text-xl mx-1 border rounded-md border-gray-300 w-12 md:w-20 h-7 md:h-10 text-center bg-white focus:bg-white hover:bg-white"
                 value={quantity}
                 onChange={handleQuantityChange}
                 onBlur={() => setIsEditingQuantity(false)}
@@ -371,7 +361,7 @@ const CartItem: React.FC<CartItemProps> = ({
               />
             ) : (
               <span
-                className="text-xl mx-1 border rounded-md border-gray-300 w-20 py-1.5 text-center bg-white cursor-pointer"
+                className="text-xl mx-1 border rounded-md border-gray-300 w-12 md:w-20 md:pt-1.5 text-center bg-white cursor-pointer"
                 onClick={() => setIsEditingQuantity(true)}
               >
                 {quantity}
@@ -386,7 +376,7 @@ const CartItem: React.FC<CartItemProps> = ({
               }
               variant="outline"
               onClick={incrementQuantity} // Single click to decrement
-              className="w-10 h-10 flex justify-center items-center border rounded-md border-gray-300 bg-white hover:bg-gray-200 hover:bg-opacity-50 hover:text-slate-900"
+              className="w-7 h-7 md:w-10 md:h-10 flex justify-center items-center border rounded-md border-gray-300 bg-white hover:bg-gray-200 hover:bg-opacity-50 hover:text-slate-900"
             >
               +
             </Button>

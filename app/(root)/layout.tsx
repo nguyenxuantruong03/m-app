@@ -1,28 +1,88 @@
-import { currentUser } from "@/lib/auth";
-import prismadb from "@/lib/prismadb";
-import { redirect } from "next/navigation";
+"use client";
 
-export default async function SetupLayout({
+import ErrorComponent from "@/components/ui/error";
+import LoadingPageComponent from "@/components/ui/loading";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { usechoosestoreModal } from "@/hooks/usechoosestoreModal";
+import { Store, UserRole } from "@prisma/client";
+import axios from "axios";
+import { redirect, usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+
+import useSWR from "swr";
+
+const fetchStores = async (): Promise<Store[]> => {
+  const response = await axios.get("/api/stores");
+  return response.data;
+};
+
+export default function SetupLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const user = await currentUser();
-  const userId = await prismadb.user.findFirst({ where: { id: user?.id } });
-  if (!userId || !user) {
+  const { data: stores, error } = useSWR("/api/stores", fetchStores);
+  const user = useCurrentUser();
+  const storeModal = usechoosestoreModal();
+  const pathname = usePathname();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true); // Only enable client-side behavior after the component has mounted
+  }, []);
+
+  if (!user) {
     redirect("/auth/login");
   }
 
-  const store = await prismadb.store.findFirst({
-    where: {
-      userId: userId.id,
-    },
-  });
+  if (user.role === UserRole.USER || user.role === UserRole.GUEST) {
+    redirect("/home-product");
+  }
 
-  /* Mã đang kiểm tra xem cửa hàng có tồn tại cho người dùng hiện tại hay không. Nếu một cửa hàng tồn tại, nó sẽ chuyển hướng
-     người dùng đến trang tương ứng với ID của cửa hàng đó. */
-  if (store) {
-    redirect(`/${store.id}`);
+  if (error) {
+    return (
+      <div>
+        <ErrorComponent
+          reset={() => {
+            if (isClient) {
+              window.location.reload(); // Reload the window, only on the client side
+            }
+          }}
+        />
+      </div>
+    );
+  }
+
+  if (!stores) {
+    return (
+      <div>
+        <LoadingPageComponent />
+      </div>
+    );
+  }
+
+  // Lấy đường dẫn hiện tại và tách storeId từ URL
+  const storeIdFromUrl = pathname.split("/")[1];
+
+  // Nếu không có storeId trong URL, redirect tới store đầu tiên
+  if (!storeIdFromUrl && stores.length > 0) {
+    storeModal.isOpen;
+    redirect(`/${stores[0].id}`);
+  }
+
+  // Kiểm tra nếu storeId trong URL không tồn tại trong danh sách cửa hàng
+  const storeExists = stores.some(
+    (store: Store) => store.id === storeIdFromUrl
+  );
+  if (!storeExists && stores.length > 0) {
+    redirect(`/${stores[0].id}`);
+  }
+
+  const matchedStore = stores.find(
+    (store: Store) => store.id === storeIdFromUrl
+  );
+  if (matchedStore) {
+    redirect(`/${matchedStore.id}`);
   }
 
   return <>{children}</>;

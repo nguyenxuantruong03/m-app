@@ -9,6 +9,10 @@ import { Link as LinkIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import axios from "axios";
 import ShowInfoEmojiModal from "../modal/show-info-emoji";
+import FaceBookSVG from "@/public/svg/facebook";
+import InstagramSVG from "@/public/svg/instagram";
+import TiktokSVG from "@/public/svg/tiktok";
+import ZaloSVG from "@/public/svg/zalo";
 
 interface EmojiProps {
   commentId: string;
@@ -430,8 +434,8 @@ const EmojiPage: React.FC<EmojiProps> = ({
         className="flex justify-center items-center text-gray-800 text-opacity-60"
         onClick={() => handleEmojiClick("like")}
       >
-        <ThumbsUp className="w-5 h-5" />
-        <kbd className="mx-1">Thích</kbd>
+        <ThumbsUp className="w-5 h-5 text-slate-900 dark:text-slate-200" />
+        <kbd className="mx-1 text-slate-900 dark:text-slate-200">Thích</kbd>
       </div>
     );
   };
@@ -580,9 +584,9 @@ const EmojiPage: React.FC<EmojiProps> = ({
         <button
           disabled={loading}
           onClick={handleResponse}
-          className="flex items-center whitespace-nowrap text-gray-800 text-opacity-60 mx-1 hover:text-gray-900 hover:bg-[#a9a9a94d] hover:rounded-md hover:py-2 px-8 "
+          className="flex items-center whitespace-nowrap text-slate-900 dark:text-slate-200 text-opacity-60 mx-1 hover:text-gray-900 hover:bg-[#a9a9a94d] hover:rounded-md hover:py-2 px-8 "
         >
-          <MessageCircle className="w-5 h-5 mr-1" /> Phản hồi
+          <MessageCircle className="w-5 h-5 mr-1 text-slate-900 dark:text-slate-200" /> Phản hồi
         </button>
 
         {responseComment > 0 && (
@@ -599,13 +603,13 @@ const EmojiPage: React.FC<EmojiProps> = ({
               className="flex items-center text-gray-800 text-opacity-60 ml-2 hover:text-gray-900 hover:bg-[#a9a9a94d] hover:rounded-md hover:py-2 px-3 md:px-8"
             >
               {showResponseComments === commentId ? (
-                <span className="flex items-center whitespace-nowrap">
-                  <EyeOff className="w-5 h-5 mr-1" />
+                <span className="flex items-center text-slate-900 dark:text-slate-200 whitespace-nowrap">
+                  <EyeOff className="w-5 h-5 mr-1 text-slate-900 dark:text-slate-200" />
                   Ẩn phản hồi
                 </span>
               ) : (
-                <span className="flex items-center whitespace-nowrap">
-                  <Eye className="w-5 h-5 mr-1" />
+                <span className="flex items-center text-slate-900 dark:text-slate-200 whitespace-nowrap">
+                  <Eye className="w-5 h-5 mr-1 text-slate-900 dark:text-slate-200" />
                   Xem phản hồi
                 </span>
               )}
@@ -620,9 +624,9 @@ const EmojiPage: React.FC<EmojiProps> = ({
           <button
             disabled={loading}
             onClick={handleShareClick}
-            className="flex items-center cursor-pointer whitespace-nowrap text-gray-800 text-opacity-60 mx-1 hover:text-gray-900 hover:bg-[#a9a9a94d] hover:rounded-md hover:py-2 px-8"
+            className="flex items-center cursor-pointer whitespace-nowrap text-slate-900 dark:text-slate-200 text-opacity-60 mx-1 hover:text-gray-900 hover:bg-[#a9a9a94d] hover:rounded-md hover:py-2 px-8"
           >
-            <Share className="w-5 h-5 mr-1" /> Chia sẻ
+            <Share className="w-5 h-5 mr-1 text-slate-900 dark:text-slate-200" /> Chia sẻ
           </button>
 
           {showShareOptions && (
@@ -641,13 +645,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
                   window.open(`https://www.facebook.com/`, "_blank");
                 }}
               >
-                <Image
-                  width="35"
-                  height="35"
-                  className="object-fit"
-                  src="/images/facebook.png"
-                  alt="error"
-                />
+                <FaceBookSVG />
                 Gửi đến Facebook
               </Link>
               <Link
@@ -661,13 +659,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
                   window.open(`https://www.instagram.com/`, "_blank");
                 }}
               >
-                <Image
-                  width="35"
-                  height="35"
-                  className="object-fit"
-                  src="/images/instagram.png"
-                  alt="error"
-                />
+                <InstagramSVG />
                 Gửi đến Instagram
               </Link>
               <Link
@@ -681,13 +673,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
                   window.open(`https://www.tiktok.com/`, "_blank");
                 }}
               >
-                <Image
-                  width="35"
-                  height="35"
-                  className="object-fit"
-                  src="/images/tiktok.png"
-                  alt="error"
-                />
+                <TiktokSVG />
                 Gửi đến TikTok
               </Link>
               <Link
@@ -701,13 +687,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
                   window.open(`https://zalo.me/`, "_blank");
                 }}
               >
-                <Image
-                  width="35"
-                  height="35"
-                  className="object-fit"
-                  src="/images/zalo.png"
-                  alt="error"
-                />
+                <ZaloSVG />
                 Gửi đến Zalo
               </Link>
               <button

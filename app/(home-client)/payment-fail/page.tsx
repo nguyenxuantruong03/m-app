@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Container from "@/components/ui/container";
 import Image from "next/image";
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const PaymentSuccess = () => {
     const router = useRouter();
@@ -34,17 +35,17 @@ const PaymentSuccess = () => {
               height="100"
             />
           </div>
-          <div className="text-center text-lg mt-3">
+          <div className="text-center text-lg mt-3 text-slate-200 dark:text-slate-200">
             Đơn hàng của bạn đã thanh toán không thành công. <br />
             Quý khách vui lòng <span className="text-red-600 font-semibold">KIỂM TRA</span> quá trình thanh toán trước khi tắt trình duyệt.
           </div>
-          <div className="text-red-800 mt-10">
+          <div className="text-red-800 dark:text-red-700 mt-10">
             <p className="text-center text-lg font-semibold">
               Trở lại trang thanh toán trong {countdown} giây <br />
               Xin vui lòng chờ trong giây lát...
             </p>
           </div>
-          <div className="mt-4 flex items-center justify-center hover:underline cursor-pointer" onClick= {()=> router.push("/home-product")}>  Trở về trang chủ 🏠</div>
+          <Link href="/home-product" className="mt-4 flex items-center justify-center hover:underline cursor-pointer text-slate-900 dark:text-slate-200">  Trở về trang chủ 🏠</Link>
         </div>
       </Container>
     );

@@ -17,10 +17,15 @@ import { ResponseComment, Comment as CommentType } from "@/types/type";
 interface CommentProps {
   data: string;
   nameProduct: string;
-  commentData?: CommentType[]
-  responsecommentData?: ResponseComment[]
+  commentData?: CommentType[];
+  responsecommentData?: ResponseComment[];
 }
-const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, responsecommentData }) => {
+const Comment: React.FC<CommentProps> = ({
+  data,
+  nameProduct,
+  commentData,
+  responsecommentData,
+}) => {
   const param = useParams();
   const [loading, setLoading] = useState(false);
   const [rating, setRating] = useState<number | null>(null);
@@ -112,32 +117,26 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
               ) // Check if createdAt is defined
               .map((response) => response.createdAt!); // Use non-null assertion since we've filtered undefined
           })
-          .sort((a, b) => {
-            // Sort by createdAt in descending order
-            return new Date(b).getTime() - new Date(a).getTime();
-          })[0]; // Get the latest createdAt
-
+          // Sort by createdAt in descending order
+          .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0]; // Get the latest createdAt
+  
         if (firstCreatedAt) {
           const createdAtDate = new Date(firstCreatedAt);
-
           // Cộng thêm 30 giây vào createdAt
-          const futureTime = new Date(createdAtDate.getTime() + 30 * 1000); // Cộng thêm 30 giây
-
+          const futureTime = new Date(createdAtDate.getTime() + 30 * 1000);
           // Tính số thời gian còn lại giữa now và futureTime
-          const diffMilliseconds = futureTime.getTime() - now.getTime(); // Sự chênh lệch tính bằng milliseconds
-          const diffSeconds = Math.floor(diffMilliseconds / 1000); // Tính số giây còn lại
+          const diffMilliseconds = futureTime.getTime() - now.getTime();
+          const diffSeconds = Math.floor(diffMilliseconds / 1000);
 
-          // Kiểm tra nếu thời gian hiện tại chưa vượt quá futureTime
+           // Kiểm tra nếu thời gian hiện tại chưa vượt quá futureTime
           if (now < futureTime) {
             if (diffSeconds > 0) {
-              setErrorResponse(
-                `Bạn có thể đánh giá lại trong ${diffSeconds} giây nữa.`
-              );
+              setErrorResponse(`Bạn có thể đánh giá lại trong ${diffSeconds} giây nữa.`);
               return;
             }
           }
         }
-
+  
         if (
           responseDescriptions === null ||
           responseDescriptions === undefined ||
@@ -146,59 +145,66 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
           setErrorResponse("Nội dung phản hồi không thể trống.");
           return;
         }
-
+  
         if (responseDescriptions.length >= 121) {
           setErrorResponse("Bạn đã nhập quá 120 ký tự.");
           return;
         } else {
           setErrorResponse("");
         }
-
+  
         setLoading(true);
-        const responses = await axios.post(
-          `/api/${param.storeId}/comments/${commentId}/responsecomment`,
+  
+        await toast.promise(
+          axios.post(
+            `/api/${param.storeId}/comments/${commentId}/responsecomment`,
+            {
+              description: responseDescriptions,
+              product: data,
+              comment: commentId,
+            }
+          ).then((responses) => {
+            // Cập nhật savedComments sau khi thêm phản hồi
+            setSavedComments((prevComments) => {
+              const updatedComments = [...prevComments];
+              const commentToUpdate = updatedComments.find(
+                (comment) => comment.id === commentId
+              );
+              if (commentToUpdate) {
+                // Kiểm tra nếu phản hồi đã tồn tại
+                const existingResponse = commentToUpdate.responses?.find(
+                  (response) => response.id === responses.data.id
+                );
+                if (!existingResponse) {
+                  commentToUpdate.responses = [
+                    ...(commentToUpdate.responses || []),
+                    {
+                      ...responses.data,
+                      id: responses.data.id,
+                      description: responseDescriptions,
+                      commentId: commentId,
+                      user: responses.data.user,
+                      createdAt: responses.data.createdAt,
+                    },
+                  ];
+                }
+              }
+              return updatedComments;
+            });
+  
+            setShowResponseForm(null);
+            setResponseDescriptions("");
+            setEditingResponseId(null);
+          }),
           {
-            description: responseDescriptions,
-            product: data,
-            comment: commentId,
+            loading: 'Đang phản hồi...',
+            success: <span>Phản hồi thành công.</span>,
+            error: <span>Hãy thử lại.</span>,
           }
         );
-
-        // Cập nhật savedComments sau khi thêm phản hồi
-        setSavedComments((prevComments) => {
-          const updatedComments = [...prevComments];
-          const commentToUpdate = updatedComments.find(
-            (comment) => comment.id === commentId
-          );
-          if (commentToUpdate) {
-            // Kiểm tra nếu phản hồi đã tồn tại
-            const existingResponse = commentToUpdate.responses?.find(
-              (response) => response.id === responses.data.id
-            );
-            if (!existingResponse) {
-              commentToUpdate.responses = [
-                ...(commentToUpdate.responses || []),
-                {
-                  ...responses.data,
-                  id: responses.data.id,
-                  description: responseDescriptions,
-                  commentId: commentId,
-                  user: responses.data.user,
-                  createdAt: responses.data.createdAt,
-                },
-              ];
-            }
-          }
-          return updatedComments;
-        });
-
-        setShowResponseForm(null);
-        setResponseDescriptions("");
-        setEditingResponseId(null);
-        toast.success("Phản hồi thành công.");
+  
       } catch (error) {
         console.error("Error submitting response:", error);
-        toast.error("Hãy thử lại.");
       } finally {
         setLoading(false);
       }
@@ -206,50 +212,56 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
       setAlertGuestModal(true);
     }
   };
+  
 
   const handleDeleteCommentresponse = async (
     commentId: string | undefined,
     id: string
   ) => {
-    try {
-      if (user?.role !== "GUEST" && user?.id) {
-        setLoading(true);
-        // Send a request to delete the comment
-        await axios.delete(
-          `/api/${param.storeId}/comments/${commentId}/responsecomment`,
+    if (user?.role !== "GUEST" && user?.id) {
+      setLoading(true);
+      try {
+        await toast.promise(
+          axios.delete(
+            `/api/${param.storeId}/comments/${commentId}/responsecomment`,
+            {
+              data: { id: id },
+            }
+          ).then(() => {
+            // Update the local state to remove the deleted comment
+            setSavedComments((prevComments) =>
+              prevComments.map((comment) => {
+                // Find the comment to update
+                if (comment.id === commentId) {
+                  // Remove the response with the specified id
+                  comment.responses = comment.responses?.filter(
+                    (response) => response.id !== id
+                  );
+                }
+                return comment;
+              })
+            );
+            setOpenCommentResponse(false);
+            setEditingResponseId(null);
+            setResponseDescriptions("");
+            setShowResponseForm(null);
+          }),
           {
-            data: { id: id },
+            loading: 'Đang xóa...',
+            success: <span>Xóa thành công.</span>,
+            error: <span>Xóa không thành công. Hãy thử lại.</span>,
           }
         );
-        // Update the local state to remove the deleted comment
-        setSavedComments((prevComments) =>
-          prevComments.map((comment) => {
-            // Find the comment to update
-            if (comment.id === commentId) {
-              // Remove the response with the specified id
-              comment.responses = comment.responses?.filter(
-                (response) => response.id !== id
-              );
-            }
-            return comment;
-          })
-        );
-
-        toast.success("Xóa thành công.");
-        setOpenCommentResponse(false);
-        setEditingResponseId(null);
-        setResponseDescriptions("");
-        setShowResponseForm(null);
-      } else {
-        setAlertGuestModal(true);
+      } catch (error) {
+        console.error("Error deleting comment:", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error deleting comment:", error);
-      toast.error("Xóa không thành công. Hãy thử lại.");
-    } finally {
-      setLoading(false);
+    } else {
+      setAlertGuestModal(true);
     }
   };
+  
 
   const handleResponseEditClick = (
     commentId: string | undefined,
@@ -289,90 +301,96 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
   };
 
   const handleResponseUpdate = async (commentId: string | undefined) => {
-    try {
-      if (user?.role !== "GUEST" && user?.id) {
-        if (
-          responseDescriptions === null ||
-          responseDescriptions === undefined ||
-          !responseDescriptions.trim()
-        ) {
-          setErrorResponse("Nội dung phản hồi không thể trống.");
-          return;
-        }
-
-        if (responseDescriptions.length >= 121) {
-          setErrorResponse("Bạn đã nhập quá 120 ký tự.");
-          return;
-        } else {
-          setErrorResponse("");
-        }
-
-        setLoading(true);
-        if (commentId) {
-          const response = await axios.patch(
-            `/api/${param.storeId}/comments/${commentId}/responsecomment`,
-            {
-              id: editingResponseId,
-              description: responseDescriptions,
-              changeReview: true,
-            }
-          );
-
-          const updatedCommentData: CommentType = response.data;
-
-          // Reset the response description to an empty string
-          setResponseDescriptions("");
-          setEditingResponseId(null);
-
-          // Update the savedComments state to reflect the changes
-          setSavedComments((prevComments) =>
-            prevComments.map((comment) => {
-              // Find the comment to update
-              if (comment.id === commentId) {
-                // Find the response to update
-                comment.responses = comment.responses?.map((response) => {
-                  if (response.id === editingResponseId) {
-                    // Update the response description
-                    response.description = responseDescriptions;
-                    response.changeReview = true;
-                    response.totalchange = updatedCommentData.totalchange;
+    if (user?.role !== "GUEST" && user?.id) {
+      if (
+        responseDescriptions === null ||
+        responseDescriptions === undefined ||
+        !responseDescriptions.trim()
+      ) {
+        setErrorResponse("Nội dung phản hồi không thể trống.");
+        return;
+      }
+  
+      if (responseDescriptions.length >= 121) {
+        setErrorResponse("Bạn đã nhập quá 120 ký tự.");
+        return;
+      } else {
+        setErrorResponse("");
+      }
+  
+      setLoading(true);
+      if (commentId) {
+        try {
+          await toast.promise(
+            axios.patch(
+              `/api/${param.storeId}/comments/${commentId}/responsecomment`,
+              {
+                id: editingResponseId,
+                description: responseDescriptions,
+                changeReview: true,
+              }
+            ).then((response) => {
+              const updatedCommentData: CommentType = response.data;
+  
+              // Reset the response description and update local state
+              setResponseDescriptions("");
+              setEditingResponseId(null);
+  
+              // Update the savedComments state to reflect the changes
+              setSavedComments((prevComments) =>
+                prevComments.map((comment) => {
+                  // Find the comment to update
+                  if (comment.id === commentId) {
+                    // Find the response to update
+                    comment.responses = comment.responses?.map((response) => {
+                      if (response.id === editingResponseId) {
+                        // Update the response description
+                        response.description = responseDescriptions;
+                        response.changeReview = true;
+                        response.totalchange = updatedCommentData.totalchange;
+                      }
+                      return response;
+                    });
                   }
-                  return response;
+                  return comment;
+                })
+              );
+  
+              if (scrollPositionResponseRef.current !== null) {
+                window.scrollTo({
+                  top: scrollPositionResponseRef.current,
+                  behavior: "smooth",
                 });
               }
-              return comment;
-            })
+              setShowResponseForm(null);
+            }),
+            {
+              loading: "Đang chỉnh sửa...",
+              success: <span>Chỉnh sửa thành công.</span>,
+              error: <span>Hãy thử lại.</span>,
+            }
           );
-
-          toast.success("Chỉnh sửa thành công.");
-          if (scrollPositionResponseRef.current !== null) {
-            window.scrollTo({
-              top: scrollPositionResponseRef.current,
-              behavior: "smooth",
-            });
-          }
-          setShowResponseForm(null);
+        } catch (error) {
+          console.error("Error updating response:", error);
+          setErrorResponse("Error updating response.");
+        } finally {
+          setLoading(false);
         }
-      } else {
-        setAlertGuestModal(true);
       }
-    } catch (error) {
-      console.error("Error updating response:", error);
-      setErrorResponse("Error updating response.");
-      toast.error("Hãy thử lại.");
-    } finally {
-      setLoading(false);
+    } else {
+      setAlertGuestModal(true);
     }
   };
+  
 
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        if(!commentData){
+        if (!commentData) {
           return null;
         }
-      
-        if(!responsecommentData){
+
+        if (!responsecommentData) {
           return null;
         }
         setLoading(true);
@@ -382,7 +400,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
           fetchedComments.map(async (comment) => {
             try {
               setLoading(true);
-              const responseComments: ResponseComment[] = responsecommentData
+              const responseComments: ResponseComment[] = responsecommentData;
               return { ...comment, responses: responseComments };
             } catch (error) {
               console.error(
@@ -461,113 +479,124 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
   };
 
   const handleUpdate = async () => {
-    try {
-      if (user?.role !== "GUEST" && user?.id) {
-        // Add your validation logic here if needed
-        const updatedComment = {
-          id: editingCommentId,
-          rating: rating as number,
-          comment,
-          changeReview: true,
-        };
-        if (updatedComment.comment.length >= 120) {
-          setErrorResponse("Bạn đã nhập quá 120 ký tự.");
-          return;
-        }
-        setLoading(true);
-        const response = await axios.patch(
-          `/api/${param.storeId}/comments`,
-          updatedComment
-        );
-
-        const updatedCommentData: CommentType = response.data;
-
-        // Update the comment in the state
-        setSavedComments((prevComments) =>
-          prevComments.map((comment) =>
-            comment.id === updatedCommentData.id
-              ? { ...comment, ...updatedCommentData, changeReview: true }
-              : comment
-          )
-        );
-
-        // Update the commentsByRating state to reflect the changes
-        setCommentsByRating((prevCommentsByRating) => {
-          const updatedCommentsByRating = { ...prevCommentsByRating };
-          const commentToUpdate = updatedCommentsByRating[
-            updatedCommentData.rating
-          ]?.find((comment) => comment.id === updatedCommentData.id);
-          if (commentToUpdate) {
-            // Update the comment in commentsByRating if found
-            commentToUpdate.rating = updatedCommentData.rating;
-            commentToUpdate.comment = updatedCommentData.comment;
-            commentToUpdate.changeReview = updatedCommentData.changeReview;
-            commentToUpdate.totalchange = updatedCommentData.totalchange;
-          }
-          return updatedCommentsByRating;
-        });
-
-        setEditingCommentId(null);
-        setRating(null);
-        setCurrentValue(null);
-        setComment("");
-        setCommentError("");
-        setRatingError("");
-        toast.success("Cập nhật thành công.");
-        if (scrollPositionRef.current !== null) {
-          window.scrollTo({
-            top: scrollPositionRef.current,
-            behavior: "smooth",
-          });
-        }
-      } else {
-        setAlertGuestModal(true);
+    if (user?.role !== "GUEST" && user?.id) {
+      // Validation logic
+      const updatedComment = {
+        id: editingCommentId,
+        rating: rating as number,
+        comment,
+        changeReview: true,
+      };
+      if (updatedComment.comment.length >= 120) {
+        setErrorResponse("Bạn đã nhập quá 120 ký tự.");
+        return;
       }
-    } catch (error) {
-      console.error("Error updating comment:", error);
-      toast.error("Xin vui lòng thử lại!");
-    } finally {
-      setLoading(false);
+  
+      setLoading(true);
+  
+      try {
+        await toast.promise(
+          axios.patch(`/api/${param.storeId}/comments`, updatedComment).then((response) => {
+            const updatedCommentData: CommentType = response.data;
+  
+            // Update the comment in the state
+            setSavedComments((prevComments) =>
+              prevComments.map((comment) =>
+                comment.id === updatedCommentData.id
+                  ? { ...comment, ...updatedCommentData, changeReview: true }
+                  : comment
+              )
+            );
+  
+            // Update the commentsByRating state to reflect the changes
+            setCommentsByRating((prevCommentsByRating) => {
+              const updatedCommentsByRating = { ...prevCommentsByRating };
+              const commentToUpdate = updatedCommentsByRating[
+                updatedCommentData.rating
+              ]?.find((comment) => comment.id === updatedCommentData.id);
+              if (commentToUpdate) {
+                // Update the comment in commentsByRating if found
+                commentToUpdate.rating = updatedCommentData.rating;
+                commentToUpdate.comment = updatedCommentData.comment;
+                commentToUpdate.changeReview = updatedCommentData.changeReview;
+                commentToUpdate.totalchange = updatedCommentData.totalchange;
+              }
+              return updatedCommentsByRating;
+            });
+  
+            setEditingCommentId(null);
+            setRating(null);
+            setCurrentValue(null);
+            setComment("");
+            setCommentError("");
+            setRatingError("");
+  
+            if (scrollPositionRef.current !== null) {
+              window.scrollTo({
+                top: scrollPositionRef.current,
+                behavior: "smooth",
+              });
+            }
+          }),
+          {
+            loading: "Đang cập nhật...",
+            success: <span>Cập nhật thành công.</span>,
+            error: <span>Xin vui lòng thử lại!</span>,
+          }
+        );
+      } catch (error) {
+        console.error("Error updating comment:", error);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      setAlertGuestModal(true);
     }
   };
 
   const handleDeleteComment = async (commentId: string | undefined) => {
-    try {
-      if (user?.role !== "GUEST" && user?.id) {
-        setLoading(true);
-        // Send a request to delete the comment
-        await axios.delete(`/api/${param.storeId}/comments/`, {
-          data: { id: commentId },
-        });
-
-        setSavedComments((prevComments) =>
-          prevComments.filter((comment) => comment.id !== commentId)
+    if (user?.role !== "GUEST" && user?.id) {
+      setLoading(true);
+  
+      try {
+        await toast.promise(
+          axios.delete(`/api/${param.storeId}/comments/`, {
+            data: { id: commentId },
+          }).then(() => {
+            // Remove the deleted comment from the state
+            setSavedComments((prevComments) =>
+              prevComments.filter((comment) => comment.id !== commentId)
+            );
+  
+            // Update commentsByRating if needed
+            setCommentsByRating((prevCommentsByRating) => {
+              const newCommentsByRating = { ...prevCommentsByRating };
+              Object.keys(newCommentsByRating).forEach((rating) => {
+                newCommentsByRating[rating as any] = newCommentsByRating[
+                  rating as any
+                ].filter((comment) => comment.id !== commentId);
+              });
+              return newCommentsByRating;
+            });
+  
+            setOpenComment(false);
+          }),
+          {
+            loading: "Đang xóa bình luận...",
+            success: <span>Xóa thành công.</span>,
+            error: <span>Xóa không thành công. Hãy thử lại.</span>,
+          }
         );
-
-        // Update commentsByRating if needed
-        setCommentsByRating((prevCommentsByRating) => {
-          const newCommentsByRating = { ...prevCommentsByRating };
-          Object.keys(newCommentsByRating).forEach((rating) => {
-            newCommentsByRating[rating as any] = newCommentsByRating[
-              rating as any
-            ].filter((comment) => comment.id !== commentId);
-          });
-          return newCommentsByRating;
-        });
-
-        // Show a success toast
-        toast.success("Xóa thành công.");
-        setOpenComment(false);
-      } else {
-        setAlertGuestModal(true);
+      } catch (error) {
+        console.error("Error deleting comment:", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error deleting comment:", error);
-      toast.error("Xóa không thành công. Hãy thử lại.");
-    } finally {
-      setLoading(false);
+    } else {
+      setAlertGuestModal(true);
     }
   };
+  
 
   const handleRatingChange = (newRating: number) => {
     setRating(newRating);
@@ -603,96 +632,89 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
         .filter((comment) => comment.user.id === user?.id && comment.createdAt) // Lọc bình luận của user hiện tại và kiểm tra createdAt không undefined
         .sort(
           (a, b) =>
-            new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime() // Sắp xếp theo thứ tự giảm dần
+            new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime()
         )[0]?.createdAt; // Lấy phần tử đầu tiên (thời gian mới nhất)
-
+  
       if (firstCreatedAt) {
         const createdAtDate = new Date(firstCreatedAt);
 
         // Cộng thêm 10 phút vào createdAt
-        const futureTime = new Date(createdAtDate.getTime() + 10 * 60 * 1000); // Cộng thêm 10 phút
-
+        const futureTime = new Date(createdAtDate.getTime() + 10 * 60 * 1000);
         // Tính số thời gian còn lại giữa now và futureTime
         const diffMilliseconds = futureTime.getTime() - now.getTime(); // Sự chênh lệch tính bằng milliseconds
         const diffMinutes = Math.floor(diffMilliseconds / (1000 * 60)); // Tính số phút còn lại
         const diffSeconds = Math.floor((diffMilliseconds % (1000 * 60)) / 1000); // Tính số giây còn lại
-
+  
         // Kiểm tra nếu thời gian hiện tại chưa vượt quá futureTime
         if (now < futureTime) {
           if (diffMinutes > 0) {
-            setCommentError(
-              `Bạn có thể đánh giá lại trong ${diffMinutes} phút nữa.`
-            );
-            return;
+            setCommentError(`Bạn có thể đánh giá lại trong ${diffMinutes} phút nữa.`);
           } else {
-            setCommentError(
-              `Bạn có thể đánh giá lại trong ${diffSeconds} giây nữa.`
-            );
-            return;
+            setCommentError(`Bạn có thể đánh giá lại trong ${diffSeconds} giây nữa.`);
           }
+          return;
         }
       }
-
+  
       if (rating === null) {
         setRatingError("Hãy lựa chọn sao.");
         return;
       }
-
+  
       if (comment.trim() === "") {
-        setCommentError("Hãy nhập nội dụng đánh giá.");
+        setCommentError("Hãy nhập nội dung đánh giá.");
         return;
       }
-
+  
       if (comment.length >= 121) {
         setCommentError("Bạn đã nhập quá 120 ký tự.");
         return;
       } else {
         setCommentError("");
       }
-
+  
+      setLoading(true);
+  
       try {
-        const newComment = {
-          rating: rating as number,
-          comment,
-          productId: data || "Sản phẩm",
-        };
-        setLoading(true);
-        const response = await axios.post(
-          `/api/${param.storeId}{/comments/`,
-          newComment
+        await toast.promise(
+          axios.post(`/api/${param.storeId}/comments/`, {
+            rating: rating as number,
+            comment,
+            productId: data || "Sản phẩm",
+          }).then((response) => {
+            // Tạo bản sao của response.data và thêm thông tin user
+            const savedComment: CommentType = {
+              ...response.data,
+              id: response.data.id,
+              user: response.data.user,
+              product: response.data.product,
+            };
+            // Cập nhật savedComments sau khi thêm phản hồi mới
+            setSavedComments((prevComments) => [...prevComments, savedComment]);
+  
+            const updatedCommentsByRating = {
+              ...commentsByRating,
+              [savedComment.rating]: [
+                ...(commentsByRating[savedComment.rating] || []),
+                savedComment,
+              ],
+            };
+            setCommentsByRating(updatedCommentsByRating);
+  
+            setRating(null);
+            setCurrentValue(null);
+            setComment("");
+            setCommentError("");
+            setRatingError("");
+          }),
+          {
+            loading: "Đang gửi đánh giá...",
+            success: "Đánh giá thành công.",
+            error: "Hãy thử lại.",
+          }
         );
-
-        // Tạo bản sao của response.data và thêm thông tin user
-        const savedComment: CommentType = {
-          ...response.data,
-          id: response.data.id,
-          user: response.data.user, // Thêm thông tin user vào comment
-          product: response.data.product, // Thêm thông tin user vào comment
-        };
-        // Cập nhật savedComments sau khi thêm phản hồi mới
-        setSavedComments((prevComments) => {
-          const updatedComments = [...prevComments, savedComment];
-          return updatedComments;
-        });
-
-        setRating(null);
-        setCurrentValue(null);
-        setComment("");
-        setCommentError("");
-        setRatingError("");
-
-        const updatedCommentsByRating: { [key: number]: CommentType[] } = {
-          ...commentsByRating,
-          [newComment.rating]: [
-            ...(commentsByRating[newComment.rating] || []),
-            savedComment,
-          ],
-        };
-        setCommentsByRating(updatedCommentsByRating);
-        toast.success("Đánh giá thành công.");
       } catch (error) {
         console.error("Error submitting comment:", error);
-        toast.error("Hãy thử lại.");
       } finally {
         setLoading(false);
       }
@@ -700,6 +722,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
       setAlertGuestModal(true);
     }
   };
+  
 
   // Theo dõi sự thay đổi của savedComments và log dữ liệu
   useEffect(() => {}, [savedComments]);
@@ -874,27 +897,28 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
         loading={loading}
       />
 
-      <div className="p-4 shadow-lg my-6 rounded-md">
-        <h2 className="text-xl font-semibold mb-4">
+      <div className="p-4 shadow-lg dark:border-slate-800 dark:border my-6 rounded-md">
+        <h2 className="text-xl font-semibold mb-4 text-slate-900 dark:text-slate-200">
           Đánh giá và Bình luận - {nameProduct}
         </h2>
         <div className="grid md:grid-cols-2 shadow-inner p-2">
           <div className="m-auto">
-            <h3 className="font-bold text-3xl">
+            <h3 className="font-bold text-3xl text-slate-900 dark:text-slate-200">
               {calculateAverageRating(data).toFixed(1)}/5
             </h3>
-            <h3 className="flex">
+            <h3 className="flex text-slate-900 dark:text-slate-200">
               {renderStars(
                 Math.floor(calculateAverageRating(data)),
                 calculateAverageRating(data) % 1
               )}
             </h3>
-            <h3>{totalReviews} đánh giá và nhận xét</h3>
+            <h3 className="text-slate-900 dark:text-slate-200">
+              {totalReviews} đánh giá và nhận xét
+            </h3>
           </div>
 
           <div>
             <div className="flex relative">
-              5
               {stars1.map((_, index) => (
                 <Star
                   key={index}
@@ -908,23 +932,25 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
                   fill="rgb(255, 186, 90)"
                 />
               ))}
-              <div
-                style={{
-                  width: `${(starReviewCounts[4] / totalReviews) * 100}%`,
-                  backgroundImage: commentcolor.gradient,
-                  height: "100%",
-                  borderRadius: "20px",
-                }}
-              >
-                <h3 className={commentcolor.text}>{starReviewCounts[4]}</h3>
-              </div>
-              <h3 className="absolute right-0">
-                {starReviewCounts[4]} đánh giá
-              </h3>
+              {starReviewCounts[4] ? (
+                <div
+                  style={{
+                    width: `${(starReviewCounts[4] / totalReviews) * 100}%`,
+                    backgroundImage: commentcolor.gradient,
+                    height: "100%",
+                    borderRadius: "20px",
+                  }}
+                >
+                  <h3 className={commentcolor.text}>{starReviewCounts[4]}</h3>
+                </div>
+              ) : (
+                <h3 className="absolute right-0 text-slate-900 dark:text-slate-200">
+                  {starReviewCounts[4]} đánh giá
+                </h3>
+              )}
             </div>
 
             <div className="flex mt-2 relative">
-              4
               {stars1.map((_, index) => (
                 <Star
                   key={index}
@@ -938,23 +964,25 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
                   fill="rgb(255, 186, 90)"
                 />
               ))}
-              <div
-                style={{
-                  width: `${(starReviewCounts[3] / totalReviews) * 100}%`,
-                  backgroundImage: commentcolor.gradient,
-                  height: "100%",
-                  borderRadius: "20px",
-                }}
-              >
-                <h3 className={commentcolor.text}>{starReviewCounts[3]}</h3>
-              </div>
-              <h3 className="absolute right-0">
-                {starReviewCounts[3]} đánh giá
-              </h3>
+              {starReviewCounts[3] ? (
+                <div
+                  style={{
+                    width: `${(starReviewCounts[3] / totalReviews) * 100}%`,
+                    backgroundImage: commentcolor.gradient,
+                    height: "100%",
+                    borderRadius: "20px",
+                  }}
+                >
+                  <h3 className={commentcolor.text}>{starReviewCounts[3]}</h3>
+                </div>
+              ) : (
+                <h3 className="absolute right-0 text-slate-900 dark:text-slate-200">
+                  {starReviewCounts[3]} đánh giá
+                </h3>
+              )}
             </div>
 
             <div className="flex mt-2 relative">
-              3
               {stars1.map((_, index) => (
                 <Star
                   key={index}
@@ -968,23 +996,25 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
                   fill="rgb(255, 186, 90)"
                 />
               ))}
-              <div
-                style={{
-                  width: `${(starReviewCounts[2] / totalReviews) * 100}%`,
-                  backgroundImage: commentcolor.gradient,
-                  height: "100%",
-                  borderRadius: "20px",
-                }}
-              >
-                <h3 className={commentcolor.text}>{starReviewCounts[2]}</h3>
-              </div>
-              <h3 className="absolute right-0">
-                {starReviewCounts[2]} đánh giá
-              </h3>
+              {starReviewCounts[2] ? (
+                <div
+                  style={{
+                    width: `${(starReviewCounts[2] / totalReviews) * 100}%`,
+                    backgroundImage: commentcolor.gradient,
+                    height: "100%",
+                    borderRadius: "20px",
+                  }}
+                >
+                  <h3 className={commentcolor.text}>{starReviewCounts[2]}</h3>
+                </div>
+              ) : (
+                <h3 className="absolute right-0 text-slate-900 dark:text-slate-200">
+                  {starReviewCounts[2]} đánh giá
+                </h3>
+              )}
             </div>
 
             <div className="flex mt-2 relative">
-              2
               {stars1.map((_, index) => (
                 <Star
                   key={index}
@@ -998,23 +1028,25 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
                   fill="rgb(255, 186, 90)"
                 />
               ))}
-              <div
-                style={{
-                  width: `${(starReviewCounts[1] / totalReviews) * 100}%`,
-                  backgroundImage: commentcolor.gradient,
-                  height: "100%",
-                  borderRadius: "20px",
-                }}
-              >
-                <h3 className={commentcolor.text}>{starReviewCounts[1]}</h3>
-              </div>
-              <h3 className="absolute right-0">
-                {starReviewCounts[1]} đánh giá
-              </h3>
+              {starReviewCounts[1] ? (
+                <div
+                  style={{
+                    width: `${(starReviewCounts[1] / totalReviews) * 100}%`,
+                    backgroundImage: commentcolor.gradient,
+                    height: "100%",
+                    borderRadius: "20px",
+                  }}
+                >
+                  <h3 className={commentcolor.text}>{starReviewCounts[1]}</h3>
+                </div>
+              ) : (
+                <h3 className="absolute right-0 text-slate-900 dark:text-slate-200">
+                  {starReviewCounts[1]} đánh giá
+                </h3>
+              )}
             </div>
 
             <div className="flex mt-2 relative">
-              1
               {stars1.map((_, index) => (
                 <Star
                   key={index}
@@ -1028,25 +1060,30 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
                   fill="rgb(255, 186, 90)"
                 />
               ))}
-              <div
-                style={{
-                  width: `${(starReviewCounts[0] / totalReviews) * 100}%`,
-                  backgroundImage: commentcolor.gradient,
-                  height: "100%",
-                  borderRadius: "20px",
-                }}
-              >
-                <h3 className={commentcolor.text}>{starReviewCounts[0]}</h3>
-              </div>
-              <h3 className="absolute right-0">
-                {starReviewCounts[0]} đánh giá
-              </h3>
+              {starReviewCounts[0] > 0 ? (
+                <div
+                  style={{
+                    width: `${(starReviewCounts[0] / totalReviews) * 100}%`,
+                    backgroundImage: commentcolor.gradient,
+                    height: "100%",
+                    borderRadius: "20px",
+                  }}
+                >
+                  <h3 className={commentcolor.text}>
+                    {starReviewCounts[0]} đánh giá
+                  </h3>
+                </div>
+              ) : (
+                <h3 className="absolute right-0 text-slate-900 dark:text-slate-200">
+                  {starReviewCounts[0]} đánh giá
+                </h3>
+              )}
             </div>
           </div>
         </div>
 
         <div className="my-4" ref={textareaRef}>
-          <span className="text-lg">
+          <span className="text-lg text-slate-900 dark:text-slate-200">
             Rating: {rating !== null ? `${rating} stars` : "Not rated yet"}
           </span>
           <div className="flex space-x-2">
@@ -1169,7 +1206,11 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
                       .sort((a, b) => b.rating - a.rating)
                       .map((comment, index) => (
                         <li key={comment.id} className="mb-8">
-                          <div className={`flex items-center relative ${comment?.user?.stream?.isLive ? "ml-8" : ""}`}>
+                          <div
+                            className={`flex items-center relative ${
+                              comment?.user?.stream?.isLive ? "ml-8" : ""
+                            }`}
+                          >
                             <>
                               <CircleAvatar
                                 srcAvatar={
@@ -1189,8 +1230,20 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
                                 comment?.totalchange ? "grid grid-rows-2" : ""
                               }`}
                             >
-                              <Link href={`${comment?.user?.stream?.isLive ? `/live/${comment?.user?.nameuser}` : `/user/${comment?.user?.nameuser}`}`}>
-                                <p className={`font-bold flex items-center text-gray-600 line-clamp-1 ${comment?.user?.stream?.isLive ? "ml-10" : "ml-3"}`}>
+                              <Link
+                                href={`${
+                                  comment?.user?.stream?.isLive
+                                    ? `/live/${comment?.user?.nameuser}`
+                                    : `/user/${comment?.user?.nameuser}`
+                                }`}
+                              >
+                                <p
+                                  className={`font-bold flex items-center text-gray-600 dark:text-slate-300 line-clamp-1 ${
+                                    comment?.user?.stream?.isLive
+                                      ? "ml-10"
+                                      : "ml-3"
+                                  }`}
+                                >
                                   <span className=" md:hidden">
                                     {truncateName(comment.user.name, 10)}
                                   </span>
@@ -1214,13 +1267,15 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
                                 ""
                               )}
                             </div>
-                            <p className=" absolute right-0 text-sm font-bold text-gray-800 text-opacity-60">
+                            <p className=" absolute right-0 text-sm font-bold text-slate-900 dark:text-slate-200 text-opacity-60">
                               {formatTimestamp(comment.createdAt || new Date())}
                             </p>
                           </div>
 
                           <div
-                            className={`group flex items-center justify-between bg-gray-100 mb-2 rounded-md p-3 text-sm ml-12 ${comment?.user?.stream?.isLive ? "mt-8" : "mt-4"}`}
+                            className={`group flex items-center justify-between bg-gray-100 mb-2 rounded-md p-3 text-sm ml-12 ${
+                              comment?.user?.stream?.isLive ? "mt-8" : "mt-4"
+                            }`}
                             onMouseLeave={() => setShowOptions(null)}
                           >
                             <div>
@@ -1305,28 +1360,38 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
                                 {showResponseComments === comment.id && (
                                   <ul>
                                     {comment.responses
-                                    .filter(response => response.createdAt !== undefined) // Lọc các phản hồi có createdAt hợp lệ
-                                    .sort((a, b) => {
-                                      // Chuyển đổi createdAt thành Date và so sánh
-                                      const dateA = new Date(a.createdAt!); // Sử dụng ! để xác nhận rằng createdAt không phải là undefined
-                                      const dateB = new Date(b.createdAt!);
-                                      //Sắp xếp mới nhất sẽ nằm ở dưới.
-                                      return dateA.getTime() - dateB.getTime(); // Trả về hiệu số thời gian để sắp xếp
-                                    })
-                                    .map(
-                                      (response, responseIndex) => (
+                                      .filter(
+                                        (response) =>
+                                          response.createdAt !== undefined
+                                      ) // Lọc các phản hồi có createdAt hợp lệ
+                                      .sort((a, b) => {
+                                        // Chuyển đổi createdAt thành Date và so sánh
+                                        const dateA = new Date(a.createdAt!); // Sử dụng ! để xác nhận rằng createdAt không phải là undefined
+                                        const dateB = new Date(b.createdAt!);
+                                        //Sắp xếp mới nhất sẽ nằm ở dưới.
+                                        return (
+                                          dateA.getTime() - dateB.getTime()
+                                        ); // Trả về hiệu số thời gian để sắp xếp
+                                      })
+                                      .map((response, responseIndex) => (
                                         <li
                                           key={responseIndex}
                                           className="w-[90%] mx-auto"
                                         >
-                                          {comment.user.id === response?.user.id ? (
+                                          {comment.user.id ===
+                                          response?.user.id ? (
                                             <>
                                               {response.commentId ===
                                                 comment.id && (
                                                 <>
                                                   <div
                                                     ref={textareaResponseRef}
-                                                    className={`flex items-center relative ${response?.user?.stream?.isLive ? "ml-8 my-4" : ""}`}
+                                                    className={`flex items-center relative ${
+                                                      response?.user?.stream
+                                                        ?.isLive
+                                                        ? "ml-8 my-4"
+                                                        : ""
+                                                    }`}
                                                   >
                                                     <>
                                                       <CircleAvatar
@@ -1336,7 +1401,6 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
                                                             ?.url ||
                                                           response?.user?.image
                                                         }
-                                                        
                                                         srcFrame={
                                                           response?.user
                                                             ?.frameAvatar
@@ -1349,9 +1413,13 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
                                                             ?.isCitizen
                                                         }
                                                         isLive={
-                                                          response?.user?.stream?.isLive
+                                                          response?.user?.stream
+                                                            ?.isLive
                                                         }
-                                                        nameuser={response?.user?.nameuser}
+                                                        nameuser={
+                                                          response?.user
+                                                            ?.nameuser
+                                                        }
                                                         classAvatar="z-10"
                                                       />
                                                     </>
@@ -1362,8 +1430,22 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
                                                           : ""
                                                       }`}
                                                     >
-                                                      <Link href={`${response?.user?.stream?.isLive ? `/live/${response?.user?.nameuser}` : `/user/${response?.user?.nameuser}`}`}>
-                                                        <div className={`font-bold text-gray-600 whitespace-nowrap line-clamp-1 ${response?.user?.stream?.isLive ? "ml-10" : "ml-3"}`}>
+                                                      <Link
+                                                        href={`${
+                                                          response?.user?.stream
+                                                            ?.isLive
+                                                            ? `/live/${response?.user?.nameuser}`
+                                                            : `/user/${response?.user?.nameuser}`
+                                                        }`}
+                                                      >
+                                                        <div
+                                                          className={`font-bold text-gray-600 whitespace-nowrap line-clamp-1 ${
+                                                            response?.user
+                                                              ?.stream?.isLive
+                                                              ? "ml-10"
+                                                              : "ml-3"
+                                                          }`}
+                                                        >
                                                           <p className="md:hidden">
                                                             {truncateName(
                                                               response?.user
@@ -1372,12 +1454,22 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
                                                             )}
                                                           </p>
                                                           <p className="hidden md:block">
-                                                            {response?.user?.name}
+                                                            {
+                                                              response?.user
+                                                                ?.name
+                                                            }
                                                           </p>
                                                         </div>
                                                       </Link>
                                                       {response.changeReview ? (
-                                                        <span className={`text-sm text-gray-400 items-center font-normal line-clamp-1 whitespace-nowrap ${response?.user?.stream?.isLive ? "ml-10" : "ml-3"}`}>
+                                                        <span
+                                                          className={`text-sm text-gray-400 items-center font-normal line-clamp-1 whitespace-nowrap ${
+                                                            response?.user
+                                                              ?.stream?.isLive
+                                                              ? "ml-10"
+                                                              : "ml-3"
+                                                          }`}
+                                                        >
                                                           {(response.totalchange ??
                                                             0) === 0
                                                             ? ""
@@ -1387,7 +1479,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
                                                         ""
                                                       )}
                                                     </div>
-                                                    <div className="absolute right-0 text-sm font-bold text-gray-800 text-opacity-60">
+                                                    <div className="absolute right-0 text-sm font-bold text-slate-900 dark:text-slate-200 text-opacity-60">
                                                       {formatTimestamp(
                                                         response.createdAt ||
                                                           new Date()
@@ -1495,7 +1587,12 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
                                                 >
                                                   <div
                                                     ref={textareaResponseRef}
-                                                    className={`flex justify-end items-center relative ${response?.user?.stream?.isLive ? "mr-6 mt-6 mb-8" : ""}`}
+                                                    className={`flex justify-end items-center relative ${
+                                                      response?.user?.stream
+                                                        ?.isLive
+                                                        ? "mr-6 mt-6 mb-8"
+                                                        : ""
+                                                    }`}
                                                   >
                                                     <div className="absolute left-0 text-sm font-bold text-gray-800 text-opacity-60">
                                                       {formatTimestamp(
@@ -1510,8 +1607,22 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
                                                           : ""
                                                       }`}
                                                     >
-                                                      <Link href={`${response?.user?.stream?.isLive ? `/live/${response?.user?.nameuser}` : `/user/${response?.user?.nameuser}`}`}>
-                                                        <div className={`text-end font-bold text-gray-600 whitespace-nowrap line-clamp-1 ${response?.user?.stream?.isLive ? "mr-8" : ""}`}>
+                                                      <Link
+                                                        href={`${
+                                                          response?.user?.stream
+                                                            ?.isLive
+                                                            ? `/live/${response?.user?.nameuser}`
+                                                            : `/user/${response?.user?.nameuser}`
+                                                        }`}
+                                                      >
+                                                        <div
+                                                          className={`text-end font-bold text-gray-600 whitespace-nowrap line-clamp-1 ${
+                                                            response?.user
+                                                              ?.stream?.isLive
+                                                              ? "mr-8"
+                                                              : ""
+                                                          }`}
+                                                        >
                                                           <p className="md:hidden">
                                                             {truncateName(
                                                               response?.user
@@ -1520,12 +1631,22 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
                                                             )}
                                                           </p>
                                                           <p className="hidden md:block">
-                                                            {response?.user?.name}
+                                                            {
+                                                              response?.user
+                                                                ?.name
+                                                            }
                                                           </p>
                                                         </div>
                                                       </Link>
                                                       {response.changeReview ? (
-                                                        <span className={`text-sm text-gray-400 line-clamp-1 items-center font-normal whitespace-nowrap ${response?.user?.stream?.isLive ? "mr-10" : ""}`}>
+                                                        <span
+                                                          className={`text-sm text-gray-400 line-clamp-1 items-center font-normal whitespace-nowrap ${
+                                                            response?.user
+                                                              ?.stream?.isLive
+                                                              ? "mr-10"
+                                                              : ""
+                                                          }`}
+                                                        >
                                                           {(response.totalchange ??
                                                             0) === 0
                                                             ? ""
@@ -1555,9 +1676,13 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
                                                             ?.frameAvatar
                                                         }
                                                         isLive={
-                                                          response?.user?.stream?.isLive
+                                                          response?.user?.stream
+                                                            ?.isLive
                                                         }
-                                                        nameuser={response?.user?.nameuser}
+                                                        nameuser={
+                                                          response?.user
+                                                            ?.nameuser
+                                                        }
                                                         classAvatar="z-10"
                                                       />
                                                     </>
@@ -1655,8 +1780,7 @@ const Comment: React.FC<CommentProps> = ({ data, nameProduct, commentData, respo
                                             </>
                                           )}
                                         </li>
-                                      )
-                                    )}
+                                      ))}
                                   </ul>
                                 )}
                               </>

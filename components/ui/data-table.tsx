@@ -28,6 +28,13 @@ import { AlertModal } from "../modals/alert-modal";
 import { DatePickerWithRange } from "./pick-calendar";
 import { DateRange } from "react-day-picker";
 
+const formatter = new Intl.NumberFormat("de-DE", {
+  style: "currency",
+  currency: "VND",
+  minimumFractionDigits: 0, // VND does not commonly use decimal places, but set it as per your need
+  maximumFractionDigits: 2, // Ensures no rounding occurs beyond two decimal places
+});
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -37,7 +44,13 @@ interface DataTableProps<TData, TValue> {
   disable?: boolean;
   open?: boolean;
   setOpen?: (open: boolean) => void;
-  showSelected?: boolean
+  showSelected?: boolean;
+  showTotal?: boolean;
+}
+
+interface DataTableRow {
+  totalPrice: string;
+  debtShipper: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -49,7 +62,8 @@ export function DataTable<TData, TValue>({
   disable,
   open,
   setOpen,
-  showSelected = true
+  showSelected = true,
+  showTotal = false,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -106,6 +120,26 @@ export function DataTable<TData, TValue>({
     }
   };
 
+  const calculateTotalDebt = () => {
+    const totalDebt = (filteredData as DataTableRow[]) // Cast filteredData to DataTableRow[]
+      .filter((row) => row.debtShipper === true)
+      .reduce((sum, row) => {
+        const numericPrice = parseInt(row.totalPrice.replace(/[^0-9]/g, ""), 10);
+        return sum + (isNaN(numericPrice) ? 0 : numericPrice);
+      }, 0);
+    return totalDebt;
+  };
+  
+  const calculateTotal = () => {
+    const total = (filteredData as DataTableRow[]) // Cast filteredData to DataTableRow[]
+      .filter((row) => row.debtShipper === false)
+      .reduce((sum, row) => {
+        const numericPrice = parseInt(row.totalPrice.replace(/[^0-9]/g, ""), 10);
+        return sum + (isNaN(numericPrice) ? 0 : numericPrice);
+      }, 0);
+    return total;
+  };
+
   return (
     <div>
       <AlertModal
@@ -117,31 +151,42 @@ export function DataTable<TData, TValue>({
         }}
         loading={disable}
       />
-          <div className="lg:flex items-center py-4 space-y-2 lg:space-y-0 lg:space-x-3 grid grid-rows-2">
-            <Input
-              placeholder="Search"
-              value={
-                (table.getColumn(searchKey || "")?.getFilterValue() as string) ?? ""
-              }
-              onChange={(event) =>
-                table.getColumn(searchKey || "")?.setFilterValue(event.target.value)
-              }
-              className="max-w-sm"
-            />
-            {Object.keys(rowSelection).length > 0 && (
-              <Button
-                size="sm"
-                disabled={disable}
-                variant="outline"
-                className="ml-auto font-normal text-xs"
-                onClick={() => setOpen?.(true)}
-              >
-                <Trash className="size-4 mr-2" />
-                Delete ({Object.keys(rowSelection).length})
-              </Button>
-            )}
-            <DatePickerWithRange onDateChange={handleDateChange} data={data} />
-          </div>
+      <div className="lg:flex items-center py-4 space-y-2 lg:space-y-0 lg:space-x-3 grid grid-rows-2">
+        <Input
+          placeholder="Search"
+          value={
+            (table.getColumn(searchKey || "")?.getFilterValue() as string) ?? ""
+          }
+          onChange={(event) =>
+            table.getColumn(searchKey || "")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
+        {Object.keys(rowSelection).length > 0 && (
+          <Button
+            size="sm"
+            disabled={disable}
+            variant="outline"
+            className="ml-auto font-normal text-xs"
+            onClick={() => setOpen?.(true)}
+          >
+            <Trash className="size-4 mr-2" />
+            Delete ({Object.keys(rowSelection).length})
+          </Button>
+        )}
+        <DatePickerWithRange onDateChange={handleDateChange} data={data} />
+      </div>
+      {/* Conditionally display total calculations if showTotal is true */}
+      {showTotal && (
+        <div className="my-4">
+          <p className="text-lg font-semibold">
+            <span className="text-red-500">Tổng nợ shipper:</span> <span className="text-yellow-500">{formatter.format(calculateTotalDebt())}</span>
+          </p>
+          <p className="text-lg font-semibold">
+            <span className="text-green-500">Tổng tiền thu được từ shipper:</span> {formatter.format(calculateTotal())}
+          </p>
+        </div>
+      )}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -193,14 +238,12 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        {
-          showSelected && (
-        <div className="flex-1 text-sm text-muted-foreground">
-          {Object.keys(rowSelection).length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
-          )
-        }
+        {showSelected && (
+          <div className="flex-1 text-sm text-muted-foreground">
+            {Object.keys(rowSelection).length} of{" "}
+            {table.getFilteredRowModel().rows.length} row(s) selected.
+          </div>
+        )}
         <Button
           variant="outline"
           size="sm"

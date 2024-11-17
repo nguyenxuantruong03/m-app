@@ -25,7 +25,6 @@ const ProductPage: React.FC<PropductPageProps> = async ({ params }) => {
   }
 
   return (
-    <div className="bg-white">
       <Container>
         <DetailProduct
           data={product}
@@ -36,7 +35,6 @@ const ProductPage: React.FC<PropductPageProps> = async ({ params }) => {
           routeOther="product10"
         />
       </Container>
-    </div>
   );
 };
 

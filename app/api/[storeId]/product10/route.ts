@@ -176,7 +176,8 @@ export async function GET(
 ) {
   try {
     const { searchParams } = new URL(req.url);
-    const isFeatured = searchParams.get("isFeatured");
+    const isFeaturedParam = searchParams.get("isFeatured");
+    const isFeatured = isFeaturedParam === null ? undefined : isFeaturedParam === 'true';
     const productdetailId = searchParams.get("productdetailId") || undefined;
     const productType = ProductType.PRODUCT10;
     const productType8 = ProductType.PRODUCT8;
@@ -190,7 +191,7 @@ export async function GET(
     const product = await prismadb.product.findMany({
       where: {
         storeId: params.storeId,
-        isFeatured: isFeatured ? true : undefined,
+        isFeatured,
         isArchived: false,
         productType: {
           in: [productType, productType8],

@@ -10,16 +10,6 @@ const ShowResult = ({ data }: ShowResultProps) => {
 
   const getRouteBasedOnProductType = (productType: any) => {
     switch (productType.toLowerCase()) {
-      case "ongnhua":
-        return "ongnhua";
-      case "bongden":
-        return "bongden";
-      case "daydien":
-        return "daydien";
-      case "ocam":
-        return "ocam";
-      case "son":
-        return "son";
       case "product":
         return "product0";
       case "product1":

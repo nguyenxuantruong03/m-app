@@ -19,20 +19,20 @@ const InfoProductDetail: React.FC<DetailProductProps> = ({ data }) => {
             <h1 className="text-center text-lg font-bold text-red-500">
               Đặc điểm nổi bật
             </h1>
-            <p className="text-sm">
+            <p className="text-sm text-slate-900 dark:text-slate-200">
               {data.productdetail.descriptionsalientfeatures}
             </p>
           </div>
-          <p className="my-1">
+          <p className="my-1 text-slate-900 dark:text-slate-200">
             {data.productdetail.description2salientfeatures}
           </p>
-          <span className="font-bold text-lg">
+          <span className="font-bold text-lg text-slate-900 dark:text-slate-200">
             Sản phẩm {data.productdetail.name1} có gì mới ?
           </span>
-          <div className="pl-2 my-1">
+          <div className="pl-2 my-1 text-slate-900 dark:text-slate-200">
             <p>{data.productdetail.description3salientfeatures}</p>
           </div>
-          <p className="text-sm font-bold my-2">
+          <p className="text-sm font-bold my-2 text-slate-900 dark:text-slate-200">
             {data.productdetail.description4salientfeatures}
           </p>
           {images.map((image, index) => (
@@ -45,7 +45,7 @@ const InfoProductDetail: React.FC<DetailProductProps> = ({ data }) => {
               className="rounded-md mt-3"
             />
           ))}
-          <p className="text-sm my-2">
+          <p className="text-sm my-2 text-slate-900 dark:text-slate-200">
             {data.productdetail.contentsalientfeatures}
           </p>
         </div>

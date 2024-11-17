@@ -1,7 +1,7 @@
 import Link from "next/link";
 import {relatedTagTivicolor} from "@/components/(client)/color/color"
 
-const RelatedTagTivi = () => {
+const RelatedTagOcam = () => {
     return ( 
         <div className=" my-2 relative">
             <div className="absolute hidden md:flex bottom-4 md:left-[26rem] xl:left-[58.1rem] space-x-4 ">
@@ -35,4 +35,4 @@ const RelatedTagTivi = () => {
      );
 }
  
-export default RelatedTagTivi;
+export default RelatedTagOcam;

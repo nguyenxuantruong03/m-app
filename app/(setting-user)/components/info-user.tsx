@@ -29,6 +29,7 @@ interface InfoUserProps {
   user: Userdata;
   favorite: Favorite[];
   imageCredential: string;
+  isCustomWarehouse?: boolean;
 }
 
 interface InfoUser {
@@ -57,9 +58,22 @@ const InfoUser: React.FC<InfoUserProps> = ({
   user,
   favorite,
   imageCredential,
+  isCustomWarehouse,
 }) => {
   const [open, setOpen] = useState(false);
   const [alertGuestModal, setAlertGuestModal] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsHidden(window.scrollY >= 30);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []); // Empty dependency array to ensure this only registers once
 
   useEffect(() => {
     const fetchData = async () => {
@@ -73,14 +87,14 @@ const InfoUser: React.FC<InfoUserProps> = ({
 
   useEffect(() => {
     if (open) {
-      document.body.style.overflow = 'hidden'; // Ngăn chặn cuộn
+      document.body.style.overflow = "hidden"; // Ngăn chặn cuộn
     } else {
-      document.body.style.overflow = 'auto'; // Khôi phục cuộn
+      document.body.style.overflow = "auto"; // Khôi phục cuộn
     }
 
     // Clean up function to reset overflow when component unmounts
     return () => {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = "auto";
     };
   }, [open]);
 
@@ -356,6 +370,7 @@ const InfoUser: React.FC<InfoUserProps> = ({
     ) {
       return (
         <SheetInfomation
+          isCustomWarehouse={isCustomWarehouse}
           name={user.name}
           nameuser={user.nameuser}
           bio={user.bio}
@@ -387,7 +402,17 @@ const InfoUser: React.FC<InfoUserProps> = ({
       {open && (
         <>
           <div className="fixed inset-0 bg-black/80 h-full w-full z-40 flex items-center justify-center">
-            <div className="h-max w-3/4 max-w-md border rounded-md gap-4 bg-slate-900 p-6 shadow-lg transition ease-in-out z-50">
+            <div
+              className={`${
+                isCustomWarehouse
+                  ? `${
+                      isHidden
+                        ? "max-h-[82%] md:w-3/4 max-w-md overflow-y-auto border rounded-md gap-4 bg-slate-900 p-6 shadow-lg transition ease-in-out z-40"
+                        : "max-h-[75%] md:max-h-[73%] md:w-3/4 max-w-md overflow-y-auto border rounded-md gap-4 bg-slate-900 p-6 shadow-lg transition ease-in-out z-40"
+                    }`
+                  : "max-h-[80%] md:w-3/4 max-w-md overflow-y-auto border rounded-md gap-4 bg-slate-900 p-6 shadow-lg transition ease-in-out z-40"
+              }`}
+            >
               <div className="flex items-center justify-between">
                 <span className="text-lg font-semibold text-foreground break-all line-clamp-2 text-white">
                   Chỉnh sửa ảnh đại diện{" "}
@@ -403,7 +428,7 @@ const InfoUser: React.FC<InfoUserProps> = ({
                 Ảnh đại diện giúp mọi người nhận biết bạn dễ dàng hơn qua các
                 bài viết, bình luận, tin nhắn...
               </div>
-              <FormImageCredential setOpen={setOpen}/>
+              <FormImageCredential setOpen={setOpen} />
             </div>
           </div>
         </>

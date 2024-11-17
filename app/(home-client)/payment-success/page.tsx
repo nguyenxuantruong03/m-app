@@ -20,6 +20,7 @@ import {
 import FormatDate from "@/components/format-Date";
 import { formatter } from "@/lib/utils";
 import { getColorPrice, getSizePrice } from "@/components/(client)/export-product-compare/size-color/match-color-size";
+import Link from 'next/link';
 
 const PaymentSuccess = () => {
   const searchParams = useSearchParams();
@@ -266,7 +267,7 @@ const PaymentSuccess = () => {
             <div className="flex items-center justify-center">
               {loading && <LoadingPageComponent />}
             </div>
-            <div className="text-center text-lg mt-3">
+            <div className="text-center text-lg mt-3 text-slate-900 dark:text-slate-200">
               Quý khách vui lòng{" "}
               <span className="text-red-600 font-semibold">KHÔNG</span> tắt
               trình duyệt vì đang xử lý tặng quà cho quý khách mua hàng.
@@ -275,7 +276,7 @@ const PaymentSuccess = () => {
         </>
       ) : (
         <div className="relative">
-          <div className="mt-32 mb-3 py-4 max-w-[600px] max-h-[700px] mx-auto shadow-lg rounded-lg">
+          <div className="mt-32 mb-3 py-4 max-w-[600px] max-h-[700px] mx-auto shadow-lg rounded-lg dark:bg-slate-700">
             <div className="flex items-center justify-center">
               <Image
                 src="/images/check-payment-success.png"
@@ -286,27 +287,27 @@ const PaymentSuccess = () => {
             </div>
 
             <div className="text-lg space-y-5 text-center">
-              <p className="font-bold mt-3">Đặt hàng thành công!</p>
+              <p className="font-bold mt-3 text-slate-900 dark:text-slate-200">Đặt hàng thành công!</p>
               {/* Check nếu role là GUEST thì ko hiển thị */}
               {user?.role !== "GUEST" && user?.id && (
                 <>
                   <div className="ml-5 grid grid-cols-2 gap-x-2 space-y-1">
-                    <p className="flex items-center">
+                    <p className="flex items-center text-slate-900 dark:text-slate-200">
                       <Truck className="h-5 w-5 mr-1" /> Mã đơn hàng:
                     </p>
-                    <p className="font-semibold text-base">
+                    <p className="font-semibold text-base text-slate-900 dark:text-slate-200">
                       {firstOrderItemId}
                     </p>
-                    <p className="flex items-center">
-                      <Banknote className="h-5 w-5 mr-1" /> {isPaidOfFirstOrder ? "Số tiền đã thanh toán:" : "Số tiền cần thanh toán:"}
+                    <p className="flex items-center text-slate-900 dark:text-slate-200">
+                      <Banknote className="h-5 w-5 mr-1 " /> {isPaidOfFirstOrder ? <span>Số tiền đã thanh toán:</span> : <span>Số tiền cần thanh toán:</span>}
                     </p>
                     <p className={`font-semibold text-base ${isPaidOfFirstOrder ? "text-green-600" : "text-red-600"}`}>
                       {PriceOfFirstOrderItem
                         ? formatter.format(PriceOfFirstOrderItem)
                         : ""}
                     </p>
-                    <p className="flex items-center">
-                      <Gift className="h-5 w-5 mr-1" /> Vòng quay được tặng:
+                    <p className="flex items-center text-slate-900 dark:text-slate-200">
+                      <Gift className="h-5 w-5 mr-1 " /> Vòng quay được tặng:
                     </p>
                     <p className="font-semibold text-base">
                       {isPaidOfFirstOrder ? (
@@ -323,11 +324,11 @@ const PaymentSuccess = () => {
                         <div className="text-red-600">Thanh toán để nhận thưởng!</div>
                       )}
                     </p>
-                    <p className="flex items-center">
+                    <p className="flex items-center text-slate-900 dark:text-slate-200">
                       <AlarmClockCheck className="h-5 w-5 mr-1" /> Thời gian đặt
                       hàng:
                     </p>
-                    <p className="font-semibold text-base">
+                    <p className="font-semibold text-base text-slate-900 dark:text-slate-200">
                       {
                         <FormatDate
                           subtractiontime={true}
@@ -335,7 +336,7 @@ const PaymentSuccess = () => {
                         />
                       }
                     </p>
-                    <p className="flex items-center">
+                    <p className="flex items-center text-slate-900 dark:text-slate-200">
                       <WalletCards className="h-5 w-5 mr-1" /> Trạng thái đơn
                       hàng:
                     </p>
@@ -348,7 +349,7 @@ const PaymentSuccess = () => {
                     </p>
                   </div>
 
-                  <p>
+                  <p className="text-slate-900 dark:text-slate-200">
                     Quý khách vui lòng{" "}
                     <span className="text-red-600 font-semibold">KIỂM TRA</span>{" "}
                     đơn hơn trước khi tắt trình duyệt.
@@ -356,19 +357,18 @@ const PaymentSuccess = () => {
                 </>
               )}
             </div>
-            <div className="text-red-800 mt-10">
+            <div className="text-red-800 dark:text-red-700 mt-10">
               <p className="text-center text-lg font-semibold">
                 Trở lại trang mua hàng trong {countdown} giây <br />
                 Xin vui lòng chờ trong giây lát...
               </p>
             </div>
-            <div
-              className="mt-4 flex items-center justify-center hover:underline cursor-pointer"
-              onClick={() => router.push("/home-product")}
+            <Link
+              href="/home-product"
+              className="mt-4 flex items-center justify-center hover:underline cursor-pointer text-slate-900 dark:text-slate-200"
             >
-              {" "}
               Trở về trang chủ 🏠
-            </div>
+            </Link>
           </div>
         </div>
       )}

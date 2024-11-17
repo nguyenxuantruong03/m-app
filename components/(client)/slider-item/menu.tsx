@@ -58,7 +58,7 @@ const Menu: React.FC<MenuProps> =  ({ showCategories = false }) => {
 
     fetchCategories();
   }, []);
-  const innerDivClassName = showCategories ? "mx-auto max-w-7xl h-[409px] my-2 mt-[120px] bg-white rounded-md flex space-x-5" : "";
+  const innerDivClassName = showCategories ? "mx-auto max-w-7xl h-[430px] my-2 mt-[120px] bg-white rounded-md flex space-x-5" : "";
 
   return (
     <>

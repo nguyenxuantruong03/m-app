@@ -3,7 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Clock12, MessageCircleMore, Tag } from "lucide-react";
+import { Clock12, MessageCircleMore, Tag, ArrowUpRight  } from "lucide-react";
 import { Images as ImageIcon } from "lucide-react";
 import SpanColumn from "@/components/span-column";
 import FormatDate from "@/components/format-Date";
@@ -16,6 +16,7 @@ export type BillboardColumn = {
   label: string | null;
   description: string | null;
   url: string;
+  link: string | null;
   createdAt: Date;
 };
 
@@ -92,6 +93,19 @@ export const columns: ColumnDef<BillboardColumn>[] = [
         );
       }
       return "";
+    },
+  },
+  {
+    accessorKey: "link",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Link
+          <ArrowUpRight className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
     },
   },
   {

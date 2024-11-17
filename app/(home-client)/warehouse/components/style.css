@@ -39,6 +39,22 @@
   width: 100%;
 }
 
+.separatorCustomForWarehouse {
+  background-image: repeating-linear-gradient(
+    135deg,
+    #ff0844,
+    #ff0844 4px,
+    transparent 0,
+    transparent 6px,
+    #ffb199 0,
+    #ffb199 10px,
+    transparent 0,
+    transparent 12px
+  );
+  background-size: 0.1875rem 7.25rem;
+  height: 15vh;
+  width: 0.25rem;
+}
 
 
 

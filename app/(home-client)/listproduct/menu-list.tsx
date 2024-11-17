@@ -15,7 +15,7 @@ import {
   getCategories10,
   getCategories11,
 } from "@/actions/client/categories/get-categories";
-import { usePathname } from "next/navigation";
+import { notFound, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Category } from "@prisma/client";
@@ -34,11 +34,27 @@ const Menu = () => {
   const [categories10, setCategories10] = useState<Category[]>([]);
   const [categories11, setCategories11] = useState<Category[]>([]);
   const [selectedTab, setSelectedTab] = useState("home");
+  const [isSmallScreen, setIsSmallScreen] = useState(true);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      if (window.innerWidth > 640) {
+        notFound();
+      } else {
+        setIsSmallScreen(true);
+      }
+    };
+
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
+  }, []);
 
   const handleTabChange = (tabId: string) => {
     setSelectedTab(tabId);
   };
-  const pathname = usePathname();
+
   const categories0 = categories.map((route) => ({
     href: `/category/${route.id}`,
     label: route.name,
@@ -145,6 +161,10 @@ const Menu = () => {
     fetchData();
   }, []);
 
+  if (!isSmallScreen) {
+    return null; // Optionally render nothing if the screen is large
+  }
+
   return (
     <>
       <div className="maintab md:hidden">
@@ -236,40 +256,40 @@ const Menu = () => {
             />
             <div className="list">
               <label htmlFor="home" className="home">
-                <span className="text-base">Pin</span>
+                <span className="text-base text-slate-900 dark:text-slate-200">Pin</span>
               </label>
               <label htmlFor="blog" className="blog">
-                <span className="text-base">Quạt</span>
+                <span className="text-base text-slate-900 dark:text-slate-200">Quạt</span>
               </label>
               <label htmlFor="help" className="help">
-                <span className="text-base">Ống</span>
+                <span className="text-base text-slate-900 dark:text-slate-200">Ống</span>
               </label>
               <label htmlFor="code" className="code">
-                <span className="text-base">Dây điện</span>
+                <span className="text-base text-slate-900 dark:text-slate-200">Dây điện</span>
               </label>
               <label htmlFor="about" className="about">
-                <span className="text-base">Đá cắt</span>
+                <span className="text-base text-slate-900 dark:text-slate-200">Đá cắt</span>
               </label>
               <label htmlFor="category" className="category">
-                <span className="text-base">Ổ khóa</span>
+                <span className="text-base text-slate-900 dark:text-slate-200">Ổ khóa</span>
               </label>
               <label htmlFor="category1" className="category1">
-                <span className="text-base">Keo</span>
+                <span className="text-base text-slate-900 dark:text-slate-200">Keo</span>
               </label>
               <label htmlFor="category2" className="category2">
-                <span className="text-base">Ổ cắm</span>
+                <span className="text-base text-slate-900 dark:text-slate-200">Ổ cắm</span>
               </label>
               <label htmlFor="category3" className="category3">
-                <span className="text-base">Sơn</span>
+                <span className="text-base text-slate-900 dark:text-slate-200">Sơn</span>
               </label>
               <label htmlFor="category4" className="category4">
-                <span className="text-base">Vl Nhà tắm</span>
+                <span className="text-base text-slate-900 dark:text-slate-200">Nhà tắm</span>
               </label>
               <label htmlFor="category5" className="category5">
-                <span className="text-base">Bóng đèn</span>
+                <span className="text-base text-slate-900 dark:text-slate-200">Bóng đèn</span>
               </label>
               <label htmlFor="category6" className="category6">
-                <span className="text-base">Thường dùng</span>
+                <span className="text-base text-slate-900 dark:text-slate-200">Thường dùng</span>
               </label>
               <div className="slider"></div>
             </div>

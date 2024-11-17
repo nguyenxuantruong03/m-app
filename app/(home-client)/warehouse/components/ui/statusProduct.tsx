@@ -29,8 +29,8 @@ const StatusProduct: React.FC<StatusProductProps> = ({
       {noneTitleStatus && (
         <>
           <div className="flex items-center space-x-2">
-            <span className={`text-sm flex items-center ${classTitleStatus}`}>
-              <Truck className="w-4 h-4 mr-1" /> {titleStatus}
+            <span className={`text-xs md:text-sm flex items-center ${classTitleStatus}`}>
+              <Truck className="w-6 h-6 md:w-4 md:h-4 mr-1" /> {titleStatus}
             </span>
 
             <HoverCard>
@@ -52,7 +52,7 @@ const StatusProduct: React.FC<StatusProductProps> = ({
         </>
       )}
 
-      <span className={`${classStatus}`}>{status}</span>
+      <span className={`${classStatus} text-sm md:text-base`}>{status}</span>
     </div>
   );
 };

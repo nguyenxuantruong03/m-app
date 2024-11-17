@@ -17,7 +17,6 @@ interface ProductDetailProps {
   routeOtherSuggestions?: string;
   other: Product[];
   routeOther?: string;
-  routeProductType?: "ongnhua" | "bongden" | "daydien"
 }
 
 const DetailProduct: React.FC<ProductDetailProps> = ({
@@ -28,7 +27,6 @@ const DetailProduct: React.FC<ProductDetailProps> = ({
   routeOtherSuggestions = "",
   other,
   routeOther="",
-  routeProductType,
   productlistsuggest2
 }) => {
   return (
@@ -49,19 +47,19 @@ const DetailProduct: React.FC<ProductDetailProps> = ({
         </div>
       </div>
       <hr className="my-10" />
-      <h1 className="font-bold text-3xl my-3">Gợi ý khác </h1>
+      <h1 className="font-bold text-3xl my-3 text-slate-900 dark:text-slate-200">Gợi ý khác </h1>
       {productlistsuggest ? (
-        <ProductListSuggest data={otherSuggestions} productType={routeProductType as "ongnhua" | "bongden" | "daydien"} />
+        <ProductListSuggest data={otherSuggestions} route={routeOtherSuggestions} />
       ) : (
         <ProductListSingleSuggest
           data={otherSuggestions}
           route={routeOtherSuggestions}
         />
       )}
-      <h1 className="font-bold text-3xl my-3">Loại khác </h1>
+      <h1 className="font-bold text-3xl my-3 text-slate-900 dark:text-slate-200">Loại khác </h1>
       {/* Kiểm tra giá trị của suggest để hiển thị component phù hợp */}
       {productlistsuggest2 ? (
-        <ProductListSuggest data={other} productType={routeProductType as "ongnhua" | "bongden" | "daydien"} />
+        <ProductListSuggest data={other} route={routeOther} />
       ) : (
         <ProductListSingleSuggest
           data={other}

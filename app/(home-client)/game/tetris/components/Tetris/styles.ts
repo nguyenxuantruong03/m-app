@@ -1,10 +1,14 @@
 import styled from "styled-components";
 
+interface PlayButtonProps {
+  disabled?: boolean;
+}
+
 export const Layout = styled.div`
   padding: 20px;
   display: flex;
   justify-content: center;
-  height: 100vh;
+  height: 90vh;
   gap: 20px;
 `;
 
@@ -62,22 +66,20 @@ export const StartGameContainer = styled.div`
   }
 `;
 
-export const PlayButton = styled.div`
+export const PlayButton = styled.div<PlayButtonProps>`
   border: 1px solid #6473ff;
   color: #6473ff;
   background-color: transparent;
   padding: 10px 20px;
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   font-weight: bold;
   font-size: 20px;
   width: fit-content;
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
+  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
   &:hover {
-    background-color: #6473ff;
-    color: black;
+    background-color: ${({ disabled }) => (disabled ? 'transparent' : '#6473ff')};
+    color: ${({ disabled }) => (disabled ? '#6473ff' : 'black')};
   }
-`;
-
-export const NoMobile = styled.div`
-  margin-top: 50px;
 `;

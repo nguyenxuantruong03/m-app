@@ -1,7 +1,7 @@
 import Link from "next/link";
 import {relatedTagHeadphonecolor} from "@/components/(client)/color/color"
 
-const RelatedTagHeadphone = () => {
+const RelatedTagOngnhua = () => {
     return ( 
         <div className=" my-2 relative">
             <div className="absolute hidden md:flex bottom-4  md:left-[23.3rem] xl:left-[49.4rem] space-x-4 ">
@@ -50,4 +50,4 @@ const RelatedTagHeadphone = () => {
      );
 }
  
-export default RelatedTagHeadphone;
+export default RelatedTagOngnhua;

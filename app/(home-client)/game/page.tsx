@@ -7,45 +7,67 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
 
-export const revalidate =86400
+export const revalidate = 86400;
 const GamePage = () => {
-  const user = useCurrentUser()
+  const user = useCurrentUser();
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
   const [alertGuestModal, setAlertGuestModal] = useState(false);
+
+  const [isMobile, setIsMobile] = useState(false);
 
   const handleClick2048 = () => {
     router.push("/game/2048");
   };
 
-  const handleClickDino = () => {
-    router.push("/game/dino");
-  };
-
   const handleClickMinesweeper = () => {
     router.push("/game/minesweeper");
   };
-  const handleClickPacman= () => {
+  const handleClickPacman = () => {
     router.push("/game/pacman");
   };
-   const handleClickTictoe= () => {
-    router.push("/game/tictoe");
-  };
-  const handleClickTetris= () => {
+  const handleClickTetris = () => {
     router.push("/game/tetris");
   };
 
   useEffect(() => {
-    if(user?.role === "GUEST" || !user?.id){
-      setAlertGuestModal(true)
-      router.push("/home-product")
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 1024);
+    };
+
+    // Initial check
+    handleResize();
+
+    // Add event listener for window resize
+    window.addEventListener('resize', handleResize);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (user?.role === "GUEST" || !user?.id) {
+      setAlertGuestModal(true);
+      router.push("/home-product");
     }
     setIsMounted(true);
-  }, [router,user?.id,user?.role]);
+  }, [router, user?.id, user?.role]);
 
   if (!isMounted) {
     return null;
   }
+
+  if (isMobile)
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center text-xl font-bold text-slate-900 dark:text-slate-200">
+          Sorry, this game only works on desktop!
+        </div>
+      </div>
+    );
+  
 
   return (
     <Container>
@@ -53,26 +75,21 @@ const GamePage = () => {
         isOpen={alertGuestModal}
         onClose={() => setAlertGuestModal(false)}
       />
-      <div className="mt-40"> 
-        <h1 className="text-center text-4xl font-bold my-5"> Trò Chơi nhận xu </h1>
-      <div className="my-8 space-x-5 flex">
-        <Image
-          src="/images/2048.png"
-          alt=""
-          width={100}
-          height={100}
-          className="cursor-pointer"
-          onClick={handleClick2048}
-        />
+      <div className="mt-40">
+        <h1 className="text-center text-4xl font-bold my-5 bg-gradient-to-r from-[#FFE998] to-[#57370D] bg-clip-text text-transparent">
+          Trò Chơi nhận xu
+        </h1>
 
-        <Image
-          src="/images/khung-long.jpg"
-          alt=""
-          width={100}
-          height={100}
-          className="cursor-pointer"
-          onClick={handleClickDino}
-        />
+        <div className="my-8 space-x-5 flex">
+          <Image
+            src="/images/2048.png"
+            alt=""
+            width={100}
+            height={100}
+            className="cursor-pointer"
+            onClick={handleClick2048}
+          />
+
           <Image
             src="/images/logo-minesweeper.png"
             alt=""
@@ -90,14 +107,6 @@ const GamePage = () => {
             onClick={handleClickPacman}
           />
           <Image
-            src="/images/tictoe.png"
-            alt=""
-            width={100}
-            height={100}
-            className="cursor-pointer"
-            onClick={handleClickTictoe}
-          />
-          <Image
             src="/images/tetris.png"
             alt=""
             width={100}
@@ -105,7 +114,7 @@ const GamePage = () => {
             className="cursor-pointer"
             onClick={handleClickTetris}
           />
-      </div>
+        </div>
       </div>
     </Container>
   );

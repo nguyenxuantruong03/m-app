@@ -14,6 +14,7 @@ import {
   Link,
   AlignEndHorizontal,
   AlignVerticalSpaceAround,
+  Underline,
 } from "lucide-react";
 import { Editor } from "@tiptap/react";
 import { Toggle } from "@/components/ui/toggle";
@@ -116,6 +117,16 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
       >
         <AlignEndHorizontal className="h-4 w-4" />
       </Toggle>
+      <Toggle
+        size="sm"
+        pressed={editor.isActive("underline")}
+        onPressedChange={() => editor.chain().focus().toggleUnderline().run()}
+        disabled={disabled}
+        title="Gạch chân"
+      >
+        <Underline className="h-4 w-4" />
+      </Toggle>
+
       <Toggle
         size="sm"
         pressed={editor.isActive("hardBreak")}

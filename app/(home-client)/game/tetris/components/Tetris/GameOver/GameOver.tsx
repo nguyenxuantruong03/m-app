@@ -1,77 +1,62 @@
-import React, { useEffect, useState } from "react";
-import { useTetrisActions, useTetris } from "../../../hooks/useTetris";
-import { GameOverContainer, NameInput, SubmitScoreButton, StatusText } from "./styles";
+import React, { Dispatch, SetStateAction, useEffect } from "react";
+import { useTetris } from "../../../hooks/useTetris";
+import { GameOverContainer } from "./styles";
 import axios from "axios";
 import { useParams } from "next/navigation";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { Leaderboard } from "@/types/type";
 
-const GameOver = (): JSX.Element => {
-  const param = useParams()
-  const user = useCurrentUser()
+interface GameOverProps {
+  setLoading: Dispatch<SetStateAction<boolean>>;
+  setData: Dispatch<SetStateAction<Leaderboard[]>>;
+}
+
+const GameOver = ({ setLoading, setData }: GameOverProps): JSX.Element => {
+  const param = useParams();
+  const user = useCurrentUser();
   const gameState = useTetris();
-  const [totalCoins, setTotalCoins] = useState<number>(0);
-  
-  useEffect(() => {
-      const newTotalCoins = totalCoins + Math.floor(gameState.score / 300);
-      updateTotalCoinsAndSave(newTotalCoins);
-  }, []);
-  const updateTotalCoinsAndSave = async (newTotalCoins: number) => {
-    try {
-      // Save the new totalCoins to the database
-      await axios.post(`/api/${param.storeId}/wheelSpin`, {userId: user?.id, coin: newTotalCoins });
-  
-      // Update the state with the new totalCoins
-      setTotalCoins(newTotalCoins);
-    } catch (error) {
-      console.error("Error saving totalCoins:", error);
+  const newTotalCoins = Math.floor(gameState.score / 300);
+
+  useEffect(() =>{
+    const fetchData = async () =>{
+      try {
+        setLoading(true);
+        await axios.post(`/api/${param.storeId}/wheelSpin`, {
+          userId: user?.id,
+          coin: newTotalCoins,
+        });
+      } catch (error) {
+        console.error("Error saving totalCoins:", error);
+      }finally {
+        setLoading(false);
+      }
     }
-  };
-  // const { setScoreId } = useTetrisActions();
-  // const [name, setName] = useState<string>("");
-  // const [status, setStatus] = useState<string>("");
+    fetchData()
+  },[])
 
-  // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setName(e.target.value);
-  // };
-
-  // const handleSubmitScore = async () => {
-  //   if (name.length > 0) {
-  //     setStatus("Loading");
-  //     const score = await fetch("/api/leaderboard", {
-  //       method: "POST",
-  //       headers: {
-  //         Accept: "application/json",
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ score: gameState.score, name }),
-  //     });
-  //     setStatus("Submitted");
-  //     setScoreId((await score.json())[0].id);
-  //   }
-  // };
+  useEffect(() =>{
+    const fetchData = async () =>{
+      try {
+        await axios.post(`/api/client/leaderboard`, {
+          userId: user?.id,
+          score: gameState.score,
+        });
+        const response = await axios.get(`/api/client/leaderboard`);
+        setData(response.data);
+      } catch (error) {
+        console.error("Error saving leaderboard:", error);
+      } 
+    }
+    fetchData()
+  },[gameState.score, user?.id])
 
   return (
     <GameOverContainer>
       <h1>Game Over!</h1>
-      <h3>Score</h3>
-      <h2>{gameState.score}</h2>
-      {/* {status === "Loading" ? (
-        <StatusText>Submitting...</StatusText>
-      ) : status === "Submitted" ? (
-        <StatusText>Submitted!</StatusText>
-      ) : (
-        <>
-          <NameInput
-            maxLength={10}
-            onChange={handleInputChange}
-            placeholder="Enter your name"
-          />
-          <SubmitScoreButton onClick={handleSubmitScore}>
-          <SubmitScoreButton>
-            Submit your score
-          </SubmitScoreButton>
-        </>
-      )} */}
+      <h3>Score: {gameState.score}</h3>
+      <span>
+        Tổng xu nhận được: <span>{newTotalCoins}</span>
+      </span>
     </GameOverContainer>
   );
 };

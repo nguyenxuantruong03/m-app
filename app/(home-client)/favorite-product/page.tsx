@@ -99,23 +99,22 @@ const LikePage = () => {
         isOpen={alertGuestModal}
         onClose={() => setAlertGuestModal(false)}
       />
-      <div className="bg-white mt-16 mx-auto max-w-7xl pl-2 pt-16 sm:px-6 lg:px-8">
+      <div className="mt-16 mx-auto max-w-7xl px-2 pt-16 sm:px-6 lg:px-8">
         <div className="lg:grid-cols-12 lg:items-start gap-x-12 lg:col-span-7">
           {favorite.items.length === 0 && (
             <>
-              <div className="text-3xl font-semibold">Thả tim</div>
-              <div className="flex pb-2 font-bold">
+              <div className="text-3xl font-semibold dark:text-slate-200 text-slate-900">Thả tim</div>
+              <div className="flex items-center pb-2 font-bold dark:text-slate-200 text-slate-900 space-x-2">
                 Chưa có sản phẩm được thả
-                <Heart className="fill-red-500 text-red-500" />.
+                <Heart className="fill-red-500 text-red-500" />
               </div>
             </>
           )}
           {favorite.items.length > 0 && (
-            <>
-              <div className="text-3xl font-semibold">Chọn theo tiêu chí:</div>
+            <div className="space-y-2 mb-2">
+              <div className="flex items-center space-x-2 text-3xl font-semibold dark:text-slate-200 text-slate-900">Yêu thích <Heart className="fill-red-500 text-red-500" /></div>
               <SortPriceRange />
-              <div className="my-2 text-3xl font-semibold">Sắp xếp theo:</div>
-              <div className="flex justify-start items-center mb-4 w-full overflow-x-auto">
+              <div className="flex justify-start items-center w-full overflow-x-auto">
                 <div className="flex space-x-2">
                   {sortButtons.map((button, index) => (
                     <SortButton
@@ -128,9 +127,9 @@ const LikePage = () => {
                   ))}
                 </div>
               </div>
-            </>
+            </div>
           )}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-6 lg:col-span-4 lg:mt-0 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-6 lg:col-span-4 lg:mt-0 m-4">
             {favorite.filteredItems.map((item) => (
               <FavoriteItem key={item.productId} data={item} loading={loading} setLoading={setLoading}/>
             ))}

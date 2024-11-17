@@ -1,7 +1,7 @@
 import Link from "next/link";
 import {relatedTagLaptopcolor} from "@/components/(client)/color/color"
 
-const RelatedTagLaptop = () => {
+const RelatedTagBongden = () => {
     return ( 
         <div className=" my-2 relative">
             <div className="absolute hidden md:flex bottom-4 md:left-[12.3rem] xl:left-[37.4rem] space-x-4 ">
@@ -45,4 +45,4 @@ const RelatedTagLaptop = () => {
      );
 }
  
-export default RelatedTagLaptop;
+export default RelatedTagBongden;

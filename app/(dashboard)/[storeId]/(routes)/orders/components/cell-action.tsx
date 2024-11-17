@@ -943,7 +943,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         {openCustomImage && (
           <>
             <div className="fixed inset-0 bg-black/80 h-full w-full z-40" />
-            <div className="absolute inset-0 m-auto h-max w-3/4 max-w-md border rounded-md gap-4 bg-slate-900 p-6 shadow-lg transition ease-in-out z-50">
+            <div className="fixed inset-0 m-auto h-max w-3/4 max-w-md border rounded-md gap-4 bg-slate-900 p-6 shadow-lg transition ease-in-out z-50">
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(comfirmOderDelivery)}

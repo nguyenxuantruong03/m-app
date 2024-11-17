@@ -120,7 +120,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
         setRotation(response.data.latestRotation);
       });
     }
-  }, [param.storeId, role]);
+  }, [param.storeId, role, userId]);
 
   if (!isMounted) {
     return null;
@@ -249,7 +249,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
                         <div className="basis-1/2 md:flex gap-2">
                           <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center relative">
                             <Gift className="w-6 h-6 text-white" />
-                            <span className="w-5 h-5 absolute bg-[#e53350] rounded-full  left-[10px] top-0 -mt[1px] shadow-lg">
+                            <span className="w-5 h-5 absolute bg-[#e53350] rounded-full left-[10px] top-0 -mt[1px] shadow-lg">
                               <p className="text-[0.75rem] text-center font-semibold text-white">
                                 {rotation}{" "}
                               </p>
@@ -282,7 +282,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
                     </div>
                   </div>
 
-                  <Link href="/ticket" className=" hidden md:block">
+                  <Link href="/warehouse" className=" hidden md:block">
                     <div className={mainnavcolor.bghover}>
                       <div className="flex flex-col md:flex-row items-center">
                         <div className="basis-1/2 md:flex gap-2">
@@ -298,7 +298,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
                             <div
                               className={cn(
                                 "text-xs w-20",
-                                pathname === `/ticket`
+                                pathname === `/warehouse`
                                   ? "text-sky-500"
                                   : "text-white"
                               )}
@@ -308,7 +308,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
                             <div
                               className={cn(
                                 "text-xs w-20",
-                                pathname === `/ticket`
+                                pathname === `/warehouse`
                                   ? "text-sky-500"
                                   : "text-white"
                               )}
@@ -372,10 +372,10 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
             handleOpenAlertGuest();
           }
         }}
-        className="hidden xl:block"
+        className="hidden xl:block cursor-pointer"
       >
         <div className={mainnavcolor.bghover}>
-          <div className="flex flex-col md:flex-row justify-center  items-center">
+          <div className="flex flex-col md:flex-row justify-center items-center">
             <div className="basis-1/2 md:flex gap-2">
               <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center ">
                 <Gamepad2 className=" text-white w-6 h-6" />

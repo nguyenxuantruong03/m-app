@@ -9,18 +9,22 @@ interface ImageMiniProps {
 const ImageMini: React.FC<ImageMiniProps> = ({ data }) => {
   const imageComponents = data?.imagebillboard
     ?.slice(0, 3)
-    .map((image, index) => (
+    .map((image, index, array) => (
       <div
         key={index}
-        className="rounded-md shadow-md overflow-hidden h-[125px]"
+        className={`relative rounded-md shadow-md overflow-hidden h-[138px] ${
+          index < array.length - 1 ? "space-y-2" : ""
+        }`}
       >
-        <Link href="https://vlxdxuantruong.vercel.app/category1/52d11611-ccd2-4326-bf7f-bd224ebef89d" className="z-50">
+        <Link
+          href={`${image.link ? `${image.link}` : `/home-product`} `}
+          className="z-50"
+        >
           <Image
             src={image.url}
-            width="285"
-            height="115"
+            fill
             alt={`Image ${index}`}
-            className="object-cover rounded-md h-[125px]"
+            className="object-cover rounded-md"
             placeholder="blur"
             blurDataURL="/images/signup-ipad.png"
             loading="lazy"

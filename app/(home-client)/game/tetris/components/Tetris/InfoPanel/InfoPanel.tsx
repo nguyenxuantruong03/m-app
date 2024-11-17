@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { useTetris } from "../../../hooks/useTetris";
 import {
   Key,
@@ -10,13 +10,20 @@ import {
 } from "./styles";
 import ActiveGame from "../../../components/Tetris/InfoPanel/ActiveGame/ActiveGame";
 import Leaderboard from "../../../components/Tetris/InfoPanel/Leaderboard/Leaderboard";
+import { Leaderboard as LeaderboardType } from "@/types/type";
 
-const InfoPanel = (): JSX.Element => {
+interface InfoPanelProps{
+  data: LeaderboardType[]
+  setData: Dispatch<SetStateAction<LeaderboardType[]>>
+  loading: boolean;
+}
+
+const InfoPanel = ({data, setData, loading}:InfoPanelProps): JSX.Element => {
   const gameState = useTetris();
 
   return (
     <InfoPanelContainer>
-      <Content>{gameState.started ? <ActiveGame /> : <Leaderboard />}</Content>
+      <Content>{gameState.started ? <ActiveGame /> : <Leaderboard data={data} setData={setData} loading={loading}/>}</Content>
       <ControlsContainer>
         <h2>Điều khiển</h2>
         <ControlRow>

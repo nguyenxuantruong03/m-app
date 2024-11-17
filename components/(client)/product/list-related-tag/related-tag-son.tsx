@@ -1,7 +1,7 @@
 import Link from "next/link";
 import {relatedTagMousecolor} from "@/components/(client)/color/color"
 
-const RelatedTagMouse = () => {
+const RelatedTagSon = () => {
     return ( 
         <div className=" my-2 relative">
             <div className="absolute hidden md:flex bottom-4 md:left-[27.5rem] xl:left-[59.5rem] space-x-4 ">
@@ -30,4 +30,4 @@ const RelatedTagMouse = () => {
      );
 }
  
-export default RelatedTagMouse;
+export default RelatedTagSon;

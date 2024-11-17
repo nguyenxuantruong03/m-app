@@ -7,7 +7,6 @@ import { Coupon } from "@/types/type";
 import FormatDate from "@/components/format-Date";
 import LoadingPageComponent from "@/components/ui/loading";
 import toast from "react-hot-toast";
-
 const Voucher = () => {
   const [data, setData] = useState<Coupon[]>([]);
   const [loading, setLoading] = useState(false);
@@ -19,7 +18,13 @@ const Voucher = () => {
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/coupon`
         );
-        setData(response.data);
+
+        // Lọc dữ liệu để chỉ lấy những coupon có redeemBy > now
+        const now = new Date();
+        const filteredData = response.data.filter(
+          (coupon: Coupon) => new Date(coupon.redeemby) > now
+        );
+        setData(filteredData);
       } catch (error) {
         console.error(error);
       } finally {
@@ -45,49 +50,56 @@ const Voucher = () => {
     <>
       {loading && <LoadingPageComponent />}
 
+      {!loading && (
+        <>
+          <h2 className="text-xl text-center font-bold text-slate-900 dark:text-slate-200 mb-5 md:hidden">
+            Mã giảm giá
+          </h2>
+        </>
+      )}
+
       {!loading && data.length === 0 && (
         <>
           <div className="flex justify-center">
             <Image src="/images/no-cart.png" alt="" width="108" height="98" />
           </div>
           <div className="flex justify-center my-2">
-            <p className="text-neutral-500">Không có mã giảm giá.</p>
+            <p className="text-slate-900 dark:text-slate-200">
+              Không có mã giảm giá.
+            </p>
           </div>
         </>
       )}
 
-      <div className="grid grid-cols-3 mx-auto">
+      <div className="grid grid-cols-2 xl:grid-cols-3 gap-3 m-2">
         {data.map((item) => (
-          <div key={item.id} className="w-[350px] mb-4 relative">
-            {" "}
+          <div key={item.id} className=" mb-4 relative">
             {/* Added mb-4 for spacing */}
-            <div className="flex items-center bg-white border border-gray-300 rounded-md p-2">
-              <div
-                style={{
-                  borderRight: "8px dashed red",
-                }}
-                className="relative h-32 w-32" // Fixed height and width
-              >
+            <div className="md:flex items-center bg-white border border-gray-300 rounded-md">
+              <div className="relative h-32 md:w-32">
                 <Image
                   src={item.imagecoupon[0].url}
                   alt="Coupon Image"
                   layout="fill" // Ensures the image fills its parent container
                   objectFit="cover" // Keeps the aspect ratio
-                  className="rounded-l-md"
+                  className="rounded-md p-2"
                 />
               </div>
-              <div className="flex items-center">
+
+              <div className="hidden lg:block separatorCustomForWarehouse"></div>
+
+              <div className="flex items-center p-2">
                 <div
-                  className="flex-1 p-4"
+                  className="flex-1 px-1"
                   style={{
                     color: "black",
                   }}
                 >
-                  <h3 className="text-lg font-bold">
+                  <h3 className="text-sm md:text-lg font-bold">
                     Giảm tối đa {item.percent}%
                   </h3>
                   <p className="text-sm">code: {item.name}</p>
-                  <span>
+                  <span className="text-sm">
                     Thời hạn:{" "}
                     <span className="text-xs text-gray-500 ml-1">
                       <FormatDate data={item.redeemby} />
@@ -114,9 +126,15 @@ const Voucher = () => {
         ))}
       </div>
 
-      <p> 
-      <span className="text-yellow-500 font-semibold">Lưu ý:</span> Mã giảm giá chỉ áp dụng cho khách hàng thanh toán trực tuyến. Khi khách hàng ấn vào lưu hãy đến chỗ thanh toán để dán mã code mã vào.
-      </p>
+      {data.length > 0 && (
+        <p>
+          <span className="text-yellow-500 font-semibold">Lưu ý:</span>{" "}
+          <span className="text-slate-900 dark:text-slate-200">
+            Mã giảm giá chỉ áp dụng cho khách hàng thanh toán trực tuyến. Khi
+            khách hàng ấn vào lưu hãy đến chỗ thanh toán để dán mã code mã vào.
+          </span>
+        </p>
+      )}
     </>
   );
 };

@@ -30,6 +30,7 @@ const formSchema = z.object({
   label: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
   description: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
   url: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
+  link: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
 });
 
 type BillboardFormValues = z.infer<typeof formSchema>;
@@ -57,6 +58,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
       label: initialData?.label ?? "",
       description: initialData?.description ?? "",
       url: initialData?.url ?? "",
+      link: initialData?.link ?? "/home-product",
     },
   });
 
@@ -252,6 +254,27 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                     <Input
                       disabled={loading}
                       placeholder="Enter mô tả ..."
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="link"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex space-x-3 items-center">
+                    Link <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message="Đặt đường dẫn phù hợp với ảnh." />
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      placeholder="Enter link ..."
                       {...field}
                     />
                   </FormControl>

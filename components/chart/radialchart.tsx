@@ -131,7 +131,7 @@ const RadialChart = ({ radialChartData, loading }: RadialChartProps) => {
             align="center"
           />
           <Tooltip
-            labelClassName="dark:text-slate-500 text-salte-900"
+            labelClassName="dark:text-slate-500 text-slate-900"
             formatter={(value, name, props) => [props.payload.name, value]}
           />
         </RadialBarChart>
@@ -160,7 +160,7 @@ const RadialChart = ({ radialChartData, loading }: RadialChartProps) => {
             align="center"
           />
           <Tooltip
-            labelClassName="dark:text-slate-500 text-salte-900"
+            labelClassName="dark:text-slate-500 text-slate-900"
             formatter={(value, name, props) => [props.payload.name, value]}
           />
         </RadialBarChart>

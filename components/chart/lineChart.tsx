@@ -52,7 +52,7 @@ export const LineChart: React.FC<LineChartProps> = ({ data, loading }) => {
           axisLine={false}
           tickFormatter={(value) => `${value}`}
         />
-        <Tooltip labelClassName="dark:text-slate-500 text-salte-900"/>
+        <Tooltip labelClassName="dark:text-slate-500 text-slate-900"/>
         <Legend />
         <Line type="monotone" dataKey="totaldate" stroke="#ff7300" />
       </ChartLine>

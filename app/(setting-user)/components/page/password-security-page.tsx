@@ -8,7 +8,11 @@ import InfoDecive  from '@/app/(setting-user)/components/info-device';
 import InfoPassword from "@/app/(setting-user)/components/info-password";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 
-const PasswordSecurityPage = async () => {
+interface PasswordSecurityProps {
+  isCustomWarehouse?: boolean;
+}
+
+const PasswordSecurityPage = async ({isCustomWarehouse}:PasswordSecurityProps) => {
   const userId = await currentUser()
   const account = await getAccountByUserId(userId?.id || "");
   const user = await prismadb.user.findUnique({
@@ -49,27 +53,27 @@ const PasswordSecurityPage = async () => {
     account?.provider === "twitter"
   );
   return (
-    <div className="w-full h-full ml-5 lg:pl-12 my-8">
-      <div className="font-semibold text-lg md:text-2xl">
+    <div className={`${ isCustomWarehouse ? "w-full h-full md:pl-5 lg:pl-12 my-8" : "w-full h-full ml-5 lg:pl-12 my-8"}`}>
+      <div className="font-semibold text-lg md:text-2xl text-salte-900 dark:text-slate-200">
         Mật khẩu và bảo mật
       </div>
-      <div className="text-sm text-gray-500 py-2">
+      <div className="text-sm py-2 text-gray-500 dark:text-gray-400">
         Quản lý mật khẩu và cài đặt bảo mật.
       </div>
-      <div className="font-semibold text-lg md:text-xl mt-5">
+      <div className="font-semibold text-lg md:text-xl mt-5 text-salte-900 dark:text-slate-200">
         Đăng nhập & khôi phục
       </div>
-      <div className="text-sm text-gray-500 py-2">
+      <div className="text-sm text-gray-500 dark:text-gray-400 py-2">
         Quản lý mật khẩu và xác minh 2 bước.
       </div>
       <InfoPassword user={user! ?? undefined} password={formatPassword} />
 
       {shouldRenderDeviceInfo && (
         <>
-          <div className="font-semibold text-lg md:text-xl mt-5">
+          <div className="font-semibold text-lg md:text-xl mt-5 text-salte-900 dark:text-slate-200">
             Kiểm tra thiết bị
           </div>
-          <div className="text-sm text-gray-500 py-2">
+          <div className="text-sm text-gray-500 dark:text-gray-400 py-2">
             Quản lý thiết bị đang đăng nhập và giới hạn.
           </div>
           <InfoDecive user={user! ?? undefined} findDevice={findDevice} />

@@ -16,7 +16,6 @@ const ScrollButton = () => {
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: 'smooth',
     });
   };
 
@@ -28,7 +27,7 @@ const ScrollButton = () => {
   }, []); // Add an empty array as the second argument to run this effect only once
 
   return (
-    <div className='fixed right-1 xl:left-[90%] bottom-[80px] md:bottom-[40px] font-2xl z-10 cursor-pointer'>
+    <div className='fixed right-4 bottom-[80px] md:bottom-[40px] font-2xl z-[99999] cursor-pointer'>
       <div 
       className="scroll"
       onClick={scrollToTop}

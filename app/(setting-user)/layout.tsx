@@ -16,7 +16,7 @@ export default async function SetupLayout({
   }
 
   return (
-    <div className="flex max-w-xs sm:max-w-sm md:max-w-3xl lg:max-w-4xl xl:max-w-7xl mx-auto">
+    <div className="flex px-3 max-w-7xl mx-auto">
       <NavbarProfile dateofbirth={userId.dateofbirth} name={userId.name}/>
       {children}
     </div>

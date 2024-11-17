@@ -2,7 +2,6 @@
 
 import { useCurrentRole } from "@/hooks/use-current-role";
 import { UserRole } from "@prisma/client";
-import ErrorComponent from "../ui/error";
 import NoResultsStore from "../ui/no-result-store";
 
 interface RoleGateProps {

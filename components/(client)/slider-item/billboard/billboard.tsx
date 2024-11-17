@@ -13,7 +13,7 @@ const BillboardImage:React.FC<BillboardProps> = ({billboard,billboardmini}) => {
     <>
           <SliderSwipper data={billboard} />
 
-          <div className="w-full space-y-4 hidden xl:block">
+          <div className="w-full space-y-2 hidden xl:block">
             <ImageMini data={billboardmini} />
           </div>
     </>

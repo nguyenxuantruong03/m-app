@@ -26,6 +26,7 @@ const CartPage = () => {
   const [loading, setLoading] = useState(false);
   const [loadingChangeData, setLoadingChangeData] = useState(false);
   const [loadingChangeLocal, setLoadingChangeLocal] = useState(false);
+  const [loadingfetchData,setLoadingfetchData] = useState(false)
   
   const handleBuyNow = () => {
     router.push("/home-product");
@@ -149,9 +150,9 @@ const CartPage = () => {
   }
 
   return (
-    <div className="bg-white mt-16 mx-auto max-w-7xl pl-2 pt-16 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold text-black"> Giỏ hàng</h1>
-      <div className="mt-12 lg:grid-cols-12 lg:items-start gap-x-12 lg:col-span-7">
+    <div className="mt-16 mx-auto max-w-7xl px-2 pt-16 sm:px-6 lg:px-8">
+      <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-200"> Giỏ hàng</h1>
+      <div className="mt-4 lg:grid-cols-12 lg:items-start gap-x-12 lg:col-span-7">
         {currentUser?.role === "GUEST" || !currentUser?.id ? (
           <>
             {cart.items.length === 0 && (
@@ -165,7 +166,7 @@ const CartPage = () => {
                   />
                 </div>
                 <div className="flex justify-center my-2">
-                  <p className="text-neutral-500">Giỏ hàng của bạn còn trống</p>
+                  <p className="text-slate-900 dark:text-slate-200">Giỏ hàng của bạn còn trống</p>
                 </div>
                 <div className="flex justify-center my-2">
                   <Button onClick={handleBuyNow} className="hover:underline"> Mua ngay</Button>
@@ -186,7 +187,7 @@ const CartPage = () => {
                   />
                 </div>
                 <div className="flex justify-center my-2">
-                  <p className="text-neutral-500">Giỏ hàng của bạn còn trống</p>
+                  <p className="text-slate-900 dark:text-slate-200">Giỏ hàng của bạn còn trống</p>
                 </div>
                 <div className="flex justify-center my-2">
                   <Button onClick={handleBuyNow} className="hover:underline"> Mua ngay</Button>
@@ -239,6 +240,8 @@ const CartPage = () => {
               role={currentUser?.role || ""}
               setLoadingChange={setLoadingChangeData}
               loadingChange={loadingChangeData}
+              setLoadingfetchData={setLoadingfetchData}
+              loadingfetchData={loadingfetchData}
             />
           </>
         )}

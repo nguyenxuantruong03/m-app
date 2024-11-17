@@ -17,6 +17,10 @@ body,
   background-image: url('/background-image/bg-dark.png');
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -219,3 +223,4 @@ body,
     font-size: 1rem !important; /* Reduce the title font size */
   }
 }
+

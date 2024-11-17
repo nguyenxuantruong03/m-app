@@ -2,7 +2,7 @@ import SettingProfilePage from "@/app/(setting-user)/components/page/setting-pro
 
 const SettingProfile = () => {
     return ( 
-        <SettingProfilePage />
+        <SettingProfilePage isCustomWarehouse={true}/>
      );
 }
  

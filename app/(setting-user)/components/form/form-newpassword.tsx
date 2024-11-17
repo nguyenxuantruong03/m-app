@@ -22,14 +22,19 @@ import FormSuccess from "@/components/form-success";
 import FormError from "@/components/form-error";
 import PasswordField from "@/components/auth/field/passwordfield";
 import PasswordNewField from "@/components/auth/field/passwordfieldnew";
-import { Github, X } from "lucide-react";
-import Image from "next/image";
+import { X } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
-
+import FaceBookSVG from "@/public/svg/facebook";
+import GitlabSVG from "@/public/svg/gitlab";
+import RedditSVG from "@/public/svg/reddit";
+import SpotifySVG from "@/public/svg/spotify";
+import TwitterSVG from "@/public/svg/twitter";
+import GithubSVG from "@/public/svg/github";
+import { Hint } from "@/components/ui/hint";
 const FormPassword = () => {
   const user = useCurrentUser();
-  const router = useRouter()
+  const router = useRouter();
   const { update } = useSession();
   const [error, setError] = useState<string>();
   const [success, setSuccess] = useState<string>();
@@ -68,7 +73,6 @@ const FormPassword = () => {
   });
 
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
-
     if (values.password === "") {
       setError("Hãy nhập mật khẩu!");
       return;
@@ -93,7 +97,7 @@ const FormPassword = () => {
           }
           if (data.success) {
             update();
-            router.refresh()
+            router.refresh();
             setSuccess(data.success);
             setIsSubmitted(true);
             setIsSubmittedPasswordnew(true);
@@ -175,7 +179,7 @@ const FormPassword = () => {
           )}
           {user?.isOAuth === true && (
             <div className="text-base font-semibold dark:text-gray-500 text-slate-800">
-            <Separator className="my-2"/>
+              <Separator className="my-2" />
               <span>Bạn đã đăng nhập bằng </span>
               {user?.provider === "google" ? (
                 <span style={{ whiteSpace: "nowrap" }}>
@@ -199,62 +203,42 @@ const FormPassword = () => {
                 </span>
               ) : user?.provider === "github" ? (
                 <span className="inline-block">
-                  <Github className="h-5 w-5 bg-white rounded-full p-px mx-1" />
+                  <Hint label="Github">
+                  <GithubSVG width={18} height={18}/>
+                  </Hint>
                 </span>
               ) : user?.provider === "facebook" ? (
                 <span className="inline-block">
-                  <Image
-                    src="/images-icon/facebook-icon.png"
-                    alt="404"
-                    width="50"
-                    height="50"
-                    className="h-7 w-7"
-                  />
+                  <Hint label="Facebook">
+                    <FaceBookSVG width={18} height={18}/>
+                  </Hint>
                 </span>
               ) : user?.provider === "gitlab" ? (
                 <span className="inline-block">
-                  <Image
-                    src="/images-icon/gitlab.png"
-                    alt="404"
-                    width="50"
-                    height="50"
-                    className="h-5 w-5 mx-1"
-                  />
+                  <Hint label="Gitlab">
+                    <GitlabSVG width={18} height={18}/>
+                  </Hint>
                 </span>
               ) : user?.provider === "reddit" ? (
                 <span className="inline-block">
-                  <Image
-                    src="/images-icon/reddit.png"
-                    alt="404"
-                    width="50"
-                    height="50"
-                    className="w-8"
-                  />
+                  <Hint label="Reddit">
+                    <RedditSVG width={18} height={18}/>
+                  </Hint>
                 </span>
               ) : user?.provider === "spotify" ? (
                 <span className="inline-block">
-                  <Image
-                    src="/images-icon/spotify.png"
-                    alt="404"
-                    width="50"
-                    height="50"
-                    className="w-8"
-                  />
+                  <Hint label="Spotify">
+                    <SpotifySVG width={18} height={18}/>
+                  </Hint>
                 </span>
               ) : user?.provider === "twitter" ? (
                 <span className="inline-block">
-                  <Image
-                    src="/images-icon/twitter.png"
-                    alt="404"
-                    width="50"
-                    height="50"
-                    className="w-8"
-                  />
+                  <Hint label="Twitter">
+                    <TwitterSVG />
+                  </Hint>
                 </span>
               ) : (
-                <span
-                  className="uppercase font-bold text-red-500 inline-block"
-                >
+                <span className="uppercase font-bold text-red-500 inline-block">
                   {user?.provider}
                 </span>
               )}

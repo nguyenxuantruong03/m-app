@@ -99,7 +99,6 @@ export async function GET(
   { params }: { params: { storeId: string } }
 ) {
   const categoryType = CategoryType.CATEGORY3;
-  const userId = await currentUser();
   try {
     if (!params.storeId) {
       return new NextResponse(
@@ -107,21 +106,6 @@ export async function GET(
         { status: 400 }
       );
     }
-
-    if (!userId) {
-      return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
-        { status: 403 }
-      );
-    }
-
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
-      return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xem categories!" }),
-        { status: 403 }
-      );
-    }
-
     const category = await prismadb.category.findMany({
       where: {
         storeId: params.storeId,

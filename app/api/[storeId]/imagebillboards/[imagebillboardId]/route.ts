@@ -150,7 +150,7 @@ export async function PATCH(
   try {
     const userId = await currentUser();
     const body = await req.json();
-    const { label, url, description } = body;
+    const { label, url, description, link } = body;
 
     if (!userId) {
       return new NextResponse(
@@ -186,6 +186,13 @@ export async function PATCH(
       );
     }
 
+    if (!link) {
+      return new NextResponse(
+        JSON.stringify({ error: "Link is required!" }),
+        { status: 400 }
+      );
+    }
+
     if (!params.imagebillboardId) {
       return new NextResponse(
         JSON.stringify({ error: "Billboard id is required!" }),
@@ -216,6 +223,7 @@ export async function PATCH(
         url: url,
         label: label,
         description: description,
+        link: link
       },
     });
 

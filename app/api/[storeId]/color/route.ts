@@ -102,26 +102,11 @@ export async function GET(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
-  const userId = await currentUser();
   try {
     if (!params.storeId) {
       return new NextResponse(
         JSON.stringify({ error: "Store id is required!" }),
         { status: 400 }
-      );
-    }
-
-    if (!userId) {
-      return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
-        { status: 403 }
-      );
-    }
-
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
-      return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xem color!" }),
-        { status: 403 }
       );
     }
 

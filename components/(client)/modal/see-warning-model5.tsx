@@ -29,7 +29,7 @@ const SeePaymentWarningModal: React.FC<SeePaymentWarningProps> = ({
         </div>
 
         <p className="mt-4">
-          Số tiền cần thanh toán của quý khách quá thấp để thanh toán online ,
+          Số tiền cần thanh toán của quý khách quá thấp để thanh toán,
           quý khách có thể liên hệ{" "}
           <span className="text-red-400 font-semibold">0352261103</span> tư vấn
           để được thanh toán trực tiếp.

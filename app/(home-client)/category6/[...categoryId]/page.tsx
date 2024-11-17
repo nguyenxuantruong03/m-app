@@ -47,7 +47,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
         const billboardData = await getBillboard(
           "aa4f4f8b-6c9a-41f0-acfc-c30c71e219b4"
         );
-        const productData = await getProduct6({isFeatured: true});
+        const productData = await getProduct6({isFeatured: undefined});
         const sizeData = await getSizes();
         const colorData = await getColors();
 
@@ -74,7 +74,6 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
     fetchData();
   }, [params.categoryId, searchParams.sizeId, searchParams.colorId]);
   return (
-    <div className="bg-white">
       <Container>
       <DetailCategory 
         billboard={billboard}
@@ -90,7 +89,6 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
         route="product6"
         />
       </Container>
-    </div>
   );
 };
 

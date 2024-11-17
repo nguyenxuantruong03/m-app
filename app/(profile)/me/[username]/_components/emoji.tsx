@@ -9,6 +9,10 @@ import { Link as LinkIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import axios from "axios";
 import ShowInfoEmojiModal from "@/components/(client)/modal/show-info-emoji";
+import FaceBookSVG from "@/public/svg/facebook";
+import TiktokSVG from "@/public/svg/tiktok";
+import InstagramSVG from "@/public/svg/instagram";
+import ZaloSVG from "@/public/svg/zalo";
 
 interface EmojiProps {
   reviewId: string;
@@ -570,13 +574,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
                   window.open(`https://www.facebook.com/`, "_blank");
                 }}
               >
-                <Image
-                  width="35"
-                  height="35"
-                  className="object-fit"
-                  src="/images/facebook.png"
-                  alt="error"
-                />
+                <FaceBookSVG />
                 Gửi đến Facebook
               </Link>
               <Link
@@ -590,13 +588,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
                   window.open(`https://www.instagram.com/`, "_blank");
                 }}
               >
-                <Image
-                  width="35"
-                  height="35"
-                  className="object-fit"
-                  src="/images/instagram.png"
-                  alt="error"
-                />
+                <InstagramSVG />
                 Gửi đến Instagram
               </Link>
               <Link
@@ -610,13 +602,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
                   window.open(`https://www.tiktok.com/`, "_blank");
                 }}
               >
-                <Image
-                  width="35"
-                  height="35"
-                  className="object-fit"
-                  src="/images/tiktok.png"
-                  alt="error"
-                />
+                <TiktokSVG />
                 Gửi đến TikTok
               </Link>
               <Link
@@ -630,13 +616,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
                   window.open(`https://zalo.me/`, "_blank");
                 }}
               >
-                <Image
-                  width="35"
-                  height="35"
-                  className="object-fit"
-                  src="/images/zalo.png"
-                  alt="error"
-                />
+                <ZaloSVG />
                 Gửi đến Zalo
               </Link>
               <button

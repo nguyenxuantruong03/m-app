@@ -220,54 +220,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ data, route }) => {
   };
 
   const onAddtoCart: MouseEventHandler<HTMLButtonElement> = async (event) => {
-    if (userId?.role === "GUEST" || !userId?.id) {
-      event.stopPropagation();
-
-      //CUID: tạo ra một 1 id theo CUID tránh checked trùng với nhau
-      const cartId = cuid();
-      const size = availableSize;
-      const color = availableColor;
-      const productWithQuantity = {
-        ...data,
-        quantity,
-        selectedWarranty: cart.getSelectedItemWarranty(data.id),
-        cartId,
-        warranty: "",
-        size,
-        color,
-      };
-
-      const existingCartItem = cart.items.find(
-        (item) =>
-          item.id === data.id && item.size === size && item.color === color
-      );
-      try {
-        setLoading(true);
-        if (existingCartItem) {
-          const existingQuantity = existingCartItem.quantity ?? 0;
-          await cart.updateQuantity(
-            existingCartItem.cartId,
-            existingQuantity + quantity,
-            null,
-            userId?.id || ""
-          );
-          toast.success("Sản phẩm đã được cập nhật số lượng trong giỏ hàng.");
-        } else {
-          await cart.addItem(
-            productWithQuantity,
-            quantity,
-            null,
-            userId?.id || "",
-            size,
-            color
-          ); // Pass the userId here
-        }
-      } catch (error) {
-        toast.error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
-      } finally {
-        setLoading(false);
-      }
-    } else {
+    if (userId?.role !== "GUEST" && userId?.id) {
       event.stopPropagation();
       await toast.promise(
         axios.post("/api/client/cart/get-items", {
@@ -345,6 +298,53 @@ const ProductCard: React.FC<ProductCardProps> = ({ data, route }) => {
           },
         }
       );
+    } else {
+      event.stopPropagation();
+
+      //CUID: tạo ra một 1 id theo CUID tránh checked trùng với nhau
+      const cartId = cuid();
+      const size = availableSize;
+      const color = availableColor;
+      const productWithQuantity = {
+        ...data,
+        quantity,
+        selectedWarranty: cart.getSelectedItemWarranty(data.id),
+        cartId,
+        warranty: "",
+        size,
+        color,
+      };
+
+      const existingCartItem = cart.items.find(
+        (item) =>
+          item.id === data.id && item.size === size && item.color === color
+      );
+      try {
+        setLoading(true);
+        if (existingCartItem) {
+          const existingQuantity = existingCartItem.quantity ?? 0;
+          await cart.updateQuantity(
+            existingCartItem.cartId,
+            existingQuantity + quantity,
+            null,
+            userId?.id || ""
+          );
+          toast.success("Sản phẩm đã được cập nhật số lượng trong giỏ hàng.");
+        } else {
+          await cart.addItem(
+            productWithQuantity,
+            quantity,
+            null,
+            userId?.id || "",
+            size,
+            color
+          ); // Pass the userId here
+        }
+      } catch (error) {
+        toast.error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -417,148 +417,155 @@ const ProductCard: React.FC<ProductCardProps> = ({ data, route }) => {
         product={data}
       />
       <div className="overflow-hidden">
-        <div className="bg-white group cursor-pointer rounded-xl border p-3 space-y-4 relative">
-          {productQuantityAll && (
-            <>
-              {/* Overlay mờ và text "Hết hàng" */}
-              <div
-                onClick={handleClick}
-                className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center z-[9998]"
-              >
-                <div className="absolute z-[9999] top-[3px] right-[-95px] bg-red-500 text-white py-[15px] w-[350px] text-center transform rotate-[45deg] font-bold text-lg tracking-[2px] overflow-hidden">
-                  <span className="inline-block duration-500 ease-in-out transform transition-transform w-full absolute left-[13%] top-1/2 translate-y-[-50%]">
-                    Hết hàng
-                  </span>
+        <div className="bg-white group cursor-pointer rounded-xl border p-3 relative">
+          <div className="space-y-2">
+            {productQuantityAll && (
+              <>
+                {/* Overlay mờ và text "Hết hàng" */}
+                <div
+                  onClick={handleClick}
+                  className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center z-[9997]"
+                >
+                  <div className="absolute z-[9999] top-[3px] right-[-95px] bg-red-500 text-white py-[15px] w-[350px] text-center transform rotate-[45deg] font-bold text-lg tracking-[2px] overflow-hidden">
+                    <span className="inline-block duration-500 ease-in-out transform transition-transform w-full absolute left-[13%] top-1/2 translate-y-[-50%]">
+                      Hết hàng
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </>
-          )}
-          {/* Images and actions */}
-          <div className="aspect-square rounded-xl bg-gray-100" onClick={handleClick}>
-            <Image
-              src={data?.images?.[0].url}
-              width="500"
-              height="500"
-              alt="Image"
-              className="aspect-square object-cover rounded-md"
-              loading="lazy"
-            />
-            <div className="opacity-0 group-hover:opacity-100 transition w-full pr-6 top-40 absolute">
-              <div className="flex gap-x-6 justify-center">
-                <IconButton
-                  disabled={loading}
-                  onClick={onPreview}
-                  icon={<Expand size={20} className="text-gray-600" />}
-                  text="Mở rộng"
-                />
-                <IconButton
-                  disabled={productQuantityAll || loading}
-                  onClick={onAddtoCart}
-                  icon={
-                    <ShoppingCart
-                      className={`${
-                        userId?.role !== "GUEST" && userId?.id
-                          ? cartdb.items.some(
-                              (item) =>
-                                item.product.name === data.name &&
-                                item.product.id === data.id &&
-                                item.size === availableSize &&
-                                item.color === availableColor
-                            )
+              </>
+            )}
+            {/* Images and actions */}
+            <div
+              className="aspect-square rounded-xl bg-gray-100"
+              onClick={handleClick}
+            >
+              <Image
+                src={data?.images?.[0].url}
+                width="500"
+                height="500"
+                alt="Image"
+                className="aspect-square object-cover rounded-md"
+                loading="lazy"
+              />
+              <div className="opacity-0 z-[9998] group-hover:opacity-100 transition w-full pr-6 top-40 absolute">
+                <div className="flex gap-x-6 justify-center">
+                  <IconButton
+                    disabled={loading}
+                    onClick={onPreview}
+                    icon={<Expand size={20} className="text-gray-600" />}
+                    text="Mở rộng"
+                  />
+                  <IconButton
+                    disabled={productQuantityAll || loading}
+                    onClick={onAddtoCart}
+                    icon={
+                      <ShoppingCart
+                        className={`${
+                          userId?.role !== "GUEST" && userId?.id
+                            ? cartdb.items.some(
+                                (item) =>
+                                  item.product.name === data.name &&
+                                  item.product.id === data.id &&
+                                  item.size === availableSize &&
+                                  item.color === availableColor
+                              )
+                              ? "active-cart"
+                              : ""
+                            : cart.items.some(
+                                (item) =>
+                                  item.id === data.id &&
+                                  item.size === availableSize &&
+                                  item.color === availableColor
+                              )
                             ? "active-cart"
                             : ""
-                          : cart.items.some(
-                              (item) =>
-                                item.id === data.id &&
-                                item.size === availableSize &&
-                                item.color === availableColor
-                            )
-                          ? "active-cart"
-                          : ""
-                      }`}
-                    />
-                  }
-                  text={`${productQuantityAll ? "Hết hàng" : "Thêm mới"}`}
-                />
+                        }`}
+                      />
+                    }
+                    text={`${productQuantityAll ? "Hết hàng" : "Thêm mới"}`}
+                  />
 
-                <IconButton
-                  disabled={loading || loadingRetchdataFavorite}
-                  onClick={() =>
-                    handleIconClick(
-                      data.id,
-                      data.name,
-                      availableSize,
-                      availableColor
-                    )
-                  }
-                  className={`${
-                    userId?.role === "GUEST" || !userId?.id ? "hidden" : ""
-                  }`}
-                  icon={
-                    <Heart
-                      size={20}
-                      className={`text-gray-600 ${
-                        favorite.items.some(
-                          (item) =>
-                            item.productName === data.name &&
-                            item.productId === data.id &&
-                            item.selectedSize === availableSize &&
-                            item.selectedColor === availableColor
-                        )
-                          ? "active"
-                          : ""
-                      }`}
-                    />
-                  }
-                  text={`${
-                    favorite.items.some(
-                      (item) =>
-                        item.productName === data.name &&
-                        item.productId === data.id &&
-                        item.selectedSize === availableSize &&
-                        item.selectedColor === availableColor
-                    )
-                      ? "Đã lưu"
-                      : "Thả Tim"
-                  }`}
-                />
+                  <IconButton
+                    disabled={loading || loadingRetchdataFavorite}
+                    onClick={() =>
+                      handleIconClick(
+                        data.id,
+                        data.name,
+                        availableSize,
+                        availableColor
+                      )
+                    }
+                    className={`${
+                      userId?.role === "GUEST" || !userId?.id ? "hidden" : ""
+                    }`}
+                    icon={
+                      <Heart
+                        size={20}
+                        className={`text-gray-600 ${
+                          favorite.items.some(
+                            (item) =>
+                              item.productName === data.name &&
+                              item.productId === data.id &&
+                              item.selectedSize === availableSize &&
+                              item.selectedColor === availableColor
+                          )
+                            ? "active"
+                            : ""
+                        }`}
+                      />
+                    }
+                    text={`${
+                      favorite.items.some(
+                        (item) =>
+                          item.productName === data.name &&
+                          item.productId === data.id &&
+                          item.selectedSize === availableSize &&
+                          item.selectedColor === availableColor
+                      )
+                        ? "Đã lưu"
+                        : "Thả Tim"
+                    }`}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-          {/* Description */}
-          <div>
-            <p className="font-semibold text-base single-line-ellipsis">
-              {data.heading}
-            </p>
-            <p className="text-sm text-gray-500 single-line-ellipsis">
-              {data.productdetail.category?.name}
-            </p>
-          </div>
-          {/* Kiểm tra xemn nếu như ko có đã bán thì hiển thị value old nếu có thì ẩn valueold */}
-          {data.sold === 0 ? (
-            <div className="flex items-center justify-between">
-              <Currency
-                value={discountedPrice || 0}
-                valueold={discountedPriceOld}
-              />
+            {/* Description */}
+            <div>
+              <p className="font-semibold text-base single-line-ellipsis">
+                {data.heading}
+              </p>
+              <p className="text-sm text-gray-500 single-line-ellipsis">
+                {data.productdetail.category?.name}
+              </p>
             </div>
-          ) : (
-            <div className="flex items-center justify-between">
-              <Currency value={discountedPrice || 0} />
-              {data.sold > 0 && (
-                <div className="flex items-center text-sm font-medium">
-                  <span className="mr-1">Đã bán:</span>
-                  <span>{formatSoldValue(data.sold) || 0}</span>
-                </div>
-              )}
-            </div>
-          )}
-          <CommentStar data={data.id} comment={data.comment}/>
-        </div>
-        <div className="home-product-item__favorite">
-          <span className="ml-1">
-            Giảm {data.productdetail.percentpromotion1}%
-          </span>
+            {/* Kiểm tra xemn nếu như ko có đã bán thì hiển thị value old nếu có thì ẩn valueold */}
+            {data.sold === 0 ? (
+              <div className="flex items-center justify-between">
+                <Currency
+                  value={discountedPrice || 0}
+                  valueold={discountedPriceOld}
+                />
+              </div>
+            ) : (
+              <div className="flex items-center justify-between">
+                <Currency value={discountedPrice || 0} />
+                {data.sold > 0 && (
+                  <div className="flex items-center text-sm font-medium">
+                    <span className="mr-1">Đã bán:</span>
+                    <span>{formatSoldValue(data.sold) || 0}</span>
+                  </div>
+                )}
+              </div>
+            )}
+            <CommentStar data={data.id} comment={data.comment} />
+          </div>
+
+          <div className="home-product-item__favorite">
+            <span className="ml-1">
+              Giảm {data.productdetail.percentpromotion1}%
+            </span>
+          </div>
+
         </div>
       </div>
     </>

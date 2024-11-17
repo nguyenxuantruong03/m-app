@@ -18,6 +18,12 @@ export const getUserById = async (id:string | undefined) => {
                     createdAt: 'desc'
                 }
             },
+            feedback: {
+                orderBy: {
+                    createdAt: 'desc',
+                },
+                take: 1, // Lấy 1 feedback mới nhất
+            },
             stream: {
                 select: {
                     isLive: true

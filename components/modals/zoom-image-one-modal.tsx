@@ -12,6 +12,8 @@ interface ZoomModalProps {
   imageUrl: string;
   createdAt?: string | null | undefined;
   email?: string | null | undefined;
+  isClient?: boolean;
+  customClassFeedBack?: string;
 }
 
 export const ZoomImageAttendanceModal: React.FC<ZoomModalProps> = ({
@@ -20,6 +22,8 @@ export const ZoomImageAttendanceModal: React.FC<ZoomModalProps> = ({
   imageUrl,
   createdAt,
   email,
+  isClient,
+  customClassFeedBack
 }) => {
   const [isMounted, setIsMounted] = useState(false);
   const [scale, setScale] = useState(1);
@@ -155,6 +159,7 @@ export const ZoomImageAttendanceModal: React.FC<ZoomModalProps> = ({
       onClose={onClose}
       maxWidth="4xl"
       textCenter={true}
+      classNameCustom={`${customClassFeedBack} ${isClient && `${window.scrollY >= 30 ? "top-[53%]" : "top-[55%]"}`}`}
     >
       <div className="flex items-center justify-center">
         <div className="relative overflow-hidden">
@@ -166,7 +171,7 @@ export const ZoomImageAttendanceModal: React.FC<ZoomModalProps> = ({
             width={1000} // Set a default width value (adjust as needed)
             height={600} // Set a default height value (adjust as needed)
             style={{
-              width: "40vw",
+              width: window.innerWidth < 640 ? "80vw" : "40vw",
               height: "auto",
               cursor: "move",
               transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,

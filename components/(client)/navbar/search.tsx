@@ -1,9 +1,8 @@
 "use client";
 import qs from "query-string";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search as SearchIcon, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import SearchItem from "./_components/search-item";
@@ -12,6 +11,18 @@ export const SearchPage = () => {
   const router = useRouter();
   const [value, setValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsHidden(window.scrollY >= 30);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []); // Empty dependency array to ensure this only registers once
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -83,7 +94,7 @@ export const SearchPage = () => {
             onClick={closeModal} // Click outside to close the modal
           />
           <div
-            className="fixed top-24 md:top-[6.5rem] lg:top-24 left-0 right-0 md:left-auto md:right-auto bg-white rounded-md shadow-md max-w-[23rem] md:max-w-md w-full z-[9999] mx-auto"
+            className={`fixed ${isHidden ? "top-16 lg:top-14" : "top-24 md:top-28 lg:top-24"} left-0 right-0 md:left-auto md:right-auto bg-white rounded-md shadow-md max-w-[23rem] md:max-w-md w-full z-[9999] mx-auto`}
             onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
           >
             <SearchItem value={value} />

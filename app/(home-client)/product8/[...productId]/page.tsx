@@ -24,7 +24,6 @@ const ProductPage: React.FC<PropductPageProps> = async ({ params }) => {
   }
 
   return (
-    <div className="bg-white">
       <Container>
         <DetailProduct
           data={product}
@@ -33,10 +32,9 @@ const ProductPage: React.FC<PropductPageProps> = async ({ params }) => {
           routeOtherSuggestions="product8"
           productlistsuggest2={true}
           other={suggestedProduct3}
-          routeProductType="daydien"
+          routeOther="product3"
         />
       </Container>
-    </div>
   );
 };
 

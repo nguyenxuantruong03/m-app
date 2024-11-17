@@ -4,6 +4,33 @@ import { currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
+export async function GET(
+  req: Request,
+) {
+  try {
+    const userId = await currentUser();
+
+    if (!userId) {
+      return new NextResponse(JSON.stringify({ error: "Unauthenticated" }), {
+        status: 403,
+      });
+    }
+
+    if (userId.role === UserRole.USER || userId.role === UserRole.GUEST ) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền để xem cửa hàng!" }),
+        { status: 405 }
+      );
+    }
+
+    const store = await prismadb.store.findMany();
+    return NextResponse.json(store);
+  } catch (error) {
+    console.log("[STORES_GET] ", error);
+    return new NextResponse("Internal error", { status: 500 });
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const userId = await currentUser();
@@ -87,5 +114,76 @@ export async function POST(req: Request) {
     return NextResponse.json(store);
   } catch (error) {
     return new NextResponse("POST failed", { status: 500 });
+  }
+}
+
+export async function DELETE(
+  req: Request,
+) {
+  try {
+    const userId = await currentUser();
+    const body = await req.json();
+    const { ids } = body;
+
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ error: "Không tìm thấy userId!" }),
+        { status: 403 }
+      );
+    }
+
+    if (userId.role !== UserRole.ADMIN) {
+      return new NextResponse(
+        JSON.stringify({ error: "Bạn không có quyền xóa store!" }),
+        { status: 403 }
+      );
+    }
+
+    if (!ids || ids.length === 0) {
+      return new NextResponse(
+        JSON.stringify({ error: "Mảng IDs không được trống!" }),
+        { status: 400 }
+      );
+    }
+
+    // Fetch all cartegories to delete, including their images
+    const StoreToDelete = await prismadb.store.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+
+    // Create an array of changes for logging
+    const changesArray = StoreToDelete.map(store => ({
+      name: store.name,
+    }));
+
+    // Delete all the cartegories in one operation
+    await prismadb.store.deleteMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+
+    // Log the changes in a single database operation
+    await prismadb.system.create({
+      data: {
+        storeId: "",
+        delete: changesArray.map(change => `DeleteName: ${change.name}`),
+        type: "DELETESTORE",
+        user: userId?.email || "",
+      },
+    });
+
+    return NextResponse.json({ message: "Xóa thành công!" });
+  } catch (error) {
+    return new NextResponse(
+      JSON.stringify({ error: "Internal error delete store." }),
+      { status: 500 }
+    );
   }
 }

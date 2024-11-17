@@ -1,0 +1,14 @@
+.line-with-text {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.line-with-text::before,
+.line-with-text::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #9ba3ae; /* Màu và kiểu đường thẳng */
+  margin: 0 10px; /* Khoảng cách từ đường thẳng đến chữ */
+}

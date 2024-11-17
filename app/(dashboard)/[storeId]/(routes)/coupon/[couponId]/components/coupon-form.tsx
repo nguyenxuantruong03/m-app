@@ -123,6 +123,13 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
 
   const onSubmit = async (data: CouponFormValues) => {
     try {
+      const now = new Date();
+      const redeembyDate = typeof data.redeemby === 'string' ? new Date(data.redeemby) : data.redeemby;
+    
+      if (redeembyDate && redeembyDate < now) {
+        toast.error("Thời gian hết hạn không được ở quá khứ.");
+        return;
+      }
       setLoading(true);
       let promise;
       let imageUrl: string[] = [];

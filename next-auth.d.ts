@@ -33,6 +33,7 @@ export type ExtendedUser = DefaultSession["user"] & {
   linkwebsite: string;
   linkother: string;
   isLive: boolean;
+  feedbackTimeNextResonse: Date;
 };
 
 declare module "next-auth" {

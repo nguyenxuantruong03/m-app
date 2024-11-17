@@ -14,9 +14,10 @@ import { ColorResult } from 'react-color';
 type Props = {
   editor: Editor | null;
   disabled: boolean;
+  isCustom?: boolean;
 };
 
-const Toolbar: React.FC<Props> = ({ editor,disabled }) => {
+const Toolbar: React.FC<Props> = ({ editor,disabled,isCustom }) => {
   const [showColorPicker, setShowColorPicker] = useState<boolean>(false);
   const [selectedColor, setSelectedColor] = useState<string>("#ffcc00"); // Màu mặc định
 
@@ -50,7 +51,7 @@ const Toolbar: React.FC<Props> = ({ editor,disabled }) => {
 
   return (
     <div className="grid grid-cols-2 gap-16">
-      <div className="bg-transparent rounded-br-md">
+      <div className={`${isCustom ? "bg-transparent rounded-br-md overflow-y-auto h-36 md:h-44" : "bg-transparent rounded-br-md"}`}>
         <ExtensionDefaultPage
           editor={editor}
           showColorPicker={showColorPicker}
@@ -74,7 +75,7 @@ const Toolbar: React.FC<Props> = ({ editor,disabled }) => {
         <TaskItemandTasklist editor={editor} disabled={disabled}/>
 
       </div>
-      <div className="space-y-3">
+      <div className={`${isCustom ? "space-y-3 overflow-y-auto h-36 md:h-44" : "space-y-3"}`}>
         <TablePage editor={editor} disabled={disabled}/>
       </div>
     </div>

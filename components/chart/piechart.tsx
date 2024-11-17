@@ -146,7 +146,7 @@ const PieChart = ({ pieChartData, loading }: PieChartProps) => {
                 <Cell key={`cell-${index}`} fill={COLORS[0][index]} />
               ))}
             </Pie>
-            <Tooltip labelClassName="dark:text-slate-500 text-salte-900"/>
+            <Tooltip labelClassName="dark:text-slate-500 text-slate-900"/>
           </ChartPie>
         </ResponsiveContainer>
 
@@ -169,7 +169,7 @@ const PieChart = ({ pieChartData, loading }: PieChartProps) => {
                 <Cell key={`cell-${index}`} fill={COLORS[1][index]} />
               ))}
             </Pie>
-            <Tooltip labelClassName="dark:text-slate-500 text-salte-900"/>
+            <Tooltip labelClassName="dark:text-slate-500 text-slate-900"/>
           </ChartPie>
         </ResponsiveContainer>
 
@@ -191,7 +191,7 @@ const PieChart = ({ pieChartData, loading }: PieChartProps) => {
                 <Cell key={`cell-${index}`} fill={COLORS[2][index]} />
               ))}
             </Pie>
-            <Tooltip labelClassName="dark:text-slate-500 text-salte-900"/>
+            <Tooltip labelClassName="dark:text-slate-500 text-slate-900"/>
           </ChartPie>
         </ResponsiveContainer>
       </div>

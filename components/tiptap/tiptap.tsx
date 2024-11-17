@@ -28,16 +28,20 @@ import TextStyle from "@tiptap/extension-text-style";
 import "./styles.scss";
 import MentionPlugin from "./mention/suggestion";
 import Recommend from "../ui/recommend";
+import Underline from '@tiptap/extension-underline';
+
 interface Tiptap {
   value: string;
   onChange: (richText: string) => void;
   disabled: boolean;
+  isCustom?: boolean;
 }
 
-const Tiptap: React.FC<Tiptap> = ({ value, onChange, disabled }) => {
+const Tiptap: React.FC<Tiptap> = ({ value, onChange, disabled, isCustom }) => {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ codeBlock: false }),
+      Underline,
       Image.configure({
         allowBase64: true,
         inline: true,
@@ -83,7 +87,7 @@ const Tiptap: React.FC<Tiptap> = ({ value, onChange, disabled }) => {
         HTMLAttributes: {
           class: "mention",
         },
-        suggestion:MentionPlugin(),
+        suggestion: MentionPlugin(),
       }),
       HorizontalRule,
       HardBreak,
@@ -97,20 +101,26 @@ const Tiptap: React.FC<Tiptap> = ({ value, onChange, disabled }) => {
     content: value,
     editorProps: {
       attributes: {
-        class:
-          "rounded-md border min-h-[150px] border-input focus:outline-none p-3  mt-3",
+        class: `${
+          isCustom
+            ? "rounded-md border min-h-[100px] md:min-h-[150px] border-input focus:outline-none p-3 mt-3"
+            : "rounded-md border min-h-[150px] border-input focus:outline-none p-3 mt-3"
+        }`,
       },
     },
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
+      onChange?.(editor.getHTML());
     },
   });
 
   return (
     <div className="flex flex-col justify-stretch min-h-[250px] overflow-y-auto">
-      <Toolbar disabled={disabled} editor={editor} />
-      <div className="text-sm flex items-center space-x-3 mt-3"> Nội dung <span className="text-red-600 pl-1">(*)</span> <Recommend message="Nhập nội dung xong có thể chỉnh sửa lựa chọn các style bên trên."/></div>
-      <EditorContent disabled={disabled} editor={editor}/>
+      <Toolbar disabled={disabled} editor={editor} isCustom={isCustom} />
+      <div className="text-sm flex items-center space-x-3 mt-3">
+        Nội dung <span className="text-red-600 pl-1">(*)</span>{" "}
+        <Recommend message="Nhập nội dung xong có thể chỉnh sửa lựa chọn các style bên trên." />
+      </div>
+      <EditorContent disabled={disabled} editor={editor} />
     </div>
   );
 };

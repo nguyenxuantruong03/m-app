@@ -120,12 +120,14 @@ export const UserButton = () => {
                 imageUrl={avatarImage}
                 createdAt={formatcreatedAt || ""}
                 email={userId?.email || ""}
+                isClient={true}
               />
             ) : avatarImage ? (
               <ImageCellOne
                 imageUrl={avatarImage}
                 createdAt={formatcreatedAt || ""}
                 email={userId?.email || ""}
+                isClient={true}
               />
             ) : (
               <AvatarFallback className="bg-sky-500">

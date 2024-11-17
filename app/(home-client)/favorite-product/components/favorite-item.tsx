@@ -244,16 +244,6 @@ const LikeItem: React.FC<LikeItemProps> = ({ data, loading, setLoading }) => {
 
   const getRouteBasedOnProductType = (productType: any) => {
     switch (productType) {
-      case "ongnhua":
-        return "ongnhua";
-      case "bongden":
-        return "bongden";
-      case "daydien":
-        return "daydien";
-      case "ocam":
-        return "ocam";
-      case "son":
-        return "son";
       case "product":
         return "product0";
       case "product1":

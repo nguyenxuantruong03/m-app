@@ -649,11 +649,17 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
 
   const totalQuantity = quantities.reduce((total, qty) => total + qty, 0);
 
+  const now = new Date();
+  const timeSaleEnd = new Date(data.timeSaleEnd!);
+  const timeSaleStart = new Date(data.timeSaleStart!);
+
+  const isValidSalePeriod = data.isSale && timeSaleEnd > now && timeSaleStart <= now;
+
   return (
     <div>
-      <h1 className="text-3xl font-bold text-gray-500">{data.heading} </h1>
+      <h1 className="text-3xl font-bold text-gray-500 dark:text-slate-300">{data.heading} </h1>
       <hr className="my-4" />
-      {(data.timeSaleEnd && data.timeSaleStart) ? (
+      {(isValidSalePeriod) ? (
         <div className="relative w-full h-10">
         <Image 
           src="/images/banner-sale.jpg"
@@ -674,7 +680,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
               <span className="uppercase text-white">kết thúc trong:</span>
             </div>
             <FlipClockCountdown
-              to={new Date(data.timeSaleEnd)}
+              to={new Date(data.timeSaleEnd!)}
               renderMap={[true, true, true, true]} // Hiển thị giờ, phút, giây nhưng không hiển thị ngày
               showLabels={false}
               digitBlockStyle={{
@@ -691,11 +697,11 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
       </div>
       ) : null}
       {/* Description */}
-      <div className="my-5">{data?.description}</div>
+      <div className="my-5 text-slate-900 dark:text-slate-200">{data?.description}</div>
       {/* Size */}
       <div className="flex flex-col gap-y-3">
         <div className="flex items-center gap-x-4">
-          <h3 className="font-semibold"> Kích cỡ: </h3>
+          <h3 className="font-semibold text-slate-900 dark:text-slate-200"> Kích cỡ: </h3>
           {availableSizes.map((size, index) => (
             <div
               key={index}
@@ -711,7 +717,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
               }}
             >
               <button
-                className={`relative ${
+                className={`relative text-slate-900 dark:text-slate-200 ${
                   selectedSize === size?.value
                     ? "border border-red-500 h-8 w-16 rounded-md overflow-hidden"
                     : ""
@@ -733,7 +739,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
         <div className="text-red-600 text-sm">{errorSize}</div>
         {/* Color */}
         <div className="flex items-center gap-x-1 cursor-pointer">
-          <h3 className="font-semibold">Màu: </h3>
+          <h3 className="font-semibold text-slate-900 dark:text-slate-200">Màu: </h3>
           {availableColors.map((color, index) => (
             <div
               key={index}
@@ -750,11 +756,11 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
               className={`inline-flex items-center justify-center h-8 w-16 relative overflow-hidden ${
                 selectedColor === color?.value
                   ? " border border-red-500 rounded-md"
-                  : ""
+                  : ""  
               }`}
             >
               <div
-                className="h-6 w-6 rounded-full"
+                className="h-6 w-6 rounded-full border border-gray-300"
                 style={{ backgroundColor: color?.value }}
               />
               {selectedColor === color?.value && (
@@ -774,7 +780,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
       {/* "+ or -" Quantity */}
       <div className="my-6 flex items-center gap-x-3">
         {/* Quantity increment and decrement buttons */}
-        <h3 className="font-semibold"> Số lượng: </h3>
+        <h3 className="font-semibold text-slate-900 dark:text-slate-200"> Số lượng: </h3>
         <Button
           disabled={loading || quantityInventory}
           variant="outline"
@@ -818,22 +824,22 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
       </div>
 
       <div className="flex items-center gap-x-4">
-        <h3 className="font-semibold">Số lượng trong kho: </h3>
-        {getQuantityMatchColorandSize()}
+        <h3 className="font-semibold text-slate-900 dark:text-slate-200">Số lượng trong kho: </h3>
+        <span className="text-slate-900 dark:text-slate-200">{getQuantityMatchColorandSize()}</span>
       </div>
 
       <div className="flex items-center gap-x-4 mt-6">
-        <h3 className="font-semibold">Tổng số lượng sản phẩm: </h3>
-        {totalQuantity} sản phẩm
+        <h3 className="font-semibold text-slate-900 dark:text-slate-200">Tổng số lượng sản phẩm: </h3>
+        <span className="text-slate-900 dark:text-slate-200">{totalQuantity} sản phẩm</span>
       </div>
 
       <div className="flex items-center gap-x-4 mt-6">
-        <h3 className="font-semibold">Đã bán:</h3>
-        {data.sold || 0} sản phẩm
+        <h3 className="font-semibold text-slate-900 dark:text-slate-200">Đã bán:</h3>
+        <span className="text-slate-900 dark:text-slate-200">{data.sold || 0} sản phẩm </span>
       </div>
 
       <div className="mt-8 flex items-center gap-x-4">
-        <h3 className="font-semibold"> Tổng giá: </h3>
+        <h3 className="font-semibold text-slate-900 dark:text-slate-200"> Tổng giá: </h3>
         <p className="text-lg text-gray-900">
           <Currency
             value={getPriceMatchColorandSize()}
@@ -967,9 +973,9 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
           <Button
             disabled={quantityInventory || loading}
             onClick={onAddtoPushCart}
-            className="w-full bg-gray-300 hover:bg-gray-200"
+            className="w-full bg-gray-300 hover:bg-gray-200 group"
           >
-            <div className="flex text-lg items-center gap-x-2 pl-[2.25] md:w-full justify-center">
+            <div className="flex text-lg items-center gap-x-2 pl-[2.25] md:w-full justify-center group-hover:text-yellow-500">
               Mua ngay
               <ShoppingCart
                 className={`${
@@ -1000,44 +1006,44 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
       {/* Check nếu như hết hàng mà người dùng vẫn click */}
       <div className="text-red-500 text-sm">{errorQuantityInventory}</div>
       {/* Ưa đãi thêm */}
-      <div className="w-full h-full shadow-lg mt-9 rounded-lg space-y-1 overflow-hidden ">
-        <div className="h-10 bg-gray-300 flex items-center ">
-          <h1 className="ml-3 font-bold "> Ưa đãi thêm </h1>
+      <div className="w-full h-full shadow-lg mt-9 rounded-lg space-y-1 overflow-hidden border border-slate-900 dark:border-slate-200">
+        <div className="h-10 bg-slate-900 dark:bg-slate-200 flex items-center ">
+          <h1 className="ml-3 font-bold text-slate-200 dark:text-slate-900"> Ưa đãi thêm </h1>
         </div>
         <div className="flex items-center">
           <BadgePercent className={Infoproductcolor.textcolor} />
-          <h1 className="text-sm"> Chiết khấu cao mua hàng với giá sỉ</h1>
+          <h1 className="text-sm text-slate-900 dark:text-slate-200"> Chiết khấu cao mua hàng với giá sỉ</h1>
         </div>
 
         <div className="flex items-center">
           <Banknote className={Infoproductcolor.textcolor} />
-          <h1 className="ml-1 text-sm ">
+          <h1 className="ml-1 text-sm text-slate-900 dark:text-slate-200">
             Ưa đãi lớn khi thanh toán trên 2 triệu
           </h1>
         </div>
 
         <div className="flex items-center">
           <Tag className={Infoproductcolor.textcolor} />
-          <h1 className="ml-1 text-sm ">Tặng mã giảm giá ngẫu nhiên</h1>
+          <h1 className="ml-1 text-sm text-slate-900 dark:text-slate-200">Tặng mã giảm giá ngẫu nhiên</h1>
         </div>
 
         <div className="flex items-center">
           <CreditCard className={Infoproductcolor.textcolor} />
-          <h1 className="ml-1 text-sm ">
+          <h1 className="ml-1 text-sm text-slate-900 dark:text-slate-200">
             Có thể thành toán bằng tiền mặt hoặc visa
           </h1>
         </div>
 
         <div className="flex items-center">
           <Award className={Infoproductcolor.textcolor} />
-          <h1 className="ml-1 text-sm ">
+          <h1 className="ml-1 text-sm text-slate-900 dark:text-slate-200">
             Ưa đãi cực nhiều khi mua hàng số lượng lớn
           </h1>
         </div>
 
         <div className="flex items-center">
           <Shield className={Infoproductcolor.textcolor} />
-          <h1 className="ml-1 text-sm ">
+          <h1 className="ml-1 text-sm text-slate-900 dark:text-slate-200">
             Nếu sản phẩm có lỗi hoặc hư bảo hành 1 năm tùy món hàng.
           </h1>
         </div>

@@ -54,7 +54,7 @@ const LoadingPageComponent = () => {
             ></circle>
           </svg>
         </div>
-          <div className="opacity-50 mb-8 flex justify-center">
+          <div className="mb-8 flex justify-center text-slate-900 dark:text-slate-200">
             Dữ liệu đang được hệ thống xử lý hãy đợi trong vài giây.
           </div>
       </div>
