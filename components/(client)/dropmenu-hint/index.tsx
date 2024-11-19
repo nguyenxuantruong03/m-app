@@ -70,8 +70,8 @@ export default function DropMenuHint() {
     : undefined;
   const now = new Date();
 
-  const compareTime = feedbackDate === undefined ||
-  now.getTime() > feedbackDate.getTime()
+  const compareTime =
+    feedbackDate === undefined || now.getTime() > feedbackDate.getTime();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -156,6 +156,23 @@ export default function DropMenuHint() {
     }
   };
 
+  useEffect(() => {
+    if (!isAISheetOpen) {
+      setTimeout(() => {
+        document.body.style.pointerEvents = ''
+      }, 500)
+    }
+  }, [isAISheetOpen])
+
+  //Bỏ pointer-event:none khi không có isFeedbackSheetOpen
+  useEffect(() => {
+    if (!isFeedbackSheetOpen) {
+      setTimeout(() => {
+        document.body.style.pointerEvents = ''
+      }, 500)
+    }
+  }, [isFeedbackSheetOpen])
+
   if (!isMounted) {
     return null;
   }
@@ -186,7 +203,7 @@ export default function DropMenuHint() {
               side="top"
               className="relative min-w-0 overflow-visible bg-transparent shadow-none border-none"
             >
-              <DropdownMenuItem className="-bottom-[62px] focus:outline-none focus:bg-transparent">
+              <DropdownMenuItem  className="-bottom-[62px] focus:outline-none focus:bg-transparent">
                 <SocialHint />
               </DropdownMenuItem>
               <DropdownMenuItem className="-bottom-[55px] right-[62px] focus:outline-none focus:bg-transparent">
@@ -200,8 +217,10 @@ export default function DropMenuHint() {
           </DropdownMenu>
 
           {/* AI Assistant Sheet */}
-          <Sheet open={isAISheetOpen} onOpenChange={setIsAISheetOpen}>
-            <SheetOverlay className="z-[999998]" />
+          <Sheet
+            open={isAISheetOpen}
+            onOpenChange={(open) => setIsAISheetOpen(open)}
+          >
             <SheetContent side="bottom" className="h-5/6 z-[999999]">
               <div className="max-w-7xl mx-auto shadow-lg flex items-center justify-between p-2 rounded-md">
                 <div className="flex item-center space-x-2">
@@ -235,6 +254,7 @@ export default function DropMenuHint() {
             </SheetContent>
           </Sheet>
 
+          {/* Feedback Sheet */}
           {compareTime && (
             <Sheet
               open={isFeedbackSheetOpen}
@@ -322,7 +342,6 @@ export default function DropMenuHint() {
               </SheetContent>
             </Sheet>
           )}
-          {/* Feedback Sheet */}
         </div>
       )}
     </>

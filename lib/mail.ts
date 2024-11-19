@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 
-const resend = new Resend("re_RCTEzcfc_3Eo7RyscVyHChCuzhtukuVkB");
+const resend = new Resend(process.env.RESEND_EMAIL_API_KEY);
 const domain = process.env.NEXT_PUBLIC_URL;
 
 export const sendTwoFactorTokenEmail = async (email: string, token: string) => {

@@ -29,6 +29,7 @@ export const CopyButton = ({value}:CopyClientProps) =>{
         disabled={!value || isCopied}
         variant="ghost"
         size="sm"
+        className="text-slate-900 dark:text-slate-200"
         >
             <Icon className="h-4 w-4"/>
         </Button>

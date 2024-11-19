@@ -87,7 +87,7 @@ const NavbarMultiple = () => {
                   src="/images/logo-custom.png"
                   width="155"
                   height="30"
-                  className="rounded-sm"
+                  className="rounded-sm hover:opacity-75 transition"
                 />
               </div>
               <div className="block xl:hidden">
@@ -96,7 +96,7 @@ const NavbarMultiple = () => {
                   src="/images/logo-mini.png"
                   width="45"
                   height="30"
-                  className="rounded-sm bg-[#c3c3c3] dark:bg-slate-700 py-1.5 px-2.5"
+                  className="rounded-sm bg-[#c3c3c3] dark:bg-slate-700 py-1.5 px-2.5 hover:opacity-75 transition"
                 />
               </div>
             </Link>

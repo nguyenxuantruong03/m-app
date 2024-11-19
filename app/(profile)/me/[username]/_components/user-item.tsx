@@ -90,11 +90,6 @@ const UserItem = ({
           />
         </div>
         <div className="lg:flex-1 w-full">
-          {filteredReviews.length === 0 && (
-            <p className="text-center text-gray-400 font-semibold text-xl">
-              Không có bài viết
-            </p>
-          )}
           <ArticleUser
             streams={streams}
             self={self}
@@ -102,6 +97,11 @@ const UserItem = ({
             user={user}
             avatarImage={avatarImage}
           />
+          {filteredReviews.length === 0 && (
+            <p className="text-center text-gray-400 font-semibold text-xl">
+              Không có bài viết
+            </p>
+          )}
         </div>
       </div>
     </div>

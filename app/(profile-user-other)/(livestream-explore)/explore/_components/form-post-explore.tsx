@@ -50,8 +50,6 @@ const FormPostExplore = ({ setOpen, reviews, id, userId }: FormPostExploreProps)
   const router = useRouter();
   const { update } = useSession();
 
-  console.log("review",reviews.find((review: { id: string }) => review.id === id))
-
   const [categories, setCategories] = useState<any>([]);
   const [products, setProducts] = useState<any>({}); // Update to store products as an object
   const [filteredProducts, setFilteredProducts] = useState<any>([]); // Initialize as an empty array

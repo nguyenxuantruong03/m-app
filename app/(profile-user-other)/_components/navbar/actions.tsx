@@ -11,7 +11,7 @@ interface ActionsProps {
 const Actions = async ({ exitLink }: ActionsProps) => {
   const user = await currentUser();
   return (
-    <div className="flex items-center justify-end gap-x-2 ml-4 lg:ml-0">
+    <div className="flex items-center justify-end gap-x-2 lg:ml-0">
       {!user && (
         <div>
           <Link href="/auth/login">
@@ -26,7 +26,7 @@ const Actions = async ({ exitLink }: ActionsProps) => {
           <Button
             size="sm"
             variant="ghost"
-            className={`text-muted-foreground hover:text-primary ${user?.isLive ? "mr-12" : ""}`}
+            className={`text-muted-foreground hover:text-primary px-2 md:px-3 ${user?.isLive ? "mr-12" : ""}`}
           >
             {exitLink ? (
               <Link href={`/explore`} className="flex items-center">

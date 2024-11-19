@@ -95,7 +95,7 @@ const NavbarProfile: React.FC<NavbarProfileProps> = ({ dateofbirth, name }) => {
             src="/images/logo-custom.png"
             width="140"
             height="30"
-            className="rounded-sm"
+            className="rounded-sm hover:opacity-75 transition"
           />
         </div>
         <div className="block xl:hidden">
@@ -104,7 +104,7 @@ const NavbarProfile: React.FC<NavbarProfileProps> = ({ dateofbirth, name }) => {
             src="/images/logo-mini.png"
             width="45"
             height="30"
-            className="rounded-sm bg-[#c3c3c3] py-1.5 px-2.5"
+            className="rounded-sm bg-[#c3c3c3] py-1.5 px-2.5 hover:opacity-75 transition"
           />
         </div>
       </Link>

@@ -17,9 +17,9 @@ const CreatorLayout = async ({ params, children }: CreatorLayoutProps) => {
   }
 
   return (
-    <div className="bg-white h-full text-slate-900">
+    <div className="h-full text-slate-900">
       <Navbar exitLink={true}/>
-      <div className="flex h-full pt-20 bg-white">
+      <div className=" h-full pt-20">
         <Sidebar />
         <Container>
         {children}

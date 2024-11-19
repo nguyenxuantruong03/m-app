@@ -177,7 +177,7 @@ const ChatGemini = ({ setChatHistory, chatHistory }: ChatGeminiProps) => {
             <div className="relative flex items-center w-full max-w-screen-lg mx-auto">
               <Textarea
                 disabled={isLoading}
-                className="bg-white flex-grow p-3 pr-12 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none overflow-y-auto"
+                className="bg-white dark:text-slate-900 flex-grow p-3 pr-12 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none overflow-y-auto"
                 placeholder="Type your message..."
                 rows={1}
                 style={{ minHeight: `${minHeight}px`, maxHeight: "150px" }}
@@ -188,7 +188,7 @@ const ChatGemini = ({ setChatHistory, chatHistory }: ChatGeminiProps) => {
               />
               <Button
                 size="icon"
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 px-4 py-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 focus:outline-none"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 rounded-full bg-blue-500 text-white hover:bg-blue-600 focus:outline-none"
                 onClick={sendMessage}
                 disabled={isLoading || userInput.trim() === ""}
               >

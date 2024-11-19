@@ -102,12 +102,12 @@ export const AboutUser = ({ self, isFollowing,user,avatarImage}: AboutUserProps)
           />
         )}
         <div className="text-center xl:text-left">
-          <p className="text-3xl font-bold">{self.name}</p>
+          <p className="text-3xl font-bold text-slate-900 dark:text-slate-200">{self.name}</p>
           <p className="text-sm text-muted-foreground space-x-1">
-            <span className="font-semibold text-primary">
+            <span className="font-semibold text-primary text-gray-600 dark:text-slate-400">
               {self._count.followedBy}
             </span>
-            <span>{followedByLabel}</span>
+            <span className="text-gray-600 dark:text-slate-400">{followedByLabel}</span>
           </p>
         </div>
       </div>

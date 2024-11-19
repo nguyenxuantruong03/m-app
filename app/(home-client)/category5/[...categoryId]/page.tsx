@@ -45,7 +45,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
     const fetchData = async () => {
       try {
         const billboardData = await getBillboard(
-          "272c1f9f-3844-4c24-9c57-19d9ee48562c"
+          `${process.env.NEXT_PUBLIC_BILLBOARD_API_KEY}`
         );
         const productData = await getProduct5({isFeatured: undefined});
         const sizeData = await getSizes();

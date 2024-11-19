@@ -6,7 +6,6 @@ import { Button } from "../ui/button";
 import Tiptap from "../tiptap/tiptap";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { Resend } from "resend";
 import toast from "react-hot-toast";
 import axios from "axios";
 
@@ -21,7 +20,6 @@ interface SentEmailModalProps {
   setOpenSentEmail: Dispatch<SetStateAction<boolean>>;
 }
 
-const resend = new Resend("re_RCTEzcfc_3Eo7RyscVyHChCuzhtukuVkB");
 
 export const SentEmailUserModal: React.FC<SentEmailModalProps> = ({
   isOpen,

@@ -272,6 +272,14 @@ const ExploreItem = ({ streams, review }: ExploreCardProps) => {
         <div className="space-y-5">
           <ExploreCard review={sortedPostReview} user={user} />
         </div>
+
+        {streams.length <=0 && sortedPostReview.length <=0 && (
+          <div className="text-center text-gray-400 font-semibold text-xl ">
+              Không có bài viết!
+          </div>
+        ) 
+
+        }
       </div>
 
       <SortItem setSortCriteria={setSortCriteria} />

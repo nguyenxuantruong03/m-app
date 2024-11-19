@@ -1,7 +1,9 @@
+"use client"
 import Link from "next/link";
 import Image from "next/image";
 import { Poppins } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { useState,useEffect } from "react";
 
 const font = Poppins({
   subsets: ["latin"],
@@ -9,17 +11,36 @@ const font = Poppins({
 });
 
 export const Logo = () => {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+  
+  if (!isMounted) {
+    return null;
+  }
+  
   return (
-    <Link href="/">
-      <div className="flex items-center gap-x-4 hover:opacity-75 transition">
-        <div className="bg-white rounded-full p-1 mr-12 shrink-0 lg:mr-0 lg:shrink">
-          <Image src="/pen.svg" alt="404" width="32" height="32" />
+      <Link href="/home-product">
+        <div className="hidden xl:block">
+          <Image
+            alt=""
+            src="/images/logo-custom.png"
+            width="140"
+            height="30"
+            className="rounded-sm hover:opacity-75 transition"
+          />
         </div>
-        <div className={cn("hidden lg:block",font.className)}>
-          <p className="text-lg font-semibold">Gamehub</p>
-          <p className="text-sm text-muted-foreground">Let&apos;s play</p>
+        <div className="block xl:hidden">
+          <Image
+            alt=""
+            src="/images/logo-mini.png"
+            width="45"
+            height="30"
+            className="rounded-sm bg-[#c3c3c3] py-1.5 px-2.5"
+          />
         </div>
-      </div>
-    </Link>
+      </Link>
   );
 };

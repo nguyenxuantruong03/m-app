@@ -19,7 +19,7 @@ const CommunityPage = async () => {
   return (
     <div className="p-6">
       <div className="mb-4">
-        <h1 className="text-2xl font-bold">List Block Settings</h1>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-200">List Block Settings</h1>
       </div>
       <DataTable columns={columns} data={formattedData} searchKey="nameuser" showSelected={false}/>
     </div>

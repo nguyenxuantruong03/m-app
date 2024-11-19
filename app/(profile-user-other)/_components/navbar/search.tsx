@@ -32,7 +32,7 @@ export const Search = () => {
   return (
     <form
       onSubmit={onSubmit}
-      className="relative w-full lg:w-[400px] flex items-center"
+      className="relative w-[230px] md:w-[400px] flex items-center"
     >
       <Input
         value={value}
@@ -50,7 +50,7 @@ export const Search = () => {
         type="submit"
         size="default"
         variant="secondary"
-        className="rounded-l-none h-10"
+        className="rounded-l-none h-10 px-2 md:px-4"
       >
         <SearchIcon className="h-5 w-5 text-muted-foreground" />
       </Button>
