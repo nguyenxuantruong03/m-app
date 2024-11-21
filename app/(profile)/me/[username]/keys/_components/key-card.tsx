@@ -23,6 +23,7 @@ export const KeyCard = ({ value }: KeyCardProps) => {
               type={show ? "text" : "password"}
               disabled
               placeholder="Stream Key"
+              className="dark:text-slate-200"
             />
             <CopyButton value={value || ""} />
           </div>

@@ -440,7 +440,7 @@ const FormPost = ({ setOpen, self, id, userId }: FormPostProps) => {
                     <SelectTrigger>
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="z-[99999999]">
                       {categories.length === 0 ? (
                         <SelectItem disabled value="empty">
                           Trống
@@ -475,7 +475,7 @@ const FormPost = ({ setOpen, self, id, userId }: FormPostProps) => {
                     <SelectTrigger>
                       <SelectValue placeholder="Select a product" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="z-[99999999]">
                       {filteredProducts.length === 0 ? (
                         <SelectItem disabled value="empty">
                           Trống

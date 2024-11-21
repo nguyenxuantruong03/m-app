@@ -48,8 +48,8 @@ import { ImageCredential } from "@/types/type";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 
 const formSchema = z.object({
-  email: z.string().min(1,{ message: "Bắt buộc nhập email" }),
-  name: z.string().min(1,{ message: "Bắt buộc nhập name" }),
+  email: z.string().min(1, { message: "Bắt buộc nhập email" }),
+  name: z.string().min(1, { message: "Bắt buộc nhập name" }),
   numberCCCD: z.string().refine((value) => /^[0-9]+$/.test(value), {
     message: "Vui lòng nhập số CMND hợp lệ chỉ có số.",
   }),
@@ -67,10 +67,14 @@ const formSchema = z.object({
   isCitizen: z.boolean().default(false).optional(),
   dateRange: z.date().nullable(),
   dateofbirth: z.union([z.date().nullable(), z.string().nullable()]),
-  timestartwork: z.string().min(1, { message: "Hãy nhập giờ bắt đầu làm việc." }),
-  urlimageCheckAttendance: z.optional(z.string().min(2,{message: "Nhập ít nhất 2 ký tự."})),
-  codeNFC: z.optional(z.string().min(2,{message: "Nhập ít nhất 2 ký tự."})),
-  image: z.optional(z.string().min(0,{message: "Hãy chọn 1 ảnh."})),
+  timestartwork: z
+    .string()
+    .min(1, { message: "Hãy nhập giờ bắt đầu làm việc." }),
+  urlimageCheckAttendance: z.optional(
+    z.string().min(2, { message: "Nhập ít nhất 2 ký tự." })
+  ),
+  codeNFC: z.optional(z.string().min(2, { message: "Nhập ít nhất 2 ký tự." })),
+  image: z.optional(z.string().min(0, { message: "Hãy chọn 1 ảnh." })),
   daywork: z.array(z.string()),
   createdAt: z.date().nullable(),
 });
@@ -88,7 +92,7 @@ interface ManageStaffFormProps {
 
 export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
   initialData,
-  imageCredential
+  imageCredential,
 }) => {
   const params = useParams();
   const router = useRouter();
@@ -108,9 +112,10 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
       name: initialData?.name ?? null!,
       numberCCCD: initialData?.numberCCCD ?? null!,
       issued: initialData?.issued ?? null!,
-      imageCredential: imageCredential && imageCredential.length > 0
-      ? [{ url: imageCredential[0].url || "" }]
-      : [{ url: "" }],
+      imageCredential:
+        imageCredential && imageCredential.length > 0
+          ? [{ url: imageCredential[0].url || "" }]
+          : [],
       phonenumber: initialData?.phonenumber ?? null!,
       gender: initialData?.gender ?? null!,
       degree: initialData?.degree ?? null!,
@@ -138,21 +143,21 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
       Thursday: "Thứ 5",
       Friday: "Thứ 6",
       Saturday: "Thứ 7",
-      Sunday: "Chủ Nhật"
+      Sunday: "Chủ Nhật",
     };
-  
+
     setSelectedOption(
       (initialData?.daywork ?? []).map((daywork: string) => ({
         value: daywork,
-        label: dayNames[daywork] // Sử dụng đối tượng dayNames để ánh xạ tên ngày
+        label: dayNames[daywork], // Sử dụng đối tượng dayNames để ánh xạ tên ngày
       }))
     );
   }, [initialData]);
 
   const onSubmit = async (data: ManageStaffFormValues) => {
     if (data.imageCredential.length > 1) {
-      toast.error("Chỉ chọn 1 đại diện hãy xóa các ảnh khác!")
-      return; 
+      toast.error("Chỉ chọn 1 đại diện hãy xóa các ảnh khác!");
+      return;
     }
     try {
       setLoading(true);
@@ -206,7 +211,11 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               <div className="flex-shrink-0 pt-0.5">
                 <Image
                   className="h-10 w-10 rounded-full"
-                  src={data.imageCredential[0]?.url || data.image || ""}
+                  src={
+                    data.imageCredential
+                      ? data.imageCredential[0]?.url
+                      : data.image || ""
+                  }
                   alt=""
                   width="50"
                   height="50"
@@ -319,15 +328,21 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex space-x-3 items-center">
-                    Hình ảnh <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Đây là hình ảnh nhân viên ảnh phông xanh." />
-                  </FormLabel>
+                  Hình ảnh <span className="text-red-600 pl-1">(*)</span>
+                  <Recommend message="Đây là hình ảnh nhân viên ảnh phông xanh." />
+                </FormLabel>
                 <FormControl>
                   <ImageUpload
-                    value={Array.isArray(field.value) ? field.value.map((image) => image.url) : []}
+                    value={
+                      Array.isArray(field.value)
+                        ? field.value.map((image) => image.url)
+                        : []
+                    }
                     disabled={loading}
                     onChange={(url) => {
-                      const updatedImages = Array.isArray(field.value) ? [...field.value, { url }] : [{ url }];
+                      const updatedImages = Array.isArray(field.value)
+                        ? [...field.value, { url }]
+                        : [{ url }];
                       if (updatedImages.length <= 1) {
                         field.onChange(updatedImages);
                       } else {
@@ -341,6 +356,33 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                       field.onChange(updatedImages);
                     }}
                     maxFiles={1}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="image"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex space-x-3 items-center">
+                  Hình ảnh <span className="text-red-600 pl-1">(*)</span>
+                  <Recommend message="Đây là hình ảnh nhân viên ảnh phông xanh." />
+                </FormLabel>
+                <FormControl>
+                  <ImageUpload
+                    value={field.value ? [field.value] : []} // Chuyển string thành string[]
+                    disabled={loading}
+                    onChange={(url) => {
+                      field.onChange(url); // Cập nhật trực tiếp thành string
+                    }}
+                    onRemove={() => {
+                      field.onChange(""); // Xóa giá trị bằng chuỗi rỗng
+                    }}
+                    maxFiles={1} // Chỉ cho phép một tệp
                   />
                 </FormControl>
                 <FormMessage />
@@ -456,7 +498,8 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Thời gian bắt đầu làm việc <span className="text-red-600 pl-1">(*)</span>
+                    Thời gian bắt đầu làm việc{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
                     <Recommend message="Quan trọng: Liên quan đến điểm danh của nhân viên sẽ bắt đầu điểm danh vào mấy giờ." />
                   </FormLabel>
                   <FormControl>
@@ -481,7 +524,8 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    CCCD cấp ở đâu <span className="text-red-600 pl-1">(*)</span>
+                    CCCD cấp ở đâu{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
                     <Recommend message="Nơi căn cứ công dân được cấp. VD: Bộ cộng An Quận Bình Tân." />
                   </FormLabel>
                   <FormControl>
@@ -502,7 +546,8 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Ngày hết hạn CMND <span className="text-red-600 pl-1">(*)</span>
+                    Ngày hết hạn CMND{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
                     <Recommend message="Thời gian Căn cước công dân hết hạn năm ở dưới ảnh hoặc dưới nơi cập." />
                   </FormLabel>
                   <FormControl>
@@ -605,7 +650,8 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Tính trạng hôn nhân <span className="text-red-600 pl-1">(*)</span>
+                    Tính trạng hôn nhân{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
                     <Recommend message="Theo dõi tình trạng hôn nhân của nhân viên." />
                   </FormLabel>
                   <Select
@@ -639,7 +685,8 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Thời gian làm việc <span className="text-red-600 pl-1">(*)</span>
+                    Thời gian làm việc{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
                     <Recommend message="Lựa chọn loại công việc bán thời gian hay fulltime." />
                   </FormLabel>
                   <Select
@@ -673,7 +720,8 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Qr code nhân viên <span className="text-red-600 pl-1">(*)</span>
+                    Qr code nhân viên{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
                     <Recommend message="Mã này sẽ được cấp bởi quản lý để nhân viên điểm danh." />
                   </FormLabel>
                   <FormControl>
@@ -721,9 +769,10 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                  <FormLabel className="flex space-x-3 items-center">
-                    Định danh <Recommend message="Xác nhận thông tin nhân viên đã cập nhật đầy đủ thông tin hay chưa." />
-                  </FormLabel>
+                    <FormLabel className="flex space-x-3 items-center">
+                      Định danh{" "}
+                      <Recommend message="Xác nhận thông tin nhân viên đã cập nhật đầy đủ thông tin hay chưa." />
+                    </FormLabel>
                     <FormDescription>Tài khoản xác thực</FormDescription>
                   </div>
                 </FormItem>
@@ -731,21 +780,26 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
             />
           </div>
           <FormField
-              control={form.control}
-              name="daywork" 
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex space-x-3 items-center">
-                    Thứ làm việc <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Lưu ý: Chọn đúng thứ ngày làm việc để nhân viên điểm danh. Nếu chọn sai nhân viên không thể điểm danh." />
-                  </FormLabel>
-                  <FormControl>
-                    <MutipleSelectOption selectedOption={selectedOption} setSelectedOption={setSelectedOption} field={field} disabled={loading}/>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            control={form.control}
+            name="daywork"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex space-x-3 items-center">
+                  Thứ làm việc <span className="text-red-600 pl-1">(*)</span>
+                  <Recommend message="Lưu ý: Chọn đúng thứ ngày làm việc để nhân viên điểm danh. Nếu chọn sai nhân viên không thể điểm danh." />
+                </FormLabel>
+                <FormControl>
+                  <MutipleSelectOption
+                    selectedOption={selectedOption}
+                    setSelectedOption={setSelectedOption}
+                    field={field}
+                    disabled={loading}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <Button disabled={loading} className="ml-auto" type="submit">
             {action}

@@ -59,10 +59,10 @@ export const Header = ({
           />
         <div className={`space-y-1 ml-6`}>
           <div className="flex items-center gap-x-1">
-            <h2 className="text-lg font-semibold">{hostName}</h2>
+            <h2 className="text-lg font-semibold dark:text-slate-200">{hostName}</h2>
             <VerifiedMark isCitizen={isCitizen} role={role}/>
           </div>
-          <p className="text-sm font-semibold break-words max-w-[14rem] md:max-w-lg 2xl:max-w-7xl">{name}</p>
+          <p className="text-sm font-semibold break-words max-w-[14rem] md:max-w-lg 2xl:max-w-7xl dark:text-slate-200">{name}</p>
           {isLive ? (
             <div className="font-semibold flex gap-x-1 items-center text-xs text-rose-500">
               <UserIcon className="h-4 w-4" />

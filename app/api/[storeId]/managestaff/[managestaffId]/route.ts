@@ -7,8 +7,20 @@ import { sendUpdateManageStaff } from "@/lib/mail-sendUpdate-Staff";
 import { sendDismissal } from "@/lib/mail";
 import { format } from "date-fns";
 
-
-type ManageStaffValue = string | number | boolean | string[] | Date | undefined | null;
+type ManageStaffValue =
+  | string
+  | number
+  | boolean
+  | string[]
+  | Date
+  | {
+      id: string;
+      userId: string;
+      url: string;
+      createdAt: Date;
+      updatedAt: Date;
+    }[]
+  | null;
 
 interface ChangeRecord {
   oldValue: ManageStaffValue;
@@ -108,9 +120,9 @@ export async function DELETE(
       where: {
         id: params.managestaffId,
       },
-      data:{
+      data: {
         role: UserRole.USER,
-      }
+      },
     });
 
     const sentVeirifiChanges = {
@@ -123,7 +135,7 @@ export async function DELETE(
     const oldChange = [`User: ${sentVeirifiChanges.olevalue}`];
 
     // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
-  const response=  await prismadb.system.create({
+    const response = await prismadb.system.create({
       data: {
         storeId: params.storeId,
         newChange: newChange,
@@ -137,11 +149,7 @@ export async function DELETE(
       ? format(response.createdAt, "dd/MM/yyyy '-' HH:mm:ss a")
       : "";
 
-    await sendDismissal(
-      managestaff.email,
-      managestaff.name,
-      dateonow
-    )
+    await sendDismissal(managestaff.email, managestaff.name, dateonow);
 
     return NextResponse.json(managestaff);
   } catch (error) {
@@ -168,6 +176,7 @@ export async function PATCH(
       numberCCCD,
       issued,
       gender,
+      image,
       degree,
       phonenumber,
       workingTime,
@@ -289,7 +298,21 @@ export async function PATCH(
       where: {
         id: params.managestaffId,
       },
+      include: {
+        imageCredential: true, // Lấy thông tin các bản ghi imageCredential
+      },
     });
+
+    const existingImageCredentials = existingData?.imageCredential || [];
+
+//So sánh dữ liệu mới với dữ liệu hiện tại
+const newImageCredentials = imageCredential.map((image: { url: string }) => image.url);
+
+// Kiểm tra nếu dữ liệu mới khác với dữ liệu hiện tại
+const isImageCredentialChanged = !existingImageCredentials.some((existingImage) =>
+  newImageCredentials.includes(existingImage.url)
+);
+
 
     // Bước 2: Thực hiện cập nhật dữ liệu mới
     const managestaff = await prismadb.user.update({
@@ -301,6 +324,7 @@ export async function PATCH(
         phonenumber,
         numberCCCD,
         gender,
+        image,
         issued,
         degree,
         workingTime,
@@ -310,11 +334,13 @@ export async function PATCH(
         urlimageCheckAttendance,
         codeNFC,
         isCitizen,
-        imageCredential: {
-          createMany: {
-            data: [...imageCredential.map((image: { url: string }) => image)],
-          },
-        },
+        imageCredential: isImageCredentialChanged
+        ? {
+            createMany: {
+              data: newImageCredentials.map((url:string) => ({ url })),
+            },
+          }
+        : undefined,
         dateofbirth,
         dateRange,
       },
@@ -329,6 +355,7 @@ export async function PATCH(
       "dateofbirth",
       "dateRange",
       "imageCredential",
+      "image",
       "urlimageCheckAttendance",
       "codeNFC",
       "isCitizen",

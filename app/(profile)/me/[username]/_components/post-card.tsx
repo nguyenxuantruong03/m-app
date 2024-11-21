@@ -230,8 +230,8 @@ const PostCard = ({
       />
       {openPost && (
         <>
-          <div className="fixed inset-0 bg-black/80 h-full w-full z-40 flex items-center justify-center">
-            <div className="h-[400px] md:h-[500px] overflow-y-auto w-3/4 max-w-md border rounded-md gap-4 bg-slate-900 p-6 shadow-lg transition ease-in-out z-50">
+          <div className="fixed inset-0 bg-black/80 h-full w-full z-[9999998] flex items-center justify-center">
+            <div className="h-[400px] md:h-[500px] overflow-y-auto w-3/4 max-w-md border rounded-md gap-4 bg-slate-900 p-6 shadow-lg transition ease-in-out z-[9999999]">
               <div className="flex items-center justify-between">
                 <span className="text-lg font-semibold text-foreground break-all line-clamp-2 text-white">
                   Chỉnh sửa bài viết

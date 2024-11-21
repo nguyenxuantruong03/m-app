@@ -66,10 +66,10 @@ export const ResultCard = ({ data }: ResultCardProps) => {
             isResultCustom={true}
           />
           <div className={`flex flex-col text-sm ${data.isLive ? "ml-5" : ""}`}>
-            <p className="trancate max-w-[12rem] overflow-hidden text-ellipsis whitespace-nowrap font-semibold hover:text-blue-500">
+            <p className="trancate max-w-[12rem] overflow-hidden text-ellipsis whitespace-nowrap font-semibold dark:text-slate-200 hover:text-blue-500">
               {data.name}
             </p>
-            <p className="trancate max-w-[12rem] overflow-hidden text-ellipsis whitespace-nowrap">{data.user.nameuser}</p>
+            <p className="trancate max-w-[12rem] overflow-hidden text-ellipsis whitespace-nowrap dark:text-slate-200">{data.user.nameuser}</p>
           </div>
         </div>
       </div>

@@ -221,6 +221,7 @@ export default function DropMenuHint() {
             open={isAISheetOpen}
             onOpenChange={(open) => setIsAISheetOpen(open)}
           >
+            <SheetOverlay className="z-[999998]"/>
             <SheetContent side="bottom" className="h-5/6 z-[999999]">
               <div className="max-w-7xl mx-auto shadow-lg flex items-center justify-between p-2 rounded-md">
                 <div className="flex item-center space-x-2">
@@ -260,6 +261,7 @@ export default function DropMenuHint() {
               open={isFeedbackSheetOpen}
               onOpenChange={setIsFeedbackSheetOpen}
             >
+              <SheetOverlay className="z-[999998]"/>
               <SheetContent className="z-[999999]">
                 <SheetHeader>
                   <SheetTitle>Feedback</SheetTitle>

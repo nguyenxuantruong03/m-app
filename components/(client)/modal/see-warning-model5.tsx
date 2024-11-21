@@ -23,7 +23,7 @@ const SeePaymentWarningModal: React.FC<SeePaymentWarningProps> = ({
     >
       <div className="w-full">
         <div className=" bg-yellow-400 rounded-md font-bold p-2  ">
-          <h1 className="ml-[320px] flex items-center font-bold">
+          <h1 className="flex items-center justify-center font-bold">
             Lưu ý <AlertTriangle className="w-5 h-5 ml-1" />{" "}
           </h1>
         </div>

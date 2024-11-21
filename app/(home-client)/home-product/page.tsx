@@ -62,7 +62,7 @@ const HomePage = async () => {
       ? new Date(maxTimeSaleProduct.timeSaleEnd)
       : null; // Handle undefined properly
   const pin = products.filter(
-    (product: any) => product.productType === "PRODUCT" && product.isFeatured === true
+    (product: any) => product.productType === "PRODUCT" && product.isFeatured === true && product.isSale === false
   );
   const quat = products.filter(
     (product: any) => product.productType === "PRODUCT1"
@@ -74,28 +74,28 @@ const HomePage = async () => {
     (product: any) => product.productType === "PRODUCT3"
   );
   const dacat = products.filter(
-    (product: any) => product.productType === "PRODUCT4" && product.isFeatured === true
+    (product: any) => product.productType === "PRODUCT4" && product.isFeatured === true && product.isSale === false
   );
   const okhoa = products.filter(
-    (product: any) => product.productType === "PRODUCT5" && product.isFeatured === true
+    (product: any) => product.productType === "PRODUCT5" && product.isFeatured === true && product.isSale === false
   );
   const keo = products.filter(
-    (product: any) => product.productType === "PRODUCT6" && product.isFeatured === true
+    (product: any) => product.productType === "PRODUCT6" && product.isFeatured === true && product.isSale === false
   );
   const ocam = products.filter(
     (product: any) => product.productType === "PRODUCT7"
   );
   const son = products.filter(
-    (product: any) => product.productType === "PRODUCT8" && product.isFeatured === true
+    (product: any) => product.productType === "PRODUCT8" && product.isFeatured === true && product.isSale === false
   );
   const vatlieunhatam = products.filter(
-    (product: any) => product.productType === "PRODUCT9" && product.isFeatured === true
+    (product: any) => product.productType === "PRODUCT9" && product.isFeatured === true && product.isSale === false
   );
   const bongden = products.filter(
     (product: any) => product.productType === "PRODUCT10"
   );
   const dothuongdung = products.filter(
-    (product: any) => product.productType === "PRODUCT11" && product.isFeatured === true
+    (product: any) => product.productType === "PRODUCT11" && product.isFeatured === true && product.isSale === false
   );
 
   // Sắp xếp sản phẩm theo số lượng đã bán

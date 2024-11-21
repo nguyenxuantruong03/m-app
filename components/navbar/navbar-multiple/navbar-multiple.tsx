@@ -639,7 +639,7 @@ const NavbarMultiple = () => {
 
             <div className="flex items-center justify-between">
               {userId?.id && userId?.email ? (
-                <div className="flex px-8 xl:px-12">
+                <div className="flex px-8 xl:px-4">
                   <div className="flex items-center space-x-8">
                     {/* <div className="p-2 rounded-full hover:bg-gray-300 hover:bg-opacity-50 cursor-pointer">
                       <Bell className="size-5 text-amber-400" />

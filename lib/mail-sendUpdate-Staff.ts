@@ -4,12 +4,18 @@ const resend = new Resend(process.env.RESEND_EMAIL_API_KEY);
 
 type FieldValue =
   | string
-  | Date
   | number
   | boolean
   | string[]
-  | null
-  | undefined;
+  | Date
+  | {
+      id: string;
+      userId: string;
+      url: string;
+      createdAt: Date;
+      updatedAt: Date;
+    }[]
+  | null;
 interface ChangeRecord {
   oldValue: FieldValue;
   newValue: FieldValue;
@@ -193,14 +199,10 @@ export const sendUpdateManageStaff = async (
               translatedField = "Ngày làm việc";
               // Special handling for arrays
               if (Array.isArray(newValue)) {
-                const formattedDaywork = newValue
-                  .filter(
-                    (day) =>
-                      typeof day === "string" &&
-                      dayOfWeekMapping.hasOwnProperty(day)
-                  )
-                  .map((day) => dayOfWeekMapping[day])
-                  .join(", ");
+                const formattedDaywork = (newValue as string[])
+                .filter((day) => typeof day === "string" && dayOfWeekMapping.hasOwnProperty(day))
+                .map((day) => dayOfWeekMapping[day])
+                .join(", ");
                 formattedContent += `<p>${translatedField}: <span style="color: #ef4444; font-weight:800;">${formattedDaywork}</span></p>`;
                 continue; // Skip remaining processing for daywork
               }

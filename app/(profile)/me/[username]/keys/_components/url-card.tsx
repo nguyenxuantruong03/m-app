@@ -16,6 +16,7 @@ export const UrlCard = ({ value }: urlCardProps) => {
             value={value || ""}
             disabled
             placeholder="Server URL"
+            className="dark:text-slate-200"
             />
             <CopyButton 
             value={value || ""}
