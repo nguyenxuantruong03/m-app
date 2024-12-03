@@ -58,7 +58,7 @@ export default function Translation({
     <div>
       <DropdownMenu onOpenChange={(open) => setIsOpen(open)}>
         <DropdownMenuTrigger asChild>
-          <Button variant="destructive" disabled={loading || loadingLanguage}>
+          <Button variant="destructive" disabled={loading || loadingLanguage} className="z-[99999999]">
             <Hint label={languageMessage}>
               {isOpen ? <ChevronDown /> : <Languages />}
             </Hint>

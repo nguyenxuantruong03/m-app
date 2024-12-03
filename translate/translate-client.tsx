@@ -16954,7 +16954,8 @@ export const translateMenuItems = (language: string) => {
         name3: "Đơn vận chuyển",
         name4: "Kho voucher",
         name5: "Cài đặt",
-        name6: "Logout",
+        name6: "Đăng xuất",
+        name7: "Danh sách trực tiếp", // Added "listlive"
       };
     case "en":
       return {
@@ -16964,6 +16965,7 @@ export const translateMenuItems = (language: string) => {
         name4: "Voucher Storage",
         name5: "Settings",
         name6: "Logout",
+        name7: "Live List", // Added "listlive"
       };
     case "zh":
       return {
@@ -16973,6 +16975,7 @@ export const translateMenuItems = (language: string) => {
         name4: "优惠券库",
         name5: "设置",
         name6: "登出",
+        name7: "实时列表", // Added "listlive"
       };
     case "fr":
       return {
@@ -16982,6 +16985,7 @@ export const translateMenuItems = (language: string) => {
         name4: "Stock de bons",
         name5: "Paramètres",
         name6: "Déconnexion",
+        name7: "Liste en direct", // Added "listlive"
       };
     case "ja":
       return {
@@ -16991,6 +16995,7 @@ export const translateMenuItems = (language: string) => {
         name4: "バウチャー庫",
         name5: "設定",
         name6: "ログアウト",
+        name7: "ライブリスト", // Added "listlive"
       };
     default:
       return {
@@ -17000,8 +17005,10 @@ export const translateMenuItems = (language: string) => {
         name4: "Voucher Storage",
         name5: "Settings",
         name6: "Logout",
+        name7: "Live List", // Added "listlive"
       };
   }
+  
 };
 
 export const translateNameuser = (language: string) => {
@@ -19882,6 +19889,184 @@ export const getError = (language: string) => {
         tryAgain: "Try again",
         backToHomepage: "Back to homepage",
         pageNotFound: "Page not found",
+      };
+  }
+};
+
+
+export const getThemeToogle = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        toggleTheme: "Chế độ",
+        light: "Chế độ sáng",
+        dark: "Chế độ tối",
+        system: "Hệ thống",
+      };
+    case "en":
+      return {
+        toggleTheme: "Toggle theme",
+        light: "Light",
+        dark: "Dark",
+        system: "System",
+      };
+    case "zh":
+      return {
+        toggleTheme: "切换主题",
+        light: "光明模式",
+        dark: "黑暗模式",
+        system: "系统",
+      };
+    case "fr":
+      return {
+        toggleTheme: "Changer de thème",
+        light: "Clair",
+        dark: "Sombre",
+        system: "Système",
+      };
+    case "ja":
+      return {
+        toggleTheme: "テーマを切り替え",
+        light: "ライトモード",
+        dark: "ダークモード",
+        system: "システム",
+      };
+    default:
+      return {
+        toggleTheme: "Toggle theme",
+        light: "Light",
+        dark: "Dark",
+        system: "System",
+      };
+  }
+};
+
+export const getListProductItem = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        viewProduct: "Xem sản phẩm",
+        sold: "Đã bán",
+        stock: "Tồn kho",
+        productLivePin: "ProductLivePin",
+        productShowLive: "ProductShowLive",
+      };
+    case "en":
+      return {
+        viewProduct: "View product",
+        sold: "Sold",
+        stock: "Stock",
+        productLivePin: "ProductLivePin",
+        productShowLive: "ProductShowLive",
+      };
+    case "zh":
+      return {
+        viewProduct: "查看产品",
+        sold: "已售出",
+        stock: "库存",
+        productLivePin: "ProductLivePin",
+        productShowLive: "ProductShowLive",
+      };
+    case "fr":
+      return {
+        viewProduct: "Voir le produit",
+        sold: "Vendu",
+        stock: "Stock",
+        productLivePin: "ProductLivePin",
+        productShowLive: "ProductShowLive",
+      };
+    case "ja":
+      return {
+        viewProduct: "製品を見る",
+        sold: "売れました",
+        stock: "在庫",
+        productLivePin: "ProductLivePin",
+        productShowLive: "ProductShowLive",
+      };
+    default:
+      return {
+        viewProduct: "View product",
+        sold: "Sold",
+        stock: "Stock",
+        productLivePin: "ProductLivePin",
+        productShowLive: "ProductShowLive",
+      };
+  }
+};
+
+export const getToggleCard = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        productUpdated: "Sản phẩm đã cập nhật.",
+        outOfStock: "Hết hàng...",
+      };
+    case "en":
+      return {
+        productUpdated: "Product updated.",
+        outOfStock: "Out of stock...",
+      };
+    case "zh":
+      return {
+        productUpdated: "产品已更新。",
+        outOfStock: "缺货...",
+      };
+    case "fr":
+      return {
+        productUpdated: "Produit mis à jour.",
+        outOfStock: "En rupture de stock...",
+      };
+    case "ja":
+      return {
+        productUpdated: "製品が更新されました。",
+        outOfStock: "在庫切れ...",
+      };
+    default:
+      return {
+        productUpdated: "Product updated.",
+        outOfStock: "Out of stock...",
+      };
+  }
+};
+
+
+export const getChatStatus = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        delayChat: "Trì hoãn trò chuyện",
+        enableChat: "Bật trò chuyện",
+        mustFollowToChat: "Phải theo dõi để trò chuyện",
+      };
+    case "en":
+      return {
+        delayChat: "Delay chat",
+        enableChat: "Enable chat",
+        mustFollowToChat: "Must be following to chat",
+      };
+    case "zh":
+      return {
+        delayChat: "延迟聊天",
+        enableChat: "启用聊天",
+        mustFollowToChat: "必须关注才能聊天",
+      };
+    case "fr":
+      return {
+        delayChat: "Retarder la discussion",
+        enableChat: "Activer le chat",
+        mustFollowToChat: "Vous devez suivre pour discuter",
+      };
+    case "ja":
+      return {
+        delayChat: "チャットを遅延させる",
+        enableChat: "チャットを有効にする",
+        mustFollowToChat: "チャットするにはフォローする必要があります",
+      };
+    default:
+      return {
+        delayChat: "Delay chat",
+        enableChat: "Enable chat",
+        mustFollowToChat: "Must be following to chat",
       };
   }
 };

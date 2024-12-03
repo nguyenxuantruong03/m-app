@@ -153,7 +153,7 @@ const CustomNav: React.FC<CustomNavProps> = ({
                   </span>
                 </div>
                 <div className="group relative">
-                  <ThemeToggleDrakorLight dropdown={true} />
+                  <ThemeToggleDrakorLight dropdown={true} languageToUse={languageToUse}/>
                   <span className="dark:text-black absolute top-11 left-[-4px] bg-white rounded-lg p-1 text-sm opacity-0 group-hover:opacity-100 transition-opacity">
                     {settingsMessage.name2}
                   </span>

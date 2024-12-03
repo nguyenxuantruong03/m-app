@@ -148,7 +148,6 @@ const ChatHistory = ({ chatHistory, languageToUse }: ChatHistoryProps) => {
 
             {message.type === "user" && (
               <div className="ml-2">
-                <Avatar>
                   <ImageCellOne
                     imageUrl={user?.imageCredential || user?.image || ""}
                     createdAt={user?.createdAt || ""}
@@ -157,10 +156,6 @@ const ChatHistory = ({ chatHistory, languageToUse }: ChatHistoryProps) => {
                     customClassFeedBack="z-[9999999]"
                     languageToUse={languageToUse}
                   />
-                  <AvatarFallback className="bg-sky-500">
-                    <User className="text-white" />
-                  </AvatarFallback>
-                </Avatar>
               </div>
             )}
           </div>

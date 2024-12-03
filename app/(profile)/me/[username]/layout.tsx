@@ -5,6 +5,7 @@ import { Sidebar } from "./_components/sidebar";
 import { getSelfByUsername } from "@/lib/stream/auth-service";
 import { Navbar } from "@/app/(profile-user-other)/_components/navbar";
 import DropMenuHint from "@/components/(client)/dropmenu-hint";
+import ScrollButton from "@/components/(client)/backtotop/backToTop";
 
 interface CreatorLayoutProps {
   params: { username: string };
@@ -26,6 +27,7 @@ const CreatorLayout = async ({ params, children }: CreatorLayoutProps) => {
           <Container>{children}</Container>
         </div>
       </div>
+      <ScrollButton />
       <DropMenuHint />
     </>
   );

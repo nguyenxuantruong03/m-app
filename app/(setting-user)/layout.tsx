@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { currentUser } from "@/lib/auth";
 import NavbarProfile from "./components/nav-profile";
 import DropMenuHint from "@/components/(client)/dropmenu-hint";
+import ScrollButton from "@/components/(client)/backtotop/backToTop";
 
 export default async function SetupLayout({
   children,
@@ -22,6 +23,7 @@ export default async function SetupLayout({
         <NavbarProfile dateofbirth={userId.dateofbirth} name={userId.name} />
         {children}
       </div>
+      <ScrollButton />
       <DropMenuHint />
     </>
   );

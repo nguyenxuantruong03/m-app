@@ -302,7 +302,7 @@ export default function DropMenuHint() {
       />
       <div>
         <DropdownMenu onOpenChange={(open) => setIsOpen(open)}>
-          <DropdownMenuTrigger asChild className="z-[99999]">
+          <DropdownMenuTrigger asChild className="z-[99999999]">
             <Button
               disabled={loading || loadingLanguage}
               variant="outline"
@@ -372,7 +372,6 @@ export default function DropMenuHint() {
               <SheetContent side="bottom" className="h-5/6 z-[999999]">
                 <div className="max-w-7xl mx-auto shadow-lg flex items-center justify-between p-2 rounded-md">
                   <div className="flex item-center space-x-2">
-                    <Avatar>
                       <ImageCellOne
                         imageUrl="/images/avatar-AI.png"
                         createdAt={""}
@@ -381,7 +380,6 @@ export default function DropMenuHint() {
                         customClassFeedBack="z-[9999999]"
                         languageToUse={languageToUse}
                       />
-                    </Avatar>
                     <div>
                       <SheetTitle>{helloVLXDXuanTruongAIMessage}</SheetTitle>
                       <SheetDescription>

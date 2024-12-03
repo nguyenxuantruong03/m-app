@@ -1,46 +1,19 @@
-"use client";
 import { getBlockedUsers } from "@/lib/stream/block-service";
 import { columns } from "./_components/column";
 import { DataTable } from "@/components/ui/data-table";
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import { useCurrentUser } from "@/hooks/use-current-user";
+
 import {
-  getToastError,
   translateListBlockSettings,
 } from "@/translate/translate-client";
+import { getSelf } from "@/lib/stream/auth-service";
 
-const CommunityPage = () => {
-  const user = useCurrentUser();
-  const [blockedUsers, setBlockedUsers] = useState<any[]>([]);
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []);
-
-  const languageToUse =
-    user?.id && user?.role !== "GUEST"
-      ? user?.language
-      : storedLanguage || "vi";
-  const toastErrorMessage = getToastError(languageToUse);
+const CommunityPage = async () => {
+  const self = await getSelf();
+  //language
+  const languageToUse = self.language || "vi";
   const listBlockSettingMessage = translateListBlockSettings(languageToUse);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const blockedUsers = await getBlockedUsers();
-        setBlockedUsers(blockedUsers);
-      } catch (error) {
-        toast.error(toastErrorMessage);
-      }
-    };
-    fetchData();
-  }, []);
+  const blockedUsers = await getBlockedUsers();
 
   const formattedData = blockedUsers.map((block) => ({
     ...block,
@@ -52,6 +25,7 @@ const CommunityPage = () => {
     role: block.blocked.role,
     isCitizen: block.blocked.isCitizen,
     isLive: block?.blocked?.stream?.isLive,
+    languageToUse: languageToUse,
   }));
 
   return (

@@ -5,7 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Package, Settings, User } from "lucide-react";
+import { Package, Radio, Settings, User } from "lucide-react";
 import { LogOut } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useCurrentUser } from "@/hooks/use-current-user";
@@ -178,13 +178,21 @@ export const UserButton = () => {
             <User className="h-5 w-5 mr-2" /> {menuItemMessage.name1}
           </DropdownMenuItem>
         </Link>
+
+        <Link href={`/listlive`}>
+          <DropdownMenuItem className="mt-4 my-2 flex items-center">
+            <Radio className="h-5 w-5 mr-2" /> {menuItemMessage.name7}
+          </DropdownMenuItem>
+        </Link>
         <Separator />
 
         <DropdownMenuItem className="flex items-center cursor-pointer">
-          <ThemeToggleDrakorLight dropdown={false} />
+          <ThemeToggleDrakorLight dropdown={false} languageToUse={languageToUse}/>
         </DropdownMenuItem>
 
         <Separator />
+
+        
 
         <Link href="/warehouse/package-product/delivered-product">
           <DropdownMenuItem className="my-2 flex items-center">

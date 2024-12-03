@@ -1,63 +1,31 @@
-"use client";
 import { StreamPlayer, StreamPlayerSkeleton } from "@/components/stream-player";
-import {
-  getToastError,
-  translateNoStreamKey,
-} from "@/translate/translate-client";
+import { getSelf } from "@/lib/stream/auth-service";
 import { getUserByUsername } from "@/lib/user-service";
+import { translateNoStreamKey } from "@/translate/translate-client";
 import { notFound } from "next/navigation";
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-
 interface CreatorProps {
   params: {
     username: string;
   };
 }
-
-const CreatorPage = ({ params }: CreatorProps) => {
-  const [user, setUser] = useState<any>();
-
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []);
-
+const CreatorPage = async ({ params }: CreatorProps) => {
+  const user = await getUserByUsername(params.username);
+  const self = await getSelf();
   //language
-  const languageToUse =
-    user?.id && user?.role !== "GUEST"
-      ? user?.language
-      : storedLanguage || "vi";
-  const toastErrorMessage = getToastError(languageToUse);
+  const languageToUse = self.language || "vi";
   const noStreamKeyMessage = translateNoStreamKey(languageToUse);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const user = await getUserByUsername(params.username);
-        if (!user) {
-          notFound();
-        }
-        if (
-          user.role !== "ADMIN" &&
-          user.role !== "STAFF" &&
-          user.role !== "MARKETING"
-        ) {
-          notFound();
-        }
-        setUser(user);
-      } catch (error) {
-        toast.error(toastErrorMessage);
-      }
-    };
-    fetchData();
-  }, []);
-
+  if (
+    self.role !== "ADMIN" &&
+    self.role !== "STAFF" &&
+    self.role !== "MARKETING"
+  ) {
+    notFound();
+  }
+  
+  if (!user) {
+    notFound();
+  }
   if (!user.stream) {
     return (
       <>
@@ -70,7 +38,6 @@ const CreatorPage = ({ params }: CreatorProps) => {
       </>
     );
   }
-
   return (
     <div className="h-full">
       {/* isFollowing true bởi vì đây là trang cá nhân của mình và ko ai có thể vào đc nên đối với bản thân mình ko thể follow chính mình */}
@@ -83,5 +50,4 @@ const CreatorPage = ({ params }: CreatorProps) => {
     </div>
   );
 };
-
 export default CreatorPage;

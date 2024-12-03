@@ -5,6 +5,7 @@ import { currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
 import GetLocalStorage from "@/localStorage/getLocalStorage-currentView";
 import DropMenuHint from "@/components/(client)/dropmenu-hint";
+import ScrollButton from "@/components/(client)/backtotop/backToTop";
 
 export default async function SetupLayout({
   children,
@@ -55,6 +56,7 @@ export default async function SetupLayout({
           <div className="w-full">{children}</div>
         </div>
       </GetLocalStorage>
+      <ScrollButton />
       <DropMenuHint />
     </>
   );

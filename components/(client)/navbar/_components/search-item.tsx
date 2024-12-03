@@ -6,7 +6,6 @@ import { Product } from "@/types/type";
 import ProductTrending from "./product-trending";
 import { Loader, Star } from "lucide-react";
 import {
-  getToastError,
   translateEnterSearchContent,
   translateNoResultFound,
   translateProductTrending,
@@ -28,7 +27,6 @@ const SearchItem = ({ value, languageToUse }: SearchItemProps) => {
     .slice(0, 6);
 
   //languages
-  const toastErrorMessage = getToastError(languageToUse);
   const resultForTermMessage = translateResultForTerm(languageToUse);
   const noResultFoundMessage = translateNoResultFound(languageToUse);
   const enterSearchContentMessage = translateEnterSearchContent(languageToUse);
@@ -45,7 +43,6 @@ const SearchItem = ({ value, languageToUse }: SearchItemProps) => {
         );
         setData(response.data);
       } catch (error) {
-        toast.error(toastErrorMessage);
       } finally {
         setLoading(false);
       }

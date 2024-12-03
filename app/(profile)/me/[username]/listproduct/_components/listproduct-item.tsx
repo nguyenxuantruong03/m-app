@@ -10,6 +10,8 @@ import Currency from "@/components/ui/currency";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { getAllProductNotQuery } from "@/actions/client/products/get-products";
 import {
+  getListProductItem,
+  getToastError,
   translateBathroom,
   translateCommonUse,
   translateCuttingStone,
@@ -23,6 +25,7 @@ import {
   translatePipe,
   translateSocket,
 } from "@/translate/translate-client";
+import toast from "react-hot-toast";
 
 interface ProductWithImages extends Product {
   images: ImageData[];
@@ -50,6 +53,7 @@ const ListProductItem = () => {
     user?.id && user?.role !== "GUEST"
       ? user?.language
       : storedLanguage || "vi";
+  const toastErroMessage = getToastError(languageToUse)
   const pinMesage = translatePin(languageToUse);
   const fanMessage = translateFan(languageToUse);
   const pipeMessage = translatePipe(languageToUse);
@@ -62,6 +66,7 @@ const ListProductItem = () => {
   const bathroomMessage = translateBathroom(languageToUse);
   const lightBlubMessage = translateLightBulb(languageToUse);
   const commonUseMessage = translateCommonUse(languageToUse);
+  const listProductItemMessage = getListProductItem(languageToUse)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -76,7 +81,7 @@ const ListProductItem = () => {
 
         setData(productsWithIndex); // Lưu vào state
       } catch (error) {
-        console.error("Error fetching data:", error);
+        toast.error(toastErroMessage);
       } finally {
         setLoading(false);
       }
@@ -214,7 +219,7 @@ const ListProductItem = () => {
       // Use the Link component for navigation
       router.push(href);
     } else {
-      console.error("Invalid route:", route);
+      toast.error(toastErroMessage);
     }
   };
 
@@ -312,7 +317,7 @@ const ListProductItem = () => {
                   >
                     <div className="grid grid-cols-2 gap-2">
                       <div className="relative">
-                        <Hint label="View product" side="bottom">
+                        <Hint label={listProductItemMessage.viewProduct} side="bottom">
                           <Image
                             width={200}
                             height={200}
@@ -342,22 +347,23 @@ const ListProductItem = () => {
                           />
                         </div>
                         <p className="text-lg text-gray-300 font-semibold truncate w-44">
-                          Đã bán: <span>{product.sold}</span>
+                        {listProductItemMessage.sold} : <span>{product.sold}</span>
                         </p>
                         <p className="text-lg text-gray-300 font-semibold truncate w-44">
-                          Tồn kho: <span>{totalQuantity}</span>
+                        {listProductItemMessage.stock} : <span>{totalQuantity}</span>
                         </p>
 
                         <FormToggleCard
                           id={product.id}
-                          labelPin="ProductLivePin"
-                          labelShowLive="ProductShowLive"
+                          labelPin={listProductItemMessage.productLivePin}
+                          labelShowLive={listProductItemMessage.productShowLive}
                           valueisProductLivePin={product.isProductLivePin}
                           valueisProductShowLive={product.isProductShowLive}
                           disabled={totalQuantity === 0 || loading}
                           totalQuantity={totalQuantity}
                           setLoading={setLoading}
                           setData={setData}
+                          languageToUse={languageToUse}
                         />
                       </div>
                     </div>

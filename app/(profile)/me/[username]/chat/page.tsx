@@ -1,66 +1,27 @@
-"use client";
+import { getSelf } from "@/lib/stream/auth-service";
 import { getStreamByUserId } from "@/lib/stream/stream-service";
 import { ToggleCard } from "./_components/toggle-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ToggleCardSkeleton } from "./_components/toggle-card";
 import { notFound } from "next/navigation";
 import FormDelay from "./_components/form-delay";
-import { useEffect, useState } from "react";
-import { useCurrentUser } from "@/hooks/use-current-user";
-import {
-  getToastError,
-  translateChatSettings,
-  translateNoStreamKey,
-} from "@/translate/translate-client";
-import toast from "react-hot-toast";
-import LoadingPageComponent from "@/components/ui/loading";
-
-const ChatPage = () => {
-  const user = useCurrentUser();
-  const [stream, setStream] = useState<any>();
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []);
-
+import { getChatStatus, translateChatSettings, translateNoStreamKey } from "@/translate/translate-client";
+const ChatPage = async () => {
+  const self = await getSelf();
   //language
-  const languageToUse =
-    user?.id && user?.role !== "GUEST"
-      ? user?.language
-      : storedLanguage || "vi";
-  const toastErrorMessage = getToastError(languageToUse);
+  const languageToUse = self.language || "vi"
   const noStreamKeyMessage = translateNoStreamKey(languageToUse);
   const translateChatSettingsMessage = translateChatSettings(languageToUse);
+  const chatStatusMessage = getChatStatus(languageToUse) 
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        if (
-          user?.role !== "ADMIN" &&
-          user?.role !== "STAFF" &&
-          user?.role !== "MARKETING"
-        ) {
-          notFound();
-        }
-        const stream = await getStreamByUserId(user?.id || "");
-        setStream(stream);
-      } catch (error) {
-        toast.error(toastErrorMessage);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
-
+  const stream = await getStreamByUserId(self.id);
+  if (
+    self.role !== "ADMIN" &&
+    self.role !== "STAFF" &&
+    self.role !== "MARKETING"
+  ) {
+    notFound();
+  }
   if (!stream) {
     return (
       <>
@@ -80,41 +41,33 @@ const ChatPage = () => {
       </>
     );
   }
-
   return (
     <div className="p-6">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">{translateChatSettingsMessage}</h1>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-200">{translateChatSettingsMessage}</h1>
       </div>
       <div className="space-y-4">
-        {loading ? (
-          <LoadingPageComponent />
-        ) : (
-          <>
-            <ToggleCard
-              field="isChatEnabled"
-              label="Enable chat"
-              value={stream.isChatEnabled}
-              languageToUse={languageToUse}
-            />
-            <ToggleCard
-              field="isChatDelayed"
-              label="Delay chat"
-              value={stream.isChatDelayed}
-              languageToUse={languageToUse}
-            />
-            <FormDelay data={stream.timeDelay} languageToUse={languageToUse} />
-            <ToggleCard
-              field="isChatFollowersOnly"
-              label="Must be following to chat"
-              value={stream.isChatFollowersOnly}
-              languageToUse={languageToUse}
-            />
-          </>
-        )}
+        <ToggleCard
+          field="isChatEnabled"
+          label={chatStatusMessage.enableChat}
+          value={stream.isChatEnabled}
+          languageToUse={languageToUse}
+        />
+        <ToggleCard
+          field="isChatDelayed"
+          label={chatStatusMessage.delayChat}
+          value={stream.isChatDelayed}
+          languageToUse={languageToUse}
+        />
+        <FormDelay data={stream.timeDelay} languageToUse={languageToUse}/>
+        <ToggleCard
+          field="isChatFollowersOnly"
+          label={chatStatusMessage.mustFollowToChat}
+          value={stream.isChatFollowersOnly}
+          languageToUse={languageToUse}
+        />
       </div>
     </div>
   );
 };
-
 export default ChatPage;

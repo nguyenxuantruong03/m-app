@@ -157,7 +157,7 @@ const ChatGemini = ({
                   <Bot className="text-white" />
                 </AvatarFallback>
               </Avatar>
-              <div className="bg-slate-50 p-2.5 rounded-lg shadow-md">
+              <div className="bg-slate-50 p-2.5 rounded-lg shadow-md dark:text-slate-900">
                 {greetingMessage}
               </div>
             </div>
@@ -182,7 +182,6 @@ const ChatGemini = ({
                     {userInput}
                   </div>
                 </div>
-                <Avatar>
                   <ImageCellOne
                     imageUrl={user?.imageCredential || user?.image || ""}
                     createdAt={user?.createdAt || ""}
@@ -191,10 +190,6 @@ const ChatGemini = ({
                     customClassFeedBack="z-[9999999]"
                     languageToUse={languageToUse}
                   />
-                  <AvatarFallback className="bg-sky-500">
-                    <User className="text-white" />
-                  </AvatarFallback>
-                </Avatar>
               </div>
               <div className="flex space-x-2">
                 <Skeleton className="h-10 w-10 rounded-full" />

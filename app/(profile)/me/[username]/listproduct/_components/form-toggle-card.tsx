@@ -10,9 +10,8 @@ import { ToogleCardForm } from "@/schemas/index";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
-import { Image as ImageData, Product, ProductDetail } from "@prisma/client";
 import { getAllProductNotQuery } from "@/actions/client/products/get-products";
-import { useCurrentUser } from "@/hooks/use-current-user";
+import { getToastError, getToggleCard } from "@/translate/translate-client";
 
 type ToogleCardFormValues = z.infer<typeof ToogleCardForm>;
 
@@ -26,6 +25,7 @@ interface ToggleCardProps {
   totalQuantity: number;
   setLoading: Dispatch<SetStateAction<boolean>>;
   setData: any;
+  languageToUse: string
 }
 
 export const FormToggleCard = ({
@@ -38,18 +38,12 @@ export const FormToggleCard = ({
   valueisProductShowLive = false,
   setData,
   totalQuantity,
+  languageToUse
 }: ToggleCardProps) => {
-  const user = useCurrentUser();
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+  //language
+  const toastErrorMessage = getToastError(languageToUse)
+  const toggleCardMessage = getToggleCard(languageToUse)
 
-  useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []); 
-  
   const form = useForm<ToogleCardFormValues>({
     resolver: zodResolver(ToogleCardForm),
     defaultValues: {
@@ -82,13 +76,10 @@ export const FormToggleCard = ({
         `${process.env.NEXT_PUBLIC_API_URL}/getAllProductNotQuery`,
         updatedData
       );
-      const languageToUse =
-      user?.id && user?.role !== "GUEST" ? user?.language : storedLanguage || "vi";
-
       const product = await getAllProductNotQuery(languageToUse);
 
       setData(product);
-      toast.success("Product updated.");
+      toast.success(toggleCardMessage.productUpdated);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -101,7 +92,7 @@ export const FormToggleCard = ({
             .error
         );
       } else {
-        toast.error("Something went wrong.");
+        toast.error(toastErrorMessage);
       }
     } finally {
       setLoading(false);
@@ -117,7 +108,7 @@ export const FormToggleCard = ({
   return (
     <>
       {totalQuantity === 0 ? (
-        <span className="text-red-500 font-semibold">Out of stock...</span>
+        <span className="text-red-500 font-semibold">{toggleCardMessage.outOfStock}</span>
       ) : (
         <Form {...form}>
           <div className="space-y-2">
