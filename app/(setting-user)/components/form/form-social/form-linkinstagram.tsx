@@ -26,13 +26,25 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import FormSuccess from "@/components/form-success";
 import FormError from "@/components/form-error";
 import { useRouter } from "next/navigation";
+import {
+  getToastError,
+  translateCancel,
+  translateChangeInstagramLink,
+  translateInstagramPath,
+  translateSave,
+} from "@/translate/translate-client";
 
 interface FormLinkInstagramProps {
   classNames?: string;
   setOpen?: Dispatch<SetStateAction<boolean>>;
+  languageToUse: string;
 }
 
-const FormLinkInstagram = ({ classNames, setOpen }: FormLinkInstagramProps) => {
+const FormLinkInstagram = ({
+  classNames,
+  setOpen,
+  languageToUse,
+}: FormLinkInstagramProps) => {
   const user = useCurrentUser();
   const router = useRouter();
   const { update } = useSession();
@@ -49,6 +61,13 @@ const FormLinkInstagram = ({ classNames, setOpen }: FormLinkInstagramProps) => {
     }
   }, []);
 
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const cancelMessage = translateCancel(languageToUse);
+  const saveMessage = translateSave(languageToUse);
+  const changeInstagramMessage = translateChangeInstagramLink(languageToUse);
+  const instagramMessage = translateInstagramPath(languageToUse);
+
   const form = useForm<z.infer<typeof SettingSchema>>({
     resolver: zodResolver(SettingSchema),
     defaultValues: {
@@ -59,15 +78,13 @@ const FormLinkInstagram = ({ classNames, setOpen }: FormLinkInstagramProps) => {
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
     // Kiểm tra giá trị linkinstagram nhập vào và user?.linkinstagram
     if (values.linkinstagram === user?.linkinstagram) {
-      setError(
-        "Hãy thay đổi link Instagram mới link Instagram trên đang được sử dụng."
-      );
+      setError(changeInstagramMessage);
       return;
     }
     setSuccess("");
     setError("");
     startTransition(() => {
-      setting(values)
+      setting(values, languageToUse)
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -80,7 +97,7 @@ const FormLinkInstagram = ({ classNames, setOpen }: FormLinkInstagramProps) => {
           }
         })
         .catch(() => {
-          setError("Something went wrong");
+          setError(toastErrorMessage);
         });
     });
   };
@@ -96,7 +113,7 @@ const FormLinkInstagram = ({ classNames, setOpen }: FormLinkInstagramProps) => {
             name="linkinstagram"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Link Instagram</FormLabel>
+                <FormLabel>{instagramMessage}</FormLabel>
                 <FormControl>
                   <Input
                     id="linkinstagram-input"
@@ -129,7 +146,7 @@ const FormLinkInstagram = ({ classNames, setOpen }: FormLinkInstagramProps) => {
               onClick={() => setOpen?.(false)}
               disabled={isPending}
             >
-              Cancel
+              {cancelMessage}
             </Button>
           )}
           <Button
@@ -138,7 +155,7 @@ const FormLinkInstagram = ({ classNames, setOpen }: FormLinkInstagramProps) => {
             type="submit"
             disabled={isPending}
           >
-            Save
+            {saveMessage}
           </Button>
         </div>
       </form>

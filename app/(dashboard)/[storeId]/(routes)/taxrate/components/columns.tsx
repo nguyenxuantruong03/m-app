@@ -28,6 +28,7 @@ export type TaxRateColumn = {
   active: boolean;
   taxtype: string | null;
   createdAt: Date;
+  language: string
 };
 
 const taxTypeMapping: Record<string, string> = {
@@ -81,6 +82,7 @@ export const columns: ColumnDef<TaxRateColumn>[] = [
         taxtype={row.original.taxtype}
         description={row.original.description}
         field="name"
+        language={row.original.language}
       />
     ),
   },
@@ -147,6 +149,7 @@ export const columns: ColumnDef<TaxRateColumn>[] = [
         taxtype={row.original.taxtype}
         description={row.original.description}
         field="description"
+        language={row.original.language}
       />
     ),
   },

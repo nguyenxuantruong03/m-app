@@ -1,43 +1,48 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
+import { translateFeedbackDelete, translateFeedbackGet, translateFeedbackPost } from "@/translate/translate-api";
 import { UserRole } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const feedbackPostMessage = translateFeedbackPost(LanguageToUse)
   try {
     const body = await req.json();
-    const { userId, emotion, category, content } = body;
+    const { user, emotion, category, content } = body;
 
-    if (!userId) {
-      return new NextResponse(JSON.stringify({ error: "UserId is required" }), {
+    if (!user) {
+      return new NextResponse(JSON.stringify({ error: feedbackPostMessage.userIdRequired}), {
         status: 400,
       });
     }
 
     if (!emotion) {
       return new NextResponse(
-        JSON.stringify({ error: "Emotion is required" }),
+        JSON.stringify({ error: feedbackPostMessage.emotionRequired }),
         { status: 400 }
       );
     }
 
     if (!category) {
       return new NextResponse(
-        JSON.stringify({ error: "Category is required" }),
+        JSON.stringify({ error: feedbackPostMessage.categoryRequired }),
         { status: 400 }
       );
     }
 
     if (!content) {
       return new NextResponse(
-        JSON.stringify({ error: "Content is required" }),
+        JSON.stringify({ error: feedbackPostMessage.contentRequired }),
         { status: 400 }
       );
     }
 
     const existingFeedBack = await prismadb.feedBack.findFirst({
       where: {
-        userId: userId
+        user: user
       },
       orderBy: {
         createdAt: 'desc',
@@ -53,7 +58,7 @@ export async function POST(req: Request) {
       if (new Date(existingFeedBack.timeNextResponse) < now) {
         const feedback = await prismadb.feedBack.create({
           data: {
-            userId: userId,
+            user: user,
             emotion: emotion,
             category: category,
             content: content,
@@ -66,14 +71,14 @@ export async function POST(req: Request) {
         return NextResponse.json(feedback);
       } else {
         return new NextResponse(
-          JSON.stringify({ error: "Bạn đã phản hồi hay quay lại sau 1 ngày để phản hồi khác!" }),
+          JSON.stringify({ error: feedbackPostMessage.feedbackLimit }),
           { status: 500 }
         );
       }
     } else {
       const feedback = await prismadb.feedBack.create({
         data: {
-          userId: userId,
+          user: user,
           emotion: emotion,
           category: category,
           content: content,
@@ -88,7 +93,7 @@ export async function POST(req: Request) {
 
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get feedback." }),
+      JSON.stringify({ error: feedbackPostMessage.internalError }),
       { status: 500 }
     );
   }
@@ -96,6 +101,10 @@ export async function POST(req: Request) {
 
 
 export async function GET(req: Request) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const feedbackGetMessage = translateFeedbackGet(LanguageToUse)
   try {
     const feedBack = await prismadb.feedBack.findMany({
       include: {
@@ -106,7 +115,7 @@ export async function GET(req: Request) {
     return NextResponse.json(feedBack);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get feedBack." }),
+      JSON.stringify({ error: feedbackGetMessage }),
       { status: 500 }
     );
   }
@@ -116,28 +125,31 @@ export async function DELETE(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const feedbackDeleteMessage = translateFeedbackDelete(LanguageToUse)
   try {
-    const userId = await currentUser();
     const body = await req.json();
     const { ids } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy userId!" }),
+        JSON.stringify({ error: feedbackDeleteMessage.userNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN) {
+    if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xóa store!" }),
+        JSON.stringify({ error: feedbackDeleteMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!ids || ids.length === 0) {
       return new NextResponse(
-        JSON.stringify({ error: "Mảng IDs không được trống!" }),
+        JSON.stringify({ error: feedbackDeleteMessage.emptyIdsArray }),
         { status: 400 }
       );
     }
@@ -150,18 +162,18 @@ export async function DELETE(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: feedbackDeleteMessage.feedbackIdNotFound }),
         { status: 405 }
       );
     }
 
     // Mảng emotion và category để ánh xạ số thành mô tả
     const emotionMap: { [key: number]: string } = {
-      1: "Tốt",
-      2: "Tạm",
-      3: "Tệ",
-      4: "Phục vụ kém",
-      5: "Quá tệ",
+      1: "Good",
+      2: "Average",
+      3: "Bad",
+      4: "Poor service",
+      5: "Terrible",
     };
 
     const categoryMap: { [key: number]: string } = {
@@ -206,14 +218,14 @@ export async function DELETE(
             `DeleteName: ${change.content}, Emotion: ${change.emotion}, Category: ${change.category}`
         ),
         type: "DELETEFEEDBACK",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
-    return NextResponse.json({ message: "Xóa thành công!" });
+    return NextResponse.json({ message: feedbackDeleteMessage.deleteSuccess });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete store." }),
+      JSON.stringify({ error: feedbackDeleteMessage.internalError }),
       { status: 500 }
     );
   }

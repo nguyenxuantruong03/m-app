@@ -16,6 +16,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { OrderColumn } from "./columns";
+import { getOrderReturnProductAction } from "@/translate/translate-dashboard";
 
 interface CellActionProps {
   data: OrderColumn;
@@ -26,6 +27,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const params = useParams();
   const user = useCurrentUser();
   const [loading, setLoading] = useState(false);
+
+  //language
+  const orderReturnProductActionMessage = getOrderReturnProductAction(data.language)
 
   const shipperToReceive = async () => {
     try {
@@ -38,10 +42,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       );
       await toast.promise(
         promise.then(() => {
-          return <p>Bàn giao shipper thành công!</p>;
+          return <p>{orderReturnProductActionMessage.handoverShipperSuccess}</p>;
         }),
         {
-          loading: "Updating stutus...",
+          loading: orderReturnProductActionMessage.updatingStatus,
           success: (message) => {
             router.refresh();
             return message;
@@ -58,13 +62,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Đã xảy ra lỗi khi xác nhận đơn hàng.";
+              return orderReturnProductActionMessage.somethingWentWrong;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi chuẩn bị đơn hàng đã xong.");
+      toast.error(orderReturnProductActionMessage.somethingWentWrong);
     } finally {
       setLoading(false);
     }
@@ -75,22 +79,22 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
+            <span className="sr-only">{orderReturnProductActionMessage.openMenu}</span>
             <MoreHorizontal className="w-4 h-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           {user?.role === "ADMIN" || user?.role === "STAFF" ? (
             <>
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuLabel>{orderReturnProductActionMessage.actions}</DropdownMenuLabel>
               <DropdownMenuItem disabled={loading} onClick={shipperToReceive}>
                 <Undo className="h-4 w-4 mr-2" />
-                Shipper đến nhận
+                {orderReturnProductActionMessage.shipperPickup}
               </DropdownMenuItem>
             </>
           ) : (
             <>
-              <DropdownMenuLabel>Trống</DropdownMenuLabel>
+              <DropdownMenuLabel> {orderReturnProductActionMessage.shipperPickup}</DropdownMenuLabel>
             </>
           )}
         </DropdownMenuContent>

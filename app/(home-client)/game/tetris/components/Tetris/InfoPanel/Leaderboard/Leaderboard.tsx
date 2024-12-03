@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import { useTetris } from "../../../../hooks/useTetris";
 import {
@@ -10,6 +11,9 @@ import { Leaderboard as LeaderboardType } from "@/types/type";
 import axios from "axios";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
+import { getToastError } from "@/translate/translate-client";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 const medals = {
   0: "🥇",
@@ -28,8 +32,26 @@ const Leaderboard = ({
   setData,
   loading,
 }: LeaderboardProps): JSX.Element => {
+  const user = useCurrentUser();
   const gameState = useTetris();
   const [loadingLeaderboard, setLoadingLeaderboard] = useState(false);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+
+  const toastErrorMessage = getToastError(languageToUse);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,7 +60,7 @@ const Leaderboard = ({
         const response = await axios.get(`/api/client/leaderboard`);
         setData(response.data);
       } catch (error) {
-        console.error("Error saving leaderboard:", error);
+        toast.error(toastErrorMessage);
       } finally {
         setLoadingLeaderboard(false);
       }

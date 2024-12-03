@@ -1,11 +1,12 @@
 import prismadb from "@/lib/prismadb";
 import { RoleGate } from "@/components/auth/role-gate";
-import { currentRole } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 import { Account, UserRole } from "@prisma/client";
 import { SettingUsersColumn } from "./components/column";
 import SettingUserClient from "./components/client";
 
 const SettingUser = async ({ params }: { params: { storeId: string } }) => {
+  const currentUsers = await currentUser()
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN || UserRole.STAFF;
   const showOrderRole = isRole;
@@ -58,6 +59,7 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
       image: item.image,
       imageCredential: item?.imageCredential[0]?.url,
       password: item.password.length,
+      language: currentUsers?.language || "vi",
       dateofbirth: item.dateofbirth,
       lastlogin: item.lastlogin,
       resendTokenVerify: item.resendTokenVerify,

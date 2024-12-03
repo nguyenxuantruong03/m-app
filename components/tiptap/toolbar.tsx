@@ -15,9 +15,10 @@ type Props = {
   editor: Editor | null;
   disabled: boolean;
   isCustom?: boolean;
+  languageToUse: string;
 };
 
-const Toolbar: React.FC<Props> = ({ editor,disabled,isCustom }) => {
+const Toolbar: React.FC<Props> = ({ editor,disabled,isCustom,languageToUse }) => {
   const [showColorPicker, setShowColorPicker] = useState<boolean>(false);
   const [selectedColor, setSelectedColor] = useState<string>("#ffcc00"); // Màu mặc định
 
@@ -57,6 +58,7 @@ const Toolbar: React.FC<Props> = ({ editor,disabled,isCustom }) => {
           showColorPicker={showColorPicker}
           setShowColorPicker={setShowColorPicker}
           disabled={disabled}
+          languageToUse={languageToUse}
         />
         {showColorPicker && (
           <CompactPicker
@@ -66,17 +68,17 @@ const Toolbar: React.FC<Props> = ({ editor,disabled,isCustom }) => {
           />
         )}
 
-        <HeadingPage editor={editor} disabled={disabled}/>
+        <HeadingPage editor={editor} disabled={disabled} languageToUse={languageToUse}/>
 
-        <TextAlignPage editor={editor} disabled={disabled}/>
+        <TextAlignPage editor={editor} disabled={disabled} languageToUse={languageToUse}/>
 
-        <ListItemPage editor={editor} disabled={disabled}/>
+        <ListItemPage editor={editor} disabled={disabled} languageToUse={languageToUse}/>
 
-        <TaskItemandTasklist editor={editor} disabled={disabled}/>
+        <TaskItemandTasklist editor={editor} disabled={disabled} languageToUse={languageToUse}/>
 
       </div>
       <div className={`${isCustom ? "space-y-3 overflow-y-auto h-36 md:h-44" : "space-y-3"}`}>
-        <TablePage editor={editor} disabled={disabled}/>
+        <TablePage editor={editor} disabled={disabled} languageToUse={languageToUse}/>
       </div>
     </div>
   );

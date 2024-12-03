@@ -5,38 +5,36 @@ import "./delivery.css";
 import { deliverycolor } from "@/components/(client)/color/color";
 import FlipClockCountdown from "@leenguyen/react-flip-clock-countdown";
 import "@leenguyen/react-flip-clock-countdown/dist/index.css";
+import toast from "react-hot-toast";
+import {
+  getPhoneNumberMessage,
+  getToastError,
+  translateAddress,
+  translateComingSoon,
+  translateHotProduct,
+  translateHuntSaleLater,
+  translateSaleTime,
+  translateStore,
+  translateWorkingHours,
+  translateCuttingStone,
+  translateElectricWire,
+  translateFan,
+  translateGlue,
+  translateLightBulb,
+  translateLock,
+  translatePaint,
+  translatePin,
+  translatePipe,
+  translateSocket,
+  translateBathroom,
+  translateCommonUse,
+} from "@/translate/translate-client";
 
-const items = [
-  "Ống nhựa",
-  "Bóng đèn",
-  "Pin",
-  "Dây điện",
-  "Sơn",
-  "Ổ khóa",
-  "Quạt",
-  "Keo",
-  "Ổ cắm",
-  "Đá cắt",
-  "Vật liệu nhà tắm",
-  "Đồ thường dùng",
-];
+interface ImageDeliveryProps {
+  languageToUse: string;
+}
 
-const productTypeDisplayNames: Record<string, string> = {
-  PRODUCT: "Pin",
-  PRODUCT1: "Quạt",
-  PRODUCT2: "Ống nhựa",
-  PRODUCT3: "Dây điện",
-  PRODUCT4: "Đá cắt",
-  PRODUCT5: "Ổ khóa",
-  PRODUCT6: "Keo",
-  PRODUCT7: "Ổ cắm",
-  PRODUCT8: "Sơn",
-  PRODUCT9: "Vật liệu nhà tắm",
-  PRODUCT10: "Bóng đèn",
-  PRODUCT11: "Đồ thường dùng",
-};
-
-const ImageDelivery = () => {
+const ImageDelivery = ({ languageToUse }: ImageDeliveryProps) => {
   const [isMounted, setIsMounted] = useState(false);
   const [products, setProducts] = useState<any>([]);
   const [randomProductType, setRandomProductType] = useState<any>(null);
@@ -46,14 +44,71 @@ const ImageDelivery = () => {
     null
   );
 
+  //languages
+  const toastErrorMessage = getToastError(languageToUse);
+  const saleTimeMessage = translateSaleTime(languageToUse);
+  const comingSoonMessage = translateComingSoon(languageToUse);
+  const huntSaleLaterMessage = translateHuntSaleLater(languageToUse);
+  const hotProductMessage = translateHotProduct(languageToUse);
+  const storeMessage = translateStore(languageToUse);
+  const workingHourMessage = translateWorkingHours(languageToUse);
+  const phoneNumberMessage = getPhoneNumberMessage(languageToUse);
+  const addressMessage = translateAddress(languageToUse);
+  const pinMesage = translatePin(languageToUse);
+  const fanMessage = translateFan(languageToUse);
+  const pipeMessage = translatePipe(languageToUse);
+  const electricWireMessage = translateElectricWire(languageToUse);
+  const cuttingStoneMessage = translateCuttingStone(languageToUse);
+  const lockMessage = translateLock(languageToUse);
+  const glueMessage = translateGlue(languageToUse);
+  const socketMessage = translateSocket(languageToUse);
+  const paintMessage = translatePaint(languageToUse);
+  const bathroomMessage = translateBathroom(languageToUse);
+  const lightBlubMessage = translateLightBulb(languageToUse);
+  const commonUseMessage = translateCommonUse(languageToUse);
+
+  const items = [
+    pipeMessage,
+    lightBlubMessage,
+    pinMesage,
+    electricWireMessage,
+    paintMessage,
+    lockMessage,
+    fanMessage,
+    glueMessage,
+    socketMessage,
+    cuttingStoneMessage,
+    bathroomMessage,
+    commonUseMessage,
+  ];
+
+  const productTypeDisplayNames: Record<string, string> = {
+    PRODUCT: pinMesage,
+    PRODUCT1: fanMessage,
+    PRODUCT2: pipeMessage,
+    PRODUCT3: electricWireMessage,
+    PRODUCT4: cuttingStoneMessage,
+    PRODUCT5: lockMessage,
+    PRODUCT6: glueMessage,
+    PRODUCT7: socketMessage,
+    PRODUCT8: paintMessage,
+    PRODUCT9: bathroomMessage,
+    PRODUCT10: lightBlubMessage,
+    PRODUCT11: commonUseMessage,
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const products = await getAllProduct({ isFeatured: true });
+
+        const products = await getAllProduct({
+          isFeatured: true,
+          language: languageToUse,
+        });
         setProducts(products);
       } catch (error) {
-        console.error(error);
+        toast.error(toastErrorMessage);
       } finally {
         setLoading(false);
       }
@@ -144,19 +199,19 @@ const ImageDelivery = () => {
 
   return (
     <>
-      {!randomTimeSaleStart|| loading ? (
+      {!randomTimeSaleStart || loading ? (
         <div>
           <div className={deliverycolor.bg_rounded__p_mt}>
-            <p className="font-medium">Thời gian Sale </p>
+            <p className="font-medium">{saleTimeMessage} </p>
             <div className="loader-disabled ml-1.5 font-semibold">
-              <span className="loader-text">Sắp diễn ra</span>
+              <span className="loader-text">{comingSoonMessage}</span>
             </div>
           </div>
         </div>
       ) : (
         <div>
           <div className={deliverycolor.bg_rounded__p_mt}>
-            <p className="font-medium ">Săn Sale sau </p>
+            <p className="font-medium ">{huntSaleLaterMessage}</p>
             <div className="loader ml-1.5 font-semibold">
               <span className="">
                 {randomTimeSaleStart && (
@@ -182,7 +237,7 @@ const ImageDelivery = () => {
 
       <div>
         <div className={deliverycolor.bg_rounded__p_mt}>
-          <p className="font-medium">Sản phẩm hot</p>
+          <p className="font-medium">{hotProductMessage}</p>
           <div className="loaderproductsale ml-1.5 font-semibold">
             {loading || products.length <= 0 || !randomProductType ? (
               <span className="loader-text">
@@ -207,9 +262,9 @@ const ImageDelivery = () => {
       <div>
         <div className={deliverycolor.bg_not_w}>
           <p className="slider-right-animation font-semibold">
-            Cửa hàng Trường Đạt. T/g làm việc: 6:00-18:00. Sđt: 0352261103. Địa
-            chỉ: 457 Lê Văn Quới, Phường Bình Trị Đông A, Quận Bình Tân, Thành
-            Phố Hồ Chí Minh
+            {storeMessage} Trường Đạt. {workingHourMessage}: 6:00-18:00.{" "}
+            {phoneNumberMessage}: 0352261103. {addressMessage}: 457 Lê Văn Quới,
+            Phường Bình Trị Đông A, Quận Bình Tân, Thành Phố Hồ Chí Minh
           </p>
         </div>
       </div>

@@ -11,12 +11,27 @@ import SeeDetail4Modal from "@/components/(client)/modal/see-detail-model4";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import useCartdb from "@/hooks/client/db/use-cart-db";
 import Currency from "@/components/ui/currency";
+import {
+  translateCustomerRegistration,
+  translateDamagePolicy,
+  translateExchangeNewProduct,
+  translateExchangeNewProduct6Months,
+  translateProductProtection,
+  translateRepairSupportProduct,
+  translateS24Plus12Months,
+  translateView,
+  translateViewDetails,
+  translateVIPExchange,
+  translateVIPExchange6Months,
+  translateWarrantyExchange,
+} from "@/translate/translate-client";
 
 interface InfoWarrantyProps {
   data: Product;
+  languageToUse: string;
 }
 
-const InfoWarranty: React.FC<InfoWarrantyProps> = ({ data }) => {
+const InfoWarranty: React.FC<InfoWarrantyProps> = ({ data, languageToUse }) => {
   const cart = useCart();
   const cartdb = useCartdb();
   const user = useCurrentUser();
@@ -26,6 +41,23 @@ const InfoWarranty: React.FC<InfoWarrantyProps> = ({ data }) => {
   const [openDetail2, setOpenDetail2] = useState(false);
   const [openDetail3, setOpenDetail3] = useState(false);
   const [openDetail4, setOpenDetail4] = useState(false);
+
+  //languages
+  const s24Plus12MonthMessage = translateS24Plus12Months(languageToUse);
+  const warrantyExchnageMessage = translateWarrantyExchange(languageToUse);
+  const VIPexchnageMessage = translateVIPExchange(languageToUse);
+  const ExchangeNewProductMessage = translateExchangeNewProduct(languageToUse);
+  const damagePolicyMessage = translateDamagePolicy(languageToUse);
+  const repairSupportProductMessage =
+    translateRepairSupportProduct(languageToUse);
+  const VIPExchange6MonthMessage = translateVIPExchange6Months(languageToUse);
+  const exchangeNewProduct6MonthMessage =
+    translateExchangeNewProduct6Months(languageToUse);
+  const productProtectionMessage = translateProductProtection(languageToUse);
+  const viewDetailMessage = translateViewDetails(languageToUse);
+  const customerRegistrationMessage =
+    translateCustomerRegistration(languageToUse);
+  const viewMessage = translateView(languageToUse);
 
   //Kiểm tra tất cả sản phẩm có === 0 không
   const productQuantityAll = [1, 2, 3, 4, 5].every(
@@ -90,31 +122,29 @@ const InfoWarranty: React.FC<InfoWarrantyProps> = ({ data }) => {
   const warrantyOptions = [
     {
       id: "1",
-      heading: "S24 + 12 tháng",
-      description:
-        "Đổi sản phẩm tương đương hoặc miễn phí chi phí sữa chữa nếu có lỗi của NSX khi hết hạn bảo hành trong 12 tháng",
+      heading: s24Plus12MonthMessage,
+      description: warrantyExchnageMessage,
       value: String(data.productdetail.warranty1),
       onClick: onSeeDetail1,
     },
     {
       id: "2",
-      heading: "1 đổi 1 VIP 12 tháng",
-      description: "Đổi máy mới tương đương khi có lỗi từ NSX trong 12 tháng",
+      heading: VIPexchnageMessage,
+      description: ExchangeNewProductMessage,
       value: String(data.productdetail.warranty2),
       onClick: onSeeDetail2,
     },
     {
       id: "3",
-      heading: "Rơi vỡ - Rớt nước",
-      description:
-        "Hỗ trợ 90% chi phí sữa chữa, đổi mới sản phẩm nếu hư hỏng nặng trong 12 tháng",
+      heading: damagePolicyMessage,
+      description: repairSupportProductMessage,
       value: String(data.productdetail.warranty3),
       onClick: onSeeDetail3,
     },
     {
       id: "4",
-      heading: "1 đổi 1 VIP 6 tháng",
-      description: "Đổi máy mới tương đương khi có lỗi từ NSX trong 6 tháng",
+      heading: VIPExchange6MonthMessage,
+      description: exchangeNewProduct6MonthMessage,
       value: String(data.productdetail.warranty4),
       onClick: onSeeDetail4,
     },
@@ -125,42 +155,45 @@ const InfoWarranty: React.FC<InfoWarrantyProps> = ({ data }) => {
       <SeeDetailModal
         isOpen={openDetail}
         onClose={() => setOpenDetail(false)}
+        languageToUse={languageToUse}
       />
       <SeeDetail1Modal
         isOpen={openDetail1}
         onClose={() => setOpenDetail1(false)}
+        languageToUse={languageToUse}
       />
       <SeeDetail2Modal
         isOpen={openDetail2}
         onClose={() => setOpenDetail2(false)}
+        languageToUse={languageToUse}
       />
       <SeeDetail3Modal
         isOpen={openDetail3}
         onClose={() => setOpenDetail3(false)}
+        languageToUse={languageToUse}
       />
       <SeeDetail4Modal
         isOpen={openDetail4}
         onClose={() => setOpenDetail4(false)}
+        languageToUse={languageToUse}
       />
       <div className="my-1 ">
         <div className="flex bg-gradient-to-r from-[#C00000] to-[#FF3334] rounded-md p-5">
           <ShieldCheck className="text-white" />
           <div className="flex ml-2 ">
             <h1 className="text-sm md:text-base ml-2 text-white font-bold ">
-              Bảo vệ sản phẩm toàn diện với dịch vụ bảo hành mở rộng
+              {productProtectionMessage}
             </h1>
             <span
               onClick={onSeeDetail}
               className=" ml-2 underline decoration-slate-900 font-bold cursor-pointer hover:underline hover:decoration-white hover:text-white"
             >
-              Xem chi tiết
+              {viewDetailMessage}
             </span>
           </div>
         </div>
         <p className="text-sm mx-4 my-2 text-slate-900 dark:text-slate-200">
-          (Khách hàng đăng ký thông tin để được hỗ trợ tư vấn và thanh toán tại
-          cửa hàng nhanh nhất, số tiền phải thanh toán chưa bao gồm giá trị của
-          gói bảo hành mở rộng)
+          ({customerRegistrationMessage})
         </p>
       </div>
       <div>
@@ -230,7 +263,7 @@ const InfoWarranty: React.FC<InfoWarrantyProps> = ({ data }) => {
                     onClick={option.onClick}
                     className="text-red-600 cursor-pointer text-sm font-bold my-auto hover:underline hover:decoration-slate-900 underline decoration-red-600 hover:text-slate-900"
                   >
-                    Xem
+                    {viewMessage}
                   </span>
                 </div>
               </>

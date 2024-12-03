@@ -1,11 +1,12 @@
 import prismadb from "@/lib/prismadb";
 import { RoleGate } from "@/components/auth/role-gate";
-import { currentRole } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
 import CommentClient from "./components/client";
 import { CommentColumn } from "./components/column";
 
 const Comment = async () => {
+  const user = await currentUser()
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN || role === UserRole.STAFF;
   const showOrderRole = isRole;
@@ -42,6 +43,7 @@ const Comment = async () => {
         );
       }),
       createdAt: item.createdAt,
+      language: user?.language || "vi",
     };
   });
 

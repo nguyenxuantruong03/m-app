@@ -1,8 +1,17 @@
 "use client";
+import getWareHouse from "@/actions/client/warehouse";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import {
+  translateAll,
+  translateCancelledOrReturned,
+  translateCompletedNormal,
+  translateConfirmOrder,
+  translateDeliveringNormal,
+  translatePrepareOrder,
+  translateWaitingForDelivery,
+} from "@/translate/translate-client";
 import { cn } from "@/lib/utils";
 import { Order } from "@/types/type";
-import axios from "axios";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -11,14 +20,35 @@ const NavbarDelivery = () => {
   const pathname = usePathname();
   const user = useCurrentUser();
   const [data, setData] = useState<Order[]>([]);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+  const allMessage = translateAll(languageToUse);
+  const confirmOrderMessage = translateConfirmOrder(languageToUse);
+  const prepareOrderMessage = translatePrepareOrder(languageToUse);
+  const waitingForDeliveryMessage = translateWaitingForDelivery(languageToUse);
+  const deliveringNormalMessage = translateDeliveringNormal(languageToUse);
+  const completedNormalMessage = translateCompletedNormal(languageToUse);
+  const cancelledOrReturnedMessage =
+    translateCancelledOrReturned(languageToUse);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/warehouse`
-        );
-        setData(response.data);
+        const warehouse = await getWareHouse(languageToUse);
+        setData(warehouse);
       } catch (error) {
         console.error("Fetch data error!");
       }
@@ -49,7 +79,7 @@ const NavbarDelivery = () => {
   const navbarOrder = [
     {
       href: `/warehouse/package-product`,
-      label: "Tất cả",
+      label: allMessage,
       active:
         pathname.startsWith(`/warehouse/package-product`) &&
         !pathname.includes(`/confirmation-product`) &&
@@ -62,7 +92,7 @@ const NavbarDelivery = () => {
     },
     {
       href: `/warehouse/package-product/confirmation-product`,
-      label: "Xác nhận đơn",
+      label: confirmOrderMessage,
       active: pathname.startsWith(
         `/warehouse/package-product/confirmation-product`
       ),
@@ -70,13 +100,13 @@ const NavbarDelivery = () => {
     },
     {
       href: `/warehouse/package-product/prepare-product`,
-      label: "Soạn hàng",
+      label: prepareOrderMessage,
       active: pathname.startsWith(`/warehouse/package-product/prepare-product`),
       length: prepareProduct.length,
     },
     {
       href: `/warehouse/package-product/transport-product`,
-      label: "Chờ giao hàng",
+      label: waitingForDeliveryMessage,
       active: pathname.startsWith(
         `/warehouse/package-product/transport-product`
       ),
@@ -84,7 +114,7 @@ const NavbarDelivery = () => {
     },
     {
       href: `/warehouse/package-product/delivering-product`,
-      label: "Đang giao",
+      label: deliveringNormalMessage,
       active: pathname.startsWith(
         `/warehouse/package-product/delivering-product`
       ),
@@ -92,7 +122,7 @@ const NavbarDelivery = () => {
     },
     {
       href: `/warehouse/package-product/delivered-product`,
-      label: "Hoàn thành",
+      label: completedNormalMessage,
       active: pathname.startsWith(
         `/warehouse/package-product/delivered-product`
       ),
@@ -100,7 +130,7 @@ const NavbarDelivery = () => {
     },
     {
       href: `/warehouse/package-product/return-product`,
-      label: "Đã hủy/Trả hàng",
+      label: cancelledOrReturnedMessage,
       active: pathname.startsWith(`/warehouse/package-product/return-product`),
       length: returnProduct.length,
     },

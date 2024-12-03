@@ -13,7 +13,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [open, setOpen] = useState(false);
   return (
     <div className="hidden md:block">
-      <ShowSystem isOpen={open} onClose={() => setOpen(false)} data={data} />
+      <ShowSystem isOpen={open} onClose={() => setOpen(false)} data={data}/>
       <Eye onClick={() => setOpen(true)} className="w-5 h-5" />
     </div>
   );

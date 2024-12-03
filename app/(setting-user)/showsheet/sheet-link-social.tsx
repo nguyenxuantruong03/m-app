@@ -17,6 +17,26 @@ import FormLinkTiktok from "../components/form/form-social/form-linktiktok";
 import FormLinkInstagram from "../components/form/form-social/form-linkinstagram";
 import FormLinkTwitter from "../components/form/form-social/form-linktwitter";
 import FormLinkOther from "../components/form/form-social/form-linkother";
+import {
+  translateEditFacebookLink,
+  translateEditFacebookLinkForProfile,
+  translateEditGithubLink,
+  translateEditGithubLinkForCode,
+  translateEditInstagramLink,
+  translateEditInstagramLinkForProfile,
+  translateEditLinkedinLink,
+  translateEditLinkedinLinkForProfile,
+  translateEditOtherLink,
+  translateEditOtherLinkForProfile,
+  translateEditPersonalWebsiteLink,
+  translateEditTiktokLink,
+  translateEditTiktokLinkForProfile,
+  translateEditTwitterLink,
+  translateEditTwitterLinkForProfile,
+  translateEditYourPersonalWebsite,
+  translateEditYoutubeLink,
+  translateEditYoutubeLinkForProfile,
+} from "@/translate/translate-client";
 
 interface SheetLinkSocialProps {
   linkwebsite: string | null;
@@ -30,7 +50,8 @@ interface SheetLinkSocialProps {
   linkother: string | null;
   children: React.ReactNode;
   role: string | undefined;
-  userId: string
+  userId: string;
+  languageToUse: string;
   setAlertGuestModal: React.Dispatch<React.SetStateAction<boolean>>;
   type:
     | "linkwebsite"
@@ -59,6 +80,7 @@ const SheetLinkSocial: React.FC<SheetLinkSocialProps> = ({
   role,
   userId,
   setAlertGuestModal,
+  languageToUse,
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -76,53 +98,68 @@ const SheetLinkSocial: React.FC<SheetLinkSocialProps> = ({
 
   const links = {
     linkwebsite: {
-      title: `Chỉnh sửa link web cá nhân: ${linkwebsite || "Chưa thay đổi"}`,
-      description: `Chỉnh sửa trang web cá nhân của bạn: ${linkwebsite || "Chưa thay đổi"}`,
-      form: <FormLinkWebSite />
+      title: translateEditPersonalWebsiteLink(languageToUse, linkwebsite),
+      description: translateEditYourPersonalWebsite(languageToUse, linkwebsite),
+      form: <FormLinkWebSite languageToUse={languageToUse} />,
     },
     linkgithub: {
-      title: `Chỉnh sửa link Github: ${linkgithub || "Chưa thay đổi"}`,
-      description: `Chỉnh sửa link GitHub để tham khảo source code: ${linkgithub || "Chưa thay đổi"}`,
-      form: <FormLinkGithub />
+      title: translateEditGithubLink(languageToUse, linkgithub),
+      description: translateEditGithubLinkForCode(languageToUse, linkgithub),
+      form: <FormLinkGithub languageToUse={languageToUse} />,
     },
     linklinkedin: {
-      title: `Chỉnh sửa link Linkedin: ${linklinkedin || "Chưa thay đổi"}`,
-      description: `Chỉnh sửa link Linkedin để hiển thị ở trang cá nhân: ${linklinkedin || "Chưa thay đổi"}`,
-      form: <FormLinkLinkedIn />
+      title: translateEditLinkedinLink(languageToUse, linklinkedin),
+      description: translateEditLinkedinLinkForProfile(
+        languageToUse,
+        linklinkedin
+      ),
+      form: <FormLinkLinkedIn languageToUse={languageToUse} />,
     },
     linkfacebook: {
-      title: `Chỉnh sửa link Facebook: ${linkfacebook || "Chưa thay đổi"}`,
-      description: `Chỉnh sửa link Facebook để hiển thị ở trang cá nhân: ${linkfacebook || "Chưa thay đổi"}`,
-      form: <FormLinkFaceBook />
+      title: translateEditFacebookLink(languageToUse, linkfacebook),
+      description: translateEditFacebookLinkForProfile(
+        languageToUse,
+        linkfacebook
+      ),
+      form: <FormLinkFaceBook languageToUse={languageToUse} />,
     },
     linkyoutube: {
-      title: `Chỉnh sửa link Youtube: ${linkyoutube || "Chưa thay đổi"}`,
-      description: `Chỉnh sửa link Youtube để hiển thị ở trang cá nhân: ${linkyoutube || "Chưa thay đổi"}`,
-      form: <FormLinkYoutube />
+      title: translateEditYoutubeLink(languageToUse, linkyoutube),
+      description: translateEditYoutubeLinkForProfile(
+        languageToUse,
+        linkyoutube
+      ),
+      form: <FormLinkYoutube languageToUse={languageToUse} />,
     },
     linktiktok: {
-      title: `Chỉnh sửa link Tiktok: ${linktiktok || "Chưa thay đổi"}`,
-      description: `Chỉnh sửa link Tiktok để hiển thị ở trang cá nhân: ${linktiktok || "Chưa thay đổi"}`,
-      form: <FormLinkTiktok />
+      title: translateEditTiktokLink(languageToUse, linktiktok),
+      description: translateEditTiktokLinkForProfile(languageToUse, linktiktok),
+      form: <FormLinkTiktok languageToUse={languageToUse} />,
     },
     linkinstagram: {
-      title: `Chỉnh sửa link Instagram: ${linkinstagram || "Chưa thay đổi"}`,
-      description: `Chỉnh sửa link Instagram để hiển thị ở trang cá nhân: ${linkinstagram || "Chưa thay đổi"}`,
-      form: <FormLinkInstagram/>
+      title: translateEditInstagramLink(languageToUse, linkinstagram),
+      description: translateEditInstagramLinkForProfile(
+        languageToUse,
+        linkinstagram
+      ),
+      form: <FormLinkInstagram languageToUse={languageToUse} />,
     },
     linktwitter: {
-      title: `Chỉnh sửa link Twitter: ${linktwitter || "Chưa thay đổi"}`,
-      description: `Chỉnh sửa link Twitter để hiển thị ở trang cá nhân: ${linktwitter || "Chưa thay đổi"}`,
-      form: <FormLinkTwitter/>
+      title: translateEditTwitterLink(languageToUse, linktwitter),
+      description: translateEditTwitterLinkForProfile(
+        languageToUse,
+        linktwitter
+      ),
+      form: <FormLinkTwitter languageToUse={languageToUse} />,
     },
     linkother: {
-      title: `Chỉnh sửa link Other: ${linkother || "Chưa thay đổi"}`,
-      description: `Chỉnh sửa link Other để hiển thị ở trang cá nhân: ${linkother || "Chưa thay đổi"}`,
-      form: <FormLinkOther/>
+      title: translateEditOtherLink(languageToUse, linkother),
+      description: translateEditOtherLinkForProfile(languageToUse, linkother),
+      form: <FormLinkOther languageToUse={languageToUse} />,
     },
   };
 
-  const { title, description,form } = links[type];
+  const { title, description, form } = links[type];
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>

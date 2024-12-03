@@ -39,6 +39,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Recommend from "@/components/ui/recommend";
 import ImageUpload from "@/components/ui/image-upload";
+import { getOrderAction } from "@/translate/translate-dashboard";
 
 interface CellActionProps {
   data: OrderColumn;
@@ -60,6 +61,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [value, setValue] = useState<string>("");
   const [openCustomImage, setOpenCustomImage] = useState(false);
 
+  //language
+  const orderActionMessage = getOrderAction(data.language);
+
   const form = useForm<ComfirmOderDelivery>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -80,7 +84,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Đã nhận tại cửa hàng:
+              {orderActionMessage.receivedAtStore}:
               <span className="font-bold">
                 {data.email || data.emailcurrent} -{" "}
                 <span className="font-bold">
@@ -92,7 +96,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating stutus...",
+          loading: orderActionMessage.updatingStatus,
           success: (message) => {
             router.refresh();
             return message;
@@ -109,13 +113,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Đã xảy ra lỗi khi nhận tại cửa hàng.";
+              return orderActionMessage.somethingWentWrong;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi nhận tại cửa hàng.");
+      toast.error(orderActionMessage.somethingWentWrong);
     } finally {
       setLoading(false);
     }
@@ -134,7 +138,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Đã lấy tiền từ shipper:
+              {orderActionMessage.collectedMoneyFromShipper}:
               <span className="font-bold">
                 {data.emailShipper} -{" "}
                 <span className="font-bold">{data.nameShipper}</span>
@@ -144,7 +148,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating stutus...",
+          loading: orderActionMessage.updatingStatus,
           success: (message) => {
             router.refresh();
             return message;
@@ -161,13 +165,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Đã xảy ra lỗi khi nhận tại cửa hàng.";
+              return orderActionMessage.somethingWentWrong;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi nhận tại cửa hàng.");
+      toast.error(orderActionMessage.somethingWentWrong);
     } finally {
       setLoading(false);
     }
@@ -183,7 +187,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Xác nhận giao lại đơn hàng:
+              {orderActionMessage.confirmResendOrder}:
               <span className="font-bold">
                 {data.email || data.emailcurrent} -{" "}
                 <span className="font-bold">
@@ -195,7 +199,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating stutus...",
+          loading: orderActionMessage.updatingStatus,
           success: (message) => {
             router.refresh();
             return message;
@@ -212,13 +216,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Đã xảy ra lỗi khi xác nhận giao lại hàng.";
+              return orderActionMessage.somethingWentWrong;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi xác nhận giao lại hàng.");
+      toast.error(orderActionMessage.somethingWentWrong);
     } finally {
       setLoading(false);
     }
@@ -235,7 +239,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Xác nhận thành công đơn hàng:
+              {orderActionMessage.confirmOrderSuccessfully}:
               <span className="font-bold">
                 {data.email || data.emailcurrent} -{" "}
                 <span className="font-bold">
@@ -247,7 +251,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating stutus...",
+          loading: orderActionMessage.updatingStatus,
           success: (message) => {
             router.refresh();
             return message;
@@ -264,13 +268,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Đã xảy ra lỗi khi xác nhận đơn hàng.";
+              return orderActionMessage.somethingWentWrong;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi xác nhận đơn hàng.");
+      toast.error(orderActionMessage.somethingWentWrong);
     } finally {
       setLoading(false);
     }
@@ -286,7 +290,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Đã soạn xong đơn hàng:
+              {orderActionMessage.orderPrepared}:
               <span className="font-bold">
                 {data.email || data.emailcurrent} -{" "}
                 <span className="font-bold">
@@ -298,7 +302,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating stutus...",
+          loading: orderActionMessage.updatingStatus,
           success: (message) => {
             router.refresh();
             return message;
@@ -315,13 +319,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Đã xảy ra lỗi khi chuẩn bị đơn hàng đã xong.";
+              return orderActionMessage.somethingWentWrong;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi chuẩn bị đơn hàng đã xong.");
+      toast.error(orderActionMessage.somethingWentWrong);
     } finally {
       setLoading(false);
     }
@@ -340,7 +344,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Đã soạn xong đơn hàng:
+              {orderActionMessage.orderPrepared}:
               <span className="font-bold">
                 {data.email || data.emailcurrent} -{" "}
                 <span className="font-bold">
@@ -352,7 +356,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating stutus...",
+          loading: orderActionMessage.updatingStatus,
           success: (message) => {
             router.refresh();
             return message;
@@ -369,13 +373,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Đã xảy ra lỗi khi chuẩn bị đơn hàng đã xong.";
+              return orderActionMessage.somethingWentWrong;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi chuẩn bị đơn hàng đã xong.");
+      toast.error(orderActionMessage.somethingWentWrong);
     } finally {
       setLoading(false);
     }
@@ -391,7 +395,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Xác nhận thành công đơn hàng:
+              {orderActionMessage.confirmOrderSuccessfully}:
               <span className="font-bold">
                 {data.email || data.emailcurrent} -{" "}
                 <span className="font-bold">
@@ -403,7 +407,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating stutus...",
+          loading: orderActionMessage.updatingStatus,
           success: (message) => {
             router.refresh();
             return message;
@@ -420,13 +424,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Đã xảy ra lỗi khi xác nhận đơn hàng.";
+              return orderActionMessage.somethingWentWrong;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi chuẩn bị đơn hàng đã xong.");
+      toast.error(orderActionMessage.somethingWentWrong);
     } finally {
       setLoading(false);
     }
@@ -443,10 +447,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       );
       await toast.promise(
         promise.then(() => {
-          return <p>Bàn giao shipper thành công!</p>;
+          return <p>{orderActionMessage.handoverShipperSuccess}</p>;
         }),
         {
-          loading: "Updating stutus...",
+          loading: orderActionMessage.updatingStatus,
           success: (message) => {
             router.refresh();
             return message;
@@ -463,13 +467,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Đã xảy ra lỗi khi xác nhận đơn hàng.";
+              return orderActionMessage.somethingWentWrong;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi chuẩn bị đơn hàng đã xong.");
+      toast.error(orderActionMessage.somethingWentWrong);
     } finally {
       setLoading(false);
     }
@@ -485,7 +489,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Nhận đơn khách hàng:
+              {orderActionMessage.receiveCustomerOrder}:
               <span className="font-bold">
                 {data.email || data.emailcurrent} -{" "}
                 <span className="font-bold">
@@ -497,7 +501,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating stutus...",
+          loading: orderActionMessage.updatingStatus,
           success: (message) => {
             router.refresh();
             return message;
@@ -514,13 +518,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Đã xảy ra lỗi khi nhận đơn.";
+              return orderActionMessage.somethingWentWrong;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi nhận đơn.");
+      toast.error(orderActionMessage.somethingWentWrong);
     } finally {
       setLoading(false);
     }
@@ -539,7 +543,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Nhận đơn khách hàng trả lại:
+              {orderActionMessage.receiveReturnedOrder}:
               <span className="font-bold">
                 {data.email || data.emailcurrent} -{" "}
                 <span className="font-bold">
@@ -551,7 +555,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating stutus...",
+          loading: orderActionMessage.updatingStatus,
           success: (message) => {
             router.refresh();
             return message;
@@ -568,13 +572,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Đã xảy ra lỗi khi nhận đơn.";
+              return orderActionMessage.somethingWentWrong;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi nhận đơn.");
+      toast.error(orderActionMessage.somethingWentWrong);
     } finally {
       setLoading(false);
     }
@@ -601,7 +605,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Đã giao thành công:
+              {orderActionMessage.deliveredSuccessfully}:
               <span className="font-bold">
                 {data.email || data.emailcurrent} -{" "}
                 <span className="font-bold">
@@ -613,7 +617,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating stutus...",
+          loading: orderActionMessage.updatingStatus,
           success: (message) => {
             router.refresh();
             return message;
@@ -630,13 +634,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Đã xảy ra lỗi khi xác thực đơn hàng thành công.";
+              return orderActionMessage.somethingWentWrong;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi xác thực đơn hàng thành công.");
+      toast.error(orderActionMessage.somethingWentWrong);
     } finally {
       setLoading(false);
       setOpenCustomImage(false);
@@ -650,7 +654,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
     // Check if the trimmed value is empty
     if (!trimmedValue) {
-      toast.error("Hãy nhập nội dung trạng thái đơn hàng!");
+      toast.error(orderActionMessage.enterOrderStatus);
       return;
     }
 
@@ -667,7 +671,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Đã hủy thành công đơn hàng:
+              {orderActionMessage.orderCancelledSuccessfully}:
               <span className="font-bold">
                 {data.email || data.emailcurrent} -{" "}
                 <span className="font-bold">
@@ -679,7 +683,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating stutus...",
+          loading: orderActionMessage.updatingStatus,
           success: (message) => {
             router.refresh();
             return message;
@@ -696,13 +700,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Đã xảy ra lỗi khi hủy đơn hàng.";
+              return orderActionMessage.somethingWentWrong;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi hủy đơn hàng.");
+      toast.error(orderActionMessage.somethingWentWrong);
     } finally {
       setOpen(false);
       setLoading(false);
@@ -722,7 +726,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Đã nhận sản phẩm trả lại:
+              {orderActionMessage.receivedReturnedProduct}:
               <span className="font-bold">
                 {data.email || data.emailcurrent} -{" "}
                 <span className="font-bold">
@@ -734,7 +738,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating stutus...",
+          loading: orderActionMessage.updatingStatus,
           success: (message) => {
             router.refresh();
             return message;
@@ -751,13 +755,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Đã xảy ra lỗi khi nhận đơn.";
+              return orderActionMessage.somethingWentWrong;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi nhận đơn.");
+      toast.error(orderActionMessage.somethingWentWrong);
     } finally {
       setLoading(false);
     }
@@ -779,7 +783,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
+            <span className="sr-only">{orderActionMessage.openMenu}</span>
             <MoreHorizontal className="w-4 h-4" />
           </Button>
         </DropdownMenuTrigger>
@@ -787,7 +791,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           {user?.role === "STAFF" && (
             <>
               <DropdownMenuLabel>
-                {hasActions ? "Actions" : "Trống"}
+                {hasActions
+                  ? orderActionMessage.actions
+                  : orderActionMessage.empty}
               </DropdownMenuLabel>
 
               {data.address !== "" &&
@@ -800,7 +806,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                     }
                   >
                     <Pin className="h-4 w-4 mr-2" />
-                    Địa chỉ
+                    {orderActionMessage.address}
                   </DropdownMenuItem>
                 )}
               {["Da_soan_hang_xong", "Da_nhan_tai_cua_hang"].includes(
@@ -812,7 +818,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                       onClick={PickupStoreSuccess}
                     >
                       <ReceiptText className="h-4 w-4 mr-2" />
-                      Đã nhận tại cửa hàng
+                      {orderActionMessage.receivedAtStore}
                     </DropdownMenuItem>
                   )
                 : data.debtShipper && (
@@ -821,20 +827,20 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                       onClick={giveMoneyDebtShipper}
                     >
                       <ReceiptText className="h-4 w-4 mr-2" />
-                      Lấy tiền hàng từ shipper
+                      {orderActionMessage.collectMoneyFromShipper}
                     </DropdownMenuItem>
                   )}
               {(data.status === "Da_huy" || data.status === "Tra_hang") && (
                 <DropdownMenuItem disabled={loading} onClick={redeliveryOrder}>
                   <ReceiptText className="h-4 w-4 mr-2" />
-                  Giao lại hàng
+                  {orderActionMessage.resendGoods}
                 </DropdownMenuItem>
               )}
             </>
           )}
 
           {user?.role !== "STAFF" && user?.role !== "ADMIN" && (
-            <DropdownMenuLabel>Trống</DropdownMenuLabel>
+            <DropdownMenuLabel>{orderActionMessage.empty}</DropdownMenuLabel>
           )}
 
           {user?.role === "ADMIN" && (
@@ -850,13 +856,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                     }
                   >
                     <Pin className="h-4 w-4 mr-2" />
-                    Địa chỉ
+                    {orderActionMessage.address}
                   </DropdownMenuItem>
                 )}
 
               <DropdownMenuItem disabled={loading} onClick={PickupStoreSuccess}>
                 <ReceiptText className="h-4 w-4 mr-2" />
-                Đã nhận tại cửa hàng
+                {orderActionMessage.receivedAtStore}
               </DropdownMenuItem>
 
               <DropdownMenuItem
@@ -864,22 +870,22 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                 onClick={giveMoneyDebtShipper}
               >
                 <ReceiptText className="h-4 w-4 mr-2" />
-                Lấy tiền hàng từ shipper
+                {orderActionMessage.collectMoneyFromShipper}
               </DropdownMenuItem>
 
               <DropdownMenuItem disabled={loading} onClick={redeliveryOrder}>
                 <ReceiptText className="h-4 w-4 mr-2" />
-                Giao lại hàng
+                {orderActionMessage.resendGoods}
               </DropdownMenuItem>
 
               <DropdownMenuItem disabled={loading} onClick={comfirmOrder}>
                 <Pin className="h-4 w-4 mr-2" />
-                Xác nhận đơn hàng
+                {orderActionMessage.resendGoods}
               </DropdownMenuItem>
 
               <DropdownMenuItem disabled={loading} onClick={pickupStore}>
                 <PackageCheck className="h-4 w-4 mr-2" />
-                Đã soạn xong
+                {orderActionMessage.prepared}
               </DropdownMenuItem>
 
               <DropdownMenuItem
@@ -887,17 +893,17 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                 onClick={prepareProcessOrder}
               >
                 <PackageCheck className="h-4 w-4 mr-2" />
-                Bàn giao shipper
+                {orderActionMessage.handoverToShipper}
               </DropdownMenuItem>
 
               <DropdownMenuItem disabled={loading} onClick={reciveProductStore}>
                 <Home className="h-4 w-4 mr-2" />
-                Soạn hàng nhận tại cửa hàng
+                {orderActionMessage.orderPreparedAtStore}
               </DropdownMenuItem>
 
               <DropdownMenuItem disabled={loading} onClick={shipperToReceive}>
                 <Undo className="h-4 w-4 mr-2" />
-                Shipper đến nhận
+                {orderActionMessage.shipperPickup}
               </DropdownMenuItem>
 
               <DropdownMenuItem
@@ -905,12 +911,12 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                 onClick={comfirmOrderDelivery}
               >
                 <Pin className="h-4 w-4 mr-2" />
-                Nhận đơn
+                {orderActionMessage.receiveOrder}
               </DropdownMenuItem>
 
               <DropdownMenuItem disabled={loading} onClick={receiveReturn}>
                 <Pin className="h-4 w-4 mr-2" />
-                Nhận hàng trả
+                {orderActionMessage.receiveReturnedGoods}
               </DropdownMenuItem>
 
               <DropdownMenuItem
@@ -918,7 +924,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                 onClick={returnedProductReceived}
               >
                 <PackageCheck className="h-4 w-4 mr-2" />
-                Đã nhận lại hàng
+                {orderActionMessage.goodsReceivedBack}
               </DropdownMenuItem>
 
               <DropdownMenuItem
@@ -926,7 +932,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                 onClick={() => setOpenCustomImage(true)}
               >
                 <PackageCheck className="h-4 w-4 mr-2" />
-                Đã giao
+                {orderActionMessage.delivered}
               </DropdownMenuItem>
 
               <DropdownMenuItem
@@ -934,7 +940,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                 onClick={() => setOpen(true)}
               >
                 <PackageX className="h-4 w-4 mr-2" />
-                Hủy đơn hàng (lý do)
+                {orderActionMessage.cancelOrderReason}
               </DropdownMenuItem>
             </>
           )}
@@ -955,9 +961,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex space-x-3 items-center w-full">
-                          <span className="text-white">Hình ảnh đã giao</span>
+                          <span className="text-white">
+                            {orderActionMessage.deliveredImage}
+                          </span>
                           <span className="text-red-600 pl-1">(*)</span>
-                          <Recommend message="Hãy chụp 2 ảnh sản phẩm đã giao." />
+                          <Recommend
+                            message={orderActionMessage.takeTwoDeliveredImages}
+                          />
                         </FormLabel>
                         <FormControl>
                           <ImageUpload
@@ -967,7 +977,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                               if (field.value.length < 2) {
                                 field.onChange([...field.value, { url }]);
                               } else {
-                                toast.error("Chỉ chọn 2 ảnh sản phẩm rõ nét.");
+                                toast.error(
+                                  orderActionMessage.selectClearImages
+                                );
                               }
                             }}
                             onRemove={(url) =>
@@ -977,6 +989,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                                 ),
                               ])
                             }
+                            language={data.language}
                           />
                         </FormControl>
                         <FormMessage />
@@ -989,7 +1002,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                       disabled={loading}
                       onClick={() => setOpenCustomImage(false)}
                     >
-                      Cancel
+                      {orderActionMessage.cancel}
                     </Button>
 
                     <Button
@@ -998,7 +1011,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                       variant="destructive"
                     >
                       <span className="flex items-center">
-                        Gửi <SendHorizontal className="w-5 h-5 ml-1" />
+                        {orderActionMessage.send}{" "}
+                        <SendHorizontal className="w-5 h-5 ml-1" />
                       </span>
                     </Button>
                   </div>
@@ -1018,7 +1032,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                 type="text"
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
-                placeholder="Nhập lý do hủy đơn..."
+                placeholder={orderActionMessage.enterCancelReason}
                 disabled={loading}
               />
               <div className="flex justify-between px-2 mt-3">
@@ -1027,14 +1041,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                   onClick={cancelOrder}
                   className="dark:bg-black dark:text-white"
                 >
-                  Save
+                  {orderActionMessage.save}
                 </Button>
                 <Button
                   disabled={loading}
                   onClick={() => setOpen(false)}
                   className="dark:bg-black dark:text-white"
                 >
-                  Cancel
+                  {orderActionMessage.cancel}
                 </Button>
               </div>
             </div>

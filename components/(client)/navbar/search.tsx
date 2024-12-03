@@ -6,8 +6,13 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import SearchItem from "./_components/search-item";
+import { translateSearchProduct } from "@/translate/translate-client";
 
-export const SearchPage = () => {
+interface SearchPageProps {
+  languageToUse: string;
+}
+
+export const SearchPage = ({ languageToUse }: SearchPageProps) => {
   const router = useRouter();
   const [value, setValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -23,6 +28,9 @@ export const SearchPage = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []); // Empty dependency array to ensure this only registers once
+
+  //languages
+  const searchProductMessage = translateSearchProduct(languageToUse);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -68,7 +76,7 @@ export const SearchPage = () => {
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onFocus={handleInputFocus}
-          placeholder="Search Product..."
+          placeholder={searchProductMessage}
           className="rounded-r-none focus-visible:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0 bg-white"
         />
         {value && (
@@ -94,10 +102,12 @@ export const SearchPage = () => {
             onClick={closeModal} // Click outside to close the modal
           />
           <div
-            className={`fixed ${isHidden ? "top-16 lg:top-14" : "top-24 md:top-28 lg:top-24"} left-0 right-0 md:left-auto md:right-auto bg-white rounded-md shadow-md max-w-[23rem] md:max-w-md w-full z-[9999] mx-auto`}
+            className={`fixed ${
+              isHidden ? "top-16 lg:top-14" : "top-24 md:top-28 lg:top-24"
+            } left-0 right-0 md:left-auto md:right-auto bg-white rounded-md shadow-md max-w-[23rem] md:max-w-md w-full z-[9999] mx-auto`}
             onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
           >
-            <SearchItem value={value} />
+            <SearchItem value={value} languageToUse={languageToUse} />
           </div>
         </div>
       )}

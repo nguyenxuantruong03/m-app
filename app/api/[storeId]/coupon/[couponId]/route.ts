@@ -4,6 +4,7 @@ import prismadb from "@/lib/prismadb";
 import { ImageCoupon, UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
 import { stripe } from "@/lib/stripe";
+import { translateCouponIdDelete, translateCouponIdGet, translateCouponIdPatch } from "@/translate/translate-api";
 
 type CouponValue = string | string[] | number | Date | ImageCoupon[] |  undefined | null;
 
@@ -16,25 +17,29 @@ export async function GET(
   req: Request,
   { params }: { params: { couponId: string } }
 ) {
-  const userId = await currentUser();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const couponIdGetMessage = translateCouponIdGet(LanguageToUse)
+
   try {
     if (!params.couponId) {
       return new NextResponse(
-        JSON.stringify({ error: "Coupon id is required!" }),
+        JSON.stringify({ error: couponIdGetMessage.couponIdRequired }),
         { status: 400 }
       );
     }
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: couponIdGetMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xem coupon!" }),
+        JSON.stringify({ error: couponIdGetMessage.permissionDenied }),
         { status: 403 }
       );
     }
@@ -51,7 +56,7 @@ export async function GET(
     return NextResponse.json(coupon);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get coupon." }),
+      JSON.stringify({ error: couponIdGetMessage.internalError }),
       { status: 500 }
     );
   }
@@ -61,26 +66,28 @@ export async function DELETE(
   req: Request,
   { params }: { params: { couponId: string; storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const couponIdDeleteMessage = translateCouponIdDelete(LanguageToUse)
   try {
-    const userId = await currentUser();
-
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: couponIdDeleteMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xóa coupon!" }),
+        JSON.stringify({ error: couponIdDeleteMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!params.couponId) {
       return new NextResponse(
-        JSON.stringify({ error: "Coupon id is required!" }),
+        JSON.stringify({ error: couponIdDeleteMessage.couponIdRequired }),
         { status: 400 }
       );
     }
@@ -93,7 +100,7 @@ export async function DELETE(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: couponIdDeleteMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -139,14 +146,14 @@ export async function DELETE(
         storeId: params.storeId,
         type: "DELETECOUPON",
         delete: changes,
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(coupon);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete coupon." }),
+      JSON.stringify({ error: couponIdDeleteMessage.internalError }),
       { status: 500 }
     );
   }
@@ -156,11 +163,13 @@ export async function PATCH(
   req: Request,
   { params }: { params: { couponId: string; storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const couponIdPatchMessage = translateCouponIdPatch(LanguageToUse)
+
   try {
-    const userId = await currentUser();
-
     const body = await req.json();
-
     const {
       name,
       durationinmoth,
@@ -172,33 +181,29 @@ export async function PATCH(
       description,
     } = body;
 
-    if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
-    }
-
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền cập nhật coupon!" }),
+        JSON.stringify({ error: couponIdPatchMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (!userId) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: couponIdPatchMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+      return new NextResponse(JSON.stringify({ error: couponIdPatchMessage.nameRequired }), {
         status: 400,
       });
     }
 
     if (!percent) {
       return new NextResponse(
-        JSON.stringify({ error: "Percent is required!" }),
+        JSON.stringify({ error: couponIdPatchMessage.percentRequired }),
         {
           status: 400,
         }
@@ -207,14 +212,14 @@ export async function PATCH(
 
     if (!imagecoupon || !imagecoupon.length) {
       return new NextResponse(
-        JSON.stringify({ error: "Imagecoupon is required!" }),
+        JSON.stringify({ error: couponIdPatchMessage.imageCouponRequired }),
         { status: 400 }
       );
     }
 
     if (!params.couponId) {
       return new NextResponse(
-        JSON.stringify({ error: "CouponId id is required!" }),
+        JSON.stringify({ error: couponIdPatchMessage.couponIdRequired }),
         { status: 400 }
       );
     }
@@ -227,7 +232,7 @@ export async function PATCH(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: couponIdPatchMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -327,14 +332,14 @@ export async function PATCH(
         newChange: newChanges,
         oldChange: oldChanges,
         type: "UPDATECOUPON",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(couponupdate);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error patch coupon." }),
+      JSON.stringify({ error: couponIdPatchMessage.internalError }),
       { status: 500 }
     );
   }

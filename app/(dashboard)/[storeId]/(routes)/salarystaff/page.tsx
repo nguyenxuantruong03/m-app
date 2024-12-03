@@ -1,12 +1,13 @@
 import prismadb from "@/lib/prismadb";
 import { RoleGate } from "@/components/auth/role-gate";
-import { currentRole } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
 import { SalaryStaffsColumn } from "./components/column";
 import SalaryStaffClient from "./components/client";
 import { formatter } from "@/lib/utils";
 
 const SalaryStaff = async () => {
+  const user = await currentUser()
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN;
   const showOrderRole = isRole;
@@ -34,6 +35,7 @@ const SalaryStaff = async () => {
       isPaid: item.isPaid,
       degree: item.user.degree,
       createdAt: item.createdAt,
+      language: user?.language || "vi",
     };
   });
 

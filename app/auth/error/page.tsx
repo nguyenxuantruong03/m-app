@@ -1,6 +1,6 @@
 import ErrorCard from "@/components/auth/error-card";
 
-const AuthErrorPage = async () => {
+const AuthErrorPage = () => {
   return (
     <>
       <ErrorCard />

@@ -34,6 +34,7 @@ import { CommentColumn } from "@/app/(dashboard)/[storeId]/(routes)/comment/comp
 import { SystemsColumn } from "@/app/(dashboard)/[storeId]/(routes)/system/components/column";
 import { StoreColumn } from "@/app/(dashboard)/store/components/columns";
 import { FeedBackColumn } from "@/app/(dashboard)/[storeId]/(routes)/feedback/components/columns";
+import { translateDownloadFile } from "@/translate/translate-dashboard";
 
 interface DownloadfileProps {
   data:
@@ -56,10 +57,14 @@ interface DownloadfileProps {
     | StoreColumn[]
     | FeedBackColumn[]
   filename: string;
+  languageToUse: string;
 }
 
-const Downloadfile: React.FC<DownloadfileProps> = ({ data, filename }) => {
+const Downloadfile: React.FC<DownloadfileProps> = ({ data, filename,languageToUse }) => {
   const [isMounted, setIsMounted] = useState(false);
+
+  //language 
+  const downloadFileMessage = translateDownloadFile(languageToUse)
 
   useEffect(() => {
     setIsMounted(true);
@@ -118,22 +123,22 @@ const Downloadfile: React.FC<DownloadfileProps> = ({ data, filename }) => {
         <DropdownMenuTrigger>
           <Button>
             <FolderDown className="mr-2 h-4 w-4" />
-            Download File
+            {downloadFileMessage.downloadFile}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuLabel>Statistical documents</DropdownMenuLabel>
+          <DropdownMenuLabel>{downloadFileMessage.statisticalDocuments}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
             <Button onClick={handlePdfDownload}>
               <FileDown className="mr-2 h-4 w-4" />
-              Tải xuống pdf
+              {downloadFileMessage.downloadPdf}
             </Button>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Button onClick={handleDownload}>
               <FileDown className="mr-2 h-4 w-4" />
-              Tải xuống excel
+              {downloadFileMessage.downloadExcel}
             </Button>
           </DropdownMenuItem>
         </DropdownMenuContent>

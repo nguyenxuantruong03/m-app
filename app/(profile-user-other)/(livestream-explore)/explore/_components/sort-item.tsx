@@ -1,15 +1,31 @@
-"use client"
+"use client";
 import {
-    Sheet,
-    SheetContent,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger
-  } from "@/components/ui/sheet";
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { AlignRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  translateNewest,
+  translateOldest,
+  translateSortPost,
+  translateTrending,
+} from "@/translate/translate-client";
 
-const SortItem = ({ setSortCriteria }: { setSortCriteria: (criteria: string) => void }) => {
+const SortItem = ({
+  setSortCriteria,
+  languageToUse,
+}: {
+  setSortCriteria: (criteria: string) => void;
+  languageToUse: string;
+}) => {
+  const sortPostMessage = translateSortPost(languageToUse);
+  const newestMessage = translateNewest(languageToUse);
+  const oldestMessage = translateOldest(languageToUse);
+  const trendingMessage = translateTrending(languageToUse);
   return (
     <>
       <Sheet>
@@ -18,12 +34,27 @@ const SortItem = ({ setSortCriteria }: { setSortCriteria: (criteria: string) => 
         </SheetTrigger>
         <SheetContent className="space-y-4" side="right">
           <SheetHeader>
-            <SheetTitle>Sắp xếp bài đăng</SheetTitle>
+            <SheetTitle>{sortPostMessage}</SheetTitle>
           </SheetHeader>
           <div className="flex flex-wrap gap-2">
-            <Button variant="secondary" onClick={() => setSortCriteria('newest')}>Mới nhất</Button>
-            <Button variant="secondary" onClick={() => setSortCriteria('oldest')}>Cũ nhất</Button>
-            <Button variant="secondary" onClick={() => setSortCriteria('trending')}>Xu hướng</Button>
+            <Button
+              variant="secondary"
+              onClick={() => setSortCriteria("newest")}
+            >
+              {newestMessage}
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => setSortCriteria("oldest")}
+            >
+              {oldestMessage}
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => setSortCriteria("trending")}
+            >
+              {trendingMessage}
+            </Button>
           </div>
         </SheetContent>
       </Sheet>

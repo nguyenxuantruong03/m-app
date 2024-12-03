@@ -9,6 +9,8 @@ import { useCurrentRole } from "@/hooks/use-current-role";
 import { SystemsColumn, columns } from "./column";
 import Downloadfile from "@/components/file/downloadfilepage";
 import { useState } from "react";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { getSystemClient } from "@/translate/translate-dashboard";
 
 interface SettingUserClientProps {
   data: SystemsColumn[];
@@ -19,14 +21,23 @@ const SettingUserClient: React.FC<SettingUserClientProps> = ({ data }) => {
   const isRole = role === UserRole.ADMIN;
   const [open, setOpen] = useState(false);
   const showAPIRole = isRole;
+  //language
+  const user = useCurrentUser();
+  const languageToUse = user?.language || "vi";
+  const systemClientMessage = getSystemClient(languageToUse)
+
   return (
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Hệ thống (${data.length})`}
-          description="Quản lý hệ thống"
+          title={`${systemClientMessage.system} (${data.length})`}
+          description={systemClientMessage.systemManagement}
         />
-        <Downloadfile data={data} filename="settinguser" />
+        <Downloadfile
+          data={data}
+          filename="settinguser"
+          languageToUse={languageToUse}
+        />
       </div>
       <Separator />
       <DataTable
@@ -37,9 +48,10 @@ const SettingUserClient: React.FC<SettingUserClientProps> = ({ data }) => {
         onDelete={() => {}}
         setOpen={setOpen}
         open={open}
+        languageToUse={languageToUse}
       />
       {showAPIRole && (
-        <Heading title="Api" description="API calls for System" />
+        <Heading title={systemClientMessage.api} description={systemClientMessage.apiCallsForSystem} />
       )}
       <Separator />
       <ApiList entityName="system" />

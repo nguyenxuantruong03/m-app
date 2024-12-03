@@ -26,13 +26,25 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import FormSuccess from "@/components/form-success";
 import FormError from "@/components/form-error";
 import { useRouter } from "next/navigation";
+import {
+  getToastError,
+  translateCancel,
+  translateChangeLinkedInLink,
+  translateLinkedInPath,
+  translateSave,
+} from "@/translate/translate-client";
 
 interface FormLinkLinkedInProps {
   classNames?: string;
   setOpen?: Dispatch<SetStateAction<boolean>>;
+  languageToUse: string;
 }
 
-const FormLinkLinkedIn = ({ classNames, setOpen }: FormLinkLinkedInProps) => {
+const FormLinkLinkedIn = ({
+  classNames,
+  setOpen,
+  languageToUse,
+}: FormLinkLinkedInProps) => {
   const user = useCurrentUser();
   const router = useRouter();
   const { update } = useSession();
@@ -49,6 +61,13 @@ const FormLinkLinkedIn = ({ classNames, setOpen }: FormLinkLinkedInProps) => {
     }
   }, []);
 
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const cancelMessage = translateCancel(languageToUse);
+  const saveMessage = translateSave(languageToUse);
+  const changeLinkedInLinkMessage = translateChangeLinkedInLink(languageToUse);
+  const linkedInPathMessage = translateLinkedInPath(languageToUse);
+
   const form = useForm<z.infer<typeof SettingSchema>>({
     resolver: zodResolver(SettingSchema),
     defaultValues: {
@@ -59,15 +78,13 @@ const FormLinkLinkedIn = ({ classNames, setOpen }: FormLinkLinkedInProps) => {
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
     // Kiểm tra giá trị linklinkedin nhập vào và user?.linklinkedin
     if (values.linklinkedin === user?.linklinkedin) {
-      setError(
-        "Hãy thay đổi link LinkedIn mới link LinkedIn trên đang được sử dụng."
-      );
+      setError(changeLinkedInLinkMessage);
       return;
     }
     setSuccess("");
     setError("");
     startTransition(() => {
-      setting(values)
+      setting(values, languageToUse)
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -80,7 +97,7 @@ const FormLinkLinkedIn = ({ classNames, setOpen }: FormLinkLinkedInProps) => {
           }
         })
         .catch(() => {
-          setError("Something went wrong");
+          setError(toastErrorMessage);
         });
     });
   };
@@ -96,7 +113,7 @@ const FormLinkLinkedIn = ({ classNames, setOpen }: FormLinkLinkedInProps) => {
             name="linklinkedin"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Link LinkedIn</FormLabel>
+                <FormLabel>{linkedInPathMessage}</FormLabel>
                 <FormControl>
                   <Input
                     id="linklinkedin-input"
@@ -129,7 +146,7 @@ const FormLinkLinkedIn = ({ classNames, setOpen }: FormLinkLinkedInProps) => {
               onClick={() => setOpen?.(false)}
               disabled={isPending}
             >
-              Cancel
+              {cancelMessage}
             </Button>
           )}
           <Button
@@ -138,7 +155,7 @@ const FormLinkLinkedIn = ({ classNames, setOpen }: FormLinkLinkedInProps) => {
             type="submit"
             disabled={isPending}
           >
-            Save
+            {saveMessage}
           </Button>
         </div>
       </form>

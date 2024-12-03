@@ -1,35 +1,39 @@
 import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
+import { currentUser } from "@/lib/auth";
+import { translateEmojiDelete, translateEmojiGet, translateEmojiPost } from "@/translate/translate-api";
 
 export async function POST(req: Request) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const emojiPostMessage = translateEmojiPost(LanguageToUse)
   try {
     const body = await req.json();
-
     const { commentId, emoji, userId, productId, reviewId } = body;
-
     if (!userId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: emojiPostMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
     if (!commentId && !reviewId) {
       return new NextResponse(
-        JSON.stringify({ error: "At least one ID is required!" }),
+        JSON.stringify({ error: emojiPostMessage.commentOrReviewIdNotFound }),
         { status: 400 }
       );
     }
 
     if (!emoji) {
-      return new NextResponse(JSON.stringify({ error: "Emoji is required!" }), {
+      return new NextResponse(JSON.stringify({ error: emojiPostMessage.emojiRequired }), {
         status: 400,
       });
     }
 
     if (!productId) {
       return new NextResponse(
-        JSON.stringify({ error: "productId is required!" }),
+        JSON.stringify({ error: emojiPostMessage.productIdRequired }),
         { status: 400 }
       );
     }
@@ -75,7 +79,7 @@ export async function POST(req: Request) {
           break;
         default:
           return new NextResponse(
-            JSON.stringify({ error: "Invalid emoji type!" }),
+            JSON.stringify({ error: emojiPostMessage.invalidEmojiType }),
             { status: 400 }
           );
       }
@@ -132,7 +136,7 @@ export async function POST(req: Request) {
           break;
         default:
           return new NextResponse(
-            JSON.stringify({ error: "Invalid emoji type!" }),
+            JSON.stringify({ error: emojiPostMessage.invalidEmojiType }),
             { status: 400 }
           );
       }
@@ -151,15 +155,19 @@ export async function POST(req: Request) {
     }
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error post emoji." }),
+      JSON.stringify({ error: emojiPostMessage.internalError }),
       { status: 500 }
     );
   }
 }
 
 export async function DELETE(req: Request) {
-  const body = await req.json();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const emojiDeleteMessage = translateEmojiDelete(LanguageToUse)
 
+  const body = await req.json();
   const { commentId, emoji, userId, reviewId } = body;
   try {
     if (commentId) {
@@ -172,7 +180,7 @@ export async function DELETE(req: Request) {
       });
 
       if (!emojiData) {
-        return new NextResponse(JSON.stringify({ error: "Emoji not found." }), {
+        return new NextResponse(JSON.stringify({ error: emojiDeleteMessage.emojiNotFound }), {
           status: 404,
         });
       }
@@ -194,7 +202,7 @@ export async function DELETE(req: Request) {
       });
 
       if (!emojiData) {
-        return new NextResponse(JSON.stringify({ error: "Emoji not found." }), {
+        return new NextResponse(JSON.stringify({ error: emojiDeleteMessage.emojiNotFound }), {
           status: 404,
         });
       }
@@ -209,13 +217,17 @@ export async function DELETE(req: Request) {
     }
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete emojie." }),
+      JSON.stringify({ error: emojiDeleteMessage.internalError }),
       { status: 500 }
     );
   }
 }
 
 export async function GET(req: Request) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const emojiGetMessage = translateEmojiGet(LanguageToUse)
   try {
     const emojidata = await prismadb.emoji.findMany({
       include: {
@@ -234,7 +246,7 @@ export async function GET(req: Request) {
     return NextResponse.json(emojidata);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get emojie." }),
+      JSON.stringify({ error: emojiGetMessage }),
       { status: 500 }
     );
   }

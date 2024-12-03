@@ -2,6 +2,7 @@ import { currentUser } from "@/lib/auth";
 import { sendBonus, sendunBonus } from "@/lib/mail";
 import prismadb from "@/lib/prismadb";
 import { formatter } from "@/lib/utils";
+import { translateSalaryStaffGet, translateSalaryStaffPatch, translateSalaryStaffPost } from "@/translate/translate-api";
 import { EventCalendar, User, UserRole } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/library";
 import { format } from "date-fns";
@@ -15,19 +16,22 @@ interface ChangeRecord {
 }
 
 export async function GET(req: Request) {
-  const userId = await currentUser();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const salaryStaffGetMessage = translateSalaryStaffGet(LanguageToUse)
 
   try {
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: salaryStaffGetMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN) {
+    if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xem salarystaff!" }),
+        JSON.stringify({ error: salaryStaffGetMessage.permissionDenied }),
         { status: 403 }
       );
     }
@@ -36,7 +40,7 @@ export async function GET(req: Request) {
     return NextResponse.json(salarystaff);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get salarystaff." }),
+      JSON.stringify({ error: salaryStaffGetMessage.internalError }),
       { status: 500 }
     );
   }
@@ -46,47 +50,50 @@ export async function PATCH(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
-  const userId = await currentUser();
-  const body = await req.json();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const salaryStaffPatchMessage = translateSalaryStaffPatch(LanguageToUse)
 
+  const body = await req.json();
   const { bonusAmount, bonusTitle, bonus } = body;
 
   try {
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: salaryStaffPatchMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN) {
+    if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền cập nhật salarystaff!" }),
+        JSON.stringify({ error: salaryStaffPatchMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!bonus) {
-      return new NextResponse(JSON.stringify({ error: "Bonus is required." }), {
+      return new NextResponse(JSON.stringify({ error: salaryStaffPatchMessage.bonusRequired }), {
         status: 400,
       });
     }
 
     if (!bonusTitle) {
       return new NextResponse(
-        JSON.stringify({ error: "Bonus title is required." }),
+        JSON.stringify({ error: salaryStaffPatchMessage.bonusTitleRequired }),
         { status: 400 }
       );
     }
 
     //Dùng để kiểm tra cũ chưa update
     const existingEventcalendar = await prismadb.eventCalendar.findUnique({
-      where: { id: userId?.id },
+      where: { id: user?.id },
     });
 
     let existingSalaryNotUpdate = await prismadb.caculateSalary.findFirst({
       where: {
-        userId: userId?.id,
+        userId: user?.id,
         eventcalendarId: existingEventcalendar?.id,
       },
     });
@@ -103,20 +110,20 @@ export async function PATCH(
     const today = new Date();
     const formattedDate = format(today, "E '-' dd/MM/yyyy '-' HH:mm:ss a");
     await sendBonus(
-      userId?.email,
-      userId?.name,
+      user?.email,
+      user?.name,
       formatterbonus,
       formattercurrentmoney,
       bonusTitle,
       formattedDate
     );
     const eventcalendar = await prismadb.eventCalendar.findUnique({
-      where: { id: userId?.id },
+      where: { id: user?.id },
     });
 
     let existingSalary = await prismadb.caculateSalary.findFirst({
       where: {
-        userId: userId?.id,
+        userId: user?.id,
         eventcalendarId: eventcalendar?.id,
       },
     });
@@ -168,14 +175,14 @@ export async function PATCH(
         oldChange: oldChanges,
         newChange: newChanges,
         type: "UPDATEBONUS",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(caculateSalary);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error patch salarystaff." }),
+      JSON.stringify({ error: salaryStaffPatchMessage.internalError }),
       { status: 500 }
     );
   }
@@ -185,48 +192,51 @@ export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
-  const userId = await currentUser();
-  const body = await req.json();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const salaryStaffPostMessage = translateSalaryStaffPost(LanguageToUse)
 
+  const body = await req.json();
   const { unbonusAmount, unbonusTitle, unbonus } = body;
 
   try {
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: salaryStaffPostMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN) {
+    if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền tạo mới salarystaff!" }),
+        JSON.stringify({ error: salaryStaffPostMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!unbonus) {
       return new NextResponse(
-        JSON.stringify({ error: "Unbonus is required." }),
+        JSON.stringify({ error: salaryStaffPostMessage.unbonusRequired }),
         { status: 400 }
       );
     }
 
     if (!unbonusTitle) {
       return new NextResponse(
-        JSON.stringify({ error: "Unbonus title is required." }),
+        JSON.stringify({ error: salaryStaffPostMessage.unbonusTitleRequired }),
         { status: 400 }
       );
     }
 
     //Dùng để kiểm tra cũ chưa update
     const existingEventcalendar = await prismadb.eventCalendar.findUnique({
-      where: { id: userId?.id },
+      where: { id: user?.id },
     });
 
     let existingSalaryNotUpdate = await prismadb.caculateSalary.findFirst({
       where: {
-        userId: userId?.id,
+        userId: user?.id,
         eventcalendarId: existingEventcalendar?.id,
       },
     });
@@ -243,20 +253,20 @@ export async function POST(
     const today = new Date();
     const formattedDate = format(today, "E '-' dd/MM/yyyy '-' HH:mm:ss a");
     await sendunBonus(
-      userId?.email,
-      userId?.name,
+      user?.email,
+      user?.name,
       formatteunbonus,
       formattercurrentmoney,
       unbonusTitle,
       formattedDate
     );
     const eventcalendar = await prismadb.eventCalendar.findUnique({
-      where: { id: userId?.id },
+      where: { id: user?.id },
     });
 
     let existingSalary = await prismadb.caculateSalary.findFirst({
       where: {
-        userId: userId?.id,
+        userId: user?.id,
         eventcalendarId: eventcalendar?.id,
       },
     });
@@ -308,14 +318,14 @@ export async function POST(
         oldChange: oldChanges,
         newChange: newChanges,
         type: "UPDATEUNBONUS",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(caculateSalary);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error post salarystaff." }),
+      JSON.stringify({ error: salaryStaffPostMessage.internalError }),
       { status: 500 }
     );
   }

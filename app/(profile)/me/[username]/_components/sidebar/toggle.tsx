@@ -3,12 +3,28 @@
 import { Button } from "@/components/ui/button";
 import { Hint } from "@/components/ui/hint";
 import { useCreatorSidebar } from "@/hooks/stream/use-creator-sidebar";
+import {
+  translateCollapse,
+  translateDashboard,
+  translateExpand,
+  translateHideSidebar,
+} from "@/translate/translate-client";
 import { ArrowLeftFromLine, ArrowRightFromLine, EyeOff } from "lucide-react";
 
-const Toggle = () => {
+interface ToggleProps {
+  languageToUse: string;
+}
+
+const Toggle = ({ languageToUse }: ToggleProps) => {
   const { hideAll, onHide, collapsed, onCollapsed, onExpand } =
     useCreatorSidebar((state) => state);
-  const label = collapsed ? "Expand" : "Collapse";
+
+  const dashboardMessage = translateDashboard(languageToUse);
+  const expandMessage = translateExpand(languageToUse);
+  const collapseMessage = translateCollapse(languageToUse);
+  const hideSidebarMessage = translateHideSidebar(languageToUse);
+
+  const label = collapsed ? expandMessage : collapseMessage;
   return (
     <>
       {collapsed && (
@@ -24,7 +40,7 @@ const Toggle = () => {
       {!hideAll && (
         <div className="flex lg:hidden items-center w-full justify-center">
           {/* Hide/Show button */}
-          <Hint label="Hide Sidebar" side="right" asChild>
+          <Hint label={hideSidebarMessage} side="right" asChild>
             <Button onClick={onHide} variant="ghost" className="h-auto p-2">
               <EyeOff className="h-4 w-4 text-gray-300" />
             </Button>
@@ -35,7 +51,7 @@ const Toggle = () => {
       {!collapsed && !hideAll && (
         <div className="p-3 pl-6 mb-2 flex items-center w-full justify-between">
           {/* "For you" section */}
-          <p className="font-semibold text-gray-300">Dashboard</p>
+          <p className="font-semibold text-gray-300">{dashboardMessage}</p>
 
           <div className="flex items-center space-x-2">
             {/* Collapse button */}
@@ -50,7 +66,7 @@ const Toggle = () => {
             </Hint>
 
             {/* Hide/Show button */}
-            <Hint label="Hide Sidebar" side="right" asChild>
+            <Hint label={hideSidebarMessage} side="right" asChild>
               <Button onClick={onHide} variant="ghost" className="h-auto p-2">
                 <EyeOff className="h-4 w-4 text-gray-300" />
               </Button>

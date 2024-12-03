@@ -12,17 +12,21 @@ import { PictureInPictureControl } from "./picture-in-picture";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import ShoppingCardInLive from "./shopping-cart";
+import { getToastError } from "@/translate/translate-client";
+import toast from "react-hot-toast";
 
 interface LiveVideoProps {
   participant: Participant;
   showExtension: boolean;
   nameuser: string;
+  languageToUse: string
 }
 
 export const LiveVideo = ({
   participant,
   showExtension,
-  nameuser
+  nameuser,
+  languageToUse
 }: LiveVideoProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -30,6 +34,9 @@ export const LiveVideo = ({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [volume, setVolume] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
+
+  //language
+  const toastErrorMessage = getToastError(languageToUse)
 
   const onVolumeChange = (value: number) => {
     setVolume(+value);
@@ -76,14 +83,14 @@ export const LiveVideo = ({
           await videoRef.current.pause(); // Đảm bảo dừng phát
           setIsPlaying(false); // Cập nhật trạng thái phát/tạm dừng
         } catch (error) {
-          console.error("Error pausing video:", error);
+          toast.error(toastErrorMessage);
         }
       } else {
         try {
           await videoRef.current.play(); // Đảm bảo phát lại
           setIsPlaying(true); // Cập nhật trạng thái phát/tạm dừng
         } catch (error) {
-          console.error("Error playing video:", error);
+          toast.error(toastErrorMessage);
         }
       }
     }
@@ -140,16 +147,18 @@ export const LiveVideo = ({
         >
           <div className="flex items-center space-x-2">
           {showExtension && (
-            <ShoppingCardInLive isPin={false}/>
+            <ShoppingCardInLive isPin={false} languageToUse={languageToUse}/>
           )}
             <PlayPauseControl
               isPlaying={isPlaying}
               onToggle={togglePlayPause}
+              languageToUse={languageToUse}
             />
             <VolumeControl
               onChange={onVolumeChange}
               value={volume}
               onToggle={toggleMute}
+              languageToUse={languageToUse}
             />
           </div>
           {showExtension && (
@@ -157,8 +166,9 @@ export const LiveVideo = ({
               <FullscreenControl
                 isFullscreen={isFullscreen}
                 onToggle={toggleFullscreen}
+                languageToUse={languageToUse}
               />
-              <PictureInPictureControl videoElement={videoRef.current} />
+              <PictureInPictureControl videoElement={videoRef.current} languageToUse={languageToUse}/>
             </div>
           )}
         </div>

@@ -4,40 +4,47 @@ import { usePathname, useRouter, useParams } from "next/navigation";
 
 import "./style.css";
 import { useState, useEffect } from "react";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { getOrderNavbar } from "@/translate/translate-dashboard";
 const NabarOrder = () => {
   const params = useParams();
   const pathname = usePathname();
   const router = useRouter();
+  //language
+  const user = useCurrentUser();
+  const languageToUse = user?.language || "vi";
+  const orderNavbarMessage = getOrderNavbar(languageToUse)
+
   const [currentStep, setCurrentStep] = useState(1);
 
   const navbarOrder = [
     {
       href: `/${params.storeId}/orders/order-confirmation`,
-      label: "Xác nhận đơn hàng",
+      label: orderNavbarMessage.confirmOrder,
       icon: <Package className="w-4 h-4" />,
       active: pathname === `/${params.storeId}/orders/order-confirmation`,
     },
     {
       href: `/${params.storeId}/orders/pickup-store`,
-      label: "Nhận tại cửa hàng",
+      label: orderNavbarMessage.pickUpAtStore,
       icon: <Home className="w-4 h-4" />,
       active: pathname === `/${params.storeId}/orders/pickup-store`,
     },
     {
       href: `/${params.storeId}/orders/order-process-prepare`,
-      label: "Soạn hàng",
+      label: orderNavbarMessage.prepareGoods,
       icon: <Truck className="w-4 h-4" />,
       active: pathname === `/${params.storeId}/orders/order-process-prepare`,
     },
     {
       href: `/${params.storeId}/orders`,
-      label: "Tổng quan đơn hàng",
+      label: orderNavbarMessage.orderOverview,
       icon: <PackageCheck className="w-4 h-4" />,
       active: pathname === `/${params.storeId}/orders`,
     },
     {
       href: `/${params.storeId}/orders/return-product`,
-      label: "Trả hàng",
+      label: orderNavbarMessage.returnGoods,
       icon: <Undo2 className="w-4 h-4" />,
       active: pathname === `/${params.storeId}/orders/return-product`,
     },

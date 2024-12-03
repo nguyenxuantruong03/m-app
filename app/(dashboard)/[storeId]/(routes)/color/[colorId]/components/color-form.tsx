@@ -24,30 +24,35 @@ import { Heading } from "@/components/ui/heading";
 import { AlertModal } from "@/components/modals/alert-modal";
 import { ChromePicker } from "react-color";
 import Recommend from "@/components/ui/recommend";
-
-const formSchema = z.object({
-  name: z.string().min(2,{message: "Nhập ít nhất 2 ký tự."}),
-  value: z.string().min(1).regex(/^#/, {
-    message: "Hãy nhập mã hex hợp lệ.",
-  }),
-});
-
-type ColorFormValues = z.infer<typeof formSchema>;
+import { getColorForm } from "@/translate/translate-dashboard";
 
 interface ColorFormProps {
   initialData: Color | null;
+  language: string
 }
 
-export const ColorForm: React.FC<ColorFormProps> = ({ initialData }) => {
+export const ColorForm: React.FC<ColorFormProps> = ({ initialData,language }) => {
   const params = useParams();
   const router = useRouter();
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const title = initialData ? "Edit color" : "Create color";
-  const description = initialData ? "Edit a color" : "Add a new color";
-  const action = initialData ? "Save changes" : "Create";
+  //language
+  const colorFormMessage = getColorForm(language)
+
+  const title = initialData ? colorFormMessage.editColor : colorFormMessage.createColor;
+  const description = initialData ? colorFormMessage.editAColor : colorFormMessage.addNewColor;
+  const action = initialData ? colorFormMessage.saveChanges : colorFormMessage.create;
+
+  const formSchema = z.object({
+    name: z.string().min(2,{message: colorFormMessage.enterAtLeast2Characters}),
+    value: z.string().min(1).regex(/^#/, {
+      message: colorFormMessage.enterValidHexCode,
+    }),
+  });
+  
+  type ColorFormValues = z.infer<typeof formSchema>;
 
   const form = useForm<ColorFormValues>({
     resolver: zodResolver(formSchema),
@@ -76,20 +81,20 @@ export const ColorForm: React.FC<ColorFormProps> = ({ initialData }) => {
           if (initialData) {
             return (
               <p>
-                Color <span className="font-bold">{response.data?.name}</span>{" "}
-                updated.
+                {colorFormMessage.color} <span className="font-bold">{response.data?.name}</span>{" "}
+                {colorFormMessage.updated}.
               </p>
             );
           } else {
             return (
               <p>
-                Color <span className="font-bold">{data.name}</span> created.
+                {colorFormMessage.color} <span className="font-bold">{data.name}</span> {colorFormMessage.created}.
               </p>
             );
           }
         }),
         {
-          loading: "Updating color...",
+          loading: colorFormMessage.updatingColor,
           success: (message) => {
             router.refresh();
             router.push(`/${params.storeId}/color`);
@@ -103,7 +108,7 @@ export const ColorForm: React.FC<ColorFormProps> = ({ initialData }) => {
             ) {
               return (error as { response: { data: { error: string } } }).response.data.error
             } else {
-              return "Something went wrong.";
+              return colorFormMessage.somethingWrong;
             }
           },
         }
@@ -120,7 +125,7 @@ export const ColorForm: React.FC<ColorFormProps> = ({ initialData }) => {
       await axios.delete(`/api/${params.storeId}/color/${params.colorId}`);
       router.refresh();
       router.push(`/${params.storeId}/color`);
-      toast.success("Color deleted.");
+      toast.success(colorFormMessage.colorDeleted);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -132,7 +137,7 @@ export const ColorForm: React.FC<ColorFormProps> = ({ initialData }) => {
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
-          "Make sure you removed all categories using this billboard first."
+          colorFormMessage.somethingWrong
         );
       }
     } finally {
@@ -148,6 +153,7 @@ export const ColorForm: React.FC<ColorFormProps> = ({ initialData }) => {
         onClose={() => setOpen(false)}
         onConfirm={onDelete}
         loading={loading}
+        languageToUse={language}
       />
       {/* update and create */}
       <div className="flex items-center justify-between">
@@ -178,13 +184,13 @@ export const ColorForm: React.FC<ColorFormProps> = ({ initialData }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Tên <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Tên của màu sác." />
+                    {colorFormMessage.name} <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message={colorFormMessage.colorName} />
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Enter name ..."
+                      placeholder={colorFormMessage.enterName}
                       {...field}
                     />
                   </FormControl>
@@ -199,14 +205,14 @@ export const ColorForm: React.FC<ColorFormProps> = ({ initialData }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Màu sắc <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Để chọn màu chính xác hãy biết được mã màu hoặc tìm trên mạng màu có code rgb,#..." />
+                    {colorFormMessage.color} <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message={colorFormMessage.colorDescription} />
                   </FormLabel>
                   <FormControl>
                     <div>
                       <Input
                         disabled={loading}
-                        placeholder="Enter color ..."
+                        placeholder={colorFormMessage.enterColor}
                         onFocus={() => setShowColorPicker(true)} // Khi Input được focus, hiển thị ColorPicker
                         {...field}
                       />

@@ -1,10 +1,32 @@
 import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
-import { Image, Imagesalientfeatures, ProductDetail, ProductType, UserRole } from "@prisma/client";
+import {
+  Image,
+  Imagesalientfeatures,
+  ProductDetail,
+  ProductType,
+  UserRole,
+} from "@prisma/client";
 import { currentUser } from "@/lib/auth";
+import { translateText } from "@/translate/translate-client";
+import {
+  translateProductIdDelete,
+  translateProductIdGet,
+  translateProductIdPatch,
+} from "@/translate/translate-api";
 
-type ProductValue = string | boolean | Date | string[] | number | Imagesalientfeatures[] | Image[] | ProductDetail | null | undefined;
+type ProductValue =
+  | string
+  | boolean
+  | Date
+  | string[]
+  | number
+  | Imagesalientfeatures[]
+  | Image[]
+  | ProductDetail
+  | null
+  | undefined;
 
 interface ChangeRecord {
   oldValue: ProductValue;
@@ -16,13 +38,20 @@ export async function GET(
   { params }: { params: { product8Id: string } }
 ) {
   const productType = ProductType.PRODUCT8;
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const productIdGetMessage = translateProductIdGet(LanguageToUse);
   try {
     if (!params.product8Id) {
       return new NextResponse(
-        JSON.stringify({ error: "Product8 id is required!" }),
+        JSON.stringify({ error: productIdGetMessage.productIdRequired }),
         { status: 400 }
       );
     }
+
+    const { searchParams } = new URL(req.url);
+    const language = searchParams.get("language") || "vi"; // Mặc định là "vi" nếu không có language
 
     const product = await prismadb.product.findUnique({
       where: {
@@ -42,9 +71,9 @@ export async function GET(
                   },
                   take: 1, // Take only the most recent entry
                 },
-              }
+              },
             },
-          }
+          },
         },
         responsecomment: {
           include: {
@@ -56,9 +85,9 @@ export async function GET(
                   },
                   take: 1, // Take only the most recent entry
                 },
-              }
+              },
             },
-          }
+          },
         },
         productdetail: {
           include: {
@@ -73,15 +102,213 @@ export async function GET(
             size3: true,
             size4: true,
             size5: true,
-          }
+          },
         },
       },
     });
 
-    return NextResponse.json(product);
+    // Kiểm tra nếu không tìm thấy billboard
+    if (!product) {
+      return new NextResponse(
+        JSON.stringify({ error: productIdGetMessage.productsNotFound }),
+        { status: 404 }
+      );
+    }
+
+    // Dịch tất cả các trường trong sản phẩm
+    const translatedProduct = {
+      ...product,
+      heading: await translateText(product.heading || "", language),
+      description: await translateText(product.description || "", language),
+      comment: await Promise.all(
+        product.comment.map(async (item: any) => ({
+          ...item,
+          comment: await translateText(item.comment || "", language),
+          user: {
+            ...item.user,
+            issued: await translateText(item.user.issued || "", language),
+            gender: await translateText(item.user.gender || "", language),
+            degree: await translateText(item.user.degree || "", language),
+            maritalStatus: await translateText(
+              item.user.maritalStatus || "",
+              language
+            ),
+            workingTime: await translateText(
+              item.user.workingTime || "",
+              language
+            ),
+          },
+        }))
+      ),
+      responsecomment: await Promise.all(
+        product.responsecomment.map(async (response: any) => ({
+          ...response,
+          description: await translateText(
+            response.description || "",
+            language
+          ),
+          user: {
+            ...response.user,
+            issued: await translateText(response.user.issued || "", language),
+            gender: await translateText(response.user.gender || "", language),
+            degree: await translateText(response.user.degree || "", language),
+            maritalStatus: await translateText(
+              response.user.maritalStatus || "",
+              language
+            ),
+            workingTime: await translateText(
+              response.user.workingTime || "",
+              language
+            ),
+          },
+        }))
+      ),
+      productdetail: {
+        ...product.productdetail,
+        title: await translateText(
+          product.productdetail?.title || "",
+          language
+        ),
+        name1: await translateText(
+          product.productdetail?.name1 || "",
+          language
+        ),
+        name2: await translateText(
+          product.productdetail?.name2 || "",
+          language
+        ),
+        name3: await translateText(
+          product.productdetail?.name3 || "",
+          language
+        ),
+        name4: await translateText(
+          product.productdetail?.name4 || "",
+          language
+        ),
+        name5: await translateText(
+          product.productdetail?.name5 || "",
+          language
+        ),
+        promotionheading: await translateText(
+          product.productdetail?.promotionheading || "",
+          language
+        ),
+        promotiondescription: await translateText(
+          product.productdetail?.promotiondescription || "",
+          language
+        ),
+        descriptionsalientfeatures: await translateText(
+          product.productdetail?.descriptionsalientfeatures || "",
+          language
+        ),
+        description2salientfeatures: await translateText(
+          product.productdetail?.description2salientfeatures || "",
+          language
+        ),
+        contentsalientfeatures: await translateText(
+          product.productdetail?.contentsalientfeatures || "",
+          language
+        ),
+        descriptionspecifications: await translateText(
+          product.productdetail?.descriptionspecifications || "",
+          language
+        ),
+        valuespecifications: await translateText(
+          product.productdetail?.valuespecifications || "",
+          language
+        ),
+        description2specifications: await translateText(
+          product.productdetail?.description2specifications || "",
+          language
+        ),
+        value2specifications: await translateText(
+          product.productdetail?.value2specifications || "",
+          language
+        ),
+        category: {
+          ...product.productdetail?.category,
+          name: await translateText(
+            product.productdetail?.category?.name || "",
+            language
+          ),
+        },
+        color1: {
+          ...product.productdetail?.color1,
+          name: await translateText(
+            product.productdetail?.color1?.name || "",
+            language
+          ),
+        },
+        color2: {
+          ...product.productdetail?.color2,
+          name: await translateText(
+            product.productdetail?.color2?.name || "",
+            language
+          ),
+        },
+        color3: {
+          ...product.productdetail?.color3,
+          name: await translateText(
+            product.productdetail?.color3?.name || "",
+            language
+          ),
+        },
+        color4: {
+          ...product.productdetail?.color4,
+          name: await translateText(
+            product.productdetail?.color4?.name || "",
+            language
+          ),
+        },
+        color5: {
+          ...product.productdetail?.color5,
+          name: await translateText(
+            product.productdetail?.color5?.name || "",
+            language
+          ),
+        },
+        size1: {
+          ...product.productdetail?.size1,
+          name: await translateText(
+            product.productdetail?.size1?.name || "",
+            language
+          ),
+        },
+        size2: {
+          ...product.productdetail?.size2,
+          name: await translateText(
+            product.productdetail?.size2?.name || "",
+            language
+          ),
+        },
+        size3: {
+          ...product.productdetail?.size3,
+          name: await translateText(
+            product.productdetail?.size3?.name || "",
+            language
+          ),
+        },
+        size4: {
+          ...product.productdetail?.size4,
+          name: await translateText(
+            product.productdetail?.size4?.name || "",
+            language
+          ),
+        },
+        size5: {
+          ...product.productdetail?.size5,
+          name: await translateText(
+            product.productdetail?.size5?.name || "",
+            language
+          ),
+        },
+      },
+    };
+
+    return NextResponse.json(translatedProduct);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get product8." }),
+      JSON.stringify({ error: `${productIdGetMessage.internalError}8` }),
       { status: 500 }
     );
   }
@@ -92,26 +319,29 @@ export async function DELETE(
   { params }: { params: { product8Id: string; storeId: string } }
 ) {
   const productType = ProductType.PRODUCT8;
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const productIdDeleteMessage = translateProductIdDelete(LanguageToUse);
   try {
-    const userId = await currentUser();
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: productIdDeleteMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xóa product!" }),
+        JSON.stringify({ error: productIdDeleteMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!params.product8Id) {
       return new NextResponse(
-        JSON.stringify({ error: "Product8 id is required!" }),
+        JSON.stringify({ error: productIdDeleteMessage.productIdRequired }),
         { status: 400 }
       );
     }
@@ -124,7 +354,7 @@ export async function DELETE(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: productIdDeleteMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -173,14 +403,14 @@ export async function DELETE(
         storeId: params.storeId,
         delete: changes,
         type: "DELETESƠN-PRODUCT",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(product);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete product8." }),
+      JSON.stringify({ error: `${productIdDeleteMessage.internalError}8` }),
       { status: 500 }
     );
   }
@@ -190,8 +420,11 @@ export async function PATCH(
   req: Request,
   { params }: { params: { product8Id: string; storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const productIdPatchMessage = translateProductIdPatch(LanguageToUse)
   try {
-    const userId = await currentUser();
     const productType = ProductType.PRODUCT8;
     const body = await req.json();
 
@@ -203,62 +436,61 @@ export async function PATCH(
       imagesalientfeatures,
       productdetailId,
       isFeatured,
-      isArchived
+      isArchived,
     } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error:productIdPatchMessage.userIdNotFound}),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền cập nhật product!" }),
+        JSON.stringify({ error: productIdPatchMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!name) {
-      return new NextResponse(
-        JSON.stringify({ error: "Name is required!" }),
-        { status: 400 }
-      );
+      return new NextResponse(JSON.stringify({ error: productIdPatchMessage.nameRequired }), {
+        status: 400,
+      });
     }
     if (!heading) {
       return new NextResponse(
-        JSON.stringify({ error: "Heading is required!" }),
+        JSON.stringify({ error: productIdPatchMessage.headingRequired }),
         { status: 400 }
       );
     }
     if (!description) {
       return new NextResponse(
-        JSON.stringify({ error: "Description is required!" }),
+        JSON.stringify({ error: productIdPatchMessage.descriptionRequired }),
         { status: 400 }
       );
     }
     if (!images || !images.length) {
       return new NextResponse(
-        JSON.stringify({ error: "Images is required!" }),
+        JSON.stringify({ error: productIdPatchMessage.imagesRequired }),
         { status: 400 }
       );
     }
     if (!productdetailId) {
       return new NextResponse(
-        JSON.stringify({ error: "ProductDetail is required!" }),
+        JSON.stringify({ error: productIdPatchMessage.productDetailRequired }),
         { status: 400 }
       );
     }
     if (!imagesalientfeatures || !imagesalientfeatures.length) {
       return new NextResponse(
-        JSON.stringify({ error: "Imagesalientfeatures is required!" }),
+        JSON.stringify({ error: productIdPatchMessage.imagesAlientFeaturesRequired }),
         { status: 400 }
       );
     }
     if (!params.product8Id) {
       return new NextResponse(
-        JSON.stringify({ error: "Product8 id is required!" }),
+        JSON.stringify({ error: productIdPatchMessage.productIdRequired }),
         { status: 405 }
       );
     }
@@ -271,7 +503,7 @@ export async function PATCH(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: productIdPatchMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -287,7 +519,7 @@ export async function PATCH(
         productdetail: true,
       },
     });
-    
+
     await prismadb.product.update({
       where: {
         id: params.product8Id,
@@ -389,14 +621,14 @@ export async function PATCH(
         newChange: newChanges,
         oldChange: oldChanges,
         type: "UPDATESƠN-PRODUCT",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(product);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error patch product8." }),
+      JSON.stringify({ error: `${productIdPatchMessage.internalError}8` }),
       { status: 500 }
     );
   }

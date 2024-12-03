@@ -1,6 +1,19 @@
 "use client";
 import { ChangeEvent, Dispatch, SetStateAction } from "react";
 import "../checkoutcash.css";
+import {
+  getCustomerInfoMessage,
+  getEnterZeroFirstMessage,
+  getFullNameMessage,
+  getGenderFemaleMessage,
+  getGenderMaleMessage,
+  getGenderOtherMessage,
+  getInvalidEmailMessage,
+  getMaxCharacterMessage,
+  getNoIndentationMessage,
+  getOnlyNumbersMessage,
+  getPhoneNumberMessage,
+} from "@/translate/translate-client";
 
 interface InfoCustomerProps {
   gender: string;
@@ -23,7 +36,8 @@ interface InfoCustomerProps {
   isNoneSelectDb: boolean;
   userRole: string;
   userId: string;
-  loading: boolean
+  loading: boolean;
+  language: string;
 }
 
 const InfoCustomer: React.FC<InfoCustomerProps> = ({
@@ -47,39 +61,53 @@ const InfoCustomer: React.FC<InfoCustomerProps> = ({
   isNoneSelectDb,
   userRole,
   userId,
-  loading
+  loading,
+  language,
 }) => {
+  //language
+  const onlyNumbersMessage = getOnlyNumbersMessage(language);
+  const enterZoroFirstMessage = getEnterZeroFirstMessage(language);
+  const maxCharacter20Message = getMaxCharacterMessage(language, 20);
+  const maxCharacter64Message = getMaxCharacterMessage(language, 64);
+  const noIdentationMessage = getNoIndentationMessage(language);
+  const invalidEmailMessage = getInvalidEmailMessage(language);
+  const customerInfoMessage = getCustomerInfoMessage(language);
+  const genderMaleMessage = getGenderMaleMessage(language);
+  const genderFemaleMessage = getGenderFemaleMessage(language);
+  const genderOtherMessage = getGenderOtherMessage(language);
+  const fullnameMessage = getFullNameMessage(language);
+  const phoneNumberMessage = getPhoneNumberMessage(language);
+
   const handlePhoneNumberChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    
-    if(value){
-      setPhoneNumberError("")
+
+    if (value) {
+      setPhoneNumberError("");
     }
-    
-    
+
     // Check if the input is numeric
     if (!/^\d+$/.test(value)) {
-      setPhoneNumberError("Vui lòng chỉ nhập số!");
+      setPhoneNumberError(onlyNumbersMessage);
       return;
     }
-    
+
     // Kiểm tra số đầu tiên là số 0
     if (value.length === 1 && value !== "0") {
-     setPhoneNumberError("Hãy nhập 0 trước!");
-     return;
-   }
-    
-    // Giới hạn độ dài của số điện thoại không quá 11 số
+      setPhoneNumberError(enterZoroFirstMessage);
+      return;
+    }
+
+    // Giới hạn độ dài của {phoneNumberMessage} không quá 11 số
     const limitedPhoneNumber = value.slice(0, 11);
 
-    // Cập nhật giá trị số điện thoại trong state và reset lỗi
+    // Cập nhật giá trị {phoneNumberMessage} trong state và reset lỗi
     setPhoneNumber(limitedPhoneNumber);
   };
 
   const handleRadioChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedGender = event.target.value;
-    if(selectedGender){
-      setGenderError("")
+    if (selectedGender) {
+      setGenderError("");
     }
     setGender(selectedGender);
   };
@@ -87,19 +115,19 @@ const InfoCustomer: React.FC<InfoCustomerProps> = ({
   const handleFullNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
 
-    if(value){
-      setFullNameError("")
+    if (value) {
+      setFullNameError("");
     }
 
     // Check if the length of the input exceeds 20 characters
     if (value.length > 20) {
-      setFullNameError("Không được nhập quá 20 ký tự!");
+      setFullNameError(maxCharacter20Message);
       return;
     }
 
     // Check if the input starts with a space
     if (value.startsWith(" ")) {
-      setFullNameError("Không được space!");
+      setFullNameError(noIdentationMessage);
       return;
     }
 
@@ -110,19 +138,19 @@ const InfoCustomer: React.FC<InfoCustomerProps> = ({
   const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
 
-    if(value){
-      setEmailError("")
+    if (value) {
+      setEmailError("");
     }
 
     // Check if the length of the input exceeds 20 characters
     if (value.length > 64) {
-      setFullNameError("Không được nhập quá 64 ký tự!");
+      setFullNameError(maxCharacter64Message);
       return;
     }
 
     // Check if the input starts with a space
     if (value.startsWith(" ")) {
-      setEmailError("Không được cách đầu dòng");
+      setEmailError(noIdentationMessage);
       return;
     }
     // Set the email and reset the error
@@ -132,7 +160,7 @@ const InfoCustomer: React.FC<InfoCustomerProps> = ({
     );
 
     if (!isValidEmail) {
-      setEmailError("Email không hợp lệ");
+      setEmailError(invalidEmailMessage);
     } else {
       setEmailError("");
     }
@@ -141,7 +169,10 @@ const InfoCustomer: React.FC<InfoCustomerProps> = ({
 
   return (
     <div className="bg-gray-50 dark:bg-slate-600 rounded-md shadow-lg p-4 mb-2">
-      <h1 className="font-bold text-blue-500">Thông tin khách hàng <span className="text-red-500">*</span></h1>
+      <h1 className="font-bold text-blue-500">
+        {customerInfoMessage}
+        <span className="text-red-500">*</span>
+      </h1>
       <div className="flex mt-4 items-center pl-[30px]">
         <div>
           <input
@@ -151,10 +182,16 @@ const InfoCustomer: React.FC<InfoCustomerProps> = ({
             checked={gender === "male"}
             onChange={handleRadioChange}
             required
-            disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
+            disabled={
+              loading ||
+              (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)
+            }
           />
-          <label htmlFor="male" className={`ml-2 ${genderError && "error-label"}`}>
-            Nam
+          <label
+            htmlFor="male"
+            className={`ml-2 ${genderError && "error-label"}`}
+          >
+            {genderMaleMessage}
           </label>
         </div>
         <div className="ml-4">
@@ -165,13 +202,16 @@ const InfoCustomer: React.FC<InfoCustomerProps> = ({
             checked={gender === "female"}
             onChange={handleRadioChange}
             required
-            disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
+            disabled={
+              loading ||
+              (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)
+            }
           />
           <label
             htmlFor="female"
             className={`ml-2 ${genderError && "error-label"}`}
           >
-            Nữ
+            {genderFemaleMessage}
           </label>
         </div>
 
@@ -183,13 +223,16 @@ const InfoCustomer: React.FC<InfoCustomerProps> = ({
             checked={gender === "other"}
             onChange={handleRadioChange}
             required
-            disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
+            disabled={
+              loading ||
+              (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)
+            }
           />
           <label
             htmlFor="other"
             className={`ml-2 ${genderError && "error-label"}`}
           >
-            Khác
+            {genderOtherMessage}
           </label>
         </div>
       </div>
@@ -198,14 +241,21 @@ const InfoCustomer: React.FC<InfoCustomerProps> = ({
       <div className="grid grid-rows-3 md:flex mt-2 items-center">
         <div className="lg:px-8">
           <div className="field field_v3">
-            <label className="ha-screen-reader">Email <span className="text-red-500">*</span></label>
+            <label className="ha-screen-reader">
+              Email <span className="text-red-500">*</span>
+            </label>
             <input
               className="field__input "
-              placeholder="Ví dụ :truong@gmail.com"
+              placeholder="truong@gmail.com"
               value={email}
               onChange={handleEmailChange}
               type="email"
-              disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
+              disabled={
+                loading ||
+                (userRole === "GUEST" || !userId
+                  ? isNoneSelect
+                  : isNoneSelectDb)
+              }
             />
             <span className="field__label-wrap" aria-hidden="true">
               <span className={`field__label ${emailError && "error-label"}`}>
@@ -218,17 +268,26 @@ const InfoCustomer: React.FC<InfoCustomerProps> = ({
 
         <div className="lg:px-8 md:ml-2 py-2">
           <div className="field field_v3">
-            <label className="ha-screen-reader">Họ và tên <span className="text-red-500">*</span></label>
+            <label className="ha-screen-reader">
+              {fullnameMessage} <span className="text-red-500">*</span>
+            </label>
             <input
               className="field__input"
-              placeholder="Ví dụ : Nguyen Van A"
+              placeholder="Nguyen Van A"
               value={fullName}
               onChange={handleFullNameChange}
-              disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
+              disabled={
+                loading ||
+                (userRole === "GUEST" || !userId
+                  ? isNoneSelect
+                  : isNoneSelectDb)
+              }
             />
             <span className="field__label-wrap" aria-hidden="true">
-              <span className={`field__label ${fullNameError && "error-label"}`}>
-                Họ và tên <span className="text-red-500">*</span>
+              <span
+                className={`field__label ${fullNameError && "error-label"}`}
+              >
+                {fullnameMessage} <span className="text-red-500">*</span>
               </span>
             </span>
           </div>
@@ -237,19 +296,28 @@ const InfoCustomer: React.FC<InfoCustomerProps> = ({
 
         <div className="md:ml-2 py-2 lg:px-8">
           <div className="field field_v3">
-            <label className="ha-screen-reader">Số điện thoại <span className="text-red-500">*</span></label>
+            <label className="ha-screen-reader">
+              {phoneNumberMessage} <span className="text-red-500">*</span>
+            </label>
             <input
               type="tel"
               className="field__input "
-              placeholder="Ví dụ :0912385***"
+              placeholder="0912385***"
               value={phoneNumber}
               pattern="0[0-9]{9,10}"
               onChange={handlePhoneNumberChange}
-              disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
+              disabled={
+                loading ||
+                (userRole === "GUEST" || !userId
+                  ? isNoneSelect
+                  : isNoneSelectDb)
+              }
             />
             <span className="field__label-wrap" aria-hidden="true">
-              <span className={`field__label ${phoneNumberError && "error-label"}`}>
-                Số điện thoại <span className="text-red-500">*</span>
+              <span
+                className={`field__label ${phoneNumberError && "error-label"}`}
+              >
+                {phoneNumberMessage} <span className="text-red-500">*</span>
               </span>
             </span>
           </div>

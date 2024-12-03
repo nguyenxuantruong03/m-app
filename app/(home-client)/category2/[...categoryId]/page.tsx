@@ -7,6 +7,9 @@ import getBillboard from "@/actions/client/billboard/get-billboard";
 import { useEffect, useState } from "react";
 import { Billboard, Color, Product, Size } from "@/types/type";
 import DetailCategory from "@/components/(client)/category/detail-category";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { getToastError } from "@/translate/translate-client";
+import toast from "react-hot-toast";
 export const revalidate = 7200;
 
 interface CategoryPageProps {
@@ -23,6 +26,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
   params,
   searchParams,
 }) => {
+  const user = useCurrentUser();
   const [billboard, setBillboard] = useState<Billboard | null>(null);
   const [product, setProduct] = useState<Product[]>([]);
   const [size, setSize] = useState<Size[]>([]);
@@ -31,6 +35,22 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
   const [minPrice, setMinPrice] = useState<number>(0);
   const [maxPrice, setMaxPrice] = useState<number>(0);
   const [maxPriceInDatas, setMaxPriceInDatas] = useState<number>(0);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+  const toastErrorMessage = getToastError(languageToUse);
 
   const handlePriceChange = (min: number, max: number) => {
     setMinPrice(min);
@@ -40,41 +60,50 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
   const handleSortChange = (value: string) => {
     setSortOrder(value);
   };
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const billboardData = await getBillboard(
-         `${process.env.NEXT_PUBLIC_BILLBOARD_API_KEY}`
+          `${process.env.NEXT_PUBLIC_BILLBOARD_API_KEY}`,
+          languageToUse
         );
-        const productData = await getProduct2({isFeatured: undefined});
+        const productData = await getProduct2({
+          isFeatured: undefined,
+          language: languageToUse,
+        });
         const sizeData = await getSizes();
-        const colorData = await getColors();
-        
+        const colorData = await getColors(languageToUse);
+
         // Tìm giá cao nhất trong danh sách sản phẩm
         const highestPrice = productData.reduce(
           (max, product) =>
-            product.productdetail.price1 * ((100 - product.productdetail.percentpromotion1) / 100) + 1000000 >
+            product.productdetail.price1 *
+              ((100 - product.productdetail.percentpromotion1) / 100) +
+              1000000 >
             max
-              ? product.productdetail.price1 * ((100 - product.productdetail.percentpromotion1) / 100) + 1000000
+              ? product.productdetail.price1 *
+                  ((100 - product.productdetail.percentpromotion1) / 100) +
+                1000000
               : max,
           0
         );
         setMaxPrice(Math.floor(highestPrice));
-        setMaxPriceInDatas(Math.floor(highestPrice))
+        setMaxPriceInDatas(Math.floor(highestPrice));
         setBillboard(billboardData);
         setProduct(productData);
         setSize(sizeData);
         setColor(colorData);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        toast.error(toastErrorMessage);
       }
     };
     fetchData();
   }, [params.categoryId, searchParams.sizeId, searchParams.colorId]);
   return (
-      <Container>
-        <DetailCategory 
+    <Container>
+      <DetailCategory
+        languageToUse={languageToUse}
         billboard={billboard}
         size={size}
         color={color}
@@ -86,8 +115,8 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
         handleSortChange={handleSortChange}
         sortOrder={sortOrder}
         route="product2"
-        />
-      </Container>
+      />
+    </Container>
   );
 };
 

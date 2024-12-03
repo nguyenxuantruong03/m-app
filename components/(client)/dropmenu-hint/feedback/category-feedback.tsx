@@ -1,11 +1,21 @@
 import { Dispatch, SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  translateComplicatedPayment,
+  translateDelayedResponse,
+  translateNoResponseToCall,
+  translateOtherMessage,
+  translateSelectCategoryFeedback,
+  translateUnprofessionalService,
+  translateWebsitePerformanceIssues,
+} from "@/translate/translate-client";
 
 interface CategoryFeedBackProps {
   setIndexCategory: Dispatch<SetStateAction<number | null>>;
   indexCategory: number | null;
   setErrorCategory: Dispatch<SetStateAction<boolean>>;
   errorCategory: boolean;
+  languageToUse: string;
 }
 
 const CategoryFeedBack = ({
@@ -13,7 +23,20 @@ const CategoryFeedBack = ({
   indexCategory,
   setErrorCategory,
   errorCategory,
+  languageToUse,
 }: CategoryFeedBackProps) => {
+  //Language
+  const unprofessionalServiceMessage =
+    translateUnprofessionalService(languageToUse);
+  const delayedResponseMessage = translateDelayedResponse(languageToUse);
+  const complicatedPaymentMessage = translateComplicatedPayment(languageToUse);
+  const noResponseToCallMessage = translateNoResponseToCall(languageToUse);
+  const websitePerformanceIssuesMessage =
+    translateWebsitePerformanceIssues(languageToUse);
+  const otherMessage = translateOtherMessage(languageToUse);
+  const selectCategoryFeedbackMessage =
+    translateSelectCategoryFeedback(languageToUse);
+
   const handleClick = (categoryIndex: number) => {
     if (indexCategory === categoryIndex) {
       // If the same emotion is clicked, deselect it (set indexEmotion to null)
@@ -27,12 +50,12 @@ const CategoryFeedBack = ({
   };
 
   const TypeCategory = [
-    { index: 1, label: "Unprofessional service" },
-    { index: 2, label: "Delayed response from staff" },
-    { index: 3, label: "Complicated payment" },
-    { index: 4, label: "No response to the call" },
-    { index: 5, label: "Website performance issues" },
-    { index: 6, label: "Other" },
+    { index: 1, label: unprofessionalServiceMessage },
+    { index: 2, label: delayedResponseMessage },
+    { index: 3, label: complicatedPaymentMessage },
+    { index: 4, label: noResponseToCallMessage },
+    { index: 5, label: websitePerformanceIssuesMessage },
+    { index: 6, label: otherMessage },
   ];
 
   return (
@@ -54,7 +77,7 @@ const CategoryFeedBack = ({
         ))}
       </div>
       {errorCategory && (
-        <p className="text-red-500 text-xs">Please select an category</p>
+        <p className="text-red-500 text-xs">{selectCategoryFeedbackMessage}</p>
       )}
     </div>
   );

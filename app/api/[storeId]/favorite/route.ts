@@ -3,39 +3,45 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
+import { translateText } from "@/translate/translate-client";
+import { translateFavoriteDelete, translateFavoriteGet, translateFavoritePost } from "@/translate/translate-api";
 
 export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
-  try {
-    const userId = await currentUser();
-    const body = await req.json();
-    const { name,value } = body;
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const favoritePostMessage = translateFavoritePost(LanguageToUse);
 
-    if (!userId) {
+  try {
+    const body = await req.json();
+    const { name, value } = body;
+
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: favoritePostMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền tạo mới favorite!" }),
+        JSON.stringify({ error: favoritePostMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+      return new NextResponse(JSON.stringify({ error: favoritePostMessage.nameRequired }), {
         status: 400,
       });
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required!" }),
+        JSON.stringify({ error: favoritePostMessage.storeIdRequired }),
         { status: 400 }
       );
     }
@@ -48,7 +54,7 @@ export async function POST(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: favoritePostMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -66,9 +72,7 @@ export async function POST(
     };
 
     // Log sự thay đổi của billboard
-    const changes = [
-      `Name: ${sentFavorite.name}`,
-    ];
+    const changes = [`Name: ${sentFavorite.name}`];
 
     // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
     await prismadb.system.create({
@@ -76,14 +80,14 @@ export async function POST(
         storeId: params.storeId,
         type: "CREATEPIN-FAVORITE",
         newChange: changes,
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(favorite);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error post favorite." }),
+      JSON.stringify({ error: favoritePostMessage.internalError }),
       { status: 500 }
     );
   }
@@ -93,73 +97,98 @@ export async function GET(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
-  const userId = await currentUser();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const favoriteGetMessage = translateFavoriteGet(LanguageToUse);
+
+  const { searchParams } = new URL(req.url);
+  const language = searchParams.get("language") || "vi"; // Mặc định là "vi" nếu không có language
   try {
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required!" }),
+        JSON.stringify({ error: favoriteGetMessage.storeIdRequired }),
         { status: 400 }
       );
     }
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: favoriteGetMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xem favorite!" }),
+        JSON.stringify({ error: favoriteGetMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
-    const favorite = await prismadb.favorite.findMany({
+    const favorites = await prismadb.favorite.findMany({
       where: {
         storeId: params.storeId,
       },
     });
 
-    return NextResponse.json(favorite);
+    const translations = await Promise.all(
+      favorites.map(async (favorite) => {
+        try {
+          // Dùng hàm translateText để dịch tên yêu thích
+          const translatedName = await translateText(
+            favorite.name ?? "",
+            language
+          );
+
+          return {
+            ...favorite,
+            name: translatedName,
+          };
+        } catch (error) {
+          return favorite; // Trả về dữ liệu gốc nếu lỗi
+        }
+      })
+    );
+
+    return NextResponse.json(translations);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get favorite." }),
+      JSON.stringify({ error: favoriteGetMessage.internalError }),
       { status: 500 }
     );
   }
 }
 
-
-
 export async function DELETE(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const favoriteDeleteMessage = translateFavoriteDelete(LanguageToUse);
   try {
-    const userId = await currentUser();
     const body = await req.json();
-
     const { ids } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy userId!" }),
+        JSON.stringify({ error: favoriteDeleteMessage.userNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xóa favorite!" }),
+        JSON.stringify({ error: favoriteDeleteMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!ids || ids.length === 0) {
       return new NextResponse(
-        JSON.stringify({ error: "Mảng IDs không được trống!" }),
+        JSON.stringify({ error: favoriteDeleteMessage.idsArrayEmpty }),
         { status: 400 }
       );
     }
@@ -172,7 +201,7 @@ export async function DELETE(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: favoriteDeleteMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -187,7 +216,7 @@ export async function DELETE(
     });
 
     // Create an array of changes for logging
-    const changesArray = FavoriteToDelete.map(favorite => ({
+    const changesArray = FavoriteToDelete.map((favorite) => ({
       name: favorite.name,
     }));
 
@@ -204,16 +233,16 @@ export async function DELETE(
     await prismadb.system.create({
       data: {
         storeId: params.storeId,
-        delete: changesArray.map(change => `DeleteName: ${change.name}`),
+        delete: changesArray.map((change) => `DeleteName: ${change.name}`),
         type: "DELETEMANY-FAVORITE",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
-    return NextResponse.json({ message: "Xóa thành công!" });
+    return NextResponse.json({ message: favoriteDeleteMessage.deleteSuccess });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete favorite." }),
+      JSON.stringify({ error: favoriteDeleteMessage.internalError }),
       { status: 500 }
     );
   }

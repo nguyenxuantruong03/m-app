@@ -111,7 +111,8 @@ export type ProductDetailColumn = {
   color4Id: string | null
   size5Id: string | null
   color5Id: string | null
-  categoryId: string
+  categoryId: string;
+  language: string
 };
 
 const LongCell = ({ field, data, datas }: any) => {
@@ -190,6 +191,7 @@ const LongCell = ({ field, data, datas }: any) => {
       description4salientfeatures={datas.description4salientfeatures}
       contentsalientfeatures={datas.contentsalientfeatures}
       category={datas.categoryId}
+      language={datas.language}
       field={field}
     />
   );

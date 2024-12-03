@@ -17,6 +17,7 @@ import { useParams } from "next/navigation";
 import { QrReader } from "react-qr-reader"; // Thư viện quét mã QR
 import toast from "react-hot-toast";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { translateCamera } from "@/translate/translate-dashboard";
 
 interface QRResult {
   text: string;
@@ -39,12 +40,14 @@ interface CameraPorps {
   loading: boolean;
   dataEventCamera: string | undefined;
   setShowCameraModal: Dispatch<SetStateAction<boolean>>;
+  languageToUse: string
 }
 const Camera: React.FC<CameraPorps> = ({
   onClose,
   loading,
   dataEventCamera,
   setShowCameraModal,
+  languageToUse
 }) => {
   const userId = useCurrentUser();
   const params = useParams();
@@ -60,6 +63,9 @@ const Camera: React.FC<CameraPorps> = ({
   const [showMessage, setShowMessage] = useState(false);
   const [showMessageNFC, setShowMessageNFC] = useState<boolean | null>(null);
   const [qrCodeValid, setQrCodeValid] = useState<boolean | null>(null);
+
+  //language
+  const cameraMessage = translateCamera(languageToUse)
 
   const getVideo = () => {
     // Kiểm tra xem truy cập vào camera đã được phép hay không
@@ -83,14 +89,14 @@ const Camera: React.FC<CameraPorps> = ({
             video.playsInline = true; // Chơi video trong khung của trang
             video.play();
           } else {
-            toast.error("Không tìm thấy camera!");
+            toast.error(cameraMessage.cameraNotFound);
           }
         })
         .catch((err) => {
-          toast.error("Error accessing camera:", err);
+          toast.error(cameraMessage.somethingWentWrong);
         });
     } else {
-      toast.error("Trình duyệt này không được hỗ trợ!");
+      toast.error(cameraMessage.browserNotSupported);
     }
   };
 
@@ -122,13 +128,13 @@ const Camera: React.FC<CameraPorps> = ({
           const dataURL = photo.toDataURL("image/jpeg", 0.8);
           handleScan(dataURL);
         } else {
-          toast.error("Không tìm thấy camera!");
+          toast.error(cameraMessage.browserNotSupported);
         }
       } else {
-        toast.error("Không thể tải ảnh 2D!");
+        toast.error(cameraMessage.cannotLoadImage2D);
       }
     } else {
-      toast.error("Không tìm thấy ảnh!");
+      toast.error(cameraMessage.imageNotFound);
     }
   };
 
@@ -173,20 +179,20 @@ const Camera: React.FC<CameraPorps> = ({
               setShowVideo(false);
               setShowCameraModal(false);
               setIsLoadingData(false);
-              toast.success("Đăng ảnh thành công!");
+              toast.success(cameraMessage.imageUploadedSuccess);
             })
             .catch((error) => {
               setIsLoadingData(false);
-              toast.error("Error uploading photo:", error);
+              toast.error(cameraMessage.somethingWentWrong);
             });
         } else {
-          toast.error("Bạn đã checkin ngày hôm nay!");
+          toast.error(cameraMessage.alreadyCheckedInToday);
         }
       } else {
-        toast.error("Qr code của bạn không đúng!");
+        toast.error(cameraMessage.invalidQrCode);
       }
     } else {
-      toast.error("Không tìm thấy ảnh!");
+      toast.error(cameraMessage.imageNotFound);
     }
   };
 
@@ -239,7 +245,7 @@ const Camera: React.FC<CameraPorps> = ({
           );
         } else {
           // Hiển thị thông báo lỗi mặc định cho người dùng
-          toast.error("Error fetching data.");
+          toast.error(cameraMessage.somethingWentWrong);
         }
       }
     };
@@ -262,9 +268,9 @@ const Camera: React.FC<CameraPorps> = ({
                 takePhoto();
               } else if (loadingfetch) {
                 // Nếu đang tải dữ liệu, không thực hiện gì khi click
-                toast.loading("Đang tải dữ liệu, vui lòng đợi...");
+                toast.loading(cameraMessage.loadingData);
               } else {
-                toast.error("Bạn đã checkin ngày hôm nay!");
+                toast.error(cameraMessage.alreadyCheckedInToday);
               }
             }}
             disabled={loadingfetch}
@@ -290,15 +296,13 @@ const Camera: React.FC<CameraPorps> = ({
           {showMessage && (
             // Sử dụng showMessage để kiểm soát việc hiển thị thông báo
             <p className=" absolute top-2 left-1/2  transform -translate-x-1/2 border-yellow-400 border-2 flex items-center p-3">
-              <TriangleAlert className="w-4 h-4 text-yellow-400 mr-3" /> Ngày
-              hôm nay bạn đã checkin. Hãy quay lại ngày sau!
+              <TriangleAlert className="w-4 h-4 text-yellow-400 mr-3" /> {cameraMessage.alreadyCheckedIn}
             </p>
           )}
           {showMessageNFC && (
             // Sử dụng showMessage để kiểm soát việc hiển thị thông báo
             <p className=" absolute top-2 left-1/2  transform -translate-x-1/2 border-yellow-400 border-2 flex items-center p-3">
-              <TriangleAlert className="w-4 h-4 text-yellow-400 mr-3" /> Bạn đã
-              checkin bằng NFC!
+              <TriangleAlert className="w-4 h-4 text-yellow-400 mr-3" /> {cameraMessage.checkedInByNfc}
             </p>
           )}
         </div>
@@ -345,12 +349,12 @@ const Camera: React.FC<CameraPorps> = ({
                 {qrCodeValid ? (
                   <>
                     <Check className="w-4 h-4 text-green-400 mr-3" />
-                    Qr code của bạn đã đúng.
+                    {cameraMessage.qrCodeCorrect}
                   </>
                 ) : (
                   <>
                     <X className="w-4 h-4 text-red-500 mr-3" />
-                    Qr code của bạn không đúng.
+                    {cameraMessage.qrCodeIncorrect}
                   </>
                 )}
               </p>

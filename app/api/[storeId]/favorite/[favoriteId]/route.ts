@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
+import { translateFavoriteIdDelete, translateFavoriteIdGet, translateFavoritePatch } from "@/translate/translate-api";
 
 type FavoriteValue = string  | Date | undefined | null;
 
@@ -15,25 +16,28 @@ export async function GET(
   req: Request,
   { params }: { params: { favoriteId: string } }
 ) {
-  const userId = await currentUser();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const favoriteIdGetMessage = translateFavoriteIdGet(LanguageToUse)
   try {
     if (!params.favoriteId) {
       return new NextResponse(
-        JSON.stringify({ error: "Favorite id is required!" }),
+        JSON.stringify({ error: favoriteIdGetMessage.favoriteIdRequired }),
         { status: 400 }
       );
     }
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: favoriteIdGetMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xem favorite!" }),
+        JSON.stringify({ error: favoriteIdGetMessage.permissionDenied }),
         { status: 403 }
       );
     }
@@ -47,7 +51,7 @@ export async function GET(
     return NextResponse.json(favorite);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get favorite." }),
+      JSON.stringify({ error: favoriteIdGetMessage.internalError }),
       { status: 500 }
     );
   }
@@ -57,26 +61,28 @@ export async function DELETE(
   req: Request,
   { params }: { params: { favoriteId: string; storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const favoriteIdDeleteMessage = translateFavoriteIdDelete(LanguageToUse)
   try {
-    const userId = await currentUser();
-
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: favoriteIdDeleteMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xóa favorite!" }),
+        JSON.stringify({ error: favoriteIdDeleteMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!params.favoriteId) {
       return new NextResponse(
-        JSON.stringify({ error: "Favorite id is required!" }),
+        JSON.stringify({ error: favoriteIdDeleteMessage.favoriteIdRequired }),
         { status: 400 }
       );
     }
@@ -89,7 +95,7 @@ export async function DELETE(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: favoriteIdDeleteMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -115,14 +121,14 @@ export async function DELETE(
         storeId: params.storeId,
         type: "DELETEPIN-FAVORITE",
         delete: changes,
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(favorite);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete favorite." }),
+      JSON.stringify({ error: favoriteIdDeleteMessage.internalError }),
       { status: 500 }
     );
   }
@@ -132,34 +138,37 @@ export async function PATCH(
   req: Request,
   { params }: { params: { favoriteId: string; storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const favoritePatchMessage = translateFavoritePatch(LanguageToUse)
   try {
-    const userId = await currentUser();
     const body = await req.json();
     const { name,value } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: favoritePatchMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền cập nhật favorite!" }),
+        JSON.stringify({ error: favoritePatchMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+      return new NextResponse(JSON.stringify({ error: favoritePatchMessage.nameRequired }), {
         status: 400,
       });
     }
 
     if (!params.favoriteId) {
       return new NextResponse(
-        JSON.stringify({ error: "Favorite id is required!" }),
+        JSON.stringify({ error: favoritePatchMessage.favoriteIdRequired }),
         { status: 400 }
       );
     }
@@ -172,7 +181,7 @@ export async function PATCH(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: favoritePatchMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -233,14 +242,14 @@ export async function PATCH(
         oldChange: oldChanges,
         newChange: newChanges,
         type: "UPDATEPIN-FAVORITE",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(favorite);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error patch favorite." }),
+      JSON.stringify({ error: favoritePatchMessage.internalError }),
       { status: 500 }
     );
   }

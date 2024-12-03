@@ -2,6 +2,19 @@
 import React, { useState, useRef, ChangeEvent, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Check, X } from "lucide-react";
+import {
+  translateCharacterLength,
+  translateCompletedNumbers,
+  translateCompletedPassword,
+  translateCompletedPasswordUpperCase,
+  translateHasDigit,
+  translateHasLowercase,
+  translateHasUppercaseLetter,
+  translateNoAccentedCharactersInPassword,
+  translateNoSpacesInPassword,
+  translateNoValidAccent,
+  translateNoValidSpace,
+} from "@/translate/translate-client";
 
 interface PasswordFieldProps {
   field: {
@@ -15,6 +28,7 @@ interface PasswordFieldProps {
   setError: (value: string) => void;
   setSuccess: (value: string) => void;
   setIsSubmitted: (value: boolean) => void;
+  languageToUse: string;
 }
 
 const PasswordField: React.FC<PasswordFieldProps> = ({
@@ -26,7 +40,8 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
   isSubmitted,
   setError,
   setSuccess,
-  setIsSubmitted
+  setIsSubmitted,
+  languageToUse,
 }) => {
   const [validations, setValidations] = useState({
     hasUpperCase: false,
@@ -112,17 +127,17 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
     setShowValidations(false); // Ẩn validations
   };
 
-  const handleFocus = () =>{
-    setError("")
-    setSuccess("")
-    setIsSubmitted(false)
+  const handleFocus = () => {
+    setError("");
+    setSuccess("");
+    setIsSubmitted(false);
     const inputElement = inputRef.current;
     if (inputElement) {
       setTimeout(() => {
         inputElement.style.borderImage = "initial"; // Đặt lại border image style sau một khoảng thời gian ngắn
       }, 1); // Đợi 1ms trước khi thực hiện xóa border
     }
-  }
+  };
 
   const calculateBorderPercentage = (): number => {
     // Tính toán tỷ lệ phần trăm của các yếu tố hợp lệ
@@ -164,8 +179,8 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
     ? {
         // Style được áp dựa trên trạng thái của input blur
         borderImage: isSubmitted
-        ? "" // Nếu isSubmitted là true, đặt lại border thành rỗng
-        : `linear-gradient(to left,#22c55e ${leftColorStop}%, #ef4444 ${leftColorStop}%, #ef4444 ${rightColorStop}%, #22c55e ${rightColorStop}%) 1`,
+          ? "" // Nếu isSubmitted là true, đặt lại border thành rỗng
+          : `linear-gradient(to left,#22c55e ${leftColorStop}%, #ef4444 ${leftColorStop}%, #ef4444 ${rightColorStop}%, #22c55e ${rightColorStop}%) 1`,
         borderWidth: "2px",
         borderRadius: "10px",
         clipPath: "inset(0 round 3px)",
@@ -199,14 +214,14 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
             <>
               <Check className="w-5 h-5 text-green-400" />
               <span className="text-xs text-green-400">
-                Đã hoàn thành (A-Z)!
+                {translateCompletedPasswordUpperCase(languageToUse)}
               </span>
             </>
           ) : (
             <>
               <X className="w-5 h-5 text-red-500" />
               <span className="text-xs text-red-500">
-                Có ít nhất một chữ cái viết hoa (A-Z)
+                {translateHasUppercaseLetter(languageToUse)}
               </span>
             </>
           )}
@@ -216,14 +231,14 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
             <>
               <Check className="w-5 h-5 text-green-400" />
               <span className="text-xs text-green-400">
-                Đã hoàn thành (a-z)!
+                {translateCompletedPassword(languageToUse)}
               </span>
             </>
           ) : (
             <>
               <X className="w-5 h-5 text-red-500" />
               <span className="text-xs text-red-500">
-                Có ít nhất một chữ cái thường (a-z)
+                {translateHasLowercase(languageToUse)}
               </span>
             </>
           )}
@@ -233,14 +248,14 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
             <>
               <Check className="w-5 h-5 text-green-400" />
               <span className="text-xs text-green-400">
-                Đã hoàn thành (0-9)!
+                {translateCompletedNumbers(languageToUse, 0, 9)}
               </span>
             </>
           ) : (
             <>
               <X className="w-5 h-5 text-red-500" />
               <span className="text-xs text-red-500">
-                Có ít nhất một chữ số (0-9)
+                {translateHasDigit(languageToUse)}
               </span>
             </>
           )}
@@ -250,14 +265,14 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
             <>
               <Check className="w-5 h-5 text-green-400" />
               <span className="text-xs text-green-400">
-                Đã hoàn thành (6-20)!
+                {translateCompletedNumbers(languageToUse, 6, 20)}
               </span>
             </>
           ) : (
             <>
               <X className="w-5 h-5 text-red-500" />
               <span className="text-xs text-red-500">
-                6 đến 20 ký tự (6-20)
+                {translateCharacterLength(languageToUse)}
               </span>
             </>
           )}
@@ -285,14 +300,14 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
           <div className="flex items-center space-x-1">
             <X className="w-5 h-5 text-red-500" />
             <span className="text-xs text-red-500">
-              Mật khẩu không được chứa khoảng trắng
+              {translateNoSpacesInPassword(languageToUse)}
             </span>
           </div>
         ) : (
           <div className="flex items-center space-x-1">
             <Check className="w-5 h-5 text-green-400" />
             <span className="text-xs text-green-400">
-              Không chứa khoảng cách hợp lệ!
+              {translateNoValidSpace(languageToUse)}
             </span>
           </div>
         )}
@@ -300,14 +315,14 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
           <div className="flex items-center space-x-1">
             <X className="w-5 h-5 text-red-500" />
             <span className="text-xs text-red-500">
-              Mật khẩu không thể chứa ký tự có dấu
+              {translateNoAccentedCharactersInPassword(languageToUse)}
             </span>
           </div>
         ) : (
           <div className="flex items-center space-x-1">
             <Check className="w-5 h-5 text-green-400" />
             <span className="text-xs text-green-400">
-              Không chứa dấu hợp lệ!
+              {translateNoValidAccent(languageToUse)}
             </span>
           </div>
         )}

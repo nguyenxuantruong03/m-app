@@ -14,6 +14,7 @@ export type CategoriesColumn = {
   id: string;
   name: string;
   createdAt: Date
+  language: string
 };
 
 export const columns: ColumnDef<CategoriesColumn>[] = [
@@ -51,7 +52,7 @@ export const columns: ColumnDef<CategoriesColumn>[] = [
         </SpanColumn>
       );
     },
-    cell: ({row}) => <EditRow data={row.original.name} id= {row.original.id}/>
+    cell: ({row}) => <EditRow data={row.original.name} id= {row.original.id}  language={row.original.language}/>
   },
   {
     accessorKey: "createdAt",

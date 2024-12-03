@@ -27,6 +27,7 @@ export type CommentColumn = {
   isbanforever: boolean | undefined | null;
   ban: boolean | null;
   createdAt: Date;
+  language: string;
 };
 
 const convertToStars = (rating: number,ban:boolean) => {

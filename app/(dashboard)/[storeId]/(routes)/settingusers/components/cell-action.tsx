@@ -16,6 +16,7 @@ import axios from "axios";
 import { AlertModal } from "@/components/modals/alert-modal";
 import { SettingUsersColumn } from "./column";
 import SheetBanUser from "./sheet-ban";
+import { getSettingUserAction } from "@/translate/translate-dashboard";
 
 interface CellActionProps {
   data: SettingUsersColumn;
@@ -28,6 +29,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [open, setOpen] = useState(false);
   const [openSheet, setOpenSheet] = useState<boolean>(false);
 
+  //language
+  const settingUserActionMessage = getSettingUserAction(data.language)
+
   const onDelete = async () => {
     try {
       setLoading(true);
@@ -35,7 +39,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         data: { id: data.id },
       });
       router.refresh();
-      toast.success("Người dùng đã bị ban vĩnh viễn!");
+      toast.success(settingUserActionMessage.userBannedForever);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -50,7 +54,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
-          "Make sure you removed all categories using this billboard first."
+          settingUserActionMessage.somethingWentWrong
         );
       }
     } finally {
@@ -69,7 +73,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Unban:{" "}
+              {settingUserActionMessage.unban}:{" "}
               <span className="font-bold">
                 {data.email} - <span className="font-bold">{data.name}</span>
               </span>
@@ -78,7 +82,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating unban user...",
+          loading: settingUserActionMessage.updatingUnbanUser,
           success: (message) => {
             router.refresh();
             return message;
@@ -91,13 +95,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             ) {
               return (error as { response: { data: { error: string } } }).response.data.error;
             } else {
-              return "Unban user Error.";
+              return settingUserActionMessage.somethingWentWrong;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi cấm người dùng.");
+      toast.error(settingUserActionMessage.somethingWentWrong);
     } finally {
       setLoading(false);
     }
@@ -113,7 +117,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Xác thực đầy đủ:{" "}
+              {settingUserActionMessage.fullAuthentication}:{" "}
               <span className="font-bold">
                 {data.email} - <span className="font-bold">{data.name}</span>
               </span>
@@ -122,7 +126,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating Citizen user...",
+          loading: settingUserActionMessage.updatingCitizenUser,
           success: (message) => {
             router.refresh();
             return message;
@@ -135,13 +139,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             ) {
               return (error as { response: { data: { error: string } } }).response.data.error;
             } else {
-              return "Unban user Error.";
+              return settingUserActionMessage.somethingWentWrong;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi cấm người dùng.");
+      toast.error(settingUserActionMessage.somethingWentWrong);
     } finally {
       setLoading(false);
     }
@@ -157,7 +161,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Xóa xác thực:{" "}
+              {settingUserActionMessage.removeAuthentication}:{" "}
               <span className="font-bold">
                 {data.email} - <span className="font-bold">{data.name}</span>
               </span>
@@ -166,7 +170,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating Citizen user...",
+          loading: settingUserActionMessage.updatingCitizenUser,
           success: (message) => {
             router.refresh();
             return message;
@@ -179,13 +183,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             ) {
               return (error as { response: { data: { error: string } } }).response.data.error;
             } else {
-              return "Unban user Error.";
+              return settingUserActionMessage.somethingWentWrong;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi cấm người dùng.");
+      toast.error(settingUserActionMessage.somethingWentWrong);
     } finally {
       setLoading(false);
     }
@@ -198,6 +202,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         onClose={() => setOpen(false)}
         onConfirm={onDelete}
         loading={loading}
+        languageToUse={data.language}
       />
       <SheetBanUser
         email={data.email || ""}
@@ -206,35 +211,36 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         setOpenSheet={setOpenSheet}
         name={data.name || ""}
         banTime= {data.banExpiresTime}
+        language={data.language}
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
+            <span className="sr-only">{settingUserActionMessage.openMenu}</span>
             <MoreHorizontal className="w-4 h-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuLabel>{settingUserActionMessage.actions}</DropdownMenuLabel>
           <DropdownMenuItem onClick={() => setOpen(true)}>
             <Ban className="h-4 w-4 mr-2" />
-            Ban Forever
+            {settingUserActionMessage.banForever}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpenSheet(true)}>
             <Lock className="h-4 w-4 mr-2" />
-            Ban
+            {settingUserActionMessage.ban}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={UnBanUser}>
             <KeyRound className="h-4 w-4 mr-2" />
-            UnBan
+            {settingUserActionMessage.unban}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={OpenCitizen}>
             <ShieldCheck className="h-4 w-4 mr-2" />
-            Xác thực đầy đủ
+            {settingUserActionMessage.fullAuthenticationText}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={UnCitizen}>
             <ShieldOff className="h-4 w-4 mr-2" />
-            Xóa xác thực
+            {settingUserActionMessage.removeAuthenticationText}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

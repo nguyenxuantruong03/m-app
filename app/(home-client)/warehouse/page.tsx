@@ -2,31 +2,71 @@
 import Image from "next/image";
 import "./components/style.css";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Coupon } from "@/types/type";
 import FormatDate from "@/components/format-Date";
 import LoadingPageComponent from "@/components/ui/loading";
 import toast from "react-hot-toast";
+import { getCoupon } from "@/actions/client/coupon/get-coupon";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { Info } from "lucide-react";
+import { Hint } from "@/components/ui/hint";
+import {
+  getToastError,
+  translateNoDiscountCode,
+  translateMaximumDiscount,
+  translateDiscountCodeNotice,
+  translateNote,
+  translateSave,
+  translateCode,
+  translateExpiryDate,
+  translateWarehouse,
+  translateSavedSuccessfully,
+} from "@/translate/translate-client";
 const Voucher = () => {
+  const user = useCurrentUser();
   const [data, setData] = useState<Coupon[]>([]);
   const [loading, setLoading] = useState(false);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+
+  const toastErrorMessage = getToastError(languageToUse);
+  const tranlasteWarehouseMessage = translateWarehouse(languageToUse);
+  const noDiscountCodeMessage = translateNoDiscountCode(languageToUse);
+  const savedSuccessfullyMessage = translateSavedSuccessfully(languageToUse);
+  const maximumDiscountMessage = translateMaximumDiscount(languageToUse);
+  const expriryDateMessage = translateExpiryDate(languageToUse);
+  const codeMessage = translateCode(languageToUse);
+  const saveMessage = translateSave(languageToUse);
+  const noteMessage = translateNote(languageToUse);
+  const discountCodeNotice = translateDiscountCodeNotice(languageToUse);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/coupon`
-        );
+        const coupon = await getCoupon(languageToUse);
 
         // Lọc dữ liệu để chỉ lấy những coupon có redeemBy > now
         const now = new Date();
-        const filteredData = response.data.filter(
+        const filteredData = coupon.filter(
           (coupon: Coupon) => new Date(coupon.redeemby) > now
         );
         setData(filteredData);
       } catch (error) {
-        console.error(error);
+        toast.error(toastErrorMessage);
       } finally {
         setLoading(false);
       }
@@ -38,10 +78,10 @@ const Voucher = () => {
     navigator.clipboard.writeText(code).then(
       () => {
         // Optional: Show a success message or notification
-        toast.success("Đã lưu thành công!");
+        toast.success(savedSuccessfullyMessage);
       },
       (err) => {
-        toast.error("Failed to copy coupon code: ", err);
+        toast.error(toastErrorMessage);
       }
     );
   };
@@ -53,7 +93,7 @@ const Voucher = () => {
       {!loading && (
         <>
           <h2 className="text-xl text-center font-bold text-slate-900 dark:text-slate-200 mb-5 md:hidden">
-            Mã giảm giá
+            {tranlasteWarehouseMessage.name}
           </h2>
         </>
       )}
@@ -65,7 +105,7 @@ const Voucher = () => {
           </div>
           <div className="flex justify-center my-2">
             <p className="text-slate-900 dark:text-slate-200">
-              Không có mã giảm giá.
+              {noDiscountCodeMessage}
             </p>
           </div>
         </>
@@ -95,12 +135,19 @@ const Voucher = () => {
                     color: "black",
                   }}
                 >
-                  <h3 className="text-sm md:text-lg font-bold">
-                    Giảm tối đa {item.percent}%
-                  </h3>
-                  <p className="text-sm">code: {item.name}</p>
+                  <div className="flex items-center space-x-2">
+                    <h3 className="text-sm md:text-lg font-bold">
+                      {maximumDiscountMessage} {item.percent}%
+                    </h3>
+                    <Hint label={item.description}>
+                      <Info className="w-5 h-5" />
+                    </Hint>
+                  </div>
+                  <p className="text-sm">
+                    {codeMessage} {item.name}
+                  </p>
                   <span className="text-sm">
-                    Thời hạn:{" "}
+                    {expriryDateMessage}
                     <span className="text-xs text-gray-500 ml-1">
                       <FormatDate data={item.redeemby} />
                     </span>
@@ -115,7 +162,7 @@ const Voucher = () => {
                   }`}
                   onClick={() => handleCopy(item.name)}
                 >
-                  Lưu
+                  {saveMessage}
                 </button>
               </div>
             </div>
@@ -128,10 +175,9 @@ const Voucher = () => {
 
       {data.length > 0 && (
         <p>
-          <span className="text-yellow-500 font-semibold">Lưu ý:</span>{" "}
+          <span className="text-yellow-500 font-semibold">{noteMessage}:</span>
           <span className="text-slate-900 dark:text-slate-200">
-            Mã giảm giá chỉ áp dụng cho khách hàng thanh toán trực tuyến. Khi
-            khách hàng ấn vào lưu hãy đến chỗ thanh toán để dán mã code mã vào.
+            {discountCodeNotice}
           </span>
         </p>
       )}

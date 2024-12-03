@@ -17,14 +17,16 @@ import Smiley from "./Smiley";
 import axios from "axios";
 import { useParams } from "next/navigation";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { getToastError } from "@/translate/translate-client";
+import toast from "react-hot-toast";
 
 type GameProps = {
   settings: GameSettings;
 };
 
 function Game({ settings }: GameProps) {
-  const param = useParams()
-  const user = useCurrentUser()
+  const param = useParams();
+  const user = useCurrentUser();
   const dispatch = useAppDispatch();
   const grid = useAppSelector(selectGrid);
   const revealedCount = useAppSelector(selectRevealedCount);
@@ -37,6 +39,22 @@ function Game({ settings }: GameProps) {
   const [totalCoins, setTotalCoins] = useState<number>(0);
   const [time, setTime] = useState<number>(0);
   const [canGetCoins, setCanGetCoins] = useState<boolean>(false);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+  const toastErrorMessage = getToastError(languageToUse);
 
   const handleVisibilityChange = () => {
     if (document.hidden) {
@@ -87,7 +105,10 @@ function Game({ settings }: GameProps) {
   const handleGetCoins = async () => {
     try {
       // Make a POST request to add 100 coins
-      await axios.post(`/api/${param.storeId}/wheelSpin`, {userId:user?.id, coin: 100 });
+      await axios.post(`/api/${param.storeId}/wheelSpin`, {
+        userId: user?.id,
+        coin: 100,
+      });
 
       // Reset the timer to 0 seconds when the "Get Coin" button is clicked
       setTime(0);
@@ -99,7 +120,7 @@ function Game({ settings }: GameProps) {
         audio.play();
       }
     } catch (error) {
-      console.error("Error getting coins:", error);
+      toast.error(toastErrorMessage);
     }
   };
   function restartGame() {

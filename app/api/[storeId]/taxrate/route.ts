@@ -5,47 +5,51 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { TaxType, UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
+import { translateTaxRateDelete, translateTaxRateGet, translateTaxRatePost } from "@/translate/translate-api";
 
 export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const taxRatePostMessage = translateTaxRatePost(LanguageToUse);
   try {
-    const userId = await currentUser();
     const body = await req.json();
     const { name, description, percentage, inclusive, active, taxtype } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: taxRatePostMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền tạo mới taxrate!" }),
+        JSON.stringify({ error: taxRatePostMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!name) {
       return new NextResponse(
-        JSON.stringify({ error: "Name is required!" }),
+        JSON.stringify({ error: taxRatePostMessage.nameRequired }),
         { status: 400 }
       );
     }
 
     if ( !percentage) {
       return new NextResponse(
-        JSON.stringify({ error: "Percentage is required!" }),
+        JSON.stringify({ error: taxRatePostMessage.percentageRequired }),
         { status: 400 }
       );
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required!" }),
+        JSON.stringify({ error: taxRatePostMessage.storeIdRequired }),
         { status: 400 }
       );
     }
@@ -58,7 +62,7 @@ export async function POST(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: taxRatePostMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -108,14 +112,14 @@ export async function POST(
         storeId: params.storeId,
         type: "CREATETAXRATE",
         newChange: changes,
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(createdCoupon);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error post taxrate." }),
+      JSON.stringify({ error: taxRatePostMessage.internalError }),
       { status: 500 }
     );
   }
@@ -125,10 +129,14 @@ export async function GET(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const taxRateGetMessage = translateTaxRateGet(LanguageToUse);
   try {
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required!" }),
+        JSON.stringify({ error: taxRateGetMessage.storeIdRequired }),
         { status: 400 }
       );
     }
@@ -138,7 +146,7 @@ export async function GET(
     return NextResponse.json(gettaxRate);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get taxrate." }),
+      JSON.stringify({ error: taxRateGetMessage.internalError }),
       { status: 500 }
     );
   }
@@ -148,29 +156,31 @@ export async function DELETE(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const taxRateDeleteMessage = translateTaxRateDelete(LanguageToUse);
   try {
-    const userId = await currentUser();
     const body = await req.json();
-
     const { ids } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy userId!" }),
+        JSON.stringify({ error: taxRateDeleteMessage.userNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xóa taxrate!" }),
+        JSON.stringify({ error: taxRateDeleteMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!ids || ids.length === 0) {
       return new NextResponse(
-        JSON.stringify({ error: "Mảng IDs không được trống!" }),
+        JSON.stringify({ error: taxRateDeleteMessage.idsArrayNotEmpty }),
         { status: 400 }
       );
     }
@@ -183,7 +193,7 @@ export async function DELETE(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: taxRateDeleteMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -222,14 +232,14 @@ export async function DELETE(
         storeId: params.storeId,
         delete: changesArray.map(change => `DeleteName: ${change.name}, DeleteDescription: ${change.description}, DeletePercentage: ${change.percentage}, DeleteInclusive: ${change.inclusive}, DeleteActive: ${change.active}, DeleteTaxtype: ${change.taxtype}, `),
         type: "DELETEMANY-TAXRATE",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
-    return NextResponse.json({ message: "Xóa thành công!" });
+    return NextResponse.json({ message: taxRateDeleteMessage.deleteSuccess });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete category." }),
+      JSON.stringify({ error: taxRateDeleteMessage.internalError }),
       { status: 500 }
     );
   }

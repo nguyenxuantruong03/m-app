@@ -6,20 +6,22 @@ import {
   getColorPrice,
   getSizePrice,
 } from "@/components/(client)/export-product-compare/size-color/match-color-size";
+import getFavoriteProduct from "@/actions/client/favoriteProduct";
+import { getToastError, translateLoginToAddToWishlist, translateProductRemovedFromWishlist, translateProductSaved, translateProductToWishlist } from "@/translate/translate-client";
 
 export type FavoriteUnion = FavoriteProduct;
 
 interface LikeStore {
   items: FavoriteUnion[];
   userId: string | null;
-  addItem: (data: FavoriteUnion) => void;
-  removeItem: (id: string, userId: string) => void;
+  addItem: (data: FavoriteUnion, languageToUse: string) => void;
+  removeItem: (id: string, userId: string, languageToUse: string) => void;
   sortType: string | null;
   setSortType: (sortType: string | null) => void; // Add a method to set the sorting preference
   getSortedItems: () => FavoriteUnion[];
   filteredItems: FavoriteUnion[]; // Add a new state for filtered items
   setFilteredItems: (items: FavoriteUnion[]) => void;
-  fetchFavoriteItems: (userId: string) => void;
+  fetchFavoriteItems: (userId: string, language: string) => void;
 }
 
 const useFavorite = create<LikeStore>((set, get) => ({
@@ -30,16 +32,18 @@ const useFavorite = create<LikeStore>((set, get) => ({
 
   setFilteredItems: (items: FavoriteUnion[]) => set({ filteredItems: items }),
 
-  fetchFavoriteItems: async (userId: string) => {
-    //TODO: Phương thức get nhưng bởi vì api trong Nextjs hạn chế query nen để patch
-    const response = await axios.patch("/api/client/favoriteProduct", {
-      userId: userId,
-    });
-    const favoriteItems = response.data;
-    set({ items: favoriteItems });
+  fetchFavoriteItems: async (userId: string,language:string) => {
+    const favoriteProduct = await getFavoriteProduct({ userId: userId,language: language });
+    set({ items: favoriteProduct });
   },
 
-  addItem: async (data: FavoriteUnion) => {
+  addItem: async (data: FavoriteUnion, languageToUse: string) => {
+    //languages
+    const loginToAddToWishlistMessage = translateLoginToAddToWishlist(languageToUse);
+    const productSaveMessage = translateProductSaved(languageToUse);
+    const productToWishlistMessage = translateProductToWishlist(languageToUse)
+    const toastErrorMessage = getToastError(languageToUse)
+
     const existingItem = get().items.find(
       (item) =>
         item.productName === data.productName &&
@@ -48,12 +52,12 @@ const useFavorite = create<LikeStore>((set, get) => ({
         item.selectedColor === data.selectedColor
     );
     if (!data.userId) {
-      toast.error("Bạn cần đăng nhập để thêm sản phẩm vào danh sách thích.");
+      toast.error(loginToAddToWishlistMessage);
       return;
     }
 
     if (existingItem) {
-      toast.error("Sản phẩm đã được lưu.");
+      toast.error(productSaveMessage);
       return;
     }
     
@@ -67,7 +71,7 @@ const useFavorite = create<LikeStore>((set, get) => ({
           selectedColor: data.selectedColor,
         });
         set({ items: [...get().items, { ...data }] });
-        toast.success("Sản phẩm vào danh sách thích.");
+        toast.success(productToWishlistMessage);
       } catch (error: unknown) {
         if (
           (error as { response?: { data?: { error?: string } } }).response &&
@@ -81,18 +85,22 @@ const useFavorite = create<LikeStore>((set, get) => ({
               .error
           );
         } else {
-          toast.error("Something went wrong.");
+          toast.error(toastErrorMessage);
         }
       }
   },
 
-  removeItem: async (id: string, userId: string) => {
+  removeItem: async (id: string, userId: string, languageToUse: string) => {
+    //language
+    const productRemovedFromWishlistMessage = translateProductRemovedFromWishlist(languageToUse)
+    const toastErrorMessage = getToastError(languageToUse)
+
     try {
       await axios.delete("/api/client/favoriteProduct", {
         data: { id: id, userId: userId },
       });
       set({ items: [...get().items.filter((item) => item.id !== id)] });
-      toast.success("Sản phẩm đã xóa khỏi danh sách thích.");
+      toast.success(productRemovedFromWishlistMessage);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -106,7 +114,7 @@ const useFavorite = create<LikeStore>((set, get) => ({
             .error
         );
       } else {
-        toast.error("Something went wrong.");
+        toast.error(toastErrorMessage);
       }
     }
   },

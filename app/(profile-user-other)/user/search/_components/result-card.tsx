@@ -57,7 +57,7 @@ export const ResultCard = ({ data }: ResultCardProps) => {
             {data?.stream && data?.stream?.name ? (
               <>{data.stream.name}</>
             ) : (
-              <>{data?.name || "Không có tên người dùng"}</>
+              <>{data?.name || ""}</>
             )}
           </p>
           <p className="text-sm text-muted-foreground">

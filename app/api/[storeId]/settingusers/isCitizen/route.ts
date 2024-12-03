@@ -1,23 +1,28 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
+import { translateSettingUserIsCitizen } from "@/translate/translate-api";
 import { UserRole } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-  const user = await currentUser()
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const settingUserIsCitizenMessage = translateSettingUserIsCitizen(LanguageToUse)
+
   const body = await req.json();
   const { userId } = body;
 
   if (!user) {
     return new NextResponse(
-      JSON.stringify({ error: "Không tìm thấy user id!" }),
+      JSON.stringify({ error: settingUserIsCitizenMessage.userIdNotFound }),
       { status: 403 }
     );
   }
 
   if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
     return new NextResponse(
-      JSON.stringify({ error: "Bạn không có quyền cập nhật settinguser!" }),
+      JSON.stringify({ error: settingUserIsCitizenMessage.permissionDenied }),
       { status: 403 }
     );
   }
@@ -32,7 +37,7 @@ export async function POST(req: Request) {
     return NextResponse.json(banuser);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Lỗi cục bộ khi xác thực!" }),
+      JSON.stringify({ error: settingUserIsCitizenMessage.internalError }),
       {
         status: 500,
       }
@@ -41,19 +46,23 @@ export async function POST(req: Request) {
 }
 
 export async function PATCH(req: Request) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const settingUserIsCitizenMessage = translateSettingUserIsCitizen(LanguageToUse)
+  
   const body = await req.json();
   const { userId } = body;
-  const user = await currentUser()
 
   if (!user) {
-    return new NextResponse(JSON.stringify({ error: "Không tìm thấy user id!" }), {
+    return new NextResponse(JSON.stringify({ error: settingUserIsCitizenMessage.userIdNotFound }), {
       status: 400,
     });
   }
 
   if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
     return new NextResponse(
-      JSON.stringify({ error: "Bạn không có quyền cập nhật settinguser!" }),
+      JSON.stringify({ error: settingUserIsCitizenMessage.permissionDenied }),
       { status: 403 }
     );
   }
@@ -68,7 +77,7 @@ export async function PATCH(req: Request) {
     return NextResponse.json(banuser);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Lỗi cục bộ khi bỏ xác thực!" }),
+      JSON.stringify({ error: settingUserIsCitizenMessage.internalError }),
       {
         status: 500,
       }

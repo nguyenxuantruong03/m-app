@@ -23,6 +23,7 @@ import { SalaryStaffsColumn } from "./column";
 import { Input } from "@/components/ui/input";
 import "./styles.css";
 import { formatter } from "@/lib/utils";
+import { getSalaryStaffAction } from "@/translate/translate-dashboard";
 
 interface CellActionProps {
   data: SalaryStaffsColumn;
@@ -31,6 +32,9 @@ interface CellActionProps {
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const router = useRouter();
   const params = useParams();
+
+  //language
+  const salaryStaffActionMessage =getSalaryStaffAction(data.language)
 
   const [bonusAmount, setBonusAmount] = useState<number | string>("");
   const [unbonusAmount, setUnbonusAmount] = useState<number | string>("");
@@ -75,11 +79,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              {" "}
-              Đã thêm <span className="font-bold">{bonusTitle}</span>. Số tiền
-              bonus{" "}
+              {salaryStaffActionMessage.added} <span className="font-bold">{bonusTitle}</span>. {salaryStaffActionMessage.bonusAmount}
               <span className="font-bold">+{formatter.format(newBonus)}</span>.
-              Tổng bonus còn lại{" "}
+              {salaryStaffActionMessage.remainingBonus}
               <span className="font-bold">
                 {formatter.format(updatedBonus)}
               </span>
@@ -87,7 +89,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating bonus...",
+          loading: salaryStaffActionMessage.updatingBonus,
           success: (message) => {
             router.refresh();
             return message;
@@ -100,7 +102,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             ) {
               return (error as { response: { data: { error: string } } }).response.data.error
             } else {
-              return "Bonus Error.";
+              return salaryStaffActionMessage.somethingWentWrong;
             }
           },
         }
@@ -137,10 +139,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           return (
             <p>
               {" "}
-              Đã thêm <span className="font-bold">{bonusTitle}</span>. Số tiền
-              unbonus{" "}
+              {salaryStaffActionMessage.added} <span className="font-bold">{bonusTitle}</span>. {salaryStaffActionMessage.unbonusAmount}
               <span className="font-bold">-{formatter.format(newBonus)}</span>.
-              Tổng bonus còn lại{" "}
+              {salaryStaffActionMessage.remainingBonus}
               <span className="font-bold">
                 {formatter.format(updatedBonus)}
               </span>
@@ -149,7 +150,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating unbonus...",
+          loading: salaryStaffActionMessage.updatingUnbonus,
           success: (message) => {
             router.refresh();
             return message;
@@ -162,7 +163,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             ) {
               return (error as { response: { data: { error: string } } }).response.data.error
             } else {
-              return "UnBonus Error.";
+              return salaryStaffActionMessage.somethingWentWrong;
             }
           },
         }
@@ -186,13 +187,12 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              {" "}
-              Đã trả lương cho <span className="font-bold">{data.name}</span>
+             {salaryStaffActionMessage.paidSalaryTo} <span className="font-bold">{data.name}</span>
             </p>
           );
         }),
         {
-          loading: "Updating paid...",
+          loading: salaryStaffActionMessage.updatingPaid,
           success: (message) => {
             router.refresh();
             return message;
@@ -205,7 +205,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             ) {
               return (error as { response: { data: { error: string } } }).response.data.error
             } else {
-              return "Paid Error.";
+              return salaryStaffActionMessage.somethingWentWrong;
             }
           },
         }
@@ -226,17 +226,17 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Làm mới thành công! Bonus:{" "}
-              <span className="font-bold">{data.bonus}</span>, Salary Day:{" "}
-              <span className="font-bold">{data.salaryday}</span>, Salary Total:{" "}
-              <span className="font-bold">{data.salarytotal}</span>, Paid:{" "}
-              <span className="font-bold">{data.isPaid}</span>, Sent:{" "}
+              {salaryStaffActionMessage.refreshSuccessBonus}
+              <span className="font-bold">{data.bonus}</span>, {salaryStaffActionMessage.salaryDay}:{" "}
+              <span className="font-bold">{data.salaryday}</span>, {salaryStaffActionMessage.salaryTotal}:{" "}
+              <span className="font-bold">{data.salarytotal}</span>, {salaryStaffActionMessage.paid}:{" "}
+              <span className="font-bold">{data.isPaid}</span>, {salaryStaffActionMessage.sent}:{" "}
               <span className="font-bold">{data.isSent}</span>
             </p>
           );
         }),
         {
-          loading: "Updating reset data...",
+          loading: salaryStaffActionMessage.updatingResetData,
           success: (message) => {
             router.refresh();
             return message;
@@ -249,7 +249,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             ) {
               return (error as { response: { data: { error: string } } }).response.data.error
             } else {
-              return "Reset Error.";
+              return salaryStaffActionMessage.somethingWentWrong;
             }
           },
         }
@@ -264,27 +264,27 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="h-8 w-8 p-0">
-          <span className="sr-only">Open menu</span>
+          <span className="sr-only">{salaryStaffActionMessage.openMenu}</span>
           <MoreHorizontal className="w-4 h-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+        <DropdownMenuLabel>{salaryStaffActionMessage.actions}</DropdownMenuLabel>
         <DropdownMenuItem onClick={() => setOpenBonus(true)}>
           <BadgeDollarSign className="h-4 w-4 mr-2" />
-          Bonus
+          {salaryStaffActionMessage.bonus}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setOpenUnbonus(true)}>
           <WalletCards className="h-4 w-4 mr-2" />
-          UnBonus
+          {salaryStaffActionMessage.unbonus}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={onPaid}>
           <HandCoins className="h-4 w-4 mr-2" />
-          Trả lương
+          {salaryStaffActionMessage.paySalary}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={onReset}>
           <RotateCcw className="h-4 w-4 mr-2" />
-          Reset
+          {salaryStaffActionMessage.reset}
         </DropdownMenuItem>
       </DropdownMenuContent>
 
@@ -295,23 +295,23 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               type="text"
               value={bonusTitle}
               onChange={(e) => setbonusTitle(e.target.value)}
-              placeholder="Enter title..."
+              placeholder={salaryStaffActionMessage.enterTitle}
               disabled={loading}
             />
             <Input
               type="number"
               value={bonusAmount}
               onChange={(e) => setBonusAmount(e.target.value)}
-              placeholder="Enter bonus..."
+              placeholder={salaryStaffActionMessage.enterBonus}
               disabled={loading}
               className="mt-3"
             />
             <div className="flex justify-between px-2 mt-3">
               <Button disabled={loading} onClick={onBonus} className="dark:bg-black dark:text-white">
-                Save
+              {salaryStaffActionMessage.save}
               </Button>
               <Button disabled={loading} onClick={() => setOpenBonus(false)}>
-                Cancel
+              {salaryStaffActionMessage.cancel}
               </Button>
             </div>
           </div>
@@ -325,23 +325,23 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               type="text"
               value={unbonusTitle}
               onChange={(e) => setUnbonusTitle(e.target.value)}
-              placeholder="Enter title..."
+              placeholder={salaryStaffActionMessage.enterTitle}
               disabled={loading}
             />
             <Input
               type="number"
               value={unbonusAmount}
               onChange={(e) => setUnbonusAmount(e.target.value)}
-              placeholder="Enter unbonus..."
+              placeholder={salaryStaffActionMessage.enterUnbonus}
               disabled={loading}
               className="mt-3"
             />
             <div className="flex justify-between px-2 mt-3">
               <Button disabled={loading} onClick={onUnbonus} className="dark:bg-black dark:text-white">
-                Save
+              {salaryStaffActionMessage.save}
               </Button>
               <Button disabled={loading} onClick={() => setOpenUnbonus(false)}>
-                Cancle
+              {salaryStaffActionMessage.cancel}
               </Button>
             </div>
           </div>

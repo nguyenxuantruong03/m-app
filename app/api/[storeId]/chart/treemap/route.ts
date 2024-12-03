@@ -1,5 +1,6 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
+import { translateTreeMapChart } from "@/translate/translate-api";
 import { UserRole } from "@prisma/client";
 import { NextResponse } from "next/server";
 
@@ -19,19 +20,22 @@ interface GroupedUser {
 export async function POST(req: Request) {
   const body = await req.json();
   const { dateRange } = body; // Chỉ lấy dateRange từ body
-  const userId = await currentUser();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const treeMapMessage = translateTreeMapChart(LanguageToUse);
 
   try {
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: treeMapMessage.name1 }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xem chart!" }),
+        JSON.stringify({ error: treeMapMessage.name2 }),
         { status: 403 }
       );
     }
@@ -78,7 +82,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error(error);
     return new NextResponse(
-      JSON.stringify({ error: "Internal error while fetching data." }),
+      JSON.stringify({ error: treeMapMessage.name3 }),
       { status: 500 }
     );
   }

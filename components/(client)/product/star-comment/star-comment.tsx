@@ -1,21 +1,29 @@
 "use client";
 import { commentcolor } from "@/components/(client)/color/color";
+import { translateRate } from "@/translate/translate-client";
 import { Comment } from "@/types/type";
 import { Star } from "lucide-react";
 
 interface CommentProps {
   data: string;
   comment?: Comment[];
+  languageToUse: string;
 }
-const CommentStar: React.FC<CommentProps> = ({ data,comment },) => {
-
-  if(!comment){
+const CommentStar: React.FC<CommentProps> = ({
+  data,
+  comment,
+  languageToUse,
+}) => {
+  if (!comment) {
     return null;
   }
 
-const calculateTotalReviews = () => {
-  return comment.filter((comment) => comment.productId === data).length;
-};
+  //language
+  const rateMessage = translateRate(languageToUse);
+
+  const calculateTotalReviews = () => {
+    return comment.filter((comment) => comment.productId === data).length;
+  };
 
   // Use the calculateTotalReviews function to get the total reviews for the current product
   const totalReviews = calculateTotalReviews();
@@ -48,7 +56,6 @@ const calculateTotalReviews = () => {
     const averageRating = totalStarsGiven / totalReviews;
     return Math.min(averageRating, 5);
   };
-
 
   const renderStars = (integerPart: number, fractionalPart: number) => {
     const starElements = [];
@@ -107,21 +114,23 @@ const calculateTotalReviews = () => {
     return starElements;
   };
 
-    return (
-      <div className="flex items-center justify-center pb-2">
-        {totalReviews > 0 ? (
-          <>
-          <span className="text-xs font-semibold md:text-sm md:mr-1">Đánh giá: </span>
+  return (
+    <div className="flex items-center justify-center pb-2">
+      {totalReviews > 0 ? (
+        <>
+          <span className="text-xs font-semibold md:text-sm md:mr-1">
+            {rateMessage}:{" "}
+          </span>
           {renderStars(
             Math.floor(calculateAverageRating(data)),
             calculateAverageRating(data) % 1
           )}
-          </>
-        ) : (
-          <></>
-        )}
-      </div>
-    );
+        </>
+      ) : (
+        <></>
+      )}
+    </div>
+  );
 };
 
 export default CommentStar;

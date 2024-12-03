@@ -26,6 +26,7 @@ import Link from "next/link";
 import { Image as ImageIcon } from "lucide-react";
 import ImageCellOne from "@/components/image-cell-one";
 import FormatDate from "@/components/format-Date";
+import { getNotFoundMessage } from "@/translate/translate-dashboard";
 
 export type ManageAttendancesColumn = {
   id: string;
@@ -45,6 +46,7 @@ export type ManageAttendancesColumn = {
   updateNFC: string | null;
   isCheckAttendanceImage: boolean | null;
   createdAt: Date;
+  language: string;
 };
 
 export const columns: ColumnDef<ManageAttendancesColumn>[] = [
@@ -97,6 +99,7 @@ export const columns: ColumnDef<ManageAttendancesColumn>[] = [
             imageUrl={imageUrl}
             createdAt={updateImage}
             email={email}
+            languageToUse={row.original.language}
           />
         );
       }
@@ -129,7 +132,7 @@ export const columns: ColumnDef<ManageAttendancesColumn>[] = [
           </Link>
         );
       } else {
-        return <span className="text-red-500 font-bold">Not Found!</span>;
+        return <span className="text-red-500 font-bold">{getNotFoundMessage(row.original.language)}</span>;
       }
     },
   },

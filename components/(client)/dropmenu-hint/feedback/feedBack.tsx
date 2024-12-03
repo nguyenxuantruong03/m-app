@@ -11,26 +11,46 @@ import {
   MessageSquare,
   BotMessageSquare,
   MessageSquareReply,
-  ArrowRight ,
+  ArrowRight,
 } from "lucide-react";
 import { Hint } from "@/components/ui/hint";
+import {
+  translateAIAssistant,
+  translateFeedback,
+  translateRating,
+} from "@/translate/translate-client";
 
-interface FeedBackProps{
-  setIsAISheetOpen: Dispatch<SetStateAction<boolean>>
-  setIsFeedbackSheetOpen: Dispatch<SetStateAction<boolean>>
-  compareTime:boolean;
+interface FeedBackProps {
+  setIsAISheetOpen: Dispatch<SetStateAction<boolean>>;
+  setIsFeedbackSheetOpen: Dispatch<SetStateAction<boolean>>;
+  compareTime: boolean;
+  loadingLanguage: boolean;
+  loading: boolean;
+  languageToUse: string;
 }
 
-export default function FeedBack({setIsAISheetOpen,setIsFeedbackSheetOpen,compareTime} : FeedBackProps) {
+export default function FeedBack({
+  setIsAISheetOpen,
+  setIsFeedbackSheetOpen,
+  compareTime,
+  loadingLanguage,
+  loading,
+  languageToUse,
+}: FeedBackProps) {
   const [isOpen, setIsOpen] = useState(false);
+
+  //language
+  const feedbackMessage = translateFeedback(languageToUse);
+  const aiAssistantMessage = translateAIAssistant(languageToUse);
+  const ratingMessage = translateRating(languageToUse);
 
   return (
     <div>
       <DropdownMenu onOpenChange={(open) => setIsOpen(open)}>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline">
-            <Hint label="Feedback">
-            {isOpen ? <ArrowRight  /> : <MessageSquare />}
+          <Button variant="destructive" disabled={loading || loadingLanguage}>
+            <Hint label={feedbackMessage}>
+              {isOpen ? <ArrowRight /> : <MessageSquare />}
             </Hint>
           </Button>
         </DropdownMenuTrigger>
@@ -41,20 +61,18 @@ export default function FeedBack({setIsAISheetOpen,setIsFeedbackSheetOpen,compar
         >
           <DropdownMenuItem onClick={() => setIsAISheetOpen(true)}>
             {/* Open AI Assistant Sheet */}
-            <Hint label="Trợ lý AI">
+            <Hint label={aiAssistantMessage}>
               <BotMessageSquare />
             </Hint>
           </DropdownMenuItem>
-        {
-          compareTime && (
-          <DropdownMenuItem onClick={() => setIsFeedbackSheetOpen(true)}>
-            {/* Open Feedback Sheet */}
-            <Hint label="FeedBack">
-              <MessageSquareReply />
-            </Hint>
-          </DropdownMenuItem>
-          )
-        }
+          {compareTime && (
+            <DropdownMenuItem onClick={() => setIsFeedbackSheetOpen(true)}>
+              {/* Open Feedback Sheet */}
+              <Hint label={ratingMessage}>
+                <MessageSquareReply />
+              </Hint>
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

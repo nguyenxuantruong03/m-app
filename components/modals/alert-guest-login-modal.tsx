@@ -4,17 +4,23 @@ import { useEffect, useState } from "react";
 import Modal from "../ui/modal";
 import { Button } from "../ui/button";
 import LogoutButton from "../auth/logout-button";
+import { translateGuestAccountModal } from "@/translate/translate-dashboard";
 
 interface AlertGuestModalProps {
   isOpen: boolean;
   onClose: () => void;
+  languageToUse: string;
 }
 
 export const AlertGuestModal: React.FC<AlertGuestModalProps> = ({
   isOpen,
   onClose,
+  languageToUse,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
+
+  //language
+  const guestAccountModalMessage = translateGuestAccountModal(languageToUse);
 
   useEffect(() => {
     setIsMounted(true);
@@ -26,29 +32,23 @@ export const AlertGuestModal: React.FC<AlertGuestModalProps> = ({
 
   return (
     <Modal
-      title={"Quy định tài khoản khách !"}
-      description={
-        "Bạn không được phép chỉnh sửa khi đăng nhập bằng tài khoản khách."
-      }
+      title={guestAccountModalMessage.guestAccountRule}
+      description={guestAccountModalMessage.cannotEditAsGuest}
       isOpen={isOpen}
       onClose={onClose}
     >
       <div>
         <p>
-          <p>- Với tư cách là người dùng khách, chức năng bị hạn chế.</p>
-          <p>
-            - Bạn không thể chỉnh sửa hoặc đăng bình luận. Vui lòng đăng nhập
-            bằng tài khoản đã đăng ký để có quyền truy cập đầy đủ vào các tính
-            năng này.
-          </p>
+          <p>- {guestAccountModalMessage.limitedFunctionalityAsGuest}</p>
+          <p>- {guestAccountModalMessage.cannotEditOrComment}</p>
         </p>
         <div className="flex items-center space-x-3 justify-end">
           <Button variant="secondary" onClick={onClose}>
-            Hủy bỏ
+            {guestAccountModalMessage.cancel}
           </Button>
 
           <LogoutButton>
-            <Button>Đăng nhập</Button>
+            <Button>{guestAccountModalMessage.login}</Button>
           </LogoutButton>
         </div>
       </div>

@@ -1,14 +1,19 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
+import { translateUserDeleteAccount } from "@/translate/translate-api";
 import { NextResponse } from "next/server";
 
 export async function DELETE() {
+  const userId = await currentUser();
+//language
+const LanguageToUse = userId?.language || "vi";
+const userDeleteAccountMessage = translateUserDeleteAccount(LanguageToUse)
+
   try {
-    const userId = await currentUser();
 
     if (!userId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy userId!" }),
+        JSON.stringify({ error: userDeleteAccountMessage.userIdNotFound }),
         { status: 403 }
       );
     }
@@ -43,9 +48,8 @@ export async function DELETE() {
 
     return NextResponse.json(user);
   } catch (error) {
-    console.error("Lỗi khi xóa người dùng:", error);
     return new NextResponse(
-      JSON.stringify({ error: "Lỗi nội bộ khi xóa người dùng." }),
+      JSON.stringify({ error: userDeleteAccountMessage.internalError }),
       { status: 500 }
     );
   }

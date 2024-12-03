@@ -1,7 +1,7 @@
 import prismadb from "@/lib/prismadb";
 import { BillboardForm } from "./components/billboard-form";
 import { UserRole } from "@prisma/client";
-import { currentRole } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 import { RoleGate } from "@/components/auth/role-gate";
 
 const BillboardPage = async ({
@@ -10,6 +10,7 @@ const BillboardPage = async ({
   params: { billboardId: string };
 }) => {
   const role = await currentRole();
+  const user = await currentUser()
   const isRole = role === UserRole.ADMIN || role === UserRole.STAFF;
   const showBillboardRole = isRole;
   const billboard = await prismadb.billboard.findUnique({
@@ -25,7 +26,7 @@ const BillboardPage = async ({
       <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>
     <div className="flex-col">
       <div className={`flex-1 space-y-4 p-8 pt-6 ${showBillboardRole}`}>
-        {showBillboardRole && <BillboardForm initialData={billboard} />}
+        {showBillboardRole && <BillboardForm initialData={billboard} language={user?.language || "vi"}/>}
       </div>
     </div>
       </RoleGate>

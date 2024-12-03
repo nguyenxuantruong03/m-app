@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Info, SquarePen, User, X } from "lucide-react";
+import { Info, SquarePen, X } from "lucide-react";
 import { Hint } from "@/components/ui/hint";
 import {
   Sheet,
@@ -40,20 +40,38 @@ import CategoryFeedBack from "./feedback/category-feedback";
 import { ChatMessage } from "@/types/type";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import ImageCellOne from "@/components/image-cell-one";
-import { useParams } from "next/navigation";
-
-const formSchema = z.object({
-  content: z
-    .string()
-    .min(4, { message: "Nhập ít nhất 4 ký tự." })
-    .max(250, { message: "Không được vượt quá 250 ký tự." }),
-});
-
-type FeedBackFormValues = z.infer<typeof formSchema>;
+import { useParams, useRouter } from "next/navigation";
+import Translation from "./translate/translation";
+import { AlertModal } from "@/components/modals/alert-modal";
+import {
+  getLanguageToastError,
+  getLanguageToastSuccess,
+  getMessageTranslate,
+  getTitleTranslate,
+  getToastError,
+  translateFeedback,
+  translateFeedbackContent,
+  translateHelloVLXDXuanTruongAI,
+  translateInformation,
+  translateLeaveFeedbackBelow,
+  translateLoading,
+  translateMaxCharacters,
+  translateMinCharacters,
+  translateMyVirtualAssistantWillHelpYou,
+  translateNewChat,
+  translatePleaseFillYourAnswer,
+  translateRequired,
+  translateSelectExperienceFeedback,
+  translateSelectFeedbackCategory,
+  translateSubmit,
+  translateThankYouForFeedback,
+  translateUpdatingFeedback,
+} from "@/translate/translate-client";
 
 export default function DropMenuHint() {
   const user = useCurrentUser();
   const param = useParams();
+  const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isAISheetOpen, setIsAISheetOpen] = useState(false); // State for AI Assistant Sheet
@@ -65,6 +83,47 @@ export default function DropMenuHint() {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [loadingLanguage, setLoadingLanguage] = useState(false);
+  const [language, setLanguage] = useState("vi");
+  const [isOpenConfirmLanguage, setIsConfirmLanguage] = useState(false);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+  const toastErrorMessage = getToastError(languageToUse);
+  const updatingFeedBackMessage = translateUpdatingFeedback(languageToUse);
+  const infomationMessage = translateInformation(languageToUse);
+  const helloVLXDXuanTruongAIMessage =
+    translateHelloVLXDXuanTruongAI(languageToUse);
+  const myVirtualAssistantWillHelpYouMessage =
+    translateMyVirtualAssistantWillHelpYou(languageToUse);
+  const newChatMessage = translateNewChat(languageToUse);
+  const feedBackMessage = translateFeedback(languageToUse);
+  const feedBackContentMessage = translateFeedbackContent(languageToUse);
+  const requiredMessage = translateRequired(languageToUse);
+  const selectExperienceFeedBackMessage =
+    translateSelectExperienceFeedback(languageToUse);
+  const selectFeedbackCategoryMessage =
+    translateSelectFeedbackCategory(languageToUse);
+  const leaveFeedbackBelowMessage = translateLeaveFeedbackBelow(languageToUse);
+  const pleaseFillYourAnswerMessage =
+    translatePleaseFillYourAnswer(languageToUse);
+  const submitMessage = translateSubmit(languageToUse);
+  const loadingMessage = translateLoading(languageToUse);
+  const minCharactersMessage = translateMinCharacters(languageToUse, 4);
+  const maxCharacterMessage = translateMaxCharacters(languageToUse, 250);
+
   const feedbackDate = user?.feedbackTimeNextResonse
     ? new Date(user.feedbackTimeNextResonse)
     : undefined;
@@ -91,6 +150,15 @@ export default function DropMenuHint() {
   const newChat = () => {
     setChatHistory([]);
   };
+
+  const formSchema = z.object({
+    content: z
+      .string()
+      .min(4, { message: minCharactersMessage })
+      .max(250, { message: maxCharacterMessage }),
+  });
+
+  type FeedBackFormValues = z.infer<typeof formSchema>;
 
   const form = useForm<FeedBackFormValues>({
     resolver: zodResolver(formSchema),
@@ -119,12 +187,15 @@ export default function DropMenuHint() {
         promise.then((response) => {
           return (
             <p>
-              Cảm ơn {response.data.user.email} đã gửi feedback cho cửa hàng!
+              {translateThankYouForFeedback(
+                languageToUse,
+                response.data.user.email
+              )}
             </p>
           );
         }),
         {
-          loading: "Updating feedback...",
+          loading: updatingFeedBackMessage,
           success: (message) => {
             setIndexEmotion(null);
             setIndexCategory(null);
@@ -144,34 +215,75 @@ export default function DropMenuHint() {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Something went wrong.";
+              return toastErrorMessage;
             }
           },
         }
       );
     } catch (error) {
-      console.error(error);
+      toast.error(toastErrorMessage);
     } finally {
       setLoading(false);
     }
   };
 
+  const onCreatlanguage = async () => {
+    setLoadingLanguage(true);
+    try {
+      // Lấy thông báo từ getLanguageToastSuccess
+      const toastMessage = getLanguageToastSuccess(language);
+
+      if (user?.role !== "GUEST" && user?.id) {
+        // Nếu có user, gọi API
+        await axios.post("/api/translation", { language: language });
+
+        // Gọi toast.success với thông báo
+        toast.success(toastMessage);
+      } else {
+        // Nếu không có user, lưu vào localStorage
+        localStorage.setItem("language", language);
+        toast.success(toastMessage);
+      }
+    } catch (error) {
+      // Lấy thông báo từ getLanguageToastError
+      const toastMessageError = getLanguageToastError(language);
+      toast.error(toastMessageError);
+    } finally {
+      setIsConfirmLanguage(false);
+      setLoadingLanguage(false);
+
+      // Làm mới trang bằng cách thay đổi URL mà không reload
+      // thay vì reload cả trang chưa được sử dụng ý của người dùng thì toast lên hỏi
+      window.location.reload();
+    }
+  };
+
+  //Bỏ pointer-event:none khi không có isAISheetOpen
   useEffect(() => {
     if (!isAISheetOpen) {
       setTimeout(() => {
-        document.body.style.pointerEvents = ''
-      }, 500)
+        document.body.style.pointerEvents = "";
+      }, 500);
     }
-  }, [isAISheetOpen])
+  }, [isAISheetOpen]);
 
   //Bỏ pointer-event:none khi không có isFeedbackSheetOpen
   useEffect(() => {
     if (!isFeedbackSheetOpen) {
       setTimeout(() => {
-        document.body.style.pointerEvents = ''
-      }, 500)
+        document.body.style.pointerEvents = "";
+      }, 500);
     }
-  }, [isFeedbackSheetOpen])
+  }, [isFeedbackSheetOpen]);
+
+  //Bỏ pointer-event:none khi không có isOpenConfirmLanguage
+  useEffect(() => {
+    if (!isOpenConfirmLanguage) {
+      setTimeout(() => {
+        document.body.style.pointerEvents = "";
+      }, 500);
+    }
+  }, [isOpenConfirmLanguage]);
 
   if (!isMounted) {
     return null;
@@ -179,173 +291,215 @@ export default function DropMenuHint() {
 
   return (
     <>
-      {user?.role !== "GUEST" && (
-        <div>
-          <DropdownMenu onOpenChange={(open) => setIsOpen(open)}>
-            <DropdownMenuTrigger asChild className="z-[99999]">
-              <Button
-                variant="outline"
-                className={`fixed right-4 ${
-                  isScrolled ? "bottom-32" : "bottom-8"
-                } transition-all duration-300`}
-              >
-                <Hint label="Infomation">
-                  {isOpen ? (
-                    <X className="dark:text-white" />
-                  ) : (
-                    <Info className="dark:text-white" />
-                  )}
-                </Hint>
-              </Button>
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent
-              side="top"
-              className="relative min-w-0 overflow-visible bg-transparent shadow-none border-none"
+      <AlertModal
+        title={getTitleTranslate(language)}
+        language={getMessageTranslate(language)}
+        isOpen={isOpenConfirmLanguage}
+        loading={loadingLanguage}
+        onClose={() => setIsConfirmLanguage(false)}
+        onConfirm={onCreatlanguage}
+        languageToUse={languageToUse}
+      />
+      <div>
+        <DropdownMenu onOpenChange={(open) => setIsOpen(open)}>
+          <DropdownMenuTrigger asChild className="z-[99999]">
+            <Button
+              disabled={loading || loadingLanguage}
+              variant="outline"
+              className={`fixed right-4 ${
+                isScrolled ? "bottom-32" : "bottom-8"
+              } transition-all duration-300`}
             >
-              <DropdownMenuItem  className="-bottom-[62px] focus:outline-none focus:bg-transparent">
-                <SocialHint />
-              </DropdownMenuItem>
+              <Hint label={infomationMessage}>
+                {isOpen ? (
+                  <X className="dark:text-white" />
+                ) : (
+                  <Info className="dark:text-white" />
+                )}
+              </Hint>
+            </Button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent
+            side="top"
+            className="relative min-w-0 overflow-visible bg-transparent shadow-none border-none"
+          >
+            <DropdownMenuItem className="top-[114px] -bottom-[62px] focus:outline-none focus:bg-transparent">
+              <SocialHint
+                loadingLanguage={loadingLanguage}
+                loading={loading}
+                languageToUse={languageToUse}
+              />
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className={`${
+                user?.role !== "GUEST" && user?.id
+                  ? "-bottom-[62px] right-[62px] focus:outline-none focus:bg-transparent"
+                  : "-bottom-[55px] right-[62px] focus:outline-none focus:bg-transparent"
+              }`}
+            >
+              <Translation
+                setLanguage={setLanguage}
+                setIsConfirmLanguage={setIsConfirmLanguage}
+                loadingLanguage={loadingLanguage}
+                loading={loading}
+                languageToUse={languageToUse}
+              />
+            </DropdownMenuItem>
+            {user?.role !== "GUEST" && user?.id && (
               <DropdownMenuItem className="-bottom-[55px] right-[62px] focus:outline-none focus:bg-transparent">
                 <FeedBack
                   setIsAISheetOpen={setIsAISheetOpen}
                   setIsFeedbackSheetOpen={setIsFeedbackSheetOpen}
                   compareTime={compareTime}
+                  loadingLanguage={loadingLanguage}
+                  loading={loading}
+                  languageToUse={languageToUse}
                 />
               </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
 
-          {/* AI Assistant Sheet */}
-          <Sheet
-            open={isAISheetOpen}
-            onOpenChange={(open) => setIsAISheetOpen(open)}
-          >
-            <SheetOverlay className="z-[999998]"/>
-            <SheetContent side="bottom" className="h-5/6 z-[999999]">
-              <div className="max-w-7xl mx-auto shadow-lg flex items-center justify-between p-2 rounded-md">
-                <div className="flex item-center space-x-2">
-                  <Avatar>
-                    <ImageCellOne
-                      imageUrl="/images/avatar-AI.png"
-                      createdAt={""}
-                      email={""}
-                      isClient={true}
-                      customClassFeedBack="z-[9999999]"
-                    />
-                  </Avatar>
-                  <div>
-                    <SheetTitle>Hello VLXD Xuân Trường AI</SheetTitle>
-                    <SheetDescription>
-                      Trợ lý ảo của tôi sẽ giúp bạn!
-                    </SheetDescription>
-                  </div>
-                </div>
-                <Hint label="Đoạn chat mới">
-                  <Button variant="secondary" size="icon" onClick={newChat}>
-                    <SquarePen />
-                  </Button>
-                </Hint>
-              </div>
-              {/* Add any additional content for the AI Sheet */}
-              <ChatGemini
-                setChatHistory={setChatHistory}
-                chatHistory={chatHistory}
-              />
-            </SheetContent>
-          </Sheet>
-
-          {/* Feedback Sheet */}
-          {compareTime && (
+        {user?.role !== "GUEST" && user?.id && (
+          <>
+            {/* AI Assistant Sheet */}
             <Sheet
-              open={isFeedbackSheetOpen}
-              onOpenChange={setIsFeedbackSheetOpen}
+              open={isAISheetOpen}
+              onOpenChange={(open) => setIsAISheetOpen(open)}
             >
-              <SheetOverlay className="z-[999998]"/>
-              <SheetContent className="z-[999999]">
-                <SheetHeader>
-                  <SheetTitle>Feedback</SheetTitle>
-                  <SheetDescription>Nội dung Feedback.</SheetDescription>
-                </SheetHeader>
-                {/* Add any additional content for the Feedback Sheet */}
-                <div className="space-y-6">
-                  <div className="space-y-2">
-                    <span className="text-sm">
-                      Please select how you feel about the experience:
-                    </span>
-                    <Hint label="Required">
-                      <span className="text-red-600">(*)</span>
-                    </Hint>
-                    <EmotionFeedBack
-                      setIndexEmotion={setIndexEmotion}
-                      indexEmotion={indexEmotion}
-                      setErrorEmotion={setErrorEmotion}
-                      errorEmotion={errorEmotion}
-                    />
+              <SheetOverlay className="z-[999998]" />
+              <SheetContent side="bottom" className="h-5/6 z-[999999]">
+                <div className="max-w-7xl mx-auto shadow-lg flex items-center justify-between p-2 rounded-md">
+                  <div className="flex item-center space-x-2">
+                    <Avatar>
+                      <ImageCellOne
+                        imageUrl="/images/avatar-AI.png"
+                        createdAt={""}
+                        email={""}
+                        isClient={true}
+                        customClassFeedBack="z-[9999999]"
+                        languageToUse={languageToUse}
+                      />
+                    </Avatar>
+                    <div>
+                      <SheetTitle>{helloVLXDXuanTruongAIMessage}</SheetTitle>
+                      <SheetDescription>
+                        {myVirtualAssistantWillHelpYouMessage}
+                      </SheetDescription>
+                    </div>
                   </div>
-
-                  <div className="space-y-2">
-                    <span className="text-sm">
-                      Please select your feedback category below:
-                    </span>
-                    <Hint label="Required">
-                      <span className="text-red-600">(*)</span>
-                    </Hint>
-                    <CategoryFeedBack
-                      setIndexCategory={setIndexCategory}
-                      indexCategory={indexCategory}
-                      setErrorCategory={setErrorCategory}
-                      errorCategory={errorCategory}
-                    />
-                  </div>
-
-                  <Form {...form}>
-                    <form
-                      onSubmit={form.handleSubmit(onSubmit)}
-                      className="space-y-2"
-                    >
-                      <div>
-                        <FormField
-                          control={form.control}
-                          name="content"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>
-                                <span className="text-sm">
-                                  Please leave your feedback below:
-                                </span>
-                                <Hint label="Required">
-                                  <span className="text-red-600">(*)</span>
-                                </Hint>
-                              </FormLabel>
-                              <FormControl>
-                                <Textarea
-                                  disabled={loading}
-                                  placeholder="Please fill on your answer ..."
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
-                      <Button
-                        disabled={loading}
-                        className="ml-auto"
-                        type="submit"
-                      >
-                        {loading ? "Loading..." : "Submit"}
-                      </Button>
-                    </form>
-                  </Form>
+                  <Hint label={newChatMessage}>
+                    <Button variant="secondary" size="icon" onClick={newChat}>
+                      <SquarePen />
+                    </Button>
+                  </Hint>
                 </div>
+                {/* Add any additional content for the AI Sheet */}
+                <ChatGemini
+                  setChatHistory={setChatHistory}
+                  chatHistory={chatHistory}
+                  languageToUse={languageToUse}
+                />
               </SheetContent>
             </Sheet>
-          )}
-        </div>
-      )}
+
+            {/* Feedback Sheet */}
+            {compareTime && (
+              <Sheet
+                open={isFeedbackSheetOpen}
+                onOpenChange={setIsFeedbackSheetOpen}
+              >
+                <SheetOverlay className="z-[999998]" />
+                <SheetContent className="z-[999999]">
+                  <SheetHeader>
+                    <SheetTitle>{feedBackMessage}</SheetTitle>
+                    <SheetDescription>
+                      {feedBackContentMessage}
+                    </SheetDescription>
+                  </SheetHeader>
+                  {/* Add any additional content for the Feedback Sheet */}
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <span className="text-sm">
+                        {selectExperienceFeedBackMessage}
+                      </span>
+                      <Hint label={requiredMessage}>
+                        <span className="text-red-600">(*)</span>
+                      </Hint>
+                      <EmotionFeedBack
+                        setIndexEmotion={setIndexEmotion}
+                        indexEmotion={indexEmotion}
+                        setErrorEmotion={setErrorEmotion}
+                        errorEmotion={errorEmotion}
+                        languageToUse={languageToUse}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <span className="text-sm">
+                        {selectFeedbackCategoryMessage}
+                      </span>
+                      <Hint label={requiredMessage}>
+                        <span className="text-red-600">(*)</span>
+                      </Hint>
+                      <CategoryFeedBack
+                        setIndexCategory={setIndexCategory}
+                        indexCategory={indexCategory}
+                        setErrorCategory={setErrorCategory}
+                        errorCategory={errorCategory}
+                        languageToUse={languageToUse}
+                      />
+                    </div>
+
+                    <Form {...form}>
+                      <form
+                        onSubmit={form.handleSubmit(onSubmit)}
+                        className="space-y-2"
+                      >
+                        <div>
+                          <FormField
+                            control={form.control}
+                            name="content"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>
+                                  <span className="text-sm">
+                                    {leaveFeedbackBelowMessage}
+                                  </span>
+                                  <Hint label={requiredMessage}>
+                                    <span className="text-red-600">(*)</span>
+                                  </Hint>
+                                </FormLabel>
+                                <FormControl>
+                                  <Textarea
+                                    disabled={loading}
+                                    placeholder={pleaseFillYourAnswerMessage}
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+
+                        <Button
+                          disabled={loading}
+                          className="ml-auto"
+                          type="submit"
+                        >
+                          {loading ? loadingMessage : submitMessage}
+                        </Button>
+                      </form>
+                    </Form>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            )}
+          </>
+        )}
+      </div>
     </>
   );
 }

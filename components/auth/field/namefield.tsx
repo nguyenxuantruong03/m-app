@@ -2,6 +2,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Check, X } from "lucide-react";
+import {
+  translateEnterFullName,
+  translateFullName,
+  translateFullNameEntered,
+  translateMinCharacters,
+  translateNoIndentNoNumbers,
+  translateValid,
+} from "@/translate/translate-client";
 
 interface NameFieldProps {
   field: {
@@ -15,6 +23,7 @@ interface NameFieldProps {
   setError: (value: string) => void;
   setSuccess: (value: string) => void;
   setIsSubmittedName: (value: boolean) => void;
+  languageToUse: string;
 }
 
 const NameField: React.FC<NameFieldProps> = ({
@@ -27,6 +36,7 @@ const NameField: React.FC<NameFieldProps> = ({
   setError,
   setSuccess,
   setIsSubmittedName,
+  languageToUse,
 }) => {
   const [showNamePrompt, setShowNamePrompt] = useState(false);
   const [isValidName, setIsValidName] = useState(false);
@@ -35,6 +45,14 @@ const NameField: React.FC<NameFieldProps> = ({
   const [allValid, setAllValid] = useState(false); // Thêm state để theo dõi tất cả các yêu cầu đều hợp lệ
 
   const inputRef = useRef<HTMLInputElement>(null);
+
+  //languages
+  const fullNameMessage = translateFullName(languageToUse);
+  const validMessage = translateValid(languageToUse);
+  const noIndentNoNumberMessage = translateNoIndentNoNumbers(languageToUse);
+  const fullNameEnterMessage = translateFullNameEntered(languageToUse);
+  const enterFullNameMessage = translateEnterFullName(languageToUse);
+  const minCharacterMessage = translateMinCharacters(languageToUse, 4);
 
   //Kiếm tra nếu tất cả các valid đều đúng thì ẩn đi
   useEffect(() => {
@@ -86,7 +104,7 @@ const NameField: React.FC<NameFieldProps> = ({
     <>
       <Input
         disabled={isPending}
-        placeholder="Họ và tên..."
+        placeholder={`${fullNameMessage}...`}
         value={name} // Bind value to the local state
         onChange={handleInputChange}
         onClick={() => setShowNamePrompt(true)}
@@ -118,10 +136,10 @@ const NameField: React.FC<NameFieldProps> = ({
           )}
           <span className="text-xs">
             {isValidName ? (
-              <span className="text-xs text-green-400">Hợp lệ!</span>
+              <span className="text-xs text-green-400">{validMessage}</span>
             ) : (
               <span className="text-xs text-red-500">
-                Không được khoảng cách đầu dòng và ghi số
+                {noIndentNoNumberMessage}
               </span>
             )}
           </span>
@@ -131,14 +149,14 @@ const NameField: React.FC<NameFieldProps> = ({
             <>
               <Check className="w-5 h-5 text-green-400" />
               <span className="text-xs text-green-400">
-                Bạn đã nhập đủ Họ và Tên!
+                {fullNameEnterMessage}
               </span>
             </>
           ) : (
             <>
               <X className="w-5 h-5 text-red-500" />
               <span className="text-xs text-red-500">
-                Hãy nhập đủ Họ và Tên. ít nhất 4 ký tự!
+                {enterFullNameMessage} {minCharacterMessage}
               </span>
             </>
           )}

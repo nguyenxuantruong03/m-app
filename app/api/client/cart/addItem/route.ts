@@ -1,26 +1,32 @@
+import { currentUser } from '@/lib/auth';
 import prismadb from '@/lib/prismadb';
+import { translateCartAddItem } from '@/translate/translate-api';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const cartAddItemMessage = translateCartAddItem(LanguageToUse)
   try {
     const body = await req.json();
     const { productId, quantity, userId, warranty,size,color } = body;
 
     if (!userId) {
         return new NextResponse(
-          JSON.stringify({ error: "Không tìm thấy user id!" }),
+          JSON.stringify({ error: cartAddItemMessage.userIdNotFound }),
           { status: 403 }
         );
       }
       if (!quantity) {
         return new NextResponse(
-          JSON.stringify({ error: "Không tìm thấy qquantity!" }),
+          JSON.stringify({ error: cartAddItemMessage.quantityNotFound }),
           { status: 403 }
         );
       }
       if (!productId) {
         return new NextResponse(
-          JSON.stringify({ error: "Không tìm thấy product id!" }),
+          JSON.stringify({ error: cartAddItemMessage.productIdNotFound }),
           { status: 403 }
         );
       }
@@ -50,7 +56,7 @@ export async function POST(req: Request) {
     }
   } catch(error) {
     return new NextResponse(
-        JSON.stringify({ error: "Internal error post cartItem." }),
+        JSON.stringify({ error: cartAddItemMessage.internalError }),
         { status: 500 }
       );
   }

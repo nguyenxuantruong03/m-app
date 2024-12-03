@@ -21,32 +21,38 @@ import {
   checkout,
   setting,
 } from "./export-name-navbar";
-const MainNav = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLElement>) => {
+import { translateMainNav } from "@/translate/translate-client";
+
+interface MainNavProps extends React.HTMLAttributes<HTMLElement> {
+  languageToUse: string;
+}
+
+const MainNav = ({ className, languageToUse, ...props }: MainNavProps) => {
   const pathname = usePathname();
   const params = useParams();
   const storeId = Array.isArray(params.storeId)
     ? params.storeId[0]
     : params.storeId;
 
-  const routes = route(storeId, pathname);
-  const staffs = staff(storeId, pathname);
-  const billboards = billboard(storeId, pathname);
-  const category = categories(storeId, pathname);
-  const parameters = parameter(storeId, pathname);
-  const products = product(storeId, pathname);
-  const orders = order(storeId, pathname);
-  const users = user(storeId, pathname);
-  const checkouts = checkout(storeId, pathname);
-  const settings = setting(storeId, pathname);
+  const routes = route(storeId, pathname, languageToUse);
+  const staffs = staff(storeId, pathname, languageToUse);
+  const billboards = billboard(storeId, pathname, languageToUse);
+  const category = categories(storeId, pathname, languageToUse);
+  const parameters = parameter(storeId, pathname, languageToUse);
+  const products = product(storeId, pathname, languageToUse);
+  const orders = order(storeId, pathname, languageToUse);
+  const users = user(storeId, pathname, languageToUse);
+  const checkouts = checkout(storeId, pathname, languageToUse);
+  const settings = setting(storeId, pathname, languageToUse);
+
+  //language
+  const mainNavMessage = translateMainNav(languageToUse);
   return (
     <>
       {/* Overview */}
       <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="item-1">
-          <AccordionTrigger>Tổng quan</AccordionTrigger>
+          <AccordionTrigger>{mainNavMessage.name1}</AccordionTrigger>
           <AccordionContent>
             {routes.map((route) => (
               <Link
@@ -66,7 +72,7 @@ const MainNav = ({
         </AccordionItem>
         {/* Staff Attendance */}
         <AccordionItem value="item-3">
-          <AccordionTrigger>Nhân viên</AccordionTrigger>
+          <AccordionTrigger>{mainNavMessage.name2}</AccordionTrigger>
           <AccordionContent>
             {staffs.map((route) => (
               <Link
@@ -86,7 +92,7 @@ const MainNav = ({
         </AccordionItem>
         {/* Billboard */}
         <AccordionItem value="item-4">
-          <AccordionTrigger>Ảnh quảng cáo</AccordionTrigger>
+          <AccordionTrigger>{mainNavMessage.name3}</AccordionTrigger>
           <AccordionContent>
             {billboards.map((billboard) => (
               <Link
@@ -106,7 +112,7 @@ const MainNav = ({
         </AccordionItem>
         {/* Category */}
         <AccordionItem value="item-5">
-          <AccordionTrigger>Loại hàng</AccordionTrigger>
+          <AccordionTrigger>{mainNavMessage.name4}</AccordionTrigger>
           <AccordionContent>
             {category.map((category) => (
               <Link
@@ -126,7 +132,7 @@ const MainNav = ({
         </AccordionItem>
         {/* Parameter */}
         <AccordionItem value="item-6">
-          <AccordionTrigger>Thông số</AccordionTrigger>
+          <AccordionTrigger>{mainNavMessage.name5}</AccordionTrigger>
           <AccordionContent>
             {parameters.map((parameter) => (
               <Link
@@ -146,7 +152,7 @@ const MainNav = ({
         </AccordionItem>
         {/* Product */}
         <AccordionItem value="item-7">
-          <AccordionTrigger>Sản phẩm</AccordionTrigger>
+          <AccordionTrigger>{mainNavMessage.name6}</AccordionTrigger>
           <AccordionContent>
             {products.map((product) => (
               <Link
@@ -166,7 +172,7 @@ const MainNav = ({
         </AccordionItem>
         {/* Order */}
         <AccordionItem value="item-8">
-          <AccordionTrigger>Đơn hàng</AccordionTrigger>
+          <AccordionTrigger>{mainNavMessage.name7}</AccordionTrigger>
           <AccordionContent>
             {orders.map((order) => (
               <Link
@@ -186,7 +192,7 @@ const MainNav = ({
         </AccordionItem>
         {/* Người dùng */}
         <AccordionItem value="item-9">
-          <AccordionTrigger>Người dùng</AccordionTrigger>
+          <AccordionTrigger>{mainNavMessage.name8}</AccordionTrigger>
           <AccordionContent>
             {users.map((order) => (
               <Link
@@ -206,7 +212,7 @@ const MainNav = ({
         </AccordionItem>
         {/*Thanh toán online */}
         <AccordionItem value="item-10">
-          <AccordionTrigger>Thanh toán</AccordionTrigger>
+          <AccordionTrigger>{mainNavMessage.name9}</AccordionTrigger>
           <AccordionContent>
             {checkouts.map((order) => (
               <Link
@@ -226,7 +232,7 @@ const MainNav = ({
         </AccordionItem>
         {/* Setting */}
         <AccordionItem value="item-11">
-          <AccordionTrigger>Cài đặt</AccordionTrigger>
+          <AccordionTrigger>{mainNavMessage.name10}</AccordionTrigger>
           <AccordionContent>
             {settings.map((setting) => (
               <Link

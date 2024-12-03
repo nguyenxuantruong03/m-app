@@ -12,7 +12,6 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { setting } from "@/actions/actions-signin-sign-up/setting";
 import { SettingSchema } from "@/schemas";
@@ -22,28 +21,35 @@ import FormError from "@/components/form-error";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction } from "react";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  getToastError,
+  translateProfileBio,
+  translateRemainingCharacters,
+  translateSave,
+} from "@/translate/translate-client";
 
 interface FormBioProps {
   setOpen?: Dispatch<SetStateAction<boolean>>;
+  languageToUse: string;
 }
 
 const MAX_CHAR_LIMIT = 101;
 
-const FormBio = ({ setOpen }: FormBioProps) => {
+const FormBio = ({ setOpen, languageToUse }: FormBioProps) => {
   const user = useCurrentUser();
   const router = useRouter();
   const { update } = useSession();
   const [error, setError] = useState<string>();
   const [success, setSuccess] = useState<string>();
-  const [remainingChars, setRemainingChars] = useState(MAX_CHAR_LIMIT); 
+  const [remainingChars, setRemainingChars] = useState(MAX_CHAR_LIMIT);
   const [loading, setLoading] = useState(false);
-  const [isBioUnchanged, setIsBioUnchanged] = useState(true); 
+  const [isBioUnchanged, setIsBioUnchanged] = useState(true);
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     if (user?.bio) {
       setRemainingChars(MAX_CHAR_LIMIT - user.bio.length);
-      setIsBioUnchanged(true); 
+      setIsBioUnchanged(true);
     }
   }, [user?.bio]);
 
@@ -53,6 +59,11 @@ const FormBio = ({ setOpen }: FormBioProps) => {
       inputElement.focus();
     }
   }, []);
+
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const profileBioMessage = translateProfileBio(languageToUse);
+  const saveMessage = translateSave(languageToUse);
 
   const form = useForm<z.infer<typeof SettingSchema>>({
     resolver: zodResolver(SettingSchema),
@@ -69,7 +80,7 @@ const FormBio = ({ setOpen }: FormBioProps) => {
     setSuccess("");
     setError("");
     startTransition(() => {
-      setting({ ...values, bio: trimmedBio })
+      setting({ ...values, bio: trimmedBio },languageToUse)
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -82,13 +93,14 @@ const FormBio = ({ setOpen }: FormBioProps) => {
           }
         })
         .catch(() => {
-          setError("Something went wrong");
+          setError(toastErrorMessage);
         })
         .finally(() => setLoading(false));
     });
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => { // Change type to HTMLTextAreaElement
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    // Change type to HTMLTextAreaElement
     const inputValue = e.target.value;
 
     if (inputValue.length <= MAX_CHAR_LIMIT) {
@@ -114,12 +126,12 @@ const FormBio = ({ setOpen }: FormBioProps) => {
             name="bio"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Bio trang cá nhân</FormLabel>
+                <FormLabel>{profileBioMessage}</FormLabel>
                 <FormControl>
                   <Textarea
                     id="bio-textarea"
                     {...field}
-                    placeholder="Minh là truong ..."
+                    placeholder="Hi! I'm truong ..."
                     disabled={isPending}
                     className={
                       form.formState.errors.bio
@@ -133,11 +145,7 @@ const FormBio = ({ setOpen }: FormBioProps) => {
                   />
                 </FormControl>
                 <p className="text-sm text-gray-500 text-end">
-                  Còn 
-                  <span className="mx-1">
-                    {remainingChars < 0 ? 0 : remainingChars}
-                  </span>
-                  ký tự
+                  {translateRemainingCharacters(languageToUse, remainingChars)}
                 </p>
               </FormItem>
             )}
@@ -147,9 +155,15 @@ const FormBio = ({ setOpen }: FormBioProps) => {
         <FormSuccess message={success} />
         <Button
           type="submit"
-          disabled={isPending || remainingChars < 0 || isBioUnchanged || loading || hasLeadingSpace}
+          disabled={
+            isPending ||
+            remainingChars < 0 ||
+            isBioUnchanged ||
+            loading ||
+            hasLeadingSpace
+          }
         >
-          Save
+          {saveMessage}
         </Button>
       </form>
     </Form>

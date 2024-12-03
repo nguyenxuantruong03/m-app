@@ -4,6 +4,7 @@ import { Container } from "./_components/container";
 import { Sidebar } from "./_components/sidebar";
 import { getSelfByUsername } from "@/lib/stream/auth-service";
 import { Navbar } from "@/app/(profile-user-other)/_components/navbar";
+import DropMenuHint from "@/components/(client)/dropmenu-hint";
 
 interface CreatorLayoutProps {
   params: { username: string };
@@ -17,15 +18,16 @@ const CreatorLayout = async ({ params, children }: CreatorLayoutProps) => {
   }
 
   return (
-    <div className="h-full text-slate-900">
-      <Navbar exitLink={true}/>
-      <div className=" h-full pt-20">
-        <Sidebar />
-        <Container>
-        {children}
-        </Container>
+    <>
+      <div className="h-full text-slate-900">
+        <Navbar exitLink={true} />
+        <div className=" h-full pt-20">
+          <Sidebar />
+          <Container>{children}</Container>
+        </div>
       </div>
-    </div>
+      <DropMenuHint />
+    </>
   );
 };
 

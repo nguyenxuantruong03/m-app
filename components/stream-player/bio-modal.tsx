@@ -14,15 +14,26 @@ import { useState, useTransition, useRef, ElementRef } from "react";
 
 import { updateUser } from "@/actions/stream/user";
 import { toast } from "react-hot-toast";
+import { getToastError, translateCancel, translateEdit, translateEditUserBio, translateSave, translateUserBio, translateUserBioUpdated } from "@/translate/translate-client";
 
 interface BioModalProps {
   initialValue: string | null;
+  languageToUse: string;
 }
 
-export const BioModal = ({ initialValue }: BioModalProps) => {
+export const BioModal = ({ initialValue, languageToUse }: BioModalProps) => {
   const closeRef = useRef<ElementRef<"button">>(null);
   const [isPending, startTransition] = useTransition();
   const [value, setValue] = useState(initialValue || "");
+
+  //languages
+  const toastErrorMessage = getToastError(languageToUse)
+  const userBioUpdatedMessage = translateUserBioUpdated(languageToUse)
+  const editMessage = translateEdit(languageToUse)
+  const editUserBioMessage = translateEditUserBio(languageToUse)
+  const userBioMessage = translateUserBio(languageToUse)
+  const cancelMessage = translateCancel(languageToUse)
+  const saveMessage = translateSave(languageToUse)
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,10 +41,10 @@ export const BioModal = ({ initialValue }: BioModalProps) => {
     startTransition(() => {
       updateUser({ bio: value })
         .then(() => {
-          toast.success("User bio updated");
+          toast.success(userBioUpdatedMessage);
           closeRef.current?.click();
         })
-        .catch(() => toast.error("Something went wrong"));
+        .catch(() => toast.error(toastErrorMessage));
     });
   };
 
@@ -41,16 +52,16 @@ export const BioModal = ({ initialValue }: BioModalProps) => {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="link" size="sm" className="ml-auto">
-          Edit
+          {editMessage}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit user bio</DialogTitle>
+          <DialogTitle>{editUserBioMessage}</DialogTitle>
         </DialogHeader>
         <form onSubmit={onSubmit} className="space-y-4">
           <Textarea
-            placeholder="User bio"
+            placeholder={`${userBioMessage}...`}
             onChange={(e) => {
               setValue(e.target.value);
             }}
@@ -61,11 +72,11 @@ export const BioModal = ({ initialValue }: BioModalProps) => {
           <div className="flex justify-between">
             <DialogClose ref={closeRef} asChild>
               <Button type="button" variant="ghost">
-                Cancel
+                {cancelMessage}
               </Button>
             </DialogClose>
             <Button disabled={isPending} type="submit" variant="primary">
-              Save
+              {saveMessage}
             </Button>
           </div>
         </form>

@@ -6,7 +6,7 @@ import { ImageCredential } from "@/types/type";
 import CircleAvatar, { UserAvatarSkeleton } from "@/components/ui/circle-avatar";
 import {useState,useEffect} from "react"
 
-interface ResultCardProps {
+export interface ResultCardProps {
   data: {
     id: string;
     user: {

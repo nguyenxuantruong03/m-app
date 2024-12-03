@@ -6,22 +6,45 @@ import prismadb from "@/lib/prismadb";
 import { getUserByEmail } from "@/data/user";
 import { sendVerificationEmail } from "@/lib/mail";
 import { generateVerificationToken } from "@/lib/tokens";
-export const register = async (values: z.infer<typeof RegisterSchema>) => {
+import {
+  translateAccountPermanentlyBannedPolicyViolation,
+  translateEmailAlreadyUsed,
+  translateInvalid,
+  translatePasswordRequirements,
+  translatePleaseFillOutAllFields,
+  translateSuccessCheckEmail,
+} from "@/translate/translate-client";
+
+export const register = async (
+  values: z.infer<typeof RegisterSchema>,
+  languageToUse: string
+) => {
+  //languages
+  const invalidMessage = translateInvalid(languageToUse);
+  const accountPermanentlyBannedPolicyViolationMessage =
+    translateAccountPermanentlyBannedPolicyViolation(languageToUse);
+  const passwordRequirementMessage =
+    translatePasswordRequirements(languageToUse);
+  const pleaseFillOutAllFieldMessage =
+    translatePleaseFillOutAllFields(languageToUse);
+  const emailAlreadyUsedMessage = translateEmailAlreadyUsed(languageToUse);
+  const successCheckEmailMessage = translateSuccessCheckEmail(languageToUse);
+
   //safeParse: Phân tích an toàn
   const validatedFields = RegisterSchema.safeParse(values);
   if (!validatedFields.success) {
-    return { error: "Không hợp lệ!" };
+    return { error: invalidMessage };
   }
   const { email, password, name } = validatedFields.data;
   // Add password regex check
   const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[0-9]).{6,20}$/;
   if (!passwordRegex.test(password)) {
-    return { error: "Mật khẩu yêu cầu [a-z] và [0-9] ,từ 6 đến 20 ký tự!" };
+    return { error: passwordRequirementMessage };
   }
 
   // Check if field of the required fields are empty
   if (!name || !email || !password) {
-    return { error: "Vui lòng nhập đầy đủ thông tin." };
+    return { error: pleaseFillOutAllFieldMessage };
   }
 
   const hashPassword = await bcrypt.hash(password, 10);
@@ -30,13 +53,12 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
 
   if (existingUser?.isbanforever) {
     return {
-      error:
-        "Tài khoản của bạn đã bị ban vĩnh viên do vi phạm chính sách có thể liên hệ chúng tôi để biết thêm lý do 0352261103.",
+      error: accountPermanentlyBannedPolicyViolationMessage,
     };
   }
 
   if (existingUser) {
-    return { error: "Email đã được sử dụng!" };
+    return { error: emailAlreadyUsedMessage };
   }
 
   // Xử lý tạo nameuser từ email
@@ -53,6 +75,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
     data: {
       name,
       email,
+      language: languageToUse,
       nameuser: nameuser,
       favorite: ["phobien"],
       password: {
@@ -70,7 +93,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
   const sanitizedValues = { name: "", email: "", password: "" };
 
   return {
-    success: "Thành công. Hãy kiểm tra email của bạn!",
+    success: successCheckEmailMessage,
     sanitizedValues,
   };
 };

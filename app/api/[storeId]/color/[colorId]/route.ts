@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
+import { translateColorIdDelete, translateColorIdGet, translateColorPatch } from "@/translate/translate-api";
 
 type ColorValue = string | Date | undefined;
 
@@ -15,26 +16,29 @@ export async function GET(
   req: Request,
   { params }: { params: { colorId: string } }
 ) {
-  const userId = await currentUser();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const colorIdGetMessage = translateColorIdGet(LanguageToUse)
 
   try {
     if (!params.colorId) {
       return new NextResponse(
-        JSON.stringify({ error: "Color id is required!" }),
+        JSON.stringify({ error: colorIdGetMessage.colorIdRequired }),
         { status: 400 }
       );
     }
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: colorIdGetMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xem color!" }),
+        JSON.stringify({ error: colorIdGetMessage.permissionDenied }),
         { status: 403 }
       );
     }
@@ -48,7 +52,7 @@ export async function GET(
     return NextResponse.json(color);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get color." }),
+      JSON.stringify({ error: colorIdGetMessage.internalError }),
       { status: 500 }
     );
   }
@@ -58,26 +62,28 @@ export async function DELETE(
   req: Request,
   { params }: { params: { colorId: string; storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const colorDeleteIdMessage = translateColorIdDelete(LanguageToUse);
   try {
-    const userId = await currentUser();
-
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: colorDeleteIdMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xóa color!" }),
+        JSON.stringify({ error: colorDeleteIdMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!params.colorId) {
       return new NextResponse(
-        JSON.stringify({ error: "Color id is required!" }),
+        JSON.stringify({ error: colorDeleteIdMessage.colorIdRequired }),
         { status: 400 }
       );
     }
@@ -90,7 +96,7 @@ export async function DELETE(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: colorDeleteIdMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -117,14 +123,14 @@ export async function DELETE(
         storeId: params.storeId,
         type: "DELETECOLOR",
         delete: changes,
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(color);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete color." }),
+      JSON.stringify({ error: colorDeleteIdMessage.internalError }),
       { status: 500 }
     );
   }
@@ -134,42 +140,44 @@ export async function PATCH(
   req: Request,
   { params }: { params: { colorId: string; storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const colorPatchMessage = translateColorPatch(LanguageToUse);
+
   try {
-    const userId = await currentUser();
-
     const body = await req.json();
-
     const { name, value } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: colorPatchMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền cập nhật color!" }),
+        JSON.stringify({ error: colorPatchMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+      return new NextResponse(JSON.stringify({ error: colorPatchMessage.nameRequired }), {
         status: 400,
       });
     }
 
     if (!value) {
-      return new NextResponse(JSON.stringify({ error: "Color is required!" }), {
+      return new NextResponse(JSON.stringify({ error: colorPatchMessage.colorRequired }), {
         status: 400,
       });
     }
 
     if (!params.colorId) {
       return new NextResponse(
-        JSON.stringify({ error: "Color id is required!" }),
+        JSON.stringify({ error: colorPatchMessage.colorIdRequired }),
         { status: 400 }
       );
     }
@@ -182,7 +190,7 @@ export async function PATCH(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: colorPatchMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -243,14 +251,14 @@ export async function PATCH(
         oldChange: oldChanges,
         newChange: newChanges,
         type: "UPDATECOLOR",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(color);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error patch color." }),
+      JSON.stringify({ error: colorPatchMessage.internalError }),
       { status: 500 }
     );
   }

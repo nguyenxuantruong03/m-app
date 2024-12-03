@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import {
   ChevronRight,
   Github,
@@ -17,10 +17,15 @@ import Link from "next/link";
 import { SocialLink, User } from "@prisma/client";
 import { useState } from "react";
 import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
+import {
+  translateNotUpdated,
+  translatePersonalWebsite,
+} from "@/translate/translate-client";
 
 interface InfoSocialProps {
   userSocial: SocialLink | null;
   existingUser: User;
+  languageToUse: string;
 }
 
 interface InfoUser {
@@ -30,36 +35,41 @@ interface InfoUser {
 const InfoSocial: React.FC<InfoSocialProps> = ({
   userSocial,
   existingUser,
+  languageToUse,
 }) => {
-  const [alertGuestModal,setAlertGuestModal] = useState(false);
+  const [alertGuestModal, setAlertGuestModal] = useState(false);
+
+  //language
+  const noUpdatedMessage = translateNotUpdated(languageToUse);
+  const personalWebsiteMessage = translatePersonalWebsite(languageToUse);
 
   const linkwebsite = userSocial?.linkwebsite
     ? userSocial?.linkwebsite
-    : "Chưa cập nhật";
+    : noUpdatedMessage;
   const linkgithub = userSocial?.linkgithub
     ? userSocial.linkgithub
-    : "Chưa cập nhật";
+    : noUpdatedMessage;
   const linklinkedin = userSocial?.linklinkedin
     ? userSocial.linklinkedin
-    : "Chưa cập nhật";
+    : noUpdatedMessage;
   const linkfacebook = userSocial?.linkfacebook
     ? userSocial.linkfacebook
-    : "Chưa cập nhật";
+    : noUpdatedMessage;
   const linkyoutube = userSocial?.linkyoutube
     ? userSocial.linkyoutube
-    : "Chưa cập nhật";
+    : noUpdatedMessage;
   const linktiktok = userSocial?.linktiktok
     ? userSocial.linktiktok
-    : "Chưa cập nhật";
+    : noUpdatedMessage;
   const linkinstagram = userSocial?.linkinstagram
     ? userSocial.linkinstagram
-    : "Chưa cập nhật";
+    : noUpdatedMessage;
   const linktwitter = userSocial?.linktwitter
     ? userSocial.linktwitter
-    : "Chưa cập nhật";
+    : noUpdatedMessage;
   const linkother = userSocial?.linkother
     ? userSocial.linkother
-    : "Chưa cập nhật";
+    : noUpdatedMessage;
 
   const isSecureLink = (link: string) => {
     return link.startsWith("https://") || link.startsWith("http://");
@@ -81,7 +91,7 @@ const InfoSocial: React.FC<InfoSocialProps> = ({
       name: (
         <span className="flex items-center">
           <Dribbble className="h-4 w-4 mr-1" />
-          Trang web cá nhân
+          {personalWebsiteMessage}
         </span>
       ),
       state: linkwebsite,
@@ -204,6 +214,7 @@ const InfoSocial: React.FC<InfoSocialProps> = ({
           role={existingUser.role}
           userId={existingUser?.id || ""}
           setAlertGuestModal={setAlertGuestModal}
+          languageToUse={languageToUse}
         >
           {content}
         </SheetLinkSocial>
@@ -214,9 +225,10 @@ const InfoSocial: React.FC<InfoSocialProps> = ({
 
   return (
     <>
-     <AlertGuestModal
+      <AlertGuestModal
         isOpen={alertGuestModal}
         onClose={() => setAlertGuestModal(false)}
+        languageToUse={languageToUse}
       />
       <div className="bg-white rounded-md overflow-hidden my-2">
         {sosials.map((sosial) => (

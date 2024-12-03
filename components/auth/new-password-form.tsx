@@ -1,7 +1,7 @@
 "use client";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -20,6 +20,12 @@ import FormError from "@/components/form-error";
 import FormSuccess from "@/components/form-success";
 import { newPassword } from "@/actions/actions-signin-sign-up/new-password";
 import PasswordField from "./field/passwordfield";
+import {
+  translateBackToLogin,
+  translateEnterNewPasswordTitle,
+  translateNewPassword,
+  translateResetPassword,
+} from "@/translate/translate-client";
 
 const NewPasswordForm = () => {
   const searchParam = useSearchParams();
@@ -31,6 +37,25 @@ const NewPasswordForm = () => {
   const [isPasswordValid, setPasswordValid] = useState(false);
   const [password, setPassword] = useState<string>("");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  //language
+  const [language, setLanguage] = useState("vi");
+  const [isOpen, setOpen] = useState(false);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  const languageToUse = storedLanguage || language;
+  const enterNewPasswordTitleMessage =
+    translateEnterNewPasswordTitle(languageToUse);
+  const backToLoginMessage = translateBackToLogin(languageToUse);
+  const newPasswordMessage = translateNewPassword(languageToUse);
+  const resetPasswordMessage = translateResetPassword(languageToUse);
 
   // form bên dưới dùng để validate trường nhập theo loginForm bên dưới gọi form đẻ validate code đã xử lý ở  đây và bên dưới dùng destructuring để gọi hết vào
   const form = useForm<z.infer<typeof NewPasswordSchema>>({
@@ -45,7 +70,7 @@ const NewPasswordForm = () => {
     setError("");
     setSuccess("");
     startTransition(() => {
-      newPassword(values, token).then((data) => {
+      newPassword(values, token, languageToUse).then((data) => {
         if (data.error) {
           setError(data?.error);
           setPassword("");
@@ -58,9 +83,14 @@ const NewPasswordForm = () => {
   };
   return (
     <CardWrapper
-      headerLabel="Enter New password"
+      headerLabel={enterNewPasswordTitleMessage}
       backButtonHref="/auth/login"
-      backButtonLabel="Back to login"
+      backButtonLabel={backToLoginMessage}
+      setLanguage={setLanguage}
+      languageToUse={languageToUse}
+      isPending={isPending}
+      setOpen={setOpen}
+      isOpen={isOpen}
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -70,9 +100,10 @@ const NewPasswordForm = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>New Password</FormLabel>
+                  <FormLabel>{newPasswordMessage}</FormLabel>
                   <FormControl>
                     <PasswordField
+                      languageToUse={languageToUse}
                       field={field}
                       isPending={isPending}
                       validatePassword={setPasswordValid}
@@ -100,7 +131,7 @@ const NewPasswordForm = () => {
             type="submit"
             disabled={isPending || !isPasswordValid}
           >
-            Send reset password
+            {resetPasswordMessage}
           </Button>
         </form>
       </Form>

@@ -19,11 +19,13 @@ import {
 import { Editor } from "@tiptap/react";
 import { Toggle } from "@/components/ui/toggle";
 import { useState } from "react";
+import { translateExtensionDefault } from "@/translate/translate-dashboard";
 interface ExtensionDefaultPage {
   editor: Editor;
   showColorPicker: boolean;
   setShowColorPicker: React.Dispatch<React.SetStateAction<boolean>>;
   disabled: boolean;
+  languageToUse: string
 }
 
 const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
@@ -31,16 +33,20 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
   showColorPicker,
   setShowColorPicker,
   disabled,
+  languageToUse
 }) => {
   const [selectedFontFamily, setSelectedFontFamily] = useState("Inter"); // Font mặc định
+  //language
+  const extensionDefaultMessage = translateExtensionDefault(languageToUse)
+
   return (
     <>
-      <h2 className="text-lg font-bold text-green-600">Default</h2>
+      <h2 className="text-lg font-bold text-green-600">{extensionDefaultMessage.default}</h2>
       <Toggle
         size="sm"
         pressed={editor.isActive("bold")}
         onPressedChange={() => editor.chain().focus().toggleBold().run()}
-        title="Chữ đậm"
+        title={extensionDefaultMessage.bold}
         disabled={disabled}
       >
         <Bold className="h-4 w-4" />
@@ -49,7 +55,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         size="sm"
         pressed={editor.isActive("italic")}
         onPressedChange={() => editor.chain().focus().toggleItalic().run()}
-        title="Chữ nghiêng"
+        title={extensionDefaultMessage.italic}
         disabled={disabled}
       >
         <Italic className="h-4 w-4" />
@@ -59,7 +65,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         pressed={editor.isActive("strike")}
         onPressedChange={() => editor.chain().focus().toggleStrike().run()}
         disabled={disabled}
-        title="Gạch ngang"
+        title={extensionDefaultMessage.strikethrough}
       >
         <Strikethrough className="h-4 w-4" />
       </Toggle>
@@ -68,7 +74,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         pressed={editor.isActive("blockquote")}
         onPressedChange={() => editor.chain().focus().toggleBlockquote().run()}
         disabled={disabled}
-        title="Khôi trích dẫn"
+        title={extensionDefaultMessage.blockquote}
       >
         <BlocksIcon className="h-4 w-4" />
       </Toggle>
@@ -77,7 +83,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         pressed={editor.isActive("code")}
         onPressedChange={() => editor.chain().focus().toggleCodeBlock().run()}
         disabled={disabled}
-        title="Chữ code"
+        title={extensionDefaultMessage.code}
       >
         <Code className="h-4 w-4" />
       </Toggle>
@@ -86,7 +92,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         pressed={showColorPicker}
         onPressedChange={() => setShowColorPicker((prev: boolean) => !prev)}
         disabled={disabled}
-        title="Nổi bật"
+        title={extensionDefaultMessage.highlight}
       >
         <Highlighter className="h-4 w-4" />
       </Toggle>
@@ -95,7 +101,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         pressed={editor.isActive("unhighlight")}
         onPressedChange={() => editor.chain().focus().unsetHighlight().run()}
         disabled={disabled}
-        title="Xóa nổi bật"
+        title={extensionDefaultMessage.removeHighlight}
       >
         <Eraser className="h-4 w-4" />
       </Toggle>
@@ -104,7 +110,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         pressed={editor.isActive("subscript")}
         onPressedChange={() => editor.chain().focus().toggleSubscript().run()}
         disabled={disabled}
-        title="Phụ đề"
+        title={extensionDefaultMessage.subtitle}
       >
         <Subscript className="h-4 w-4" />
       </Toggle>
@@ -113,7 +119,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         pressed={editor.isActive("horizontalRule")}
         onPressedChange={() => editor.chain().focus().setHorizontalRule().run()}
         disabled={disabled}
-        title="Gạch ngang"
+        title={extensionDefaultMessage.horizontalRule}
       >
         <AlignEndHorizontal className="h-4 w-4" />
       </Toggle>
@@ -122,7 +128,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         pressed={editor.isActive("underline")}
         onPressedChange={() => editor.chain().focus().toggleUnderline().run()}
         disabled={disabled}
-        title="Gạch chân"
+        title={extensionDefaultMessage.underline}
       >
         <Underline className="h-4 w-4" />
       </Toggle>
@@ -132,7 +138,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         pressed={editor.isActive("hardBreak")}
         onPressedChange={() => editor.chain().focus().setHardBreak().run()}
         disabled={disabled}
-        title="Line Height"
+        title={extensionDefaultMessage.lineHeight}
       >
         <AlignVerticalSpaceAround className="h-4 w-4" />
       </Toggle>
@@ -147,7 +153,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
             .run()
         }
         disabled={disabled}
-        title="Link"
+        title={extensionDefaultMessage.link}
       >
         <Link className="h-4 w-4" />
       </Toggle>
@@ -156,7 +162,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         pressed={editor.isActive("unLink")}
         onPressedChange={() => editor.chain().focus().unsetLink().run()}
         disabled={disabled}
-        title="Un link"
+        title={extensionDefaultMessage.unlink}
       >
         <Unlink className="h-4 w-4" />
       </Toggle>
@@ -193,7 +199,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         pressed={editor.isActive("undo")}
         onPressedChange={() => editor.chain().focus().undo().run()}
         disabled={disabled}
-        title="Hoàn tác"
+        title={extensionDefaultMessage.undo}
       >
         <Undo className="h-4 w-4" />
       </Toggle>
@@ -202,7 +208,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         pressed={editor.isActive("redo")}
         onPressedChange={() => editor.chain().focus().redo().run()}
         disabled={disabled}
-        title="Làm lại"
+        title={extensionDefaultMessage.redo}
       >
         <Redo className="h-4 w-4" />
       </Toggle>

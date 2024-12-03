@@ -1,10 +1,16 @@
-import React, { Dispatch, SetStateAction, useEffect } from "react";
+"use client";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useTetris } from "../../../hooks/useTetris";
 import { GameOverContainer } from "./styles";
 import axios from "axios";
 import { useParams } from "next/navigation";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { Leaderboard } from "@/types/type";
+import {
+  getToastError,
+  translateTotalCoinsReceived,
+} from "@/translate/translate-client";
+import toast from "react-hot-toast";
 
 interface GameOverProps {
   setLoading: Dispatch<SetStateAction<boolean>>;
@@ -16,9 +22,27 @@ const GameOver = ({ setLoading, setData }: GameOverProps): JSX.Element => {
   const user = useCurrentUser();
   const gameState = useTetris();
   const newTotalCoins = Math.floor(gameState.score / 300);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
 
-  useEffect(() =>{
-    const fetchData = async () =>{
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+
+  const totalCoinReceivedMessage = translateTotalCoinsReceived(languageToUse);
+  const toastErrorMessage = getToastError(languageToUse);
+
+  useEffect(() => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         await axios.post(`/api/${param.storeId}/wheelSpin`, {
@@ -26,16 +50,16 @@ const GameOver = ({ setLoading, setData }: GameOverProps): JSX.Element => {
           coin: newTotalCoins,
         });
       } catch (error) {
-        console.error("Error saving totalCoins:", error);
-      }finally {
+        toast.error(toastErrorMessage);
+      } finally {
         setLoading(false);
       }
-    }
-    fetchData()
-  },[])
+    };
+    fetchData();
+  }, []);
 
-  useEffect(() =>{
-    const fetchData = async () =>{
+  useEffect(() => {
+    const fetchData = async () => {
       try {
         await axios.post(`/api/client/leaderboard`, {
           userId: user?.id,
@@ -44,18 +68,18 @@ const GameOver = ({ setLoading, setData }: GameOverProps): JSX.Element => {
         const response = await axios.get(`/api/client/leaderboard`);
         setData(response.data);
       } catch (error) {
-        console.error("Error saving leaderboard:", error);
-      } 
-    }
-    fetchData()
-  },[gameState.score, user?.id])
+        toast.error(toastErrorMessage);
+      }
+    };
+    fetchData();
+  }, [gameState.score, user?.id]);
 
   return (
     <GameOverContainer>
       <h1>Game Over!</h1>
       <h3>Score: {gameState.score}</h3>
       <span>
-        Tổng xu nhận được: <span>{newTotalCoins}</span>
+        {totalCoinReceivedMessage} <span>{newTotalCoins}</span>
       </span>
     </GameOverContainer>
   );

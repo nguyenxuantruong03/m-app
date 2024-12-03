@@ -32,6 +32,22 @@ import EmojiReview from "@/app/(profile)/me/[username]/_components/emoji";
 import Link from "next/link";
 import FormPostExplore from "./form-post-explore";
 import CircleAvatar from "@/components/ui/circle-avatar";
+import {
+  getToastError,
+  translateBad,
+  translateDeletePost,
+  translateEditPost,
+  translateFollowers,
+  translateItemType,
+  translateNotSatisfied,
+  translatePersonal,
+  translateProduct,
+  translatePublic,
+  translateQuiteSatisfied,
+  translateUpdate,
+  translateVerySatisfied,
+  translateViewProduct,
+} from "@/translate/translate-client";
 
 interface ExploreCard {
   review: any;
@@ -57,6 +73,35 @@ const ExploreCard = ({ review, user }: ExploreCard) => {
   const [isOpenDeletePost, setIsOpenDeletePost] = useState(false);
   const [alertGuestModal, setAlertGuestModal] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+  const toastErrorMessage = getToastError(languageToUse);
+  const verySatisfiedMessage = translateVerySatisfied(languageToUse);
+  const quiteSatisfiedMessage = translateQuiteSatisfied(languageToUse);
+  const notSatisfiedMessage = translateNotSatisfied(languageToUse);
+  const badMessage = translateBad(languageToUse);
+  const editPostMessage = translateEditPost(languageToUse);
+  const updateMessage = translateUpdate(languageToUse);
+  const deletePostMessage = translateDeletePost(languageToUse);
+  const itemTypeMessage = translateItemType(languageToUse);
+  const productMessage = translateProduct(languageToUse);
+  const publicMessage = translatePublic(languageToUse);
+  const personalMessage = translatePersonal(languageToUse);
+  const followerMessage = translateFollowers(languageToUse);
+  const viewProductMessage = translateViewProduct(languageToUse);
 
   useEffect(() => {
     if (openPost) {
@@ -101,10 +146,10 @@ const ExploreCard = ({ review, user }: ExploreCard) => {
   };
 
   const ratingMessages: { [key: number]: string } = {
-    1: "🤩Rất hài lòng",
-    2: "🥰Khá hài lòng",
-    3: "🤨Không hài lòng",
-    4: "😔Tệ",
+    1: verySatisfiedMessage,
+    2: quiteSatisfiedMessage,
+    3: notSatisfiedMessage,
+    4: badMessage,
   };
 
   //1.Logic follow hiện tại nếu như người dùng follow mình thì không thể xem được bài viết người theo dõi.
@@ -177,7 +222,7 @@ const ExploreCard = ({ review, user }: ExploreCard) => {
       // Use the Link component for navigation
       router.push(href);
     } else {
-      console.error("Invalid route:", route);
+      toast.error(toastErrorMessage);
     }
   };
 
@@ -193,7 +238,7 @@ const ExploreCard = ({ review, user }: ExploreCard) => {
           }
         })
         .catch(() => {
-          toast.error("Something went wrong");
+          toast.error(toastErrorMessage);
         });
     });
   };
@@ -205,11 +250,13 @@ const ExploreCard = ({ review, user }: ExploreCard) => {
         onClose={() => setIsOpenDeletePost(false)}
         onConfirm={onSubmit}
         loading={isPending}
+        languageToUse={languageToUse}
       />
       <ZoomImageAttendanceModal
         isOpen={isOpenOneImage}
         onClose={() => setIsOpenOneImage(false)}
         imageUrl={valueImage}
+        languageToUse={languageToUse}
       />
       <ZoomImageModal
         imageUrl={currentImages} // Pass the current images to the modal
@@ -220,6 +267,7 @@ const ExploreCard = ({ review, user }: ExploreCard) => {
       <AlertGuestModal
         isOpen={alertGuestModal}
         onClose={() => setAlertGuestModal(false)}
+        languageToUse={languageToUse}
       />
       {openPost && (
         <>
@@ -227,7 +275,7 @@ const ExploreCard = ({ review, user }: ExploreCard) => {
             <div className="h-[400px] md:h-[500px] overflow-y-auto w-3/4 max-w-md border rounded-md gap-4 bg-slate-900 p-6 shadow-lg transition ease-in-out z-50">
               <div className="flex items-center justify-between">
                 <span className="text-lg font-semibold text-foreground break-all line-clamp-2 text-white">
-                  Chỉnh sửa bài viết
+                  {editPostMessage}
                 </span>
                 <span
                   onClick={() => setOpenPost(false)}
@@ -241,6 +289,8 @@ const ExploreCard = ({ review, user }: ExploreCard) => {
                 reviews={review}
                 id={idPost}
                 userId={user?.id || ""}
+                language={user?.language || "vi"}
+                role={user?.role}
               />
             </div>
           </div>
@@ -256,7 +306,11 @@ const ExploreCard = ({ review, user }: ExploreCard) => {
         const avatarImage = imageCredentials || item?.user.image || null;
         return (
           <div key={item.id} className="bg-slate-900 rounded-md p-2 text-white">
-            <div className={`flex items-center justify-between ${item.user.stream?.isLive ? "ml-[4.5rem]" : ""}`}>
+            <div
+              className={`flex items-center justify-between ${
+                item.user.stream?.isLive ? "ml-[4.5rem]" : ""
+              }`}
+            >
               <div className="space-x-2 flex">
                 {item.user.stream?.isLive ? (
                   <Link href={`/live/${item.user.nameuser}`}>
@@ -284,18 +338,26 @@ const ExploreCard = ({ review, user }: ExploreCard) => {
                   </Link>
                 )}
                 <div>
-                  <Link href={`${item.user.stream?.isLive ? `/live/${item.user.nameuser}` : `/user/${item.user.nameuser}`}`}>
-                    <p className="font-semibold truncate max-w-[7rem] md:max-w-md overflow-hidden">{item.user.name}</p>
+                  <Link
+                    href={`${
+                      item.user.stream?.isLive
+                        ? `/live/${item.user.nameuser}`
+                        : `/user/${item.user.nameuser}`
+                    }`}
+                  >
+                    <p className="font-semibold truncate max-w-[7rem] md:max-w-md overflow-hidden">
+                      {item.user.name}
+                    </p>
                   </Link>
                   <p className="text-sm text-gray-300">
                     {formatDistanceToNow(new Date(item.createdAt), {
                       addSuffix: true,
                     })}
                   </p>
-              </div>
+                </div>
               </div>
               <div className="flex items-center space-x-5">
-                <Hint label="Xem sản phẩm">
+                <Hint label={viewProductMessage}>
                   <SquarePen
                     onClick={() =>
                       handleClick(item.product.name, item.product.productType)
@@ -325,7 +387,8 @@ const ExploreCard = ({ review, user }: ExploreCard) => {
                                 handleClickIdPost(item.id, event);
                               }}
                             >
-                              <Pencil className="w-5 h-5 mr-2" /> Cập nhật
+                              <Pencil className="w-5 h-5 mr-2" />{" "}
+                              {updateMessage}
                             </p>
                             <p
                               className="hover:bg-gray-500 hover:bg-opacity-50 cursor-pointer p-2 rounded-md flex items-center"
@@ -334,7 +397,7 @@ const ExploreCard = ({ review, user }: ExploreCard) => {
                               }
                             >
                               <Trash className="w-5 h-5 mr-2" />
-                              Xóa bài viết
+                              {deletePostMessage}
                             </p>
                           </div>
                         </div>
@@ -350,22 +413,26 @@ const ExploreCard = ({ review, user }: ExploreCard) => {
                   <span>{ratingMessages[item.rating]}</span>
                 )}
               </span>
-              <span>Loại hàng: {item.categoryName}</span>
-              <span>Sản phẩm: {item.product.heading}</span>
+              <span>
+                {itemTypeMessage} {item.categoryName}
+              </span>
+              <span>
+                {productMessage}: {item.product.heading}
+              </span>
               <span className="flex items-center">
                 {item.isPublic === "public" && (
                   <span className="flex items-center">
-                    <Earth className="mr-1 h-3 w-3" /> Công khai
+                    <Earth className="mr-1 h-3 w-3" /> {publicMessage}
                   </span>
                 )}
                 {item.isPublic === "individual" && (
                   <span className="flex items-center">
-                    <Lock className="w-3 h-3 mr-1" /> Cá nhân
+                    <Lock className="w-3 h-3 mr-1" /> {personalMessage}
                   </span>
                 )}
                 {item.isPublic === "follow" && (
                   <span className="flex items-center">
-                    <Users className="w-3 h-3 mr-1" /> Người theo dõi
+                    <Users className="w-3 h-3 mr-1" /> {followerMessage}
                   </span>
                 )}
               </span>
@@ -416,6 +483,7 @@ const ExploreCard = ({ review, user }: ExploreCard) => {
               product={item.product}
               productId={item.product.id}
               loading={isPending}
+              languageToUse={languageToUse}
             />
           </div>
         );

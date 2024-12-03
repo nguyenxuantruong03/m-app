@@ -8,12 +8,14 @@ import { onBlock } from "@/actions/stream/block";
 import { cn, stringToColor } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Hint } from "../ui/hint";
+import { getToastError, translateBlock, translateBlockedBy } from "@/translate/translate-client";
 
 interface CommunityItemProps {
   hostName: string;
   viewerName: string;
   participantName?: string;
   participantIdentity: string;
+  languageToUse: string;
 }
 
 export const CommunityItem = ({
@@ -21,6 +23,7 @@ export const CommunityItem = ({
   viewerName,
   participantIdentity,
   participantName,
+  languageToUse
 }: CommunityItemProps) => {
   const [isPending,startTransition] = useTransition()
 
@@ -28,13 +31,18 @@ export const CommunityItem = ({
     const isSelf = participantName === viewerName;
     const isHost = viewerName == hostName
 
+    //language
+    const toastErrorMessage = getToastError(languageToUse)
+    const blockedByMessage = translateBlockedBy(languageToUse)
+    const blockMessage = translateBlock(languageToUse)
+
     const handleBlock = () =>{
       if(!participantName || isSelf || !isHost) return
 
       startTransition(() =>{
         onBlock(participantIdentity)
-        .then(() => toast.success(`Blocked ${participantName}`))
-        .catch(() => toast.error("Something went wrong"))
+        .then(() => toast.success(`${blockedByMessage} ${participantName}`))
+        .catch(() => toast.error(toastErrorMessage))
       })
     }
 
@@ -49,7 +57,7 @@ export const CommunityItem = ({
         {participantName}
       </p>
       {isHost && !isSelf && (
-        <Hint label="Block">
+        <Hint label={blockMessage}>
           <Button 
           variant="ghost"
           disabled={isPending}

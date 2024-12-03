@@ -28,13 +28,36 @@ import {
   getSizePrice,
 } from "../../export-product-compare/size-color/match-color-size";
 import axios from "axios";
+import {
+  getOutOfStockMessage,
+  getToastError,
+  translateAddNew,
+  translateAddToCartError,
+  translateCannotRemoveSavedProduct,
+  translateCannotSaveProduct,
+  translateDecrease,
+  translateExpand,
+  translateHeart,
+  translateInsufficientStock,
+  translateLoading,
+  translateOutOfStock,
+  translateProductAddedToCart,
+  translateProductQuantityUpdated,
+  translateSaved,
+  translateSold,
+} from "@/translate/translate-client";
 
 interface ProductCardProps {
   data: Product;
   route: string;
+  languageToUse: string;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ data, route }) => {
+const ProductCard: React.FC<ProductCardProps> = ({
+  data,
+  route,
+  languageToUse,
+}) => {
   const router = useRouter();
   const cart = useCart();
   const cartdb = useCartdb();
@@ -46,17 +69,36 @@ const ProductCard: React.FC<ProductCardProps> = ({ data, route }) => {
   const [alertGuestModal, setAlertGuestModal] = useState(false);
   const [loadingRetchdataFavorite, setLoadingFetchDataFavorite] =
     useState(false);
-
   const { addItem, removeItem } = useFavorite();
+
+  //languages
+  const toastErrorMessage = getToastError(languageToUse);
+  const outOfStockInventoryMessage = translateOutOfStock(languageToUse);
+  const productQuantityUpdatedMessage =
+    translateProductQuantityUpdated(languageToUse);
+  const loadingMessage = translateLoading(languageToUse);
+  const insufficientStockMessage = translateInsufficientStock(languageToUse);
+  const addtoCartErrorMessage = translateAddToCartError(languageToUse);
+  const productAddedToCartMessage = translateProductAddedToCart(languageToUse);
+  const cannotRemoveSavedProductMessage =
+    translateCannotRemoveSavedProduct(languageToUse);
+  const cannotSaveProductMessage = translateCannotSaveProduct(languageToUse);
+  const outOfStockMessage = getOutOfStockMessage(languageToUse);
+  const soldMessage = translateSold(languageToUse);
+  const decreaseMessage = translateDecrease(languageToUse);
+  const expandMessage = translateExpand(languageToUse);
+  const addNewMessage = translateAddNew(languageToUse);
+  const savedMessage = translateSaved(languageToUse);
+  const heartMessage = translateHeart(languageToUse);
 
   useEffect(() => {
     if (userId?.role !== "GUEST" && userId?.id) {
       const fetchData = async () => {
         try {
           setLoadingFetchDataFavorite(true);
-          await favorite.fetchFavoriteItems(userId?.id || "");
+          await favorite.fetchFavoriteItems(userId?.id || "", languageToUse);
         } catch (error) {
-          toast.error("Có vấn đề khi get dữ liệu!");
+          toast.error(toastErrorMessage);
         } finally {
           setLoadingFetchDataFavorite(false);
         }
@@ -98,15 +140,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ data, route }) => {
         try {
           setLoadingFetchDataFavorite(true);
           if (favoriteData && favoriteData.id) {
-            await removeItem(favoriteData.id, userId?.id || "");
+            await removeItem(favoriteData.id, userId?.id || "",languageToUse);
           } else {
-            await addItem(favoriteProduct);
+            await addItem(favoriteProduct,languageToUse);
           }
         } catch (error) {
           toast.error(
             favoriteData
-              ? `Không thể xóa lưu sản phẩm!`
-              : `Không thể lưu sản phẩm!`
+              ? cannotRemoveSavedProductMessage
+              : cannotSaveProductMessage
           );
         } finally {
           setLoadingFetchDataFavorite(false);
@@ -191,7 +233,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ data, route }) => {
   const availableColor = lowestPriceDetails.color;
 
   if (!availableSize && !availableColor) {
-    toast.error("Sản phẩm đã hết hàng!");
+    toast.error(outOfStockInventoryMessage);
     return;
   }
 
@@ -227,7 +269,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ data, route }) => {
           userId: userId?.id || "",
         }),
         {
-          loading: "Loading...",
+          loading: loadingMessage,
           success: (response) => {
             const cartItemData = response.data;
             const size = availableSize;
@@ -248,7 +290,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ data, route }) => {
               matchingQuantity >= maxQuantity && maxQuantity > 0;
 
             if (compareQuantityExistingAndAvailable) {
-              throw new Error("Số lượng sản phẩm trong kho không đủ!");
+              throw new Error(insufficientStockMessage);
             }
 
             const productWithQuantity = {
@@ -271,7 +313,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ data, route }) => {
                   existingCartItem.id,
                   existingCartItem.quantity + quantity,
                   null,
-                  userId?.id || ""
+                  userId?.id || "",
+                  languageToUse
                 );
               } else {
                 cartdb.addItem(
@@ -284,17 +327,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ data, route }) => {
                 ); // Pass the userId here
               }
             } catch (error) {
-              toast.error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
+              toast.error(addtoCartErrorMessage);
             } finally {
               setLoading(false);
             }
 
             return existingCartItem
-              ? "Sản phẩm đã được cập nhật số lượng trong giỏ hàng."
-              : "Sản phẩm đã thêm vào giỏ hàng.";
+              ? productQuantityUpdatedMessage
+              : productAddedToCartMessage;
           },
           error: (error) => {
-            return error.message || "Failed to add product to cart!";
+            return error.message || toastErrorMessage;
           },
         }
       );
@@ -329,7 +372,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ data, route }) => {
             null,
             userId?.id || ""
           );
-          toast.success("Sản phẩm đã được cập nhật số lượng trong giỏ hàng.");
+          toast.success(productQuantityUpdatedMessage);
         } else {
           await cart.addItem(
             productWithQuantity,
@@ -337,11 +380,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ data, route }) => {
             null,
             userId?.id || "",
             size,
-            color
+            color,
+            languageToUse
           ); // Pass the userId here
         }
       } catch (error) {
-        toast.error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
+        toast.error(addtoCartErrorMessage);
       } finally {
         setLoading(false);
       }
@@ -410,11 +454,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ data, route }) => {
       <AlertGuestModal
         isOpen={alertGuestModal}
         onClose={() => setAlertGuestModal(false)}
+        languageToUse={languageToUse}
       />
       <PreviewModal
         isOpen={openPreviewModal}
         onClose={() => setOpenPreviewModal(false)}
         product={data}
+        languageToUse={languageToUse}
       />
       <div className="overflow-hidden">
         <div className="bg-white group cursor-pointer rounded-xl border p-3 relative">
@@ -428,7 +474,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ data, route }) => {
                 >
                   <div className="absolute z-[9999] top-[3px] right-[-95px] bg-red-500 text-white py-[15px] w-[350px] text-center transform rotate-[45deg] font-bold text-lg tracking-[2px] overflow-hidden">
                     <span className="inline-block duration-500 ease-in-out transform transition-transform w-full absolute left-[13%] top-1/2 translate-y-[-50%]">
-                      Hết hàng
+                      {outOfStockMessage}
                     </span>
                   </div>
                 </div>
@@ -453,7 +499,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ data, route }) => {
                     disabled={loading}
                     onClick={onPreview}
                     icon={<Expand size={20} className="text-gray-600" />}
-                    text="Mở rộng"
+                    text={expandMessage}
                   />
                   <IconButton
                     disabled={productQuantityAll || loading}
@@ -482,7 +528,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ data, route }) => {
                         }`}
                       />
                     }
-                    text={`${productQuantityAll ? "Hết hàng" : "Thêm mới"}`}
+                    text={`${
+                      productQuantityAll ? outOfStockMessage : addNewMessage
+                    }`}
                   />
 
                   <IconButton
@@ -522,8 +570,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ data, route }) => {
                           item.selectedSize === availableSize &&
                           item.selectedColor === availableColor
                       )
-                        ? "Đã lưu"
-                        : "Thả Tim"
+                        ? savedMessage
+                        : heartMessage
                     }`}
                   />
                 </div>
@@ -551,21 +599,24 @@ const ProductCard: React.FC<ProductCardProps> = ({ data, route }) => {
                 <Currency value={discountedPrice || 0} />
                 {data.sold > 0 && (
                   <div className="flex items-center text-sm font-medium">
-                    <span className="mr-1">Đã bán:</span>
+                    <span className="mr-1">{soldMessage}:</span>
                     <span>{formatSoldValue(data.sold) || 0}</span>
                   </div>
                 )}
               </div>
             )}
-            <CommentStar data={data.id} comment={data.comment} />
+            <CommentStar
+              data={data.id}
+              comment={data.comment}
+              languageToUse={languageToUse}
+            />
           </div>
 
           <div className="home-product-item__favorite">
             <span className="ml-1">
-              Giảm {data.productdetail.percentpromotion1}%
+              {decreaseMessage} {data.productdetail.percentpromotion1}%
             </span>
           </div>
-
         </div>
       </div>
     </>

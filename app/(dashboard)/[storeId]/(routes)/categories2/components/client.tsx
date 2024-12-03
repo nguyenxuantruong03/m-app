@@ -19,6 +19,8 @@ import DownloadFile from "@/components/file/downloadfilepage";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { getCategoriesClient } from "@/translate/translate-dashboard";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 interface CategoriesClientProps {
   data: CategoriesColumn[];
@@ -33,6 +35,10 @@ const CategoriesClient: React.FC<CategoriesClientProps> = ({ data }) => {
   const role = useCurrentRole();
   const isRole = role === UserRole.ADMIN;
   const showAPIRole = isRole;
+   //language
+   const user = useCurrentUser();
+   const languageToUse = user?.language || "vi"
+   const categoriesClientMessage = getCategoriesClient(languageToUse)
 
   const handleDelete = async () => {
     setLoading(true);
@@ -43,7 +49,7 @@ const CategoriesClient: React.FC<CategoriesClientProps> = ({ data }) => {
       });
       setLoading(false);
       setOpen(false);
-      toast.success("Category deleted successfully");
+      toast.success(categoriesClientMessage.categoryDeleted);
       // Optionally, refresh data or handle post-delete state
     } catch (error) {
       setLoading(false);
@@ -61,7 +67,7 @@ const CategoriesClient: React.FC<CategoriesClientProps> = ({ data }) => {
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
-          "Make sure you removed all categories using this category first."
+          categoriesClientMessage.error
         );
       }
     }
@@ -70,16 +76,16 @@ const CategoriesClient: React.FC<CategoriesClientProps> = ({ data }) => {
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Loại sản phẩm (${data.length})`}
-          description="Quản lý loại sản phẩm cửa hàng"
+          title={`${categoriesClientMessage.category} (${data.length})`}
+          description={categoriesClientMessage.manageCategory}
         />
         <div className=" flex space-x-3">
-          <DownloadFile data={data} filename="categories2" />
+          <DownloadFile data={data} filename="categories2" languageToUse={languageToUse}/>
           <Button
             onClick={() => router.push(`/${params.storeId}/categories2/new`)}
           >
             <Plus className="mr-2 h-4 w-4" />
-            Thêm mới
+            T{categoriesClientMessage.addNew}
           </Button>
         </div>
       </div>
@@ -95,9 +101,10 @@ const CategoriesClient: React.FC<CategoriesClientProps> = ({ data }) => {
         onDelete={handleDelete}
         setOpen={setOpen}
         open={open}
+        languageToUse={languageToUse}
       />
       {showAPIRole && (
-        <Heading title="Api" description="API calls for Category" />
+        <Heading title={categoriesClientMessage.api} description={categoriesClientMessage.apiCalls} />
       )}
       <Separator />
       <ApiList entityIdName="category2Id" entityName="categories2" />

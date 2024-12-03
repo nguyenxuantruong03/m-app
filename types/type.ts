@@ -345,6 +345,7 @@ export interface Coupon {
   name: string
   percent: number;
   redeemby: Date;
+  description: string;
   maxredemptions: number;
   imagecoupon : ImageCoupon[]
 }

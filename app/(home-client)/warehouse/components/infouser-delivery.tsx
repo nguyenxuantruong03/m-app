@@ -18,6 +18,13 @@ import { useEffect, useRef, useState } from "react";
 import viLocale from "date-fns/locale/vi";
 import Image from "next/image";
 import Link from "next/link";
+import {
+  translateMyAccount,
+  translatePasswordSecurity,
+  translatePurchaseOrder,
+  translateUserInfo,
+  translateVoucherWarehouse,
+} from "@/translate/translate-client";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 
 const InfoDelivery = () => {
@@ -33,6 +40,26 @@ const InfoDelivery = () => {
   const [open, setOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+  const voucherWarehouseMessage = translateVoucherWarehouse(languageToUse);
+  const purchaseOrderMessage = translatePurchaseOrder(languageToUse);
+  const userInfoMessage = translateUserInfo(languageToUse);
+  const passwordSecurityMessage = translatePasswordSecurity(languageToUse);
+  const myAccountMessage = translateMyAccount(languageToUse);
 
   const handleMouseDown = (e: React.MouseEvent<HTMLParagraphElement>) => {
     setIsDragging(true);
@@ -111,13 +138,13 @@ const InfoDelivery = () => {
   const navbarInfo = [
     {
       href: `/warehouse`,
-      label: "Kho voucher",
+      label: voucherWarehouseMessage,
       icon: <Ticket className="h-5 w-5 text-yellow-500" />,
       active: pathname === `/warehouse`,
     },
     {
       href: `/warehouse/package-product`,
-      label: "Đơn mua",
+      label: purchaseOrderMessage,
       icon: <ScrollText className="w-5 h-5 text-blue-700" />,
       active:
         pathname === `/warehouse/package-product` ||
@@ -133,12 +160,12 @@ const InfoDelivery = () => {
   const accountOptions = [
     {
       href: `/warehouse/user/setting-profile`,
-      label: "Thông tin người dùng",
+      label: userInfoMessage,
       active: pathname === `/warehouse/user/setting-profile`,
     },
     {
       href: `/warehouse/user/password-security`,
-      label: "Mật khẩu & bảo mật",
+      label: passwordSecurityMessage,
       active: pathname === `/warehouse/user/password-security`,
     },
   ];
@@ -154,6 +181,7 @@ const InfoDelivery = () => {
                 createdAt={formatcreatedAt || ""}
                 email={user?.email || ""}
                 isClient={true}
+                languageToUse={languageToUse}
               />
             ) : avatarImage ? (
               <ImageCellOne
@@ -161,6 +189,7 @@ const InfoDelivery = () => {
                 createdAt={formatcreatedAt || ""}
                 email={user?.email || ""}
                 isClient={true}
+                languageToUse={languageToUse}
               />
             ) : (
               <AvatarFallback className="bg-sky-500">
@@ -224,7 +253,7 @@ const InfoDelivery = () => {
                     : "text-slate-900 dark:text-slate-200"
                 )}
               >
-                Tài khoản của tôi
+                {myAccountMessage}
               </span>
             </AccordionTrigger>
             <AccordionContent>
@@ -317,6 +346,7 @@ const InfoDelivery = () => {
                             createdAt={formatcreatedAt || ""}
                             email={user?.email || ""}
                             isClient={true}
+                            languageToUse={languageToUse}
                           />
                         ) : avatarImage ? (
                           <ImageCellOne
@@ -324,6 +354,7 @@ const InfoDelivery = () => {
                             createdAt={formatcreatedAt || ""}
                             email={user?.email || ""}
                             isClient={true}
+                            languageToUse={languageToUse}
                           />
                         ) : (
                           <AvatarFallback className="bg-sky-500">
@@ -388,7 +419,7 @@ const InfoDelivery = () => {
                               : "text-slate-900 dark:text-slate-200"
                           )}
                         >
-                          Tài khoản của tôi
+                          {myAccountMessage}
                         </span>
                       </AccordionTrigger>
                       <AccordionContent>

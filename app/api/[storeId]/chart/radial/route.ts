@@ -1,5 +1,6 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
+import { translateRadialChart } from "@/translate/translate-api";
 import { ProductType, UserRole } from "@prisma/client";
 import { NextResponse } from "next/server";
 
@@ -14,19 +15,22 @@ interface ProductData {
 export async function POST(req: Request) {
   const body = await req.json();
   const { storeId, dateRange } = body;
-  const userId = await currentUser();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const radiaChartMessage = translateRadialChart(LanguageToUse)
 
   try {
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: radiaChartMessage.name1 }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xem chart!" }),
+        JSON.stringify({ error: radiaChartMessage.name2 }),
         { status: 403 }
       );
     }
@@ -116,7 +120,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error(error);
     return new NextResponse(
-      JSON.stringify({ error: "Internal error while fetching data." }),
+      JSON.stringify({ error: radiaChartMessage.name3 }),
       { status: 500 }
     );
   }

@@ -17,6 +17,7 @@ import axios from "axios";
 
 import { BillboardColumn } from "./columns";
 import { AlertModal } from "@/components/modals/alert-modal";
+import { transalteBillboardAction } from "@/translate/translate-dashboard";
 
 interface CellActionProps {
   data: BillboardColumn;
@@ -26,12 +27,15 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const router = useRouter();
   const params = useParams();
 
+  //language
+  const billboardActiconMessage = transalteBillboardAction(data.language)
+
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id);
-    toast.success("Billboard Id copied to the clipboard.");
+    toast.success(billboardActiconMessage.billboardIdCopied);
   };
 
   const onDelete = async () => {
@@ -39,7 +43,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       setLoading(true);
       await axios.delete(`/api/${params.storeId}/billboards/${data.id}`);
       router.refresh();
-      toast.success(`Billboard deleted.`);
+      toast.success(billboardActiconMessage.billboardDeleted);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -50,9 +54,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         toast.error((error as { response: { data: { error: string } } }).response.data.error);
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
-        toast.error(
-          "Make sure you removed all categories using this billboard first."
-        );
+        toast.error(billboardActiconMessage.somethingWentWrong);
       }
     } finally {
       setLoading(false);
@@ -67,19 +69,20 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         onClose={() => setOpen(false)}
         onConfirm={onDelete}
         loading={loading}
+        languageToUse={data.language}
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
+            <span className="sr-only">{billboardActiconMessage.openMenu}</span>
             <MoreHorizontal className="w-4 h-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuLabel>{billboardActiconMessage.actions}</DropdownMenuLabel>
           <DropdownMenuItem onClick={() => onCopy(data.id)}>
             <Copy className="h-4 w-4 mr-2" />
-            CopyId
+            {billboardActiconMessage.copyId}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() =>
@@ -87,11 +90,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             }
           >
             <Edit className="h-4 w-4 mr-2" />
-            Update
+            {billboardActiconMessage.update}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>
             <Trash className="h-4 w-4 mr-2" />
-            Delete
+            {billboardActiconMessage.delete}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

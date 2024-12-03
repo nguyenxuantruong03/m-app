@@ -1,7 +1,14 @@
+import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
+import { translateLeaderboardGet, translateLeaderboardPost } from "@/translate/translate-api";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const leaderboardPostMessage = translateLeaderboardPost(LanguageToUse);
+
   try {
     const body = await req.json();
     const { userId, score } = body;
@@ -36,13 +43,18 @@ export async function POST(req: Request) {
     return NextResponse.json(favoriteItemData);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error post favorite Product." }),
+      JSON.stringify({ error: leaderboardPostMessage }),
       { status: 500 }
     );
   }
 }
 
 export async function GET(req: Request) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const leaderboardGetMessage = translateLeaderboardGet(LanguageToUse);
+
   try {
     const FavoriteItemData = await prismadb.leaderboard.findMany({
       include: {
@@ -53,7 +65,7 @@ export async function GET(req: Request) {
     return NextResponse.json(FavoriteItemData);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get favorite Product." }),
+      JSON.stringify({ error: leaderboardGetMessage }),
       { status: 500 }
     );
   }

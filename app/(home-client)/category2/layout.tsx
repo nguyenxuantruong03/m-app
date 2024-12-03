@@ -1,18 +1,42 @@
+import {
+  translatePlasticPipe,
+  translateXuanTruongBuildingMaterials,
+} from "@/translate/translate-client";
+import { currentUser } from "@/lib/auth";
 import type { Metadata } from "next";
-export const metadata: Metadata & { image: string } = {
-  title: "Ống nhựa, ống lưới xanh", 
-  description: "Vật liệu xây dựng Xuân Trường",
-  image: '/images/Home.png',
-};
+
+let cachedMetadata: Metadata | null = null;
+
+export async function generateMetadata(): Promise<Metadata> {
+  if (cachedMetadata) return cachedMetadata;
+  const user = await currentUser();
+  let storedLanguage: string | null = null;
+
+  // Lấy storedLanguage từ localStorage (cần đảm bảo client-side)
+  if (typeof window !== "undefined") {
+    storedLanguage = localStorage.getItem("language");
+  }
+
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+
+  const plasticPipeMessage = translatePlasticPipe(languageToUse);
+  const descriptionMessage =
+    translateXuanTruongBuildingMaterials(languageToUse);
+  cachedMetadata = {
+    title: plasticPipeMessage,
+    description: descriptionMessage,
+  };
+
+  return cachedMetadata;
+}
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <>
-      {children}
-    </>
-  );
+  return <>{children}</>;
 }

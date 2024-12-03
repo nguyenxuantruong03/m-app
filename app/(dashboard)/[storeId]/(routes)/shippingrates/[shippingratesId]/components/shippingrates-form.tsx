@@ -36,30 +36,14 @@ import {
   ShippingTaxcode,
 } from "@prisma/client";
 import Recommend from "@/components/ui/recommend";
-
-const formSchema = z
-  .object({
-    name: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-    taxbehavior: z.string().min(1, { message: "Hãy chọn 1 taxbehavior." }),
-    amount: z.coerce
-      .number()
-      .min(500, { message: "Hãy nhập ít nhấp 500 đồng." }),
-    unitmin: z.string().min(1, { message: "Hãy nhập ít nhất 1 tiếng." }),
-    valuemin: z.coerce.number().min(1, { message: "Hãy chọn giờ hoặc ngày." }),
-    unitmax: z.string().min(1, { message: "Hãy nhập ít nhất 1 tiếng." }),
-    valuemax: z.coerce.number().min(1, { message: "Hãy chọn giờ hoặc ngày." }),
-    taxcode: z.string().min(1, { message: "Hãy chọn 1 loại taxcode." }),
-    active: z.boolean().default(false).optional(),
-  })
-  .refine((data) => data.valuemax > data.valuemin, {
-    message: "Thời gian tối đa phải lớn hơn thời gian tối thiểu.",
-    path: ["valuemax"], // indicate that the error should be shown at the valuemax field
-  });
-
-type ShippingRatesFormValues = z.infer<typeof formSchema>;
+import {
+  getShippingRateForm,
+  getShippingRateSchema,
+} from "@/translate/translate-dashboard";
 
 interface ShippingRatesFormProps {
   initialData: ShippingRates | null;
+  language: string;
 }
 
 const mapTaxCodeToName = (taxCode: string) => {
@@ -75,6 +59,7 @@ const mapTaxCodeToName = (taxCode: string) => {
 
 export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
   initialData,
+  language,
 }) => {
   const params = useParams();
   const router = useRouter();
@@ -91,6 +76,45 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
     !!initialData?.unitmin
   );
 
+  //language
+  const shippingRateSchemaMessage = getShippingRateSchema(language);
+  const shippingRateFormMessage = getShippingRateForm(language);
+
+  const formSchema = z
+    .object({
+      name: z
+        .string()
+        .min(2, { message: shippingRateSchemaMessage.requiredName }),
+      taxbehavior: z
+        .string()
+        .min(1, { message: shippingRateSchemaMessage.requiredTaxbehavior }),
+      amount: z.coerce
+        .number()
+        .min(500, { message: shippingRateSchemaMessage.enterMinPrice }),
+      unitmin: z
+        .string()
+        .min(1, { message: shippingRateSchemaMessage.enterMinHour }),
+      valuemin: z.coerce
+        .number()
+        .min(1, { message: shippingRateSchemaMessage.chooseHourOrDay }),
+      unitmax: z
+        .string()
+        .min(1, { message: shippingRateSchemaMessage.enterMinHour }),
+      valuemax: z.coerce
+        .number()
+        .min(1, { message: shippingRateSchemaMessage.chooseHourOrDay }),
+      taxcode: z
+        .string()
+        .min(1, { message: shippingRateSchemaMessage.requiredTaxcode }),
+      active: z.boolean().default(false).optional(),
+    })
+    .refine((data) => data.valuemax > data.valuemin, {
+      message: shippingRateSchemaMessage.maxTimeGreaterThanMinTime,
+      path: ["valuemax"], // indicate that the error should be shown at the valuemax field
+    });
+
+  type ShippingRatesFormValues = z.infer<typeof formSchema>;
+
   // Sử dụng useEffect để kiểm tra khi component được tạo và cập nhật trạng thái active
   useEffect(() => {
     // Nếu initialData không tồn tại (không có dữ liệu ban đầu), có nghĩa là bạn đang tạo mới
@@ -101,11 +125,15 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
     }
   }, [initialData]); // Sử dụng initialData làm dependency để useEffect chạy khi initialData thay đổi
 
-  const title = initialData ? "Edit shipping rates" : "Create shipping rates";
+  const title = initialData
+    ? shippingRateSchemaMessage.editShippingRates
+    : shippingRateSchemaMessage.createShippingRates;
   const description = initialData
-    ? "Edit a shipping rates"
-    : "Add a new shipping rates";
-  const action = initialData ? "Save changes" : "Create";
+    ? shippingRateSchemaMessage.editAShippingRates
+    : shippingRateSchemaMessage.addNewShippingRates;
+  const action = initialData
+    ? shippingRateSchemaMessage.saveChanges
+    : shippingRateSchemaMessage.create;
 
   const form = useForm<ShippingRatesFormValues>({
     resolver: zodResolver(formSchema),
@@ -154,22 +182,23 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
           if (initialData) {
             return (
               <p>
-                Shipping rates{" "}
+                {shippingRateFormMessage.shippingRate}
                 <span className="font-bold">{response.data?.name}</span>{" "}
-                updated.
+                {shippingRateFormMessage.updated}.
               </p>
             );
           } else {
             return (
               <p>
-                Shipping rates <span className="font-bold">{data.name}</span>{" "}
-                created.
+                {shippingRateFormMessage.shippingRate}{" "}
+                <span className="font-bold">{data.name}</span>{" "}
+                {shippingRateFormMessage.created}.
               </p>
             );
           }
         }),
         {
-          loading: "Updating shipping rates...",
+          loading: shippingRateFormMessage.updatingShippingRates,
           success: (message) => {
             router.refresh();
             router.push(`/${params.storeId}/shippingrates`);
@@ -187,7 +216,7 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Something went wrong.";
+              return shippingRateFormMessage.somethingWentWrong;
             }
           },
         }
@@ -229,14 +258,18 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Tên giao hàng
+                    {shippingRateFormMessage.shippingName}
                     <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Nhập cái tên sản phẩm muốn giao." />
+                    <Recommend
+                      message={shippingRateFormMessage.enterShippingName}
+                    />
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập tên giao hàng ..."
+                      placeholder={
+                        shippingRateFormMessage.enterShippingNamePlaceholder
+                      }
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
@@ -255,15 +288,19 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
                 return (
                   <FormItem>
                     <FormLabel className="flex space-x-3 items-center">
-                      Số tiền
+                      {shippingRateFormMessage.amount}
                       <span className="text-red-600 pl-1">(*)</span>
-                      <Recommend message="Nhập phí tiền giao hàng." />
+                      <Recommend
+                        message={shippingRateFormMessage.enterAmount}
+                      />
                     </FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         disabled={loading || isEditing}
-                        placeholder="Nhập số tiền ..."
+                        placeholder={
+                          shippingRateFormMessage.enterAmountPlaceholder
+                        }
                         {...field}
                       />
                     </FormControl>
@@ -279,9 +316,11 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Hành vi thuế
+                    {shippingRateFormMessage.taxBehavior}
                     <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Chọn loại thuế." />
+                    <Recommend
+                      message={shippingRateFormMessage.selectTaxBehavior}
+                    />
                   </FormLabel>
                   <Select
                     disabled={loading}
@@ -293,7 +332,9 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
                       <SelectTrigger>
                         <SelectValue
                           defaultValue={field.value}
-                          placeholder="Chọn hành vi thuế"
+                          placeholder={
+                            shippingRateFormMessage.selectTaxBehaviorPlaceholder
+                          }
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -316,15 +357,17 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
                 return (
                   <FormItem>
                     <FormLabel className="flex space-x-3 items-center">
-                      Thời gian thấp nhất
+                      {shippingRateFormMessage.minTime}
                       <span className="text-red-600 pl-1">(*)</span>
-                      <Recommend message="Lưu ý: Nhập không quá 2400 giờ. Khoảng thời gian thấp nhất sẽ được giao." />
+                      <Recommend
+                        message={shippingRateFormMessage.minTimeNote}
+                      />
                     </FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         disabled={loading || isEditing}
-                        placeholder="Nhập phần thời gian thấp nhất ..."
+                        placeholder={shippingRateFormMessage.enterMinTime}
                         {...field}
                         onChange={(e) => {
                           const value = Number(e.target.value);
@@ -335,9 +378,7 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
                               handleValueMinChange(value);
                             } else {
                               // Nếu giá trị lớn hơn 2400, không thay đổi giá trị
-                              toast.error(
-                                "Thời gian thấp nhất không được lớn hơn 2400 giờ"
-                              );
+                              toast.error(shippingRateFormMessage.maxTimeError);
                             }
                           }
                         }}
@@ -355,9 +396,11 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Đơn vị thấp nhất
+                    {shippingRateFormMessage.minUnit}
                     <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Chọn giờ hoặc ngày." />
+                    <Recommend
+                      message={shippingRateFormMessage.selectMinUnit}
+                    />
                   </FormLabel>
                   <Select
                     disabled={loading || isEditing}
@@ -372,7 +415,9 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
                       <SelectTrigger>
                         <SelectValue
                           defaultValue={field.value}
-                          placeholder="Select Unit Min"
+                          placeholder={
+                            shippingRateFormMessage.selectMinUnitPlaceholder
+                          }
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -395,9 +440,11 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
                 return (
                   <FormItem>
                     <FormLabel className="flex space-x-3 items-center">
-                      Thơi gian tối đa
+                      {shippingRateFormMessage.maxTime}
                       <span className="text-red-600 pl-1">(*)</span>
-                      <Recommend message="Lưu ý: Nhập không quá 2400 giờ. Đây là thời gian tối đa khách hàng sẽ nhận được sản phẩm." />
+                      <Recommend
+                        message={shippingRateFormMessage.maxTimeNote}
+                      />
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -408,7 +455,7 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
                           !valueMinSelected ||
                           !unitMinSelected
                         }
-                        placeholder="Nhập phần thời gian tối đa ..."
+                        placeholder={shippingRateFormMessage.enterMaxTime}
                         {...field}
                         max={2400}
                       />
@@ -425,9 +472,11 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Đơn vị tối đa
+                    {shippingRateFormMessage.maxUnit}
                     <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Chọn giờ hoặc ngày." />
+                    <Recommend
+                      message={shippingRateFormMessage.selectMaxUnit}
+                    />
                   </FormLabel>
                   <Select
                     disabled={
@@ -444,7 +493,9 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
                       <SelectTrigger>
                         <SelectValue
                           defaultValue={field.value}
-                          placeholder="Select Unit Max"
+                          placeholder={
+                            shippingRateFormMessage.selectMaxUnitPlaceholder
+                          }
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -468,9 +519,11 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Người chịu thuế
+                    {shippingRateFormMessage.taxCode}
                     <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Mặc định đơn hàng sẽ được cửa hàng chịu thuế." />
+                    <Recommend
+                      message={shippingRateFormMessage.defaultTaxCodeNote}
+                    />
                   </FormLabel>
                   <Select
                     disabled={loading || isEditing}
@@ -480,7 +533,11 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select ShippingTaxcode">
+                        <SelectValue
+                          placeholder={
+                            shippingRateFormMessage.selectShippingTaxcode
+                          }
+                        >
                           {mapTaxCodeToName(field.value)}
                         </SelectValue>
                       </SelectTrigger>
@@ -512,11 +569,15 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel className="flex space-x-3 items-center">
-                      Hoạt động
+                      {shippingRateFormMessage.activity}
                       <span className="text-red-600 pl-1">(*)</span>
-                      <Recommend message="Lựa chọn ngừng hoặc mở thuế mặc định là ngừng." />
+                      <Recommend
+                        message={shippingRateFormMessage.taxStatusNote}
+                      />
                     </FormLabel>
-                    <FormDescription>Ngừng hoặc mở thuế</FormDescription>
+                    <FormDescription>
+                      {shippingRateFormMessage.taxStatusOptions}
+                    </FormDescription>
                   </div>
                 </FormItem>
               )}

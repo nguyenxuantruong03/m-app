@@ -24,27 +24,41 @@ import { Separator } from "@/components/ui/separator";
 import { Heading } from "@/components/ui/heading";
 import { AlertModal } from "@/components/modals/alert-modal";
 import Recommend from "@/components/ui/recommend";
-
-const formSchema = z.object({
-  name: z.string().min(4,{message: "Nhập ít nhất 4 ký tự."}),
-});
-
-type CategoryFormValues = z.infer<typeof formSchema>;
+import { getCategoryForm } from "@/translate/translate-dashboard";
 
 interface CategoryFormProps {
   initialData: Category | null;
+  language: string;
 }
 
-export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData }) => {
+export const CategoryForm: React.FC<CategoryFormProps> = ({
+  initialData,
+  language,
+}) => {
   const params = useParams();
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const title = initialData ? "Edit category" : "Create category";
-  const description = initialData ? "Edit a category." : "Add a new category";
-  const action = initialData ? "Save changes" : "Create";
+  //language
+  const categoryFormMessage = getCategoryForm(language);
+
+  const title = initialData
+    ? categoryFormMessage.editCategory
+    : categoryFormMessage.createCategory;
+  const description = initialData
+    ? categoryFormMessage.editCategoryDescription
+    : categoryFormMessage.addNewCategory;
+  const action = initialData
+    ? categoryFormMessage.saveChanges
+    : categoryFormMessage.create;
+
+  const formSchema = z.object({
+    name: z.string().min(4, { message: categoryFormMessage.minCharacters }),
+  });
+
+  type CategoryFormValues = z.infer<typeof formSchema>;
 
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(formSchema),
@@ -72,21 +86,23 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData }) => {
           if (initialData) {
             return (
               <p>
-                Category{" "}
+                {categoryFormMessage.category}
                 <span className="font-bold">{response.data?.name}</span>{" "}
-                updated.
+                {categoryFormMessage.updated}.
               </p>
             );
           } else {
             return (
               <p>
-                Category <span className="font-bold">{data.name}</span> created.
+                {categoryFormMessage.category}{" "}
+                <span className="font-bold">{data.name}</span>{" "}
+                {categoryFormMessage.created}.
               </p>
             );
           }
         }),
         {
-          loading: "Updating category7...",
+          loading: categoryFormMessage.updatingCategory,
           success: (message) => {
             router.refresh();
             router.push(`/${params.storeId}/categories7`);
@@ -94,19 +110,23 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData }) => {
           },
           error: (error: unknown) => {
             if (
-              (error as { response?: { data?: { error?: string } } }).response &&
-              (error as { response: { data?: { error?: string } } }).response.data &&
-              (error as { response: { data: { error?: string } } }).response.data.error
+              (error as { response?: { data?: { error?: string } } })
+                .response &&
+              (error as { response: { data?: { error?: string } } }).response
+                .data &&
+              (error as { response: { data: { error?: string } } }).response
+                .data.error
             ) {
-              return (error as { response: { data: { error: string } } }).response.data.error
+              return (error as { response: { data: { error: string } } })
+                .response.data.error;
             } else {
-              return "Something went wrong.";
+              return categoryFormMessage.error;
             }
           },
         }
       );
-    } catch (error) {} 
-      finally {
+    } catch (error) {
+    } finally {
       setLoading(false);
     }
   };
@@ -119,20 +139,22 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData }) => {
       );
       router.refresh();
       router.push(`/${params.storeId}/categories7`);
-      toast.success("Category deleted.");
+      toast.success(categoryFormMessage.categoryDeleted);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
         (error as { response: { data?: { error?: string } } }).response.data &&
-        (error as { response: { data: { error?: string } } }).response.data.error
+        (error as { response: { data: { error?: string } } }).response.data
+          .error
       ) {
         // Hiển thị thông báo lỗi cho người dùng
-        toast.error((error as { response: { data: { error: string } } }).response.data.error);
+        toast.error(
+          (error as { response: { data: { error: string } } }).response.data
+            .error
+        );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
-        toast.error(
-          "Make sure you removed all categories using this billboard first."
-        );
+        toast.error(categoryFormMessage.error);
       }
     } finally {
       setLoading(false);
@@ -147,6 +169,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData }) => {
         onClose={() => setOpen(false)}
         onConfirm={onDelete}
         loading={loading}
+        languageToUse={language}
       />
       {/* update and create */}
       <div className="flex items-center justify-between">
@@ -177,13 +200,14 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Tên <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Hãy đặt tên phù hợp với từng loại hàng. VD: Ổ cắm Sino..." />
+                    {categoryFormMessage.name}{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message={categoryFormMessage.nameHint} />
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Enter label ..."
+                      placeholder={categoryFormMessage.enterLabel}
                       {...field}
                     />
                   </FormControl>
@@ -192,6 +216,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData }) => {
               )}
             />
           </div>
+          
           <Button disabled={loading} className="ml-auto" type="submit">
             {action}
           </Button>

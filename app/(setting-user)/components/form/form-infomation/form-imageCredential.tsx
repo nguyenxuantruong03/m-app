@@ -23,12 +23,26 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useCurrentRole } from "@/hooks/use-current-role";
 import { UserRole } from "@prisma/client";
+import {
+  getToastError,
+  translateAddProfilePicture,
+  translateAvatar,
+  translateChangeProfilePictureNotification,
+  translateChooseBestProfilePicture,
+  translateChooseProfilePicturePrompt,
+  translateChooseVIPProfilePicture,
+  translateSave,
+} from "@/translate/translate-client";
 
-interface FormImageCredentialProps{
-  setOpen: Dispatch<SetStateAction<boolean>>
+interface FormImageCredentialProps {
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  languageToUse: string;
 }
 
-const FormImageCredential = ({setOpen}:FormImageCredentialProps) => {
+const FormImageCredential = ({
+  setOpen,
+  languageToUse,
+}: FormImageCredentialProps) => {
   const user = useCurrentUser();
   const router = useRouter();
   const { update } = useSession();
@@ -39,15 +53,29 @@ const FormImageCredential = ({setOpen}:FormImageCredentialProps) => {
   const [selectedAvatar, setSelectedAvatar] = useState<string>("");
   const role = useCurrentRole() || UserRole.GUEST;
 
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const saveMessage = translateSave(languageToUse);
+  const addProfilePictureMessage = translateAddProfilePicture(languageToUse);
+  const chooseBestProfilePicture =
+    translateChooseBestProfilePicture(languageToUse);
+  const changeProfilePictureNotificationMessage =
+    translateChangeProfilePictureNotification(languageToUse);
+  const avatarMessage = translateAvatar(languageToUse);
+  const chooseProfilePicturePromptMessage =
+    translateChooseProfilePicturePrompt(languageToUse);
+  const chooseVIPProfilePictureMessage =
+    translateChooseVIPProfilePicture(languageToUse);
+
   const form = useForm<z.infer<typeof SettingSchema>>({
     resolver: zodResolver(SettingSchema),
     defaultValues: {
       imageCredential: Array.isArray(user?.imageCredential)
-      ? user?.imageCredential
-      : user?.imageCredential
-      ? [user?.imageCredential]
-      : [],
-  },
+        ? user?.imageCredential
+        : user?.imageCredential
+        ? [user?.imageCredential]
+        : [],
+    },
   });
 
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
@@ -60,23 +88,21 @@ const FormImageCredential = ({setOpen}:FormImageCredentialProps) => {
     const userString = JSON.stringify(user?.imageCredential);
 
     if (!values.imageCredential || values.imageCredential.length === 0) {
-      setError("Hãy thêm ảnh đại diện cho tài khoản của bạn.");
+      setError(addProfilePictureMessage);
       return;
     }
 
     if (!values.imageCredential || values.imageCredential.length > 1) {
-      setError(
-        "Hãy lựa chọn 1 bức ảnh đẹp nhất để làm ảnh đại diện và xóa ảnh còn lại đi."
-      );
+      setError(chooseBestProfilePicture);
       return;
     }
     // Kiểm tra giá trị imageCredential nhập vào và user?.imageCredential
     if (valuesString === userString) {
-      setError("Hãy thay đổi ảnh mới ảnh trên đang được sử dụng.");
+      setError(changeProfilePictureNotificationMessage);
       return;
     }
     startTransition(() => {
-      setting(values)
+      setting(values, languageToUse)
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -85,11 +111,11 @@ const FormImageCredential = ({setOpen}:FormImageCredentialProps) => {
             update();
             router.refresh();
             setSuccess(data.success);
-            setOpen(false)
+            setOpen(false);
           }
         })
         .catch(() => {
-          setError("Something went wrong");
+          setError(toastErrorMessage);
         });
     });
   };
@@ -126,7 +152,7 @@ const FormImageCredential = ({setOpen}:FormImageCredentialProps) => {
             name="imageCredential"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Ảnh đại diện</FormLabel>
+                <FormLabel>{avatarMessage}</FormLabel>
                 <FormControl>
                   <div className="flex items-center justify-center">
                     <ImageUpload
@@ -145,15 +171,18 @@ const FormImageCredential = ({setOpen}:FormImageCredentialProps) => {
                       selectedAvatar={selectedAvatar}
                       maxFiles={1}
                       showAvatar={true}
+                      language={languageToUse}
                     />
                   </div>
                 </FormControl>
               </FormItem>
             )}
-          /> 
+          />
         </div>
         <div className="space-y-4">
-          <FormLabel className="text-white">Chọn ảnh đại diện (Nếu bạn không có ảnh)</FormLabel>
+          <FormLabel className="text-white">
+            {chooseProfilePicturePromptMessage}
+          </FormLabel>
           <div className="grid grid-cols-5 gap-2 h-32 overflow-y-auto">
             {avatars.map((avatar, index) => (
               <Image
@@ -175,7 +204,9 @@ const FormImageCredential = ({setOpen}:FormImageCredentialProps) => {
         </div>
         {(role === UserRole.ADMIN || role === UserRole.STAFF) && (
           <div className="space-y-4">
-            <FormLabel className="text-white">Chọn ảnh đại diện VIP</FormLabel>
+            <FormLabel className="text-white">
+              {chooseVIPProfilePictureMessage}
+            </FormLabel>
             <div className="grid grid-cols-5 gap-2 h-32 overflow-y-auto">
               {AvatarVIP.map((avatar, index) => (
                 <Image
@@ -198,8 +229,13 @@ const FormImageCredential = ({setOpen}:FormImageCredentialProps) => {
         )}
         <FormError message={error} />
         <FormSuccess message={success} />
-        <Button type="submit" disabled={isPending} className="w-full" variant="secondary">
-          Save
+        <Button
+          type="submit"
+          disabled={isPending}
+          className="w-full"
+          variant="secondary"
+        >
+          {saveMessage}
         </Button>
       </form>
     </Form>

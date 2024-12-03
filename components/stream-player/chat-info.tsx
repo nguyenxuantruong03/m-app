@@ -1,26 +1,37 @@
 import { useMemo } from "react";
 import { Info } from "lucide-react";
 import { Hint } from "../ui/hint";
+import { translateFollowersAndSlowMode, translateFollowersOnly, translateFollowersOnlyChat, translateMessageDelay, translateSlowMode } from "@/translate/translate-client";
 
 
 interface ChatInfoProps {
   isDelayed: boolean;
   isFollowersOnly: boolean;
   timeDelay: number;
+  languageToUse: string
 }
 
-export const ChatInfo = ({ isDelayed, isFollowersOnly,timeDelay }: ChatInfoProps) => {
+export const ChatInfo = ({ isDelayed, isFollowersOnly,timeDelay,languageToUse }: ChatInfoProps) => {
+  const delayInSeconds = timeDelay / 1000;
+
+  //languages
+  const followersOnlyChatMessage = translateFollowersOnlyChat(languageToUse)
+  const chatDelayMessage = translateMessageDelay(languageToUse, delayInSeconds)
+  const followerOnlyMessage = translateFollowersOnly(languageToUse)
+  const slowModeMessage = translateSlowMode(languageToUse)
+  const followerAndSlowModeMessage = translateFollowersAndSlowMode(languageToUse)
+
   const hint = useMemo(() => {
     if (isFollowersOnly && !isDelayed) {
-      return "Only followers can chat";
+      return followersOnlyChatMessage;
     }
 
     if (isDelayed && !isFollowersOnly) {
-      return `Messages are delayed by ${timeDelay / 1000} seconds`;
+      return chatDelayMessage;
     }
 
     if (isDelayed && isFollowersOnly) {
-      return `Only followers can chat. Messages are delayed by ${timeDelay / 1000} seconds`;
+      return `${followersOnlyChatMessage}. ${chatDelayMessage}`;
     }
 
     return "";
@@ -28,15 +39,15 @@ export const ChatInfo = ({ isDelayed, isFollowersOnly,timeDelay }: ChatInfoProps
 
   const label = useMemo(() => {
     if (isFollowersOnly && !isDelayed) {
-      return "Followers only";
+      return followerOnlyMessage;
     }
 
     if (isDelayed && !isFollowersOnly) {
-      return "Slow mode";
+      return slowModeMessage;
     }
 
     if (isDelayed && isFollowersOnly) {
-      return "Followers only and slow mode";
+      return followerAndSlowModeMessage;
     }
 
     return "";
@@ -51,7 +62,7 @@ export const ChatInfo = ({ isDelayed, isFollowersOnly,timeDelay }: ChatInfoProps
       <Hint label={hint}>
         <Info className="h-4 w-4 text-gray-300" />
       </Hint>
-      <p className="text-xs font-semibold">{label}</p>
+      <p className="text-xs font-semibold break-words">{label}</p>
     </div>
   );
 };

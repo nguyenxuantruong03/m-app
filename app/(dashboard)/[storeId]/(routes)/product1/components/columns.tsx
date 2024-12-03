@@ -32,6 +32,7 @@ export type ProductColumn = {
   imagesalientfeaturesUrl: { url: string }[];
   imagesUrl: { url: string }[];
   createdAt: Date;
+  language: string;
 };
 
 export const columns: ColumnDef<ProductColumn>[] = [
@@ -64,7 +65,7 @@ export const columns: ColumnDef<ProductColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Tên sản phẩm
+          Heading
           <Tag className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -83,6 +84,7 @@ export const columns: ColumnDef<ProductColumn>[] = [
         isArchived={row.original.isArchived}
         productdetailId={row.original.productdetailId}
         field="heading"
+        language={row.original.language}
       />
     ),
   },

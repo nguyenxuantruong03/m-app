@@ -19,6 +19,8 @@ import DownloadFile from "@/components/file/downloadfilepage";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { getFavoriteClient } from "@/translate/translate-dashboard";
 
 interface FavoriteClientProps {
   data: FavoriteColumn[];
@@ -33,6 +35,10 @@ const FavoriteClient: React.FC<FavoriteClientProps> = ({ data }) => {
   const role = useCurrentRole();
   const isRole = role === UserRole.ADMIN;
   const showAPIRole = isRole;
+  //language
+  const user = useCurrentUser();
+  const languageToUse = user?.language || "vi";
+  const favoriteClientMessage = getFavoriteClient(languageToUse)
 
   const handleDelete = async () => {
     setLoading(true);
@@ -43,7 +49,7 @@ const FavoriteClient: React.FC<FavoriteClientProps> = ({ data }) => {
       });
       setLoading(false);
       setOpen(false);
-      toast.success("Favorite deleted successfully");
+      toast.success(favoriteClientMessage.favoriteDeletedSuccessfully);
       // Optionally, refresh data or handle post-delete state
     } catch (error) {
       setLoading(false);
@@ -61,7 +67,7 @@ const FavoriteClient: React.FC<FavoriteClientProps> = ({ data }) => {
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
-          "Make sure you removed all favorite using this favorite first."
+          favoriteClientMessage.somethingWentWrong
         );
       }
     }
@@ -70,16 +76,16 @@ const FavoriteClient: React.FC<FavoriteClientProps> = ({ data }) => {
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Sở thích (${data.length})`}
-          description="Quản lý sở thích sản phẩm"
+          title={`${favoriteClientMessage.favorite} (${data.length})`}
+          description={favoriteClientMessage.favoriteManagement}
         />
         <div className=" flex space-x-3">
-          <DownloadFile data={data} filename="categories" />
+          <DownloadFile data={data} filename="categories" languageToUse={languageToUse}/>
           <Button
             onClick={() => router.push(`/${params.storeId}/favorite/new`)}
           >
             <Plus className="mr-2 h-4 w-4" />
-            Thêm mới
+            {favoriteClientMessage.addNew}
           </Button>
         </div>
       </div>
@@ -95,9 +101,10 @@ const FavoriteClient: React.FC<FavoriteClientProps> = ({ data }) => {
         onDelete={handleDelete}
         setOpen={setOpen}
         open={open}
+        languageToUse={languageToUse}
       />
       {showAPIRole && (
-        <Heading title="Api" description="API calls for Favorite" />
+        <Heading title={favoriteClientMessage.api} description={favoriteClientMessage.apiCallsForFavorite} />
       )}
       <Separator />
       <ApiList entityIdName="favoriteId" entityName="favorite" />

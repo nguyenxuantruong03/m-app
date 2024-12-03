@@ -5,8 +5,13 @@ import FormPost from "./form-post";
 import PostCard from "./post-card";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
-import SortItem from "./sort-item";
 import CircleAvatar from "@/components/ui/circle-avatar";
+import {
+  translateCreatePost,
+  translateLiveVideo,
+  translateWhatAreYouThinking,
+} from "@/translate/translate-client";
+import SortItem from "@/app/(profile-user-other)/(livestream-explore)/explore/_components/sort-item";
 
 interface ArticleUserProps {
   self: any;
@@ -14,6 +19,7 @@ interface ArticleUserProps {
   user: any;
   avatarImage: string;
   streams?: any;
+  languageToUse: string;
 }
 
 const ArticleUser = ({
@@ -22,11 +28,17 @@ const ArticleUser = ({
   user,
   avatarImage,
   streams,
+  languageToUse,
 }: ArticleUserProps) => {
   const [openPost, setOpenPost] = useState(false);
   const [sortedPostReview, setSortedPostReview] = useState<any[]>(self.review);
   const [sortCriteria, setSortCriteria] = useState<string>("newest"); // Default to newest
   const isLive = streams?.some((stream: any) => stream?.isLive === true);
+
+  //language
+  const createPostMessage = translateCreatePost(languageToUse);
+  const whatAreYouThinkingMessage = translateWhatAreYouThinking(languageToUse);
+  const liveVideoMessage = translateLiveVideo(languageToUse);
 
   useEffect(() => {
     // Sort posts when criteria changes
@@ -112,7 +124,7 @@ const ArticleUser = ({
                 <div className="h-[400px] md:h-[500px] overflow-y-auto w-3/4 max-w-md border rounded-md gap-4 bg-slate-900 p-6 shadow-lg transition ease-in-out z-[9999999]">
                   <div className="flex items-center justify-between">
                     <span className="text-lg font-semibold text-foreground break-all line-clamp-2 text-white">
-                      Tạo bài viết
+                      {createPostMessage}
                     </span>
                     <span
                       onClick={() => setOpenPost(false)}
@@ -136,8 +148,12 @@ const ArticleUser = ({
       <div className="space-y-5">
         {self.id === user?.id && showFunction && (
           <div className="bg-slate-900 rounded-md text-white p-3 mt-5 lg:mt-0 ">
-            <div className={`flex items-center space-x-2 ${user?.isLive ? "ml-9" : ""}`}>
-            {user?.isLive ? (
+            <div
+              className={`flex items-center space-x-2 ${
+                user?.isLive ? "ml-9" : ""
+              }`}
+            >
+              {user?.isLive ? (
                 <Link href={`/live/${user.nameuser}`}>
                   <CircleAvatar
                     nameuser={user.nameuser || ""}
@@ -174,7 +190,7 @@ const ArticleUser = ({
                 className="w-full bg-gray-300 rounded-full text-slate-900 hover:bg-white hover:bg-opacity-70 p-3 cursor-pointer"
                 onClick={() => setOpenPost(true)}
               >
-                Bạn đang nghĩ gì ?
+                {whatAreYouThinkingMessage}
               </div>
             </div>
             <Separator className="my-4 bg-gray-300 bg-opacity-30" />
@@ -194,12 +210,15 @@ const ArticleUser = ({
                     </>
                   )}
                 </div>
-                Video trực tiếp
+                {liveVideoMessage}
               </Link>
 
               <Separator orientation="vertical" className="mx-2 h-8" />
 
-              <SortItem setSortCriteria={setSortCriteria} />
+              <SortItem
+                setSortCriteria={setSortCriteria}
+                languageToUse={languageToUse}
+              />
             </div>
           </div>
         )}
@@ -210,6 +229,7 @@ const ArticleUser = ({
           avatarImage={avatarImage}
           user={user}
           showFunction={showFunction}
+          languageToUse={languageToUse}
         />
       </div>
     </>

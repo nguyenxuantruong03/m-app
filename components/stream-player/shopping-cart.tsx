@@ -23,6 +23,33 @@ import { CartItemType } from "@/types/type";
 import useCartdb from "@/hooks/client/db/use-cart-db";
 import Currency from "../ui/currency";
 import PreviewModal from "../(client)/modal/preview-modal";
+import { getAllProductNotQuery } from "@/actions/client/products/get-products";
+import {
+  translateCuttingStone,
+  translateElectricWire,
+  translateFan,
+  translateGlue,
+  translateLightBulb,
+  translateLock,
+  translatePaint,
+  translatePin,
+  translatePipe,
+  translateSocket,
+  translateBathroom,
+  translateCommonUse,
+  getToastError,
+  translateAddToCartError,
+  translateInsufficientStock,
+  translateLoading,
+  translateOutOfStock,
+  translateProductAddedToCart,
+  translateProductQuantityUpdated,
+  translateSold,
+  translateShoppingList,
+  translateBuy,
+  translateShoppingCart,
+  getCartTranslation,
+} from "@/translate/translate-client";
 
 interface ProductWithImages extends Product {
   images: ImageData[];
@@ -31,28 +58,58 @@ interface ProductWithImages extends Product {
 
 interface ShippingCartInLiveProps {
   isPin?: boolean;
+  languageToUse: string
 }
-const ShoppingCardInLive = ({ isPin = true }: ShippingCartInLiveProps) => {
+const ShoppingCardInLive = ({ isPin = true, languageToUse }: ShippingCartInLiveProps) => {
   const router = useRouter();
   const userId = useCurrentUser();
   const cartdb = useCartdb();
-  const [data, setData] = useState<ProductWithImages[]>([]);
+
+  const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null); // Add currentProduct state
   const [openPreviewModal, setOpenPreviewModal] = useState(false);
   const [isShowPin, setIsShowPin] = useState(true);
 
+  //language
+    //languages
+    const pinMesage = translatePin(languageToUse);
+    const fanMessage = translateFan(languageToUse);
+    const pipeMessage = translatePipe(languageToUse);
+    const electricWireMessage = translateElectricWire(languageToUse);
+    const cuttingStoneMessage = translateCuttingStone(languageToUse);
+    const lockMessage = translateLock(languageToUse);
+    const glueMessage = translateGlue(languageToUse);
+    const socketMessage = translateSocket(languageToUse);
+    const paintMessage = translatePaint(languageToUse);
+    const bathroomMessage = translateBathroom(languageToUse);
+    const lightBlubMessage = translateLightBulb(languageToUse);
+    const commonUseMessage = translateCommonUse(languageToUse);
+    const toastErrorMessage = getToastError(languageToUse);
+    const loadingMessage = translateLoading(languageToUse);
+    const insufficientStockMessage = translateInsufficientStock(languageToUse)
+    const outOfStockInventoryMessage = translateOutOfStock(languageToUse);
+    const productQuantityUpdatedMessage =
+      translateProductQuantityUpdated(languageToUse);
+    const addtoCartErrorMessage = translateAddToCartError(languageToUse);
+    const productAddedToCartMessage = translateProductAddedToCart(languageToUse);
+    const shoppingListMessage = translateShoppingList(languageToUse)
+    const soldMessage = translateSold(languageToUse);
+    const buyMessage = translateBuy(languageToUse)
+    const shoppingCartMessage = translateShoppingCart(languageToUse)
+    const cartMessage = getCartTranslation(languageToUse)
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/getAllProductNotQuery`
-        );
-        setData(response.data);
+        const product = await getAllProductNotQuery(languageToUse);
+  
+        setData(product);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        toast.error(toastErrorMessage);
       } finally {
         setLoading(false);
       }
@@ -62,18 +119,18 @@ const ShoppingCardInLive = ({ isPin = true }: ShippingCartInLiveProps) => {
   }, []);
 
   const productTypeDisplayNames: Record<string, string> = {
-    PRODUCT: "Pin",
-    PRODUCT1: "Quạt",
-    PRODUCT2: "Ống nhựa, ống lưới xanh",
-    PRODUCT3: "Dây điện",
-    PRODUCT4: "Đá cắt",
-    PRODUCT5: "Ổ khóa",
-    PRODUCT6: "Keo",
-    PRODUCT7: "Ổ cắm, mặt ổ cắm",
-    PRODUCT8: "Sơn",
-    PRODUCT9: "Vật liệu nhà tắm",
-    PRODUCT10: "Bóng đèn",
-    PRODUCT11: "Đồ thường dùng",
+    PRODUCT: pinMesage,
+    PRODUCT1: fanMessage,
+    PRODUCT2: pipeMessage,
+    PRODUCT3: electricWireMessage,
+    PRODUCT4: cuttingStoneMessage,
+    PRODUCT5: lockMessage,
+    PRODUCT6: glueMessage,
+    PRODUCT7: socketMessage,
+    PRODUCT8: paintMessage,
+    PRODUCT9: bathroomMessage,
+    PRODUCT10: lightBlubMessage,
+    PRODUCT11: commonUseMessage,
   };
 
   // Nhóm các sản phẩm theo productType, chỉ lấy sản phẩm isProductShowLive === true
@@ -149,7 +206,7 @@ const ShoppingCardInLive = ({ isPin = true }: ShippingCartInLiveProps) => {
       // Use the Link component for navigation
       router.push(href);
     } else {
-      console.error("Invalid route:", route);
+      toast.error(toastErrorMessage);
     }
   };
 
@@ -267,7 +324,7 @@ const ShoppingCardInLive = ({ isPin = true }: ShippingCartInLiveProps) => {
           userId: userId?.id || "",
         }),
         {
-          loading: "Loading...",
+          loading: loadingMessage,
           success: (response) => {
             const cartItemData = response.data;
             const size = availableSize;
@@ -292,7 +349,7 @@ const ShoppingCardInLive = ({ isPin = true }: ShippingCartInLiveProps) => {
               matchingQuantity >= maxQuantity && maxQuantity > 0;
 
             if (compareQuantityExistingAndAvailable) {
-              throw new Error("Số lượng sản phẩm trong kho không đủ!");
+              throw new Error(insufficientStockMessage);
             }
 
             const productWithQuantity = {
@@ -315,7 +372,8 @@ const ShoppingCardInLive = ({ isPin = true }: ShippingCartInLiveProps) => {
                   existingCartItem.id,
                   existingCartItem.quantity + quantity,
                   null,
-                  userId?.id || ""
+                  userId?.id || "",
+                  languageToUse
                 );
               } else {
                 cartdb.addItem(
@@ -328,17 +386,17 @@ const ShoppingCardInLive = ({ isPin = true }: ShippingCartInLiveProps) => {
                 );
               }
             } catch (error) {
-              toast.error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
+              toast.error(addtoCartErrorMessage);
             } finally {
               setLoading(false);
             }
 
             return existingCartItem
-              ? "Sản phẩm đã được cập nhật số lượng trong giỏ hàng."
-              : "Sản phẩm đã thêm vào giỏ hàng.";
+              ? productQuantityUpdatedMessage
+              : productAddedToCartMessage;
           },
           error: (error) => {
-            return error.message || "Failed to add product to cart!";
+            return error.message || toastErrorMessage
           },
         }
       );
@@ -366,7 +424,7 @@ const ShoppingCardInLive = ({ isPin = true }: ShippingCartInLiveProps) => {
           {data.filter((item) => item.isProductShowLive === true).length >
             0 && (
             <div>
-              <Hint label="Shopping">
+              <Hint label={shoppingCartMessage}>
                 <div className="relative cursor-pointer">
                   <ShoppingBag className="text-yellow-500 w-9 h-9 hover:bg-white/10 p-1.5 rounded-lg" />
                   <div className="absolute top-0 right-0 flex items-center justify-center bg-white w-4 h-4 text-xs rounded-full border border-gray-300">
@@ -382,7 +440,7 @@ const ShoppingCardInLive = ({ isPin = true }: ShippingCartInLiveProps) => {
         </SheetTrigger>
         <SheetContent side="right">
           <SheetHeader>
-            <SheetTitle className="flex items-center">Shopping List</SheetTitle>
+            <SheetTitle className="flex items-center">{shoppingListMessage}</SheetTitle>
           </SheetHeader>
           <div className="space-y-6">
             {/* Hiển thị từng nhóm sản phẩm */}
@@ -422,7 +480,7 @@ const ShoppingCardInLive = ({ isPin = true }: ShippingCartInLiveProps) => {
                       const discountedPriceOld = validPriceAndPromotion.price;
 
                       if (!availableSize && !availableColor) {
-                        toast.error("Sản phẩm đã hết hàng!");
+                        toast.error(outOfStockInventoryMessage);
                         return;
                       }
 
@@ -463,6 +521,7 @@ const ShoppingCardInLive = ({ isPin = true }: ShippingCartInLiveProps) => {
                               isOpen={openPreviewModal}
                               onClose={() => setOpenPreviewModal(false)}
                               product={currentProduct as any}
+                              languageToUse={languageToUse}
                             />
                           )}
                           <div className="flex">
@@ -497,7 +556,7 @@ const ShoppingCardInLive = ({ isPin = true }: ShippingCartInLiveProps) => {
                               </div>
 
                               <span className="text-sm text-gray-300">
-                                Đã bán: {product.sold}
+                                {soldMessage}: {product.sold}
                               </span>
 
                               <div className="flex items-center justify-end border-gray-300 px-2">
@@ -513,7 +572,7 @@ const ShoppingCardInLive = ({ isPin = true }: ShippingCartInLiveProps) => {
                                   disabled={productQuantityAll || loading}
                                   className="p-1.5 rounded-r-lg text-sm bg-red-500 px-2 text-white" // Added padding and rounded right corner
                                 >
-                                  Mua
+                                  {buyMessage}
                                 </button>
                               </div>
                             </div>
@@ -529,7 +588,7 @@ const ShoppingCardInLive = ({ isPin = true }: ShippingCartInLiveProps) => {
               className="fixed bottom-10 right-10 cursor-pointer"
               onClick={() => router.push("/cart")}
             >
-              <Hint label="Giỏ hàng">
+              <Hint label={cartMessage}>
                 <div className="rounded-full p-3 bg-orange-500">
                   <ShoppingBag className="text-white w-6 h-6" />
                 </div>
@@ -568,7 +627,7 @@ const ShoppingCardInLive = ({ isPin = true }: ShippingCartInLiveProps) => {
               const discountedPriceOld = validPriceAndPromotion.price;
 
               if (!availableSize && !availableColor) {
-                toast.error("Sản phẩm đã hết hàng!");
+                toast.error(outOfStockInventoryMessage);
                 return;
               }
 
@@ -611,6 +670,7 @@ const ShoppingCardInLive = ({ isPin = true }: ShippingCartInLiveProps) => {
                           isOpen={openPreviewModal}
                           onClose={() => setOpenPreviewModal(false)}
                           product={currentProduct as any}
+                          languageToUse={languageToUse}
                         />
                       )}
                       <div
@@ -647,7 +707,7 @@ const ShoppingCardInLive = ({ isPin = true }: ShippingCartInLiveProps) => {
                         </div>
 
                         <div className="text-sm text-gray-300">
-                          Đã bán: {product.sold}
+                          {soldMessage}: {product.sold}
                         </div>
 
                         <div className="flex items-center justify-end border-gray-300 px-2">
@@ -663,7 +723,7 @@ const ShoppingCardInLive = ({ isPin = true }: ShippingCartInLiveProps) => {
                             disabled={productQuantityAll || loading}
                             className="p-1.5 rounded-r-lg text-sm bg-red-500 px-2 text-white" // Added padding and rounded right corner
                           >
-                            Mua
+                            {buyMessage}
                           </button>
                         </div>
                       </div>

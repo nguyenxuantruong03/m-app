@@ -17,6 +17,7 @@ import axios from "axios";
 
 import { OrderColumn } from "./columns";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { getOrderPickupStoreAction } from "@/translate/translate-dashboard";
 
 interface CellActionProps {
   data: OrderColumn;
@@ -28,6 +29,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const user = useCurrentUser();
   const [loading, setLoading] = useState(false);
 
+  //language
+  const orderPickupStoreActionMessage = getOrderPickupStoreAction(data.language)
+
   const reciveProductStore = async () => {
     try {
       setLoading(true);
@@ -38,7 +42,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Xác nhận thành công đơn hàng:
+              {orderPickupStoreActionMessage.confirmOrderSuccessfully}:
               <span className="font-bold">
                 {data.email || data.emailcurrent} -{" "}
                 <span className="font-bold">
@@ -50,7 +54,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating stutus...",
+          loading: orderPickupStoreActionMessage.updatingStatus,
           success: (message) => {
             router.refresh();
             return message;
@@ -67,13 +71,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Đã xảy ra lỗi khi xác nhận đơn hàng.";
+              return orderPickupStoreActionMessage.somethingWentWrong;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi chuẩn bị đơn hàng đã xong.");
+      toast.error(orderPickupStoreActionMessage.somethingWentWrong);
     } finally {
       setLoading(false);
     }
@@ -84,22 +88,22 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
+            <span className="sr-only">{orderPickupStoreActionMessage.openMenu}</span>
             <MoreHorizontal className="w-4 h-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           {user?.role === "ADMIN" || user?.role === "STAFF" ? (
             <>
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuLabel>{orderPickupStoreActionMessage.actions}</DropdownMenuLabel>
               <DropdownMenuItem disabled={loading} onClick={reciveProductStore}>
                 <Home className="h-4 w-4 mr-2" />
-                Soạn hàng nhận tại cửa hàng
+                {orderPickupStoreActionMessage.orderPreparedAtStore}
               </DropdownMenuItem>
             </>
           ) : (
             <>
-              <DropdownMenuLabel>Trống</DropdownMenuLabel>
+              <DropdownMenuLabel>{orderPickupStoreActionMessage.empty}</DropdownMenuLabel>
             </>
           )}
         </DropdownMenuContent>

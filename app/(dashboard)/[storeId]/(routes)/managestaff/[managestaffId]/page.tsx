@@ -1,6 +1,6 @@
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
-import { currentRole } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 import { RoleGate } from "@/components/auth/role-gate";
 import FormSuccess from "@/components/form-success";
 import { ManageStaffForm } from "./component/managestaff-form";
@@ -10,6 +10,7 @@ const ManageStaffPage = async ({
 }: {
   params: { storeId: string; managestaffId: string };
 }) => {
+  const user = await currentUser()
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN;
   const showProductRole = isRole;
@@ -33,6 +34,7 @@ const ManageStaffPage = async ({
             <ManageStaffForm
               initialData={ManageStaff}
               imageCredential={ManageStaff?.imageCredential || []}
+              language={user?.language || "vi"}
             />
           )}
         </div>

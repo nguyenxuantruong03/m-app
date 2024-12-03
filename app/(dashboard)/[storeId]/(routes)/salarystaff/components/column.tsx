@@ -17,16 +17,9 @@ export type SalaryStaffsColumn = {
   isPaid: boolean | null;
   degree: string | null;
   createdAt: Date;
+  language: string;
 };
 
-const degreeMappings = {
-  Elementary: "Tiểu học",
-  JuniorHighSchool: "Trung học",
-  HighSchool: "Trung học phổ thông",
-  JuniorColleges: "Cao đẳng",
-  University: "Đại học",
-  MastersDegree: "Thạc sĩ",
-};
 
 export const columns: ColumnDef<SalaryStaffsColumn>[] = [
   {
@@ -68,15 +61,74 @@ export const columns: ColumnDef<SalaryStaffsColumn>[] = [
       );
     },
     cell: ({ row }) => {
+      type Language = "vi" | "en" | "zh" | "fr" | "ja";
+
+      const degreeMappings = {
+        vi: {
+          Elementary: "Tiểu học",
+          JuniorHighSchool: "Trung học",
+          HighSchool: "Trung học phổ thông",
+          JuniorColleges: "Cao đẳng",
+          University: "Đại học",
+          MastersDegree: "Thạc sĩ",
+        },
+        en: {
+          Elementary: "Elementary School",
+          JuniorHighSchool: "Junior High School",
+          HighSchool: "High School",
+          JuniorColleges: "Junior Colleges",
+          University: "University",
+          MastersDegree: "Master's Degree",
+        },
+        zh: {
+          Elementary: "小学",
+          JuniorHighSchool: "初中",
+          HighSchool: "高中",
+          JuniorColleges: "大专",
+          University: "大学",
+          MastersDegree: "硕士",
+        },
+        fr: {
+          Elementary: "École primaire",
+          JuniorHighSchool: "Collège",
+          HighSchool: "Lycée",
+          JuniorColleges: "Collèges",
+          University: "Université",
+          MastersDegree: "Master",
+        },
+        ja: {
+          Elementary: "小学校",
+          JuniorHighSchool: "中学校",
+          HighSchool: "高校",
+          JuniorColleges: "短期大学",
+          University: "大学",
+          MastersDegree: "修士号",
+        },
+      };
+      
+      const getDegreeText = (degree: string | null | undefined, language: Language) => {
+        const languageMappings = degreeMappings[language];
+      
+        if (languageMappings) {
+          const degreeText = degree ? languageMappings[degree as keyof typeof languageMappings] : "";
+          return degreeText || "";
+        }
+      
+        return "";
+      };
+      
+      // Example usage inside your React component
       const degreeValue: string | null | undefined = row.original.degree;
-      const degreeText = degreeValue
-        ? degreeMappings[degreeValue as keyof typeof degreeMappings] || ""
-        : "";
+      const language: Language = row.original.language as Language; // Assuming this is where the language comes from
+      
+      const degreeText = getDegreeText(degreeValue, language);
+      
       return (
         <div>
           {degreeText}
         </div>
       );
+      
     },
   },
   {

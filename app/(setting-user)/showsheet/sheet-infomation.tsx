@@ -20,6 +20,30 @@ import FormDeleteAccount from "../components/form/form-infomation/form-delete-ac
 import FormFavorite from "../components/form/form-infomation/form-favorite";
 import { Favorite } from "@prisma/client";
 import FormAvatarandFrame from "../components/form/form-infomation/form-avatar-frame";
+import {
+  translateChangeFrame,
+  translateChangeFrameMessage,
+  translateCurrentUsername,
+  translateDeleteAccount,
+  translateDeleteAccountWarning,
+  translateEditAddress,
+  translateEditBio,
+  translateEditDateOfBirth,
+  translateEditDisplayBio,
+  translateEditFavorite,
+  translateEditGender,
+  translateEditName,
+  translateEditPhoneNumber,
+  translateEditValidPhoneNumber,
+  translateEditYourAddress,
+  translateEditYourDateOfBirth,
+  translateEditYourGender,
+  translateFavorite,
+  translateNameDisplay,
+  translateNotChange,
+  translatePopular,
+  translateProfileUrlChange,
+} from "@/translate/translate-client";
 
 interface SheetInfomationProps {
   name?: string | null;
@@ -36,6 +60,8 @@ interface SheetInfomationProps {
   dataallfavorite: Favorite[];
   role: string | undefined;
   isCustomWarehouse: boolean | undefined;
+  loadingFavorite?: boolean;
+  languageToUse: string;
   setAlertGuestModal: React.Dispatch<React.SetStateAction<boolean>>;
   type:
     | "name"
@@ -68,6 +94,8 @@ const SheetInfomation: React.FC<SheetInfomationProps> = ({
   userId,
   setAlertGuestModal,
   isCustomWarehouse,
+  loadingFavorite,
+  languageToUse,
 }) => {
   const [open, setOpen] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
@@ -84,83 +112,80 @@ const SheetInfomation: React.FC<SheetInfomationProps> = ({
     }
   };
 
+  //language
+  const noChangeMessage = translateNotChange(languageToUse);
+
   const infoMap = {
     frame: {
-      title: `Thay đổi khung`,
-      description: `Bạn có thể thay đổi khung tùy thích.`,
-      form: <FormAvatarandFrame />,
+      title: translateChangeFrame(languageToUse),
+      description: translateChangeFrameMessage(languageToUse),
+      form: <FormAvatarandFrame languageToUse={languageToUse} />,
     },
     name: {
-      title: `Chỉnh sửa tên: ${name || "Chưa thay đổi"}`,
-      description: `Tên sẽ được hiển thị trên trang cá nhân, trong các bình luận và bài viết của bạn.: ${
-        name || "Chưa thay đổi"
-      }`,
-      form: <FormName />,
+      title: translateEditName(languageToUse, name),
+      description: translateNameDisplay(languageToUse, name),
+      form: <FormName languageToUse={languageToUse} />,
     },
     nameuser: {
-      title: `URL trang cá nhân VLXD Xuân Trường của bạn sẽ bị thay đổi: ${
-        nameuser || "Chưa thay đổi"
-      }`,
-      description: `Tên người dùng hiện tại: ${nameuser || "Chưa thay đổi"}`,
-      form: <FormNameUser />,
+      title: translateProfileUrlChange(languageToUse, nameuser),
+      description: translateCurrentUsername(languageToUse, nameuser),
+      form: <FormNameUser languageToUse={languageToUse} />,
     },
     bio: {
-      title: `Chỉnh sửa giới thiệu: ${bio || "Chưa thay đổi"}`,
-      description: `Chỉnh sửa giới thiệu hiển thị ở trang cá nhân: ${
-        bio || "Chưa thay đổi"
-      }`,
-      form: <FormBio />,
+      title: translateEditBio(languageToUse, bio),
+      description: translateEditDisplayBio(languageToUse, bio),
+      form: <FormBio languageToUse={languageToUse} />,
     },
     gender: {
-      title: `Chỉnh sửa giới tính: ${gender || "Chưa thay đổi"}`,
-      description: `Chỉnh sửa giới tính của bản thân: ${
-        gender || "Chưa thay đổi"
-      }`,
-      form: <FormGender />,
+      title: translateEditGender(languageToUse, gender),
+      description: translateEditYourGender(languageToUse, gender),
+      form: <FormGender languageToUse={languageToUse} />,
     },
     phonenumber: {
-      title: `Chỉnh sửa số điện thoại: ${phonenumber || "Chưa thay đổi"}`,
-      description: `Chỉnh sửa số điện thoại phù hợp 10-11 số: ${
-        phonenumber || "Chưa thay đổi"
-      }`,
-      form: <FormPhoneNumber />,
+      title: translateEditPhoneNumber(languageToUse, phonenumber),
+      description: translateEditValidPhoneNumber(languageToUse, phonenumber),
+      form: <FormPhoneNumber languageToUse={languageToUse} />,
     },
     dateofbirth: {
-      title: `Chỉnh sửa sinh nhật: ${dateofbirth || "Chưa thay đổi"}`,
-      description: `Chỉnh sửa sinh nhật: ${dateofbirth || "Chưa thay đổi"}`,
-      form: <FormDateOfBirth />,
+      title: translateEditDateOfBirth(languageToUse, dateofbirth),
+      description: translateEditYourDateOfBirth(languageToUse, dateofbirth),
+      form: <FormDateOfBirth languageToUse={languageToUse} />,
     },
     address: {
-      title: `Chỉnh sửa địa chỉ: ${address || "Chưa thay đổi"}`,
-      description: `Chỉnh sửa địa chỉ để không cần nhập lúc thanh toán: ${
-        address || "Chưa thay đổi"
-      }`,
-      form: <FormAddress />,
+      title: translateEditAddress(languageToUse, address),
+      description: translateEditYourAddress(languageToUse, address),
+      form: <FormAddress languageToUse={languageToUse} />,
     },
     addressother: {
-      title: `Chỉnh sửa địa chỉ khác: ${addressother || "Chưa thay đổi"}`,
-      description: `Chỉnh sửa địa chỉ khác để không cần nhập lúc thanh toán: ${
-        addressother || "Chưa thay đổi"
-      }`,
-      form: <FormAddressOther />,
+      title: translateEditAddress(languageToUse, addressother),
+      description: translateEditYourAddress(languageToUse, addressother),
+      form: <FormAddressOther languageToUse={languageToUse} />,
     },
     email: {
-      title: `Xóa tài khoản`,
-      description: `Hành động của bạn sẽ xóa đi vĩnh viễn tài khoản khỏi hệ thống. Hãy cân nhắc kỹ trước khi thực hiện hành động này.`,
-      form: <FormDeleteAccount />,
+      title: translateDeleteAccount(languageToUse),
+      description: translateDeleteAccountWarning(languageToUse),
+      form: <FormDeleteAccount languageToUse={languageToUse} />,
     },
     favorite: {
-      title: `Ưa thích`,
-      description: `Chỉnh sửa ưa thích của bạn: ${
+      title: translateFavorite(languageToUse),
+      description: `${translateEditFavorite(languageToUse)} ${
         favorite.length > 0
           ? favorite
               .map((item) =>
-                item === "phobien" ? "Phổ biến" : item || "Chưa thay đổi"
+                item === "phobien"
+                  ? translatePopular(languageToUse)
+                  : item || noChangeMessage
               )
               .join(", ") + "."
-          : ["Chưa thay đổi"]
+          : [noChangeMessage]
       }`,
-      form: <FormFavorite dataallfavorite={dataallfavorite} />,
+      form: (
+        <FormFavorite
+          languageToUse={languageToUse}
+          dataallfavorite={dataallfavorite}
+          loadingFavorite={loadingFavorite}
+        />
+      ),
     },
   };
 

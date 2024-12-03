@@ -2,7 +2,7 @@ import prismadb from "@/lib/prismadb";
 import OrderClient from "./components/client";
 import { formatter } from "@/lib/utils";
 import { RoleGate } from "@/components/auth/role-gate";
-import { currentRole } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 import { StatusOrder, UserRole } from "@prisma/client";
 import { OrderColumn } from "./components/columns";
 
@@ -11,6 +11,7 @@ const OrderComfirmation = async ({
 }: {
   params: { storeId: string };
 }) => {
+  const user = await currentUser()
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN || role === UserRole.SHIPPER || role === UserRole.STAFF;
   const showOrderRole = isRole;
@@ -92,6 +93,7 @@ const OrderComfirmation = async ({
       isGift: item.orderItem.map((item) => item?.isGift),
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
+      language: user?.language || "vi"
     }));
 
   return (

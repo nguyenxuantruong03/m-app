@@ -3,9 +3,10 @@ import CategoriesClient from "./components/client";
 import { CategoriesColumn } from "./components/columns";
 import { CategoryType, UserRole } from "@prisma/client";
 import { RoleGate } from "@/components/auth/role-gate";
-import { currentRole } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 
 const CategoriesPage = async ({ params }: { params: { storeId: string } }) => {
+  const user = await currentUser()
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN || role === UserRole.STAFF;
   const showCategoryRole = isRole;
@@ -24,6 +25,7 @@ const CategoriesPage = async ({ params }: { params: { storeId: string } }) => {
     id: item.id,
     name: item.name,
     createdAt: item.createdAt,
+    language: user?.language || "vi"
   }));
   return (
     <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>

@@ -7,11 +7,20 @@ import { formatter } from "@/lib/utils";
 import viLocale from "date-fns/locale/vi";
 import { format } from "date-fns";
 import { StatusOrder } from "@prisma/client";
+import { currentUser } from "@/lib/auth";
+import {
+  translateCheckOutCashPost,
+  translateOrderErrorPatch,
+} from "@/translate/translate-api";
 
 export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const checkOutCashPostMessage = translateCheckOutCashPost(LanguageToUse);
   try {
     const body = await req.json();
     const { encryptedData } = body;
@@ -288,16 +297,19 @@ export async function POST(
       if (outOfStockProducts.length > 0) {
         return new NextResponse(
           JSON.stringify({
-            error: `Số lượng không đủ cho sản phẩm: ${outOfStockProducts.join(
-              ", "
-            )}`,
+            error: `${
+              checkOutCashPostMessage.insufficientQuantity
+            }: ${outOfStockProducts.join(", ")}`,
           }),
           { status: 403 }
         );
       }
     }
 
-    const statisDelivery = deliveryOption === "pickup" ? StatusOrder.Nhan_tai_cua_hang : StatusOrder.Cho_xac_nhan
+    const statisDelivery =
+      deliveryOption === "pickup"
+        ? StatusOrder.Nhan_tai_cua_hang
+        : StatusOrder.Cho_xac_nhan;
 
     const order = await prismadb.order.create({
       data: {
@@ -360,7 +372,7 @@ export async function POST(
 
     // Add the total row
     tableRows.push(`<tr>
-    <td colspan="4"><strong>Thành tiền</strong></td>
+    <td colspan="4"><strong>${checkOutCashPostMessage.totalAmount}</strong></td>
     <td>${formatter.format(totalPrice)}</td>
   </tr>`);
 
@@ -377,29 +389,41 @@ export async function POST(
        <svg style="color: #16a34a;" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check"><path d="M20 6 9 17l-5-5"/></svg>
       <path d="M20 6 9 17l-5-5"/>
     </svg>
-      <p style="text-align: center; font-weight:700; margin-left:4px; color:#16a34a;">ĐẶT HÀNG THÀNH CÔNG</p>
+      <p style="text-align: center; font-weight:700; margin-left:4px; color:#16a34a;">${
+        checkOutCashPostMessage.orderSuccess
+      }</p>
     </div>
 
-  <p>Cảm ơn <span style="font-weight: 700;">${
-    order.name
-  }</span> đã tin tưởng của hàng VLXD Xuân Trường. Mã vận đơn của bạn là <span style="font-weight: 700;">${
+  <p>${checkOutCashPostMessage.thankYou} <span style="font-weight: 700;">${
+      order.name
+    }</span> ${checkOutCashPostMessage.orderInfo} <span style="font-weight: 700;">${
       order.id
     }</span>.</p>
   ${
     order.address && order.address !== "Trống"
-      ? `<p style="margin-bottom: 15px;">Sau khi shop nhận đơn hàng, sản phẩm sẽ được giao đến địa chỉ <span style="font-weight: 700;">${order.address}</span> trong <span style="font-weight: 700;">Dự kiến trước ngày ${formatDate}</span>.</p>`
-      : `<p style="margin-bottom: 15px;">Sau khi shop nhận đơn hàng, ngay lập tức soạn hàng nhanh chóng. Sau khi soạn đủ sẽ gọi bạn đến lấy.</p>`
+      ? `<p style="margin-bottom: 15px;">${checkOutCashPostMessage.deliveryInfo} <span style="font-weight: 700;">${order.address}</span> ${checkOutCashPostMessage.deliveryTime} <span style="font-weight: 700;">${checkOutCashPostMessage.estimatedArrival} ${formatDate}</span>.</p>`
+      : `<p style="margin-bottom: 15px;">${checkOutCashPostMessage.shopPrepare}</p>`
   }
 </div>
 
 <table border="1" cellpadding="5" cellspacing="0" style="width: 100%;">
   <thead>
     <tr>
-      <th style="background-color: #FFCC00; padding: 5px;">ID</th>
-      <th style="background-color: #FFCC00; padding: 5px;">Tên sản phẩm</th>
-      <th style="background-color: #FFCC00; padding: 5px;">Số lượng</th>
-      <th style="background-color: #FFCC00; padding: 5px;">Bảo hành</th>
-      <th style="background-color: #FFCC00; padding: 5px;">Giá tiền</th>
+      <th style="background-color: #FFCC00; padding: 5px;">${
+        checkOutCashPostMessage.orderId
+      }</th>
+      <th style="background-color: #FFCC00; padding: 5px;">${
+        checkOutCashPostMessage.productName
+      }</th>
+      <th style="background-color: #FFCC00; padding: 5px;">${
+        checkOutCashPostMessage.quantity
+      }</th>
+      <th style="background-color: #FFCC00; padding: 5px;">${
+        checkOutCashPostMessage.warranty
+      }</th>
+      <th style="background-color: #FFCC00; padding: 5px;">${
+        checkOutCashPostMessage.price
+      }</th>
     </tr>
   </thead>
   <tbody>
@@ -408,24 +432,28 @@ export async function POST(
 </table>
 
 <div style="margin-top: 12px;">
-  Bạn có thể theo dõi đơn hàng tại <span style="font-weight: 700;">Vận chuyển đơn hàng</span> sau đó dán mã vận đơn chúng tôi đã gửi cho bạn.
+  ${checkOutCashPostMessage.trackOrder} <span style="font-weight: 700;">${
+      checkOutCashPostMessage.shippingInfo
+    }</span> ${checkOutCashPostMessage.shippingInstructions}
 </div>
 
-<p style="margin-top: 25px; margin-bottom: 20px;">VLXD Xuân Trường rất hân hạnh được phục vụ bạn!</p>
+<p style="margin-top: 25px; margin-bottom: 20px;">${
+      checkOutCashPostMessage.customerService
+    }</p>
 
 <div style="margin-top: 5px; display: flex; justify-content: center; align-items: center;">
 <a href="${
       process.env.NEXT_PUBLIC_URL
     }" style="text-decoration: none; color: inherit; cursor: pointer;" target="_blank">
   <button style="padding: 12px; border-radius: 5px; background: transparent;">
-  Tiếp tục mua hàng
+  ${checkOutCashPostMessage.continueShopping}
   </button>
 </a>
   <a href="${
     process.env.NEXT_PUBLIC_URL
   }/warehouse/package-product" style="text-decoration: none; color: #dc2626; cursor: pointer;" target="_blank">
   <button style="padding: 12px; margin-left: 10px; border-radius: 5px; border: 1px solid #dc2626; background: transparent;">
-  Chi tiết đơn hàng
+  ${checkOutCashPostMessage.orderDetails}
   </button>
   </a>
 </div>
@@ -442,7 +470,7 @@ export async function POST(
       await resend.emails.send({
         from: "mail@vlxdxuantruong.email",
         to: [order?.email || ""],
-        subject: "Order Completed",
+        subject: `${checkOutCashPostMessage.orderCompleted}`,
         html: `
         ${sentEmailUserHTML}
         
@@ -456,20 +484,26 @@ export async function POST(
       //   to: order?.phone || "",
       // });
     } catch (error) {
-      console.error("Error sending email:", error);
+      console.error(checkOutCashPostMessage.emailError);
     }
 
     return NextResponse.json(order);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error during checkout." }),
+      JSON.stringify({ error: checkOutCashPostMessage.checkoutError }),
       { status: 500 }
     );
   }
 }
 
-export async function PATCH(req: Request ,
-  { params }: { params: { storeId: string } }) {
+export async function PATCH(
+  req: Request,
+  { params }: { params: { storeId: string } }
+) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const checkOutCashPatchMessage = translateOrderErrorPatch(LanguageToUse);
   try {
     const body = await req.json();
     const { responseIdOrderCurrent } = body;
@@ -486,7 +520,7 @@ export async function PATCH(req: Request ,
     return NextResponse.json(orders);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get orders." }),
+      JSON.stringify({ error: checkOutCashPatchMessage }),
       { status: 500 }
     );
   }

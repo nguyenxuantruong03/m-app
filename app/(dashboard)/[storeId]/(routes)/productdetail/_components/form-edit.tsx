@@ -17,6 +17,7 @@ import toast from "react-hot-toast";
 import { ChangeEvent, useState } from "react";
 import { Decimal } from "@prisma/client/runtime/library";
 import { Textarea } from "@/components/ui/textarea";
+import { getProductDetailFormEditSheet } from "@/translate/translate-dashboard";
 
 interface LabelFormProps {
   setOpen: (open: boolean) => void;
@@ -95,165 +96,9 @@ interface LabelFormProps {
   description3salientfeatures: string;
   description4salientfeatures: string;
   contentsalientfeatures: string;
+  language:string
   field: "title" | "name1" | "name2" | "name3" | "name4" | "name5" | "quantity1" | "quantity2" | "quantity3" | "quantity4" | "quantity5" | "promotionheading" | "promotiondescription" | "price1" | "price2" | "price3" | "price4" | "price5" | "percentpromotion1" | "percentpromotion2" | "percentpromotion3" | "percentpromotion4" | "percentpromotion5" | "warranty1" | "warranty2" | "warranty3" | "warranty4" | "descriptionspecifications" | "valuespecifications" | "description2specifications" | "value2specifications" | "description3specifications" | "value3specifications" | "description4specifications" | "value4specifications" | "description5specifications" | "value5specifications" | "description6specifications" | "value6specifications" | "description7specifications" | "value7specifications" | "description8specifications" | "value8specifications" | "description9specifications" | "value9specifications" | "description10specifications" | "value10specifications" | "description11specifications" | "value11specifications" | "description12specifications" | "value12specifications" | "description13specifications" | "value13specifications" | "description14specifications" | "value14specifications" | "descriptionsalientfeatures" | "description2salientfeatures" | "description3salientfeatures" | "description4salientfeatures" | "contentsalientfeatures"
 }
-
-const formSchema = z.object({
-  title: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  promotionheading: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  promotiondescription: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  warranty1: z.optional(
-    z.coerce.number().min(0, { message: "Không được nhập số âm." })
-  ),
-  warranty2: z.optional(
-    z.coerce.number().min(0, { message: "Không được nhập số âm." })
-  ),
-  warranty3: z.optional(
-    z.coerce.number().min(0, { message: "Không được nhập số âm." })
-  ),
-  warranty4: z.optional(
-    z.coerce.number().min(0, { message: "Không được nhập số âm." })
-  ),
-  // Specification
-  descriptionspecifications: z
-    .string()
-    .min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  valuespecifications: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  description2specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value2specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  description3specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value3specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  description4specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value4specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  description5specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value5specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  description6specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value6specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  description7specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value7specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  description8specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value8specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  description9specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value9specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  description10specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value10specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  description11specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value11specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  description12specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value12specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  description13specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value13specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  description14specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value14specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  // salientfeatures:
-  descriptionsalientfeatures: z
-    .string()
-    .min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  description2salientfeatures: z
-    .string()
-    .min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  description3salientfeatures: z
-    .string()
-    .min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  description4salientfeatures: z
-    .string()
-    .min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  contentsalientfeatures: z
-    .string()
-    .min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  size1Id: z.string().min(1, { message: "Hãy chọn 1 size phù hợp." }),
-  color1Id: z.string().min(1, { message: "Hãy chọn 1 color phù hợp." }),
-  size2Id: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-  color2Id: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-  size3Id: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-  color3Id: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-  size4Id: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-  color4Id: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-  size5Id: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-  color5Id: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-  price1: z.coerce.number().min(500, { message: "Hãy nhập ít nhất 500 đồng." }),
-  price2: z.optional(
-    z.coerce.number().min(500, { message: "Hãy nhập ít nhất 500 đồng." })
-  ),
-  price3: z.optional(
-    z.coerce.number().min(500, { message: "Hãy nhập ít nhất 500 đồng." })
-  ),
-  price4: z.optional(
-    z.coerce.number().min(500, { message: "Hãy nhập ít nhất 500 đồng." })
-  ),
-  price5: z.optional(
-    z.coerce.number().min(500, { message: "Hãy nhập ít nhất 500 đồng." })
-  ),
-  name1: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  name2: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-  name3: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-  name4: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-  name5: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-  percentpromotion1: z.coerce.number().int().min(1, { message: "Hãy nhập phần trăm từ 1 đến 100." }).max(100, { message: "Hãy nhập phần trăm từ 1 đến 100." }),
-  percentpromotion2: z.optional(z.coerce.number().int().min(1, { message: "Hãy nhập phần trăm từ 1 đến 100." }).max(100, { message: "Hãy nhập phần trăm từ 1 đến 100." })),
-  percentpromotion3: z.optional(z.coerce.number().int().min(1, { message: "Hãy nhập phần trăm từ 1 đến 100." }).max(100, { message: "Hãy nhập phần trăm từ 1 đến 100." })),
-  percentpromotion4: z.optional(z.coerce.number().int().min(1, { message: "Hãy nhập phần trăm từ 1 đến 100." }).max(100, { message: "Hãy nhập phần trăm từ 1 đến 100." })),
-  percentpromotion5: z.optional(z.coerce.number().int().min(1, { message: "Hãy nhập phần trăm từ 1 đến 100." }).max(100, { message: "Hãy nhập phần trăm từ 1 đến 100." })),
-  quantity1: z.coerce.number().int().min(1, { message: "Hãy nhập số lượng từ 1 đến 9999." }).max(9999, { message: "Hãy nhập số lượng từ 1 đến 9999." }),
-  quantity2: z.optional(z.coerce.number().int().min(1, { message: "Hãy nhập số lượng từ 1 đến 9999." }).max(9999, { message: "Hãy nhập số lượng từ 1 đến 9999." })),
-  quantity3: z.optional(z.coerce.number().int().min(1, { message: "Hãy nhập số lượng từ 1 đến 9999." }).max(9999, { message: "Hãy nhập số lượng từ 1 đến 9999." })),
-  quantity4: z.optional(z.coerce.number().int().min(1, { message: "Hãy nhập số lượng từ 1 đến 9999." }).max(9999, { message: "Hãy nhập số lượng từ 1 đến 9999." })),
-  quantity5:  z.optional(z.coerce.number().int().min(1, { message: "Hãy nhập số lượng từ 1 đến 9999." }).max(9999, { message: "Hãy nhập số lượng từ 1 đến 9999." })),
-  categoryId: z.string().min(1, { message: "Hãy chọn 1 category phù hợp." }),
-});
-type FormValues = z.input<typeof formSchema>;
 
 const LabelForm: React.FC<LabelFormProps> = ({
   data,
@@ -331,9 +176,171 @@ const LabelForm: React.FC<LabelFormProps> = ({
   contentsalientfeatures,
   field,
   setOpen,
+  language
 }) => {
   const params = useParams();
   const [loading, setLoading] = useState(false);
+
+  //language
+  const productDetailFormEditSheetMessage = getProductDetailFormEditSheet(language)
+
+  const formSchema = z.object({
+    title: z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters }),
+    promotionheading: z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters }),
+    promotiondescription: z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters }),
+    warranty1: z.optional(
+      z.coerce.number().min(0, { message: productDetailFormEditSheetMessage.noNegativeNumber })
+    ),
+    warranty2: z.optional(
+      z.coerce.number().min(0, { message: productDetailFormEditSheetMessage.noNegativeNumber })
+    ),
+    warranty3: z.optional(
+      z.coerce.number().min(0, { message: productDetailFormEditSheetMessage.noNegativeNumber })
+    ),
+    warranty4: z.optional(
+      z.coerce.number().min(0, { message: productDetailFormEditSheetMessage.noNegativeNumber })
+    ),
+    // Specification
+    descriptionspecifications: z
+      .string()
+      .min(2, { message: productDetailFormEditSheetMessage.min2Characters }),
+    valuespecifications: z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters }),
+    description2specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    value2specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    description3specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    value3specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    description4specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    value4specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    description5specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    value5specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    description6specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    value6specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    description7specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    value7specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    description8specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    value8specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    description9specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    value9specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    description10specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    value10specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    description11specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    value11specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    description12specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    value12specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    description13specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    value13specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    description14specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    value14specifications: z.optional(
+      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
+    ),
+    // salientfeatures:
+    descriptionsalientfeatures: z
+      .string()
+      .min(2, { message: productDetailFormEditSheetMessage.min2Characters }),
+    description2salientfeatures: z
+      .string()
+      .min(2, { message: productDetailFormEditSheetMessage.min2Characters }),
+    description3salientfeatures: z
+      .string()
+      .min(2, { message: productDetailFormEditSheetMessage.min2Characters }),
+    description4salientfeatures: z
+      .string()
+      .min(2, { message: productDetailFormEditSheetMessage.min2Characters }),
+    contentsalientfeatures: z
+      .string()
+      .min(2, { message: productDetailFormEditSheetMessage.min2Characters }),
+    size1Id: z.string().min(1, { message: productDetailFormEditSheetMessage.selectSize }),
+    color1Id: z.string().min(1, { message: productDetailFormEditSheetMessage.selectColor }),
+    size2Id: z.optional(z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })),
+    color2Id: z.optional(z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })),
+    size3Id: z.optional(z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })),
+    color3Id: z.optional(z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })),
+    size4Id: z.optional(z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })),
+    color4Id: z.optional(z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })),
+    size5Id: z.optional(z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })),
+    color5Id: z.optional(z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })),
+    price1: z.coerce.number().min(500, { message: productDetailFormEditSheetMessage.minPrice }),
+    price2: z.optional(
+      z.coerce.number().min(500, { message: productDetailFormEditSheetMessage.minPrice })
+    ),
+    price3: z.optional(
+      z.coerce.number().min(500, { message: productDetailFormEditSheetMessage.minPrice })
+    ),
+    price4: z.optional(
+      z.coerce.number().min(500, { message: productDetailFormEditSheetMessage.minPrice })
+    ),
+    price5: z.optional(
+      z.coerce.number().min(500, { message: productDetailFormEditSheetMessage.minPrice })
+    ),
+    name1: z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters }),
+    name2: z.optional(z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })),
+    name3: z.optional(z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })),
+    name4: z.optional(z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })),
+    name5: z.optional(z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })),
+    percentpromotion1: z.coerce.number().int().min(1, { message: productDetailFormEditSheetMessage.percentageRange }).max(100, { message: productDetailFormEditSheetMessage.percentageRange }),
+    percentpromotion2: z.optional(z.coerce.number().int().min(1, { message: productDetailFormEditSheetMessage.percentageRange }).max(100, { message: productDetailFormEditSheetMessage.percentageRange })),
+    percentpromotion3: z.optional(z.coerce.number().int().min(1, { message: productDetailFormEditSheetMessage.percentageRange }).max(100, { message: productDetailFormEditSheetMessage.percentageRange })),
+    percentpromotion4: z.optional(z.coerce.number().int().min(1, { message: productDetailFormEditSheetMessage.percentageRange }).max(100, { message: productDetailFormEditSheetMessage.percentageRange })),
+    percentpromotion5: z.optional(z.coerce.number().int().min(1, { message: productDetailFormEditSheetMessage.percentageRange }).max(100, { message: productDetailFormEditSheetMessage.percentageRange })),
+    quantity1: z.coerce.number().int().min(1, { message: productDetailFormEditSheetMessage.quantityRange }).max(9999, { message: productDetailFormEditSheetMessage.quantityRange }),
+    quantity2: z.optional(z.coerce.number().int().min(1, { message: productDetailFormEditSheetMessage.quantityRange }).max(9999, { message: productDetailFormEditSheetMessage.quantityRange })),
+    quantity3: z.optional(z.coerce.number().int().min(1, { message: productDetailFormEditSheetMessage.quantityRange }).max(9999, { message: productDetailFormEditSheetMessage.quantityRange })),
+    quantity4: z.optional(z.coerce.number().int().min(1, { message: productDetailFormEditSheetMessage.quantityRange }).max(9999, { message: productDetailFormEditSheetMessage.quantityRange })),
+    quantity5:  z.optional(z.coerce.number().int().min(1, { message: productDetailFormEditSheetMessage.quantityRange }).max(9999, { message: productDetailFormEditSheetMessage.quantityRange })),
+    categoryId: z.string().min(1, { message: productDetailFormEditSheetMessage.selectCategory }),
+  });
+  type FormValues = z.input<typeof formSchema>;
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -427,7 +434,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
       await axios.patch(`/api/${params.storeId}/productdetail/${id}`, datas);
       setLoading(false);
       setOpen(false);
-      toast.success("Cập nhật thành công!");
+      toast.success(productDetailFormEditSheetMessage.updateSuccess);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -440,7 +447,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
             .error
         );
       } else {
-        toast.error("Something went wrong.");
+        toast.error(productDetailFormEditSheetMessage.error);
       }
     } finally {
       setLoading(false);
@@ -458,12 +465,12 @@ const LabelForm: React.FC<LabelFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Tiêu đề <span className="text-red-600 pl-1">(*)</span>
+                    {productDetailFormEditSheetMessage.title} <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập tiêu đề ..."
+                      placeholder={productDetailFormEditSheetMessage.enterTitle}
                       {...field}
                     />
                   </FormControl>
@@ -479,13 +486,13 @@ const LabelForm: React.FC<LabelFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Tên sản phẩm 1{" "}
+                    {productDetailFormEditSheetMessage.productName1}
                     <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập tên sản phẩm 1..."
+                      placeholder={productDetailFormEditSheetMessage.enterProductName1}
                       {...field}
                       className="border-2 border-orange-400 "
                     />
@@ -503,14 +510,14 @@ const LabelForm: React.FC<LabelFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Giá sản phẩm 1{" "}
+                  {productDetailFormEditSheetMessage.productPrice1}
                     <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Nhập giá sản phẩm 1..."
+                      placeholder={productDetailFormEditSheetMessage.enterProductPrice1}
                       {...field}
                       className="border-2 border-orange-400 "
                     />
@@ -527,14 +534,14 @@ const LabelForm: React.FC<LabelFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Giảm giá sản phẩm 1{" "}
+                  {productDetailFormEditSheetMessage.productDiscount1}
                     <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Nhập % giảm sản phẩm 1 ..."
+                      placeholder={productDetailFormEditSheetMessage.enterProductDiscount1}
                       {...field}
                       className="border-2 border-orange-400 "
                     />
@@ -551,14 +558,14 @@ const LabelForm: React.FC<LabelFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Số lượng còn trong kho 1{" "}
+                  {productDetailFormEditSheetMessage.productQuantity1}
                     <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Nhập số lượng còn trong kho 1..."
+                      placeholder={productDetailFormEditSheetMessage.enterProductQuantity1}
                       {...field}
                       className="border-2 border-orange-400 "
                     />
@@ -574,11 +581,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="name2"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên sản phẩm 2</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.productName2}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập tên sản phẩm 2 ..."
+                      placeholder={productDetailFormEditSheetMessage.enterProductName2}
                       {...field}
                       className="border-2 border-green-400 "
                     />
@@ -594,12 +601,12 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="price2"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giá sản phẩm 2</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.productPrice2}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Nhập giá sản phẩm 2..."
+                      placeholder={productDetailFormEditSheetMessage.enterProductPrice2}
                       {...field}
                       className="border-2 border-green-400 "
                     />
@@ -615,12 +622,12 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="percentpromotion2"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giảm giá sản phẩm 2</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.productDiscount2}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Nhập % giảm sản phẩm 2 ..."
+                      placeholder={productDetailFormEditSheetMessage.enterProductDiscount2}
                       {...field}
                       className="border-2 border-green-400 "
                     />
@@ -636,12 +643,12 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="quantity2"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Số lượng còn trong kho 2</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.productQuantity2}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Nhập số lượng còn trong kho 2..."
+                      placeholder={productDetailFormEditSheetMessage.enterProductQuantity2}
                       {...field}
                       className="border-2 border-green-400 "
                     />
@@ -657,11 +664,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="name3"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên sản phẩm 3</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.productName3}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập tên sản phẩm 3 ..."
+                      placeholder={productDetailFormEditSheetMessage.enterProductName3}
                       {...field}
                       className="border-2 border-sky-400 "
                     />
@@ -677,12 +684,12 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="price3"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giá sản phẩm 3</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.productPrice3}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Nhập giá sản phẩm 3..."
+                      placeholder={productDetailFormEditSheetMessage.enterProductPrice3}
                       {...field}
                       className="border-2 border-sky-400 "
                     />
@@ -698,12 +705,12 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="percentpromotion3"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giảm giá sản phẩm 3</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.productDiscount3}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Nhập % giảm sản phẩm 3 ..."
+                      placeholder={productDetailFormEditSheetMessage.enterProductDiscount3}
                       {...field}
                       className="border-2 border-sky-400 "
                     />
@@ -720,12 +727,12 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="quantity3"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Số lượng còn trong kho 3</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.productQuantity3}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Nhập số lượng còn trong kho 3..."
+                      placeholder={productDetailFormEditSheetMessage.enterProductQuantity3}
                       {...field}
                       className="border-2 border-sky-400 "
                     />
@@ -741,11 +748,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="name4"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên sản phẩm 4</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.productName4}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập tên sản phẩm 4 ..."
+                      placeholder={productDetailFormEditSheetMessage.enterProductName4}
                       {...field}
                       className="border-2 border-violet-400 "
                     />
@@ -761,12 +768,12 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="price4"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giá sản phẩm 4</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.productPrice4}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Nhập giá sản phẩm 4..."
+                      placeholder={productDetailFormEditSheetMessage.enterProductPrice4}
                       {...field}
                       className="border-2 border-violet-400 "
                     />
@@ -782,12 +789,12 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="percentpromotion4"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giảm giá sản phẩm 4</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.productDiscount4}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Nhập % giảm sản phẩm 4 ..."
+                      placeholder={productDetailFormEditSheetMessage.enterProductDiscount4}
                       {...field}
                       className="border-2 border-violet-400 "
                     />
@@ -803,12 +810,12 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="quantity4"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Số lượng còn trong kho 4</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.productQuantity4}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Nhập số lượng còn trong kho 4..."
+                      placeholder={productDetailFormEditSheetMessage.enterProductQuantity4}
                       {...field}
                       className="border-2 border-violet-400 "
                     />
@@ -825,11 +832,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="name5"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên sản phẩm 5</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.productName5}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập tên sản phẩm 5 ..."
+                      placeholder={productDetailFormEditSheetMessage.enterProductName5}
                       {...field}
                       className="border-2 border-pink-400 "
                     />
@@ -846,12 +853,12 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="price5"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giá sản phẩm 5</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.productPrice5}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Nhập giá sản phẩm 5..."
+                      placeholder={productDetailFormEditSheetMessage.enterProductPrice5}
                       {...field}
                       className="border-2 border-pink-400 "
                     />
@@ -867,12 +874,12 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="percentpromotion5"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giảm giá sản phẩm 5</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.productDiscount5}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Nhập % giảm sản phẩm 5 ..."
+                      placeholder={productDetailFormEditSheetMessage.enterProductDiscount5}
                       {...field}
                       className="border-2 border-pink-400 "
                     />
@@ -888,12 +895,12 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="quantity5"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Số lượng còn trong kho 5</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.productQuantity5}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Nhập số lượng còn trong kho 5..."
+                      placeholder={productDetailFormEditSheetMessage.enterProductQuantity5}
                       {...field}
                       className="border-2 border-pink-400 "
                     />
@@ -908,11 +915,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="promotionheading"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Khuyến mãi sỉ</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.bulkPromotion}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập khuyến mãi sỉ ..."
+                      placeholder={productDetailFormEditSheetMessage.enterBulkPromotion}
                       {...field}
                     />
                   </FormControl>
@@ -926,11 +933,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="promotiondescription"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Khuyến mãi thầu</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.tenderPromotion}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập khuyến mãi thầu ..."
+                      placeholder={productDetailFormEditSheetMessage.enterTenderPromotion}
                       {...field}
                     />
                   </FormControl>
@@ -945,12 +952,12 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="warranty1"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giá tiền bảo hành 1</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.warrantyPrice1}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Nhập giá tiền bảo hành ..."
+                      placeholder={productDetailFormEditSheetMessage.enterWarrantyPrice1}
                       {...field}
                     />
                   </FormControl>
@@ -965,12 +972,12 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="warranty2"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giá tiền bảo hành 2</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.warrantyPrice2}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Nhập giá tiền bảo hành ..."
+                      placeholder={productDetailFormEditSheetMessage.enterWarrantyPrice2}
                       {...field}
                     />
                   </FormControl>
@@ -985,12 +992,12 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="warranty3"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giá tiền bảo hành 3</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.warrantyPrice3}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Nhập giá tiền bảo hành ..."
+                      placeholder={productDetailFormEditSheetMessage.enterWarrantyPrice3}
                       {...field}
                     />
                   </FormControl>
@@ -1005,12 +1012,12 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="warranty4"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giá tiền bảo hành 4</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.warrantyPrice4}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Nhập giá tiền bảo hành ..."
+                      placeholder={productDetailFormEditSheetMessage.enterWarrantyPrice4}
                       {...field}
                     />
                   </FormControl>
@@ -1025,12 +1032,12 @@ const LabelForm: React.FC<LabelFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Thông số <span className="text-red-600 pl-1">(*)</span>
+                    {productDetailFormEditSheetMessage.specification} <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecification}
                       {...field}
                     />
                   </FormControl>
@@ -1045,13 +1052,13 @@ const LabelForm: React.FC<LabelFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Nội dung thông số{" "}
+                    {productDetailFormEditSheetMessage.specContent}
                     <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecContent}
                       {...field}
                     />
                   </FormControl>
@@ -1065,11 +1072,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="description2specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specification}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecification}
                       {...field}
                     />
                   </FormControl>
@@ -1083,11 +1090,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="value2specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specContent}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecContent}
                       {...field}
                     />
                   </FormControl>
@@ -1101,11 +1108,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="description3specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specification}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecification}
                       {...field}
                     />
                   </FormControl>
@@ -1119,11 +1126,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="value3specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specContent}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecContent}
                       {...field}
                     />
                   </FormControl>
@@ -1137,11 +1144,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="description4specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specification}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecification}
                       {...field}
                     />
                   </FormControl>
@@ -1155,11 +1162,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="value4specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specContent}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecContent}
                       {...field}
                     />
                   </FormControl>
@@ -1173,11 +1180,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="description5specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specification}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecification}
                       {...field}
                     />
                   </FormControl>
@@ -1191,11 +1198,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="value5specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specContent}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecContent}
                       {...field}
                     />
                   </FormControl>
@@ -1209,11 +1216,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="description6specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specification}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecification}
                       {...field}
                     />
                   </FormControl>
@@ -1227,11 +1234,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="value6specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specContent}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecContent}
                       {...field}
                     />
                   </FormControl>
@@ -1246,11 +1253,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="description7specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specification}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecification}
                       {...field}
                     />
                   </FormControl>
@@ -1265,11 +1272,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="value7specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specContent}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecContent}
                       {...field}
                     />
                   </FormControl>
@@ -1283,11 +1290,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="description8specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specification}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecification}
                       {...field}
                     />
                   </FormControl>
@@ -1301,11 +1308,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="value8specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specContent}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecContent}
                       {...field}
                     />
                   </FormControl>
@@ -1319,11 +1326,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="description9specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specification}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecification}
                       {...field}
                     />
                   </FormControl>
@@ -1337,11 +1344,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="value9specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specContent}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecContent}
                       {...field}
                     />
                   </FormControl>
@@ -1355,11 +1362,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="description10specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specification}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecification}
                       {...field}
                     />
                   </FormControl>
@@ -1373,11 +1380,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="value10specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specContent}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecContent}
                       {...field}
                     />
                   </FormControl>
@@ -1391,11 +1398,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="description11specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specification}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecification}
                       {...field}
                     />
                   </FormControl>
@@ -1409,11 +1416,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="value11specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specContent}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecContent}
                       {...field}
                     />
                   </FormControl>
@@ -1427,11 +1434,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="description12specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specification}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecification}
                       {...field}
                     />
                   </FormControl>
@@ -1445,11 +1452,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="value12specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specContent}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecContent}
                       {...field}
                     />
                   </FormControl>
@@ -1463,11 +1470,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="description13specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specification}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecification}
                       {...field}
                     />
                   </FormControl>
@@ -1481,11 +1488,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="value13specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nội dung thông số </FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specContent} </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecContent}
                       {...field}
                     />
                   </FormControl>
@@ -1499,11 +1506,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="description14specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specification}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecification}
                       {...field}
                     />
                   </FormControl>
@@ -1517,11 +1524,11 @@ const LabelForm: React.FC<LabelFormProps> = ({
               name="value14specifications"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nội dung thông số</FormLabel>
+                  <FormLabel>{productDetailFormEditSheetMessage.specContent}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
+                      placeholder={productDetailFormEditSheetMessage.enterSpecContent}
                       {...field}
                     />
                   </FormControl>
@@ -1536,13 +1543,13 @@ const LabelForm: React.FC<LabelFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Mô tả tính năng nổi bật{" "}
+                  {productDetailFormEditSheetMessage.featureDescription}
                     <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <FormControl>
                     <Textarea
                       disabled={loading}
-                      placeholder="Nhập mô tả tính năng nổi bật ..."
+                      placeholder={productDetailFormEditSheetMessage.enterFeatureDescription}
                       {...field}
                     />
                   </FormControl>
@@ -1557,13 +1564,13 @@ const LabelForm: React.FC<LabelFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Mô tả tính năng nổi bật{" "}
+                    {productDetailFormEditSheetMessage.featureDescription}
                     <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <FormControl>
                     <Textarea
                       disabled={loading}
-                      placeholder="Nhập mô tả tính năng nổi bật ..."
+                      placeholder={productDetailFormEditSheetMessage.enterFeatureDescription}
                       {...field}
                     />
                   </FormControl>
@@ -1578,13 +1585,13 @@ const LabelForm: React.FC<LabelFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Mô tả tính năng nổi bật{" "}
+                    {productDetailFormEditSheetMessage.featureDescription}
                     <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <FormControl>
                     <Textarea
                       disabled={loading}
-                      placeholder="Nhập mô tả tính năng nổi bật ..."
+                      placeholder={productDetailFormEditSheetMessage.enterFeatureDescription}
                       {...field}
                     />
                   </FormControl>
@@ -1599,13 +1606,13 @@ const LabelForm: React.FC<LabelFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Mô tả tính năng nổi bật{" "}
+                    {productDetailFormEditSheetMessage.featureDescription}
                     <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <FormControl>
                     <Textarea
                       disabled={loading}
-                      placeholder="Nhập mô tả tính năng nổi bật ..."
+                      placeholder={productDetailFormEditSheetMessage.enterFeatureDescription}
                       {...field}
                     />
                   </FormControl>
@@ -1620,13 +1627,13 @@ const LabelForm: React.FC<LabelFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Nội dung tính năng nổi bật{" "}
+                  {productDetailFormEditSheetMessage.featureContent}
                     <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <FormControl>
                     <Textarea
                       disabled={loading}
-                      placeholder="Nhập nội dung tính năng nổi bật ..."
+                      placeholder={productDetailFormEditSheetMessage.enterFeatureContent}
                       {...field}
                     />
                   </FormControl>
@@ -1637,7 +1644,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
           )}
         </div>
         <Button disabled={loading} className="ml-auto" type="submit">
-          Save Change
+        {productDetailFormEditSheetMessage.saveChange}
         </Button>
       </form>
     </Form>

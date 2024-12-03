@@ -199,6 +199,7 @@ export const getBlockedUsers = async () => {
           role: true,
           isCitizen: true,
           nameuser: true,
+          language: true,
           stream: {
             select: {
               isLive: true

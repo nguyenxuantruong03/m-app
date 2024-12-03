@@ -1,6 +1,28 @@
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { getNotFound } from "@/translate/translate-client";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const NoResults = () => {
+  const user = useCurrentUser();
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+  
+  const notFoundMessage = getNotFound(languageToUse)
+
     return ( 
         <section className="bg-white py-10">
         <div className=" max-w-7xl mx-auto">
@@ -13,16 +35,16 @@ const NoResults = () => {
                     'url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif)',
                 }}
               >
-                <h1 className="text-xl xl:text-5xl">NOT FOUND!</h1>
+                <h1 className="text-xl xl:text-5xl">{notFoundMessage.notFound}</h1>
               </div>
               <div className="mt-5">
-                <h3 className="text-3xl xl:text-8xl font-bold text-slate-900">Chưa có sản phẩm!</h3>
-                <p className="mt-5 text-slate-900">Bạn có thể chuyển qua sản phẩm khác.</p>
+                <h3 className="text-3xl xl:text-8xl font-bold text-slate-900">{notFoundMessage.noProduct}</h3>
+                <p className="mt-5 text-slate-900">{notFoundMessage.suggestion}</p>
                 <Link
                   href="/home-product"
                   className="text-white bg-green-500 px-8 py-4 rounded-full inline-block mt-5"
                 >
-                  Go to Home
+                  {notFoundMessage.goToHome}
                 </Link>
               </div>
             </div>

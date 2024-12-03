@@ -3,6 +3,9 @@
 import { useSidebar } from "@/hooks/stream/use-sidebar";
 import { Follow, ImageCredential, User } from "@prisma/client";
 import UserItem, { UserItemSkeleton } from "./user-item";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { useEffect, useState } from "react";
+import { translateFollowing } from "@/translate/translate-client";
 
 interface FollowingProps {
   data: (Follow & {
@@ -15,6 +18,24 @@ interface FollowingProps {
 
 export const Following = ({ data }: FollowingProps) => {
   const { collapsed } = useSidebar();
+  const user = useCurrentUser();
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+
+  const followingMessage = translateFollowing(languageToUse);
 
   if (!data.length) {
     return null;
@@ -23,7 +44,7 @@ export const Following = ({ data }: FollowingProps) => {
     <div>
       {!collapsed && (
         <div className="pl-6 mb-4">
-          <p className="text-sm text-gray-300">Following</p>
+          <p className="text-sm text-gray-300">{followingMessage}</p>
         </div>
       )}
       <ul className="space-y-2 px-2">

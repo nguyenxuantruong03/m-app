@@ -8,8 +8,22 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { AlertModal } from "@/components/modals/alert-modal";
+import {
+  getToastError,
+  translateAccountDeletionConfirmation,
+  translateAccountDeletionSuccess,
+  translateContent,
+  translateDeleteAccount,
+  translateDeleteAccountPrompt,
+  translateEnterEmailPrompt,
+  translateIrreversibleDeletion,
+} from "@/translate/translate-client";
 
-const FormDeleteAccount = () => {
+interface FormDeleteAccountProps {
+  languageToUse: string;
+}
+
+const FormDeleteAccount = ({ languageToUse }: FormDeleteAccountProps) => {
   const user = useCurrentUser();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -24,13 +38,32 @@ const FormDeleteAccount = () => {
     }
   }, []);
 
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const accountDeletionSuccessMessage =
+    translateAccountDeletionSuccess(languageToUse);
+  const accountDeletionConfirmationMessage =
+    translateAccountDeletionConfirmation(languageToUse);
+  const irreversibleDeletionMessage =
+    translateIrreversibleDeletion(languageToUse);
+  const deleteAccountPromptMessage = translateDeleteAccountPrompt(
+    languageToUse,
+    user?.email
+  );
+  const contentMessage = translateContent(languageToUse);
+  const deleteAccountMessage = translateDeleteAccount(languageToUse);
+  const enterEmailPromptMessage = translateEnterEmailPrompt(
+    languageToUse,
+    user?.email
+  );
+
   const onSubmit = async () => {
     setLoading(true);
     try {
       await axios.delete(`/api/deleteaccount`);
       setLoading(false);
-      toast.success("Tài khoản của bạn đã xóa thành công!");
-      router.push("/auth/login")
+      toast.success(accountDeletionSuccessMessage);
+      router.push("/auth/login");
     } catch (error: unknown) {
       setLoading(false);
       if (
@@ -44,7 +77,7 @@ const FormDeleteAccount = () => {
             .error
         );
       } else {
-        toast.error("Có vấn đề khi xóa tài khoản!");
+        toast.error(toastErrorMessage);
       }
     } finally {
       setLoading(true);
@@ -63,30 +96,27 @@ const FormDeleteAccount = () => {
   return (
     <>
       <AlertModal
-        title="Bạn đã chắc chắn xóa đi tài khoản tài khoản của mình?"
-        message="Nếu bạn xóa sẽ không thể khôi phục lại được."
+        title={accountDeletionConfirmationMessage}
+        message={irreversibleDeletionMessage}
         isOpen={open}
         onClose={() => setOpen(false)}
         onConfirm={onSubmit}
         loading={loading}
+        languageToUse={languageToUse}
       />
       <div className="space-y-3">
-        <p className="text-sm">
-          Để xóa tài khoản bạn cần nhập &ldquo;
-          <span className="font-bold text-red-500  text-sm">{user?.email}</span>
-          &rdquo; vào bên dưới.
-        </p>
-        <p className=" text-white font-semibold text-sm">Nội dung</p>
+        <p className="text-sm">{deleteAccountPromptMessage}</p>
+        <p className=" text-white font-semibold text-sm">{contentMessage}</p>
         <Input
           id="address-input"
-          placeholder={`Hãy nhập ${user?.email} vào đây.`}
+          placeholder={enterEmailPromptMessage}
           disabled={loading}
           onChange={handleChange}
         />
       </div>
       <div className="my-2"></div>
       <Button disabled={loading || !isEmailValid} onClick={() => setOpen(true)}>
-        Delete Account
+        {deleteAccountMessage}
       </Button>
     </>
   );

@@ -1,18 +1,22 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
+import { translateOrderPickupSuccess } from "@/translate/translate-api";
 import { StatusOrder } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function PATCH(req: Request) {
-  try {
-    const userId = await currentUser();
-    const body = await req.json();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const orderPickupStoreSuccessMessage = translateOrderPickupSuccess(LanguageToUse)
 
+  try {
+    const body = await req.json();
     const { orderId } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: orderPickupStoreSuccessMessage.userIdNotFound }),
         { status: 403 }
       );
     }
@@ -25,7 +29,7 @@ export async function PATCH(req: Request) {
 
     if (!existingOrder) {
       return new NextResponse(
-        JSON.stringify({ error: "Order not found!" }),
+        JSON.stringify({ error: orderPickupStoreSuccessMessage.orderNotFound }),
         { status: 404 }
       );
     }
@@ -38,7 +42,7 @@ export async function PATCH(req: Request) {
         //Sử dụng debtShipper và receiveCash lặp lại ở đây vì debtShipper sẽ bị chỉnh sửa lại khi shipper đã đưa tiền cho cửa hàng
         receiveCash: !existingOrder.isPaid ? true : false,
         status: StatusOrder.Da_nhan_tai_cua_hang,
-        userIdStaff: userId?.id || "",
+        userIdStaff: user?.id || "",
         updatedAt: new Date()
       },
     });
@@ -46,7 +50,7 @@ export async function PATCH(req: Request) {
     return NextResponse.json(order);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error patch order." }),
+      JSON.stringify({ error: orderPickupStoreSuccessMessage.internalError }),
       { status: 500 }
     );
   }

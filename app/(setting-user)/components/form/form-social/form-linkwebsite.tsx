@@ -26,13 +26,25 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import FormSuccess from "@/components/form-success";
 import FormError from "@/components/form-error";
 import { useRouter } from "next/navigation";
+import {
+  getToastError,
+  translateCancel,
+  translateChangeWebsiteLink,
+  translateSave,
+  translateWebsitePath,
+} from "@/translate/translate-client";
 
 interface FormLinkWebSiteProps {
   classNames?: string;
   setOpen?: Dispatch<SetStateAction<boolean>>;
+  languageToUse: string;
 }
 
-const FormLinkWebSite = ({ classNames, setOpen }: FormLinkWebSiteProps) => {
+const FormLinkWebSite = ({
+  classNames,
+  setOpen,
+  languageToUse,
+}: FormLinkWebSiteProps) => {
   const user = useCurrentUser();
   const router = useRouter();
   const { update } = useSession();
@@ -49,6 +61,13 @@ const FormLinkWebSite = ({ classNames, setOpen }: FormLinkWebSiteProps) => {
     }
   }, []);
 
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const cancelMessage = translateCancel(languageToUse);
+  const saveMessage = translateSave(languageToUse);
+  const changeWebsiteLinkMessage = translateChangeWebsiteLink(languageToUse);
+  const websitePathMessage = translateWebsitePath(languageToUse);
+
   const form = useForm<z.infer<typeof SettingSchema>>({
     resolver: zodResolver(SettingSchema),
     defaultValues: {
@@ -59,15 +78,13 @@ const FormLinkWebSite = ({ classNames, setOpen }: FormLinkWebSiteProps) => {
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
     // Kiểm tra giá trị linktwitter nhập vào và user?.linktwitter
     if (values.linkwebsite === user?.linkwebsite) {
-      setError(
-        "Hãy thay đổi link Website mới link Website trên đang được sử dụng."
-      );
+      setError(changeWebsiteLinkMessage);
       return;
     }
     setSuccess("");
     setError("");
     startTransition(() => {
-      setting(values)
+      setting(values, languageToUse)
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -80,7 +97,7 @@ const FormLinkWebSite = ({ classNames, setOpen }: FormLinkWebSiteProps) => {
           }
         })
         .catch(() => {
-          setError("Something went wrong");
+          setError(toastErrorMessage);
         });
     });
   };
@@ -96,7 +113,7 @@ const FormLinkWebSite = ({ classNames, setOpen }: FormLinkWebSiteProps) => {
             name="linkwebsite"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Link Website</FormLabel>
+                <FormLabel>{websitePathMessage}</FormLabel>
                 <FormControl>
                   <Input
                     id="linkwebsite-input"
@@ -129,7 +146,7 @@ const FormLinkWebSite = ({ classNames, setOpen }: FormLinkWebSiteProps) => {
               onClick={() => setOpen?.(false)}
               disabled={isPending}
             >
-              Cancel
+              {cancelMessage}
             </Button>
           )}
           <Button
@@ -138,7 +155,7 @@ const FormLinkWebSite = ({ classNames, setOpen }: FormLinkWebSiteProps) => {
             type="submit"
             disabled={isPending}
           >
-            Save
+            {saveMessage}
           </Button>
         </div>
       </form>

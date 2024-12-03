@@ -29,15 +29,20 @@ import "./styles.scss";
 import MentionPlugin from "./mention/suggestion";
 import Recommend from "../ui/recommend";
 import Underline from '@tiptap/extension-underline';
+import { translateContentTiptap } from "@/translate/translate-dashboard";
 
 interface Tiptap {
   value: string;
   onChange: (richText: string) => void;
   disabled: boolean;
   isCustom?: boolean;
+  languageToUse: string;
 }
 
-const Tiptap: React.FC<Tiptap> = ({ value, onChange, disabled, isCustom }) => {
+const Tiptap: React.FC<Tiptap> = ({ value, onChange, disabled, isCustom,languageToUse }) => {
+  //language
+  const contentTiptapMessage= translateContentTiptap(languageToUse)
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ codeBlock: false }),
@@ -115,10 +120,10 @@ const Tiptap: React.FC<Tiptap> = ({ value, onChange, disabled, isCustom }) => {
 
   return (
     <div className="flex flex-col justify-stretch min-h-[250px] overflow-y-auto">
-      <Toolbar disabled={disabled} editor={editor} isCustom={isCustom} />
+      <Toolbar disabled={disabled} editor={editor} isCustom={isCustom} languageToUse={languageToUse}/>
       <div className="text-sm flex items-center space-x-3 mt-3">
-        Nội dung <span className="text-red-600 pl-1">(*)</span>{" "}
-        <Recommend message="Nhập nội dung xong có thể chỉnh sửa lựa chọn các style bên trên." />
+        {contentTiptapMessage.title} <span className="text-red-600 pl-1">(*)</span>{" "}
+        <Recommend message={contentTiptapMessage.message} />
       </div>
       <EditorContent disabled={disabled} editor={editor} />
     </div>

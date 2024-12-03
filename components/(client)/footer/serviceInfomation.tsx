@@ -1,17 +1,28 @@
+import {
+  translateCorporateCustomer,
+  translateWarrantyPolicy,
+} from "@/translate/translate-client";
 import Link from "next/link";
 
+interface ServiceInfomationProps {
+  languageToUse: string;
+}
 
-const ServiceInfomation = () => {
-    return ( 
-        <>
-         <Link href="/enterprise">
-        <div>Khách hàng doanh nghiệp</div>
+const ServiceInfomation = ({ languageToUse }: ServiceInfomationProps) => {
+  //language
+  const corporateCustomerMessage = translateCorporateCustomer(languageToUse);
+  const warrantyPolicyMessage = translateWarrantyPolicy(languageToUse);
+
+  return (
+    <>
+      <Link href="/enterprise">
+        <div>{corporateCustomerMessage}</div>
       </Link>
       <Link href="/guarantee">
-        <div>Chính sách Bảo hành</div>
+        <div>{warrantyPolicyMessage}</div>
       </Link>
-        </>
-     );
-}
- 
+    </>
+  );
+};
+
 export default ServiceInfomation;

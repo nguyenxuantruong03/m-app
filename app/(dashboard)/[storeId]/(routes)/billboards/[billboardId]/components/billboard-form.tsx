@@ -29,15 +29,8 @@ import { format } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import viLocale from "date-fns/locale/vi";
 import Recommend from "@/components/ui/recommend";
+import { getBillboardForm } from "@/translate/translate-dashboard";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
-
-const formSchema = z.object({
-  label: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  description: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  imagebillboard: z.object({ url: z.string() }).array(),
-});
-
-type BillboardFormValues = z.infer<typeof formSchema>;
 
 interface BillboardFormProps {
   initialData:
@@ -45,20 +38,38 @@ interface BillboardFormProps {
         imagebillboard: ImageBillboard[];
       })
     | null;
+  language: string;
 }
 
 export const BillboardForm: React.FC<BillboardFormProps> = ({
   initialData,
+  language,
 }) => {
   const params = useParams();
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  //language
+  const billboardFormMessage = getBillboardForm(language);
 
-  const title = initialData ? "Edit billboard" : "Create billboard";
-  const description = initialData ? "Edit a billboard." : "Add a new billboard";
-  const action = initialData ? "Save changes" : "Create";
+  const title = initialData
+    ? billboardFormMessage.editBillboard
+    : billboardFormMessage.createBillboard;
+  const description = initialData
+    ? billboardFormMessage.editBillboardDescription
+    : billboardFormMessage.addNewBillboard;
+  const action = initialData
+    ? billboardFormMessage.saveChanges
+    : billboardFormMessage.create;
+
+  const formSchema = z.object({
+    label: z.string().min(2, { message: billboardFormMessage.minLength }),
+    description: z.string().min(2, { message: billboardFormMessage.minLength }),
+    imagebillboard: z.object({ url: z.string() }).array(),
+  });
+
+  type BillboardFormValues = z.infer<typeof formSchema>;
 
   const form = useForm<BillboardFormValues>({
     resolver: zodResolver(formSchema),
@@ -91,14 +102,17 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
       if (initialData) {
         message = (
           <p>
-            Billboard <span className="font-bold">{response?.data.label}</span>{" "}
-            updated.
+            {billboardFormMessage.billboard}{" "}
+            <span className="font-bold">{response?.data.label}</span>{" "}
+            {billboardFormMessage.updatedOther}.
           </p>
         );
       } else {
         message = (
           <p>
-            Billboard <span className="font-bold">{data.label}</span> created.
+            {billboardFormMessage.billboard}{" "}
+            <span className="font-bold">{data.label}</span>{" "}
+            {billboardFormMessage.createdOther}.
           </p>
         );
       }
@@ -109,7 +123,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
           <div className="flex items-center justify-between text-sm">
             <p className="text-green-500 font-bold flex">
               <Check className="w-5 h-5 rounded-full bg-green-500 text-white mx-1" />
-              Billboard updated!
+              {billboardFormMessage.updated}
             </p>
             <span className="text-gray-500">
               {response.data?.createdAt
@@ -130,7 +144,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
           <div className="flex items-center justify-between text-sm">
             <p className="text-green-500 font-bold flex">
               <Check className="w-4 h-4 rounded-full bg-green-500 text-white mx-1" />
-              Billboard created!
+              {billboardFormMessage.created}
             </p>
             <span className="text-gray-500">
               {response.data?.createdAt
@@ -183,7 +197,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               onClick={() => toast.dismiss(t.id)}
               className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
-              Close
+              {billboardFormMessage.close}
             </button>
           </div>
         </div>
@@ -203,7 +217,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
             .error
         );
       } else {
-        toast.error("Something went wrong.");
+        toast.error(billboardFormMessage.somethingWentWrong);
       }
     } finally {
       setLoading(false);
@@ -219,7 +233,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
       );
       router.refresh();
       router.push(`/${params.storeId}/billboards`);
-      toast.success(`Billboard deleted.`);
+      toast.success(billboardFormMessage.deleted);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -234,9 +248,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
         );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
-        toast.error(
-          "Make sure you removed all categories using this billboard first."
-        );
+        toast.error(billboardFormMessage.somethingWentWrong);
       }
     } finally {
       setLoading(false);
@@ -251,6 +263,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
         onClose={() => setOpen(false)}
         onConfirm={onDelete}
         loading={loading}
+        languageToUse={language}
       />
       {/* update and create */}
       <div className="flex items-center justify-between">
@@ -279,8 +292,9 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex space-x-3 items-center">
-                  Hình ảnh <span className="text-red-600 pl-1">(*)</span>
-                  <Recommend message="Lưu ý: chỉ thêm tối đa 10 ảnh và ảnh phải rõ nét với tất cả màn hình." />
+                  {billboardFormMessage.image}{" "}
+                  <span className="text-red-600 pl-1">(*)</span>
+                  <Recommend message={billboardFormMessage.imageNote} />
                 </FormLabel>
                 <FormControl>
                   <ImageUpload
@@ -294,6 +308,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                         ...field.value.filter((current) => current.url !== url),
                       ])
                     }
+                    language={language}
                   />
                 </FormControl>
                 <FormMessage />
@@ -308,13 +323,14 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Nhãn <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Hãy đặt tên phù hợp với tất cả ảnh trên." />
+                    {billboardFormMessage.label}{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message={billboardFormMessage.labelRecommend} />
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Enter label ..."
+                      placeholder={billboardFormMessage.labelPlaceholder}
                       {...field}
                     />
                   </FormControl>
@@ -329,13 +345,16 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Mô tả <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Hãy đặt tên phù hợp với tất cả ảnh trên." />
+                    {billboardFormMessage.description}{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend
+                      message={billboardFormMessage.descriptionRecommend}
+                    />
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Enter mô tả ..."
+                      placeholder={billboardFormMessage.descriptionPlaceholder}
                       {...field}
                     />
                   </FormControl>

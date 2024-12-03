@@ -24,6 +24,7 @@ import { Separator } from "@/components/ui/separator";
 import { Heading } from "@/components/ui/heading";
 import { AlertModal } from "@/components/modals/alert-modal";
 import Recommend from "@/components/ui/recommend";
+import { translateStoreForm } from "@/translate/translate-dashboard";
 
 const formSchema = z.object({
   name: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
@@ -33,18 +34,23 @@ type StoreFormValues = z.infer<typeof formSchema>;
 
 interface StoreFormProps {
   initialData: Store | null;
+  user: any;
 }
 
-export const StoreForm: React.FC<StoreFormProps> = ({ initialData }) => {
+export const StoreForm: React.FC<StoreFormProps> = ({ initialData,user }) => {
   const params = useParams();
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const title = initialData ? "Edit store" : "Create store";
-  const description = initialData ? "Edit a store." : "Add a new store";
-  const action = initialData ? "Save changes" : "Create";
+  //language
+  const languageToUse = user?.language || "vi"
+  const storeFormMessage = translateStoreForm(languageToUse)
+
+  const title = initialData ? storeFormMessage.editStore : storeFormMessage.createStore;
+  const description = initialData ? storeFormMessage.editAStore : storeFormMessage.addANewStore;
+  const action = initialData ? storeFormMessage.saveChanges : storeFormMessage.create;
 
   const form = useForm<StoreFormValues>({
     resolver: zodResolver(formSchema),
@@ -72,20 +78,20 @@ export const StoreForm: React.FC<StoreFormProps> = ({ initialData }) => {
           if (initialData) {
             return (
               <p>
-                Store <span className="font-bold">{response.data?.name}</span>{" "}
-                updated!
+                {storeFormMessage.store} <span className="font-bold">{response.data?.name}</span>{" "}
+                {storeFormMessage.updated}
               </p>
             );
           } else {
             return (
               <p>
-                Store <span className="font-bold">{data.name}</span> created!
+                {storeFormMessage.store} <span className="font-bold">{data.name}</span> {storeFormMessage.created}
               </p>
             );
           }
         }),
         {
-          loading: "Updating store...",
+          loading: storeFormMessage.updatingStore,
           success: (message) => {
             router.refresh();
             router.push(`/store`);
@@ -103,7 +109,7 @@ export const StoreForm: React.FC<StoreFormProps> = ({ initialData }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Something went wrong.";
+              return storeFormMessage.somethingWentWrong;
             }
           },
         }
@@ -120,7 +126,7 @@ export const StoreForm: React.FC<StoreFormProps> = ({ initialData }) => {
       await axios.delete(`/api/stores/${params.storesId}`);
       router.refresh();
       router.push(`/store`);
-      toast.success("Store deleted.");
+      toast.success(storeFormMessage.storeDeleted);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -136,7 +142,7 @@ export const StoreForm: React.FC<StoreFormProps> = ({ initialData }) => {
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
-          "Make sure you removed all categories using this billboard first."
+          storeFormMessage.somethingWentWrong
         );
       }
     } finally {
@@ -152,6 +158,7 @@ export const StoreForm: React.FC<StoreFormProps> = ({ initialData }) => {
         onClose={() => setOpen(false)}
         onConfirm={onDelete}
         loading={loading}
+        languageToUse={languageToUse}
       />
       {/* update and create */}
       <div className="flex items-center justify-between">
@@ -182,14 +189,14 @@ export const StoreForm: React.FC<StoreFormProps> = ({ initialData }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Tên
+                    {storeFormMessage.name}
                     <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Tên cửa hàng. VD: Hà Nội, Thành Phố Hồ Chí Minh..." />
+                    <Recommend message={storeFormMessage.storeNameExample} />
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Name ..."
+                      placeholder={storeFormMessage.namePlaceholder}
                       {...field}
                     />
                   </FormControl>

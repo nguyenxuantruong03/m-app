@@ -10,10 +10,19 @@ import { AlertModal } from "@/components/modals/alert-modal";
 import { useDevice } from "@/providers/device-info-provider";
 import { User } from "@prisma/client";
 import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
+import {
+  getToastError,
+  translateDelete,
+  translateDeleteSuccess,
+  translateFirstLoginBrowser,
+  translateLoggedInDevice,
+  translatePermanentDeleteAction,
+  translateUnknownDevice,
+} from "@/translate/translate-client";
 
 interface InfoUser {
-  key: string;   
-  name: string;  
+  key: string;
+  name: string;
 }
 
 function resolveImage(item: DeviceInfoData): string {
@@ -78,9 +87,9 @@ function resolveImage(item: DeviceInfoData): string {
     }
   }
 
-  if (item.device && typeof item.device[1] === 'string') {
+  if (item.device && typeof item.device[1] === "string") {
     const brandLower = item.device[1].toLocaleLowerCase();
-  
+
     if (brandLower.includes("window")) {
       return "/device/window.png";
     } else if (brandLower.includes("macbook")) {
@@ -178,20 +187,33 @@ interface DeviceInfoData {
 interface InfoDeviceProps {
   findDevice: DeviceInfoData[];
   user: User;
+  languageToUse: string;
 }
 
 const InfoDevice: React.FC<InfoDeviceProps> = ({
-  findDevice: initialFindDevice, user
+  findDevice: initialFindDevice,
+  user,
+  languageToUse,
 }) => {
   const deviceInfo = useDevice();
   const checkCurrentDevice = (item: DeviceInfoData): boolean => {
-    const currentDevice = deviceInfo?.fullModel || deviceInfo?.os || deviceInfo?.device;
-    if (typeof currentDevice === 'string') {
-      if (currentDevice && (item.os || item.fullModel || item.device[2] || item.device[1])) {
+    const currentDevice =
+      deviceInfo?.fullModel || deviceInfo?.os || deviceInfo?.device;
+    if (typeof currentDevice === "string") {
+      if (
+        currentDevice &&
+        (item.os || item.fullModel || item.device[2] || item.device[1])
+      ) {
         const fullModel =
           (item.fullModel ? item.fullModel.toLowerCase() : null) ||
-          (typeof item.device[2] === 'string' ? item.device[2].toLowerCase() : null);
-        if (fullModel && fullModel.includes((currentDevice as string).toLowerCase())) { // Ép kiểu currentDevice thành string
+          (typeof item.device[2] === "string"
+            ? item.device[2].toLowerCase()
+            : null);
+        if (
+          fullModel &&
+          fullModel.includes((currentDevice as string).toLowerCase())
+        ) {
+          // Ép kiểu currentDevice thành string
           return true;
         }
       }
@@ -205,10 +227,20 @@ const InfoDevice: React.FC<InfoDeviceProps> = ({
     return aIsCurrentDevice - bIsCurrentDevice;
   });
 
-  const [alertGuestModal,setAlertGuestModal] = useState(false);
+  const [alertGuestModal, setAlertGuestModal] = useState(false);
   const [findDevice, setFindDevice] = useState(sortedDevices);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState<string | null>(null);
+
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const deleteSuccess = translateDeleteSuccess(languageToUse);
+  const loggedInDeviceMessage = translateLoggedInDevice(languageToUse);
+  const permanentDeleteActionMessage =
+    translatePermanentDeleteAction(languageToUse);
+  const unknownDeviceMessage = translateUnknownDevice(languageToUse);
+  const deleteMessage = translateDelete(languageToUse);
+  const firstLoginBrowseMessage = translateFirstLoginBrowser(languageToUse);
 
   const handleDelete = async (id: string) => {
     setLoading(true);
@@ -216,7 +248,7 @@ const InfoDevice: React.FC<InfoDeviceProps> = ({
       await axios.delete(`/api/limitdevice`, { data: { id } });
       const updatedDevices = findDevice.filter((device) => device.id !== id);
       setFindDevice(updatedDevices);
-      toast.success("Xóa thành công.");
+      toast.success(deleteSuccess);
       setLoading(false);
     } catch (error: unknown) {
       if (
@@ -234,7 +266,7 @@ const InfoDevice: React.FC<InfoDeviceProps> = ({
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         setLoading(false);
-        toast.error("Không thể xóa thiết bị duy nhất.");
+        toast.error(toastErrorMessage);
       }
     } finally {
       setOpen(null); // Đảm bảo đóng AlertModal sau khi xử lý xong (thành công hoặc thất bại)
@@ -243,7 +275,7 @@ const InfoDevice: React.FC<InfoDeviceProps> = ({
 
   const infoDevices = [
     {
-      name: "Thiết bị đăng nhâp",
+      name: loggedInDeviceMessage,
       state: (
         <div className="text-gray-600 break-all">
           {findDevice.map((item) => (
@@ -254,13 +286,16 @@ const InfoDevice: React.FC<InfoDeviceProps> = ({
                 onConfirm={() => {
                   if (open) handleDelete(open);
                 }}
-                message={`Hành động của bạn sẽ xóa đi vĩnh viễn: ${
+                message={`${permanentDeleteActionMessage} ${
                   findDevice.find((item) => item.id === open)?.fullModel ||
-                  (findDevice.find((item) => item.id === open)?.os?.join(", ") ||
-                    (item.device[1] !== "unknown" && item.device[2] !== "unknown" && item.device[1])) ||
-                  "Thiết bị không xác định"
+                  findDevice.find((item) => item.id === open)?.os?.join(", ") ||
+                  (item.device[1] !== "unknown" &&
+                    item.device[2] !== "unknown" &&
+                    item.device[1]) ||
+                  unknownDeviceMessage
                 }!`}
                 loading={loading}
+                languageToUse={languageToUse}
               />
 
               <div
@@ -284,10 +319,10 @@ const InfoDevice: React.FC<InfoDeviceProps> = ({
                     disabled={loading}
                   >
                     <Trash className="w-5 h-5 mr-1" />
-                    Delete
+                    {deleteMessage}
                   </Button>
                   <div>
-                    <h2>{` Đăng nhập đầu tiên ở trình duyệt: ${item.browser[0]}`}</h2>
+                    <h2>{`${firstLoginBrowseMessage} ${item.browser[0]}`}</h2>
                   </div>
                   <div className="hidden xl:block">
                     <h2>CPU: {item.cpu}</h2>
@@ -323,8 +358,9 @@ const InfoDevice: React.FC<InfoDeviceProps> = ({
           findDevice={findDevice}
           type={infouser.key} // Pass the key as type
           role={user.role}
-          userId= {user?.id || ""}
+          userId={user?.id || ""}
           setAlertGuestModal={setAlertGuestModal}
+          languageToUse={languageToUse}
         >
           {content}
         </SheetDevice>
@@ -335,9 +371,10 @@ const InfoDevice: React.FC<InfoDeviceProps> = ({
 
   return (
     <>
-     <AlertGuestModal
+      <AlertGuestModal
         isOpen={alertGuestModal}
         onClose={() => setAlertGuestModal(false)}
+        languageToUse={languageToUse}
       />
       <div className="dark:bg-white bg-slate-900 rounded-md overflow-hidden my-2">
         {findDevice.length === 0

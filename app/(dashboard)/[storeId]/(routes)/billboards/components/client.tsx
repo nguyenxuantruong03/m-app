@@ -16,6 +16,8 @@ import Downloadfile from "@/components/file/downloadfilepage";
 import axios from "axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { getBillboardClient } from "@/translate/translate-dashboard";
 
 interface BillboardClientProps {
   data: BillboardColumn[];
@@ -30,6 +32,10 @@ const BillboardClient: React.FC<BillboardClientProps> = ({ data }) => {
   const role = useCurrentRole();
   const isRole = role === UserRole.ADMIN;
   const showAPIRole = isRole;
+  //language
+  const user = useCurrentUser()
+  const languageToUse = user?.language || "vi"
+  const billboardClientMessage = getBillboardClient(languageToUse)
 
   const handleDelete = async () => {
     setLoading(true);
@@ -40,7 +46,7 @@ const BillboardClient: React.FC<BillboardClientProps> = ({ data }) => {
       });
       setLoading(false);
       setOpen(false);
-      toast.success("Billboards deleted successfully");
+      toast.success(billboardClientMessage.billboardsDeletedSuccessfully);
       // Optionally, refresh data or handle post-delete state
     } catch (error) {
       setLoading(false);
@@ -57,9 +63,7 @@ const BillboardClient: React.FC<BillboardClientProps> = ({ data }) => {
         );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
-        toast.error(
-          "Make sure you removed all billboard using this billboard first."
-        );
+        toast.error(billboardClientMessage.somethingWentWrong);
       }
     }
   };
@@ -68,16 +72,16 @@ const BillboardClient: React.FC<BillboardClientProps> = ({ data }) => {
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Ảnh quảng cáo (${data.length})`}
-          description="Quản lý ảnh quảng cáo cửa hàng"
+          title={`${billboardClientMessage.billboardImage} (${data.length})`}
+          description={billboardClientMessage.manageBillboardImages}
         />
         <div className="flex space-x-3">
-          <Downloadfile data={data} filename="billboard" />
+          <Downloadfile data={data} filename="billboard" languageToUse={languageToUse}/>
           <Button
             onClick={() => router.push(`/${params.storeId}/billboards/new`)}
           >
             <Plus className="mr-2 h-4 w-4" />
-            Thêm mới
+            {billboardClientMessage.addNew}
           </Button>
         </div>
       </div>
@@ -93,10 +97,11 @@ const BillboardClient: React.FC<BillboardClientProps> = ({ data }) => {
         onDelete={handleDelete}
         setOpen={setOpen}
         open={open}
+        languageToUse={languageToUse}
       />
       {showAPIRole && (
         <>
-          <Heading title="Api" description="API calls for Billboards" />
+          <Heading title={billboardClientMessage.api} description={billboardClientMessage.apiCallsForBillboards} />
           <Separator />
           <ApiList entityIdName="billboardId" entityName="billboards" />
         </>

@@ -74,6 +74,7 @@ export type SettingUsersColumn = {
   dateofbirth: Date | null;
   isBirthdayToday?: boolean | null;
   createdAt: Date | null;
+  language: string
 };
 
 interface RoleCellProps<T> {
@@ -464,6 +465,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
             imageUrl={imageUrl}
             createdAt={updateImage}
             email={email}
+            languageToUse={row.original.language}
           />
         );
       }
@@ -502,6 +504,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
             imageUrl={imageUrl}
             createdAt={updateImage}
             email={email}
+            languageToUse={row.original.language}
           />
         );
       }

@@ -6,6 +6,13 @@ import { AlertTriangle } from "lucide-react";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import {
+  translateDesktopOnlyMessage,
+  translateNote,
+  translateGoodExperience,
+  translateClickOnSmile,
+  translateStartGameOrRefresh,
+} from "@/translate/translate-client";
 
 const GameNossr = dynamic(() => import("./components/game"), {
   ssr: false,
@@ -14,6 +21,27 @@ const Page = () => {
   const user = useCurrentUser();
   const router = useRouter();
   const [isMobile, setIsMobile] = useState(false);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+
+  const desktopOnlyMessage = translateDesktopOnlyMessage(languageToUse);
+  const noteMessage = translateNote(languageToUse);
+  const goodExperienceMessage = translateGoodExperience(languageToUse);
+  const clickOnSmileMessage = translateClickOnSmile(languageToUse);
+  const startGameOrRefresh = translateStartGameOrRefresh(languageToUse);
 
   useEffect(() => {
     if (user?.role === "GUEST" || !user?.id) {
@@ -38,7 +66,7 @@ const Page = () => {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center text-xl font-bold text-slate-900 dark:text-slate-200">
-          Sorry, this game only works on desktop!
+          {desktopOnlyMessage}
         </div>
       </div>
     );
@@ -47,18 +75,20 @@ const Page = () => {
     <Container>
       {!isMobile && (
         <div className="mt-32 mb-12 ">
-          <p className="text-5xl font-bold text-center mb-10 text-gray-400">Minesweeper</p>
+          <p className="text-5xl font-bold text-center mb-10 text-gray-400">
+            Minesweeper
+          </p>
           <div className="absolute left-36">
             <div className="w-20 h-10 bg-amber-300 rounded-md flex items-center text-sm px-2 mx-auto my-1 font-semibold">
-              Lưu ý<AlertTriangle className=" ml-1 h-5 w-5" />{" "}
+              {noteMessage}
+              <AlertTriangle className=" ml-1 h-5 w-5" />{" "}
             </div>
             <div className="font-semibold w-48 rounded p-1 mx-auto bg-opacity-50 bg-gray-300 ">
-              {" "}
-              Để có một trải nghiệm tốt{" "}
+              {goodExperienceMessage}
               <span className="text-red-500 text-center">
-                &#39;Click vào mặt cười&#39;{" "}
+                &#39;{clickOnSmileMessage}&#39;{" "}
               </span>{" "}
-              để bắt đầu trò chơi hoặc làm mới.
+              {startGameOrRefresh}
             </div>
           </div>
           <GameNossr settings={{ height: 16, width: 16, minesCount: 40 }} />

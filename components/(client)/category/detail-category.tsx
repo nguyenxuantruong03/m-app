@@ -15,34 +15,16 @@ import {
   Percent,
 } from "lucide-react";
 import { useMemo } from "react";
-
-const sortButtons = [
-  {
-    label: "Giá cao đến thấp",
-    sortType: "priceHighToLow",
-    icon: <ArrowDownWideNarrow className="w-5 h-5" />,
-  },
-  {
-    label: "Giá thấp đến cao",
-    sortType: "priceLowToHigh",
-    icon: <ArrowUpNarrowWide className="w-5 h-5 " />,
-  },
-  {
-    label: "Tên A đến Z",
-    sortType: "nameAToZ",
-    icon: <ArrowDownAZ className="w-5 h-5 " />,
-  },
-  {
-    label: "Tên Z đến A",
-    sortType: "nameZToA",
-    icon: <ArrowDownZA className="w-5 h-5" />,
-  },
-  {
-    label: "Khuyến mãi hot",
-    sortType: "percentPromotionHighToLow",
-    icon: <Percent className="w-5 h-5" />,
-  },
-];
+import {
+  translateColors,
+  translateFilter,
+  translateHotDeals,
+  translateSizes,
+  translateSortHighToLow,
+  translateSortLowToHigh,
+  translateSortNameAToZ,
+  translateSortNameZToA,
+} from "@/translate/translate-client";
 
 interface DetailCategoryProps {
   billboard: Billboard | null;
@@ -56,6 +38,7 @@ interface DetailCategoryProps {
   handleSortChange: (value: string) => void;
   sortOrder: string;
   route: string;
+  languageToUse: string;
 }
 
 const DetailCategory: React.FC<DetailCategoryProps> = ({
@@ -70,7 +53,46 @@ const DetailCategory: React.FC<DetailCategoryProps> = ({
   handleSortChange,
   sortOrder,
   route,
+  languageToUse,
 }) => {
+  //language
+  const sortHighToLowMessage = translateSortHighToLow(languageToUse);
+  const sortLowtoHighMessage = translateSortLowToHigh(languageToUse);
+  const sortNameAToZMessage = translateSortNameAToZ(languageToUse);
+  const sortNameZToAMessage = translateSortNameZToA(languageToUse);
+  const hotDealsMessage = translateHotDeals(languageToUse);
+  const filterMessage = translateFilter(languageToUse);
+  const sizesMessage = translateSizes(languageToUse);
+  const colorsMessage = translateColors(languageToUse);
+
+  const sortButtons = [
+    {
+      label: sortHighToLowMessage,
+      sortType: "priceHighToLow",
+      icon: <ArrowDownWideNarrow className="w-5 h-5" />,
+    },
+    {
+      label: sortLowtoHighMessage,
+      sortType: "priceLowToHigh",
+      icon: <ArrowUpNarrowWide className="w-5 h-5 " />,
+    },
+    {
+      label: sortNameAToZMessage,
+      sortType: "nameAToZ",
+      icon: <ArrowDownAZ className="w-5 h-5 " />,
+    },
+    {
+      label: sortNameZToAMessage,
+      sortType: "nameZToA",
+      icon: <ArrowDownZA className="w-5 h-5" />,
+    },
+    {
+      label: hotDealsMessage,
+      sortType: "percentPromotionHighToLow",
+      icon: <Percent className="w-5 h-5" />,
+    },
+  ];
+
   const filterProductsByPrice = (products: Product[]) => {
     return products.filter(
       (product) =>
@@ -121,13 +143,13 @@ const DetailCategory: React.FC<DetailCategoryProps> = ({
       <div className="mt-28 flex items-center justify-center px-2.5">
         <BillboardCategory data={billboard} />
       </div>
-      <div className="px-4 sm:px-6 lg:px-8 pb-24 my-5">
+      <div className="px-4 sm:px-6 lg:px-8 pb-24 mb-5 mt-10">
         <div className="lg:grid lg:grid-cols-5 lg:gap-x-8">
-          <MobileFilter size={size} color={color} />
+          <MobileFilter size={size} name={filterMessage} color={color} />
           {/* Desktop and laptop */}
           <div className="hidden lg:block">
-            <Filter valueKey="sizeId" name="Sizes" data={size} />
-            <Filter valueKey="colorId" name="Colors" data={color} />
+            <Filter valueKey="sizeId" name={sizesMessage} data={size} />
+            <Filter valueKey="colorId" name={colorsMessage} data={color} />
           </div>
           <div className="mt-6 lg:col-span-4 lg:mt-0">
             <div className="">
@@ -155,7 +177,12 @@ const DetailCategory: React.FC<DetailCategoryProps> = ({
               {sortedProduct.length === 0 && <LoadingPageComponent />}
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {filterProductsByPrice(sortedProduct).map((item) => (
-                  <ProductCard key={item.id} data={item} route={route} />
+                  <ProductCard
+                    key={item.id}
+                    data={item}
+                    route={route}
+                    languageToUse={languageToUse}
+                  />
                 ))}
               </div>
             </div>

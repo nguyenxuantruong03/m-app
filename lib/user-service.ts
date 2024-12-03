@@ -19,6 +19,7 @@ export const getUserByUsername = async (nameuser: string) => {
       socialLink: true,
       showInfomation: true,
       frameAvatar: true,
+      language: true,
       createdAt: true,
       review: {
         orderBy: {

@@ -6,6 +6,7 @@ import {
   sendVerifyAccountisCitizenShipper,
 } from "@/lib/mail";
 import prismadb from "@/lib/prismadb";
+import { translateSettingUserBan, translateSettingUserDelete, translateSettingUserGet, translateSettingUserPatch } from "@/translate/translate-api";
 import { UserRole } from "@prisma/client";
 import { format, subHours } from "date-fns";
 import { NextResponse } from "next/server";
@@ -25,23 +26,26 @@ interface ChangeRecord {
 }
 
 export async function GET(req: Request) {
-  const userId = await currentUser();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const settingUserGetMessage = translateSettingUserGet(LanguageToUse)
   try {
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: settingUserGetMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xem settinguser!" }),
+        JSON.stringify({ error: settingUserGetMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
-    const isAdmin = userId.role === UserRole.ADMIN;
+    const isAdmin = user.role === UserRole.ADMIN;
     const userCondition = isAdmin ? {} : UserRole.USER;
 
     const settinguser = await prismadb.user.findMany({
@@ -59,7 +63,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json(settinguser);
   } catch (error) {
-    return new NextResponse(JSON.stringify({ error: "Lỗi cục bộ khi get!" }), {
+    return new NextResponse(JSON.stringify({ error: settingUserGetMessage.internalError }), {
       status: 500,
     });
   }
@@ -72,18 +76,21 @@ export async function PATCH(
   const body = await req.json();
   const { userId, newRole } = body;
   const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const settingUserPatchMessage = translateSettingUserPatch(LanguageToUse)
 
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: settingUserPatchMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền cập nhật settinguser!" }),
+        JSON.stringify({ error: settingUserPatchMessage.permissionDenied }),
         { status: 403 }
       );
     }
@@ -104,7 +111,7 @@ export async function PATCH(
     ) {
       return new NextResponse(
         JSON.stringify({
-          error: "Yêu cầu cần có 1 ADMIN!",
+          error: settingUserPatchMessage.adminRequired,
         }),
         { status: 400 }
       );
@@ -113,7 +120,7 @@ export async function PATCH(
     if (existingUser?.isbanforever) {
       return new NextResponse(
         JSON.stringify({
-          error: "Người dùng nay đã bị ban vĩnh viễn!",
+          error: settingUserPatchMessage.userBanned,
         }),
         { status: 400 }
       );
@@ -184,7 +191,7 @@ export async function PATCH(
     return NextResponse.json(roleupdate);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Lỗi cục bộ khi thay đổi user!" }),
+      JSON.stringify({ error: settingUserPatchMessage.internalError }),
       { status: 400 }
     );
   }
@@ -194,21 +201,25 @@ export async function DELETE(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
-  const userId = await currentUser();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const settingUserDeleteMessage = translateSettingUserDelete(LanguageToUse)
+
   const body = await req.json();
   const { id } = body;
 
   try {
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: settingUserDeleteMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền cập nhật settinguser!" }),
+        JSON.stringify({ error: settingUserDeleteMessage.permissionDenied }),
         { status: 403 }
       );
     }
@@ -224,7 +235,7 @@ export async function DELETE(
     if (existingUser?.isbanforever) {
       return new NextResponse(
         JSON.stringify({
-          error: "Người dùng nay đã bị ban vĩnh viễn!",
+          error: settingUserDeleteMessage.userBanned,
         }),
         { status: 400 }
       );
@@ -234,16 +245,16 @@ export async function DELETE(
     if (adminCount <= 1 && existingUser?.role === "ADMIN") {
       return new NextResponse(
         JSON.stringify({
-          error: "Yêu cầu cần có 1 ADMIN!",
+          error: settingUserDeleteMessage.adminRequired,
         }),
         { status: 400 }
       );
     }
 
-    if (userId?.id === id) {
+    if (user?.id === id) {
       return new NextResponse(
         JSON.stringify({
-          error: "Bạn không thể tự ban bản thân!",
+          error: settingUserDeleteMessage.selfBanError,
         }),
         { status: 400 }
       );
@@ -276,7 +287,7 @@ export async function DELETE(
         storeId: params.storeId,
         type: "BANFOREVER-USER",
         delete: changes,
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
@@ -289,7 +300,7 @@ export async function DELETE(
     return NextResponse.json(banforeverUser);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Lỗi cục bộ khi delete user!" }),
+      JSON.stringify({ error: settingUserDeleteMessage.internalError }),
       { status: 400 }
     );
   }
@@ -299,21 +310,25 @@ export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
-  const body = await req.json();
   const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const settingUserBanMessgae = translateSettingUserBan(LanguageToUse)
+
+  const body = await req.json();
   const userCheck = await currentUser();
   const { userId, descriptionBan, time } = body;
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: settingUserBanMessgae.userIdNotFound }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền cập nhật settinguser!" }),
+        JSON.stringify({ error: settingUserBanMessgae.permissionDenied }),
         { status: 403 }
       );
     }
@@ -324,7 +339,7 @@ export async function POST(
 
     if (userCheck?.id === existingUser?.id) {
       return new NextResponse(
-        JSON.stringify({ error: "Không thể tự ban chỉnh mình!" }),
+        JSON.stringify({ error: settingUserBanMessgae.selfBanError }),
         {
           status: 404,
         }
@@ -334,7 +349,7 @@ export async function POST(
     if (existingUser?.ban) {
       return new NextResponse(
         JSON.stringify({
-          error: "Người dùng này đã bị ban!",
+          error: settingUserBanMessgae.userBanned,
         }),
         { status: 400 }
       );
@@ -343,14 +358,14 @@ export async function POST(
     if (user?.id === userId) {
       return new NextResponse(
         JSON.stringify({
-          error: "Bạn không thể tự ban bản thân!",
+          error: settingUserBanMessgae.selfBanProhibited,
         }),
         { status: 400 }
       );
     }
 
     if (!existingUser?.id) {
-      return new NextResponse(JSON.stringify({ error: "User not found!" }), {
+      return new NextResponse(JSON.stringify({ error: settingUserBanMessgae.userNotFound }), {
         status: 404,
       });
     }
@@ -358,7 +373,7 @@ export async function POST(
     if (existingUser?.isbanforever) {
       return new NextResponse(
         JSON.stringify({
-          error: "Người dùng nay đã bị ban vĩnh viễn!",
+          error: settingUserBanMessgae.userPermanentlyBanned,
         }),
         { status: 400 }
       );
@@ -414,7 +429,7 @@ export async function POST(
 
     return NextResponse.json(banuser);
   } catch (error) {
-    return new NextResponse(JSON.stringify({ error: "Lỗi cục bộ khi ban!" }), {
+    return new NextResponse(JSON.stringify({ error: settingUserBanMessgae.internalError }), {
       status: 500,
     });
   }

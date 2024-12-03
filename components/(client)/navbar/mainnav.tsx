@@ -42,14 +42,38 @@ import { cn } from "@/lib/utils";
 import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
 import useCartdb from "@/hooks/client/db/use-cart-db";
 import { SearchPage } from "./search";
+import {
+  translateBasketAndGoods,
+  translateCoinsLowerCase,
+  translateConvenience,
+  translateDiscountAndSuperShocking,
+  translateGamesAndEntertainment,
+  translateList,
+  translateLogin,
+  translatePackageProduct,
+  translateRegister,
+  translateShopping,
+  translateShoppingDiscount,
+  translateSpin,
+  translateSpinAndLuck,
+  translateThrowAndHeart,
+  translateTotalCoins,
+  translateUseful,
+} from "@/translate/translate-client";
 
 interface mainNavProps {
   role: string;
   userId: string;
   isLive: boolean | undefined;
+  languageToUse: string;
 }
 
-const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
+const MainNav: React.FC<mainNavProps> = ({
+  role,
+  userId,
+  isLive,
+  languageToUse,
+}) => {
   const pathname = usePathname();
   const param = useParams();
   const router = useRouter();
@@ -61,6 +85,24 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
   //List-onClick-onBlur click mở blur ra ngoài thì tắt đi
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  //languages
+  const listMessage = translateList(languageToUse);
+  const totalCoinMessage = translateTotalCoins(languageToUse);
+  const coninLowerCase = translateCoinsLowerCase(languageToUse);
+  const convenienceMessage = translateConvenience(languageToUse);
+  const shoppingMessage = translateShopping(languageToUse);
+  const shoppingDiscountMessage = translateShoppingDiscount(languageToUse);
+  const spinAndLuckyMessage = translateSpinAndLuck(languageToUse);
+  const discountAndSuperShockingMessage =
+    translateDiscountAndSuperShocking(languageToUse);
+  const packageProductMessage = translatePackageProduct(languageToUse);
+  const gameAndEntertaimentMessage =
+    translateGamesAndEntertainment(languageToUse);
+  const throwAndHeartMessage = translateThrowAndHeart(languageToUse);
+  const basketAndGoodsMessage = translateBasketAndGoods(languageToUse);
+  const loginMessage = translateLogin(languageToUse);
+  const registerMessage = translateRegister(languageToUse);
 
   const toggleOpen = useCallback(() => {
     setIsOpen((value) => !value);
@@ -80,8 +122,9 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
     if (role !== "GUEST" && userId) {
       const fetchData = async () => {
         try {
-          await cartdb.fetchCartItems(userId);
-          await favorite.fetchFavoriteItems(userId);
+          await cartdb.fetchCartItems(userId, languageToUse);
+
+          await favorite.fetchFavoriteItems(userId, languageToUse);
         } catch (error) {
           console.error(error);
         }
@@ -130,6 +173,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
       <AlertGuestModal
         isOpen={alertGuestModal}
         onClose={() => setAlertGuestModal(false)}
+        languageToUse={languageToUse}
       />
 
       <Link href="/home-product">
@@ -159,7 +203,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
             <div className="px-1 py-1">
               <AlignJustify className="w-5 h-5" />
             </div>
-            Danh sách
+            {listMessage}
           </div>
         </div>
       </div>
@@ -172,8 +216,8 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
       )}
       {/* Menu */}
       {isOpen && (
-        <div className="absolute top-[-40px] z-40 " ref={menuRef}>
-          <Menu showCategories={true} />
+        <div className="absolute top-[-40px] z-40" ref={menuRef}>
+          <Menu showCategories={true} languageToUse={languageToUse} />
         </div>
       )}
 
@@ -184,15 +228,20 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
               <Coins className=" text-white w-5 h-5" />
             </div>
             <div className="basis-2/3 ">
-              <div className="text-sm flex gap-3 text-white">Tổng xu</div>
-              <div className="text-sm w-24 text-white"> {totalCoins} xu</div>
+              <div className="text-sm flex gap-3 text-white">
+                {totalCoinMessage}
+              </div>
+              <div className="text-sm w-24 text-white">
+                {" "}
+                {totalCoins} {coninLowerCase}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <div className="ml-1.5 md:ml-0">
-        <SearchPage />
+        <SearchPage languageToUse={languageToUse} />
       </div>
 
       <NavigationMenu className="hidden md:block">
@@ -205,9 +254,13 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
                     <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center ">
                       <Blocks className="w-6 h-6 text-white" />
                     </div>
-                    <div className="basis-2/3 hidden md:block">
-                      <div className="text-xs flex gap-4 text-white">Tiện</div>
-                      <div className="text-xs text-white">ích</div>
+                    <div className="basis-2/3 hidden md:block w-20">
+                      <div className="text-xs text-white">
+                        {convenienceMessage.name}
+                      </div>
+                      <div className="text-xs text-white">
+                        {convenienceMessage.name2}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -223,11 +276,10 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
                     >
                       <ShoppingCart className="h-6 w-6" />
                       <div className="mb-2 mt-4 text-lg font-medium">
-                        Mua sắm thỏa ga
+                        {shoppingMessage}
                       </div>
                       <p className="text-sm leading-tight text-muted-foreground">
-                        Việc mua sắm sẽ tiết kiệm nhiều chi phí được giảm giá
-                        qua từng khung giờ.
+                        {shoppingDiscountMessage}
                       </p>
                     </a>
                   </NavigationMenuLink>
@@ -251,7 +303,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
                             <Gift className="w-6 h-6 text-white" />
                             <span className="w-5 h-5 absolute bg-[#e53350] rounded-full left-[10px] top-0 -mt[1px] shadow-lg">
                               <p className="text-[0.75rem] text-center font-semibold text-white">
-                                {rotation}{" "}
+                                {rotation}
                               </p>
                             </span>
                           </div>
@@ -264,7 +316,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
                                   : "text-white"
                               )}
                             >
-                              Vòng quay
+                              {spinAndLuckyMessage.name}
                             </div>
                             <div
                               className={cn(
@@ -274,7 +326,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
                                   : "text-white"
                               )}
                             >
-                              May Mắn
+                              {spinAndLuckyMessage.name1}
                             </div>
                           </div>
                         </div>
@@ -303,7 +355,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
                                   : "text-white"
                               )}
                             >
-                              Mã giảm giá
+                              {discountAndSuperShockingMessage.name}
                             </div>
                             <div
                               className={cn(
@@ -313,7 +365,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
                                   : "text-white"
                               )}
                             >
-                              siêu sốc
+                              {discountAndSuperShockingMessage.name2}
                             </div>
                           </div>
                         </div>
@@ -340,7 +392,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
                                   : "text-white"
                               )}
                             >
-                              Vận chuyển
+                              {packageProductMessage.name}
                             </div>
                             <div
                               className={cn(
@@ -350,7 +402,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
                                   : "text-white"
                               )}
                             >
-                              đơn hàng
+                              {packageProductMessage.name2}
                             </div>
                           </div>
                         </div>
@@ -381,8 +433,12 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
                 <Gamepad2 className=" text-white w-6 h-6" />
               </div>
               <div className="basis-2/3">
-                <div className="text-xs flex gap-4 text-white">Trò chơi</div>
-                <div className="text-xs w-14 text-white">giải trí</div>
+                <div className="text-xs  text-white">
+                  {gameAndEntertaimentMessage.name}
+                </div>
+                <div className="text-xs w-14  text-white">
+                  {gameAndEntertaimentMessage.name2}
+                </div>
               </div>
             </div>
           </div>
@@ -407,15 +463,19 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
               <div className="basis-1/2 md:flex gap-2">
                 <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center ">
                   <Heart className="w-6 h-6 text-white" />
-                  <span className="w-5 h-5 absolute bg-[#e53350] rounded-full left-[10px] -top-[5px] md:top-0 bg-opacity-90 -mt[1px] shadow-lg">
+                  <span className="w-5 h-5 absolute bg-[#e53350] rounded-full left-[20px] -top-[5px] md:top-0 bg-opacity-90 -mt[1px] shadow-lg">
                     <p className="text-[0.75rem] m-auto text-white font-semibold">
                       {favorite.items.length}
                     </p>
                   </span>
                 </div>
-                <div className="basis-2/3 hidden md:block">
-                  <div className="text-xs flex gap-4 text-white">Thả</div>
-                  <div className="text-xs text-white">Tim</div>
+                <div className="basis-2/3 hidden md:block w-20">
+                  <div className="text-xs text-white">
+                    {throwAndHeartMessage.name}
+                  </div>
+                  <div className="text-xs text-white">
+                    {throwAndHeartMessage.name2}
+                  </div>
                 </div>
               </div>
             </div>
@@ -430,7 +490,7 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
               <div className="basis-1/2 md:flex gap-2">
                 <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center ">
                   <ShoppingBag className="w-6 h-6 text-white" />
-                  <span className="w-5 h-5 absolute bg-[#e53350] rounded-full left-[10px] -top-[5px] md:top-0 bg-opacity-90 -mt[1px] shadow-lg">
+                  <span className="w-5 h-5 absolute bg-[#e53350] rounded-full left-[20px] -top-[5px] md:top-0 bg-opacity-90 -mt[1px] shadow-lg">
                     <p className="text-[0.75rem] m-auto text-white font-semibold">
                       {role !== "GUEST" && userId ? (
                         <>{cartdb.items.length || "0"}</>
@@ -440,9 +500,13 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
                     </p>
                   </span>
                 </div>
-                <div className="basis-2/3 hidden md:block">
-                  <div className="text-xs flex gap-4 text-white">Giỏ</div>
-                  <div className="text-xs text-white">hàng</div>
+                <div className="basis-2/3 hidden md:block w-20">
+                  <div className="text-xs  text-white">
+                    {basketAndGoodsMessage.name}
+                  </div>
+                  <div className="text-xs  text-white">
+                    {basketAndGoodsMessage.name2}
+                  </div>
                 </div>
               </div>
             </div>
@@ -466,12 +530,12 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
                     <div className="whitespace-nowrap p-1 lg:p-2 border-slate-300 shadow-sm rounded-md border-2 2xl:text-base lg:text-sm font-medium text-white hover:border-slate-900 dark:hover:text-slate-900">
                       <span className="flex items-center 2xl:text-base lg:text-sm">
                         <CircleUser className="size-3 lg:h-5 lg:w-5 2xl:size-4 md:mr-1" />
-                        <span className="hidden md:block"> Login</span>
+                        <span className="hidden md:block">{loginMessage}</span>
                       </span>
                     </div>
                   </TooltipTrigger>
                   <TooltipContent side="bottom">
-                    <p>Đăng nhập</p>
+                    <p>{loginMessage}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -483,12 +547,15 @@ const MainNav: React.FC<mainNavProps> = ({ role, userId, isLive }) => {
                     <div className="whitespace-nowrap inline-flex items-center justify-center p-1 lg:p-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700">
                       <span className="flex items-center 2xl:text-base lg:text-sm">
                         <UserRoundPlus className="size-3 lg:h-5 lg:w-5 2xl:size-4 md:mr-1" />
-                        <span className="hidden md:block"> Register</span>
+                        <span className="hidden md:block">
+                          {" "}
+                          {registerMessage}
+                        </span>
                       </span>
                     </div>
                   </TooltipTrigger>
                   <TooltipContent side="bottom">
-                    <p>Đăng ký</p>
+                    <p>{registerMessage}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>

@@ -35,7 +35,7 @@ const SettingsPage: React.FC<SettingProps> = async ({ params }) => {
     <RoleGate allowedRole={[UserRole.ADMIN]}>
       <div className="w-full">
         <div className={`space-y-4 p-8 pt-6 ${showSettingRole}`}>
-          {showSettingRole && <SettingsForm initialData={store} />}
+          {showSettingRole && <SettingsForm initialData={store} language={user?.language || "vi"}/>}
         </div>
       </div>
     </RoleGate>

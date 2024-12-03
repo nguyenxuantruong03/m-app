@@ -54,6 +54,7 @@ export type OrderColumn = {
   imageCustomerUrl: string[]
   createdAt: Date;
   updatedAt: Date;
+  language: string;
 };
 
 export const columns: ColumnDef<OrderColumn>[] = [

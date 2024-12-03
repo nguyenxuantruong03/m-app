@@ -20,6 +20,11 @@ import SpanColumn from "@/components/span-column";
 import { Clock12 } from "lucide-react";
 import EditRow from "../_components/edit-row";
 import FormatDate from "@/components/format-Date";
+import {
+  getShippingTaxcodeText,
+  getTaxBehaviorMessage,
+  getUnitText,
+} from "@/translate/translate-dashboard";
 
 export type ShippingRatesColumn = {
   id: string;
@@ -34,25 +39,7 @@ export type ShippingRatesColumn = {
   active: boolean | null;
   amountnotformat: number;
   createdAt: Date;
-};
-
-const taxBehaviorMapping: Record<string, string> = {
-  exclusive: "Loại trừ",
-  inclusive: "Bao gồm",
-  unspecified: "Không xác định",
-};
-
-const unitMapping: Record<string, string> = {
-  hour: "Giờ",
-  day: "Ngày",
-  week: "Tuần",
-  month: "Tháng",
-  business_day: "Ngày làm việc",
-};
-
-const ShippingTaxcodeMapping: Record<string, string> = {
-  txcd_00000000: "Không chịu thuế",
-  txcd_92010001: "Người giao chịu thuế",
+  language: string;
 };
 
 export const columns: ColumnDef<ShippingRatesColumn>[] = [
@@ -104,6 +91,7 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
         active={row.original.active}
         taxcode={row.original.taxcode}
         field="name"
+        language={row.original.language}
       />
     ),
   },
@@ -133,11 +121,15 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      const taxbehaviortypeValue = row.original.taxbehavior;
-      if (taxbehaviortypeValue && taxBehaviorMapping[taxbehaviortypeValue]) {
-        return taxBehaviorMapping[taxbehaviortypeValue];
-      }
-      return "";
+      // Ví dụ sử dụng
+      const language = row.original.language // Ngôn ngữ hiện tại
+      const taxBehaviorType = row.original.taxbehavior; // Loại thuế từ dữ liệu
+      const taxBehaviorMessage = getTaxBehaviorMessage(
+        language,
+        taxBehaviorType
+      );
+
+      return <div>{taxBehaviorMessage}</div>;
     },
   },
   {
@@ -166,11 +158,11 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      const unimintypeValue = row.original.unitmin;
-      if (unimintypeValue && unitMapping[unimintypeValue]) {
-        return unitMapping[unimintypeValue];
-      }
-      return "";
+      const language = row.original.language; // Ví dụ ngôn ngữ đang dùng là "vi"
+      const unit = row.original.unitmin; // Lấy giá trị đơn vị từ dữ liệu
+      const unitText = getUnitText(language, unit);
+
+      return <div>{unitText}</div>;
     },
   },
   {
@@ -199,11 +191,11 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      const unitmaxtypeValue = row.original.unitmax;
-      if (unitmaxtypeValue && unitMapping[unitmaxtypeValue]) {
-        return unitMapping[unitmaxtypeValue];
-      }
-      return "";
+      const language = row.original.language; // Ví dụ ngôn ngữ đang dùng là "vi"
+      const unit = row.original.unitmax; // Lấy giá trị đơn vị từ dữ liệu
+      const unitText = getUnitText(language, unit);
+
+      return <div>{unitText}</div>;
     },
   },
   {
@@ -240,14 +232,12 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      const ShippingtaxcodetypeValue = row.original.taxcode;
-      if (
-        ShippingtaxcodetypeValue &&
-        ShippingTaxcodeMapping[ShippingtaxcodetypeValue]
-      ) {
-        return ShippingTaxcodeMapping[ShippingtaxcodetypeValue];
-      }
-      return "";
+      // Sử dụng hàm getShippingTaxcodeText trong trang của bạn:
+      const language = row.original.language; // Ví dụ ngôn ngữ đang sử dụng là "vi"
+      const taxcode = row.original.taxcode; // Lấy giá trị mã thuế từ dữ liệu
+      const taxcodeText = getShippingTaxcodeText(language, taxcode);
+
+      return <div>{taxcodeText}</div>;
     },
   },
   {
@@ -263,10 +253,8 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      return (
-      <FormatDate data={row.original.createdAt}/>
-      )
-    }
+      return <FormatDate data={row.original.createdAt} />;
+    },
   },
   {
     id: "actions",

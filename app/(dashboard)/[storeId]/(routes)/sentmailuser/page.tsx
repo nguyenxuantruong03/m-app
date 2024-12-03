@@ -1,7 +1,7 @@
 import prismadb from "@/lib/prismadb";
 import SentEmailUserClient from "./components/client";
 import { UserRole } from "@prisma/client";
-import { currentRole } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 import { RoleGate } from "@/components/auth/role-gate";
 
 const SentEmailUserPage = async ({
@@ -9,6 +9,7 @@ const SentEmailUserPage = async ({
 }: {
   params: { storeId: string };
 }) => {
+  const user = await currentUser()
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN || role === UserRole.STAFF;
   const showSentEmailUserRole = isRole;
@@ -52,6 +53,7 @@ const SentEmailUserPage = async ({
         user: item.user.email,
         isSent: item.isSent,
         createdAt: item.createdAt,
+        language: user?.language || "vi",
       };
     })
   );

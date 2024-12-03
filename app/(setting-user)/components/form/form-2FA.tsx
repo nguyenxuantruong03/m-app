@@ -29,8 +29,21 @@ import SpotifySVG from "@/public/svg/spotify";
 import TwitterSVG from "@/public/svg/twitter";
 import GithubSVG from "@/public/svg/github";
 import { Hint } from "@/components/ui/hint";
+import {
+  getToastError,
+  translateCannotEnableTwoFactor,
+  translateChangeTwoFactorStatus,
+  translateEnableTwoFactorAuthentication,
+  translateLoggedInWith,
+  translateSave,
+  translateTwoFactorAuthentication,
+} from "@/translate/translate-client";
 
-const FormTwoFactor = () => {
+interface FormTwoFactorProps {
+  languageToUse: string;
+}
+
+const FormTwoFactor = ({ languageToUse }: FormTwoFactorProps) => {
   const user = useCurrentUser();
   const router = useRouter();
   const { update } = useSession();
@@ -38,6 +51,20 @@ const FormTwoFactor = () => {
   const [success, setSuccess] = useState<string>();
 
   const [isPending, startTransition] = useTransition();
+
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const saveMessage = translateSave(languageToUse);
+  const changeTwoFactorStatusMessage =
+    translateChangeTwoFactorStatus(languageToUse);
+  const twoFactorAuthenticationMessage =
+    translateTwoFactorAuthentication(languageToUse);
+  const enableTwoFactorAuthenticationMessage =
+    translateEnableTwoFactorAuthentication(languageToUse);
+  const loggedInWithMessage = translateLoggedInWith(languageToUse);
+  const cannotEnableTwoFactorMessage =
+    translateCannotEnableTwoFactor(languageToUse);
+
   const form = useForm<z.infer<typeof SettingSchema>>({
     resolver: zodResolver(SettingSchema),
     defaultValues: {
@@ -47,13 +74,13 @@ const FormTwoFactor = () => {
 
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
     if (values.isTwoFactorEnabled === user?.isTwoFactorEnabled) {
-      setError("Hãy thay đổi trạng thái xác minh 2 bước!");
+      setError(changeTwoFactorStatusMessage);
       return;
     }
     setSuccess("");
     setError("");
     startTransition(() => {
-      setting(values)
+      setting(values, languageToUse)
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -65,7 +92,7 @@ const FormTwoFactor = () => {
           }
         })
         .catch(() => {
-          setError("Something went wrong");
+          setError(toastErrorMessage);
         });
     });
   };
@@ -81,9 +108,9 @@ const FormTwoFactor = () => {
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadpw-sm">
                     <div className="space-y-0.5">
-                      <FormLabel>Two Factor Authentication</FormLabel>
+                      <FormLabel>{twoFactorAuthenticationMessage}</FormLabel>
                       <FormDescription>
-                        Enable two factor authentication for your
+                        {enableTwoFactorAuthenticationMessage}
                       </FormDescription>
                     </div>
                     <FormControl>
@@ -99,14 +126,14 @@ const FormTwoFactor = () => {
               <FormError message={error} />
               <FormSuccess message={success} />
               <Button type="submit" disabled={isPending}>
-                Save
+                {saveMessage}
               </Button>
             </>
           )}
           {user?.isOAuth === true && (
             <div className="text-base font-semibold dark:text-gray-500 text-slate-800">
               <Separator className="my-2" />
-              <span>Bạn đã đăng nhập bằng </span>
+              <span>{loggedInWithMessage} </span>
               {user?.provider === "google" ? (
                 <span style={{ whiteSpace: "nowrap" }}>
                   <strong>
@@ -130,31 +157,31 @@ const FormTwoFactor = () => {
               ) : user?.provider === "github" ? (
                 <span className="inline-block">
                   <Hint label="Github">
-                    <GithubSVG width={18} height={18}/>
+                    <GithubSVG width={18} height={18} />
                   </Hint>
                 </span>
               ) : user?.provider === "facebook" ? (
                 <span className="inline-block">
                   <Hint label="Facebook">
-                    <FaceBookSVG width={18} height={18}/>
+                    <FaceBookSVG width={18} height={18} />
                   </Hint>
                 </span>
               ) : user?.provider === "gitlab" ? (
                 <span className="inline-block">
                   <Hint label="GitLab">
-                    <GitlabSVG width={18} height={18}/>
+                    <GitlabSVG width={18} height={18} />
                   </Hint>
                 </span>
               ) : user?.provider === "reddit" ? (
                 <span className="inline-block">
                   <Hint label="Reddit">
-                    <RedditSVG width={18} height={18}/>
+                    <RedditSVG width={18} height={18} />
                   </Hint>
                 </span>
               ) : user?.provider === "spotify" ? (
                 <span className="inline-block">
                   <Hint label="Spotify">
-                    <SpotifySVG width={18} height={18}/>
+                    <SpotifySVG width={18} height={18} />
                   </Hint>
                 </span>
               ) : user?.provider === "twitter" ? (
@@ -168,7 +195,7 @@ const FormTwoFactor = () => {
                   {user?.provider}
                 </span>
               )}
-              <span> nên không thể bật xác minh 2 bước.</span>
+              <span> {cannotEnableTwoFactorMessage}</span>
             </div>
           )}
         </div>

@@ -11,26 +11,50 @@ import { sendVerificationEmail } from "@/lib/mail";
 import bcrypt from "bcryptjs";
 import { format } from "date-fns";
 import { Gender } from "@prisma/client";
+import {
+  translateAccountLockedCannotChange,
+  translateChangeSuccessful,
+  translateEmailAlreadyInUse,
+  translateEmailVerifiedSuccess,
+  translateIncorrectPassword,
+  translateNewPasswordCannotBeSameAsOld,
+  translateNotAllowed,
+  translateUsernameAlreadyTaken,
+} from "@/translate/translate-client";
 
-export const setting = async (values: z.infer<typeof SettingSchema>) => {
+export const setting = async (
+  values: z.infer<typeof SettingSchema>,
+  languageToUse: string
+) => {
+  //language
+  const accountLockedCannotChangeMessage =
+    translateAccountLockedCannotChange(languageToUse);
+  const notAllowedMessage = translateNotAllowed(languageToUse);
+  const emailAlreadyInUseMessage = translateEmailAlreadyInUse(languageToUse);
+  const emailVerifiedSuccessMessage =
+    translateEmailVerifiedSuccess(languageToUse);
+  const incirrectPasswordMessage = translateIncorrectPassword(languageToUse);
+  const usernameAlreadyTakenMessage =
+    translateUsernameAlreadyTaken(languageToUse);
+  const changeSuccessfulMessage = translateChangeSuccessful(languageToUse);
+
   const user = await currentUser();
 
   if (!user) {
-    return { error: "Không được phép!" };
+    return { error: notAllowedMessage };
   }
 
   // Check ban status again after potential update
   if (user.ban) {
     return {
-      error:
-        "Tài khoản của bạn đã bị khóa. Không thể thay đổi. Hãy kiểm tra Email để biết thời gian mở khóa!",
+      error: accountLockedCannotChangeMessage,
     };
   }
 
   const dbUser = await getUserById(user.id);
 
   if (!dbUser) {
-    return { error: "Không được phép!" };
+    return { error: notAllowedMessage };
   }
 
   if (user.isOAuth) {
@@ -44,7 +68,7 @@ export const setting = async (values: z.infer<typeof SettingSchema>) => {
     const existingUser = await getUserByEmail(values.email);
 
     if (existingUser && existingUser.id !== user.id) {
-      return { error: "Email already in use!" };
+      return { error: emailAlreadyInUseMessage };
     }
 
     const verificationToken = await generateVerificationToken(values.email);
@@ -52,14 +76,14 @@ export const setting = async (values: z.infer<typeof SettingSchema>) => {
       verificationToken.email,
       verificationToken.token
     );
-    return { success: "Xác thực email thành công!" };
+    return { success: emailVerifiedSuccessMessage };
   }
 
   const FindNameUser = await prismadb.user.findMany();
 
   for (const user of FindNameUser) {
     if (user.nameuser === values.nameuser) {
-      return { error: "Tên người dùng này đã có người đặt!" };
+      return { error: usernameAlreadyTakenMessage };
     }
   }
 
@@ -79,7 +103,7 @@ export const setting = async (values: z.infer<typeof SettingSchema>) => {
     );
 
     if (!passwordMatch) {
-      return { error: "Password không đúng!" };
+      return { error: incirrectPasswordMessage };
     }
 
     let isSamePassword = false;
@@ -97,7 +121,10 @@ export const setting = async (values: z.infer<typeof SettingSchema>) => {
         );
 
         return {
-          error: `Mật khẩu mới không được giống mật khẩu cũ! Mật khẩu cũ đã được đặt vào ngày ${passwordSetDate}.`,
+          error: translateNewPasswordCannotBeSameAsOld(
+            languageToUse,
+            passwordSetDate
+          ),
         };
       }
     }
@@ -112,71 +139,72 @@ export const setting = async (values: z.infer<typeof SettingSchema>) => {
     ? Array.from(new Set([...values.favorite, "phobien"]))
     : ["phobien"];
 
-    await prismadb.user.update({
-      where: { id: dbUser.id },
-      data: {
-        password: values.password
-          ? {
-              create: {
-                password: values.password, // Update with new password
-              },
-            }
-          : undefined,
-    
-        // Update social links only if any values are provided
-        socialLink: {
-          upsert: {
-            where: { userId: dbUser.id },
+  await prismadb.user.update({
+    where: { id: dbUser.id },
+    data: {
+      password: values.password
+        ? {
             create: {
-              linkyoutube: values.linkyoutube || undefined,
-              linkfacebook: values.linkfacebook || undefined,
-              linkinstagram: values.linkinstagram || undefined,
-              linktwitter: values.linktwitter || undefined,
-              linklinkedin: values.linklinkedin || undefined,
-              linkgithub: values.linkgithub || undefined,
-              linktiktok: values.linktiktok || undefined,
-              linkwebsite: values.linkwebsite || undefined,
-              linkother: values.linkother || undefined,
+              password: values.password, // Update with new password
             },
-            update: {
-              linkyoutube: values.linkyoutube || undefined,
-              linkfacebook: values.linkfacebook || undefined,
-              linkinstagram: values.linkinstagram || undefined,
-              linktwitter: values.linktwitter || undefined,
-              linklinkedin: values.linklinkedin || undefined,
-              linkgithub: values.linkgithub || undefined,
-              linktiktok: values.linktiktok || undefined,
-              linkwebsite: values.linkwebsite || undefined,
-              linkother: values.linkother || undefined,
-            },
+          }
+        : undefined,
+
+      // Update social links only if any values are provided
+      socialLink: {
+        upsert: {
+          where: { userId: dbUser.id },
+          create: {
+            linkyoutube: values.linkyoutube || undefined,
+            linkfacebook: values.linkfacebook || undefined,
+            linkinstagram: values.linkinstagram || undefined,
+            linktwitter: values.linktwitter || undefined,
+            linklinkedin: values.linklinkedin || undefined,
+            linkgithub: values.linkgithub || undefined,
+            linktiktok: values.linktiktok || undefined,
+            linkwebsite: values.linkwebsite || undefined,
+            linkother: values.linkother || undefined,
+          },
+          update: {
+            linkyoutube: values.linkyoutube || undefined,
+            linkfacebook: values.linkfacebook || undefined,
+            linkinstagram: values.linkinstagram || undefined,
+            linktwitter: values.linktwitter || undefined,
+            linklinkedin: values.linklinkedin || undefined,
+            linkgithub: values.linkgithub || undefined,
+            linktiktok: values.linktiktok || undefined,
+            linkwebsite: values.linkwebsite || undefined,
+            linkother: values.linkother || undefined,
           },
         },
-    
-        // Update imageCredential only if values.imageCredential is provided
-        imageCredential: values.imageCredential && values.imageCredential.length > 0
+      },
+
+      // Update imageCredential only if values.imageCredential is provided
+      imageCredential:
+        values.imageCredential && values.imageCredential.length > 0
           ? {
               create: {
                 url: values.imageCredential[0], // Select the first URL if available
               },
             }
           : undefined,
-    
-        // Other user attributes can be updated directly
-        favorite: favoriteWithPhobien,
-        bio: values.bio,
-        address: values.address,
-        addressother: values.addressother,
-        nameuser: values.nameuser,
-        gender: values.gender as Gender,
-        phonenumber: values.phonenumber,
-        dateofbirth: values.dateofbirth,
-        frameAvatar: values.frame,
-        
-        // Do not update email and isTwoFactorEnabled if they are not provided
-        email: undefined,
-        isTwoFactorEnabled: values.isTwoFactorEnabled,
-      },
-    });
-    
-  return { success: "Thay đổi thành công!" };
+
+      // Other user attributes can be updated directly
+      favorite: favoriteWithPhobien,
+      bio: values.bio,
+      address: values.address,
+      addressother: values.addressother,
+      nameuser: values.nameuser,
+      gender: values.gender as Gender,
+      phonenumber: values.phonenumber,
+      dateofbirth: values.dateofbirth,
+      frameAvatar: values.frame,
+
+      // Do not update email and isTwoFactorEnabled if they are not provided
+      email: undefined,
+      isTwoFactorEnabled: values.isTwoFactorEnabled,
+    },
+  });
+
+  return { success: changeSuccessfulMessage };
 };

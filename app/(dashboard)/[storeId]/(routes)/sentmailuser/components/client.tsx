@@ -19,6 +19,8 @@ import Downloadfile from "@/components/file/downloadfilepage";
 import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { translateSendEmailClient } from "@/translate/translate-dashboard";
 
 interface SentEmailUserClientProps {
   data: SentEmailUserColumn[];
@@ -33,6 +35,10 @@ const SentEmailUserClient: React.FC<SentEmailUserClientProps> = ({ data }) => {
   const role = useCurrentRole();
   const isRole = role === UserRole.ADMIN;
   const showAPIRole = isRole;
+    //language
+    const user = useCurrentUser();
+    const languageToUse = user?.language || "vi"
+    const sendEmailClientMessage = translateSendEmailClient(languageToUse)
 
   const handleDelete = async () => {
     setLoading(true);
@@ -43,7 +49,7 @@ const SentEmailUserClient: React.FC<SentEmailUserClientProps> = ({ data }) => {
       });
       setLoading(false);
       setOpen(false);
-      toast.success("Deleted successfully");
+      toast.success(sendEmailClientMessage.deletedSuccessfully);
       // Optionally, refresh data or handle post-delete state
     } catch (error) {
       setLoading(false);
@@ -60,7 +66,7 @@ const SentEmailUserClient: React.FC<SentEmailUserClientProps> = ({ data }) => {
         );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
-        toast.error("Make sure you removed all using this first.");
+        toast.error(sendEmailClientMessage.somethingWentWrong);
       }
     }
   };
@@ -68,16 +74,16 @@ const SentEmailUserClient: React.FC<SentEmailUserClientProps> = ({ data }) => {
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Spam mail (${data.length})`}
-          description="Quản lý Spam mail"
+          title={`${sendEmailClientMessage.sendMail} (${data.length})`}
+          description={sendEmailClientMessage.manageSendMail}
         />
         <div className="flex space-x-3">
-          <Downloadfile data={data} filename="sentmailuser" />
+          <Downloadfile data={data} filename="sentmailuser" languageToUse={languageToUse}/>
           <Button
             onClick={() => router.push(`/${params.storeId}/sentmailuser/new`)}
           >
             <Plus className="mr-2 h-4 w-4" />
-            Thêm mới
+            {sendEmailClientMessage.addNew}
           </Button>
         </div>
       </div>
@@ -93,9 +99,10 @@ const SentEmailUserClient: React.FC<SentEmailUserClientProps> = ({ data }) => {
         onDelete={handleDelete}
         setOpen={setOpen}
         open={open}
+        languageToUse={languageToUse}
       />
       {showAPIRole && (
-        <Heading title="Api" description="API calls for SentEmailUser" />
+        <Heading title={sendEmailClientMessage.api} description={sendEmailClientMessage.apiCallsForSendEmailUser} />
       )}
       <Separator />
       <ApiList entityIdName="sentmailId" entityName="sentmailuser" />

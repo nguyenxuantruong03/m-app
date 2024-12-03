@@ -9,6 +9,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import LabelForm from "./label-form";
+import { getBillboardEditRowSheet } from "@/translate/translate-dashboard";
 
 interface EditRowProps {
   data: string;
@@ -17,9 +18,14 @@ interface EditRowProps {
   description: string
   imagebillboard: { url: string }[];
   field: "label" | "description"
+  language: string;
 }
-const EditRow: React.FC<EditRowProps> = ({ data, id,imagebillboard,description,field,label }) => {
+const EditRow: React.FC<EditRowProps> = ({ data, id,imagebillboard,description,field,label,language }) => {
   const [open, setOpen] = useState(false);
+
+  //language
+  const billboardEditRowSheetMessage = getBillboardEditRowSheet(language)
+
   const handleClick = () => {
     setOpen(true);
   };
@@ -28,13 +34,13 @@ const EditRow: React.FC<EditRowProps> = ({ data, id,imagebillboard,description,f
   };
   return (
     <>
-      <div onClick={handleClick} className="hover:underline cursor-pointer">{data || "Không tìm thấy!"}</div>
+      <div onClick={handleClick} className="hover:underline cursor-pointer">{data || billboardEditRowSheetMessage.notFound}</div>
 
       <Sheet open={open} onOpenChange={handleonClose}>
         <SheetContent className="space-y-4">
           <SheetHeader>
-            <SheetTitle>Edit {field === "label" ? `${label}` : `${description}`}</SheetTitle>
-            <SheetDescription>Edit an existing {field === "label" ? `${label}` : `${description}`}.</SheetDescription>
+            <SheetTitle>{billboardEditRowSheetMessage.edit} {field === "label" ? `${label}` : `${description}`}</SheetTitle>
+            <SheetDescription>{billboardEditRowSheetMessage.editAnExisting} {field === "label" ? `${label}` : `${description}`}.</SheetDescription>
           </SheetHeader>
           <LabelForm
           data={data}
@@ -44,6 +50,7 @@ const EditRow: React.FC<EditRowProps> = ({ data, id,imagebillboard,description,f
           label= {label}
           setOpen={setOpen}
           field={field}
+          language={language}
           />
         </SheetContent>
       </Sheet>

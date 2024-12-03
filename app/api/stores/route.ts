@@ -3,22 +3,26 @@ import prismadb from "@/lib/prismadb";
 import { currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { translateStoreDelete, translateStoreGet, translateStorePost } from "@/translate/translate-api";
 
 export async function GET(
   req: Request,
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const storeGetMessage = translateStoreGet(LanguageToUse)
   try {
-    const userId = await currentUser();
 
-    if (!userId) {
-      return new NextResponse(JSON.stringify({ error: "Unauthenticated" }), {
+    if (!user) {
+      return new NextResponse(JSON.stringify({ error: storeGetMessage.userIdNotFound }), {
         status: 403,
       });
     }
 
-    if (userId.role === UserRole.USER || userId.role === UserRole.GUEST ) {
+    if (user.role === UserRole.USER || user.role === UserRole.GUEST ) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền để xem cửa hàng!" }),
+        JSON.stringify({ error: storeGetMessage.permissionDenied }),
         { status: 405 }
       );
     }
@@ -26,33 +30,37 @@ export async function GET(
     const store = await prismadb.store.findMany();
     return NextResponse.json(store);
   } catch (error) {
-    console.log("[STORES_GET] ", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(JSON.stringify({ error: storeGetMessage.internalErrorGetStore }), {
+      status: 500,
+    });
   }
 }
 
 export async function POST(req: Request) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const storePostMessage = translateStorePost(LanguageToUse)
   try {
-    const userId = await currentUser();
     const body = await req.json();
 
     const { name } = body;
 
-    if (!userId) {
-      return new NextResponse(JSON.stringify({ error: "Unauthorizd" }), {
+    if (!user) {
+      return new NextResponse(JSON.stringify({ error: storePostMessage.userIdNotFound }), {
         status: 403,
       });
     }
 
-    if (userId.role !== UserRole.ADMIN) {
+    if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền để tạo cửa hàng mới!" }),
+        JSON.stringify({ error: storePostMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: "Name is required" }), {
+      return new NextResponse(JSON.stringify({ error: storePostMessage.nameRequired }), {
         status: 400,
       });
     }
@@ -60,7 +68,7 @@ export async function POST(req: Request) {
     const store = await prismadb.store.create({
       data: {
         name,
-        userId: userId.id || "",
+        userId: user.id || "",
       },
     });
 
@@ -113,35 +121,40 @@ export async function POST(req: Request) {
 
     return NextResponse.json(store);
   } catch (error) {
-    return new NextResponse("POST failed", { status: 500 });
+    return new NextResponse(JSON.stringify({ error: storePostMessage.internalErrorPostStore }), {
+      status: 500,
+    });
   }
 }
 
 export async function DELETE(
   req: Request,
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const storeDeleteMessage = translateStoreDelete(LanguageToUse)
   try {
-    const userId = await currentUser();
     const body = await req.json();
     const { ids } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy userId!" }),
+        JSON.stringify({ error: storeDeleteMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN) {
+    if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xóa store!" }),
+        JSON.stringify({ error: storeDeleteMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!ids || ids.length === 0) {
       return new NextResponse(
-        JSON.stringify({ error: "Mảng IDs không được trống!" }),
+        JSON.stringify({ error: storeDeleteMessage.idsArrayNotEmpty }),
         { status: 400 }
       );
     }
@@ -175,14 +188,14 @@ export async function DELETE(
         storeId: "",
         delete: changesArray.map(change => `DeleteName: ${change.name}`),
         type: "DELETESTORE",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
-    return NextResponse.json({ message: "Xóa thành công!" });
+    return NextResponse.json({ message: storeDeleteMessage.deletionSuccess });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete store." }),
+      JSON.stringify({ error: storeDeleteMessage.internalErrorDeleteStore }),
       { status: 500 }
     );
   }

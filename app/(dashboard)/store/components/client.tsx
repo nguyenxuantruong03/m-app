@@ -18,6 +18,8 @@ import Downloadfile from "@/components/file/downloadfilepage";
 import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { translateStoreClient } from "@/translate/translate-dashboard";
 
 interface SizeClientProps {
   data: StoreColumn[];
@@ -31,6 +33,10 @@ const StoreClient: React.FC<SizeClientProps> = ({ data }) => {
   const role = useCurrentRole();
   const isRole = role === UserRole.ADMIN;
   const showAPIRole = isRole;
+  //language
+  const user = useCurrentUser();
+  const languageToUse = user?.language || "vi"
+  const storeClientMessage = translateStoreClient(languageToUse)
 
   const handleDelete = async () => {
     setLoading(true);
@@ -41,7 +47,7 @@ const StoreClient: React.FC<SizeClientProps> = ({ data }) => {
       });
       setLoading(false);
       setOpen(false);
-      toast.success("Store deleted successfully");
+      toast.success(storeClientMessage.storeDeletedSuccessfully);
       // Optionally, refresh data or handle post-delete state
     } catch (error) {
       setLoading(false);
@@ -58,7 +64,7 @@ const StoreClient: React.FC<SizeClientProps> = ({ data }) => {
         );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
-        toast.error("Make sure you removed all using this first.");
+        toast.error(storeClientMessage.somethingWentWrong);
       }
     }
   };
@@ -66,14 +72,14 @@ const StoreClient: React.FC<SizeClientProps> = ({ data }) => {
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Cửa hàng (${data.length})`}
-          description="Quản lý cửa hàng"
+          title={`${storeClientMessage.store} (${data.length})`}
+          description={storeClientMessage.storeManagement}
         />
         <div className="flex space-x-3">
-          <Downloadfile data={data} filename="store" />
+          <Downloadfile data={data} filename="store"  languageToUse={languageToUse}/>
           <Button onClick={() => router.push(`/store/new`)}>
             <Plus className="mr-2 h-4 w-4" />
-            Add New
+            {storeClientMessage.addNew}
           </Button>
         </div>
       </div>
@@ -89,8 +95,9 @@ const StoreClient: React.FC<SizeClientProps> = ({ data }) => {
         onDelete={handleDelete}
         setOpen={setOpen}
         open={open}
+        languageToUse={languageToUse}
       />
-      {showAPIRole && <Heading title="Api" description="API calls for Store" />}
+      {showAPIRole && <Heading title={storeClientMessage.api} description={storeClientMessage.apiCallsForStore} />}
       <Separator />
       <ApiList entityIdName="" entityName="store" />
     </>

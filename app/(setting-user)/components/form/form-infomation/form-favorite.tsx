@@ -27,11 +27,21 @@ import FormError from "@/components/form-error";
 import { useRouter } from "next/navigation";
 import Select, { StylesConfig } from "react-select";
 import { Favorite } from "@prisma/client";
+import LoadingPageComponent from "@/components/ui/loading";
+import {
+  getToastError,
+  translateCancel,
+  translateChangePreferenceNotification,
+  translateChooseYourPreference,
+  translateSave,
+} from "@/translate/translate-client";
 
 interface FormFavoriteProps {
   dataallfavorite: Favorite[];
   classNames?: string;
   setOpen?: Dispatch<SetStateAction<boolean>>;
+  loadingFavorite?: boolean;
+  languageToUse: string;
 }
 
 interface OptionType {
@@ -54,6 +64,8 @@ const FormFavorite: React.FC<FormFavoriteProps> = ({
   dataallfavorite,
   classNames,
   setOpen,
+  loadingFavorite,
+  languageToUse,
 }) => {
   const user = useCurrentUser();
   const router = useRouter();
@@ -72,6 +84,15 @@ const FormFavorite: React.FC<FormFavoriteProps> = ({
     }));
     setSelectedOption(data);
   }, [dataallfavorite]);
+
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const cancelMessage = translateCancel(languageToUse);
+  const saveMessage = translateSave(languageToUse);
+  const changePreferenceNotificationMessage =
+    translateChangePreferenceNotification(languageToUse);
+  const chooseYourPreferenceMessage =
+    translateChooseYourPreference(languageToUse);
 
   const form = useForm<z.infer<typeof SettingSchema>>({
     resolver: zodResolver(SettingSchema),
@@ -92,12 +113,12 @@ const FormFavorite: React.FC<FormFavoriteProps> = ({
     const userString = JSON.stringify(filteredUserFavorites);
 
     if (valuesString === userString) {
-      setError("Hãy thay đổi ưa thích mới ưa thích trên đang được sử dụng.");
+      setError(changePreferenceNotificationMessage);
       return;
     }
 
     startTransition(() => {
-      setting(values)
+      setting(values, languageToUse)
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -110,7 +131,7 @@ const FormFavorite: React.FC<FormFavoriteProps> = ({
           }
         })
         .catch(() => {
-          setError("Something went wrong");
+          setError(toastErrorMessage);
         });
     });
   };
@@ -150,22 +171,26 @@ const FormFavorite: React.FC<FormFavoriteProps> = ({
             name="favorite"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Chọn sở thích của bạn</FormLabel>
+                <FormLabel>{chooseYourPreferenceMessage}</FormLabel>
                 <FormControl>
-                  <Select
-                    className=" text-slate-900"
-                    isMulti
-                    options={selectedOption}
-                    value={selectedOption.filter((option) =>
-                      field.value?.includes(option.value)
-                    )}
-                    onChange={(newValue) => {
-                      field.onChange(newValue.map((option) => option.value));
-                    }}
-                    styles={customStyles}
-                    isSearchable={false}
-                    isDisabled={isPending}
-                  />
+                  {loadingFavorite ? (
+                    <LoadingPageComponent />
+                  ) : (
+                    <Select
+                      className=" text-slate-900"
+                      isMulti
+                      options={selectedOption}
+                      value={selectedOption.filter((option) =>
+                        field.value?.includes(option.value)
+                      )}
+                      onChange={(newValue) => {
+                        field.onChange(newValue.map((option) => option.value));
+                      }}
+                      styles={customStyles}
+                      isSearchable={false}
+                      isDisabled={isPending}
+                    />
+                  )}
                 </FormControl>
               </FormItem>
             )}
@@ -186,7 +211,7 @@ const FormFavorite: React.FC<FormFavoriteProps> = ({
               onClick={() => setOpen?.(false)}
               disabled={isPending}
             >
-              Cancel
+              {cancelMessage}
             </Button>
           )}
           <Button
@@ -195,7 +220,7 @@ const FormFavorite: React.FC<FormFavoriteProps> = ({
             type="submit"
             disabled={isPending}
           >
-            Save
+            {saveMessage}
           </Button>
         </div>
       </form>

@@ -1,18 +1,21 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
+import { translateReturnProductReceiveOrderUpdate } from "@/translate/translate-api";
 import { StatusOrder } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function PATCH(req: Request) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const returnProductReceiveOrderUpdateMessage = translateReturnProductReceiveOrderUpdate(LanguageToUse)
     try {
-      const userId = await currentUser();
       const body = await req.json();
-  
       const { orderId } = body;
   
-      if (!userId) {
+      if (!user) {
         return new NextResponse(
-          JSON.stringify({ error: "Không tìm thấy user id!" }),
+          JSON.stringify({ error: returnProductReceiveOrderUpdateMessage.userIdNotFound }),
           { status: 403 }
         );
       }
@@ -24,7 +27,7 @@ export async function PATCH(req: Request) {
         data: {
           returnProduct: false,
           status: StatusOrder.Da_nhan_tra_hang,
-          userIdShipper: userId?.id || "",
+          userIdShipper: user?.id || "",
           updatedAt: new Date()
         },
       });
@@ -32,7 +35,7 @@ export async function PATCH(req: Request) {
       return NextResponse.json(order);
     } catch (error) {
       return new NextResponse(
-        JSON.stringify({ error: "Internal error patch delivery order." }),
+        JSON.stringify({ error: returnProductReceiveOrderUpdateMessage.internalError }),
         { status: 500 }
       );
     }

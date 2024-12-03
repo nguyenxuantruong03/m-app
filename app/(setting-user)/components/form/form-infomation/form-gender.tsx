@@ -21,13 +21,28 @@ import FormError from "@/components/form-error";
 import { useRouter } from "next/navigation";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Image from "next/image";
+import {
+  getGenderFemaleMessage,
+  getGenderMaleMessage,
+  getGenderOtherMessage,
+  getToastError,
+  translateCancel,
+  translateChangeGenderNotification,
+  translateGender,
+  translateSave,
+} from "@/translate/translate-client";
 
 interface FormGenderProps {
   classNames?: string;
   setOpen?: Dispatch<SetStateAction<boolean>>;
+  languageToUse: string;
 }
 
-const FormGender = ({ classNames, setOpen }: FormGenderProps) => {
+const FormGender = ({
+  classNames,
+  setOpen,
+  languageToUse,
+}: FormGenderProps) => {
   const user = useCurrentUser();
   const router = useRouter();
   const { update } = useSession();
@@ -35,6 +50,18 @@ const FormGender = ({ classNames, setOpen }: FormGenderProps) => {
   const [success, setSuccess] = useState<string>();
 
   const [isPending, startTransition] = useTransition();
+
+  //language
+  const errorToastMessage = getToastError(languageToUse);
+  const maleGenderMessage = getGenderMaleMessage(languageToUse);
+  const feMaleGenderMessage = getGenderFemaleMessage(languageToUse);
+  const otherGenderMessage = getGenderOtherMessage(languageToUse);
+  const genderMessage = translateGender(languageToUse);
+  const cancelMessage = translateCancel(languageToUse);
+  const saveMessage = translateSave(languageToUse);
+  const changeGenderNotification =
+    translateChangeGenderNotification(languageToUse);
+
   const form = useForm<z.infer<typeof SettingSchema>>({
     resolver: zodResolver(SettingSchema),
     defaultValues: {
@@ -45,22 +72,22 @@ const FormGender = ({ classNames, setOpen }: FormGenderProps) => {
   // Gender labels with images
   const genderOptions = {
     Male: {
-      label: "Nam",
+      label: maleGenderMessage,
       image: "/images/male.png",
     },
     Female: {
-      label: "Nữ",
+      label: feMaleGenderMessage,
       image: "/images/female.png",
     },
     None: {
-      label: "Khác",
+      label: otherGenderMessage,
       image: "/images/other.png",
     },
   };
 
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
     if (values.gender === user?.gender) {
-      setError("Hãy thay đổi giới tính mới giới tính trên đang được sử dụng.");
+      setError(changeGenderNotification);
       return;
     }
 
@@ -68,7 +95,7 @@ const FormGender = ({ classNames, setOpen }: FormGenderProps) => {
     setError("");
 
     startTransition(() => {
-      setting(values)
+      setting(values, languageToUse)
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -81,7 +108,7 @@ const FormGender = ({ classNames, setOpen }: FormGenderProps) => {
           }
         })
         .catch(() => {
-          setError("Something went wrong");
+          setError(errorToastMessage);
         });
     });
   };
@@ -99,7 +126,7 @@ const FormGender = ({ classNames, setOpen }: FormGenderProps) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Giới tính <span className="text-red-600 pl-1">(*)</span>
+                  {genderMessage} <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <RadioGroup
                   disabled={isPending}
@@ -145,7 +172,7 @@ const FormGender = ({ classNames, setOpen }: FormGenderProps) => {
               disabled={isPending}
               onClick={() => setOpen?.(false)}
             >
-              Cancel
+              {cancelMessage}
             </Button>
           )}
           <Button
@@ -154,7 +181,7 @@ const FormGender = ({ classNames, setOpen }: FormGenderProps) => {
             type="submit"
             disabled={isPending}
           >
-            Save
+            {saveMessage}
           </Button>
         </div>
       </form>

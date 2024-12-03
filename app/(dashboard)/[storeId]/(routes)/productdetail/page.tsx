@@ -3,7 +3,7 @@ import ProductDetailClient from "./components/client";
 import { ProductDetailColumn } from "./components/columns";
 import { formatter } from "@/lib/utils";
 import { UserRole } from "@prisma/client";
-import { currentRole } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 import { RoleGate } from "@/components/auth/role-gate";
 
 const ProductDetailPage = async ({
@@ -11,6 +11,7 @@ const ProductDetailPage = async ({
 }: {
   params: { storeId: string };
 }) => {
+  const user = await currentUser()
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN || role === UserRole.STAFF;
   const showProductDetailRole = isRole;
@@ -146,6 +147,7 @@ const ProductDetailPage = async ({
       description4salientfeatures: item.description4salientfeatures,
       contentsalientfeatures: item.contentsalientfeatures,
       createdAt: item.createdAt,
+      language: user?.language || "vi"
     })
   );
   return (

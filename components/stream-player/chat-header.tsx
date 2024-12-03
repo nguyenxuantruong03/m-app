@@ -1,18 +1,25 @@
 "use client";
 
+import { translateStreamChat } from "@/translate/translate-client";
 import { Skeleton } from "../ui/skeleton";
 import { ChatToggle } from "./chat-toggle";
 import { VariantToggle } from "./variant-toggle";
 
-export const ChatHeader = () => {
+interface ChatHeaderProps{
+  languageToUse: string;
+}
+
+export const ChatHeader = ({languageToUse}:ChatHeaderProps) => {
+  //language
+  const streamChatMessage = translateStreamChat(languageToUse)
   return (
     <div className="relative p-3 border-b">
       <div className="absolute left-2 top-2 hidden lg:block">
-        <ChatToggle />
+        <ChatToggle languageToUse={languageToUse}/>
       </div>
-      <p className="font-semibold text-primary text-center">Stream Chat</p>
+      <p className="font-semibold text-primary text-center">{streamChatMessage}</p>
       <div className="absolute right-2 top-2">
-        <VariantToggle />
+        <VariantToggle languageToUse={languageToUse}/>
       </div>
     </div>
   );

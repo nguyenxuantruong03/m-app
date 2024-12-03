@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 import { formatter } from "@/lib/utils";
 import { Decimal } from "@prisma/client/runtime/library";
 import { UserRole } from "@prisma/client";
+import { translateSalaryStaffIdGet, translateSalaryStaffIdPatch, translateSalaryStaffIdPost } from "@/translate/translate-api";
 
 type SalaryStaffValue =string | number | boolean | Date | Decimal | null | undefined;
 
@@ -15,30 +16,33 @@ interface ChangeRecord {
 }
 
 export async function GET(req: Request) {
-  const userId = await currentUser();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const salaryStaffIdGetMessage = translateSalaryStaffIdGet(LanguageToUse)
   try {
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: salaryStaffIdGetMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN) {
+    if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xem salarystaff!" }),
+        JSON.stringify({ error: salaryStaffIdGetMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     const eventcalendar = await prismadb.eventCalendar.findUnique({
-      where: { id: userId?.id },
+      where: { id: user?.id },
     });
 
     let existingSalary = await prismadb.caculateSalary.findFirst({
       where: {
-        userId: userId?.id,
+        userId: user?.id,
         eventcalendarId: eventcalendar?.id,
       },
     });
@@ -53,7 +57,7 @@ export async function GET(req: Request) {
     return NextResponse.json(salarystaff);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get salarystaff." }),
+      JSON.stringify({ error: salaryStaffIdGetMessage.internalError }),
       { status: 500 }
     );
   }
@@ -63,29 +67,32 @@ export async function PATCH(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
-  const userId = await currentUser();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const salaryStaffIdPatchMessage = translateSalaryStaffIdPatch(LanguageToUse)
   try {
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: salaryStaffIdPatchMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN) {
+    if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền cập nhật salarystaff!" }),
+        JSON.stringify({ error: salaryStaffIdPatchMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     const eventcalendar = await prismadb.eventCalendar.findUnique({
-      where: { id: userId?.id },
+      where: { id: user?.id },
     });
 
     let existingSalary = await prismadb.caculateSalary.findFirst({
       where: {
-        userId: userId?.id,
+        userId: user?.id,
         eventcalendarId: eventcalendar?.id,
       },
     });
@@ -95,8 +102,8 @@ export async function PATCH(
     const today = new Date();
     const formattedDate = format(today, "E '-' dd/MM/yyyy '-' HH:mm:ss a");
     await sendSalarytotal(
-      userId?.email,
-      userId?.name,
+      user?.email,
+      user?.name,
       formattersalary,
       formattedDate
     );
@@ -151,14 +158,14 @@ export async function PATCH(
         oldChange: oldChanges,
         newChange: newChanges,
         type: "UPDATECACULATESALARY",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(caculateSalary);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error patch salarystaff." }),
+      JSON.stringify({ error: salaryStaffIdPatchMessage.internalError }),
       { status: 500 }
     );
   }
@@ -168,29 +175,32 @@ export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
-  const userId = await currentUser();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const slaryStaffIdPostMessage = translateSalaryStaffIdPost(LanguageToUse)
   try {
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: slaryStaffIdPostMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN) {
+    if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền tạo mới salarystaff!" }),
+        JSON.stringify({ error: slaryStaffIdPostMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     const eventcalendar = await prismadb.eventCalendar.findUnique({
-      where: { id: userId?.id },
+      where: { id: user?.id },
     });
 
     let existingSalary = await prismadb.caculateSalary.findFirst({
       where: {
-        userId: userId?.id,
+        userId: user?.id,
         eventcalendarId: eventcalendar?.id,
       },
     });
@@ -245,14 +255,14 @@ export async function POST(
         oldChange: oldChanges,
         newChange: newChanges,
         type: "UPDATERESETSALARY",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(caculateSalary);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error post salarystaff." }),
+      JSON.stringify({ error: slaryStaffIdPostMessage.internalError }),
       { status: 500 }
     );
   }

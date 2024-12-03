@@ -1,24 +1,28 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
+import { translateFunnelChart } from "@/translate/translate-api";
 import { UserRole } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const body = await req.json();
   const { dateRange } = body;
-  const userId = await currentUser();
+  const user = await currentUser();
+    //language
+    const LanguageToUse = user?.language || "vi";
+    const funnelChartMessage = translateFunnelChart(LanguageToUse)
 
   try {
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: funnelChartMessage.name1 }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xem chart!" }),
+        JSON.stringify({ error: funnelChartMessage.name2 }),
         { status: 403 }
       );
     }
@@ -55,7 +59,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error(error);
     return new NextResponse(
-      JSON.stringify({ error: "Internal error while fetching data." }),
+      JSON.stringify({ error: funnelChartMessage.name3 }),
       { status: 500 }
     );
   }

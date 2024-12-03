@@ -3,15 +3,20 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
+import { translateText } from "@/translate/translate-client";
+import { translateProductDetailDelete, translateProductDetailGet, translateProductDetailPost } from "@/translate/translate-api";
 
 export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
-  try {
-    const userId = await currentUser();
-    const body = await req.json();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const productDetailPostMessage = translateProductDetailPost(LanguageToUse)
 
+  try {
+    const body = await req.json();
     const {
       title,
       categoryId,
@@ -86,83 +91,83 @@ export async function POST(
       contentsalientfeatures,
     } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: productDetailPostMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền tạo mới product detail!" }),
+        JSON.stringify({ error: productDetailPostMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!title) {
-      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+      return new NextResponse(JSON.stringify({ error: productDetailPostMessage.titleRequired }), {
         status: 400,
       });
     }
 
     if (!categoryId) {
       return new NextResponse(
-        JSON.stringify({ error: "CategoryId is required!" }),
+        JSON.stringify({ error: productDetailPostMessage.categoryIdRequired }),
         { status: 400 }
       );
     }
 
     if (!promotionheading) {
       return new NextResponse(
-        JSON.stringify({ error: "Promotionheading is required!" }),
+        JSON.stringify({ error: productDetailPostMessage.promotionHeadingRequired }),
         { status: 400 }
       );
     }
 
     if (!promotiondescription) {
       return new NextResponse(
-        JSON.stringify({ error: "Promotiondescription is required!" }),
+        JSON.stringify({ error: productDetailPostMessage.promotionDescriptionRequired }),
         { status: 400 }
       );
     }
 
     if (!size1Id) {
       return new NextResponse(
-        JSON.stringify({ error: "SizeId is required!" }),
+        JSON.stringify({ error: productDetailPostMessage.sizeIdRequired }),
         { status: 400 }
       );
     }
 
     if (!color1Id) {
       return new NextResponse(
-        JSON.stringify({ error: "ColorId is required!" }),
+        JSON.stringify({ error: productDetailPostMessage.colorIdRequired }),
         { status: 400 }
       );
     }
 
     if (!name1) {
-      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+      return new NextResponse(JSON.stringify({ error: productDetailPostMessage.nameRequired }), {
         status: 400,
       });
     }
 
     if (!percentpromotion1) {
       return new NextResponse(
-        JSON.stringify({ error: "Percent Promotion is required!" }),
+        JSON.stringify({ error: productDetailPostMessage.percentPromotionRequired }),
         { status: 400 }
       );
     }
 
     if (!price1) {
-      return new NextResponse(JSON.stringify({ error: "Price is required!" }), {
+      return new NextResponse(JSON.stringify({ error: productDetailPostMessage.priceRequired }), {
         status: 400,
       });
     }
 
     if (!quantity1) {
       return new NextResponse(
-        JSON.stringify({ error: "Quantity is required!" }),
+        JSON.stringify({ error: productDetailPostMessage.quantityRequired }),
         {
           status: 400,
         }
@@ -171,49 +176,49 @@ export async function POST(
 
     if (!descriptionspecifications) {
       return new NextResponse(
-        JSON.stringify({ error: "Descriptionspecifications is required!" }),
+        JSON.stringify({ error: productDetailPostMessage.descriptionSpecificationsRequired }),
         { status: 400 }
       );
     }
     if (!valuespecifications) {
       return new NextResponse(
-        JSON.stringify({ error: "Valuespecifications is required!" }),
+        JSON.stringify({ error: productDetailPostMessage.valueSpecificationsRequired }),
         { status: 400 }
       );
     }
     if (!descriptionsalientfeatures) {
       return new NextResponse(
-        JSON.stringify({ error: "Descriptionsalientfeatures is required!" }),
+        JSON.stringify({ error: productDetailPostMessage.descriptionSalientFeaturesRequired }),
         { status: 400 }
       );
     }
     if (!description2salientfeatures) {
       return new NextResponse(
-        JSON.stringify({ error: "Description2salientfeatures is required!" }),
+        JSON.stringify({ error: productDetailPostMessage.description2SalientFeaturesRequired }),
         { status: 400 }
       );
     }
     if (!description3salientfeatures) {
       return new NextResponse(
-        JSON.stringify({ error: "Description3salientfeatures is required!" }),
+        JSON.stringify({ error: productDetailPostMessage.description3SalientFeaturesRequired }),
         { status: 400 }
       );
     }
     if (!description4salientfeatures) {
       return new NextResponse(
-        JSON.stringify({ error: "Description4salientfeatures is required!" }),
+        JSON.stringify({ error: productDetailPostMessage.description4SalientFeaturesRequired }),
         { status: 400 }
       );
     }
     if (!contentsalientfeatures) {
       return new NextResponse(
-        JSON.stringify({ error: "Contentsalientfeatures is required!" }),
+        JSON.stringify({ error: productDetailPostMessage.contentSalientFeaturesRequired }),
         { status: 400 }
       );
     }
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required!" }),
+        JSON.stringify({ error: productDetailPostMessage.storeIdRequired }),
         { status: 400 }
       );
     }
@@ -227,7 +232,7 @@ export async function POST(
 
     // Nếu sizeId không tồn tại, trả về thông báo lỗi
     if (!size) {
-      return new NextResponse(JSON.stringify({ error: "Hãy chọn lại Size!" }), {
+      return new NextResponse(JSON.stringify({ error: productDetailPostMessage.chooseSize }), {
         status: 404,
       });
     }
@@ -241,7 +246,7 @@ export async function POST(
     // Nếu sizeId không tồn tại, trả về thông báo lỗi
     if (!color) {
       return new NextResponse(
-        JSON.stringify({ error: "Hãy chọn lại Color!" }),
+        JSON.stringify({ error: productDetailPostMessage.chooseColor }),
         { status: 404 }
       );
     }
@@ -255,7 +260,7 @@ export async function POST(
     // Nếu sizeId không tồn tại, trả về thông báo lỗi
     if (!category) {
       return new NextResponse(
-        JSON.stringify({ error: "Hãy chọn lại Category!" }),
+        JSON.stringify({ error: productDetailPostMessage.chooseCategory }),
         { status: 404 }
       );
     }
@@ -268,7 +273,7 @@ export async function POST(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: productDetailPostMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -351,13 +356,11 @@ export async function POST(
     });
 
     const sentProductDetail = {
-        title:productDetail.title,
+      title: productDetail.title,
     };
 
     // Log sự thay đổi của billboard
-    const changes = [
-      `Title: ${sentProductDetail.title}`,
-    ];
+    const changes = [`Title: ${sentProductDetail.title}`];
 
     // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
     await prismadb.system.create({
@@ -365,14 +368,14 @@ export async function POST(
         storeId: params.storeId,
         type: "CREATEPRODUCTDETAIL",
         newChange: changes,
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(productDetail);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error post productdetail." }),
+      JSON.stringify({ error: productDetailPostMessage.internalError }),
       { status: 500 }
     );
   }
@@ -382,6 +385,10 @@ export async function GET(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const productDetailGetMessage =translateProductDetailGet(LanguageToUse)
   try {
     const { searchParams } = new URL(req.url);
     const categoryId = searchParams.get("categoryId") || undefined;
@@ -395,15 +402,16 @@ export async function GET(
     const size3Id = searchParams.get("size3Id") || undefined;
     const size4Id = searchParams.get("size4Id") || undefined;
     const size5Id = searchParams.get("size5Id") || undefined;
+    const language = searchParams.get("language") || "vi"; // Mặc định là "vi" nếu không có language
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required!" }),
+        JSON.stringify({ error: productDetailGetMessage.storeIdRequired }),
         { status: 400 }
       );
     }
 
-    const productDetail = await prismadb.productDetail.findMany({
+    const productDetails = await prismadb.productDetail.findMany({
       where: {
         storeId: params.storeId,
         categoryId,
@@ -436,43 +444,174 @@ export async function GET(
       },
     });
 
-    return NextResponse.json(productDetail);
+    // Dịch tất cả các trường trong sản phẩm
+    const translations = await Promise.all(
+      productDetails.map(async (productDetail) => {
+        const translatedProduct = {
+          ...productDetail,
+          title: await translateText(productDetail?.title || "", language),
+          name1: await translateText(productDetail?.name1 || "", language),
+          name2: await translateText(productDetail?.name2 || "", language),
+          name3: await translateText(productDetail?.name3 || "", language),
+          name4: await translateText(productDetail?.name4 || "", language),
+          name5: await translateText(productDetail?.name5 || "", language),
+          promotionheading: await translateText(
+            productDetail?.promotionheading || "",
+            language
+          ),
+          promotiondescription: await translateText(
+            productDetail?.promotiondescription || "",
+            language
+          ),
+          descriptionsalientfeatures: await translateText(
+            productDetail?.descriptionsalientfeatures || "",
+            language
+          ),
+          description2salientfeatures: await translateText(
+            productDetail?.description2salientfeatures || "",
+            language
+          ),
+          contentsalientfeatures: await translateText(
+            productDetail?.contentsalientfeatures || "",
+            language
+          ),
+          descriptionspecifications: await translateText(
+            productDetail?.descriptionspecifications || "",
+            language
+          ),
+          valuespecifications: await translateText(
+            productDetail?.valuespecifications || "",
+            language
+          ),
+          description2specifications: await translateText(
+            productDetail?.description2specifications || "",
+            language
+          ),
+          value2specifications: await translateText(
+            productDetail?.value2specifications || "",
+            language
+          ),
+          category: {
+            ...productDetail?.category,
+            name: await translateText(
+              productDetail?.category?.name || "",
+              language
+            ),
+          },
+          color1: {
+            ...productDetail?.color1,
+            name: await translateText(
+              productDetail?.color1?.name || "",
+              language
+            ),
+          },
+          color2: {
+            ...productDetail?.color2,
+            name: await translateText(
+              productDetail?.color2?.name || "",
+              language
+            ),
+          },
+          color3: {
+            ...productDetail?.color3,
+            name: await translateText(
+              productDetail?.color3?.name || "",
+              language
+            ),
+          },
+          color4: {
+            ...productDetail?.color4,
+            name: await translateText(
+              productDetail?.color4?.name || "",
+              language
+            ),
+          },
+          color5: {
+            ...productDetail?.color5,
+            name: await translateText(
+              productDetail?.color5?.name || "",
+              language
+            ),
+          },
+          size1: {
+            ...productDetail?.size1,
+            name: await translateText(
+              productDetail?.size1?.name || "",
+              language
+            ),
+          },
+          size2: {
+            ...productDetail?.size2,
+            name: await translateText(
+              productDetail?.size2?.name || "",
+              language
+            ),
+          },
+          size3: {
+            ...productDetail?.size3,
+            name: await translateText(
+              productDetail?.size3?.name || "",
+              language
+            ),
+          },
+          size4: {
+            ...productDetail?.size4,
+            name: await translateText(
+              productDetail?.size4?.name || "",
+              language
+            ),
+          },
+          size5: {
+            ...productDetail?.size5,
+            name: await translateText(
+              productDetail?.size5?.name || "",
+              language
+            ),
+          },
+        };
+
+        return translatedProduct;
+      })
+    );
+
+    return NextResponse.json(translations);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get productdetail." }),
+      JSON.stringify({ error: productDetailGetMessage.internalErrorGetProductDetail }),
       { status: 500 }
     );
   }
 }
 
-
 export async function DELETE(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const productDetailDeleteMessage = translateProductDetailDelete(LanguageToUse)
   try {
-    const userId = await currentUser();
     const body = await req.json();
-
     const { ids } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy userId!" }),
+        JSON.stringify({ error: productDetailDeleteMessage.userNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xóa product detail!" }),
+        JSON.stringify({ error: productDetailDeleteMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!ids || ids.length === 0) {
       return new NextResponse(
-        JSON.stringify({ error: "Mảng IDs không được trống!" }),
+        JSON.stringify({ error: productDetailDeleteMessage.idsArrayEmpty }),
         { status: 400 }
       );
     }
@@ -485,7 +624,7 @@ export async function DELETE(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: productDetailDeleteMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -513,7 +652,7 @@ export async function DELETE(
     });
 
     // Create an array of changes for logging
-    const changesArray = ProductToDelete.map(productdetail => ({
+    const changesArray = ProductToDelete.map((productdetail) => ({
       title: productdetail.title,
       name1: productdetail.name1,
       price1: productdetail.price1,
@@ -567,16 +706,19 @@ export async function DELETE(
     await prismadb.system.create({
       data: {
         storeId: params.storeId,
-        delete: changesArray.map(change => `Title: ${change.title}, Name1: ${change.name1}, Price1: ${change.price1}, Percentpromotion1: ${change.percentpromotion1}, Quantity1: ${change.quantity1}, Size1: ${change.size1}, Color1: ${change.color1}, Name2: ${change.name2}, Price2: ${change.price2}, Percentpromotion2: ${change.percentpromotion2}, Quantity2: ${change.quantity2}, Size2: ${change.size2}, Color2: ${change.color2}, Name3: ${change.name3}, Price3: ${change.price3}, Percentpromotion3: ${change.percentpromotion3}, Quantity3: ${change.quantity3}, Size3: ${change.size3}, Color3: ${change.color3}, Name4: ${change.name4}, Price4: ${change.price4}, Percentpromotion4: ${change.percentpromotion4}, Quantity4: ${change.quantity4}, Size4: ${change.size4}, Color4: ${change.color4}, Name5: ${change.name5}, Price5: ${change.price5}, Percentpromotion5: ${change.percentpromotion5}, Quantity5: ${change.quantity5}, Size5: ${change.size5}, Color5: ${change.color5}, Category: ${change.category}, Promotionheading: ${change.promotionheading}, Promotiondescription: ${change.promotiondescription}, Warranty1: ${change.warranty1}, Warranty2: ${change.warranty2}, Warranty3: ${change.warranty3}, Warranty4: ${change.warranty4}`),
+        delete: changesArray.map(
+          (change) =>
+            `Title: ${change.title}, Name1: ${change.name1}, Price1: ${change.price1}, Percentpromotion1: ${change.percentpromotion1}, Quantity1: ${change.quantity1}, Size1: ${change.size1}, Color1: ${change.color1}, Name2: ${change.name2}, Price2: ${change.price2}, Percentpromotion2: ${change.percentpromotion2}, Quantity2: ${change.quantity2}, Size2: ${change.size2}, Color2: ${change.color2}, Name3: ${change.name3}, Price3: ${change.price3}, Percentpromotion3: ${change.percentpromotion3}, Quantity3: ${change.quantity3}, Size3: ${change.size3}, Color3: ${change.color3}, Name4: ${change.name4}, Price4: ${change.price4}, Percentpromotion4: ${change.percentpromotion4}, Quantity4: ${change.quantity4}, Size4: ${change.size4}, Color4: ${change.color4}, Name5: ${change.name5}, Price5: ${change.price5}, Percentpromotion5: ${change.percentpromotion5}, Quantity5: ${change.quantity5}, Size5: ${change.size5}, Color5: ${change.color5}, Category: ${change.category}, Promotionheading: ${change.promotionheading}, Promotiondescription: ${change.promotiondescription}, Warranty1: ${change.warranty1}, Warranty2: ${change.warranty2}, Warranty3: ${change.warranty3}, Warranty4: ${change.warranty4}`
+        ),
         type: "DELETEMANY-PRODUCTDETAIL",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
-    return NextResponse.json({ message: "Xóa thành công!" });
+    return NextResponse.json({ message: productDetailDeleteMessage.deleteSuccess });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete category." }),
+      JSON.stringify({ error: productDetailDeleteMessage.internalErrorDeleteCategory }),
       { status: 500 }
     );
   }

@@ -37,6 +37,7 @@ import ImageCellOne from "@/components/image-cell-one";
 import EditRow from "../_components/edit-row";
 import FormatDate from "@/components/format-Date";
 import { ImageCredential } from "@/types/type";
+import { getDayName } from "@/translate/translate-dashboard";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -69,6 +70,7 @@ export type ManageStaffsColumn = {
   dateofbirthpatach: Date | null;
   createdAt: Date;
   createdAtString: string | null
+  language: string
 };
 
 export const columns: ColumnDef<ManageStaffsColumn>[] = [
@@ -119,7 +121,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
           timestartwork={row.original.timestartwork} issued={row.original.issued} gender={row.original.gender}
           degree={row.original.degree} maritalStatus={row.original.maritalStatus} workingTime={row.original.workingTime}
           daywork={row.original.daywork} isCitizen={row.original.isCitizen} sentVeirifi={row.original.sentVeirifi}
-          field="name"
+          field="name" language={row.original.language}
           />
         </span>
       );
@@ -170,6 +172,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
             imageUrl={imageUrl}
             createdAt={updateImage}
             email={email}
+            languageToUse={row.original.language}
           />
         );
       }
@@ -199,6 +202,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
             imageUrl={imageUrl}
             createdAt={updateImage}
             email={email}
+            languageToUse={row.original.language}
           />
         );
       }
@@ -270,7 +274,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
           timestartwork={row.original.timestartwork} issued={row.original.issued} gender={row.original.gender}
           degree={row.original.degree} maritalStatus={row.original.maritalStatus} workingTime={row.original.workingTime}
           daywork={row.original.daywork} isCitizen={row.original.isCitizen} sentVeirifi={row.original.sentVeirifi}
-          field="numberCCCD"
+          field="numberCCCD" language={row.original.language}
           />
         </span>
       );
@@ -301,7 +305,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
           timestartwork={row.original.timestartwork} issued={row.original.issued} gender={row.original.gender}
           degree={row.original.degree} maritalStatus={row.original.maritalStatus} workingTime={row.original.workingTime}
           daywork={row.original.daywork} isCitizen={row.original.isCitizen} sentVeirifi={row.original.sentVeirifi}
-          field="phonenumber"
+          field="phonenumber" language={row.original.language}
           />
         </span>
       );
@@ -332,7 +336,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
           timestartwork={row.original.timestartwork} issued={row.original.issued} gender={row.original.gender}
           degree={row.original.degree} maritalStatus={row.original.maritalStatus} workingTime={row.original.workingTime}
           daywork={row.original.daywork} isCitizen={row.original.isCitizen} sentVeirifi={row.original.sentVeirifi}
-          field="dateRange"
+          field="dateRange" language={row.original.language}
           />
         </span>
       );
@@ -363,7 +367,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
           timestartwork={row.original.timestartwork} issued={row.original.issued} gender={row.original.gender}
           degree={row.original.degree} maritalStatus={row.original.maritalStatus} workingTime={row.original.workingTime}
           daywork={row.original.daywork} isCitizen={row.original.isCitizen} sentVeirifi={row.original.sentVeirifi}
-          field="dateofbirth"
+          field="dateofbirth" language={row.original.language}
           />
         </span>
       );
@@ -444,7 +448,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
           timestartwork={row.original.timestartwork} issued={row.original.issued} gender={row.original.gender}
           degree={row.original.degree} maritalStatus={row.original.maritalStatus} workingTime={row.original.workingTime}
           daywork={row.original.daywork} isCitizen={row.original.isCitizen} sentVeirifi={row.original.sentVeirifi}
-          field="timestartwork"
+          field="timestartwork" language={row.original.language}
           />
         </span>
       );
@@ -475,7 +479,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
           timestartwork={row.original.timestartwork} issued={row.original.issued} gender={row.original.gender}
           degree={row.original.degree} maritalStatus={row.original.maritalStatus} workingTime={row.original.workingTime}
           daywork={row.original.daywork} isCitizen={row.original.isCitizen} sentVeirifi={row.original.sentVeirifi}
-          field="issued"
+          field="issued" language={row.original.language}
           />
         </span>
       );
@@ -519,7 +523,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
           timestartwork={row.original.timestartwork} issued={row.original.issued} gender={row.original.gender}
           degree={row.original.degree} maritalStatus={row.original.maritalStatus} workingTime={row.original.workingTime}
           daywork={row.original.daywork} isCitizen={row.original.isCitizen} sentVeirifi={row.original.sentVeirifi}
-          field="gender"
+          field="gender" language={row.original.language}
           />
         </span>
       );
@@ -550,7 +554,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
           timestartwork={row.original.timestartwork} issued={row.original.issued} gender={row.original.gender}
           degree={row.original.degree} maritalStatus={row.original.maritalStatus} workingTime={row.original.workingTime}
           daywork={row.original.daywork} isCitizen={row.original.isCitizen} sentVeirifi={row.original.sentVeirifi}
-          field="workingTime"
+          field="workingTime" language={row.original.language}
           />
         </span>
       );
@@ -581,7 +585,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
           timestartwork={row.original.timestartwork} issued={row.original.issued} gender={row.original.gender}
           degree={row.original.degree} maritalStatus={row.original.maritalStatus} workingTime={row.original.workingTime}
           daywork={row.original.daywork} isCitizen={row.original.isCitizen} sentVeirifi={row.original.sentVeirifi}
-          field="degree"
+          field="degree" language={row.original.language}
           />
         </span>
       );
@@ -613,7 +617,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
           timestartwork={row.original.timestartwork} issued={row.original.issued} gender={row.original.gender}
           degree={row.original.degree} maritalStatus={row.original.maritalStatus} workingTime={row.original.workingTime}
           daywork={row.original.daywork} isCitizen={row.original.isCitizen} sentVeirifi={row.original.sentVeirifi}
-          field="maritalStatus"
+          field="maritalStatus" language={row.original.language}
           />
         </span>
       );
@@ -642,36 +646,17 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
         "Saturday",
         "Sunday",
       ];
-
+    
       // Lọc và sắp xếp lại các ngày làm việc theo thứ tự
       const sortedDays = allDays.filter((day) =>
         row.original.daywork.includes(day)
       );
-
-      // Chuyển đổi các ngày thành ngày trong tuần
+    
+      // Chuyển đổi các ngày thành tên ngày trong tuần theo ngôn ngữ
       const days = sortedDays
-        .map((day) => {
-          switch (day) {
-            case "Monday":
-              return "Thứ 2";
-            case "Tuesday":
-              return "Thứ 3";
-            case "Wednesday":
-              return "Thứ 4";
-            case "Thursday":
-              return "Thứ 5";
-            case "Friday":
-              return "Thứ 6";
-            case "Saturday":
-              return "Thứ 7";
-            case "Sunday":
-              return "Chủ Nhật";
-            default:
-              return "";
-          }
-        })
+        .map((day) => getDayName(day, row.original.language))
         .join(", "); // Nối các ngày bằng dấu phẩy và khoảng trắng
-
+    
       return (
         <div className={isBanned ? "line-through text-gray-400" : ""}>
           {days}

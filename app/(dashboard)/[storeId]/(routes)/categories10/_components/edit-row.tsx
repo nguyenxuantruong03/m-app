@@ -9,13 +9,20 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import LabelForm from "./name-form";
+import { getCategoriesEditRow } from "@/translate/translate-dashboard";
 
 interface EditRowProps {
   data: string;
   id: string;
+  language: string;
 }
-const EditRow: React.FC<EditRowProps> = ({ data, id }) => {
+
+const EditRow: React.FC<EditRowProps> = ({ data, id, language }) => {
   const [open, setOpen] = useState(false);
+
+  //language
+  const categoriesEditRowMessage = getCategoriesEditRow(language);
+
   const handleClick = () => {
     setOpen(true);
   };
@@ -24,18 +31,25 @@ const EditRow: React.FC<EditRowProps> = ({ data, id }) => {
   };
   return (
     <>
-      <div onClick={handleClick} className="hover:underline cursor-pointer">{data || "Không tìm thấy!"}</div>
+      <div onClick={handleClick} className="hover:underline cursor-pointer">
+        {data || categoriesEditRowMessage.notFound}
+      </div>
 
       <Sheet open={open} onOpenChange={handleonClose}>
         <SheetContent className="space-y-4">
           <SheetHeader>
-            <SheetTitle>Edit Name {data}</SheetTitle>
-            <SheetDescription>Edit an existing name {data}.</SheetDescription>
+            <SheetTitle>
+              {categoriesEditRowMessage.editName} {data}
+            </SheetTitle>
+            <SheetDescription>
+              {categoriesEditRowMessage.editExistingName} {data}.
+            </SheetDescription>
           </SheetHeader>
           <LabelForm
-          data={data}
-          id={id}
-          setOpen={setOpen}
+            data={data}
+            id={id}
+            setOpen={setOpen}
+            language={language}
           />
         </SheetContent>
       </Sheet>

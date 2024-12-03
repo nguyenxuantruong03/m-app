@@ -6,31 +6,35 @@ import { format, subHours } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import { NextResponse } from "next/server";
 import viLocale from "date-fns/locale/vi";
+import { translateEventCalendarEndGet, translateEventCalendarEndPost } from "@/translate/translate-api";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 
 export async function GET(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const eventCalendarEndGetMessage = translateEventCalendarEndGet(LanguageToUse)
   try {
-    const userId = await currentUser();
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: eventCalendarEndGetMessage.userIdNotFound }),
         { status: 403 }
       );
     }
     
-    if (userId.role === UserRole.GUEST || userId.role === UserRole.USER) {
+    if (user.role === UserRole.GUEST || user.role === UserRole.USER) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xem attendance!" }),
+        JSON.stringify({ error: eventCalendarEndGetMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required!" }),
+        JSON.stringify({ error: eventCalendarEndGetMessage.storeIdRequired }),
         { status: 400 }
       );
     }
@@ -43,7 +47,7 @@ export async function GET(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: eventCalendarEndGetMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -52,7 +56,7 @@ export async function GET(
     const allEvents = await prismadb.eventCalendar.findMany({
       where: {
         storeId: params.storeId,
-        userId: userId?.id || "",
+        userId: user?.id || "",
       },
       orderBy: {
         end: "desc",
@@ -71,7 +75,7 @@ export async function GET(
      //Check nếu như đã điểm danh thì lọt vào đây
      if(latestEvent?.isEnd === true) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn đã kết thúc ngày hôm nay!" }),
+        JSON.stringify({ error: eventCalendarEndGetMessage.dayEnded }),
         { status: 400 }
       );
     }
@@ -87,7 +91,7 @@ export async function GET(
       } else {
         return new NextResponse(
           JSON.stringify({
-            error: `Điểm danh chưa kết thúc! Hãy quay lại vào lúc: ${
+            error: `${eventCalendarEndGetMessage.attendanceNotFinished}: ${
               latestEventEnd
                 ? format(
                     utcToZonedTime(
@@ -105,13 +109,13 @@ export async function GET(
       }
     } else {
       return new NextResponse(
-        JSON.stringify({ error: "Không có điểm danh nào diễn ra!" }),
+        JSON.stringify({ error: eventCalendarEndGetMessage.noAttendanceFound }),
         { status: 400 }
       );
     }
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get eventcalendarend." }),
+      JSON.stringify({ error: eventCalendarEndGetMessage.internalError }),
       { status: 500 }
     );
   }
@@ -121,28 +125,32 @@ export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const eventCalendarEndPostMessage = translateEventCalendarEndPost(LanguageToUse)
+
   try {
-    const userId = await currentUser();
     const body = await req.json();
     const { title, start, allDay, attendancestart, attendanceend } = body;
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required!" }),
+        JSON.stringify({ error: eventCalendarEndPostMessage.storeIdRequired }),
         { status: 400 }
       );
     }
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: eventCalendarEndPostMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role === UserRole.GUEST || userId.role === UserRole.USER) {
+    if (user.role === UserRole.GUEST || user.role === UserRole.USER) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền check attendance!" }),
+        JSON.stringify({ error: eventCalendarEndPostMessage.permissionDenied }),
         { status: 403 }
       );
     }
@@ -155,7 +163,7 @@ export async function POST(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: eventCalendarEndPostMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -165,11 +173,11 @@ export async function POST(
     today.setHours(today.getHours() + 7);
     const dayName = format(today, "EEEE"); // 'EEEE' là định dạng để lấy tên của thứ trong tiếng Anh
 
-    const dateWorkAttendance = userId?.daywork.join(", ");
+    const dateWorkAttendance = user?.daywork.join(", ");
 
     if (dateWorkAttendance && !dateWorkAttendance.includes(dayName)) {
       return new NextResponse(
-        JSON.stringify({ error: "Hôm nay không phải lịch làm của bạn!" }),
+        JSON.stringify({ error: eventCalendarEndPostMessage.notYourWorkingDay }),
         { status: 403 }
       );
     }
@@ -177,7 +185,7 @@ export async function POST(
     const allEvents = await prismadb.eventCalendar.findMany({
       where: {
         storeId: params.storeId,
-        userId: userId?.id || "",
+        userId: user?.id || "",
       },
       orderBy: {
         end: "desc",
@@ -212,7 +220,7 @@ export async function POST(
         storeId: params.storeId,
         attendancestart,
         attendanceend,
-        userId: userId?.id || "",
+        userId: user?.id || "",
       },
     });
     
@@ -227,7 +235,7 @@ export async function POST(
           { locale: viLocale }
         )
       : null;
-    await sendAttendanceEnd(userId?.email, userId?.name, emailTimeStart);
+    await sendAttendanceEnd(user?.email, user?.name, emailTimeStart);
 
     //Đây là khi check với totle ✅ là đc cộng lương nhưng tôi đã làm ở bên camera và nfc
     // const eventcalendar = await prismadb.eventCalendar.findUnique({
@@ -308,7 +316,7 @@ export async function POST(
     return NextResponse.json(eventCalendar);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error post eventcalendar." }),
+      JSON.stringify({ error: eventCalendarEndPostMessage.internalError }),
       { status: 500 }
     );
   }

@@ -18,6 +18,7 @@ export type BillboardColumn = {
   url: string;
   link: string | null;
   createdAt: Date;
+  language: string
 };
 
 export const columns: ColumnDef<BillboardColumn>[] = [
@@ -89,6 +90,7 @@ export const columns: ColumnDef<BillboardColumn>[] = [
         return (
           <ImageCellOne
             imageUrl={imageUrl}
+            languageToUse={row.original.language}
           />
         );
       }

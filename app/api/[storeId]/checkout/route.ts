@@ -5,6 +5,8 @@ import { stripe } from "@/lib/stripe";
 import prismadb from "@/lib/prismadb";
 import { formatter } from "@/lib/utils";
 import { StatusOrder } from "@prisma/client";
+import { currentUser } from "@/lib/auth";
+import { translateCheckout } from "@/translate/translate-api";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -31,9 +33,14 @@ export async function POST(
     colors,
   } = await req.json();
 
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const checkOutMessage = translateCheckout(LanguageToUse)
+
   if (!productIds || productIds.length === 0) {
     return new NextResponse(
-      JSON.stringify({ error: "Product ids are required" }),
+      JSON.stringify({ error: checkOutMessage.productIdsRequired }),
       { status: 400 }
     );
   }
@@ -250,7 +257,7 @@ export async function POST(
     if (outOfStockProducts.length > 0) {
       return new NextResponse(
         JSON.stringify({
-          error: `Số lượng không đủ cho sản phẩm: ${outOfStockProducts.join(
+          error: `${checkOutMessage.insufficientQuantity}: ${outOfStockProducts.join(
             ", "
           )}`,
         }),
@@ -264,7 +271,7 @@ export async function POST(
   const productQuantities: string[] = [];
   // Assume products is an array of product objects
   products.map((product) => {
-    productQuantities.push(`Sản phẩm:${product.heading}`);
+    productQuantities.push(`${checkOutMessage.product}:${product.heading}`);
   });
   line_items.push({
     quantity: 1,
@@ -272,9 +279,9 @@ export async function POST(
       currency: "VND",
       product_data: {
         name: productQuantities.toString(),
-        description: `Số tiền bảo hiểm là : ${formatter.format(
+        description: `${checkOutMessage.insuranceAmount}: ${formatter.format(
           warranty
-        )}, Số tiền chưa sale là : ${formatter.format(priceold)}`,
+        )}, ${checkOutMessage.amountNotOnSale}: ${formatter.format(priceold)}`,
       },
       unit_amount: pricesales,
     },

@@ -9,6 +9,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import LabelForm from "./name-form";
+import { getColorEditRow } from "@/translate/translate-dashboard";
 
 interface EditRowProps {
   data: string;
@@ -16,10 +17,15 @@ interface EditRowProps {
   id: string;
   value: string;
   field: "name" | "value";
+  language: string;
 }
 
-const EditRow: React.FC<EditRowProps> = ({ data, id, value, field, name }) => {
+const EditRow: React.FC<EditRowProps> = ({ data, id, value, field, name,language }) => {
   const [open, setOpen] = useState(false);
+
+  //language
+  const colorEditRowMessage = getColorEditRow(language)
+
   const handleClick = () => {
     setOpen(true);
   };
@@ -36,7 +42,7 @@ const EditRow: React.FC<EditRowProps> = ({ data, id, value, field, name }) => {
         {field === "value" ? (
           <div className="h-6 w-6 rounded-full" style={{ backgroundColor }} />
         ) : (
-          data || "Không tìm thấy!"
+          data || colorEditRowMessage.notFound
         )}
       </div>
 
@@ -44,10 +50,10 @@ const EditRow: React.FC<EditRowProps> = ({ data, id, value, field, name }) => {
         <SheetContent className="space-y-4">
           <SheetHeader>
             <SheetTitle>
-              Edit {field === "name" ? `${data}` : `${value}`}
+              {colorEditRowMessage.edit} {field === "name" ? `${data}` : `${value}`}
             </SheetTitle>
             <SheetDescription>
-              Edit an existing {field === "name" ? `${data}` : `${value}`}.
+            {colorEditRowMessage.editExisting} {field === "name" ? `${data}` : `${value}`}.
             </SheetDescription>
           </SheetHeader>
           <LabelForm
@@ -57,6 +63,7 @@ const EditRow: React.FC<EditRowProps> = ({ data, id, value, field, name }) => {
             name={name}
             value={value}
             field={field}
+            language={language}
           />
         </SheetContent>
       </Sheet>

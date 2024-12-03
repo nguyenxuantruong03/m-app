@@ -16,16 +16,30 @@ import FaceBookSVG from "@/public/svg/facebook";
 import MessangerSVG from "@/public/svg/messanger";
 import TiktokSVG from "@/public/svg/tiktok";
 import ZaloSVG from "@/public/svg/zalo";
+import { translateSocial } from "@/translate/translate-client";
 
-export default function SocialHint() {
+interface SocialHintProps {
+  loadingLanguage: boolean;
+  loading: boolean;
+  languageToUse: string;
+}
+
+export default function SocialHint({
+  loadingLanguage,
+  loading,
+  languageToUse,
+}: SocialHintProps) {
   const [isOpen, setIsOpen] = useState(false);
+
+  //language
+  const socialMessage = translateSocial(languageToUse);
 
   return (
     <div>
       <DropdownMenu onOpenChange={(open) => setIsOpen(open)}>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline">
-            <Hint label="Social">
+          <Button variant="destructive" disabled={loading || loadingLanguage}>
+            <Hint label={socialMessage}>
               {isOpen ? <ArrowDown /> : <MessageSquareWarning />}
             </Hint>
           </Button>

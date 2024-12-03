@@ -16,6 +16,7 @@ import { Input } from "../../../../../../components/ui/input";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
+import { translateSentEmailEditForm } from "@/translate/translate-dashboard";
 
 interface LabelFormPorps {
   data: string | null;
@@ -24,21 +25,8 @@ interface LabelFormPorps {
   description: string;
   field: "subject" | "description";
   setOpen: (open: boolean) => void;
+  language: string;
 }
-
-const formSchema = z.object({
-  subject: z
-    .string()
-    .min(1, { message: "Bắt buộc nhập name." })
-    .nullable()
-    .optional(),
-  description: z
-    .string()
-    .min(1, { message: "Bắt buộc nhập description." })
-    .nullable()
-    .optional(),
-});
-type FormValues = z.input<typeof formSchema>;
 
 const LabelForm: React.FC<LabelFormPorps> = ({
   data,
@@ -47,9 +35,28 @@ const LabelForm: React.FC<LabelFormPorps> = ({
   description,
   field,
   setOpen,
+  language,
 }) => {
   const params = useParams();
   const [loading, setLoading] = useState(false);
+
+  //language
+  const sentEmailEditFormMessage = translateSentEmailEditForm(language);
+
+  const formSchema = z.object({
+    subject: z
+      .string()
+      .min(1, { message: sentEmailEditFormMessage.requiredName })
+      .nullable()
+      .optional(),
+    description: z
+      .string()
+      .min(1, { message: sentEmailEditFormMessage.requiredDescription })
+      .nullable()
+      .optional(),
+  });
+  type FormValues = z.input<typeof formSchema>;
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -64,7 +71,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({
       await axios.patch(`/api/${params.storeId}/sentmailuser/${id}`, datas);
       setLoading(false);
       setOpen(false);
-      toast.success("Cập nhật thành công!");
+      toast.success(sentEmailEditFormMessage.updateSuccess);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -78,7 +85,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({
             .error
         );
       } else {
-        toast.error("Something went wrong.");
+        toast.error(sentEmailEditFormMessage.somethingWentWrong);
       }
     } finally {
       setLoading(false);
@@ -94,12 +101,13 @@ const LabelForm: React.FC<LabelFormPorps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Chủ đề <span className="text-red-600 pl-1">(*)</span>
+                  {sentEmailEditFormMessage.subject}{" "}
+                  <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <FormControl>
                   <Input
                     disabled={loading}
-                    placeholder="Nhập chủ đề ..."
+                    placeholder={sentEmailEditFormMessage.enterSubject}
                     {...field}
                     onChange={(e) => {
                       field.onChange(e);
@@ -120,12 +128,13 @@ const LabelForm: React.FC<LabelFormPorps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Mô tả thuế <span className="text-red-600 pl-1">(*)</span>
+                  {sentEmailEditFormMessage.taxDescription}{" "}
+                  <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <FormControl>
                   <Textarea
                     disabled={loading}
-                    placeholder="Nhập mô tả thuế ..."
+                    placeholder={sentEmailEditFormMessage.enterTaxDescription}
                     {...field}
                     onChange={(e) => {
                       field.onChange(e);
@@ -140,7 +149,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({
         )}
 
         <Button disabled={loading} className="ml-auto" type="submit">
-          Save Change
+          {sentEmailEditFormMessage.saveChange}
         </Button>
       </form>
     </Form>

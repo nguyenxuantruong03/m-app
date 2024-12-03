@@ -2,6 +2,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import Container from "@/components/ui/container";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { useEffect, useState } from "react";
+import { getError } from "@/translate/translate-client";
 
 
 export default function ErrorComponent({
@@ -9,7 +12,24 @@ export default function ErrorComponent({
 }: {
   reset: () => void;
 }) {
+  const user = useCurrentUser();
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
 
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+
+  const errorMessage = getError(languageToUse)
   return (
     <Container>
     <div className=" bg-gray-50 flex items-center mt-24">
@@ -19,20 +39,20 @@ export default function ErrorComponent({
             404
           </div>
           <p className="text-2xl md:text-3xl font-light leading-normal mb-8">
-            Xin Lỗi chúng tôi không thể, thực hiện đúng theo yêu cầu của bạn !
+            {errorMessage.sorryUnable}
           </p>
 
           <button
             className="p-4 bg-red-500 text-white rounded-xl hover:bg-green-600"
             onClick={() => reset()}
           >
-            Thử lại
+            {errorMessage.tryAgain}
           </button>
           <Link
             href="/"
             className="p-4 ml-5 inline text-sm font-medium leading-5 shadow-2xl text-white transition-all duration-400 border border-transparent rounded-lg focus:outline-none bg-green-600 active:bg-red-600 hover:bg-red-700"
           >
-            Back to homepage
+            {errorMessage.backToHomepage}
           </Link>
         </div>
         <div className="w-full lg:flex lg:justify-end mx-5 my-12 h-[200px] md:h-[300px] xl:h-[500px]">
@@ -41,7 +61,7 @@ export default function ErrorComponent({
             className=""
             height="300"
             width="300"
-            alt="Page not found"
+            alt={errorMessage.pageNotFound}
           />
         </div>
       </div>

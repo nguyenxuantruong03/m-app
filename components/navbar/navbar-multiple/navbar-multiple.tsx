@@ -46,6 +46,11 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import {
+  translateLogin,
+  translateMenuHintNavbarMultiple,
+  translateRegister,
+} from "@/translate/translate-client";
 
 type ListItemProps = React.ComponentPropsWithoutRef<"a"> & {
   title: string; // Assuming title is also a custom prop you want to pass
@@ -53,8 +58,12 @@ type ListItemProps = React.ComponentPropsWithoutRef<"a"> & {
   active?: string;
 };
 
-const NavbarMultiple = () => {
-  const userId = useCurrentUser();
+interface NavbarMultypleProps {
+  userId: any;
+  languageToUse: string;
+}
+
+const NavbarMultiple = ({ languageToUse, userId }: NavbarMultypleProps) => {
   const [open, setOpen] = useState(false);
   const params = useParams();
   const pathname = usePathname();
@@ -62,16 +71,22 @@ const NavbarMultiple = () => {
     ? params.storeId[0]
     : params.storeId;
 
-  const routes = route(storeId, pathname);
-  const staffs = staff(storeId, pathname);
-  const billboards = billboard(storeId, pathname);
-  const category = categories(storeId, pathname);
-  const parameters = parameter(storeId, pathname);
-  const products = product(storeId, pathname);
-  const orders = order(storeId, pathname);
-  const users = user(storeId, pathname);
-  const checkouts = checkout(storeId, pathname);
-  const settings = setting(storeId, pathname);
+  const routes = route(storeId, pathname, languageToUse);
+  const staffs = staff(storeId, pathname, languageToUse);
+  const billboards = billboard(storeId, pathname, languageToUse);
+  const category = categories(storeId, pathname, languageToUse);
+  const parameters = parameter(storeId, pathname, languageToUse);
+  const products = product(storeId, pathname, languageToUse);
+  const orders = order(storeId, pathname, languageToUse);
+  const users = user(storeId, pathname, languageToUse);
+  const checkouts = checkout(storeId, pathname, languageToUse);
+  const settings = setting(storeId, pathname, languageToUse);
+
+  //language
+  const loginMessage = translateLogin(languageToUse);
+  const registerMessage = translateRegister(languageToUse);
+  const menuHintNavbarMultipleMessage =
+    translateMenuHintNavbarMultiple(languageToUse);
 
   return (
     <>
@@ -80,26 +95,26 @@ const NavbarMultiple = () => {
         <div className={`mx-auto ${userId ? "p-2" : "p-2 xl:p-4"}`}>
           <div className="flex justify-between items-center">
             <div className="flex justify-start">
-            <Link href="/">
-              <div className="hidden xl:block">
-              <Image
-                  alt=""
-                  src="/images/logo-custom.png"
-                  width="155"
-                  height="30"
-                  className="rounded-sm hover:opacity-75 transition"
-                />
-              </div>
-              <div className="block xl:hidden">
-                <Image
-                  alt=""
-                  src="/images/logo-mini.png"
-                  width="45"
-                  height="30"
-                  className="rounded-sm bg-[#c3c3c3] dark:bg-slate-700 py-1.5 px-2.5 hover:opacity-75 transition"
-                />
-              </div>
-            </Link>
+              <Link href="/">
+                <div className="hidden xl:block">
+                  <Image
+                    alt=""
+                    src="/images/logo-custom.png"
+                    width="155"
+                    height="30"
+                    className="rounded-sm hover:opacity-75 transition"
+                  />
+                </div>
+                <div className="block xl:hidden">
+                  <Image
+                    alt=""
+                    src="/images/logo-mini.png"
+                    width="45"
+                    height="30"
+                    className="rounded-sm bg-[#c3c3c3] dark:bg-slate-700 py-1.5 px-2.5 hover:opacity-75 transition"
+                  />
+                </div>
+              </Link>
             </div>
 
             <nav className="hidden xl:flex space-x-1 z-[999]">
@@ -108,8 +123,8 @@ const NavbarMultiple = () => {
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
-                      {routeTitle.map((route) => (
-                        <>{route.mainicon}</>
+                      {routeTitle(languageToUse).map((route, index) => (
+                        <div key={index}>{route.mainicon}</div>
                       ))}
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
@@ -169,8 +184,8 @@ const NavbarMultiple = () => {
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
-                      {staffTitle.map((staff) => (
-                        <>{staff.mainicon}</>
+                      {staffTitle(languageToUse).map((staff, index) => (
+                        <div key={index}>{staff.mainicon}</div>
                       ))}
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
@@ -189,15 +204,15 @@ const NavbarMultiple = () => {
                             icon={staff.icon}
                           >
                             <span
-                                className={cn(
-                                  "text-md font-medium transition-colors hover:text-primary",
-                                  staff.active
-                                    ? "text-sky-500"
-                                    : "text-muted-foreground"
-                                )}
-                              >
-                                {staff.content}
-                              </span>
+                              className={cn(
+                                "text-md font-medium transition-colors hover:text-primary",
+                                staff.active
+                                  ? "text-sky-500"
+                                  : "text-muted-foreground"
+                              )}
+                            >
+                              {staff.content}
+                            </span>
                           </ListItem>
                         ))}
                       </ul>
@@ -210,8 +225,8 @@ const NavbarMultiple = () => {
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
-                      {billboardTitle.map((billboard) => (
-                        <>{billboard.mainicon}</>
+                      {billboardTitle(languageToUse).map((billboard, index) => (
+                        <div key={index}>{billboard.mainicon}</div>
                       ))}
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
@@ -271,8 +286,8 @@ const NavbarMultiple = () => {
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
-                      {categoryTitle.map((categories) => (
-                        <>{categories.mainicon}</>
+                      {categoryTitle(languageToUse).map((categories, index) => (
+                        <div key={index}>{categories.mainicon}</div>
                       ))}
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
@@ -291,15 +306,15 @@ const NavbarMultiple = () => {
                             icon={categories.icon}
                           >
                             <span
-                                className={cn(
-                                  "text-md font-medium transition-colors hover:text-primary",
-                                  categories.active
-                                    ? "text-sky-500"
-                                    : "text-muted-foreground"
-                                )}
-                              >
-                                {categories.content}
-                              </span>
+                              className={cn(
+                                "text-md font-medium transition-colors hover:text-primary",
+                                categories.active
+                                  ? "text-sky-500"
+                                  : "text-muted-foreground"
+                              )}
+                            >
+                              {categories.content}
+                            </span>
                           </ListItem>
                         ))}
                       </ul>
@@ -312,8 +327,8 @@ const NavbarMultiple = () => {
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
-                      {parameterTitle.map((parameter) => (
-                        <>{parameter.mainicon}</>
+                      {parameterTitle(languageToUse).map((parameter, index) => (
+                        <div key={index}>{parameter.mainicon}</div>
                       ))}
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
@@ -373,8 +388,8 @@ const NavbarMultiple = () => {
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
-                      {productTitle.map((product) => (
-                        <>{product.mainicon}</>
+                      {productTitle(languageToUse).map((product, index) => (
+                        <div key={index}>{product.mainicon}</div>
                       ))}
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
@@ -393,15 +408,15 @@ const NavbarMultiple = () => {
                             icon={product.icon}
                           >
                             <span
-                                className={cn(
-                                  "text-md font-medium transition-colors hover:text-primary",
-                                  product.active
-                                    ? "text-sky-500"
-                                    : "text-muted-foreground"
-                                )}
-                              >
-                                {product.content}
-                              </span>
+                              className={cn(
+                                "text-md font-medium transition-colors hover:text-primary",
+                                product.active
+                                  ? "text-sky-500"
+                                  : "text-muted-foreground"
+                              )}
+                            >
+                              {product.content}
+                            </span>
                           </ListItem>
                         ))}
                       </ul>
@@ -414,8 +429,8 @@ const NavbarMultiple = () => {
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
-                      {orderTitle.map((order) => (
-                        <>{order.mainicon}</>
+                      {orderTitle(languageToUse).map((order, index) => (
+                        <div key={index}>{order.mainicon}</div>
                       ))}
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
@@ -475,8 +490,8 @@ const NavbarMultiple = () => {
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
-                      {userTitle.map((user) => (
-                        <>{user.mainicon}</>
+                      {userTitle(languageToUse).map((user, index) => (
+                        <div key={index}>{user.mainicon}</div>
                       ))}
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
@@ -536,8 +551,8 @@ const NavbarMultiple = () => {
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
-                      {checkoutTitle.map((checkout) => (
-                        <>{checkout.mainicon}</>
+                      {checkoutTitle(languageToUse).map((checkout, index) => (
+                        <div key={index}>{checkout.mainicon}</div>
                       ))}
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
@@ -597,7 +612,7 @@ const NavbarMultiple = () => {
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
-                      {settingTitle.map((setting) => (
+                      {settingTitle(languageToUse).map((setting) => (
                         <>{setting.mainicon}</>
                       ))}
                     </NavigationMenuTrigger>
@@ -655,7 +670,7 @@ const NavbarMultiple = () => {
                   >
                     <span className="flex items-center 2xl:text-base lg:text-sm">
                       <CircleUser className="h-4 w-4 lg:h-5 lg:w-5 2xl:size-4 mr-1" />
-                      Login
+                      {loginMessage}
                     </span>
                   </Link>
                   <Link
@@ -664,7 +679,7 @@ const NavbarMultiple = () => {
                   >
                     <span className="flex items-center 2xl:text-base lg:text-sm">
                       <UserRoundPlus className="h-4 w-4 lg:h-5 lg:w-5 2xl:size-4 mr-1" />
-                      Register
+                      {registerMessage}
                     </span>
                   </Link>
                 </div>
@@ -719,12 +734,12 @@ const NavbarMultiple = () => {
             <div className="pt-5 pb-6 px-5">
               <div className="flex xl:hidden items-center justify-between">
                 <Image
-                    alt=""
-                    src="/images/logo-mini.png"
-                    width="45"
-                    height="30"
-                    className="rounded-sm bg-[#c3c3c3] dark:bg-slate-700 py-1.5 px-2.5"
-                  />
+                  alt=""
+                  src="/images/logo-mini.png"
+                  width="45"
+                  height="30"
+                  className="rounded-sm bg-[#c3c3c3] dark:bg-slate-700 py-1.5 px-2.5"
+                />
                 <div className="-mr-2">
                   <button
                     type="button"
@@ -734,27 +749,27 @@ const NavbarMultiple = () => {
                     <span className="sr-only">Close menu</span>
                     {/* Heroicon name: outline/x */}
                     <svg
-                    className="h-6 w-6"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                  </svg>
+                      className="h-6 w-6"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 6h16M4 12h16M4 18h16"
+                      />
+                    </svg>
                   </button>
                 </div>
               </div>
               <div className="mt-6">
                 {/* Navbar của responsive */}
                 <nav className="grid gap-y-8">
-                  <NavbarMultipleResponsive />
+                  <NavbarMultipleResponsive languageToUse={languageToUse} />
                 </nav>
               </div>
             </div>
@@ -764,42 +779,42 @@ const NavbarMultiple = () => {
                   href="#"
                   className="flex items-center text-base font-medium text-slate-700 dark:text-slate-300 hover:text-gray-700"
                 >
-                  Enterprise
+                  {menuHintNavbarMultipleMessage.name1}
                   <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
                   className="flex items-center text-base font-medium text-slate-700 dark:text-slate-300 hover:text-gray-700"
                 >
-                  Blog
+                  {menuHintNavbarMultipleMessage.name2}
                   <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
                   className="flex items-center text-base font-medium text-slate-700 dark:text-slate-300 hover:text-gray-700"
                 >
-                  Help Center
+                  {menuHintNavbarMultipleMessage.name3}
                   <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
                   className="flex items-center text-base font-medium text-slate-700 dark:text-slate-300 hover:text-gray-700"
                 >
-                  Guides
+                  {menuHintNavbarMultipleMessage.name4}
                   <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
                   className="flex items-center text-base font-medium text-slate-700 dark:text-slate-300 hover:text-gray-700"
                 >
-                  Security
+                  {menuHintNavbarMultipleMessage.name5}
                   <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
                   className="flex items-center text-base font-medium text-slate-700 dark:text-slate-300 hover:text-gray-700"
                 >
-                  Events
+                  {menuHintNavbarMultipleMessage.name6}
                   <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
               </div>

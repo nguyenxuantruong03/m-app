@@ -24,12 +24,36 @@ import { Favorite, User as Userdata } from "@prisma/client";
 import FormImageCredential from "./form/form-infomation/form-imageCredential";
 import Image from "next/image";
 import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
+import { getFavorite } from "@/actions/client/favorite/get-favorite";
+import toast from "react-hot-toast";
+import {
+  getGenderFemaleMessage,
+  getGenderMaleMessage,
+  getGenderOtherMessage,
+  getToastError,
+  translateAddress,
+  translateAvatar,
+  translateAvatarDescription,
+  translateBirthday,
+  translateDeleteAccount,
+  translateEditAvatar,
+  translateFavorite,
+  translateFullName,
+  translateGender,
+  translateImageFrame,
+  translateNotChange,
+  translateNotUpdated,
+  translateOtherAddress,
+  translatePhoneNumber,
+  translateProfileIntro,
+  translateUsername,
+} from "@/translate/translate-client";
 
 interface InfoUserProps {
   user: Userdata;
-  favorite: Favorite[];
   imageCredential: string;
   isCustomWarehouse?: boolean;
+  languageToUse: string;
 }
 
 interface InfoUser {
@@ -56,13 +80,53 @@ interface AccountItem {
 
 const InfoUser: React.FC<InfoUserProps> = ({
   user,
-  favorite,
   imageCredential,
   isCustomWarehouse,
+  languageToUse,
 }) => {
   const [open, setOpen] = useState(false);
   const [alertGuestModal, setAlertGuestModal] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
+  const [favorite, setFavorite] = useState<Favorite[]>([]);
+  const [loadingFavorite, setLoadingFavorite] = useState(false);
+
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const notUpdatedMessage = translateNotUpdated(languageToUse);
+  const avatarMessage = translateAvatar(languageToUse);
+  const imageFrameMessage = translateImageFrame(languageToUse);
+  const fullNameMessage = translateFullName(languageToUse);
+  const userNameMessage = translateUsername(languageToUse);
+  const profileIntroMessage = translateProfileIntro(languageToUse);
+  const genderMessage = translateGender(languageToUse);
+  const phoneNumberMessage = translatePhoneNumber(languageToUse);
+  const birthdayMessage = translateBirthday(languageToUse);
+  const favoriteMessage = translateFavorite(languageToUse);
+  const addressMessage = translateAddress(languageToUse);
+  const otheraddressMessage = translateOtherAddress(languageToUse);
+  const deleteAccountMessage = translateDeleteAccount(languageToUse);
+  const genderMaleMessage = getGenderMaleMessage(languageToUse);
+  const genderFemaleMessage = getGenderFemaleMessage(languageToUse);
+  const genderOtherMessage = getGenderOtherMessage(languageToUse);
+  const notChangeMessage = translateNotChange(languageToUse);
+  const editAvatarMessage = translateEditAvatar(languageToUse);
+  const avatarDescriptionMessage = translateAvatarDescription(languageToUse);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoadingFavorite(true);
+        const favorite = await getFavorite(languageToUse);
+        setFavorite(favorite);
+      } catch (error) {
+        console.error(error);
+        toast.error(toastErrorMessage);
+      } finally {
+        setLoadingFavorite(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -106,7 +170,7 @@ const InfoUser: React.FC<InfoUserProps> = ({
     user?.image;
 
   const formatDate = (dateString: Date | null) => {
-    if (!dateString) return "Chưa cập nhật"; // Return a default message if date is null
+    if (!dateString) return notUpdatedMessage; // Return a default message if date is null
     const formattedDate = format(dateString, "dd/MM/yyyy"); // Safe to use dateString here as it's guaranteed to be non-null
     return formattedDate;
   };
@@ -116,7 +180,7 @@ const InfoUser: React.FC<InfoUserProps> = ({
       name: (
         <span className="flex items-center mb-2">
           <Contact className="h-4 w-4 mr-1" />
-          Ảnh đại diện
+          {avatarMessage}
         </span>
       ),
       state: (
@@ -139,7 +203,7 @@ const InfoUser: React.FC<InfoUserProps> = ({
       name: (
         <span className="flex items-center">
           <Frame className="h-4 w-4 mr-1" />
-          Khung ảnh
+          {imageFrameMessage}
         </span>
       ),
       state: (
@@ -160,10 +224,10 @@ const InfoUser: React.FC<InfoUserProps> = ({
       name: (
         <span className="flex items-center">
           <Contact className="h-4 w-4 mr-1" />
-          Họ và tên
+          {fullNameMessage}
         </span>
       ),
-      state: user.name || "Chưa cập nhật",
+      state: user.name || notUpdatedMessage,
       icons: (
         <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
       ),
@@ -173,10 +237,10 @@ const InfoUser: React.FC<InfoUserProps> = ({
       name: (
         <span className="flex items-center">
           <SquareUser className="h-4 w-4 mr-1" />
-          Tên người dùng
+          {userNameMessage}
         </span>
       ),
-      state: user.nameuser || "Chưa cập nhật",
+      state: user.nameuser || notUpdatedMessage,
       icons: (
         <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
       ),
@@ -189,16 +253,16 @@ const InfoUser: React.FC<InfoUserProps> = ({
           Email
         </span>
       ),
-      state: user.email || "Chưa cập nhật",
+      state: user.email || notUpdatedMessage,
     },
     {
       name: (
         <span className="flex items-center">
           <Captions className="h-4 w-4 mr-1" />
-          Giới thiệu trang cá nhân
+          {profileIntroMessage}
         </span>
       ),
-      state: user.bio || "Chưa cập nhật",
+      state: user.bio || notUpdatedMessage,
       icons: (
         <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
       ),
@@ -208,7 +272,7 @@ const InfoUser: React.FC<InfoUserProps> = ({
       name: (
         <span className="flex items-center">
           <Users className="h-4 w-4 mr-1" />
-          Giới tính
+          {genderMessage}
         </span>
       ),
       state: (
@@ -244,13 +308,13 @@ const InfoUser: React.FC<InfoUserProps> = ({
                 />
               ) : null}
               {user.gender === "Male"
-                ? "Nam"
+                ? genderMaleMessage
                 : user.gender === "Female"
-                ? "Nữ"
-                : "Khác"}
+                ? genderFemaleMessage
+                : genderOtherMessage}
             </span>
           ) : (
-            "Chưa cập nhật"
+            notUpdatedMessage
           )}
         </>
       ),
@@ -263,10 +327,10 @@ const InfoUser: React.FC<InfoUserProps> = ({
       name: (
         <span className="flex items-center">
           <Phone className="h-4 w-4 mr-1" />
-          Số điện thoại
+          {phoneNumberMessage}
         </span>
       ),
-      state: user.phonenumber || "Chưa cập nhật",
+      state: user.phonenumber || notUpdatedMessage,
       icons: (
         <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
       ),
@@ -276,10 +340,10 @@ const InfoUser: React.FC<InfoUserProps> = ({
       name: (
         <span className="flex items-center">
           <Cake className="h-4 w-4 mr-1" />
-          Sinh nhật
+          {birthdayMessage}
         </span>
       ),
-      state: formatDate(user?.dateofbirth) || "Chưa cập nhật",
+      state: formatDate(user?.dateofbirth) || notUpdatedMessage,
       icons: (
         <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
       ),
@@ -289,17 +353,17 @@ const InfoUser: React.FC<InfoUserProps> = ({
       name: (
         <span className="flex items-center">
           <Heart className="h-4 w-4 mr-1" />
-          Ưa thích
+          {favoriteMessage}
         </span>
       ),
       state:
         user.favorite.length > 0
           ? user.favorite
               .map((item: string) =>
-                item === "phobien" ? "Phổ biến" : item || "Chưa thay đổi"
+                item === "phobien" ? "Phổ biến" : item || notChangeMessage
               )
               .join(", ") + "."
-          : ["Chưa thay đổi"],
+          : [notChangeMessage],
 
       icons: (
         <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
@@ -310,10 +374,10 @@ const InfoUser: React.FC<InfoUserProps> = ({
       name: (
         <span className="flex items-center">
           <MapPin className="h-4 w-4 mr-1" />
-          Địa chỉ
+          {addressMessage}
         </span>
       ),
-      state: user.address || "Chưa cập nhật",
+      state: user.address || notUpdatedMessage,
       icons: (
         <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
       ),
@@ -323,10 +387,10 @@ const InfoUser: React.FC<InfoUserProps> = ({
       name: (
         <span className="flex items-center">
           <MapPin className="h-4 w-4 mr-1" />
-          Địa chỉ khác
+          {otheraddressMessage}
         </span>
       ),
-      state: user.addressother || "Chưa cập nhật",
+      state: user.addressother || notUpdatedMessage,
       icons: (
         <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
       ),
@@ -336,10 +400,10 @@ const InfoUser: React.FC<InfoUserProps> = ({
       name: (
         <span className="flex items-center">
           <Trash2 className="h-4 w-4 mr-1" />
-          Xóa tài khoản
+          {deleteAccountMessage}
         </span>
       ),
-      state: user.email || "Chưa cập nhật",
+      state: user.email || notUpdatedMessage,
       icons: (
         <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
       ),
@@ -373,6 +437,7 @@ const InfoUser: React.FC<InfoUserProps> = ({
           isCustomWarehouse={isCustomWarehouse}
           name={user.name}
           nameuser={user.nameuser}
+          loadingFavorite={loadingFavorite}
           bio={user.bio}
           gender={user.gender}
           phonenumber={user.phonenumber}
@@ -385,6 +450,7 @@ const InfoUser: React.FC<InfoUserProps> = ({
           role={user.role}
           userId={user?.id || ""}
           setAlertGuestModal={setAlertGuestModal}
+          languageToUse={languageToUse}
         >
           {content}
         </SheetInfomation>
@@ -398,6 +464,7 @@ const InfoUser: React.FC<InfoUserProps> = ({
       <AlertGuestModal
         isOpen={alertGuestModal}
         onClose={() => setAlertGuestModal(false)}
+        languageToUse={languageToUse}
       />
       {open && (
         <>
@@ -415,7 +482,7 @@ const InfoUser: React.FC<InfoUserProps> = ({
             >
               <div className="flex items-center justify-between">
                 <span className="text-lg font-semibold text-foreground break-all line-clamp-2 text-white">
-                  Chỉnh sửa ảnh đại diện{" "}
+                  {editAvatarMessage}
                 </span>
                 <span
                   onClick={() => setOpen(false)}
@@ -425,10 +492,12 @@ const InfoUser: React.FC<InfoUserProps> = ({
                 </span>
               </div>
               <div className="text-sm text-muted-foreground break-all line-clamp-3">
-                Ảnh đại diện giúp mọi người nhận biết bạn dễ dàng hơn qua các
-                bài viết, bình luận, tin nhắn...
+                {avatarDescriptionMessage}
               </div>
-              <FormImageCredential setOpen={setOpen} />
+              <FormImageCredential
+                setOpen={setOpen}
+                languageToUse={languageToUse}
+              />
             </div>
           </div>
         </>

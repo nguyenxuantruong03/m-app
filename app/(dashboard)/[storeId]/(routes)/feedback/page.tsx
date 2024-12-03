@@ -2,10 +2,11 @@ import prismadb from "@/lib/prismadb";
 import FeedBackClient from "./components/client";
 import { FeedBackColumn } from "./components/columns";
 import { UserRole } from "@prisma/client";
-import { currentRole } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 import { RoleGate } from "@/components/auth/role-gate";
 
 const FeedBackPage = async ({ params }: { params: { storeId: string } }) => {
+  const user = await currentUser()
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN || role === UserRole.STAFF;
   const showFeedBackRole = isRole;
@@ -25,7 +26,8 @@ const FeedBackPage = async ({ params }: { params: { storeId: string } }) => {
     content: item.content,
     createdAt: item.createdAt,
     email: item.user.email,
-    name: item.user.name
+    name: item.user.name,
+    language: user?.language || "vi"
   }));
   return (
     <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>

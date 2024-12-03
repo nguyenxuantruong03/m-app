@@ -3,54 +3,60 @@ import { currentUser } from "@/lib/auth";
 
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
+import { translateText } from "@/translate/translate-client";
+import { translateBillboardDelete, translatebillboardGet, translateBillboardPost } from "@/translate/translate-api";
 
 export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  const body = await req.json();
+  const { label, imagebillboard, description } = body;
+
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const billboardPostMessage = translateBillboardPost(LanguageToUse)
   try {
-    const userId = await currentUser();
-
-    const body = await req.json();
-
-    const { label, imagebillboard,description } = body;
-
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: billboardPostMessage.name1 }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền để tạo billboard!" }),
+        JSON.stringify({ error: billboardPostMessage.name2 }),
         { status: 403 }
       );
     }
 
     if (!label) {
-      return new NextResponse(JSON.stringify({ error: "Label is required!" }), {
+      return new NextResponse(JSON.stringify({ error: billboardPostMessage.name3 }), {
         status: 400,
       });
     }
 
     if (!description) {
-      return new NextResponse(JSON.stringify({ error: "Description is required!" }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: billboardPostMessage.name4 }),
+        {
+          status: 400,
+        }
+      );
     }
 
     if (!imagebillboard || !imagebillboard.length) {
       return new NextResponse(
-        JSON.stringify({ error: "Images billboard is required!" }),
+        JSON.stringify({ error: billboardPostMessage.name5 }),
         { status: 400 }
       );
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required!" }),
+        JSON.stringify({ error: billboardPostMessage.name6 }),
         { status: 400 }
       );
     }
@@ -63,7 +69,7 @@ export async function POST(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: billboardPostMessage.name7 }),
         { status: 405 }
       );
     }
@@ -98,14 +104,14 @@ export async function POST(
         storeId: params.storeId,
         newChange: changes,
         type: "CREATEBILLBOARD",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(billboard);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error post billboard." }),
+      JSON.stringify({ error: billboardPostMessage.name8 }),
       { status: 500 }
     );
   }
@@ -115,10 +121,18 @@ export async function GET(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  const { searchParams } = new URL(req.url);
+  const language = searchParams.get("language") || "vi"; // Mặc định là "vi" nếu không có language
+  
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const billboardGetMessage = translatebillboardGet(LanguageToUse)
+
   try {
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required!" }),
+        JSON.stringify({ error: billboardGetMessage.name1 }),
         { status: 400 }
       );
     }
@@ -135,10 +149,56 @@ export async function GET(
       },
     });
 
+    const translations = await Promise.all(
+      billboards.map(async (billboard) => {
+        try {
+          // Dịch label và description của billboard
+          const translatedLabelText = await translateText(
+            billboard.label || "",
+            language
+          );
+          const translatedDescriptionText = await translateText(
+            billboard.description || "",
+            language
+          );
+
+          // Dịch cho các imagebillboard
+          const translatedImageBillboards = await Promise.all(
+            billboard.imagebillboard.map(async (imageBillboard) => {
+              const translatedImageLabelText = await translateText(
+                imageBillboard.label || "",
+                language
+              );
+              const translatedImageDescriptionText = await translateText(
+                imageBillboard.description || "",
+                language
+              );
+
+              return {
+                ...imageBillboard,
+                label: translatedImageLabelText,
+                description: translatedImageDescriptionText,
+              };
+            })
+          );
+
+          return {
+            ...billboard,
+            label: translatedLabelText,
+            description: translatedDescriptionText,
+            imagebillboard: translatedImageBillboards,
+          };
+        } catch (error) {
+          console.error("Error while translating billboard:", error);
+          return billboard; // Trả về dữ liệu gốc nếu có lỗi
+        }
+      })
+    );
+
     return NextResponse.json(billboards);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get billboard." }),
+      JSON.stringify({ error: billboardGetMessage.name2 }),
       { status: 500 }
     );
   }
@@ -148,29 +208,33 @@ export async function DELETE(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const billboardDeleteMessage = translateBillboardDelete(LanguageToUse) 
+
   try {
-    const userId = await currentUser();
     const body = await req.json();
 
     const { ids } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy userId!" }),
+        JSON.stringify({ error: billboardDeleteMessage.name1 }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền để xóa billboard!" }),
+        JSON.stringify({ error: billboardDeleteMessage.name2 }),
         { status: 403 }
       );
     }
 
     if (!ids || ids.length === 0) {
       return new NextResponse(
-        JSON.stringify({ error: "Mảng IDs không được trống!" }),
+        JSON.stringify({ error: billboardDeleteMessage.name3 }),
         { status: 400 }
       );
     }
@@ -183,7 +247,7 @@ export async function DELETE(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: billboardDeleteMessage.name4 }),
         { status: 405 }
       );
     }
@@ -201,10 +265,10 @@ export async function DELETE(
     });
 
     // Create an array of changes for logging
-    const changesArray = billboardsToDelete.map(billboard => ({
+    const changesArray = billboardsToDelete.map((billboard) => ({
       label: billboard.label,
       description: billboard.description,
-      valueImage: billboard.imagebillboard.map(image => image.url),
+      valueImage: billboard.imagebillboard.map((image) => image.url),
     }));
 
     // Delete all the billboards in one operation
@@ -220,16 +284,19 @@ export async function DELETE(
     await prismadb.system.create({
       data: {
         storeId: params.storeId,
-        delete: changesArray.map(change => `DeleteLabel: ${change.label}, ImageBillboard: ${change.valueImage}, Descriotion: ${change.description}`),
+        delete: changesArray.map(
+          (change) =>
+            `DeleteLabel: ${change.label}, ImageBillboard: ${change.valueImage}, Descriotion: ${change.description}`
+        ),
         type: "DELETEMANYBILLBOARD",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
-    return NextResponse.json({ message: "Xóa thành công!" });
+    return NextResponse.json({ message: billboardDeleteMessage.name5 });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete billboards." }),
+      JSON.stringify({ error: billboardDeleteMessage.name6 }),
       { status: 500 }
     );
   }

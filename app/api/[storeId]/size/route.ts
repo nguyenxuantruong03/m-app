@@ -3,45 +3,55 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
+import { translateSizeDelete, translateSizeGet, translateSizePost } from "@/translate/translate-api";
 
 export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const sizePostMessage = translateSizePost(LanguageToUse);
   try {
-    const userId = await currentUser();
     const body = await req.json();
     const { name, value } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: sizePostMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền tạo mới size!" }),
+        JSON.stringify({ error: sizePostMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: sizePostMessage.nameRequired }),
+        {
+          status: 400,
+        }
+      );
     }
 
     if (!value) {
-      return new NextResponse(JSON.stringify({ error: "Value is required!" }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: sizePostMessage.valueRequired }),
+        {
+          status: 400,
+        }
+      );
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required!" }),
+        JSON.stringify({ error: sizePostMessage.storeIdRequired }),
         { status: 400 }
       );
     }
@@ -54,7 +64,7 @@ export async function POST(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: sizePostMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -81,14 +91,14 @@ export async function POST(
         storeId: params.storeId,
         type: "CREATESIZE",
         newChange: changes,
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(size);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error post size." }),
+      JSON.stringify({ error: sizePostMessage.internalError }),
       { status: 500 }
     );
   }
@@ -98,10 +108,14 @@ export async function GET(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const sizeGetMessage = translateSizeGet(LanguageToUse);
   try {
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required!" }),
+        JSON.stringify({ error: sizeGetMessage.storeIdRequired }),
         { status: 400 }
       );
     }
@@ -115,7 +129,7 @@ export async function GET(
     return NextResponse.json(size);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get size." }),
+      JSON.stringify({ error: sizeGetMessage.internalError }),
       { status: 500 }
     );
   }
@@ -125,29 +139,31 @@ export async function DELETE(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const sizeDeleteMessage = translateSizeDelete(LanguageToUse)
   try {
-    const userId = await currentUser();
     const body = await req.json();
-
     const { ids } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy userId!" }),
+        JSON.stringify({ error: sizeDeleteMessage.userNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xóa size!" }),
+        JSON.stringify({ error: sizeDeleteMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!ids || ids.length === 0) {
       return new NextResponse(
-        JSON.stringify({ error: "Mảng IDs không được trống!" }),
+        JSON.stringify({ error: sizeDeleteMessage.idsArrayNotEmpty }),
         { status: 400 }
       );
     }
@@ -160,7 +176,7 @@ export async function DELETE(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: sizeDeleteMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -175,9 +191,9 @@ export async function DELETE(
     });
 
     // Create an array of changes for logging
-    const changesArray = SizeToDelete.map(size => ({
+    const changesArray = SizeToDelete.map((size) => ({
       name: size.name,
-      value: size.value
+      value: size.value,
     }));
 
     // Delete all the size in one operation
@@ -193,16 +209,18 @@ export async function DELETE(
     await prismadb.system.create({
       data: {
         storeId: params.storeId,
-        delete: changesArray.map(change => `DeleteName: ${change.name}, Value: ${change.value}`),
+        delete: changesArray.map(
+          (change) => `DeleteName: ${change.name}, Value: ${change.value}`
+        ),
         type: "DELETEMANY-SIZE",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
-    return NextResponse.json({ message: "Xóa thành công!" });
+    return NextResponse.json({ message: sizeDeleteMessage.deleteSuccess });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete category." }),
+      JSON.stringify({ error: sizeDeleteMessage.internalError }),
       { status: 500 }
     );
   }

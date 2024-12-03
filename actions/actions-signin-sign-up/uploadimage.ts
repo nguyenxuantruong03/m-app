@@ -5,11 +5,13 @@ import { UpdateImageSchema } from "@/schemas";
 import prismadb from "@/lib/prismadb";
 import { getUserById } from "@/data/user";
 import { currentUser } from "@/lib/auth";
+import { getUploadImageAction } from "@/translate/translate-client";
 
-export const image = async (values: z.infer<typeof UpdateImageSchema>) => {
+export const image = async (values: z.infer<typeof UpdateImageSchema>,languageToUse: string) => {
   const validatedFields = UpdateImageSchema.safeParse(values);
+  const uploadImageActionMessage = getUploadImageAction(languageToUse);
   if (!validatedFields.success) {
-    return { error: "Không hợp lệ!" };
+    return { error: uploadImageActionMessage.invalid };
   }
   const { imageCredential } = validatedFields.data;
 
@@ -26,8 +28,8 @@ export const image = async (values: z.infer<typeof UpdateImageSchema>) => {
       }
     });
   } else {
-    return { error: "User not found!" };
+    return { error: uploadImageActionMessage.userNotFound };
   }
 
-  return { success: "Thành công!" };
+  return { success: uploadImageActionMessage.success };
 };

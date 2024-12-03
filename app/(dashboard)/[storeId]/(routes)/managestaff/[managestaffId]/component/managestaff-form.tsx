@@ -45,41 +45,9 @@ import viLocale from "date-fns/locale/vi";
 import MutipleSelectOption from "./mutiple-select";
 import Recommend from "@/components/ui/recommend";
 import { ImageCredential } from "@/types/type";
+import { getDayNameForm, getManageStaffSchemaForm, getManageStaffsForm } from "@/translate/translate-dashboard";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 
-const formSchema = z.object({
-  email: z.string().min(1, { message: "Bắt buộc nhập email" }),
-  name: z.string().min(1, { message: "Bắt buộc nhập name" }),
-  numberCCCD: z.string().refine((value) => /^[0-9]+$/.test(value), {
-    message: "Vui lòng nhập số CMND hợp lệ chỉ có số.",
-  }),
-  phonenumber: z.string().refine((value) => /^[0-9]+$/.test(value), {
-    message: "Vui lòng nhập số điện thoại hợp lệ chỉ có số.",
-  }),
-  issued: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  imageCredential: z.object({ url: z.string() }).array(),
-  gender: z.string().min(1, { message: "Bắt buộc chọn 1 gender." }),
-  degree: z.string().min(1, { message: "Bắt buộc chọn 1 degree." }),
-  maritalStatus: z
-    .string()
-    .min(1, { message: "Bắt buộc chọn 1 maritalStatus." }),
-  workingTime: z.string().min(1, { message: "Bắt buộc chọn 1 workingTime." }),
-  isCitizen: z.boolean().default(false).optional(),
-  dateRange: z.date().nullable(),
-  dateofbirth: z.union([z.date().nullable(), z.string().nullable()]),
-  timestartwork: z
-    .string()
-    .min(1, { message: "Hãy nhập giờ bắt đầu làm việc." }),
-  urlimageCheckAttendance: z.optional(
-    z.string().min(2, { message: "Nhập ít nhất 2 ký tự." })
-  ),
-  codeNFC: z.optional(z.string().min(2, { message: "Nhập ít nhất 2 ký tự." })),
-  image: z.optional(z.string().min(0, { message: "Hãy chọn 1 ảnh." })),
-  daywork: z.array(z.string()),
-  createdAt: z.date().nullable(),
-});
-
-type ManageStaffFormValues = z.infer<typeof formSchema>;
 type Option = {
   value: string;
   label: string;
@@ -88,11 +56,13 @@ type Option = {
 interface ManageStaffFormProps {
   initialData: User | null;
   imageCredential: ImageCredential[] | null;
+  language: string;
 }
 
 export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
   initialData,
   imageCredential,
+  language,
 }) => {
   const params = useParams();
   const router = useRouter();
@@ -100,9 +70,49 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
   const [loading, setLoading] = useState(false);
   const [selectedOption, setSelectedOption] = useState<Option[]>([]);
 
-  const title = "Edit";
-  const description = "Edit";
-  const action = "Save changes";
+  //language
+  const manageStaffSchemaForm = getManageStaffSchemaForm(language)
+  const manageStaffsForm = getManageStaffsForm(language)
+
+  const title = manageStaffSchemaForm.edit;
+  const description = manageStaffSchemaForm.edit;
+  const action = manageStaffSchemaForm.saveChanges;
+
+  const formSchema = z.object({
+    email: z.string().min(1, { message: manageStaffSchemaForm.requiredEmail }),
+    name: z.string().min(1, { message: manageStaffSchemaForm.requiredName }),
+    numberCCCD: z.string().refine((value) => /^[0-9]+$/.test(value), {
+      message: manageStaffSchemaForm.validCmnd,
+    }),
+    phonenumber: z.string().refine((value) => /^[0-9]+$/.test(value), {
+      message: manageStaffSchemaForm.validPhoneNumber,
+    }),
+    issued: z.string().min(2, { message: manageStaffSchemaForm.minLength2 }),
+    imageCredential: z.object({ url: z.string() }).array(),
+    gender: z.string().min(1, { message: manageStaffSchemaForm.requiredGender }),
+    degree: z.string().min(1, { message: manageStaffSchemaForm.requiredDegree }),
+    maritalStatus: z
+      .string()
+      .min(1, { message: manageStaffSchemaForm.requiredMaritalStatus }),
+    workingTime: z.string().min(1, { message: manageStaffSchemaForm.requiredWorkingTime }),
+    isCitizen: z.boolean().default(false).optional(),
+    dateRange: z.date().nullable(),
+    dateofbirth: z.union([z.date().nullable(), z.string().nullable()]),
+    timestartwork: z
+      .string()
+      .min(1, { message: manageStaffSchemaForm.enterStartWorkTime }),
+    urlimageCheckAttendance: z.optional(
+      z.string().min(2, { message: manageStaffSchemaForm.minLength2 })
+    ),
+    codeNFC: z.optional(
+      z.string().min(2, { message: manageStaffSchemaForm.minLength2 })
+    ),
+    image: z.optional(z.string().min(0, { message: manageStaffSchemaForm.chooseImage })),
+    daywork: z.array(z.string()),
+    createdAt: z.date().nullable(),
+  });
+
+  type ManageStaffFormValues = z.infer<typeof formSchema>;
 
   const form = useForm<ManageStaffFormValues>({
     resolver: zodResolver(formSchema),
@@ -136,27 +146,17 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
     },
   });
   useEffect(() => {
-    const dayNames: { [key: string]: string } = {
-      Monday: "Thứ 2",
-      Tuesday: "Thứ 3",
-      Wednesday: "Thứ 4",
-      Thursday: "Thứ 5",
-      Friday: "Thứ 6",
-      Saturday: "Thứ 7",
-      Sunday: "Chủ Nhật",
-    };
-
     setSelectedOption(
       (initialData?.daywork ?? []).map((daywork: string) => ({
         value: daywork,
-        label: dayNames[daywork], // Sử dụng đối tượng dayNames để ánh xạ tên ngày
+        label:  getDayNameForm(daywork, language), // Sử dụng đối tượng dayNames để ánh xạ tên ngày
       }))
     );
   }, [initialData]);
 
   const onSubmit = async (data: ManageStaffFormValues) => {
     if (data.imageCredential.length > 1) {
-      toast.error("Chỉ chọn 1 đại diện hãy xóa các ảnh khác!");
+      toast.error(manageStaffsForm.selectOneRepresentative);
       return;
     }
     try {
@@ -171,7 +171,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
       if (initialData) {
         message = (
           <p>
-            ManageStaff <span className="font-bold">{data.name}</span> updated.
+            {manageStaffsForm.manageStaff} <span className="font-bold">{data.name}</span> {manageStaffsForm.updated}.
           </p>
         );
       }
@@ -182,7 +182,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
           <div className="flex items-center justify-between text-sm">
             <p className="text-green-500 font-bold flex">
               <Check className="w-5 h-5 rounded-full bg-green-500 text-white mx-1" />
-              ManageStaff updated!
+              {manageStaffsForm.manageStaffUpdated}
             </p>
             <span className="text-gray-500">
               {data?.createdAt
@@ -232,7 +232,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               onClick={() => toast.dismiss(t.id)}
               className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
-              Close
+              {manageStaffsForm.close}
             </button>
           </div>
         </div>
@@ -252,7 +252,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
             .error
         );
       } else {
-        toast.error("Something went wrong.");
+        toast.error(manageStaffsForm.somethingWentWrong);
       }
     } finally {
       setLoading(false);
@@ -267,7 +267,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
       );
       router.refresh();
       router.push(`/${params.storeId}/managestaff`);
-      toast.success("Color deleted.");
+      toast.success(manageStaffsForm.colorDeleted);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -283,7 +283,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
-          "Make sure you removed all categories using this billboard first."
+          manageStaffsForm.somethingWentWrong
         );
       }
     } finally {
@@ -299,6 +299,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
         onClose={() => setOpen(false)}
         onConfirm={onDelete}
         loading={loading}
+        languageToUse={language}
       />
       {/* update and create */}
       <div className="flex items-center justify-between">
@@ -328,8 +329,8 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex space-x-3 items-center">
-                  Hình ảnh <span className="text-red-600 pl-1">(*)</span>
-                  <Recommend message="Đây là hình ảnh nhân viên ảnh phông xanh." />
+                  {manageStaffsForm.image} <span className="text-red-600 pl-1">(*)</span>
+                  <Recommend message={manageStaffsForm.employeeImage} />
                 </FormLabel>
                 <FormControl>
                   <ImageUpload
@@ -346,7 +347,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                       if (updatedImages.length <= 1) {
                         field.onChange(updatedImages);
                       } else {
-                        toast.error("Chỉ chọn 1 ảnh đại diện rõ nét.");
+                        toast.error(manageStaffsForm.selectOneClearImage);
                       }
                     }}
                     onRemove={(url) => {
@@ -356,6 +357,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                       field.onChange(updatedImages);
                     }}
                     maxFiles={1}
+                    language={language}
                   />
                 </FormControl>
                 <FormMessage />
@@ -369,8 +371,8 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex space-x-3 items-center">
-                  Hình ảnh <span className="text-red-600 pl-1">(*)</span>
-                  <Recommend message="Đây là hình ảnh nhân viên ảnh phông xanh." />
+                  {manageStaffsForm.image} <span className="text-red-600 pl-1">(*)</span>
+                  <Recommend message={manageStaffsForm.employeeImage} />
                 </FormLabel>
                 <FormControl>
                   <ImageUpload
@@ -383,6 +385,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                       field.onChange(""); // Xóa giá trị bằng chuỗi rỗng
                     }}
                     maxFiles={1} // Chỉ cho phép một tệp
+                    language={language}
                   />
                 </FormControl>
                 <FormMessage />
@@ -397,15 +400,15 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Số điện thoại <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Số điện thoại của nhân viên tối đa 10 só." />
+                  {manageStaffsForm.phoneNumber} <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message={manageStaffsForm.phoneNumberMaxLength} />
                   </FormLabel>
                   <FormControl>
                     <Input
                       type="tel"
                       pattern="0[0-9]{9,10}"
                       disabled={loading}
-                      placeholder="095348..."
+                      placeholder={manageStaffsForm.examplePhoneNumber}
                       {...field}
                     />
                   </FormControl>
@@ -420,15 +423,15 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Số CCDD <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Nhập tối đa 12 số giông với trong CCCD" />
+                  {manageStaffsForm.idCardNumber} <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message={manageStaffsForm.idCardNumberMaxLength} />
                   </FormLabel>
                   <FormControl>
                     <Input
                       type="tel"
                       pattern="^0\d{8}(\d{3})?$"
                       disabled={loading}
-                      placeholder="0582356234..."
+                      placeholder={manageStaffsForm.exampleIdCardNumber}
                       {...field}
                     />
                   </FormControl>
@@ -443,13 +446,13 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Tên <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Tên nhân viên theo giấy khai sinh." />
+                  {manageStaffsForm.name} <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message={manageStaffsForm.nameDescription} />
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Họ và tên ..."
+                      placeholder={manageStaffsForm.exampleName}
                       {...field}
                     />
                   </FormControl>
@@ -464,8 +467,8 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Sinh nhật <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Dựa vào giấy khai sinh ghi chính xác sinh nhật để ưa đãi cho nhân viên." />
+                  {manageStaffsForm.birthday} <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message={manageStaffsForm.birthdayDescription} />
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -498,9 +501,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Thời gian bắt đầu làm việc{" "}
+                    {manageStaffsForm.workingStartTime}
                     <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Quan trọng: Liên quan đến điểm danh của nhân viên sẽ bắt đầu điểm danh vào mấy giờ." />
+                    <Recommend message={manageStaffsForm.workingStartTimeDescription} />
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -524,14 +527,14 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    CCCD cấp ở đâu{" "}
+                  {manageStaffsForm.idCardIssued}
                     <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Nơi căn cứ công dân được cấp. VD: Bộ cộng An Quận Bình Tân." />
+                    <Recommend message={manageStaffsForm.idCardIssuedDescription} />
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Bộ Công An Quận ..."
+                      placeholder={manageStaffsForm.exampleIdCardIssuer}
                       {...field}
                     />
                   </FormControl>
@@ -546,9 +549,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Ngày hết hạn CMND{" "}
+                  {manageStaffsForm.idCardExpirationDate}
                     <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Thời gian Căn cước công dân hết hạn năm ở dưới ảnh hoặc dưới nơi cập." />
+                    <Recommend message={manageStaffsForm.idCardExpirationDescription} />
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -581,8 +584,8 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Giới tính <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Lựa chọn giới tính nhân viên." />
+                  {manageStaffsForm.gender} <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message={manageStaffsForm.genderDescription}/>
                   </FormLabel>
                   <Select
                     disabled={loading}
@@ -594,7 +597,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                       <SelectTrigger>
                         <SelectValue
                           defaultValue={field.value}
-                          placeholder="Select Gender"
+                          placeholder={manageStaffsForm.selectGender}
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -616,8 +619,8 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Bằng cấp <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Bắt buộc nhân viên cung cấp lương sẽ phù thuộc vào bằng cấp có được." />
+                    {manageStaffsForm.degree} <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message={manageStaffsForm.degreeDescription} />
                   </FormLabel>
                   <Select
                     disabled={loading}
@@ -629,7 +632,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                       <SelectTrigger>
                         <SelectValue
                           defaultValue={field.value}
-                          placeholder="Select Degree"
+                          placeholder={manageStaffsForm.selectDegree}
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -650,9 +653,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Tính trạng hôn nhân{" "}
+                  {manageStaffsForm.maritalStatus}
                     <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Theo dõi tình trạng hôn nhân của nhân viên." />
+                    <Recommend message={manageStaffsForm.maritalStatusDescription} />
                   </FormLabel>
                   <Select
                     disabled={loading}
@@ -664,7 +667,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                       <SelectTrigger>
                         <SelectValue
                           defaultValue={field.value}
-                          placeholder="Select Marital Status"
+                          placeholder={manageStaffsForm.maritalStatusSelect}
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -685,9 +688,9 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Thời gian làm việc{" "}
+                  {manageStaffsForm.workingTime}
                     <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Lựa chọn loại công việc bán thời gian hay fulltime." />
+                    <Recommend message={manageStaffsForm.workingTimeDescription} />
                   </FormLabel>
                   <Select
                     disabled={loading}
@@ -699,7 +702,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                       <SelectTrigger>
                         <SelectValue
                           defaultValue={field.value}
-                          placeholder="Select Working Time"
+                          placeholder={manageStaffsForm.workingTimeSelect}
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -720,14 +723,14 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Qr code nhân viên{" "}
+                  {manageStaffsForm.employeeQrCode}
                     <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Mã này sẽ được cấp bởi quản lý để nhân viên điểm danh." />
+                    <Recommend message={manageStaffsForm.qrCodeDescription} />
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Mã qr ..."
+                      placeholder={manageStaffsForm.qrCodeExample} 
                       {...field}
                     />
                   </FormControl>
@@ -741,13 +744,13 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    NFC Nhân viên <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Nhân viên sẽ được tích hợp NFC vào QrCode." />
+                  {manageStaffsForm.employeeNfc} <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message={manageStaffsForm.nfcDescription} />
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Mã NFC ..."
+                      placeholder={manageStaffsForm.nfPlaceholder}
                       {...field}
                     />
                   </FormControl>
@@ -770,10 +773,10 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel className="flex space-x-3 items-center">
-                      Định danh{" "}
-                      <Recommend message="Xác nhận thông tin nhân viên đã cập nhật đầy đủ thông tin hay chưa." />
+                    {manageStaffsForm.identityVerification}
+                      <Recommend message={manageStaffsForm.identityVerificationDescription} />
                     </FormLabel>
-                    <FormDescription>Tài khoản xác thực</FormDescription>
+                    <FormDescription>{manageStaffsForm.accountVerification}</FormDescription>
                   </div>
                 </FormItem>
               )}
@@ -785,8 +788,8 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex space-x-3 items-center">
-                  Thứ làm việc <span className="text-red-600 pl-1">(*)</span>
-                  <Recommend message="Lưu ý: Chọn đúng thứ ngày làm việc để nhân viên điểm danh. Nếu chọn sai nhân viên không thể điểm danh." />
+                {manageStaffsForm.workingDay} <span className="text-red-600 pl-1">(*)</span>
+                  <Recommend message={manageStaffsForm.workingDayNote}  />
                 </FormLabel>
                 <FormControl>
                   <MutipleSelectOption
@@ -794,6 +797,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                     setSelectedOption={setSelectedOption}
                     field={field}
                     disabled={loading}
+                    language={language}
                   />
                 </FormControl>
                 <FormMessage />

@@ -23,6 +23,25 @@ import { PackageModal } from "@/components/(client)/modal/packageProdct-modal";
 import { ReturnProduct } from "@/components/(client)/modal/returnProduct-modal";
 import StatusProduct from "../../components/ui/statusProduct";
 import "../../components/style.css";
+import getWareHouse from "@/actions/client/warehouse";
+import {
+  getToastError,
+  translateInsufficientStock,
+  getProductNotFoundMessage,
+  translateColorCategory,
+  translateSizeCategory,
+  translateReturnRequestInfo,
+  translateResolveOrderFirst,
+  translateOrderIssueContact,
+  translateRate,
+  translateReturnRefund,
+  translateContactStore,
+  translateBuyAgain,
+  translateTotalAmount,
+  translateNoOrder,
+  translateWaitingForConfirmation,
+  translateProcessing,
+} from "@/translate/translate-client";
 
 const ComfirmationProduct = () => {
   const router = useRouter();
@@ -35,6 +54,39 @@ const ComfirmationProduct = () => {
   const [openReview, setOpenReview] = useState(false);
   const [openReturnProduct, setOpenReturnProduct] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order>();
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+
+  const toastErrorMessage = getToastError(languageToUse);
+  const productNotFoundMessage = getProductNotFoundMessage(languageToUse);
+  const insufficientStockMessage = translateInsufficientStock(languageToUse);
+  const returnRequestInfoMessage = translateReturnRequestInfo(languageToUse);
+  const resolveOrderFirstMessage = translateResolveOrderFirst(languageToUse);
+  const orderIssueContactMessage = translateOrderIssueContact(languageToUse);
+  const totalAmountMessage = translateTotalAmount(languageToUse);
+  const noOrderMessage = translateNoOrder(languageToUse);
+  const RateMessage = translateRate(languageToUse);
+  const returnRefundMessage = translateReturnRefund(languageToUse);
+  const contactStoreMessage = translateContactStore(languageToUse);
+  const buyAgaginMessage = translateBuyAgain(languageToUse);
+  const colorCategoryMessage = translateColorCategory(languageToUse);
+  const sizeCategoryMessage = translateSizeCategory(languageToUse);
+  const waitingForConfirmationMessage =
+    translateWaitingForConfirmation(languageToUse);
+  const processingMessage = translateProcessing(languageToUse);
 
   // Function to handle opening the review modal with a specific order
   const handleOpenReview = (order: Order) => {
@@ -51,13 +103,10 @@ const ComfirmationProduct = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/warehouse`
-        );
-
-        setData(response.data);
+        const warehouse = await getWareHouse(languageToUse);
+        setData(warehouse);
       } catch (error) {
-        toast.error("Fetch data error!");
+        toast.error(toastErrorMessage);
       } finally {
         setLoading(false);
       }
@@ -67,14 +116,14 @@ const ComfirmationProduct = () => {
 
   useEffect(() => {
     if (openReturnProduct) {
-      document.body.style.overflow = 'hidden'; // Ngăn chặn cuộn
+      document.body.style.overflow = "hidden"; // Ngăn chặn cuộn
     } else {
-      document.body.style.overflow = 'auto'; // Khôi phục cuộn
+      document.body.style.overflow = "auto"; // Khôi phục cuộn
     }
 
     // Clean up function to reset overflow when component unmounts
     return () => {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = "auto";
     };
   }, [openReturnProduct]);
 
@@ -134,12 +183,12 @@ const ComfirmationProduct = () => {
         if (user?.role === "GUEST" || !user?.id) return;
 
         if (!orderItem.size && !orderItem.color) {
-          toast.error("Không tìm thấy số lượng của sản phẩm!");
+          toast.error(insufficientStockMessage);
           return;
         }
 
         if (!orderItem.product) {
-          toast.error("Không tìm thấy sản phẩm!");
+          toast.error(productNotFoundMessage);
           return;
         }
 
@@ -192,7 +241,8 @@ const ComfirmationProduct = () => {
                 existingCartItem.id,
                 existingCartItem.quantity + 1,
                 orderItem.warranty || null,
-                user.id
+                user.id,
+                languageToUse
               );
             } else {
               // Add the product to the cart
@@ -207,7 +257,7 @@ const ComfirmationProduct = () => {
             }
           }
         } catch (error) {
-          toast.error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
+          toast.error(toastErrorMessage);
         } finally {
           router.push("/cart");
           setLoading(false);
@@ -246,7 +296,7 @@ const ComfirmationProduct = () => {
             <Image src="/images/no-order.png" alt="" width="108" height="98" />
           </div>
           <div className="flex justify-center my-2">
-            <p className="text-neutral-500">Chưa có đơn hàng</p>
+            <p className="text-neutral-500">{noOrderMessage}</p>
           </div>
         </>
       )}
@@ -312,7 +362,9 @@ const ComfirmationProduct = () => {
                       key={orderItem.id}
                       className="flex items-center cursor-pointer"
                       onClick={() =>
-                        router.push(`/warehouse/package-product/confirmation-product/${order.id}`)
+                        router.push(
+                          `/warehouse/package-product/confirmation-product/${order.id}`
+                        )
                       }
                     >
                       {openReturnProduct && (
@@ -323,6 +375,7 @@ const ComfirmationProduct = () => {
                                 order={selectedOrder}
                                 onClose={() => setOpenReturnProduct(false)}
                                 user={user}
+                                languageToUse={languageToUse}
                               />
                             </div>
                           </div>
@@ -335,6 +388,7 @@ const ComfirmationProduct = () => {
                             isOpen={openReview}
                             order={selectedOrder}
                             onClose={() => setOpenReview(false)}
+                            languageToUse={languageToUse}
                           />
                         </>
                       )}
@@ -343,6 +397,7 @@ const ComfirmationProduct = () => {
                         order={matchingItemData || undefined}
                         onClose={() => setOpen(false)}
                         user={user}
+                        languageToUse={languageToUse}
                       />
                       <div className="w-3/12 md:w-1/6 lg:w-1/12">
                         {typeof imageUrl === "string" ? (
@@ -367,16 +422,18 @@ const ComfirmationProduct = () => {
                           {orderItem.product?.heading}
                         </p>
                         <p className="flex text-xs text-gray-500 dark:text-gray-400">
-                          Phân loại màu:
+                          {colorCategoryMessage}
                           <div
                             className="h-4 w-4 rounded-full ml-2"
                             style={{ backgroundColor: selectedColor }}
                           />
                         </p>
                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                          Phân loại kích thước: {selectedSize}
+                          {sizeCategoryMessage} {selectedSize}
                         </p>
-                        <p className="text-slate-900 dark:text-slate-200">x{orderItem.quantity}</p>
+                        <p className="text-slate-900 dark:text-slate-200">
+                          x{orderItem.quantity}
+                        </p>
                       </div>
                       <div className="w-4/12 md:w-1/5 text-end text-slate-900 dark:text-slate-200">
                         {formatter.format(getPriceMatchColorandSize())}
@@ -394,16 +451,19 @@ const ComfirmationProduct = () => {
                   {order.status === "Cho_xac_nhan" && (
                     <StatusProduct
                       updatedAt={order.updatedAt}
-                      titleStatus="Chờ xác nhận"
+                      titleStatus={waitingForConfirmationMessage}
                       classTitleStatus="text-yellow-600"
                       noneTitleStatus={true}
-                      status="ĐANG XỬ LÝ"
+                      status={processingMessage}
+                      languageToUse={languageToUse}
                       classStatus="text-red-500"
                     />
                   )}
                 </div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-slate-900 dark:text-slate-200 text-sm md:text-base">Thành tiền:</span>{" "}
+                  <span className="text-slate-900 dark:text-slate-200 text-sm md:text-base">
+                    {totalAmountMessage}
+                  </span>{" "}
                   <Currency value={calculateTotalPrice(order)} />
                 </div>
               </div>
@@ -418,12 +478,10 @@ const ComfirmationProduct = () => {
                     <div className="flex">
                       <div className="w-3/4">
                         <p className="text-xs text-gray-400 dark:text-slate-200">
-                          Nếu hàng nhận được có vấn đề, bạn có thể gửi yêu cầu
-                          Trả hàng/Hoàn tiền trước trước 3 ngày kể từ ngày bạn
-                          nhận.
+                          {returnRequestInfoMessage}
                         </p>
                         <p className="text-xs text-gray-400">
-                          Giải quyết đơn hàng trước{" "}
+                          {resolveOrderFirstMessage}
                           {
                             <FormatDate
                               subtractiontime={true}
@@ -433,7 +491,7 @@ const ComfirmationProduct = () => {
                           .
                         </p>
                         <p className="text-xs text-gray-400 dark:text-slate-200">
-                          Có vấn đề về đơn hàng liên hệ số điện thoại{" "}
+                          {orderIssueContactMessage}
                           <Link href="tel:0352261103" className="underline">
                             0352261103
                           </Link>{" "}
@@ -445,7 +503,7 @@ const ComfirmationProduct = () => {
                           className="bg-red-500 text-slate-900 dark:text-slate-200 dark:hover:text-slate-900"
                           onClick={() => handleOpenReview(order)}
                         >
-                          Đánh giá
+                          {RateMessage}
                         </Button>
                       </div>
                     </div>
@@ -460,7 +518,7 @@ const ComfirmationProduct = () => {
                           className="bg-transparent text-slate-900 dark:text-slate-200 dark:border px-1 dark:border-white text-xs md:text-sm"
                           onClick={() => handleOpenReturnProduct(order)}
                         >
-                          Trả Hàng/Hoàn Tiền
+                          {returnRefundMessage}
                         </Button>
                       </div>
                     </div>
@@ -474,7 +532,9 @@ const ComfirmationProduct = () => {
                           variant="outline"
                           className="bg-transparent text-slate-900 dark:text-slate-200 dark:border dark:border-white text-xs md:text-sm"
                         >
-                          <Link href="tel:0352261103">Liên hệ cửa hàng</Link>
+                          <Link href="tel:0352261103">
+                            {contactStoreMessage}
+                          </Link>
                         </Button>
                       </div>
                     </div>
@@ -489,7 +549,7 @@ const ComfirmationProduct = () => {
                           className="bg-transparent text-slate-900 dark:text-slate-200 dark:border dark:border-white text-xs md:text-sm"
                           onClick={() => handleBuyAgainClick(order)}
                         >
-                          Mua lại
+                          {buyAgaginMessage}
                         </Button>
                       </div>
                     </div>

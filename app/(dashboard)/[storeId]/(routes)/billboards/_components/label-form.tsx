@@ -15,6 +15,7 @@ import { Button } from "../../../../../../components/ui/button";
 import { Input } from "../../../../../../components/ui/input";
 import toast from "react-hot-toast";
 import { useState } from "react";
+import { getBillboardLabelFormSheet } from "@/translate/translate-dashboard";
 
 interface LabelFormPorps {
   data: string;
@@ -24,14 +25,8 @@ interface LabelFormPorps {
   field: string;
   imagebillboard: { url: string }[];
   setOpen: (open: boolean) => void;
+  language: string;
 }
-
-const formSchema = z.object({
-  label: z.string().min(2, { message: "Nhập ít nhất 2 ký tự." }),
-  description: z.string().min(2, { message: "Nhập ít nhất 2 ký tự." }),
-  imagebillboard: z.object({ url: z.string() }).array(),
-});
-type FormValues = z.input<typeof formSchema>;
 
 const LabelForm: React.FC<LabelFormPorps> = ({
   data,
@@ -40,10 +35,26 @@ const LabelForm: React.FC<LabelFormPorps> = ({
   setOpen,
   description,
   field,
-  label
+  label,
+  language,
 }) => {
   const params = useParams();
   const [loading, setLoading] = useState(false);
+
+  //language
+  const billboardLabelFormSheetMessage = getBillboardLabelFormSheet(language);
+
+  const formSchema = z.object({
+    label: z
+      .string()
+      .min(2, { message: billboardLabelFormSheetMessage.minLength }),
+    description: z
+      .string()
+      .min(2, { message: billboardLabelFormSheetMessage.minLength }),
+    imagebillboard: z.object({ url: z.string() }).array(),
+  });
+  type FormValues = z.input<typeof formSchema>;
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -59,7 +70,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({
       await axios.patch(`/api/${params.storeId}/billboards/${id}`, datas);
       setLoading(false);
       setOpen(false);
-      toast.success("Cập nhật thành công!");
+      toast.success(billboardLabelFormSheetMessage.updateSuccess);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -73,7 +84,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({
             .error
         );
       } else {
-        toast.error("Something went wrong.");
+        toast.error(billboardLabelFormSheetMessage.somethingWentWrong);
       }
     } finally {
       setLoading(false);
@@ -89,12 +100,15 @@ const LabelForm: React.FC<LabelFormPorps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Tên sản phẩm <span className="text-red-600 pl-1">(*)</span>
+                  {billboardLabelFormSheetMessage.productName}{" "}
+                  <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <FormControl>
                   <Input
                     disabled={loading}
-                    placeholder="Nhập tên ..."
+                    placeholder={
+                      billboardLabelFormSheetMessage.enterProductName
+                    }
                     {...field}
                   />
                 </FormControl>
@@ -111,12 +125,15 @@ const LabelForm: React.FC<LabelFormPorps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Mô tả <span className="text-red-600 pl-1">(*)</span>
+                  {billboardLabelFormSheetMessage.description}{" "}
+                  <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <FormControl>
                   <Input
                     disabled={loading}
-                    placeholder="Nhập mô tả ..."
+                    placeholder={
+                      billboardLabelFormSheetMessage.enterDescription
+                    }
                     {...field}
                   />
                 </FormControl>
@@ -127,7 +144,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({
         )}
 
         <Button disabled={loading} className="ml-auto" type="submit">
-          Save Change
+          {billboardLabelFormSheetMessage.saveChanges}
         </Button>
       </form>
     </Form>

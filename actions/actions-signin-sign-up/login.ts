@@ -24,16 +24,78 @@ import { getTwoFactorConfirmationbyUserId } from "@/data/two-factor-confirmation
 import { format } from "date-fns";
 import bcrypt from "bcryptjs";
 import { UAInfo } from "@/providers/device-info-provider";
+import {
+  getInvalidEmailMessage,
+  getToastError,
+  translateAccountBannedTime,
+  translateAccountPermanentlyBannedPolicyViolation,
+  translateDeviceExists,
+  translateDeviceInfoNotFound,
+  translateDeviceLimitExceeded,
+  translateDeviceNotFound,
+  translateDeviceSaveError,
+  translateDeviceSearchError,
+  translateEmailNotConfirmedOrInvalid,
+  translateIncorrectPassword,
+  translateIncorrectVerificationCode,
+  translateInvalid,
+  translateInvalidEmailOrPassword,
+  translateTooManyVerificationRequests,
+  translateValidInfo,
+  translateVerificationCodeExpired,
+  translateVerificationCodeNotFound,
+} from "@/translate/translate-client";
 
 export const login = async (
   values: z.infer<typeof LoginSchema>,
   callbackUrl?: string | null,
-  deviceInfo?: UAInfo | null
+  deviceInfo?: UAInfo | null,
+  languageToUse?: string
 ) => {
+  //languages
+  const accountPermanentlyBannedPolicyViolationMessage =
+    translateAccountPermanentlyBannedPolicyViolation(languageToUse || "vi");
+  const invalidEmailMessage = getInvalidEmailMessage(languageToUse || "vi");
+  const emailNotConfirmedOrInvalidMessage = translateEmailNotConfirmedOrInvalid(
+    languageToUse || "vi"
+  );
+  const invalidMessage = translateInvalid(languageToUse!);
+  const incorrectPasswordMessage = translateIncorrectPassword(
+    languageToUse || "vi"
+  );
+  const validInfoMessage = translateValidInfo(languageToUse || "vi");
+  const deviceLimitExceededMessage = translateDeviceLimitExceeded(
+    languageToUse || "vi"
+  );
+  const verificationCodeNotFoundMessage = translateVerificationCodeNotFound(
+    languageToUse || "vi"
+  );
+  const incorrectVerificationCodeMessage = translateIncorrectVerificationCode(
+    languageToUse || "vi"
+  );
+  const verificationCodeExpiredMessage = translateVerificationCodeExpired(
+    languageToUse || "vi"
+  );
+  const deviceExitsMessage = translateDeviceExists(languageToUse || "vi");
+  const deviceSearchErrorMessage = translateDeviceSearchError(
+    languageToUse || "vi"
+  );
+  const deviceNotFoundMessage = translateDeviceNotFound(languageToUse || "vi");
+  const deviceSaveErrorMessage = translateDeviceSaveError(
+    languageToUse || "vi"
+  );
+  const deviceInfoNotFoundMessage = translateDeviceInfoNotFound(
+    languageToUse || "vi"
+  );
+  const invalidEmailOrPasswordMessage = translateInvalidEmailOrPassword(
+    languageToUse || "vi"
+  );
+  const toastErrorMessage = getToastError(languageToUse || "vi");
+
   //safeParse: Phân tích an toàn
   const validatedFields = LoginSchema.safeParse(values);
   if (!validatedFields.success) {
-    return { error: "Không hợp lệ!" };
+    return { error: invalidMessage };
   }
 
   const { email, password, code } = validatedFields.data;
@@ -42,18 +104,17 @@ export const login = async (
 
   if (existingUser?.isbanforever) {
     return {
-      error:
-        "Tài khoản của bạn đã bị ban vĩnh viên do vi phạm chính sách có thể liên hệ chúng tôi để biết thêm lý do 0352261103.",
+      error: accountPermanentlyBannedPolicyViolationMessage,
     };
   }
 
   if (!existingUser?.email) {
-    return { error: "Email không hợp lệ!" };
+    return { error: `${invalidEmailMessage}!` };
   }
 
   if (!existingUser?.emailVerified) {
     return {
-      error: "Bạn chưa xác nhận email hoặc email của bạn không hợp lệ!",
+      error: emailNotConfirmedOrInvalidMessage,
     };
   }
 
@@ -81,7 +142,7 @@ export const login = async (
   }
 
   if (!passwordsMatch) {
-    return { error: "Mật khẩu không đúng!" };
+    return { error: incorrectPasswordMessage };
   }
 
   if (existingUser?.role !== "GUEST" && existingUser?.id) {
@@ -96,7 +157,7 @@ export const login = async (
           ? format(banExpiresAt, "dd/MM/yyyy '-' HH:mm:ss a")
           : "";
         return {
-          error: `Tài khoản của bạn đã bị khóa. Bạn có thể đăng nhập lại sau ${daysLeft} ngày. Để biết thêm thông tin liên hệ ADMIN.`,
+          error: translateAccountBannedTime(languageToUse || "vi", daysLeft),
         };
       } else {
         // Ban period has expired, unban the user
@@ -138,7 +199,7 @@ export const login = async (
         verificationtoken.email,
         verificationtoken.token
       );
-      return { success: "Thông tin chính xác!" };
+      return { success: validInfoMessage };
     }
 
     // Dùng để kiểm tra thiết bị xem có quá giới hạn không
@@ -157,7 +218,7 @@ export const login = async (
     const totalDeviceCount = existingDeviceLimitDevice.length;
     if (totalDeviceCount > effectiveLimitDevice) {
       return {
-        error: `Xin lỗi! Người dùng đã giới hạn thiết bị đăng nhập. Hiện tại đã quá nhiều thiết bị đăng nhập vào tài khoản này.`,
+        error: deviceLimitExceededMessage,
       };
     }
 
@@ -170,17 +231,17 @@ export const login = async (
         );
 
         if (!twoFactorToken) {
-          return { error: "Không tìm thấy mã xác thực,hãy thử lại!" };
+          return { error: verificationCodeNotFoundMessage };
         }
 
         if (twoFactorToken.token !== code) {
-          return { error: "Mã xác thực không chính xác,hãy thử lại!" };
+          return { error: incorrectVerificationCodeMessage };
         }
 
         const hasExpired = new Date(twoFactorToken.expires) < new Date();
 
         if (hasExpired) {
-          return { error: "Mã xác thực đã hết hạn!" };
+          return { error: verificationCodeExpiredMessage };
         }
         await prismadb.twoFactorToken.delete({
           where: { id: twoFactorToken.id },
@@ -220,7 +281,10 @@ export const login = async (
             ? format(banUser.banExpires, "dd/MM/yyyy '-' HH:mm:ss a")
             : "";
           return {
-            error: `Bạn đã gửi lại mã xác thực quá nhiều lần và đã bị khóa tài khoản trong 24 giờ. Hãy quay lại vào lúc ${timeBan}.`,
+            error: translateTooManyVerificationRequests(
+              languageToUse || "vi",
+              timeBan
+            ),
           };
         } else {
           // Tăng resendCount lên 1 và lưu lại vào cơ sở dữ liệu
@@ -306,14 +370,14 @@ export const login = async (
                 const cutString = deviceInfo.ua.substring(start + 1, end);
 
                 if (deviceInfo.ua.includes(cutString)) {
-                  console.error("Thiết bị đã tồn tại.");
+                  console.error(deviceExitsMessage);
                   deviceExists = true;
                 }
               } else {
-                console.error("Lỗi tìm kiếm thiết bị.");
+                console.error(deviceSearchErrorMessage);
               }
             } else {
-              console.error("Không tìm thấy ua trên thiết bị này.");
+              console.error(deviceNotFoundMessage);
             }
           });
 
@@ -346,7 +410,7 @@ export const login = async (
           }
         }
       } catch (errors) {
-        console.error("Lỗi lưu thiết bị vào dữ liệu.", errors);
+        console.error(deviceSaveErrorMessage, errors);
       }
     };
 
@@ -360,15 +424,15 @@ export const login = async (
         saveDeviceInfoResult,
       ]);
     } else {
-      console.error("DeviceInfo không tìm thấy!");
+      console.error(deviceInfoNotFoundMessage);
     }
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CredentialsSignin":
-          return { error: "Email hoặc mật khẩu không đúng!" };
+          return { error: invalidEmailOrPasswordMessage };
         default:
-          return { error: "Something went wrong" };
+          return { error: toastErrorMessage };
       }
     }
     throw error;

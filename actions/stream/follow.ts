@@ -2,8 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { followUser, unfollowUser } from "@/lib/stream/follow-service";
+import { getToastError } from "@/translate/translate-client";
 
-export const onFollow = async (id: string) => {
+export const onFollow = async (id: string, languageToUse: string) => {
+  //language
+  const toastErrorMessage = getToastError(languageToUse)
+
   try {
     const followedUser = await followUser(id);
 
@@ -13,11 +17,13 @@ export const onFollow = async (id: string) => {
     }
     return followedUser;
   } catch {
-    throw new Error("Interal Error");
+    throw new Error(toastErrorMessage);
   }
 };
 
-export const onUnfollow = async (id: string) => {
+export const onUnfollow = async (id: string, languageToUse: string) => {
+  //language
+  const toastErrorMessage = getToastError(languageToUse)
   try {
     const unfollowedUser = await unfollowUser(id);
 
@@ -27,6 +33,6 @@ export const onUnfollow = async (id: string) => {
     }
     return unfollowedUser;
   } catch {
-    throw new Error("Interal Error");
+    throw new Error(toastErrorMessage);
   }
 };

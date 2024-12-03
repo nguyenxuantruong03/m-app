@@ -1,55 +1,113 @@
 import Modal from "@/components/ui/modal";
+import {
+  translateApplicableProducts,
+  translateEquivalentProductExchange,
+  translateExchangeForDefect,
+  translateExtendedServiceDetails,
+  translateExtendedWarranty,
+  translateFallDamageUpperCase,
+  translateNoWarranty,
+  translateOfficialWarrantyFeeUpperCase,
+  translateOneToOneCheck,
+  translateProcessingTimes,
+  translateProductProtection,
+  translateServiceSummary,
+  translateTradeInDiscount,
+  translateVIPWarrantyUpperCase,
+  translateWarrantyApplicable,
+  translateWarrantyBenefitsAndServices,
+  translateWarrantyCondition,
+  translateWarrantyNotice,
+  translateWarrantyPeriods,
+  translateWarrantyTime,
+} from "@/translate/translate-client";
 
 interface SeeDetailProps {
-    isOpen: boolean;
-    onClose: () => void;
-    message?: string;
-    title?: string
+  isOpen: boolean;
+  onClose: () => void;
+  message?: string;
+  title?: string;
+  languageToUse: string;
 }
 
-const SeeDetailModal:React.FC<SeeDetailProps> = ({ isOpen, onClose,message,title }) => {
-    return ( 
-        <Modal
-            title={title || "Bảo vệ sản phẩm toàn diện với dịch vụ bảo hành mở rộng"}
-            description={message || "Tông hợp dịch vụ"}
-            isOpen={isOpen}
-            onClose={onClose}
-        >
-            <div >
-                <h1 className="text-center font-bold text-2xl">Chi tiết dịch vụ mở rộng</h1>
+const SeeDetailModal: React.FC<SeeDetailProps> = ({
+  isOpen,
+  onClose,
+  message,
+  title,
+  languageToUse,
+}) => {
+  //language
+  const productProtectionMessage = translateProductProtection(languageToUse);
+  const serviceSummaryMessage = translateServiceSummary(languageToUse);
+  const extendedServiceDetailMessage =
+    translateExtendedServiceDetails(languageToUse);
+  const VIPWarranty = translateVIPWarrantyUpperCase(languageToUse);
+  const applicableProductMessage = translateApplicableProducts(languageToUse);
+  const warrantyPeriodMessage = translateWarrantyPeriods(languageToUse);
+  const warrantyBenefitAndServiceMessage =
+    translateWarrantyBenefitsAndServices(languageToUse);
+  const onetoOneCheckMessage = translateOneToOneCheck(languageToUse);
+  const EquivalentProductExchangeMessage =
+    translateEquivalentProductExchange(languageToUse);
+  const warrantyConditionMessage = translateWarrantyCondition(languageToUse);
+  const warrantyNoticeMessage = translateWarrantyNotice(languageToUse);
+  const processingTimeMessage = translateProcessingTimes(languageToUse);
+  const fallDamegeUpperCaseMessage =
+    translateFallDamageUpperCase(languageToUse);
+  const noWarrantyMessage = translateNoWarranty(languageToUse);
+  const officiaWarrantyFeedUpperCaseMessage =
+    translateOfficialWarrantyFeeUpperCase(languageToUse);
+  const translateWarrantyApplicableMessage =
+    translateWarrantyApplicable(languageToUse);
+  const warrantyTimeMessage = translateWarrantyTime(languageToUse);
+  const ExtendedWarrantyMessage = translateExtendedWarranty(languageToUse);
+  const ExchangeForDefectMessage = translateExchangeForDefect(languageToUse);
+  const tradeInDiscountMessage = translateTradeInDiscount(languageToUse);
 
-                <h2 className="font-bold">I. BẢO HÀNH 1 ĐỔI 1 VIP:</h2>
-                <ul>
-                    <li>- Sản phẩm áp dụng: Những đồ điện tử, quạt, có phiếu bảo hành. </li>
-                    <li>- Thời gian bảo hành: 6 tháng / 12 tháng.</li>
-                    <li>- Quyền lợi và dịch vụ bảo hành:  </li>
-                </ul>
+  return (
+    <Modal
+      title={title || productProtectionMessage}
+      description={message || serviceSummaryMessage}
+      isOpen={isOpen}
+      onClose={onClose}
+    >
+      <div>
+        <h1 className="text-center font-bold text-2xl">
+          {extendedServiceDetailMessage}
+        </h1>
 
-                <p>+ Kiểm tra 1 đổi 1 toàn bộ linh kiện của sản phẩm.</p>
-                <p>+ Đổi sản phẩm tương đương sản phẩm bảo hành.</p>
-                <ul>
-                    <li>- Điều kiện bảo hành: Sản phẩm bị lỗi do nhà sản xuất.</li>
-                    <li>- Lưu ý: Gói bảo hành không có hiệu lực với các sản phẩm bị biến dạng so với ban đầu ( cấn, móp,cong,vênh, nứt…) và các sản phẩm bị vào nước hoặc đã được sửa chữa.</li>
-                    <li>- Thời gian xử lý: Trong vòng 24h và tối đa 14 ngày làm việc tùy thuộc vào tình trạng của sản phẩm.  </li>
-                </ul>
+        <h2 className="font-bold">I. {VIPWarranty}:</h2>
+        <ul>
+          <li>- {applicableProductMessage}. </li>
+          <li>- {warrantyPeriodMessage}.</li>
+          <li>- {warrantyBenefitAndServiceMessage}: </li>
+        </ul>
 
-                <h2 className="font-bold">II RƠI VỠ, RƠI NƯỚC:</h2>
-                <ul>
-                    <li>- Sẽ không được bảo hành.</li>
-                </ul>
+        <p>+ {onetoOneCheckMessage}.</p>
+        <p>+ {EquivalentProductExchangeMessage}.</p>
+        <ul>
+          <li>- {warrantyConditionMessage}.</li>
+          <li>- {warrantyNoticeMessage}.</li>
+          <li>- {processingTimeMessage} </li>
+        </ul>
 
-                <h2 className="font-bold">III BẢO HÀNH CHÍNH HÃNG MẤT PHÍ</h2>
-                <ul>
-                    <li>-  Những đồ điện tử, quạt, và chỉ hư một số phụ kiện.</li>
-                    <li>- Thời gian bảo hành : 1-2 tuần</li>
-                </ul>
-                <p>+ Sau khi hết bảo hành chính hãng, sản phẩm vẫn được tiếp tục bảo hành các lỗi nhà sản xuất, thời gian bảo hành theo gói bảo hành mà khách hàng lựa chọn.</p>
-                <p>+ Được đổi sản phẩm tương đương nếu máy hư hỏng nặng không sửa chữa được.</p>
-                <p>+ Được trợ giá nhập lại sản phẩm bị hỏng để lên đời nếu không có sản phẩm để đổi.</p>
-                
-            </div>
-        </Modal>
-     );
-}
- 
+        <h2 className="font-bold">II {fallDamegeUpperCaseMessage}:</h2>
+        <ul>
+          <li>- {noWarrantyMessage}.</li>
+        </ul>
+
+        <h2 className="font-bold">III {officiaWarrantyFeedUpperCaseMessage}</h2>
+        <ul>
+          <li>- {translateWarrantyApplicableMessage}.</li>
+          <li>- {warrantyTimeMessage}</li>
+        </ul>
+        <p>+ {ExtendedWarrantyMessage}.</p>
+        <p>+ {ExchangeForDefectMessage}.</p>
+        <p>+ {tradeInDiscountMessage}.</p>
+      </div>
+    </Modal>
+  );
+};
+
 export default SeeDetailModal;

@@ -1,7 +1,7 @@
 import prismadb from "@/lib/prismadb";
 import { format, subHours } from "date-fns";
 import { RoleGate } from "@/components/auth/role-gate";
-import { currentRole } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
 import { ManageAttendancesColumn } from "./components/column";
 import ManageAttendanceClient from "./components/client";
@@ -15,6 +15,7 @@ const ManageAttendance = async ({
 }: {
   params: { storeId: string };
 }) => {
+  const currentUsers = await currentUser()
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN;
   const showOrderRole = isRole;
@@ -39,6 +40,7 @@ const ManageAttendance = async ({
       user: item.user.name,
       wokingTime: item.user.workingTime,
       email: item.user.email,
+      language: currentUsers?.language || "vi",
       attendancestart: item.attendancestart,
       attendanceend: item.attendanceend,
       allDay: item.allDay,

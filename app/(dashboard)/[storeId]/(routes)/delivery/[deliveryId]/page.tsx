@@ -6,7 +6,7 @@ const OrderForm = dynamic(() => import("./components/order-form"), {
 });
 import { formatter } from "@/lib/utils";
 import { UserRole } from "@prisma/client";
-import { currentRole } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 import { RoleGate } from "@/components/auth/role-gate";
 
 const OrderPage = async ({
@@ -14,6 +14,7 @@ const OrderPage = async ({
 }: {
   params: { storeId: string; orderId: string };
 }) => {
+  const user = await currentUser()
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN || role === UserRole.STAFF;
   const showOrderRole = isRole;
@@ -85,11 +86,12 @@ const OrderPage = async ({
     isGift: item.orderItem.map((item) => item?.isGift),
     createdAt: item.createdAt,
     updatedAt: item.updatedAt,
+    language: user?.language || "vi"
   }));
   return (
     <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>
       <div className={` ${showOrderRole}`}>
-        {showOrderRole && <OrderForm data={formattedOrder} />}
+        {showOrderRole && <OrderForm data={formattedOrder} language={user?.language || "vi"}/>}
       </div>
     </RoleGate>
   );

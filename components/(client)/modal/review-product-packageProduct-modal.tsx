@@ -14,6 +14,19 @@ import {
   getColorPrice,
   getSizePrice,
 } from "../export-product-compare/size-color/match-color-size";
+import {
+  getOutOfStockMessage,
+  getToastError,
+  translateColorLowerCase,
+  translateEnterContent,
+  translateEvaluationSuccess,
+  translateProductNotExist,
+  translateProductReview,
+  translateReviewed,
+  translateSizes,
+  translateSubmit,
+  translateThankYouForReview,
+} from "@/translate/translate-client";
 
 interface ReviewModalProps {
   isOpen: boolean;
@@ -21,6 +34,7 @@ interface ReviewModalProps {
   order: Order | undefined;
   message?: string;
   title?: string;
+  languageToUse: string;
 }
 
 export interface Comment {
@@ -48,6 +62,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
   message,
   title,
   order,
+  languageToUse,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
   const [commentValues, setCommentValues] = useState<CommentValues>({});
@@ -55,7 +70,18 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  console.log("order", order);
+  //languages
+  const toastErrorMessage = getToastError(languageToUse);
+  const evaluationSuccessMessage = translateEvaluationSuccess(languageToUse);
+  const productReviewMessage = translateProductReview(languageToUse);
+  const thanksYouForReviewMessage = translateThankYouForReview(languageToUse);
+  const productNotExitMessage = translateProductNotExist(languageToUse);
+  const sizeMessage = translateSizes(languageToUse);
+  const colorLowerCaseMessage = translateColorLowerCase(languageToUse);
+  const outOfStockMessage = getOutOfStockMessage(languageToUse);
+  const submitMessage = translateSubmit(languageToUse);
+  const reviewedMessage = translateReviewed(languageToUse);
+  const enterContentMessage = translateEnterContent(languageToUse);
 
   useEffect(() => {
     setIsMounted(true);
@@ -93,7 +119,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
         );
         setData(response.data);
       } catch (error) {
-        toast.error("Không tìm thấy dữ liệu!");
+        toast.error(toastErrorMessage);
       } finally {
         setLoading(false);
       }
@@ -118,10 +144,10 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
         );
         setData(response.data); // Update state with new comments
 
-        toast.success("Đánh giá thành công!");
+        toast.success(evaluationSuccessMessage);
       }
     } catch (error) {
-      toast.error("Có lỗi khi đánh giá!");
+      toast.error(toastErrorMessage);
     } finally {
       setLoading(false);
     }
@@ -142,10 +168,8 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
   }
   return (
     <Modal
-      title={title || "Đánh giá sản phẩm"}
-      description={
-        message || "Cảm ơn bạn đã đánh giá cho cửa hàng của chúng tôi!"
-      }
+      title={title || productReviewMessage}
+      description={message || thanksYouForReviewMessage}
       isOpen={isOpen}
       onClose={onClose}
     >
@@ -193,7 +217,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
               const href = `/${route}/${productName}`;
               router.push(href);
             } else {
-              console.error("Invalid route:", route);
+              toast.error(toastErrorMessage);
             }
           };
 
@@ -233,7 +257,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
           if (!item.product) {
             return (
               <div key={item.id} className="text-red-500">
-                Sản phẩm không tồn tại.
+                {productNotExitMessage}
               </div>
             );
           }
@@ -259,7 +283,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
                   <span className="grid grid-rows-2">
                     {item.product?.heading}{" "}
                     <span className="flex items-center">
-                      Kích thước: {item.size} + màu:{" "}
+                      {sizeMessage}: {item.size} + {colorLowerCaseMessage}:
                       {
                         <div
                           className="h-4 w-4 rounded-full ml-2"
@@ -270,7 +294,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
                   </span>
                   <span className="text-sm">
                     {quantity === 0 ? (
-                      <span className="text-gray-500">Hết hàng</span>
+                      <span className="text-gray-500">{outOfStockMessage}</span>
                     ) : (
                       <span>x{item.quantity}</span>
                     )}
@@ -305,7 +329,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
                       ))}
                     </div>
                     <Input
-                      placeholder="Nhập nội dung........"
+                      placeholder={enterContentMessage}
                       maxLength={120} // Set maximum length
                       value={commentValues[item.product!.id]?.comment || ""}
                       onChange={(e) => handleChange(item.product!.id, e)}
@@ -321,12 +345,12 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
                         onClick={() => handleSubmit(item.product!.id)}
                         className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
                       >
-                        Gửi đánh giá
+                        {submitMessage}
                       </Button>
                     </div>
                   </>
                 ) : (
-                  <div className="text-gray-500">Đã đánh giá</div>
+                  <div className="text-gray-500">{reviewedMessage}</div>
                 )}
               </div>
             </>

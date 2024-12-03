@@ -5,18 +5,34 @@ import { useState, useEffect } from "react";
 import { Product } from "@/types/type";
 import ProductTrending from "./product-trending";
 import { Loader, Star } from "lucide-react";
+import {
+  getToastError,
+  translateEnterSearchContent,
+  translateNoResultFound,
+  translateProductTrending,
+  translateResultForTerm,
+} from "@/translate/translate-client";
+import toast from "react-hot-toast";
 
 interface SearchItemProps {
   value: string;
+  languageToUse: string;
 }
 
-const SearchItem = ({ value }: SearchItemProps) => {
+const SearchItem = ({ value, languageToUse }: SearchItemProps) => {
   const [data, setData] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
 
   const topSoldProducts = data
     .sort((a, b) => b.sold - a.sold) // Giả sử có thuộc tính `sold` trong Product
     .slice(0, 6);
+
+  //languages
+  const toastErrorMessage = getToastError(languageToUse);
+  const resultForTermMessage = translateResultForTerm(languageToUse);
+  const noResultFoundMessage = translateNoResultFound(languageToUse);
+  const enterSearchContentMessage = translateEnterSearchContent(languageToUse);
+  const productTrendingMessage = translateProductTrending(languageToUse);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,7 +45,7 @@ const SearchItem = ({ value }: SearchItemProps) => {
         );
         setData(response.data);
       } catch (error) {
-        console.error(error);
+        toast.error(toastErrorMessage);
       } finally {
         setLoading(false);
       }
@@ -59,18 +75,18 @@ const SearchItem = ({ value }: SearchItemProps) => {
             {value.length > 0 ? (
               <>
                 <h2 className="text-lg font-semibold mb-4">
-                  Result for term &quot;{value}&quot;
+                  {resultForTermMessage} &quot;{value}&quot;
                 </h2>
                 {data.length === 0 && (
                   <div className="text-muted-foreground text-sm">
-                    No result found. Try searching for something else.
+                    {noResultFoundMessage}
                   </div>
                 )}
               </>
             ) : (
               <>
                 <h2 className="text-lg text-center text-gray-300">
-                  Hãy nhập nội dung tìm kiếm!
+                  {enterSearchContentMessage}
                 </h2>
               </>
             )}
@@ -85,7 +101,7 @@ const SearchItem = ({ value }: SearchItemProps) => {
               <div className="text-lg font-semibold mb-4 text-yellow-400 flex items-center space-x-2">
                 <Star className="w-5 h-5" fill="#facc15" />
                 <Star className="w-5 h-5" fill="#facc15" />{" "}
-                <span>Product Trending</span>
+                <span>{productTrendingMessage}</span>
                 <Star className="w-5 h-5" fill="#facc15" />
                 <Star className="w-5 h-5" fill="#facc15" />{" "}
               </div>

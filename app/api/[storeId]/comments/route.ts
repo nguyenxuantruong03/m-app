@@ -1,31 +1,55 @@
 // /api/comments/router.ts
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
+import {
+  translateCommentDelete,
+  translateCommentGet,
+  translateCommentPatch,
+  translateCommentPost,
+} from "@/translate/translate-api";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const userId = await currentUser();
   const { rating, comment, productId } = body;
 
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const commentPostMessage = translateCommentPost(LanguageToUse);
+
   if (!rating) {
-    return new NextResponse(JSON.stringify({ error: "Rating is required!" }), {
-      status: 400,
-    });
+    return new NextResponse(
+      JSON.stringify({ error: commentPostMessage.ratingRequired }),
+      {
+        status: 400,
+      }
+    );
   }
   if (!productId) {
-    return new NextResponse(JSON.stringify({ error: "Product is required!" }), {
-      status: 400,
-    });
+    return new NextResponse(
+      JSON.stringify({ error: commentPostMessage.productRequired }),
+      {
+        status: 400,
+      }
+    );
   }
   if (!comment) {
-    return new NextResponse(JSON.stringify({ error: "Comment is required!" }), {
-      status: 400,
-    });
+    return new NextResponse(
+      JSON.stringify({ error: commentPostMessage.commentRequired }),
+      {
+        status: 400,
+      }
+    );
   }
   try {
-    if (!userId?.id) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+    if (!user?.id) {
+      return new NextResponse(
+        JSON.stringify({ error: commentPostMessage.userIdNotFound }),
+        {
+          status: 400,
+        }
+      );
     }
 
     const newComment = await prismadb.comment.create({
@@ -33,7 +57,7 @@ export async function POST(req: Request) {
         rating,
         comment,
         productId,
-        userId: userId.id || "",
+        userId: user.id || "",
       },
       include: {
         user: {
@@ -55,8 +79,10 @@ export async function POST(req: Request) {
     });
     return NextResponse.json(newComment);
   } catch (error) {
-    console.error("Error creating comment:", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: commentPostMessage.internalError }),
+      { status: 500 }
+    );
   }
 }
 
@@ -64,22 +90,37 @@ export async function DELETE(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const commentDeleteMessage = translateCommentDelete(LanguageToUse);
+
   try {
-    const userId = await currentUser();
     const body = await req.json();
     const { id } = body;
-    if (!userId?.id) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+
+    if (!user?.id) {
+      return new NextResponse(
+        JSON.stringify({ error: commentDeleteMessage.userIdNotFound }),
+        {
+          status: 400,
+        }
+      );
     }
 
     const commentById = await prismadb.comment.findFirst({
       where: {
-        userId: userId.id || "",
+        userId: user.id || "",
       },
     });
 
     if (!commentById) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse(
+        JSON.stringify({ error: commentDeleteMessage.commentByIdNotFound }),
+        {
+          status: 405,
+        }
+      );
     }
 
     await prismadb.emoji.deleteMany({
@@ -102,8 +143,10 @@ export async function DELETE(
 
     return NextResponse.json(comment);
   } catch (error) {
-    console.log("[COMMENT_DELETE]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: commentDeleteMessage.internalError }),
+      { status: 500 }
+    );
   }
 }
 
@@ -111,19 +154,28 @@ export async function PATCH(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const commentPatchMessage = translateCommentPatch(LanguageToUse);
+
   try {
-    const userId = await currentUser();
     const body = await req.json();
     const { id, rating, comment, changeReview } = body;
 
-    if (!userId?.id) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+    if (!user?.id) {
+      return new NextResponse(
+        JSON.stringify({ error: commentPatchMessage.userIdNotFound }),
+        {
+          status: 400,
+        }
+      );
     }
 
     const existingComment = await prismadb.comment.findFirst({
       where: {
         id: id,
-        userId: userId.id || "",
+        userId: user.id || "",
       },
     });
 
@@ -144,12 +196,18 @@ export async function PATCH(
 
     return NextResponse.json(updatedComment);
   } catch (error) {
-    console.error("[COMMENT_PATCH]", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: commentPatchMessage.internalError }),
+      { status: 500 }
+    );
   }
 }
 
 export async function GET() {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const commentGetMessage = translateCommentGet(LanguageToUse)
   try {
     const responseComment = await prismadb.comment.findMany({
       orderBy: {
@@ -176,7 +234,9 @@ export async function GET() {
     });
     return NextResponse.json(responseComment);
   } catch (error) {
-    console.error("Error fetching comments:", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: commentGetMessage }),
+      { status: 500 }
+    );
   }
 }

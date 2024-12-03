@@ -9,6 +9,8 @@ import { useCurrentRole } from "@/hooks/use-current-role";
 import { CommentColumn, columns } from "./column";
 import Downloadfile from "@/components/file/downloadfilepage";
 import { useState } from "react";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { getCommentClient } from "@/translate/translate-dashboard";
 
 interface CommentClientProps {
   data: CommentColumn[];
@@ -19,14 +21,18 @@ const CommentClient: React.FC<CommentClientProps> = ({ data }) => {
   const [open, setOpen] = useState(false);
   const isRole = role === UserRole.ADMIN;
   const showAPIRole = isRole;
+    //language
+    const user = useCurrentUser();
+    const languageToUse = user?.language || "vi";
+    const commentClientMessage = getCommentClient(languageToUse);
   return (
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Đánh giá (${data.length})`}
-          description="Quản lý đánh giá"
+          title={`${commentClientMessage.review} (${data.length})`}
+          description={commentClientMessage.manageReview}
         />
-        <Downloadfile data={data} filename="đánh_giá" />
+        <Downloadfile data={data} filename="đánh_giá" languageToUse={languageToUse}/>
       </div>
       <Separator />
       <DataTable
@@ -37,9 +43,10 @@ const CommentClient: React.FC<CommentClientProps> = ({ data }) => {
         onDelete={() => {}}
         setOpen={setOpen}
         open={open}
+        languageToUse={languageToUse}
       />
       {showAPIRole && (
-        <Heading title="Api" description="API calls for Comment" />
+        <Heading title={commentClientMessage.api} description={commentClientMessage.apiCalls} />
       )}
       <Separator />
       <ApiList entityIdName="commentId" entityName="comments" />

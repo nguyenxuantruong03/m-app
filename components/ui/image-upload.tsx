@@ -13,6 +13,7 @@ import viLocale from "date-fns/locale/vi";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 import { format } from "date-fns";
 import { ZoomImageModal } from "../modals/zoom-image-mutiple";
+import { getImageUpload } from "@/translate/translate-dashboard";
 
 interface ImageUploadProps {
   disabled?: boolean;
@@ -22,6 +23,7 @@ interface ImageUploadProps {
   maxFiles?: number;
   showAvatar?: boolean;
   selectedAvatar?: string;
+  language: string
 }
 
 interface AccountItem {
@@ -46,12 +48,16 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   value = [],
   maxFiles = 10,
   showAvatar = false,
-  selectedAvatar
+  selectedAvatar,
+  language
 }) => {
   const [isMounted, setIsMounted] = useState(false);
   const userId = useCurrentUser();
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0); // New state variable for selected index
+
+  //language
+  const imageUploadMessage = getImageUpload(language)
 
   const openImageModal = (index: number) => {
     setSelectedIndex(index);
@@ -123,7 +129,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                             open();
                           } else {
                             toast.error(
-                              "Đã có vấn đề khi thêm ảnh. Hãy làm mới trang để thử lại!"
+                              imageUploadMessage.errorAddingImage
                             );
                           }
                         }}
@@ -141,7 +147,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                             open();
                           } else {
                             toast.error(
-                              "Đã có vấn đề khi thêm ảnh. Hãy làm mới trang để thử lại!"
+                              imageUploadMessage.errorAddingImage
                             );
                           }
                         }}
@@ -156,7 +162,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                             open();
                           } else {
                             toast.error(
-                              "Đã có vấn đề khi thêm ảnh. Hãy làm mới trang để thử lại!"
+                              imageUploadMessage.errorAddingImage
                             );
                           }
                         }}
@@ -197,7 +203,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                                 open();
                               } else {
                                 toast.error(
-                                  "Đã có vấn đề khi thêm ảnh. Hãy làm mới trang để thử lại!"
+                                  imageUploadMessage.errorAddingImage
                                 );
                               }
                             } else {
@@ -219,7 +225,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                                 open();
                               } else {
                                 toast.error(
-                                  "Đã có vấn đề khi thêm ảnh. Hãy làm mới trang để thử lại!"
+                                  imageUploadMessage.errorAddingImage
                                 );
                               }
                             }}
@@ -249,7 +255,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                         open();
                       } else {
                         toast.error(
-                          "Đã có vấn đề khi thêm ảnh. Hãy làm mới trang để thử lại!"
+                          imageUploadMessage.errorAddingImage
                         );
                       }
                     }}
@@ -257,7 +263,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                     className="mt-3 text-slate-500 flex items-center justify-center w-full max-w-sm"
                   >
                     <ImagePlus className="w-4 h-4" />
-                    Upload an Image
+                    {imageUploadMessage.uploadImage}
                   </Button>
                 )}
             </>

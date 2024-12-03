@@ -11,6 +11,18 @@ import { Separator } from "@/components/ui/separator";
 import FireworksComponent from "@/components/canvas-confetti";
 import viLocale from "date-fns/locale/vi";
 import "./style.css";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import {
+  translateAccompaniedWithUsToday,
+  translateAccountManagement,
+  translateAccountSettings,
+  translateHappyBirthday,
+  translateInfo,
+  translatePasswordAndSecurity,
+  translatePersonalInfo,
+  translateSecurity,
+  translateSpecialBirthdayMessage,
+} from "@/translate/translate-client";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 
 interface NavbarProfileProps {
@@ -19,20 +31,47 @@ interface NavbarProfileProps {
 }
 
 const NavbarProfile: React.FC<NavbarProfileProps> = ({ dateofbirth, name }) => {
+  const user = useCurrentUser();
   const pathname = usePathname();
 
   const [showBirthdayMessage, setShowBirthdayMessage] = useState(true);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+  const personalInfoMessage = translatePersonalInfo(languageToUse);
+  const infoMessage = translateInfo(languageToUse);
+  const passwordAndSecurityMessage =
+    translatePasswordAndSecurity(languageToUse);
+  const securityMessage = translateSecurity(languageToUse);
+  const accountSettingMessage = translateAccountSettings(languageToUse);
+  const accountManagementMessage = translateAccountManagement(languageToUse);
+  const happyBirthdayMessage = translateHappyBirthday(languageToUse);
+  const accompaniedWithUsTodayMessage =
+    translateAccompaniedWithUsToday(languageToUse);
+  const specialBirthdayMessage = translateSpecialBirthdayMessage(languageToUse);
 
   const mainnavs = [
     {
-      name: "Thông tin cá nhân",
-      nameMobile: "Thông tin",
+      name: personalInfoMessage,
+      nameMobile: infoMessage,
       href: `/setting-profile`,
       icon: User,
     },
     {
-      name: "Mật khẩu và bảo mật",
-      nameMobile: "Bảo mật",
+      name: passwordAndSecurityMessage,
+      nameMobile: securityMessage,
       href: `/password-security`,
       icon: Shield,
     },
@@ -88,37 +127,36 @@ const NavbarProfile: React.FC<NavbarProfileProps> = ({ dateofbirth, name }) => {
     <>
       <div className="relative w-1/2 md:w-[45%]">
         <div className="pr-4 lg:pr-12 my-8">
-        <Link href="/home-product">
-        <div className="hidden xl:block">
-          <Image
-            alt=""
-            src="/images/logo-custom.png"
-            width="140"
-            height="30"
-            className="rounded-sm hover:opacity-75 transition"
-          />
-        </div>
-        <div className="block xl:hidden">
-          <Image
-            alt=""
-            src="/images/logo-mini.png"
-            width="45"
-            height="30"
-            className="rounded-sm bg-[#c3c3c3] py-1.5 px-2.5 hover:opacity-75 transition"
-          />
-        </div>
-      </Link>
+          <Link href="/home-product">
+            <div className="hidden xl:block">
+              <Image
+                alt=""
+                src="/images/logo-custom.png"
+                width="140"
+                height="30"
+                className="rounded-sm hover:opacity-75 transition"
+              />
+            </div>
+            <div className="block xl:hidden">
+              <Image
+                alt=""
+                src="/images/logo-mini.png"
+                width="45"
+                height="30"
+                className="rounded-sm bg-[#c3c3c3] py-1.5 px-2.5 hover:opacity-75 transition"
+              />
+            </div>
+          </Link>
           <Link href="/home-product" className="cursor-pointer">
             <div className="fixed right-4 top-4 xl:right-12 xl:top-8 rounded-full p-2 bg-slate-300 bg-opacity-30 shadow-lg hover:bg-slate-500">
               <X className="h-6 w-6 font-bold dark:text-slate-900 text-white" />
             </div>
           </Link>
           <div className="font-semibold text-lg md:text-2xl my-3">
-            Cài đặt tài khoản
+            {accountSettingMessage}
           </div>
           <div className="text-sm text-gray-500">
-            Quản lý tài khoản của bạn như thông tin cá nhân, cài đặt bảo mật,
-            quản lý thông báo, v.v.
+            {accountManagementMessage}
           </div>
 
           {mainnavs.map((mainnav) => {
@@ -164,21 +202,21 @@ const NavbarProfile: React.FC<NavbarProfileProps> = ({ dateofbirth, name }) => {
 
       {showBirthdayMessage && isBirthdayToday && (
         <>
-      <BirthdayFireworks isBirthdayToday={isBirthdayToday} />
-      <div className="container left-0 xl:left-12 2xl:left-auto">
-        <p className="container-text-auto-right">
-          Chúc mừng sinh nhật 
-          <span className="inline-block font-bold ml-1">
-            <ColorfulText text={name} />
-          </span>{" "}
-          đã đồng hành cùng chúng tôi. Hôm nay 
-          <span className="inline-block font-bold ml-1">
-            <ColorfulText text={birthday} />
-          </span>{" "}
-          là ngày đặc biệt dành cho bạn. Chúc bạn ngày sinh nhật vui vẻ bên người thân và gia đình! 🎉🎉🎉
-        </p>
-      </div>
-    </>
+          <BirthdayFireworks isBirthdayToday={isBirthdayToday} />
+          <div className="container left-0 xl:left-12 2xl:left-auto">
+            <p className="container-text-auto-right">
+              {happyBirthdayMessage}
+              <span className="inline-block font-bold ml-1">
+                <ColorfulText text={name} />
+              </span>{" "}
+              {accompaniedWithUsTodayMessage}
+              <span className="inline-block font-bold ml-1">
+                <ColorfulText text={birthday} />
+              </span>{" "}
+              {specialBirthdayMessage}
+            </p>
+          </div>
+        </>
       )}
     </>
   );

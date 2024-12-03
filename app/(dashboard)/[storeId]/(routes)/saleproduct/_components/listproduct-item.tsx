@@ -10,6 +10,23 @@ import { Hint } from "@/components/ui/hint";
 import Currency from "@/components/ui/currency";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { getAllProductNotQuery } from "@/actions/client/products/get-products";
+import {
+  translateCuttingStone,
+  translateElectricWire,
+  translateFan,
+  translateGlue,
+  translateLightBulb,
+  translateLock,
+  translatePaint,
+  translatePin,
+  translatePipe,
+  translateSocket,
+  translateBathroom,
+  translateCommonUse,
+} from "@/translate/translate-client";
+import { getSaleProductList } from "@/translate/translate-dashboard";
 
 interface ProductWithImages extends Product {
   images: ImageData[];
@@ -19,27 +36,38 @@ interface ProductWithImages extends Product {
 
 const ListProductItem = () => {
   const router = useRouter();
-  const [data, setData] = useState<ProductWithImages[]>([]);
+  const user = useCurrentUser();
+  const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  
+  const languageToUse = user?.language || "vi";
+  const pinMesage = translatePin(languageToUse);
+  const fanMessage = translateFan(languageToUse);
+  const pipeMessage = translatePipe(languageToUse);
+  const electricWireMessage = translateElectricWire(languageToUse);
+  const cuttingStoneMessage = translateCuttingStone(languageToUse);
+  const lockMessage = translateLock(languageToUse);
+  const glueMessage = translateGlue(languageToUse);
+  const socketMessage = translateSocket(languageToUse);
+  const paintMessage = translatePaint(languageToUse);
+  const bathroomMessage = translateBathroom(languageToUse);
+  const lightBlubMessage = translateLightBulb(languageToUse);
+  const commonUseMessage = translateCommonUse(languageToUse);
+  const saleProductListMessage = getSaleProductList(languageToUse);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/getAllProductNotQuery`
-        );
+        const product = await getAllProductNotQuery(languageToUse);
 
-        const productsWithIndex = response.data.map(
-          (product: ProductWithImages) => ({
-            ...product,
-            originalIndex: undefined, // Khởi tạo originalIndex là undefined
-          })
-        );
+        const productsWithIndex = product.map((product: any) => ({
+          ...product,
+          originalIndex: undefined, // Khởi tạo originalIndex là undefined
+        }));
 
         setData(productsWithIndex); // Lưu vào state
       } catch (error) {
-        console.error("Error fetching data:", error);
+        toast.error(saleProductListMessage.somethingWentWrong);
       } finally {
         setLoading(false);
       }
@@ -49,18 +77,18 @@ const ListProductItem = () => {
   }, []);
 
   const productTypeDisplayNames: Record<string, string> = {
-    PRODUCT: "Pin",
-    PRODUCT1: "Quạt",
-    PRODUCT2: "Ống nhựa, ống lưới xanh",
-    PRODUCT3: "Dây điện",
-    PRODUCT4: "Đá cắt",
-    PRODUCT5: "Ổ khóa",
-    PRODUCT6: "Keo",
-    PRODUCT7: "Ổ cắm, mặt ổ cắm",
-    PRODUCT8: "Sơn",
-    PRODUCT9: "Vật liệu nhà tắm",
-    PRODUCT10: "Bóng đèn",
-    PRODUCT11: "Đồ thường dùng",
+    PRODUCT: pinMesage,
+    PRODUCT1: fanMessage,
+    PRODUCT2: pipeMessage,
+    PRODUCT3: electricWireMessage,
+    PRODUCT4: cuttingStoneMessage,
+    PRODUCT5: lockMessage,
+    PRODUCT6: glueMessage,
+    PRODUCT7: socketMessage,
+    PRODUCT8: paintMessage,
+    PRODUCT9: bathroomMessage,
+    PRODUCT10: lightBlubMessage,
+    PRODUCT11: commonUseMessage,
   };
 
   // Mảng để giữ thứ tự productType
@@ -177,41 +205,39 @@ const ListProductItem = () => {
       // Use the Link component for navigation
       router.push(href);
     } else {
-      console.error("Invalid route:", route);
+      toast.error(saleProductListMessage.somethingWentWrong);
     }
   };
 
-  const onClickSaleAll = async () =>{
+  const onClickSaleAll = async () => {
     try {
       setLoading(true);
       await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/saleProduct`);
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/getAllProductNotQuery`
-      );
-      setData(response.data)
-      toast.success("Product updated.");
+      const product = await getAllProductNotQuery(languageToUse);
+
+      setData(product);
+      toast.success(saleProductListMessage.productUpdated);
     } catch (error: unknown) {
-      toast.error("Something went wrong.");
+      toast.error(saleProductListMessage.somethingWentWrong);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  const onClickRemoveSaleAll = async () =>{
+  const onClickRemoveSaleAll = async () => {
     try {
       setLoading(true);
       await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/saleProduct`);
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/getAllProductNotQuery`
-      );
-      setData(response.data)
-      toast.success("Product updated.");
+      const product = await getAllProductNotQuery(languageToUse);
+
+      setData(product);
+      toast.success(saleProductListMessage.productUpdated);
     } catch (error: unknown) {
-      toast.error("Something went wrong.");
+      toast.error(saleProductListMessage.somethingWentWrong);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   if (!data.length) {
     return (
@@ -225,10 +251,15 @@ const ListProductItem = () => {
     <div>
       <div className="flex items-center space-x-2">
         <Button className="w-full" onClick={onClickSaleAll} disabled={loading}>
-          Sale All
+          {saleProductListMessage.saleAll}
         </Button>
-        <Button variant="destructive" className="w-full" onClick={onClickRemoveSaleAll} disabled={loading}>
-          Remove Sale All
+        <Button
+          variant="destructive"
+          className="w-full"
+          onClick={onClickRemoveSaleAll}
+          disabled={loading}
+        >
+          {saleProductListMessage.removeSaleAll}
         </Button>
       </div>
 
@@ -317,7 +348,10 @@ const ListProductItem = () => {
                     >
                       <div className="grid grid-cols-2 gap-2">
                         <div className="relative">
-                          <Hint label="View product" side="bottom">
+                          <Hint
+                            label={saleProductListMessage.viewProduct}
+                            side="bottom"
+                          >
                             <Image
                               width={200}
                               height={200}
@@ -347,19 +381,23 @@ const ListProductItem = () => {
                             />
                           </div>
                           <p className="text-lg text-gray-300 font-semibold truncate w-44">
-                            Đã bán: <span>{product.sold}</span>
+                            {saleProductListMessage.sold}:{" "}
+                            <span>{product.sold}</span>
                           </p>
                           <p className="text-lg text-gray-300 font-semibold truncate w-44">
-                            Tồn kho: <span>{totalQuantity}</span>
+                            {saleProductListMessage.stock}:{" "}
+                            <span>{totalQuantity}</span>
                           </p>
                           <p className="text-lg text-gray-300 font-semibold truncate w-44">
-                            Giảm giá:{" "}
-                            <span>{validPriceAndPromotion.percentPromotion}%</span>
+                            {saleProductListMessage.discount}:{" "}
+                            <span>
+                              {validPriceAndPromotion.percentPromotion}%
+                            </span>
                           </p>
 
                           <FormSaleProduct
                             id={product.id}
-                            label="ProductSale"
+                            label={saleProductListMessage.productSale}
                             valueTimeSaleStart={product.timeSaleStart}
                             valueTimeSaleEnd={product.timeSaleEnd}
                             valueIsSale={product.isSale}

@@ -12,7 +12,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  SheetClose
+  SheetClose,
 } from "@/components/ui/sheet";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
@@ -23,36 +23,58 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "react-hot-toast";
+import {
+  getToastError,
+  translateCancel,
+  translateGenerate,
+  translateGenerateConnection,
+  translateIngressCreated,
+  translateResetStreamsWarning,
+  translateWarning,
+} from "@/translate/translate-client";
 
 const RTMP = String(IngressInput.RTMP_INPUT);
 const WHIP = String(IngressInput.WHIP_INPUT);
 
 type IngressType = typeof RTMP | typeof WHIP;
 
-export const ConnectModal = () => {
+interface ConnectModal {
+  languageToUse: string;
+}
+export const ConnectModal = ({ languageToUse }: ConnectModal) => {
   const closeRef = useRef<ElementRef<"button">>(null);
   const [isPending, startTransition] = useTransition();
   const [ingressType, setIngressType] = useState<IngressType>(RTMP);
 
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const ingressCreatedMessage = translateIngressCreated(languageToUse);
+  const generateConnection = translateGenerateConnection(languageToUse);
+  const warningMessage = translateWarning(languageToUse);
+  const resetStreamsWarningMessage =
+    translateResetStreamsWarning(languageToUse);
+  const cancelMessage = translateCancel(languageToUse);
+  const generateMessage = translateGenerate(languageToUse);
+
   const onSubmit = () => {
     startTransition(() => {
-      createIngress(parseInt(ingressType))
+      createIngress(parseInt(ingressType),languageToUse)
         .then(() => {
-          toast.success("Ingress created");
+          toast.success(ingressCreatedMessage);
           closeRef?.current?.click();
         })
-        .catch(() => toast.error("Something went wrong"));
+        .catch(() => toast.error(toastErrorMessage));
     });
   };
 
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="primary">Generate connection</Button>
+        <Button variant="primary">{generateConnection}</Button>
       </SheetTrigger>
       <SheetContent side="center" className="space-y-3">
         <SheetHeader>
-          <SheetTitle>Generate connection</SheetTitle>
+          <SheetTitle>{generateConnection}</SheetTitle>
         </SheetHeader>
         <Select
           disabled={isPending}
@@ -69,18 +91,15 @@ export const ConnectModal = () => {
         </Select>
         <Alert>
           <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>Warning</AlertTitle>
-          <AlertDescription>
-            This action will reset all active streams using the current
-            connection
-          </AlertDescription>
+          <AlertTitle>{warningMessage}</AlertTitle>
+          <AlertDescription>{resetStreamsWarningMessage}</AlertDescription>
         </Alert>
         <div className="flex justify-between">
           <SheetClose ref={closeRef} asChild>
-            <Button variant="ghost">Cancel</Button>
+            <Button variant="ghost">{cancelMessage}</Button>
           </SheetClose>
           <Button disabled={isPending} onClick={onSubmit} variant="primary">
-            Generate
+            {generateMessage}
           </Button>
         </div>
       </SheetContent>

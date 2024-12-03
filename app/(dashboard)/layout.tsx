@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
 import GetLocalStorage from "@/localStorage/getLocalStorage-currentView";
+import DropMenuHint from "@/components/(client)/dropmenu-hint";
 
 export default async function SetupLayout({
   children,
@@ -17,7 +18,7 @@ export default async function SetupLayout({
   if (!user) {
     redirect("/auth/login");
   }
-  
+
   if (user?.ban === true) {
     redirect("/auth/login");
   }
@@ -43,15 +44,18 @@ export default async function SetupLayout({
   const checkRole = allowedRoles.includes(user.role as UserRole);
 
   return (
-    <GetLocalStorage>
-      <div className="flex">
-        {checkRole && (
-          <div>
-            <Navbar />
-          </div>
-        )}
-        <div className="w-full">{children}</div>
-      </div>
-    </GetLocalStorage>
+    <>
+      <GetLocalStorage>
+        <div className="flex">
+          {checkRole && (
+            <div>
+              <Navbar />
+            </div>
+          )}
+          <div className="w-full">{children}</div>
+        </div>
+      </GetLocalStorage>
+      <DropMenuHint />
+    </>
   );
 }

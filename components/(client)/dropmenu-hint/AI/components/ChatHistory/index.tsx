@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import ReactMarkdown, { Components } from "react-markdown";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -10,14 +11,23 @@ import "highlight.js/styles/github.css";
 import { ChatMessage } from "@/types/type";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import ImageCellOne from "@/components/image-cell-one";
+import {
+  translateCopied,
+  translateCopyCode,
+} from "@/translate/translate-client";
 
 interface ChatHistoryProps {
   chatHistory: ChatMessage[];
+  languageToUse: string;
 }
 
-const ChatHistory = ({ chatHistory }: ChatHistoryProps) => {
+const ChatHistory = ({ chatHistory, languageToUse }: ChatHistoryProps) => {
   const user = useCurrentUser();
   const [copiedKeys, setCopiedKeys] = useState<{ [key: string]: boolean }>({});
+
+  //language
+  const copiedMessage = translateCopied(languageToUse);
+  const copyMessage = translateCopyCode(languageToUse);
 
   const handleCopy = (key: string) => {
     setCopiedKeys((prevState) => ({
@@ -73,11 +83,11 @@ const ChatHistory = ({ chatHistory }: ChatHistoryProps) => {
                   >
                     {copiedKeys[value] ? (
                       <>
-                        <Check /> Đã sao chép
+                        <Check /> {copiedMessage}
                       </>
                     ) : (
                       <>
-                        <Copy /> Sao chép mã
+                        <Copy /> {copyMessage}
                       </>
                     )}
                   </Button>
@@ -145,6 +155,7 @@ const ChatHistory = ({ chatHistory }: ChatHistoryProps) => {
                     email={user?.email || ""}
                     isClient={true}
                     customClassFeedBack="z-[9999999]"
+                    languageToUse={languageToUse}
                   />
                   <AvatarFallback className="bg-sky-500">
                     <User className="text-white" />

@@ -6,6 +6,7 @@ import Camera from "@/app/(dashboard)/[storeId]/(routes)/attendancestaff/ChooseC
 import { format } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import viLocale from "date-fns/locale/vi";
+import { translateAttendanceCamera } from "@/translate/translate-dashboard";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 
 interface CameraModalProps {
@@ -17,7 +18,8 @@ interface CameraModalProps {
   userId: string | null | undefined;
   isCheckAttendanceTitle: string;
   isCheckAttendanceStart: string | Date;
-  isCheckAttendanceEnd:  string | Date;
+  isCheckAttendanceEnd: string | Date;
+  languageToUse: string;
 }
 
 export const CameraModal: React.FC<CameraModalProps> = ({
@@ -29,7 +31,8 @@ export const CameraModal: React.FC<CameraModalProps> = ({
   userId,
   isCheckAttendanceTitle,
   isCheckAttendanceStart,
-  isCheckAttendanceEnd
+  isCheckAttendanceEnd,
+  languageToUse,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -42,39 +45,47 @@ export const CameraModal: React.FC<CameraModalProps> = ({
   }
 
   const start = isCheckAttendanceStart
-  ? format(
-      utcToZonedTime(
-        new Date(
-          new Date(isCheckAttendanceStart).setHours(
-            new Date(isCheckAttendanceStart).getHours() - 7
-          )
+    ? format(
+        utcToZonedTime(
+          new Date(
+            new Date(isCheckAttendanceStart).setHours(
+              new Date(isCheckAttendanceStart).getHours() - 7
+            )
+          ),
+          vietnamTimeZone
         ),
-        vietnamTimeZone
-      ),
-      "E '-' dd/MM/yyyy '-' HH:mm:ss",
-      { locale: viLocale }
-    )
-  : null;
+        "E '-' dd/MM/yyyy '-' HH:mm:ss",
+        { locale: viLocale }
+      )
+    : null;
 
-const end = isCheckAttendanceEnd
-  ? format(
-      utcToZonedTime(
-        new Date(
-          new Date(isCheckAttendanceEnd).setHours(
-            new Date(isCheckAttendanceEnd).getHours() - 7
-          )
+  const end = isCheckAttendanceEnd
+    ? format(
+        utcToZonedTime(
+          new Date(
+            new Date(isCheckAttendanceEnd).setHours(
+              new Date(isCheckAttendanceEnd).getHours() - 7
+            )
+          ),
+          vietnamTimeZone
         ),
-        vietnamTimeZone
-      ),
-      "E '-' dd/MM/yyyy '-' HH:mm:ss",
-      { locale: viLocale }
-    )
-  : null;
+        "E '-' dd/MM/yyyy '-' HH:mm:ss",
+        { locale: viLocale }
+      )
+    : null;
 
+  //language
+  const cameraAttendanceModalMessage = translateAttendanceCamera(
+    languageToUse,
+    userId,
+    isCheckAttendanceTitle,
+    start,
+    end
+  );
   return (
     <Modal
-      title={`Chụp ảnh điểm danh - Tên: ${userId} - Sự kiện:${isCheckAttendanceTitle} - ${isCheckAttendanceTitle === "✅" ? "Kết thúc" : "Bắt đầu"}: ${start || ""}${end ? ` - Kết thúc: ${end}` : ""}`}
-      description="Nhân viên sẽ được trả lương thông qua việc điểm danh khuôn mặt để hệ thống quét Qrcode."
+      title={cameraAttendanceModalMessage.attendanceMessage}
+      description={cameraAttendanceModalMessage.salaryInfo}
       isOpen={isOpen}
       onClose={onClose}
       maxWidth="5xl"
@@ -85,6 +96,7 @@ const end = isCheckAttendanceEnd
         loading={loading}
         dataEventCamera={dataEventCamera}
         setShowCameraModal={setShowCameraModal}
+        languageToUse={languageToUse}
       />
     </Modal>
   );

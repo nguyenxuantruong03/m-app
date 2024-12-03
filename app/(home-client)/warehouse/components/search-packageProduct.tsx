@@ -1,17 +1,24 @@
 import { SeatchPackageProduct } from "@/components/(client)/modal/search-package-product-moda";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { translateEnterOrderId } from "@/translate/translate-client";
 import { Order } from "@/types/type";
 import { Search } from "lucide-react";
 import { useState } from "react";
 
-interface SearchPackageProductProps{
-    order: Order[]
+interface SearchPackageProductProps {
+  order: Order[];
+  languageToUse: string;
 }
 
-const SearchPackageProduct:React.FC<SearchPackageProductProps> = ({order}) => {
+const SearchPackageProduct: React.FC<SearchPackageProductProps> = ({
+  order,
+  languageToUse,
+}) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState<string>(""); // Explicitly type inputValue as a string
+
+  const enterOrderIdMessage = translateEnterOrderId(languageToUse);
 
   // Handle input change with explicit typing
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,13 +46,14 @@ const SearchPackageProduct:React.FC<SearchPackageProductProps> = ({order}) => {
         order={order}
         isOpen={open}
         inputValue={inputValue}
+        languageToUse={languageToUse}
         onClose={() => setOpen(false)}
       />
       <div className="flex items-center">
         <div className="w-full">
           <Input
             type="text"
-            placeholder="Nhập id đơn hàng cần tìm..."
+            placeholder={enterOrderIdMessage}
             className="text-white"
             value={inputValue}
             onChange={handleInputChange} // Correctly typed onChange handler

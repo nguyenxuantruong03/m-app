@@ -8,10 +8,17 @@ import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import "leaflet.locatecontrol";
 import "leaflet.locatecontrol/dist/L.Control.Locate.min.css";
 import { OrderColumn } from "@/app/(dashboard)/[storeId]/(routes)/orders/components/columns";
+import {
+  getAddressMessage,
+  getPhoneNumberMessage,
+  getToastError,
+  translateProduct,
+} from "@/translate/translate-client";
 
 interface OrderProps {
-    data: OrderColumn[];
-  }
+  data: OrderColumn[];
+  languageToUse: string;
+}
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -20,7 +27,12 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow.src,
 });
 
-const LeafletMap:React.FC<OrderProps> = ({data}) => {
+const LeafletMap: React.FC<OrderProps> = ({ data, languageToUse }) => {
+  //languages
+  const addressMessage = getAddressMessage(languageToUse);
+  const numberMessage = getPhoneNumberMessage(languageToUse);
+  const productMessage = translateProduct(languageToUse);
+
   useEffect(() => {
     const map = L.map("map").setView([10.77621, 106.60444], 16);
     const mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
@@ -33,17 +45,18 @@ const LeafletMap:React.FC<OrderProps> = ({data}) => {
     L.control.locate().addTo(map);
 
     const extractRelevantAddress = (fullAddress: string): string => {
-        const addressComponents = fullAddress.split(", ");
-        const relevantAddress = `${addressComponents[0]} ${
-          addressComponents[addressComponents.length - 3]
-        }`;
-        return relevantAddress;
-      };
+      const addressComponents = fullAddress.split(", ");
+      const relevantAddress = `${addressComponents[0]} ${
+        addressComponents[addressComponents.length - 3]
+      }`;
+      return relevantAddress;
+    };
 
-    data.forEach((location) => {// Sử dụng API geocoding để lấy tọa độ từ tên địa chỉ
+    data.forEach((location) => {
+      // Sử dụng API geocoding để lấy tọa độ từ tên địa chỉ
       fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-            extractRelevantAddress(location.address)
+          extractRelevantAddress(location.address)
         )}`
       )
         .then((response) => response.json())
@@ -52,7 +65,7 @@ const LeafletMap:React.FC<OrderProps> = ({data}) => {
             const { lat, lon } = data[0];
             const marker = L.marker([lat, lon]).addTo(map);
             const popupContent = `
-                <p>Địa chỉ: ${location.address} - Email: ${location.email} - Sđt: ${location.phone} - Sản phẩm: ${location.products} </p> 
+                <p>${addressMessage}: ${location.address} - Email: ${location.email} - ${numberMessage}: ${location.phone} - ${productMessage}: ${location.products} </p> 
               `;
             marker.bindPopup(popupContent);
           }
@@ -67,10 +80,7 @@ const LeafletMap:React.FC<OrderProps> = ({data}) => {
 
   return (
     <div>
-      <div
-        id="map"
-        className="max-w-full h-[800px] rounded-md"
-      />
+      <div id="map" className="max-w-full h-[800px] rounded-md" />
     </div>
   );
 };

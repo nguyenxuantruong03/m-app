@@ -10,6 +10,17 @@ import axios from "axios";
 import Select from "react-select";
 import "../checkoutcash.css";
 import { Provinces } from "@/types/type";
+import {
+  getAddressMessage,
+  getCitySelectionMessage,
+  getDistrictSelectionMessage,
+  getMaxCharacterMessage,
+  getNoteMessage,
+  getNotePlaceholderMessage,
+  getNotFoundMessage,
+  getOtherAddressMessage,
+  getWardSelectionMessage,
+} from "@/translate/translate-client";
 
 interface DeliveryProps {
   selectedProvince: Provinces | null;
@@ -36,11 +47,12 @@ interface DeliveryProps {
   addressOtherError: string;
   setNoteError: Dispatch<SetStateAction<string>>;
   noteError: string;
-  isNoneSelect:boolean;
+  isNoneSelect: boolean;
   isNoneSelectDb: boolean;
   userRole: string;
   userId: string;
-  loading: boolean
+  loading: boolean;
+  language: string;
 }
 
 const host = "https://provinces.open-api.vn/api/";
@@ -73,11 +85,23 @@ const ApiProvinces: React.FC<DeliveryProps> = ({
   isNoneSelectDb,
   userRole,
   userId,
-  loading
+  loading,
+  language,
 }) => {
   const [provinces, setProvinces] = useState<Provinces[]>([]);
   const [districts, setDistricts] = useState<Provinces[]>([]);
   const [wards, setWards] = useState<Provinces[]>([]);
+
+  //language
+  const maxCharacterMessage = getMaxCharacterMessage(language, 120);
+  const citySelectMessage = getCitySelectionMessage(language);
+  const districSelectionMessage = getDistrictSelectionMessage(language);
+  const wardselectionMessage = getWardSelectionMessage(language);
+  const notFoundMessage = getNotFoundMessage(language);
+  const addressMessage = getAddressMessage(language);
+  const otherAddressMessage = getOtherAddressMessage(language);
+  const noteMessage = getNoteMessage(language);
+  const notePlaceholderMessage = getNotePlaceholderMessage(language);
 
   const callAPI = (api: string) => {
     return axios.get(api).then((response) => {
@@ -135,21 +159,20 @@ const ApiProvinces: React.FC<DeliveryProps> = ({
     value: any,
     clearError: Dispatch<SetStateAction<string>>
   ) => {
-
     if (value) {
       clearError("");
     }
     setter(value);
   };
-  
+
   const handleAdressChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    if(value){
-      setAddressError("")
+    if (value) {
+      setAddressError("");
     }
     // Check if the length of the input exceeds 20 characters
     if (value.length > 120) {
-      setAddressError("Không được nhập quá 120 ký tự!");
+      setAddressError(maxCharacterMessage);
       return;
     }
     setAddress(value);
@@ -157,11 +180,11 @@ const ApiProvinces: React.FC<DeliveryProps> = ({
 
   const handleAdressOtherChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    if(value){
-      setAddressOtherError("")
+    if (value) {
+      setAddressOtherError("");
     }
     if (value.length > 120) {
-      setAddressOtherError("Không được nhập quá 120 ký tự!");
+      setAddressOtherError(maxCharacterMessage);
       return;
     }
     setAddressOther(value);
@@ -169,11 +192,11 @@ const ApiProvinces: React.FC<DeliveryProps> = ({
 
   const handleNoteChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    if(value){
-      setNoteError("")
+    if (value) {
+      setNoteError("");
     }
     if (value.length > 120) {
-      setNoteError("Không được nhập quá 120 ký tự!");
+      setNoteError(maxCharacterMessage);
       return;
     }
     setNote(value);
@@ -182,50 +205,81 @@ const ApiProvinces: React.FC<DeliveryProps> = ({
   return (
     <div className="mx-auto p-4">
       <div className="mb-4">
-        <label className={`block text-sm font-bold ${selectedProvinceError && "error-label"}`}>Chọn Thành phố <span className="text-red-500">*</span></label>
+        <label
+          className={`block text-sm font-bold ${
+            selectedProvinceError && "error-label"
+          }`}
+        >
+          {citySelectMessage} <span className="text-red-500">*</span>
+        </label>
         <Select
           id="province"
           options={provinces}
-          onChange={(value) => handleSelectChange(setSelectedProvince, value, setSelectedProvinceError)}
+          onChange={(value) =>
+            handleSelectChange(
+              setSelectedProvince,
+              value,
+              setSelectedProvinceError
+            )
+          }
           value={selectedProvince}
-          placeholder="Chọn thành phố"
+          placeholder={citySelectMessage}
           className="react-select-container"
           classNamePrefix="react-select"
-          noOptionsMessage={() => "Không tìm thấy!"}
-          isDisabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
+          noOptionsMessage={() => notFoundMessage}
+          isDisabled={
+            loading ||
+            (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)
+          }
           styles={{
             control: (base, state) => {
-              const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+              const isDarkMode = window.matchMedia(
+                "(prefers-color-scheme: dark)"
+              ).matches;
               return {
                 ...base,
                 backgroundColor: state.isFocused
-                  ? (isDarkMode ? "#0f172a" : base.backgroundColor)
-                  : (isDarkMode ? "#0f172a" : "#ffffff"), // Nền tối cho dark, nền sáng cho light
+                  ? isDarkMode
+                    ? "#0f172a"
+                    : base.backgroundColor
+                  : isDarkMode
+                  ? "#0f172a"
+                  : "#ffffff", // Nền tối cho dark, nền sáng cho light
                 color: isDarkMode ? "#e2e8f0" : base.color, // Màu chữ sáng tối
                 borderColor: isDarkMode ? "#4b5563" : base.borderColor, // Màu viền cho dark/light mode
               };
             },
             singleValue: (base) => {
-              const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+              const isDarkMode = window.matchMedia(
+                "(prefers-color-scheme: dark)"
+              ).matches;
               return {
                 ...base,
                 color: isDarkMode ? "#e2e8f0" : base.color, // Màu chữ của giá trị đã chọn
               };
             },
             menu: (base) => {
-              const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+              const isDarkMode = window.matchMedia(
+                "(prefers-color-scheme: dark)"
+              ).matches;
               return {
                 ...base,
                 backgroundColor: isDarkMode ? "#0f172a" : "#ffffff", // Nền của menu
               };
             },
             option: (base, state) => {
-              const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+              const isDarkMode = window.matchMedia(
+                "(prefers-color-scheme: dark)"
+              ).matches;
               return {
                 ...base,
                 backgroundColor: isDarkMode
-                  ? (state.isSelected ? "#1e293b" : "#0f172a")
-                  : (state.isSelected ? "#f0f0f0" : "#ffffff"), // Màu nền tùy chọn
+                  ? state.isSelected
+                    ? "#1e293b"
+                    : "#0f172a"
+                  : state.isSelected
+                  ? "#f0f0f0"
+                  : "#ffffff", // Màu nền tùy chọn
                 color: isDarkMode ? "#e2e8f0" : "#333", // Màu chữ
                 "&:hover": {
                   backgroundColor: isDarkMode ? "#1e293b" : "#f0f0f0", // Màu nền khi hover
@@ -243,50 +297,83 @@ const ApiProvinces: React.FC<DeliveryProps> = ({
       </div>
 
       <div className="mb-4">
-        <label className={`block text-sm font-bold ${selectedDistrictError && "error-label"}`}>Chọn Quận/Huyện <span className="text-red-500">*</span></label>
+        <label
+          className={`block text-sm font-bold ${
+            selectedDistrictError && "error-label"
+          }`}
+        >
+          {districSelectionMessage}
+          <span className="text-red-500">*</span>
+        </label>
         <Select
           id="district"
           options={districts}
-          onChange={(value) => handleSelectChange(setSelectedDistrict, value, setSelectedDistrictError)}
+          onChange={(value) =>
+            handleSelectChange(
+              setSelectedDistrict,
+              value,
+              setSelectedDistrictError
+            )
+          }
           value={selectedDistrict}
-          placeholder="Chọn Quận/Huyện"
+          placeholder={districSelectionMessage}
           className="react-select-container"
           classNamePrefix="react-select"
-          isDisabled={loading || !selectedProvince || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
-          noOptionsMessage={() => "Không tìm thấy!"}
+          isDisabled={
+            loading ||
+            !selectedProvince ||
+            (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)
+          }
+          noOptionsMessage={() => notFoundMessage}
           styles={{
             control: (base, state) => {
-              const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+              const isDarkMode = window.matchMedia(
+                "(prefers-color-scheme: dark)"
+              ).matches;
               return {
                 ...base,
                 backgroundColor: state.isFocused
-                  ? (isDarkMode ? "#0f172a" : base.backgroundColor)
-                  : (isDarkMode ? "#0f172a" : "#ffffff"), // Nền tối cho dark, nền sáng cho light
+                  ? isDarkMode
+                    ? "#0f172a"
+                    : base.backgroundColor
+                  : isDarkMode
+                  ? "#0f172a"
+                  : "#ffffff", // Nền tối cho dark, nền sáng cho light
                 color: isDarkMode ? "#e2e8f0" : base.color, // Màu chữ sáng tối
                 borderColor: isDarkMode ? "#4b5563" : base.borderColor, // Màu viền cho dark/light mode
               };
             },
             singleValue: (base) => {
-              const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+              const isDarkMode = window.matchMedia(
+                "(prefers-color-scheme: dark)"
+              ).matches;
               return {
                 ...base,
                 color: isDarkMode ? "#e2e8f0" : base.color, // Màu chữ của giá trị đã chọn
               };
             },
             menu: (base) => {
-              const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+              const isDarkMode = window.matchMedia(
+                "(prefers-color-scheme: dark)"
+              ).matches;
               return {
                 ...base,
                 backgroundColor: isDarkMode ? "#0f172a" : "#ffffff", // Nền của menu
               };
             },
             option: (base, state) => {
-              const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+              const isDarkMode = window.matchMedia(
+                "(prefers-color-scheme: dark)"
+              ).matches;
               return {
                 ...base,
                 backgroundColor: isDarkMode
-                  ? (state.isSelected ? "#1e293b" : "#0f172a")
-                  : (state.isSelected ? "#f0f0f0" : "#ffffff"), // Màu nền tùy chọn
+                  ? state.isSelected
+                    ? "#1e293b"
+                    : "#0f172a"
+                  : state.isSelected
+                  ? "#f0f0f0"
+                  : "#ffffff", // Màu nền tùy chọn
                 color: isDarkMode ? "#e2e8f0" : "#333", // Màu chữ
                 "&:hover": {
                   backgroundColor: isDarkMode ? "#1e293b" : "#f0f0f0", // Màu nền khi hover
@@ -304,50 +391,79 @@ const ApiProvinces: React.FC<DeliveryProps> = ({
       </div>
 
       <div className="mb-4">
-        <label className={`block text-sm font-bold ${selectedWardError && "error-label"}`}>Chọn Phường Xã <span className="text-red-500">*</span></label>
+        <label
+          className={`block text-sm font-bold ${
+            selectedWardError && "error-label"
+          }`}
+        >
+          {wardselectionMessage}
+          <span className="text-red-500">*</span>
+        </label>
         <Select
           id="ward"
           options={wards}
-          onChange={(value) => handleSelectChange(setSelectedWard, value, setSelectedWardError)}
+          onChange={(value) =>
+            handleSelectChange(setSelectedWard, value, setSelectedWardError)
+          }
           value={selectedWard}
-          placeholder="Chọn Phường/Xã"
+          placeholder={wardselectionMessage}
           className="react-select-container"
           classNamePrefix="react-select"
-          isDisabled={loading || !selectedDistrict || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
-          noOptionsMessage={() => "Không tìm thấy!"}
+          isDisabled={
+            loading ||
+            !selectedDistrict ||
+            (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)
+          }
+          noOptionsMessage={() => notFoundMessage}
           styles={{
             control: (base, state) => {
-              const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+              const isDarkMode = window.matchMedia(
+                "(prefers-color-scheme: dark)"
+              ).matches;
               return {
                 ...base,
                 backgroundColor: state.isFocused
-                  ? (isDarkMode ? "#0f172a" : base.backgroundColor)
-                  : (isDarkMode ? "#0f172a" : "#ffffff"), // Nền tối cho dark, nền sáng cho light
+                  ? isDarkMode
+                    ? "#0f172a"
+                    : base.backgroundColor
+                  : isDarkMode
+                  ? "#0f172a"
+                  : "#ffffff", // Nền tối cho dark, nền sáng cho light
                 color: isDarkMode ? "#e2e8f0" : base.color, // Màu chữ sáng tối
                 borderColor: isDarkMode ? "#4b5563" : base.borderColor, // Màu viền cho dark/light mode
               };
             },
             singleValue: (base) => {
-              const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+              const isDarkMode = window.matchMedia(
+                "(prefers-color-scheme: dark)"
+              ).matches;
               return {
                 ...base,
                 color: isDarkMode ? "#e2e8f0" : base.color, // Màu chữ của giá trị đã chọn
               };
             },
             menu: (base) => {
-              const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+              const isDarkMode = window.matchMedia(
+                "(prefers-color-scheme: dark)"
+              ).matches;
               return {
                 ...base,
                 backgroundColor: isDarkMode ? "#0f172a" : "#ffffff", // Nền của menu
               };
             },
             option: (base, state) => {
-              const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+              const isDarkMode = window.matchMedia(
+                "(prefers-color-scheme: dark)"
+              ).matches;
               return {
                 ...base,
                 backgroundColor: isDarkMode
-                  ? (state.isSelected ? "#1e293b" : "#0f172a")
-                  : (state.isSelected ? "#f0f0f0" : "#ffffff"), // Màu nền tùy chọn
+                  ? state.isSelected
+                    ? "#1e293b"
+                    : "#0f172a"
+                  : state.isSelected
+                  ? "#f0f0f0"
+                  : "#ffffff", // Màu nền tùy chọn
                 color: isDarkMode ? "#e2e8f0" : "#333", // Màu chữ
                 "&:hover": {
                   backgroundColor: isDarkMode ? "#1e293b" : "#f0f0f0", // Màu nền khi hover
@@ -367,16 +483,27 @@ const ApiProvinces: React.FC<DeliveryProps> = ({
       <div className="flex items-center">
         <div className="lg:px-8">
           <div className="field field_v3">
-            <label className="ha-screen-reader">Địa chỉ <span className="text-red-500">*</span></label>
+            <label className="ha-screen-reader">
+              {addressMessage} <span className="text-red-500">*</span>
+            </label>
             <input
               className="field__input"
-              placeholder="Vd: 4xx Lê Văn Q*"
+              placeholder="45x Le van Quoi"
               value={address}
               onChange={handleAdressChange}
-              disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
+              disabled={
+                loading ||
+                (userRole === "GUEST" || !userId
+                  ? isNoneSelect
+                  : isNoneSelectDb)
+              }
             />
             <span className="field__label-wrap" aria-hidden="true">
-              <span className={`field__label  ${addressError && "error-label"}`}>Địa chỉ <span className="text-red-500">*</span></span>
+              <span
+                className={`field__label  ${addressError && "error-label"}`}
+              >
+                {addressMessage} <span className="text-red-500">*</span>
+              </span>
             </span>
           </div>
           {addressError && <p className="text-red-500 ">{addressError}</p>}
@@ -384,16 +511,27 @@ const ApiProvinces: React.FC<DeliveryProps> = ({
 
         <div className="lg:px-8">
           <div className="field field_v3">
-            <label className="ha-screen-reader ">Địa chỉ khác</label>
+            <label className="ha-screen-reader ">{otherAddressMessage}</label>
             <input
               className="field__input"
-              placeholder="Vd: 4xx Lê Văn Q*"
+              placeholder="45x Le van Quoi"
               value={addressOther}
               onChange={handleAdressOtherChange}
-              disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
+              disabled={
+                loading ||
+                (userRole === "GUEST" || !userId
+                  ? isNoneSelect
+                  : isNoneSelectDb)
+              }
             />
             <span className="field__label-wrap" aria-hidden="true">
-              <span className={`field__label  ${addressOtherError && "error-label"}`}>Địa chỉ khác</span>
+              <span
+                className={`field__label  ${
+                  addressOtherError && "error-label"
+                }`}
+              >
+                {otherAddressMessage}
+              </span>
             </span>
           </div>
           {addressOtherError && (
@@ -403,16 +541,23 @@ const ApiProvinces: React.FC<DeliveryProps> = ({
 
         <div className="ml-2 py-2 lg:px-8">
           <div className="field field_v3">
-            <label className="ha-screen-reader ">Ghi chú</label>
+            <label className="ha-screen-reader ">{noteMessage}</label>
             <input
               className="field__input"
-              placeholder="Vd: Note thêm địa chỉ mới hoặc số điện thoại mới."
+              placeholder={notePlaceholderMessage}
               value={note}
               onChange={handleNoteChange}
-              disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
+              disabled={
+                loading ||
+                (userRole === "GUEST" || !userId
+                  ? isNoneSelect
+                  : isNoneSelectDb)
+              }
             />
             <span className="field__label-wrap" aria-hidden="true">
-              <span className={`field__label  ${noteError && "error-label"}`}>Ghi chú</span>
+              <span className={`field__label  ${noteError && "error-label"}`}>
+                {noteMessage}
+              </span>
             </span>
           </div>
           {noteError && <p className="text-red-500 ">{noteError}</p>}

@@ -7,7 +7,6 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import { Grid, Autoplay, FreeMode } from "swiper/modules";
 import Image from "next/image";
-import Currency from "@/components/ui/currency";
 import { useRouter } from "next/navigation";
 import PrevNextSwiper from "./prevnextswiper";
 import { debounce } from "lodash";
@@ -36,12 +35,36 @@ import {
   getColorPrice,
   getSizePrice,
 } from "../../export-product-compare/size-color/match-color-size";
+import {
+  getOutOfStockMessage,
+  getToastError,
+  translateAddNew,
+  translateAddToCartError,
+  translateCannotRemoveSavedProduct,
+  translateCannotSaveProduct,
+  translateDecrease,
+  translateExpand,
+  translateHeart,
+  translateInsufficientStock,
+  translateLoading,
+  translateOutOfStock,
+  translateProductAddedToCart,
+  translateProductQuantityUpdated,
+  translateSaved,
+  translateSold,
+  translateSuperSale,
+  translateTrendingNow,
+} from "@/translate/translate-client";
 
 interface ProductListSaleProps {
   data: Product[];
+  languageToUse: string;
 }
 
-const ProductListSale: React.FC<ProductListSaleProps> = ({ data }) => {
+const ProductListSale: React.FC<ProductListSaleProps> = ({
+  data,
+  languageToUse,
+}) => {
   const router = useRouter();
   const cart = useCart();
   const cartdb = useCartdb();
@@ -55,14 +78,36 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({ data }) => {
   const [loadingRetchdataFavorite, setLoadingFetchDataFavorite] =
     useState(false);
 
+  //languages
+  const toastErrorMessage = getToastError(languageToUse);
+  const outOfStockInventoryMessage = translateOutOfStock(languageToUse);
+  const productQuantityUpdatedMessage =
+    translateProductQuantityUpdated(languageToUse);
+  const loadingMessage = translateLoading(languageToUse);
+  const insufficientStockMessage = translateInsufficientStock(languageToUse);
+  const addtoCartErrorMessage = translateAddToCartError(languageToUse);
+  const productAddedToCartMessage = translateProductAddedToCart(languageToUse);
+  const cannotRemoveSavedProductMessage =
+    translateCannotRemoveSavedProduct(languageToUse);
+  const cannotSaveProductMessage = translateCannotSaveProduct(languageToUse);
+  const outOfStockMessage = getOutOfStockMessage(languageToUse);
+  const superSaleMessage = translateSuperSale(languageToUse);
+  const soldMessage = translateSold(languageToUse);
+  const trendingNowMessage = translateTrendingNow(languageToUse);
+  const decreaseMessage = translateDecrease(languageToUse);
+  const expandMessage = translateExpand(languageToUse);
+  const addNewMessage = translateAddNew(languageToUse);
+  const savedMessage = translateSaved(languageToUse);
+  const heartMessage = translateHeart(languageToUse);
+
   useEffect(() => {
     if (userId?.role !== "GUEST" && userId?.id) {
       const fetchData = async () => {
         try {
           setLoadingFetchDataFavorite(true);
-          await favorite.fetchFavoriteItems(userId?.id || "");
+          await favorite.fetchFavoriteItems(userId?.id || "", languageToUse);
         } catch (error) {
-          toast.error("Có vấn đề khi get dữ liệu!");
+          toast.error(toastErrorMessage);
         } finally {
           setLoadingFetchDataFavorite(false);
         }
@@ -113,7 +158,7 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({ data }) => {
       // Use the Link component for navigation
       router.push(href);
     } else {
-      console.error("Invalid route:", route);
+      toast.error(toastErrorMessage);
     }
   };
 
@@ -124,11 +169,13 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({ data }) => {
           isOpen={openPreviewModal}
           onClose={() => setOpenPreviewModal(false)}
           product={currentProduct}
+          languageToUse={languageToUse}
         />
       )}
       <AlertGuestModal
         isOpen={alertGuestModal}
         onClose={() => setAlertGuestModal(false)}
+        languageToUse={languageToUse}
       />
       <Swiper
         slidesPerView={5}
@@ -266,7 +313,7 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({ data }) => {
           const availableColor = lowestPriceDetails.color;
 
           if (!availableSize && !availableColor) {
-            toast.error("Sản phẩm đã hết hàng!");
+            toast.error(outOfStockInventoryMessage);
             return;
           }
 
@@ -332,9 +379,7 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({ data }) => {
                   null,
                   userId?.id || ""
                 );
-                toast.success(
-                  "Sản phẩm đã được cập nhật số lượng trong giỏ hàng."
-                );
+                toast.success(productQuantityUpdatedMessage);
               } else {
                 cart.addItem(
                   productWithQuantity,
@@ -342,7 +387,8 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({ data }) => {
                   null,
                   userId?.id || "",
                   size,
-                  color
+                  color,
+                  languageToUse
                 );
               }
             },
@@ -359,7 +405,7 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({ data }) => {
                   userId: userId?.id || "",
                 }),
                 {
-                  loading: "Loading...",
+                  loading: loadingMessage,
                   success: (response) => {
                     const cartItemData = response.data;
                     const size = availableSize;
@@ -382,7 +428,7 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({ data }) => {
                       matchingQuantity >= maxQuantity && maxQuantity > 0;
 
                     if (compareQuantityExistingAndAvailable) {
-                      throw new Error("Số lượng sản phẩm trong kho không đủ!");
+                      throw new Error(insufficientStockMessage);
                     }
 
                     const productWithQuantity = {
@@ -407,7 +453,8 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({ data }) => {
                           existingCartItem.id,
                           existingCartItem.quantity + quantity,
                           null,
-                          userId?.id || ""
+                          userId?.id || "",
+                          languageToUse
                         );
                       } else {
                         cartdb.addItem(
@@ -420,19 +467,17 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({ data }) => {
                         );
                       }
                     } catch (error) {
-                      toast.error(
-                        "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
-                      );
+                      toast.error(addtoCartErrorMessage);
                     } finally {
                       setLoading(false);
                     }
 
                     return existingCartItem
-                      ? "Sản phẩm đã được cập nhật số lượng trong giỏ hàng."
-                      : "Sản phẩm đã thêm vào giỏ hàng.";
+                      ? productQuantityUpdatedMessage
+                      : productAddedToCartMessage;
                   },
                   error: (error) => {
-                    return error.message || "Failed to add product to cart!";
+                    return error.message || toastErrorMessage;
                   },
                 }
               );
@@ -491,16 +536,17 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({ data }) => {
                   if (favoriteData && favoriteData.id) {
                     await favorite.removeItem(
                       favoriteData.id,
-                      userId?.id || ""
+                      userId?.id || "",
+                      languageToUse
                     );
                   } else {
-                    await favorite.addItem(favoriteProduct);
+                    await favorite.addItem(favoriteProduct,languageToUse);
                   }
                 } catch (error) {
                   toast.error(
                     favoriteData
-                      ? `Không thể xóa lưu sản phẩm!`
-                      : `Không thể lưu sản phẩm!`
+                      ? cannotRemoveSavedProductMessage
+                      : cannotSaveProductMessage
                   );
                 } finally {
                   setLoadingFetchDataFavorite(false);
@@ -550,7 +596,7 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({ data }) => {
                         <div className="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-[9997]">
                           <div className="fixed z-[9999] top-[3px] right-[-95px] bg-red-600 text-white py-[15px] w-[350px] text-center transform rotate-[45deg] font-bold text-lg tracking-[2px] overflow-hidden">
                             <span className="inline-block duration-500 ease-in-out transform transition-transform w-full absolute left-[13%] top-1/2 translate-y-[-50%]">
-                              Hết hàng
+                              {outOfStockMessage}
                             </span>
                           </div>
                         </div>
@@ -568,7 +614,7 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({ data }) => {
                     <div>
                       <p className="font-semibold text-sm md:text-base whitespace-nowrap overflow-hidden text-ellipsis">
                         <span className="p-1 rounded-md bg-[#de0024] text-xs text-white">
-                          Siêu sale
+                          {superSaleMessage}
                         </span>
                         <span> {product.heading}</span>
                       </p>
@@ -592,7 +638,7 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({ data }) => {
                         >
                           <div className="flex items-center justify-between text-white">
                             <span className="text-sm font-medium">
-                              Hết hàng
+                              {outOfStockMessage}
                             </span>
                           </div>
                         </div>
@@ -611,11 +657,11 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({ data }) => {
                           }}
                         >
                           <div className="flex items-center justify-between text-white">
-                            {product.sold > 0 && <span>Đã bán</span>}
+                            {product.sold > 0 && <span>{soldMessage}</span>}
                             <span>
                               {product.sold === 0 ? (
                                 <span className="text-sm font-medium">
-                                  Đang bán chạy
+                                  {trendingNowMessage}
                                 </span>
                               ) : (
                                 <span>
@@ -627,11 +673,16 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({ data }) => {
                         </div>
                       </>
                     )}
-                    <CommentStar data={product.id} comment={product.comment} />
+                    <CommentStar
+                      data={product.id}
+                      comment={product.comment}
+                      languageToUse={languageToUse}
+                    />
                   </div>
                   <div className="home-product-item__favorite">
                     <span className="ml-1">
-                      Giảm {product.productdetail?.percentpromotion1}%
+                      {decreaseMessage}
+                      {product.productdetail?.percentpromotion1}%
                     </span>
                   </div>
                 </div>
@@ -641,7 +692,7 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({ data }) => {
                       disabled={loading}
                       onClick={onPreview}
                       icon={<Expand size={20} className="text-gray-600" />}
-                      text="Mở rộng"
+                      text={expandMessage}
                     />
                     <IconButton
                       disabled={productQuantityAll || loading}
@@ -670,7 +721,9 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({ data }) => {
                           }`}
                         />
                       }
-                      text={`${productQuantityAll ? "Hết hàng" : "Thêm mới"}`}
+                      text={`${
+                        productQuantityAll ? outOfStockMessage : addNewMessage
+                      }`}
                     />
                     <IconButton
                       disabled={loading || loadingRetchdataFavorite}
@@ -709,8 +762,8 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({ data }) => {
                             item.selectedSize === availableSize &&
                             item.selectedColor === availableColor
                         )
-                          ? "Đã lưu"
-                          : "Thả Tim"
+                          ? savedMessage
+                          : heartMessage
                       }`}
                     />
                   </div>

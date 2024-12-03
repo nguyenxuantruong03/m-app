@@ -10,50 +10,80 @@ import { onFollow, onUnfollow } from "@/actions/stream/follow";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import { onBlock } from "@/actions/stream/block";
+import {
+  getToastError,
+  translateBlock,
+  translateBlockedUser,
+  translateFollow,
+  translateFollower,
+  translateFollowers,
+  translateNowFollowing,
+  translateUnfollow,
+  translateUnfollowedUser,
+} from "@/translate/translate-client";
 
 interface AboutUserProps {
   self: any;
   isFollowing: boolean;
-  user: any
-  avatarImage: string
+  user: any;
+  avatarImage: string;
+  languageToUse: string;
 }
 
-export const AboutUser = ({ self, isFollowing,user,avatarImage}: AboutUserProps) => {
+export const AboutUser = ({
+  self,
+  isFollowing,
+  user,
+  avatarImage,
+  languageToUse,
+}: AboutUserProps) => {
   const [isMounted, setIsMounted] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
-  const followedByLabel =
-    self._count.followedBy === 1 ? "follower" : "followers";
 
   if (!user) {
     throw new Error("Not found user!");
   }
+  const toastErrorMessage = getToastError(languageToUse);
+  const blockUserMessage = translateBlockedUser(languageToUse, self.name);
+  const blockMessage = translateBlock(languageToUse);
+  const followerMessage = translateFollower(languageToUse);
+  const followersMessage = translateFollowers(languageToUse);
+  const unFollowMessage = translateUnfollow(languageToUse);
+  const followMessage = translateFollow(languageToUse);
 
-  const handleBlock = () =>{
-    startTransition(() =>{
+  const followedByLabel =
+    self._count.followedBy === 1 ? followerMessage : followersMessage;
+
+  const handleBlock = () => {
+    startTransition(() => {
       onBlock(self.id)
-      .then(() => toast.success(`Blocked ${self.name}`))
-      .catch(() => toast.error("Something went wrong"))
-    })
-  }
+        .then(() => toast.success(blockUserMessage))
+        .catch(() => toast.error(toastErrorMessage));
+    });
+  };
 
   const handleFollow = () => {
     startTransition(() => {
-      onFollow(self.id)
+      onFollow(self.id,languageToUse)
         .then((data) =>
-          toast.success(`You are now following ${data.following.nameuser}`)
+          toast.success(
+            translateNowFollowing(languageToUse, data.following.nameuser)
+          )
         )
-        .catch(() => toast.error("Something went wrong"));
+        .catch(() => toast.error(toastErrorMessage));
     });
   };
 
   const handleUnFollow = () => {
     startTransition(() => {
-      onUnfollow(self.id)
+      onUnfollow(self.id,languageToUse)
         .then((data) =>
-          toast.success(`You have unfollowed ${data.following.nameuser}`)
+          toast.success(
+            translateUnfollowedUser(languageToUse, data.following.nameuser)
+          )
         )
-        .catch(() => toast.error("Something went wrong"));
+        .catch(() => toast.error(toastErrorMessage));
     });
   };
 
@@ -91,6 +121,7 @@ export const AboutUser = ({ self, isFollowing,user,avatarImage}: AboutUserProps)
             heightImage={120}
             showUpload={true}
             classNames="border-2 border-slate-300"
+            languageToUse={languageToUse}
           />
         ) : (
           <Image
@@ -102,12 +133,16 @@ export const AboutUser = ({ self, isFollowing,user,avatarImage}: AboutUserProps)
           />
         )}
         <div className="text-center xl:text-left">
-          <p className="text-3xl font-bold text-slate-900 dark:text-slate-200">{self.name}</p>
+          <p className="text-3xl font-bold text-slate-900 dark:text-slate-200">
+            {self.name}
+          </p>
           <p className="text-sm text-muted-foreground space-x-1">
             <span className="font-semibold text-primary text-gray-600 dark:text-slate-400">
               {self._count.followedBy}
             </span>
-            <span className="text-gray-600 dark:text-slate-400">{followedByLabel}</span>
+            <span className="text-gray-600 dark:text-slate-400">
+              {followedByLabel}
+            </span>
           </p>
         </div>
       </div>
@@ -127,7 +162,7 @@ export const AboutUser = ({ self, isFollowing,user,avatarImage}: AboutUserProps)
                   isFollowing ? "fill-red-500 text-red-500" : "fill-none"
                 )}
               />
-              {isFollowing ? "Unfollow" : "Follow"}
+              {isFollowing ? unFollowMessage : followMessage}
             </Button>
 
             <Button
@@ -136,7 +171,8 @@ export const AboutUser = ({ self, isFollowing,user,avatarImage}: AboutUserProps)
               onClick={handleBlock}
               className="w-full lg:w-auto"
             >
-              <MinusCircle className="w-4 h-4 text-muted-foreground mr-2" /> Block
+              <MinusCircle className="w-4 h-4 text-muted-foreground mr-2" />{" "}
+              {blockMessage}
             </Button>
           </>
         )}

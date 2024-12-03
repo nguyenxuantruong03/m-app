@@ -19,8 +19,37 @@ import {
 } from "lucide-react";
 import FormatDate from "@/components/format-Date";
 import { formatter } from "@/lib/utils";
-import { getColorPrice, getSizePrice } from "@/components/(client)/export-product-compare/size-color/match-color-size";
-import Link from 'next/link';
+import {
+  getColorPrice,
+  getSizePrice,
+} from "@/components/(client)/export-product-compare/size-color/match-color-size";
+import Link from "next/link";
+import {
+  getProductNotFoundMessage,
+  getToastError,
+  translateProductRewardError,
+  translateRewardErrorContactAdmin,
+  translatePaymentSuccess,
+  translatePaymentFailure,
+  translatePlease,
+  translateCheck,
+  translateNo,
+  translateBrowserCloseMessage,
+  translateOrderSuccess,
+  translateOrderCode,
+  translatePaidAmount,
+  translateAmountToPay,
+  translateGiftWheel,
+  translateInsufficientAmount,
+  translatePayToReceiveReward,
+  translateOrderTime,
+  translateOrderStatus,
+  translatePaidStatus,
+  translateUnpaidStatus,
+  translateBeforeClosingBrowser,
+  translateBackToPayment,
+  translateBackToHome,
+} from "@/translate/translate-client";
 
 const PaymentSuccess = () => {
   const searchParams = useSearchParams();
@@ -37,6 +66,47 @@ const PaymentSuccess = () => {
   const [rotation, setRotation] = useState(0);
   const hasRunToastRef = useRef(false);
   const hasRunReset = useRef(false);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+  const toastErrorMessage = getToastError(languageToUse);
+  const productNotfoundMessage = getProductNotFoundMessage(languageToUse);
+  const productRewardErrorMessage = translateProductRewardError(languageToUse);
+  const rewardErrorContacAdminMessage =
+    translateRewardErrorContactAdmin(languageToUse);
+  const payementSuccessMessage = translatePaymentSuccess(languageToUse);
+  const payementFailureMessage = translatePaymentFailure(languageToUse);
+  const pleaseMessage = translatePlease(languageToUse);
+  const CheckMessage = translateCheck(languageToUse);
+  const noMessage = translateNo(languageToUse);
+  const browerCloseMessage = translateBrowserCloseMessage(languageToUse);
+  const orderSuccessMessage = translateOrderSuccess(languageToUse);
+  const orderCode = translateOrderCode(languageToUse);
+  const paidAmountMessage = translatePaidAmount(languageToUse);
+  const amountToPayMessage = translateAmountToPay(languageToUse);
+  const giftWheelMessage = translateGiftWheel(languageToUse);
+  const insufficientAmountMessage = translateInsufficientAmount(languageToUse);
+  const payToReceiveReward = translatePayToReceiveReward(languageToUse);
+  const orderItemMessage = translateOrderTime(languageToUse);
+  const orderStatusMessage = translateOrderStatus(languageToUse);
+  const paidStatusMessage = translatePaidStatus(languageToUse);
+  const unpaidStatusMessage = translateUnpaidStatus(languageToUse);
+  const beforeClosingBrowerMessage =
+    translateBeforeClosingBrowser(languageToUse);
+  const backToPaymentMessage = translateBackToPayment(languageToUse, countdown);
+  const backToHomeMessage = translateBackToHome(languageToUse);
 
   const selectedItems = items.filter((item) =>
     cartdb.selectedItems.includes(item.id)
@@ -64,7 +134,7 @@ const PaymentSuccess = () => {
             setDataOrderItem(response.data);
           });
       } catch (error) {
-        console.error(error);
+        toast.error(toastErrorMessage);
       } finally {
         setLoading(false);
       }
@@ -79,16 +149,15 @@ const PaymentSuccess = () => {
 
       if (!itemInCart || !itemInCart.product) {
         // Nếu itemInCart hoặc itemInCart.product là undefined, bỏ qua item này
-        toast.error("Không tìm thấy sản phẩm!");
+        toast.error(productNotfoundMessage);
         return total;
       }
       //GetPrice dựa vào size
       const getPriceMatchColorandSize = () => {
-        const { price: priceSize, percentpromotion: percentpromotionSize } = getSizePrice(
-          itemInCart?.product || "",
-          itemInCart?.size
-        );
-        const { price: priceColor, percentpromotion: percentpromotionColor } = getColorPrice(itemInCart.product, itemInCart?.color);
+        const { price: priceSize, percentpromotion: percentpromotionSize } =
+          getSizePrice(itemInCart?.product || "", itemInCart?.size);
+        const { price: priceColor, percentpromotion: percentpromotionColor } =
+          getColorPrice(itemInCart.product, itemInCart?.color);
         return Math.ceil(Math.max(priceSize, priceColor));
       };
 
@@ -98,7 +167,7 @@ const PaymentSuccess = () => {
         totalPrice: total.totalPrice + itemTotalPrice,
       };
     },
-    { totalPrice: 0}
+    { totalPrice: 0 }
   );
 
   // Tiền bảo hiểm
@@ -136,29 +205,28 @@ const PaymentSuccess = () => {
   const resetTotalCoins = async (amountdb: number, coins: number) => {
     setLoading(true);
     try {
+      //Check lỗi
+      if (isGiftOfFirstOrderItem !== false) {
+        toast.error(productRewardErrorMessage);
+        router.push("/cart");
+        return;
+      }
 
-       //Check lỗi
-        if (isGiftOfFirstOrderItem !== false) {
-          toast.error("Lỗi sản phẩm đã được nhận thưởng.");
-          router.push("/cart");
-          return;
-        }
+      if (!firstOrderItemId) {
+        toast.error(productNotfoundMessage);
+        router.push("/cart");
+        return;
+      }
 
-        if (!firstOrderItemId) {
-          toast.error("Lỗi không tìm thấy sản phẩm của bạn.");
-          router.push("/cart");
-          return;
-        }
+      // Lấy URL và tham số truy vấn
+      const currentUrl = window.location.pathname;
+      const successParam = getQueryParam("success");
+      //Check nếu người dùng tự động chuyển đến /payment-success hoặc khác payment-success?success=1 khác 1 thì chuyển người dùng về /cart
+      if (currentUrl === "/payment-success" && successParam !== "1") {
+        router.push("/cart");
+        return;
+      }
 
-        // Lấy URL và tham số truy vấn
-        const currentUrl = window.location.pathname;
-        const successParam = getQueryParam("success");
-        //Check nếu người dùng tự động chuyển đến /payment-success hoặc khác payment-success?success=1 khác 1 thì chuyển người dùng về /cart
-        if (currentUrl === "/payment-success" && successParam !== "1") {
-          router.push("/cart");
-          return;
-        }
-        
       if (
         user?.role !== "GUEST" &&
         user?.id &&
@@ -193,7 +261,7 @@ const PaymentSuccess = () => {
       }
     } catch (error) {
       setLoading(false);
-      toast.error("Lỗi tặng thưởng liên hệ ADMIN ngay 0352261103.");
+      toast.error(rewardErrorContacAdminMessage);
     } finally {
       setLoading(false);
     }
@@ -205,39 +273,39 @@ const PaymentSuccess = () => {
       const canceled = searchParams.get("canceled");
 
       if (success) {
-          if (user?.role !== "GUEST" && user?.id && !hasRunToastRef.current) {
-              //hasRunToastRef: Ngăn chặn chỉ cho API chạy 1 lần nếu ko có nó call liên tục bên ngoài
-              hasRunToastRef.current = true;  
-              try {
-                  await cartdb.removeSelectedItems(user?.id || "");
-                  toast.success("Thanh toán thành công!");
-              } catch (error) {
-                  console.error("Error removing selected items:", error);
-              }
-          } else if (!hasRunToastRef.current) {
-              //hasRunToastRef: Ngăn chặn chỉ cho API chạy 1 lần nếu ko có nó call liên tục bên ngoài
-              hasRunToastRef.current = true;
-              setLoading(false);
-              try {
-                  await cart.removeSelectedItems();
-                  toast.success("Thanh toán thành công!");
-              } catch (error) {
-                  console.error("Error removing selected items:", error);
-              }
+        if (user?.role !== "GUEST" && user?.id && !hasRunToastRef.current) {
+          //hasRunToastRef: Ngăn chặn chỉ cho API chạy 1 lần nếu ko có nó call liên tục bên ngoài
+          hasRunToastRef.current = true;
+          try {
+            await cartdb.removeSelectedItems(user?.id || "", languageToUse);
+            toast.success(payementSuccessMessage);
+          } catch (error) {
+            toast.error(toastErrorMessage);
           }
-          if (dataOrderItem.length > 0) {
-              resetTotalCoins(totalAmount, totalCoins);
+        } else if (!hasRunToastRef.current) {
+          //hasRunToastRef: Ngăn chặn chỉ cho API chạy 1 lần nếu ko có nó call liên tục bên ngoài
+          hasRunToastRef.current = true;
+          setLoading(false);
+          try {
+            await cart.removeSelectedItems();
+            toast.success(payementSuccessMessage);
+          } catch (error) {
+            toast.error(toastErrorMessage);
           }
+        }
+        if (dataOrderItem.length > 0) {
+          resetTotalCoins(totalAmount, totalCoins);
+        }
       }
 
       if (canceled && !hasRunToastRef.current) {
-          //hasRunToastRef: Ngăn chặn chỉ cho API chạy 1 lần nếu ko có nó call liên tục bên ngoài
-          hasRunToastRef.current = true;
-          toast.error("Thanh toán thất bại!");
+        //hasRunToastRef: Ngăn chặn chỉ cho API chạy 1 lần nếu ko có nó call liên tục bên ngoài
+        hasRunToastRef.current = true;
+        toast.error(payementFailureMessage);
       }
-  };
+    };
 
-  handlePaymentStatus();
+    handlePaymentStatus();
   }, [searchParams, totalAmount, totalCoins]);
 
   useEffect(() => {
@@ -268,9 +336,11 @@ const PaymentSuccess = () => {
               {loading && <LoadingPageComponent />}
             </div>
             <div className="text-center text-lg mt-3 text-slate-900 dark:text-slate-200">
-              Quý khách vui lòng{" "}
-              <span className="text-red-600 font-semibold">KHÔNG</span> tắt
-              trình duyệt vì đang xử lý tặng quà cho quý khách mua hàng.
+              {pleaseMessage}
+              <span className="text-red-600 font-semibold">
+                {noMessage}
+              </span>{" "}
+              {browerCloseMessage}
             </div>
           </div>
         </>
@@ -287,46 +357,57 @@ const PaymentSuccess = () => {
             </div>
 
             <div className="text-lg space-y-5 text-center">
-              <p className="font-bold mt-3 text-slate-900 dark:text-slate-200">Đặt hàng thành công!</p>
+              <p className="font-bold mt-3 text-slate-900 dark:text-slate-200">
+                {orderSuccessMessage}
+              </p>
               {/* Check nếu role là GUEST thì ko hiển thị */}
               {user?.role !== "GUEST" && user?.id && (
                 <>
                   <div className="ml-5 grid grid-cols-2 gap-x-2 space-y-1">
                     <p className="flex items-center text-slate-900 dark:text-slate-200">
-                      <Truck className="h-5 w-5 mr-1" /> Mã đơn hàng:
+                      <Truck className="h-5 w-5 mr-1" /> {orderCode}
                     </p>
                     <p className="font-semibold text-base text-slate-900 dark:text-slate-200">
                       {firstOrderItemId}
                     </p>
                     <p className="flex items-center text-slate-900 dark:text-slate-200">
-                      <Banknote className="h-5 w-5 mr-1 " /> {isPaidOfFirstOrder ? <span>Số tiền đã thanh toán:</span> : <span>Số tiền cần thanh toán:</span>}
+                      <Banknote className="h-5 w-5 mr-1 " />{" "}
+                      {isPaidOfFirstOrder ? (
+                        <span>{paidAmountMessage}</span>
+                      ) : (
+                        <span>{amountToPayMessage}</span>
+                      )}
                     </p>
-                    <p className={`font-semibold text-base ${isPaidOfFirstOrder ? "text-green-600" : "text-red-600"}`}>
+                    <p
+                      className={`font-semibold text-base ${
+                        isPaidOfFirstOrder ? "text-green-600" : "text-red-600"
+                      }`}
+                    >
                       {PriceOfFirstOrderItem
                         ? formatter.format(PriceOfFirstOrderItem)
                         : ""}
                     </p>
                     <p className="flex items-center text-slate-900 dark:text-slate-200">
-                      <Gift className="h-5 w-5 mr-1 " /> Vòng quay được tặng:
+                      <Gift className="h-5 w-5 mr-1 " /> {giftWheelMessage}
                     </p>
                     <p className="font-semibold text-base">
                       {isPaidOfFirstOrder ? (
                         <div>
                           {rotation === 0 ? (
                             <div className="text-red-600">
-                              Số tiền không đáp ứng
+                              {insufficientAmountMessage}
                             </div>
                           ) : (
                             <div className="text-green-500">+{rotation}</div>
                           )}
                         </div>
                       ) : (
-                        <div className="text-red-600">Thanh toán để nhận thưởng!</div>
+                        <div className="text-red-600">{payToReceiveReward}</div>
                       )}
                     </p>
                     <p className="flex items-center text-slate-900 dark:text-slate-200">
-                      <AlarmClockCheck className="h-5 w-5 mr-1" /> Thời gian đặt
-                      hàng:
+                      <AlarmClockCheck className="h-5 w-5 mr-1" />{" "}
+                      {orderItemMessage}
                     </p>
                     <p className="font-semibold text-base text-slate-900 dark:text-slate-200">
                       {
@@ -337,37 +418,42 @@ const PaymentSuccess = () => {
                       }
                     </p>
                     <p className="flex items-center text-slate-900 dark:text-slate-200">
-                      <WalletCards className="h-5 w-5 mr-1" /> Trạng thái đơn
-                      hàng:
+                      <WalletCards className="h-5 w-5 mr-1" />{" "}
+                      {orderStatusMessage}
                     </p>
                     <p className="font-semibold text-base">
                       {isPaidOfFirstOrder ? (
-                        <span className="text-green-500">Đã thanh toán</span>
+                        <span className="text-green-500">
+                          {paidStatusMessage}
+                        </span>
                       ) : (
-                        <span className="text-red-600">Chưa thanh toán</span>
+                        <span className="text-red-600">
+                          {unpaidStatusMessage}
+                        </span>
                       )}
                     </p>
                   </div>
 
                   <p className="text-slate-900 dark:text-slate-200">
-                    Quý khách vui lòng{" "}
-                    <span className="text-red-600 font-semibold">KIỂM TRA</span>{" "}
-                    đơn hơn trước khi tắt trình duyệt.
+                    {pleaseMessage}
+                    <span className="text-red-600 font-semibold">
+                      {CheckMessage}
+                    </span>
+                    {beforeClosingBrowerMessage}
                   </p>
                 </>
               )}
             </div>
             <div className="text-red-800 dark:text-red-700 mt-10">
               <p className="text-center text-lg font-semibold">
-                Trở lại trang mua hàng trong {countdown} giây <br />
-                Xin vui lòng chờ trong giây lát...
+                {backToPaymentMessage}
               </p>
             </div>
             <Link
               href="/home-product"
               className="mt-4 flex items-center justify-center hover:underline cursor-pointer text-slate-900 dark:text-slate-200"
             >
-              Trở về trang chủ 🏠
+              {backToHomeMessage}
             </Link>
           </div>
         </div>

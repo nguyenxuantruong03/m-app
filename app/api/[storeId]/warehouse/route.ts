@@ -1,21 +1,28 @@
+import { translateText } from "@/translate/translate-client";
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
 import { NextResponse } from "next/server";
+import { translateWareHouseGet } from "@/translate/translate-api";
 
 export async function GET(req: Request) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const wareHouseGetMessage = translateWareHouseGet(LanguageToUse)
   try {
-    const userId = await currentUser();
+    const { searchParams } = new URL(req.url);
+    const language = searchParams.get("language") || "vi"; // Mặc định là "vi" nếu không có language
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: wareHouseGetMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    const order = await prismadb.order.findMany({
+    const orders = await prismadb.order.findMany({
       where: {
-        userId: userId?.id,
+        userId: user?.id,
       },
       include: {
         orderItem: {
@@ -45,10 +52,190 @@ export async function GET(req: Request) {
       },
     });
 
-    return NextResponse.json(order);
+    // Dịch tất cả các trường trong sản phẩm
+    const translations = await Promise.all(
+      orders.map(async (order) => {
+        // Dịch các trường chung
+        const translatedOrder = {
+          ...order,
+          deliveryMethod: await translateText(
+            order.deliveryMethod || "",
+            language
+          ),
+          orderItem: await Promise.all(
+            order.orderItem.map(async (item) => {
+              const translatedItem = {
+                ...item,
+                product: {
+                  ...item.product,
+                  heading: await translateText(
+                    item.product?.heading || "",
+                    language
+                  ), // Dịch product.heading
+                  description: await translateText(
+                    item.product?.description || "",
+                    language
+                  ), // Dịch product.description
+                  productdetail: {
+                    ...item.product.productdetail,
+                    title: await translateText(
+                      item.product.productdetail?.title || "",
+                      language
+                    ),
+                    name1: await translateText(
+                      item.product.productdetail?.name1 || "",
+                      language
+                    ),
+                    name2: await translateText(
+                      item.product.productdetail?.name2 || "",
+                      language
+                    ),
+                    name3: await translateText(
+                      item.product.productdetail?.name3 || "",
+                      language
+                    ),
+                    name4: await translateText(
+                      item.product.productdetail?.name4 || "",
+                      language
+                    ),
+                    name5: await translateText(
+                      item.product.productdetail?.name5 || "",
+                      language
+                    ),
+                    promotionheading: await translateText(
+                      item.product.productdetail?.promotionheading || "",
+                      language
+                    ),
+                    promotiondescription: await translateText(
+                      item.product.productdetail?.promotiondescription || "",
+                      language
+                    ),
+                    descriptionsalientfeatures: await translateText(
+                      item.product.productdetail?.descriptionsalientfeatures ||
+                        "",
+                      language
+                    ),
+                    description2salientfeatures: await translateText(
+                      item.product.productdetail?.description2salientfeatures ||
+                        "",
+                      language
+                    ),
+                    contentsalientfeatures: await translateText(
+                      item.product.productdetail?.contentsalientfeatures || "",
+                      language
+                    ),
+                    descriptionspecifications: await translateText(
+                      item.product.productdetail?.descriptionspecifications ||
+                        "",
+                      language
+                    ),
+                    valuespecifications: await translateText(
+                      item.product.productdetail?.valuespecifications || "",
+                      language
+                    ),
+                    description2specifications: await translateText(
+                      item.product.productdetail?.description2specifications ||
+                        "",
+                      language
+                    ),
+                    value2specifications: await translateText(
+                      item.product.productdetail?.value2specifications || "",
+                      language
+                    ),
+                    category: {
+                      ...item.product.productdetail?.category,
+                      name: await translateText(
+                        item.product.productdetail?.category?.name || "",
+                        language
+                      ),
+                    },
+                    color1: {
+                      ...item.product.productdetail?.color1,
+                      name: await translateText(
+                        item.product.productdetail?.color1?.name || "",
+                        language
+                      ),
+                    },
+                    color2: {
+                      ...item.product.productdetail?.color2,
+                      name: await translateText(
+                        item.product.productdetail?.color2?.name || "",
+                        language
+                      ),
+                    },
+                    color3: {
+                      ...item.product.productdetail?.color3,
+                      name: await translateText(
+                        item.product.productdetail?.color3?.name || "",
+                        language
+                      ),
+                    },
+                    color4: {
+                      ...item.product.productdetail?.color4,
+                      name: await translateText(
+                        item.product.productdetail?.color4?.name || "",
+                        language
+                      ),
+                    },
+                    color5: {
+                      ...item.product.productdetail?.color5,
+                      name: await translateText(
+                        item.product.productdetail?.color5?.name || "",
+                        language
+                      ),
+                    },
+                    size1: {
+                      ...item.product.productdetail?.size1,
+                      name: await translateText(
+                        item.product.productdetail?.size1?.name || "",
+                        language
+                      ),
+                    },
+                    size2: {
+                      ...item.product.productdetail?.size2,
+                      name: await translateText(
+                        item.product.productdetail?.size2?.name || "",
+                        language
+                      ),
+                    },
+                    size3: {
+                      ...item.product.productdetail?.size3,
+                      name: await translateText(
+                        item.product.productdetail?.size3?.name || "",
+                        language
+                      ),
+                    },
+                    size4: {
+                      ...item.product.productdetail?.size4,
+                      name: await translateText(
+                        item.product.productdetail?.size4?.name || "",
+                        language
+                      ),
+                    },
+                    size5: {
+                      ...item.product.productdetail?.size5,
+                      name: await translateText(
+                        item.product.productdetail?.size5?.name || "",
+                        language
+                      ),
+                    },
+                  },
+                },
+              };
+
+              return translatedItem;
+            })
+          ),
+        };
+
+        return translatedOrder;
+      })
+    );
+
+    return NextResponse.json(translations);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error patch order." }),
+      JSON.stringify({ error: wareHouseGetMessage.internalError }),
       { status: 500 }
     );
   }

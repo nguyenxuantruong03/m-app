@@ -37,29 +37,7 @@ import viLocale from "date-fns/locale/vi";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 import Image from "next/image";
 import Recommend from "@/components/ui/recommend";
-
-const formSchema = z.object({
-  name: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  imagecoupon: z.object({ url: z.string() }).array(),
-  duration: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  description: z.optional(
-    z.string().min(4, {
-      message: "Nhập ít nhất 4 ký tự.",
-    })
-  ),
-  percent: z.coerce.number().min(1, { message: "Nhập ít nhất 1%." }),
-  durationinmoth: z.optional(
-    z.coerce.number().min(0, {
-      message: "Nhập ít nhất 1 tháng.",
-    })
-  ),
-  maxredemptions: z.coerce
-    .number()
-    .min(1, { message: "Nhập ít nhất 1 người." }),
-  redeemby: z.union([z.date().nullable(), z.string().nullable()]),
-});
-
-type CouponFormValues = z.infer<typeof formSchema>;
+import { getCouponForm } from "@/translate/translate-dashboard";
 
 interface CouponFormProps {
   initialData:
@@ -67,18 +45,31 @@ interface CouponFormProps {
         imagecoupon: ImageCoupon[];
       })
     | null;
+  language: string;
 }
 
-export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
+export const CouponForm: React.FC<CouponFormProps> = ({
+  initialData,
+  language,
+}) => {
   const params = useParams();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const isEditing = !!initialData;
 
-  const title = initialData ? "Edit coupon" : "Create coupon";
-  const description = initialData ? "Edit a coupon" : "Add a new coupon";
-  const action = initialData ? "Save changes" : "Create";
+  //language
+  const couponFormMessage = getCouponForm(language);
+
+  const title = initialData
+    ? couponFormMessage.editCoupon
+    : couponFormMessage.createCoupon;
+  const description = initialData
+    ? couponFormMessage.editCouponDescription
+    : couponFormMessage.addCoupon;
+  const action = initialData
+    ? couponFormMessage.saveChanges
+    : couponFormMessage.create;
 
   // Khởi tạo state cho lựa chọn duration
   const [selectedDuration, setSelectedDuration] = useState<Duration | null>(
@@ -90,6 +81,31 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
     // Cập nhật state khi lựa chọn duration thay đổi
     setSelectedDuration(initialData ? initialData.duration : null);
   }, [initialData]);
+
+  const formSchema = z.object({
+    name: z.string().min(2, { message: couponFormMessage.minLength }),
+    imagecoupon: z.object({ url: z.string() }).array(),
+    duration: z.string().min(2, { message: couponFormMessage.minLength }),
+    description: z.optional(
+      z.string().min(2, {
+        message: couponFormMessage.minLength,
+      })
+    ),
+    percent: z.coerce
+      .number()
+      .min(1, { message: couponFormMessage.minPercentage }),
+    durationinmoth: z.optional(
+      z.coerce.number().min(0, {
+        message: couponFormMessage.minMonths,
+      })
+    ),
+    maxredemptions: z.coerce
+      .number()
+      .min(1, { message: couponFormMessage.minPeople }),
+    redeemby: z.union([z.date().nullable(), z.string().nullable()]),
+  });
+
+  type CouponFormValues = z.infer<typeof formSchema>;
 
   const form = useForm<CouponFormValues>({
     resolver: zodResolver(formSchema),
@@ -124,10 +140,13 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
   const onSubmit = async (data: CouponFormValues) => {
     try {
       const now = new Date();
-      const redeembyDate = typeof data.redeemby === 'string' ? new Date(data.redeemby) : data.redeemby;
-    
+      const redeembyDate =
+        typeof data.redeemby === "string"
+          ? new Date(data.redeemby)
+          : data.redeemby;
+
       if (redeembyDate && redeembyDate < now) {
-        toast.error("Thời gian hết hạn không được ở quá khứ.");
+        toast.error(couponFormMessage.expirationNotPast);
         return;
       }
       setLoading(true);
@@ -150,24 +169,29 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
       if (initialData) {
         message = (
           <p>
-            Coupon <span className="font-bold">{response?.data.name}</span>{" "}
-            updated. Phần trăm giảm:{" "}
-            <span className="font-bold">{response?.data.percent}%</span>. Số
-            lượng tối đa:{" "}
+            {couponFormMessage.coupon}{" "}
+            <span className="font-bold">{response?.data.name}</span>{" "}
+            {couponFormMessage.updated}. {couponFormMessage.discountPercentage}:{" "}
+            <span className="font-bold">{response?.data.percent}%</span>.{" "}
+            {couponFormMessage.maxQuantity}:{" "}
             <span className="font-bold">{response?.data.maxredemptions}</span>{" "}
-            người. Lặp lại:{" "}
+            {couponFormMessage.repeatPeople}:{" "}
             <span className="font-bold">{response?.data.durationinmoth}</span>{" "}
-            tháng.
+            {couponFormMessage.months}.
           </p>
         );
       } else {
         message = (
           <p>
-            Coupon <span className="font-bold">{data.name}</span> created. Phần
-            trăm giảm: <span className="font-bold">{data.percent}%</span>. Số
-            lượng tối đa:{" "}
-            <span className="font-bold">{data.maxredemptions}</span> người. Lặp
-            lại: <span className="font-bold">{data.durationinmoth}</span> tháng.
+            {couponFormMessage.coupon}{" "}
+            <span className="font-bold">{data.name}</span>{" "}
+            {couponFormMessage.created}. {couponFormMessage.discountPercentage}:{" "}
+            <span className="font-bold">{data.percent}%</span>.{" "}
+            {couponFormMessage.maxQuantity}:{" "}
+            <span className="font-bold">{data.maxredemptions}</span>{" "}
+            {couponFormMessage.repeatPeople}:{" "}
+            <span className="font-bold">{data.durationinmoth}</span>{" "}
+            {couponFormMessage.months}.
           </p>
         );
       }
@@ -178,7 +202,7 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
           <div className="flex items-center justify-between text-sm">
             <p className="text-green-500 font-bold flex">
               <Check className="w-5 h-5 rounded-full bg-green-500 text-white mx-1" />
-              Coupon updated!
+              {couponFormMessage.couponUpdated}
             </p>
             <span className="text-gray-500">
               {response.data?.createdAt
@@ -199,7 +223,7 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
           <div className="flex items-center justify-between text-sm">
             <p className="text-green-500 font-bold flex">
               <Check className="w-4 h-4 rounded-full bg-green-500 text-white mx-1" />
-              Coupon created!
+              {couponFormMessage.couponCreated}
             </p>
             <span className="text-gray-500">
               {response.data?.createdAt
@@ -252,7 +276,7 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
               onClick={() => toast.dismiss(t.id)}
               className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
-              Close
+              {couponFormMessage.close}
             </button>
           </div>
         </div>
@@ -272,7 +296,7 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
             .error
         );
       } else {
-        toast.error("Something went wrong.");
+        toast.error(couponFormMessage.somethingWentWrong);
       }
     } finally {
       setLoading(false);
@@ -285,7 +309,7 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
       await axios.delete(`/api/${params.storeId}/coupon/${params.couponId}`);
       router.refresh();
       router.push(`/${params.storeId}/coupon`);
-      toast.success("Coupon deleted.");
+      toast.success(couponFormMessage.couponDeleted);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -301,7 +325,7 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
-          "Make sure you removed all categories using this billboard first."
+          couponFormMessage.somethingWentWrong
         );
       }
     } finally {
@@ -317,6 +341,7 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
         onClose={() => setOpen(false)}
         onConfirm={onDelete}
         loading={loading}
+        languageToUse={language}
       />
       {/* update and create */}
       <div className="flex items-center justify-between">
@@ -346,9 +371,9 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex space-x-3 items-center">
-                  Hình ảnh giảm giá{" "}
+                  {couponFormMessage.discountImage}
                   <span className="text-red-600 pl-1">(*)</span>
-                  <Recommend message="Chọn những hình ảnh đẹp phù hợp với mã giảm giá." />
+                  <Recommend message={couponFormMessage.selectDiscountImage} />
                 </FormLabel>
                 <FormControl>
                   <ImageUpload
@@ -362,6 +387,7 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
                         ...field.value.filter((current) => current.url !== url),
                       ])
                     }
+                    language={language}
                   />
                 </FormControl>
                 <FormMessage />
@@ -376,13 +402,13 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Tên giảm giá <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Tên giảm giá. Vd: Giảm giá sốc 50% ..." />
+                  {couponFormMessage.couponName} <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message={couponFormMessage.couponNameDescription}/>
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập tên giảm giá ..."
+                      placeholder={couponFormMessage.enterCouponName}
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
@@ -399,11 +425,11 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mô tả giảm giá</FormLabel>
+                  <FormLabel>{couponFormMessage.couponDescription}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập mô tả giảm giá ..."
+                      placeholder={couponFormMessage.enterCouponDescription}
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
@@ -421,8 +447,7 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Khoảng thời gian (Nếu chọn forever hoặc once thì không điền
-                    durationinmoth){" "}
+                  {couponFormMessage.durationDescription}
                     <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <Select
@@ -440,7 +465,7 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
                       <SelectTrigger>
                         <SelectValue
                           defaultValue={field.value}
-                          placeholder="Select Duration"
+                          placeholder={couponFormMessage.selectDuration}
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -486,15 +511,14 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
                     return (
                       <FormItem>
                         <FormLabel>
-                          Khoảng thời gian trong tháng(0-12) (Nếu chọn forever
-                          hoặc once thì không điền durationinmoth){" "}
+                        {couponFormMessage.durationInMonthsDescription}
                           <span className="text-red-600 pl-1">(*)</span>
                         </FormLabel>
                         <FormControl>
                           <Input
                             type="number"
                             disabled={loading || isEditing}
-                            placeholder="Nhập % khoảng thời gian trong tháng ..."
+                            placeholder={couponFormMessage.enterDurationInMonths}
                             value={field.value ?? 0}
                             onChange={handleInputChange}
                           />
@@ -524,14 +548,14 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
                 return (
                   <FormItem>
                     <FormLabel>
-                      Phần trăm khuyến mãi (0-100){" "}
+                    {couponFormMessage.promotionPercentageDescription}
                       <span className="text-red-600 pl-1">(*)</span>
                     </FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         disabled={loading || isEditing}
-                        placeholder="Nhập % khuyến mãi ..."
+                        placeholder={couponFormMessage.enterPromotionPercentage}
                         {...field}
                         onChange={handleInputChange}
                       />
@@ -548,14 +572,14 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Số lượng tối đa được giảm giá{" "}
+                  {couponFormMessage.maxDiscountQuantity}
                     <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading || isEditing}
-                      placeholder="Nhập số lượng tối đa được giảm giá ..."
+                      placeholder={couponFormMessage.enterMaxDiscountQuantity}
                       {...field}
                     />
                   </FormControl>
@@ -570,7 +594,7 @@ export const CouponForm: React.FC<CouponFormProps> = ({ initialData }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Thời gian hết hạn{" "}
+                  {couponFormMessage.expirationTime}
                     <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <FormControl>

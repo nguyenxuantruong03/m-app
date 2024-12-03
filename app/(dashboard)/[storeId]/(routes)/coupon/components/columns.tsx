@@ -31,6 +31,7 @@ export type CouponColumn = {
   redeembypatch: Date | null;
   imagecouponpatch: { url: string }[];
   createdAt: Date;
+  language: string
 };
 
 const durationMapping: Record<string, string> = {
@@ -86,6 +87,7 @@ export const columns: ColumnDef<CouponColumn>[] = [
         redeemby={row.original.redeembypatch}
         imagecoupon={row.original.imagecouponpatch}
         field="name"
+        language={row.original.language}
       />
     ),
   },

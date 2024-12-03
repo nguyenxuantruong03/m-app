@@ -665,6 +665,8 @@ model User {
   urlimageCheckAttendance  String?
   //Mã nfc của nhân viên
   codeNFC                  String?
+  //language               
+  language                 String        @default("vi")
   //--------------Các thứ làm việc của  nhân viên------------------
   daywork                  String[]
 

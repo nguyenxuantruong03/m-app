@@ -6,6 +6,7 @@ import { currentUser } from "@/lib/auth";
 import { sendUpdateManageStaff } from "@/lib/mail-sendUpdate-Staff";
 import { sendDismissal } from "@/lib/mail";
 import { format } from "date-fns";
+import { translateManageStaffIdDelete, translateManageStaffIdGet, translateManageStaffIdPatch } from "@/translate/translate-api";
 
 type ManageStaffValue =
   | string
@@ -31,25 +32,28 @@ export async function GET(
   req: Request,
   { params }: { params: { managestaffId: string } }
 ) {
-  const userId = await currentUser();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const manageStaffIdGetMessage = translateManageStaffIdGet(LanguageToUse)
   try {
     if (!params.managestaffId) {
       return new NextResponse(
-        JSON.stringify({ error: "Managestaff id is required!" }),
+        JSON.stringify({ error: manageStaffIdGetMessage.manageStaffIdRequired }),
         { status: 400 }
       );
     }
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: manageStaffIdGetMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN) {
+    if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xem Manage Staff!" }),
+        JSON.stringify({ error: manageStaffIdGetMessage.permissionDenied }),
         { status: 403 }
       );
     }
@@ -63,7 +67,7 @@ export async function GET(
     return NextResponse.json(managestaff);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get managestaff." }),
+      JSON.stringify({ error: manageStaffIdGetMessage.internalError }),
       { status: 500 }
     );
   }
@@ -73,26 +77,28 @@ export async function DELETE(
   req: Request,
   { params }: { params: { managestaffId: string; storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const manageStaffIdDelteMessage = translateManageStaffIdDelete(LanguageToUse)
   try {
-    const userId = await currentUser();
-
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: manageStaffIdDelteMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN) {
+    if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xóa Manage Staff!" }),
+        JSON.stringify({ error: manageStaffIdDelteMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!params.managestaffId) {
       return new NextResponse(
-        JSON.stringify({ error: "Managestaff id is required!" }),
+        JSON.stringify({ error: manageStaffIdDelteMessage.manageStaffIdRequired }),
         { status: 400 }
       );
     }
@@ -105,7 +111,7 @@ export async function DELETE(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: manageStaffIdDelteMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -141,7 +147,7 @@ export async function DELETE(
         newChange: newChange,
         oldChange: oldChange,
         type: "UPDATE-ROLE-MANAGESTAFF",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
@@ -154,7 +160,7 @@ export async function DELETE(
     return NextResponse.json(managestaff);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete managestaff." }),
+      JSON.stringify({ error: manageStaffIdDelteMessage.internalError }),
       { status: 500 }
     );
   }
@@ -164,11 +170,12 @@ export async function PATCH(
   req: Request,
   { params }: { params: { managestaffId: string; storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const manageStaffIdPatchMessage = translateManageStaffIdPatch(LanguageToUse)
   try {
-    const userId = await currentUser();
-
     const body = await req.json();
-
     const {
       email,
       name,
@@ -190,92 +197,92 @@ export async function PATCH(
       codeNFC,
     } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: manageStaffIdPatchMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN) {
+    if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền cập nhật Manage Staff!" }),
+        JSON.stringify({ error: manageStaffIdPatchMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+      return new NextResponse(JSON.stringify({ error:  manageStaffIdPatchMessage.nameRequired }), {
         status: 400,
       });
     }
 
     if (!numberCCCD) {
       return new NextResponse(
-        JSON.stringify({ error: "Sô CMND is required!" }),
+        JSON.stringify({ error: manageStaffIdPatchMessage.cmndRequired }),
         { status: 400 }
       );
     }
 
     if (!issued) {
       return new NextResponse(
-        JSON.stringify({ error: "Nơi cấp is required!" }),
+        JSON.stringify({ error: manageStaffIdPatchMessage.placeIssuedRequired }),
         { status: 400 }
       );
     }
 
     if (!gender) {
       return new NextResponse(
-        JSON.stringify({ error: "Giới tính is required!" }),
+        JSON.stringify({ error: manageStaffIdPatchMessage.genderRequired }),
         { status: 400 }
       );
     }
 
     if (!degree) {
       return new NextResponse(
-        JSON.stringify({ error: "Bằng cấp is required!" }),
+        JSON.stringify({ error: manageStaffIdPatchMessage.degreeRequired }),
         { status: 400 }
       );
     }
 
     if (!phonenumber) {
       return new NextResponse(
-        JSON.stringify({ error: "Số diện thoại is required!" }),
+        JSON.stringify({ error: manageStaffIdPatchMessage.phoneRequired }),
         { status: 400 }
       );
     }
 
     if (!workingTime) {
       return new NextResponse(
-        JSON.stringify({ error: "Thời gian làm việc is required!" }),
+        JSON.stringify({ error: manageStaffIdPatchMessage.workingTimeRequired }),
         { status: 400 }
       );
     }
 
     if (!imageCredential) {
       return new NextResponse(
-        JSON.stringify({ error: "Hình ảnh is required!" }),
+        JSON.stringify({ error: manageStaffIdPatchMessage.imageRequired }),
         { status: 400 }
       );
     }
 
     if (!daywork) {
       return new NextResponse(
-        JSON.stringify({ error: "Hãy chọn làm thứ mấy!" }),
+        JSON.stringify({ error: manageStaffIdPatchMessage.choosePositionRequired }),
         { status: 400 }
       );
     }
 
     if (!maritalStatus) {
       return new NextResponse(
-        JSON.stringify({ error: "Tính trạng hôn nhân is required!" }),
+        JSON.stringify({ error: manageStaffIdPatchMessage.maritalStatusRequired }),
         { status: 400 }
       );
     }
 
     if (!params.managestaffId) {
       return new NextResponse(
-        JSON.stringify({ error: "Managestaff id is required!" }),
+        JSON.stringify({ error: manageStaffIdPatchMessage.manageStaffIdRequired }),
         { status: 400 }
       );
     }
@@ -288,7 +295,7 @@ export async function PATCH(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: manageStaffIdPatchMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -408,7 +415,7 @@ const isImageCredentialChanged = !existingImageCredentials.some((existingImage) 
         newChange: newChanges,
         oldChange: oldChanges,
         type: "UPDATEMANAGESTAFF",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
@@ -434,7 +441,7 @@ const isImageCredentialChanged = !existingImageCredentials.some((existingImage) 
     return NextResponse.json(managestaff);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error patch managestaff." }),
+      JSON.stringify({ error: manageStaffIdPatchMessage.internalError }),
       { status: 500 }
     );
   }

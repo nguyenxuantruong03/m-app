@@ -18,11 +18,14 @@ import Chart from "@/components/chart/chart";
 import Datastatistics from "@/components/home/datastatistics";
 import { RoleGate } from "@/components/auth/role-gate";
 import { UserRole } from "@prisma/client";
+import { currentUser } from "@/lib/auth";
+import { translateRevenue } from "@/translate/translate-client";
 interface DashboardPageProps {
   params: { storeId: string };
 }
 
 const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
+  const user = await currentUser();
   const totalRevenue = await getTotalRevenue(params.storeId);
   const totalPriceOldRevenue = await getTotalPriceOldRevenue(params.storeId);
   const totalWarrantyRevenue = await getTotalWarrantyRevenue(params.storeId);
@@ -30,8 +33,12 @@ const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
   const stockCount = await getStockCount(params.storeId);
   const stockCount2 = await getStockCount2(params.storeId);
 
+  //language
+  const languageToUse = user?.language || "vi";
+  const revenueMessage = translateRevenue(languageToUse);
+
   return (
-    <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>
+    <RoleGate allowedRole={[UserRole.ADMIN]}>
       <div className="flex-col">
         <div className="flex-1 space-y-4 p-8 pt-6">
           <Heading title="Bảng điều khiển" description="Tổng quan cửa hàng" />
@@ -40,7 +47,7 @@ const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 ">
                 <CardTitle className="text-xs font-medium">
-                  Tổng doanh thu
+                  {revenueMessage.name1}
                 </CardTitle>
                 <DollarSign className="w-4 h-4 text-muted-foreground" />
               </CardHeader>
@@ -53,7 +60,7 @@ const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 ">
                 <CardTitle className="text-xs font-medium">
-                  Tổng doanh thu chưa giảm giá
+                  {revenueMessage.name2}
                 </CardTitle>
                 <BadgePercent className="w-4 h-4 text-muted-foreground" />
               </CardHeader>
@@ -66,7 +73,7 @@ const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 ">
                 <CardTitle className="text-xs font-medium">
-                  Tổng doanh thu bảo hành
+                  {revenueMessage.name3}
                 </CardTitle>
                 <ShieldCheck className="w-4 h-4 text-muted-foreground" />
               </CardHeader>
@@ -79,7 +86,7 @@ const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 ">
                 <CardTitle className="text-xs font-medium">
-                  Số đơn hàng
+                  {revenueMessage.name4}
                 </CardTitle>
                 <CreditCard className="w-4 h-4 text-muted-foreground" />
               </CardHeader>
@@ -90,7 +97,7 @@ const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 ">
                 <CardTitle className="text-xs font-medium">
-                  Tổng sản phẩm còn
+                  {revenueMessage.name5}
                 </CardTitle>
                 <Package className="w-4 h-4 text-muted-foreground" />
               </CardHeader>
@@ -101,7 +108,7 @@ const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 ">
                 <CardTitle className="text-xs font-medium">
-                  Sản phẩm hết hàng
+                  {revenueMessage.name6}
                 </CardTitle>
                 <Package className="w-4 h-4 text-muted-foreground" />
               </CardHeader>
@@ -111,10 +118,13 @@ const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
             </Card>
           </div>
           <div>
-            <Chart storeId={params.storeId} />
+            <Chart storeId={params.storeId} languageToUse={languageToUse} />
           </div>
         </div>
-        <Datastatistics storeId={params.storeId} />
+        <Datastatistics
+          storeId={params.storeId}
+          languageToUse={languageToUse}
+        />
       </div>
     </RoleGate>
   );

@@ -17,12 +17,25 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import {
+  getEmptyCartMessage,
+  getInsufficientStockMessage,
+  getMaxProductsMessage,
+  getNotEnoughStockMessage,
+  getOutOfStockMessage,
+  getRemainingProductsMessage,
+  getRemainingQuantityMessage,
+  getSoldOutCategoryMessage,
+  getToastError,
+  getWarrantyPriceMessage,
+} from "@/translate/translate-client";
 
 interface CartItemProps {
   data: ProductUnion;
   userId: string;
   setLoadingChange: Dispatch<SetStateAction<boolean>>;
   loadingChange: boolean;
+  languageToUse: string;
 }
 
 type ProductWithQuantity = ProductUnion & { quantity: number };
@@ -42,20 +55,23 @@ const CartItem: React.FC<CartItemProps> = ({
   userId,
   setLoadingChange,
   loadingChange,
+  languageToUse,
 }) => {
   const cart = useCart();
   const router = useRouter();
+  const selected = cart.selectedItems.includes(data.cartId);
+  const warranty = cart.getSelectedItemWarranty(data.cartId);
   const [quantity, setQuantity] = useState<number>(data.quantity || 1);
   const [isEditingQuantity, setIsEditingQuantity] = useState(false);
   const [quantityInventory, setQuantiyInventory] = useState(false);
   const [loadingLimitQuantity, setLoadingLimitQuantity] = useState(false);
-  const selected = cart.selectedItems.includes(data.cartId);
-  const warranty = cart.getSelectedItemWarranty(data.cartId);
 
   //GetPrice dựa vào size
   const getPriceMatchColorandSize = () => {
-    const { price: priceSize, percentpromotion: percentpromotionSize } = getSizePrice(data, data.size);
-    const { price: priceColor, percentpromotion: percentpromotionColor } = getColorPrice(data, data.color);
+    const { price: priceSize, percentpromotion: percentpromotionSize } =
+      getSizePrice(data, data.size);
+    const { price: priceColor, percentpromotion: percentpromotionColor } =
+      getColorPrice(data, data.color);
     return Math.ceil(Math.max(priceSize, priceColor));
   };
 
@@ -68,8 +84,10 @@ const CartItem: React.FC<CartItemProps> = ({
 
   //Quantity: Thêm hàm để lấy số lượng dựa trên giá cao nhất
   const getQuantityMatchColorandSize = () => {
-    const { price: priceSize, percentpromotion: percentpromotionSize } = getSizePrice(data, data.size);
-    const { price: priceColor, percentpromotion: percentpromotionColor } = getColorPrice(data, data.color);
+    const { price: priceSize, percentpromotion: percentpromotionSize } =
+      getSizePrice(data, data.size);
+    const { price: priceColor, percentpromotion: percentpromotionColor } =
+      getColorPrice(data, data.color);
     const highestPrice = Math.max(priceSize, priceColor);
 
     switch (highestPrice) {
@@ -92,6 +110,20 @@ const CartItem: React.FC<CartItemProps> = ({
 
   //Tìm kiếm quantity của sản phẩm
   const maxQuantity = getQuantityMatchColorandSize();
+
+  //Language
+  const errorMessage = getEmptyCartMessage(languageToUse);
+  const maxProductMessage = getMaxProductsMessage(languageToUse);
+  const toastError = getToastError(languageToUse);
+  const outOfStockMessage = getOutOfStockMessage(languageToUse);
+  const notEnoughStockMessage = getNotEnoughStockMessage(languageToUse);
+  const soldOutCategoryMessage = getSoldOutCategoryMessage(languageToUse);
+  const insufficientStockMessage = getInsufficientStockMessage(languageToUse);
+  const remainingProductMessage = getRemainingProductsMessage(
+    languageToUse,
+    maxQuantity
+  );
+  const warrantyPriceMessage = getWarrantyPriceMessage(languageToUse);
 
   //So sánh sản phẩm hiện tại và sản phẩm có sẳn nhưng maxQuantity phải lớn hơn 0 mới đủ điều kiện
   const compareQuantityExistingAndAvailable =
@@ -129,23 +161,27 @@ const CartItem: React.FC<CartItemProps> = ({
           setLoadingChange(true);
           await cart.updateQuantity(data.cartId, value, warranty, userId);
         } catch (error) {
-          toast.error("Lỗi cập nhật sản phẩm!");
+          toast.error(errorMessage);
           setLoadingChange(false);
         } finally {
           setLoadingChange(false);
         }
       } else {
-        toast.error("Bạn chỉ có thể chọn tối đa 99 sản phẩm!");
+        toast.error(maxProductMessage);
       }
     } else if (value > maxQuantity) {
-      toast.error(`Số lượng còn lại ${maxQuantity} sản phẩm!`);
+      const remainingQuantiyMessage = getRemainingQuantityMessage(
+        languageToUse,
+        maxQuantity
+      );
+      toast.error(remainingQuantiyMessage);
     }
   };
 
   const incrementQuantity = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (quantity >= 99) {
-      toast.error("Bạn chỉ có thể chọn tối đa 99 sản phẩm!");
+      toast.error(maxProductMessage);
       return;
     }
 
@@ -159,16 +195,25 @@ const CartItem: React.FC<CartItemProps> = ({
       if (quantity < maxQuantity) {
         try {
           setLoadingChange(true);
-          await cart.updateQuantity(data.cartId, quantity + 1, warranty, userId); // Update the quantity in the cartdb
+          await cart.updateQuantity(
+            data.cartId,
+            quantity + 1,
+            warranty,
+            userId
+          ); // Update the quantity in the cartdb
         } catch (error) {
-          toast.error(`Lỗi cập nhật sản phẩm!`);
+          toast.error(errorMessage);
           setLoadingLimitQuantity(true);
           setLoadingChange(false);
         } finally {
           setLoadingChange(false);
         }
       } else {
-        toast.error(`Số lượng còn lại ${maxQuantity} sản phẩm!`);
+        const remainingQuantiyMessage = getRemainingQuantityMessage(
+          languageToUse,
+          maxQuantity
+        );
+        toast.error(remainingQuantiyMessage);
       }
     }
   };
@@ -190,7 +235,7 @@ const CartItem: React.FC<CartItemProps> = ({
           setLoadingChange(true);
           await cart.updateQuantity(data.cartId, newQuantity, warranty, userId); // Update the quantity in the cartdb
         } catch (error) {
-          toast.error("Lỗi khi cập nhật số lượng!");
+          toast.error(errorMessage);
           setLoadingChange(false);
         } finally {
           setLoadingChange(false);
@@ -202,9 +247,9 @@ const CartItem: React.FC<CartItemProps> = ({
   const onRemove = async () => {
     setLoadingChange(true);
     try {
-      await cart.removeItem(data.cartId, userId);
+      await cart.removeItem(data.cartId, userId, languageToUse);
     } catch (error) {
-      toast.error("Error removing item");
+      toast.error(errorMessage);
       setLoadingChange(false);
     } finally {
       setLoadingChange(false);
@@ -253,7 +298,7 @@ const CartItem: React.FC<CartItemProps> = ({
       // Use the Link component for navigation
       router.push(href);
     } else {
-      console.error("Invalid route:", route);
+      toast.error(toastError);
     }
   };
   return (
@@ -267,11 +312,11 @@ const CartItem: React.FC<CartItemProps> = ({
           <span>
             {quantityInventory ? (
               <span className="p-1 rounded-md bg-red-500 text-white">
-                Hết hàng
+                {outOfStockMessage}
               </span>
             ) : (
               <div className="p-1 rounded-md bg-red-500 text-white text-center">
-                <p> Không đủ </p> <p>hàng </p>
+                <p className="break-words"> {notEnoughStockMessage}</p>
               </div>
             )}
           </span>
@@ -306,19 +351,19 @@ const CartItem: React.FC<CartItemProps> = ({
         <div className="relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-6">
           <div className="flex justify-between">
             <div className="max-w-40">
-              <p className="text-lg font-semibold text-slate-900 dark:text-slate-200">{data.heading}</p>
+              <p className="text-lg font-semibold text-slate-900 dark:text-slate-200">
+                {data.heading}
+              </p>
               {/* Check nếu có isOutOfStock thì hiển theo quantityInventory lên khi hàng hết hoặc ko đủ số lượng */}
               {isOutOfStock && (
                 <div>
                   {quantityInventory ? (
                     <p className="text-red-500 text-xs">
-                      Phân loại hàng này bán hết, vui lòng lựa chọn một phân
-                      loại khác.
+                      {soldOutCategoryMessage}
                     </p>
                   ) : (
                     <p className="text-red-500 text-xs">
-                      Phân loại hàng này không đủ hàng, giảm số lượng phù hợp
-                      trong kho.
+                      {insufficientStockMessage}
                     </p>
                   )}
                 </div>
@@ -389,11 +434,11 @@ const CartItem: React.FC<CartItemProps> = ({
 
         {/* Check nếu có isOutOfStock thì hiển thị số lượng sản phẩm còn  */}
         {isOutOfStock && (
-          <div className="text-red-500">Còn {maxQuantity} sản phẩm</div>
+          <div className="text-red-500">{remainingProductMessage}</div>
         )}
 
         <div className="mt-1 text-sm text-gray-500">
-          Giá tiền bảo hành cho {data.heading}:
+          {warrantyPriceMessage} {data.heading}:
           {data.warranty ? (
             <span>
               <Currency value={data.warranty || 0} />

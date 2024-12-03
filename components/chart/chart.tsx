@@ -19,12 +19,20 @@ import { DateRange } from "react-day-picker";
 import { DatePickerWithRangeChart } from "./date-picker-range-chart";
 import TreeMap from "./treemap";
 import RadarChart from "./radar";
+import toast from "react-hot-toast";
+import {
+  getToastError,
+  translateChartData,
+  translateChartTypes,
+  translateChooseChart,
+} from "@/translate/translate-client";
 
 interface ChartProps {
   storeId: string;
+  languageToUse: string;
 }
 
-const Chart = ({ storeId }: ChartProps) => {
+const Chart = ({ storeId, languageToUse }: ChartProps) => {
   const [selectedBasicChart, setSelectedBasicChart] =
     useState<string>("barchart");
   const [selectedAdvancedChart, setSelectedAdvancedChart] =
@@ -73,6 +81,12 @@ const Chart = ({ storeId }: ChartProps) => {
     undefined
   );
 
+  //languages
+  const toastErrorMessage = getToastError(languageToUse);
+  const chartDataMessage = translateChartData(languageToUse);
+  const chooseChartMessage = translateChooseChart(languageToUse);
+  const chartTypesMessage = translateChartTypes(languageToUse);
+
   useEffect(() => {
     if (selectedBasicChart === "barchart") {
       const fetchBarChartData = async () => {
@@ -87,7 +101,7 @@ const Chart = ({ storeId }: ChartProps) => {
           );
           setBarChartData(response.data);
         } catch (error) {
-          console.error(error);
+          toast.error(toastErrorMessage);
         } finally {
           setLoadingBarChart(false);
         }
@@ -110,7 +124,7 @@ const Chart = ({ storeId }: ChartProps) => {
           );
           setComposedChartData(response.data);
         } catch (error) {
-          console.error(error);
+          toast.error(toastErrorMessage);
         } finally {
           setLoadingComposed(false);
         }
@@ -134,7 +148,7 @@ const Chart = ({ storeId }: ChartProps) => {
           );
           setLineChartData(response.data);
         } catch (error) {
-          console.error(error);
+          toast.error(toastErrorMessage);
         } finally {
           setLoadingLine(false);
         }
@@ -157,7 +171,7 @@ const Chart = ({ storeId }: ChartProps) => {
           );
           setTreemapData(response.data);
         } catch (error) {
-          console.error(error);
+          toast.error(toastErrorMessage);
         } finally {
           setLoadingTreeMap(false);
         }
@@ -181,7 +195,7 @@ const Chart = ({ storeId }: ChartProps) => {
           );
           setPieChartData(response.data);
         } catch (error) {
-          console.error(error);
+          toast.error(toastErrorMessage);
         } finally {
           setLoadingPie(false);
         }
@@ -205,7 +219,7 @@ const Chart = ({ storeId }: ChartProps) => {
           );
           setRadialChartData(response.data);
         } catch (error) {
-          console.error(error);
+          toast.error(toastErrorMessage);
         } finally {
           setLoadingRadial(false);
         }
@@ -228,7 +242,7 @@ const Chart = ({ storeId }: ChartProps) => {
           );
           setFunnelChartData(response.data);
         } catch (error) {
-          console.error(error);
+          toast.error(toastErrorMessage);
         } finally {
           setLoadingFunnel(false);
         }
@@ -251,7 +265,7 @@ const Chart = ({ storeId }: ChartProps) => {
           );
           setRadarChartData(response.data);
         } catch (error) {
-          console.error(error);
+          toast.error(toastErrorMessage);
         } finally {
           setLoadingRadar(false);
         }
@@ -272,20 +286,18 @@ const Chart = ({ storeId }: ChartProps) => {
               defaultValue="barchart"
             >
               <SelectTrigger className="md:w-[300px]">
-                <SelectValue placeholder="Chọn biểu đồ cơ bản" />
+                <SelectValue placeholder={chooseChartMessage} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="barchart">
-                  Biểu đồ cột tổng tiền tháng
+                  {chartDataMessage.name1}
                 </SelectItem>
                 <SelectItem value="composed">
-                  Biểu đồ tổng hợp bảo hành, doanh thu, tiền sale tháng
+                  {chartDataMessage.name2}
                 </SelectItem>
-                <SelectItem value="line">
-                  Biểu đồ đường doanh thu ngày
-                </SelectItem>
+                <SelectItem value="line">{chartDataMessage.name3}</SelectItem>
                 <SelectItem value="treemap">
-                  Biểu đồ map tổng người dùng
+                  {chartDataMessage.name4}
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -326,10 +338,14 @@ const Chart = ({ storeId }: ChartProps) => {
           {selectedBasicChart === "barchart" && (
             <Card className="mt-4">
               <CardHeader>
-                <CardTitle>Biểu đồ cột tổng tiền tháng</CardTitle>
+                <CardTitle>{chartDataMessage.name1}</CardTitle>
               </CardHeader>
               <CardContent className="p-2 xl:p-6">
-                <BarChart data={barChartData} loading={loadingBarChart} />
+                <BarChart
+                  data={barChartData}
+                  loading={loadingBarChart}
+                  languageToUse={languageToUse}
+                />
               </CardContent>
             </Card>
           )}
@@ -337,14 +353,13 @@ const Chart = ({ storeId }: ChartProps) => {
           {selectedBasicChart === "composed" && (
             <Card className="mt-4">
               <CardHeader>
-                <CardTitle>
-                  Biểu đồ tổng hợp bảo hành, doanh thu, tiền sale tháng
-                </CardTitle>
+                <CardTitle>{chartDataMessage.name2}</CardTitle>
               </CardHeader>
               <CardContent className="p-2 xl:p-6">
                 <ComposedChart
                   data={composedChartData}
                   loading={loadingComposed}
+                  languageToUse={languageToUse}
                 />
               </CardContent>
             </Card>
@@ -353,10 +368,14 @@ const Chart = ({ storeId }: ChartProps) => {
           {selectedBasicChart === "line" && (
             <Card className="mt-4">
               <CardHeader>
-                <CardTitle>Biểu đồ đường doanh thu ngày</CardTitle>
+                <CardTitle>{chartDataMessage.name3}</CardTitle>
               </CardHeader>
               <CardContent className="p-2 xl:p-6">
-                <LineChart data={lineChartData} loading={loadingLine} />
+                <LineChart
+                  data={lineChartData}
+                  loading={loadingLine}
+                  languageToUse={languageToUse}
+                />
               </CardContent>
             </Card>
           )}
@@ -364,10 +383,14 @@ const Chart = ({ storeId }: ChartProps) => {
           {selectedBasicChart === "treemap" && (
             <Card className="mt-4">
               <CardHeader>
-                <CardTitle> Biểu đồ map tổng người dùng</CardTitle>
+                <CardTitle>{chartDataMessage.name4}</CardTitle>
               </CardHeader>
               <CardContent className="p-2 xl:p-6">
-                <TreeMap data={treemapData} loading={loadingTreeMap} />
+                <TreeMap
+                  data={treemapData}
+                  loading={loadingTreeMap}
+                  languageToUse={languageToUse}
+                />
               </CardContent>
             </Card>
           )}
@@ -381,15 +404,17 @@ const Chart = ({ storeId }: ChartProps) => {
               defaultValue="pie"
             >
               <SelectTrigger className="md:w-[300px]">
-                <SelectValue placeholder="Chọn biểu đồ nâng cao" />
+                <SelectValue placeholder={chooseChartMessage} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="pie">Biểu đồ tròn</SelectItem>
-                <SelectItem value="radial">Biểu đồ bán kính</SelectItem>
-                <SelectItem value="funnel">Biểu đồ funnel</SelectItem>
-                <SelectItem value="radar">
-                  Biểu đồ sở thích người dùng
+                <SelectItem value="pie">{chartTypesMessage.name1}</SelectItem>
+                <SelectItem value="radial">
+                  {chartTypesMessage.name2}
                 </SelectItem>
+                <SelectItem value="funnel">
+                  {chartTypesMessage.name3}
+                </SelectItem>
+                <SelectItem value="radar">{chartTypesMessage.name4}</SelectItem>
               </SelectContent>
             </Select>
 
@@ -431,10 +456,14 @@ const Chart = ({ storeId }: ChartProps) => {
           {selectedAdvancedChart === "pie" && (
             <Card className="mt-4">
               <CardHeader>
-                <CardTitle>Biểu đồ tròn</CardTitle>
+                <CardTitle>{chartTypesMessage.name1}</CardTitle>
               </CardHeader>
               <CardContent className="p-2 xl:p-6">
-                <PieChart pieChartData={pieChartData} loading={loadingPie} />
+                <PieChart
+                  pieChartData={pieChartData}
+                  loading={loadingPie}
+                  languageToUse={languageToUse}
+                />
               </CardContent>
             </Card>
           )}
@@ -442,12 +471,13 @@ const Chart = ({ storeId }: ChartProps) => {
           {selectedAdvancedChart === "radial" && (
             <Card className="mt-4">
               <CardHeader>
-                <CardTitle>Biểu đồ bán kính</CardTitle>
+                <CardTitle>{chartTypesMessage.name2}</CardTitle>
               </CardHeader>
               <CardContent className="p-2 xl:p-6">
                 <RadialChart
                   radialChartData={radialChartData}
                   loading={loadingRadial}
+                  languageToUse={languageToUse}
                 />
               </CardContent>
             </Card>
@@ -456,12 +486,13 @@ const Chart = ({ storeId }: ChartProps) => {
           {selectedAdvancedChart === "funnel" && (
             <Card className="mt-4">
               <CardHeader>
-                <CardTitle>Biểu đồ funnel</CardTitle>
+                <CardTitle>{chartTypesMessage.name3}</CardTitle>
               </CardHeader>
               <CardContent className="p-2 xl:p-6">
                 <FunnelChart
                   funnelChartData={funnelChartData}
                   loading={loadingFunnel}
+                  languageToUse={languageToUse}
                 />
               </CardContent>
             </Card>
@@ -470,12 +501,13 @@ const Chart = ({ storeId }: ChartProps) => {
           {selectedAdvancedChart === "radar" && (
             <Card className="mt-4">
               <CardHeader>
-                <CardTitle>Biểu đồ radar</CardTitle>
+                <CardTitle>{chartTypesMessage.name4}</CardTitle>
               </CardHeader>
               <CardContent className="p-2 xl:p-6">
                 <RadarChart
                   radarChartData={radarChartData}
                   loading={loadingRadar}
+                  languageToUse={languageToUse}
                 />
               </CardContent>
             </Card>

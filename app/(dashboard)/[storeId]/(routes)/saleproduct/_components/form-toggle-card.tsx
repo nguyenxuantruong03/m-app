@@ -18,16 +18,13 @@ import {
   FormMessage,
   FormDescription,
 } from "@/components/ui/form";
-import { Image as ImageData, Product, ProductDetail } from "@prisma/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { getAllProductNotQuery } from "@/actions/client/products/get-products";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { getSaleProductFormToggleCard } from "@/translate/translate-dashboard";
 
 type SaleProductFormValues = z.infer<typeof SaleProduct>;
-
-interface ProductWithImages extends Product {
-  images: ImageData[];
-  productdetail: ProductDetail;
-}
 
 interface SalProductProps {
   id: string;
@@ -39,7 +36,7 @@ interface SalProductProps {
   totalQuantity: number;
   setLoading: Dispatch<SetStateAction<boolean>>;
   loading: boolean;
-  setData: Dispatch<SetStateAction<ProductWithImages[]>>;
+  setData: any;
 }
 
 export const FormSaleProduct = ({
@@ -54,6 +51,12 @@ export const FormSaleProduct = ({
   loading,
   totalQuantity,
 }: SalProductProps) => {
+  const user = useCurrentUser();
+
+  //language
+  const languageToUse = user?.language || "vi";
+  const slateProductFormToggleCardMessage = getSaleProductFormToggleCard(languageToUse)
+
   const form = useForm<SaleProductFormValues>({
     resolver: zodResolver(SaleProduct),
     defaultValues: {
@@ -62,7 +65,7 @@ export const FormSaleProduct = ({
       isSale: valueIsSale,
     },
   });
-
+  
   const [isModified, setIsModified] = useState(false);
 
   // Hàm kiểm tra thay đổi giá trị
@@ -77,12 +80,12 @@ export const FormSaleProduct = ({
 
   const onSubmit = async (data: SaleProductFormValues) => {
     if (!data.timeSaleStart || !data.timeSaleEnd) {
-      toast.error("Start time and end time are required.");
+      toast.error(slateProductFormToggleCardMessage.startEndTimeRequired);
       return;
     }
 
     if (data.timeSaleEnd < data.timeSaleStart) {
-      toast.error("End time must be after start time.");
+      toast.error(slateProductFormToggleCardMessage.endTimeAfterStartTime);
       return;
     }
 
@@ -92,13 +95,12 @@ export const FormSaleProduct = ({
         id,
         ...data,
       });
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/getAllProductNotQuery`
-      );
-      setData(response.data);
-      toast.success("Product updated.");
+
+      const product = await getAllProductNotQuery(languageToUse);
+      setData(product);
+      toast.success(slateProductFormToggleCardMessage.productUpdated);
     } catch (error: unknown) {
-      toast.error("Something went wrong.");
+      toast.error(slateProductFormToggleCardMessage.somethingWentWrong);
     } finally {
       setLoading(false);
     }
@@ -125,7 +127,7 @@ export const FormSaleProduct = ({
       // Reset isModified state
       setIsModified(false);
 
-      toast.success("Cleared.");
+      toast.success(slateProductFormToggleCardMessage.cleared);
     } catch (error) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -140,7 +142,7 @@ export const FormSaleProduct = ({
         );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
-        toast.error("Something went wrong!");
+        toast.error(slateProductFormToggleCardMessage.somethingWentWrong);
       }
     } finally{
       setLoading(false);
@@ -170,7 +172,7 @@ export const FormSaleProduct = ({
   return (
     <>
       {totalQuantity === 0 ? (
-        <span className="text-red-500 font-semibold">Out of stock...</span>
+        <span className="text-red-500 font-semibold">{slateProductFormToggleCardMessage.outOfStock}</span>
       ) : (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
@@ -199,7 +201,7 @@ export const FormSaleProduct = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center text-slate-900">
-                    Sale Start <span className="text-red-600 pl-1">(*)</span>
+                  {slateProductFormToggleCardMessage.saleStart} <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -228,7 +230,7 @@ export const FormSaleProduct = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center text-slate-900">
-                    Sale End <span className="text-red-600 pl-1">(*)</span>
+                  {slateProductFormToggleCardMessage.saleEnd} <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -254,7 +256,7 @@ export const FormSaleProduct = ({
             {isModified && (
               <div className="flex items-center space-x-2">
                 <Button type="submit" variant="secondary" disabled={loading}>
-                  {loading ? "Waiting..." : "Save Changes"}
+                  {loading ? slateProductFormToggleCardMessage.waiting : slateProductFormToggleCardMessage.saveChanges}
                 </Button>
                 <Button
                   type="button"
@@ -262,7 +264,7 @@ export const FormSaleProduct = ({
                   variant="destructive"
                   disabled={loading}
                 >
-                  {loading ? "Waiting..." : "Clear"}
+                  {loading ? slateProductFormToggleCardMessage.waiting : slateProductFormToggleCardMessage.clear}
                 </Button>
               </div>
             )}

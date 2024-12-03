@@ -1,3 +1,4 @@
+import { translateProductAddedToCart, translateProductRemoved } from "@/translate/translate-client";
 import { ProductCartLocal } from "@/types/type";
 import toast from "react-hot-toast";
 import { create } from "zustand";
@@ -14,15 +15,16 @@ interface CartStore {
     warranty: string | null,
     userId: string,
     selectedSize: string,
-    selectedColor: string
+    selectedColor: string,
+    languageToUse: string,
   ) => void;
-  removeItem: (id: string, userId: string) => void;
+  removeItem: (id: string, userId: string,languageToUse: string,) => void;
   removeAll: (userId: string) => void;
   updateQuantity: (
     cartId: string,
     quantity: number,
     warranty: string | null,
-    userId: string
+    userId: string,
   ) => void;
   selectedItems: string[]; // Array of selected item IDs
   selectAll: boolean; // Flag for "Select All" checkbox
@@ -128,8 +130,12 @@ const useCart = create(
         warranty: string | null,
         userId: string,
         size: string,
-        color: string
+        color: string,
+        languageToUse: string
       ) => {
+        //language
+        const productAddedToCartMessage = translateProductAddedToCart(languageToUse)
+        
         const validWarranty = warranty ?? ""; // Fallback to an empty string if null+
           // Add the new item to the cart
           set({
@@ -144,7 +150,7 @@ const useCart = create(
               },
             ],
           });
-          toast.success("Sản phẩm đã thêm vào giỏ hàng.");
+          toast.success(productAddedToCartMessage);
       },
       removeSelectedItems: () => {
         set((state) => ({
@@ -159,7 +165,7 @@ const useCart = create(
         cartId: string,
         quantity: number,
         warranty: string | null,
-        userId: string
+        userId: string,
       ) => {
         const validWarranty = warranty ?? "";
         set((state) => ({
@@ -168,7 +174,10 @@ const useCart = create(
           ),
         }));
       },
-      removeItem: (cartId: string, userId: string) => {
+      removeItem: (cartId: string, userId: string,languageToUse: string) => {
+        //language
+        const productRemovedMessage = translateProductRemoved(languageToUse)
+
         set((state) => {
           const newItems = state.items.filter((item) => item.cartId !== cartId);
           const newSelectedWarranties = { ...state.selectedWarranties };
@@ -185,7 +194,7 @@ const useCart = create(
             ), // Remove the item from selectedItems
           };
         });
-        toast.success("Sản phẩm đã xóa khỏi giỏ hàng.");
+        toast.success(productRemovedMessage);
       },
       removeAll: (userId: string) => {
         set({ items: [] });

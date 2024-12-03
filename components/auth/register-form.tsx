@@ -23,6 +23,14 @@ import EmailField from "./field/emailfield";
 import NameField from "./field/namefield";
 import { X } from "lucide-react";
 import ReCAPTCHA from "react-google-recaptcha";
+import {
+  translateAlreadyHaveAccount,
+  translateCreateAccount,
+  translateName,
+  translatePassword,
+  translateVerifyNotRobot,
+  translateVerifyNotRobots,
+} from "@/translate/translate-client";
 
 const getTheme = () => {
   if (
@@ -54,6 +62,26 @@ const RegisterForm = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmittedName, setIsSubmittedName] = useState(false);
   const [isSubmittedEmail, setIsSubmittedEmail] = useState(false);
+  //language
+  const [language, setLanguage] = useState("vi");
+  const [isOpen, setOpen] = useState(false);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  const languageToUse = storedLanguage || language;
+  const verifyNotRobotsMessage = translateVerifyNotRobots(languageToUse);
+  const createAccountMessage = translateCreateAccount(languageToUse);
+  const alreadyHaveAccountMessage = translateAlreadyHaveAccount(languageToUse);
+  const nameMessage = translateName(languageToUse);
+  const passwordMessage = translatePassword(languageToUse);
+  const verifyNotRobotMessage = translateVerifyNotRobot(languageToUse);
 
   useEffect(() => {
     const handleThemeChange = () => {
@@ -86,16 +114,16 @@ const RegisterForm = () => {
     setSuccess("");
     setRegisterClicked(true);
     if (!isCaptchaVerified) {
-      return setError("Vui lòng xác minh bạn không phải là robot!");
+      return setError(verifyNotRobotsMessage);
     } else {
       startTransition(() => {
-        register(values).then((data) => {
+        register(values, languageToUse).then((data) => {
           if (data.error) {
             setError(data.error);
             setPassword("");
             setIsSubmitted(true);
-            setIsSubmittedName(true)
-            setIsSubmittedEmail(true)
+            setIsSubmittedName(true);
+            setIsSubmittedEmail(true);
           } else if (data.success) {
             setSuccess(data.success);
             // Reset form fields
@@ -108,8 +136,8 @@ const RegisterForm = () => {
             setEmail("");
             setName("");
             setIsSubmitted(true);
-            setIsSubmittedName(true)
-            setIsSubmittedEmail(true)
+            setIsSubmittedName(true);
+            setIsSubmittedEmail(true);
           }
         });
       });
@@ -122,10 +150,14 @@ const RegisterForm = () => {
 
   return (
     <CardWrapper
-      headerLabel="Create an account!"
+      headerLabel={createAccountMessage}
       backButtonHref="/auth/login"
-      backButtonLabel="Already have an account?"
+      backButtonLabel={alreadyHaveAccountMessage}
       showSocial
+      setLanguage={setLanguage}
+      languageToUse={languageToUse}
+      setOpen={setOpen}
+      isOpen={isOpen}
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -135,9 +167,10 @@ const RegisterForm = () => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>{nameMessage}</FormLabel>
                   <FormControl>
                     <NameField
+                      languageToUse={languageToUse}
                       field={field}
                       isPending={isPending}
                       validateName={setNameValid}
@@ -161,6 +194,7 @@ const RegisterForm = () => {
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <EmailField
+                      languageToUse={languageToUse}
                       field={field}
                       isPending={isPending}
                       validateEmail={setEmailValid}
@@ -181,9 +215,10 @@ const RegisterForm = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>{passwordMessage}</FormLabel>
                   <FormControl>
                     <PasswordField
+                      languageToUse={languageToUse}
                       field={field}
                       isPending={isPending}
                       validatePassword={setPasswordValid}
@@ -221,11 +256,11 @@ const RegisterForm = () => {
               isPending ||
               !isPasswordValid ||
               !isNameValid ||
-              !isCaptchaVerified || 
+              !isCaptchaVerified ||
               !isEmailValid
             }
           >
-            Create an account
+            {createAccountMessage}
           </Button>
 
           <>
@@ -233,7 +268,7 @@ const RegisterForm = () => {
               <div className="flex items-center space-x-1">
                 <X className="w-5 h-5 mr-1 text-red-500" />
                 <span className="text-red-500 text-xs">
-                  Bạn chưa xác minh bạn không phải là robot.
+                  {verifyNotRobotMessage}
                 </span>
               </div>
             )}

@@ -25,10 +25,29 @@ import MultiInputField from "./field/mutipleinput";
 import { login } from "@/actions/actions-signin-sign-up/login";
 import axios from "axios";
 import ReCAPTCHA from "react-google-recaptcha";
-import { ArrowRight, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Label } from "../ui/label";
 import { useDevice } from "@/providers/device-info-provider";
 import { LoginGuestModal } from "../modals/login-guest-modal";
+import {
+  getToastError,
+  translateBackToLogin,
+  translateConfirmLogin,
+  translateDontHaveAccount,
+  translateExceededAttempts,
+  translateForgotPassword,
+  translateGuestLogin,
+  translatePassword,
+  translateResendError,
+  translateResendSuccess,
+  translateRetryLimit,
+  translateTwoFactorAuth,
+  translateTwoFactorExpired,
+  translateTwoFactorExpiry,
+  translateVerifyNotRobot,
+  translateVerifyRobot,
+  translateWelcomeBack,
+} from "@/translate/translate-client";
 
 const getTheme = () => {
   if (
@@ -50,6 +69,7 @@ const LoginForm = () => {
     searchParams.get("error") === "OAuthAccountNotLinked"
       ? "Email already in use with diffrent provider!"
       : "";
+  const [isMounted, setIsMounted] = useState(false);
   //ShowtoFactor dùng để xác thực 2 yếu tố hay còn được gọi là 2FA
   const [showTwoFacTor, setShowTwoFactor] = useState(false);
   const [error, setError] = useState<string | undefined>("");
@@ -72,8 +92,44 @@ const LoginForm = () => {
   const [isSubmittedEmail, setIsSubmittedEmail] = useState(false);
   const [loadingResent, setLoadingResent] = useState(false);
   const [openGuestModal, setOpenGuestModal] = useState(false);
+  //language
+  const [language, setLanguage] = useState("vi");
+  const [isOpen, setOpen] = useState(false);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
 
   const MAX_RESEND_ATTEMPTS = 5;
+
+  //language
+  const languageToUse = storedLanguage || language;
+  const toastErrorMessage = getToastError(languageToUse);
+  const exceededAttemptMessage = translateExceededAttempts(languageToUse);
+  const resendSuccessMessage = translateResendSuccess(languageToUse);
+  const resendErrorMessage = translateResendError(languageToUse);
+  const verifyRobotMessage = translateVerifyRobot(languageToUse);
+  const welcomeBackMessage = translateWelcomeBack(languageToUse);
+  const dontHaveAccountMessage = translateDontHaveAccount(languageToUse);
+  const twoFactorAuthMessage = translateTwoFactorAuth(languageToUse);
+  const passwordMessage = translatePassword(languageToUse);
+  const forgotPasswordMessage = translateForgotPassword(languageToUse);
+  const twoFactorExpiryMessage = translateTwoFactorExpiry(languageToUse);
+  const twoFactorExpiredMessage = translateTwoFactorExpired(languageToUse);
+  const retryLimitMessage = translateRetryLimit(languageToUse);
+  const confirmLoginMessage = translateConfirmLogin(languageToUse);
+  const guestLoginMessage = translateGuestLogin(languageToUse);
+  const verifyNotRobotMessage = translateVerifyNotRobot(languageToUse);
+  const backToLoginMessage = translateBackToLogin(languageToUse);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Dùng để tự dộng đổi theme theo trình duyệt
   useEffect(() => {
@@ -119,7 +175,7 @@ const LoginForm = () => {
     if (resendCount >= MAX_RESEND_ATTEMPTS) {
       setShowTwoFactor(false); // Tắt chế độ xác thực hai yếu tố
       setLoadingResent(true);
-      setError("Bạn đã vượt quá số lần cho phép.");
+      setError(`${exceededAttemptMessage}.`);
       return;
     }
 
@@ -138,14 +194,14 @@ const LoginForm = () => {
         setSuccess(data.success); // Hiển thị thông báo thành công nếu có
         setLoadingResent(false);
       } else {
-        setSuccess("Mã xác thực đã được gửi lại thành công!");
+        setSuccess(resendSuccessMessage);
       }
 
       setCountdown(120); // Đặt lại đếm ngược
       await axios.patch(`/api/resendCount`, resendCount);
       setResendCount((prevCount) => prevCount + 1); // Tăng số lần thử lại lên 1
     } catch (error) {
-      setError("Đã xảy ra lỗi khi gửi lại mã xác thực!"); // Xử lý lỗi nếu có
+      setError(resendErrorMessage); // Xử lý lỗi nếu có
     }
   };
 
@@ -154,10 +210,10 @@ const LoginForm = () => {
     setError("");
     setSuccess("");
     if (showCaptcha && !isCaptchaVerified) {
-      return setError("Vui lòng xác minh tôi không phải là robot!");
+      return setError(verifyRobotMessage);
     } else {
       startTransition(() => {
-        login(values, callbackUrl,deviceInfo)
+        login(values, callbackUrl, deviceInfo, languageToUse)
           .then((data) => {
             if (data?.error) {
               setError(data.error);
@@ -188,7 +244,7 @@ const LoginForm = () => {
             //   setCountdown(0); // Đặt lại đếm ngược
             // }
           })
-          .catch(() => setError("Something went wrong"));
+          .catch(() => setError(toastErrorMessage));
       });
     }
   };
@@ -204,216 +260,224 @@ const LoginForm = () => {
     };
     onSubmit(guestValues);
   };
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <>
-    <LoginGuestModal
+      <LoginGuestModal
+        languageToUse={languageToUse}
         isOpen={openGuestModal}
         onClose={() => setOpenGuestModal(false)}
         onConfirm={handleGuestLogin}
         loading={isPending}
         isCaptchaVerified={isCaptchaVerified}
       />
-    <CardWrapper
-      headerLabel="Welcome back"
-      backButtonHref="/auth/register"
-      backButtonLabel="Don't have an account ?"
-      showSocial
-    >
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="space-y-4">
-            {showTwoFacTor && (
-              <FormField
-                control={form.control}
-                name="code"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Xác thực 2 yếu tố</FormLabel>
-                    <FormControl>
-                      <MultiInputField
-                        length={6} // Số lượng ô input
-                        onChange={(newValue) => field.onChange(newValue)} // Cập nhật giá trị mới vào field của useForm
-                        isError={isError}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
-            {!showTwoFacTor && (
-              <>
+      <CardWrapper
+        headerLabel={welcomeBackMessage}
+        backButtonHref="/auth/register"
+        backButtonLabel={dontHaveAccountMessage}
+        showSocial
+        setLanguage={setLanguage}
+        languageToUse={languageToUse}
+        isPending={isPending}
+        setOpen={setOpen}
+        isOpen={isOpen}
+      >
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="space-y-4">
+              {showTwoFacTor && (
                 <FormField
                   control={form.control}
-                  name="email"
+                  name="code"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>{twoFactorAuthMessage}</FormLabel>
                       <FormControl>
-                        <EmailField
-                          field={field}
-                          isPending={isPending}
-                          setEmail={setEmail}
-                          email={email}
-                          validateEmail={setEmailValid}
-                          setError={setError}
-                          setSuccess={setSuccess}
-                          isSubmittedEmail={isSubmittedEmail}
-                          setIsSubmittedEmail={setIsSubmittedEmail}
+                        <MultiInputField
+                          length={6} // Số lượng ô input
+                          onChange={(newValue) => field.onChange(newValue)} // Cập nhật giá trị mới vào field của useForm
+                          isError={isError}
                         />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <PasswordField
-                          field={field}
-                          isPending={isPending}
-                          validatePassword={setPasswordValid}
-                          setPassword={setPassword}
-                          password={password}
-                          setError={setError}
-                          setSuccess={setSuccess}
-                          isSubmitted={isSubmitted}
-                          setIsSubmitted={setIsSubmitted}
-                        />
-                      </FormControl>
-                      <Button
-                        size="sm"
-                        variant="link"
-                        asChild
-                        className="px-0 font-normal"
-                      >
-                        <Link href="/auth/reset">Quên mật khẩu?</Link>
-                      </Button>
-                    </FormItem>
-                  )}
-                />
-              </>
-            )}
-          </div>
-          {showTwoFacTor && (
-            <div className="mt-2 mb-6">
-              {countdown > 0 ? (
-                <p className="text-sm">
-                  Xác thực 2 yếu tố sẽ hết hiệu lực sau{" "}
-                  <span className="font-bold">{countdown}</span> giây.
-                </p>
-              ) : (
+              )}
+              {!showTwoFacTor && (
                 <>
-                  <p className="text-sm">
-                    Xác thực 2 yếu tố đã hết hiệu lực. Nhấn để{" "}
-                    {countdown === 0 && (
-                      <Label
-                        className={`text-sm cursor-pointer ${
-                          loadingResent
-                            ? "text-gray-400 cursor-not-allowed"
-                            : "hover:underline text-sky-400"
-                        }`}
-                        onClick={loadingResent ? () => {} : handleResendCode}
-                      >
-                        thử lại
-                      </Label>
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <EmailField
+                            languageToUse={languageToUse}
+                            field={field}
+                            isPending={isPending}
+                            setEmail={setEmail}
+                            email={email}
+                            validateEmail={setEmailValid}
+                            setError={setError}
+                            setSuccess={setSuccess}
+                            isSubmittedEmail={isSubmittedEmail}
+                            setIsSubmittedEmail={setIsSubmittedEmail}
+                          />
+                        </FormControl>
+                      </FormItem>
                     )}
-                    .
-                  </p>
-                  {resendCount >= 1 && (
-                    <>
-                      <p className="text-xs text-red-500">
-                        Đã gửi lại{" "}
-                        <span className="font-bold text-xs text-red-500">
-                          {resendCount}
-                        </span>{" "}
-                        lần. Tối đa là 5 lần.
-                      </p>
-                      <p className="text-xs  text-red-500">
-                        <span className="text-sm text-red-500 font-bold">
-                          Lưu ý:
-                        </span>{" "}
-                        Nếu bạn gửi lại quá 5 lần, bạn sẽ bị khóa tài khoản
-                        trong 24 giờ.
-                      </p>
-                    </>
-                  )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{passwordMessage}</FormLabel>
+                        <FormControl>
+                          <PasswordField
+                            languageToUse={languageToUse}
+                            field={field}
+                            isPending={isPending}
+                            validatePassword={setPasswordValid}
+                            setPassword={setPassword}
+                            password={password}
+                            setError={setError}
+                            setSuccess={setSuccess}
+                            isSubmitted={isSubmitted}
+                            setIsSubmitted={setIsSubmitted}
+                          />
+                        </FormControl>
+                        <Button
+                          size="sm"
+                          variant="link"
+                          asChild
+                          className="px-0 font-normal"
+                        >
+                          <Link href="/auth/reset">
+                            {forgotPasswordMessage}
+                          </Link>
+                        </Button>
+                      </FormItem>
+                    )}
+                  />
                 </>
               )}
             </div>
-          )}
-
-          {showCaptcha && (
-            <div className="mb-1">
-              <ReCAPTCHA
-                sitekey="6LePtLopAAAAAMq1dib9ylE_qam95hA6CVCNIsRr"
-                onChange={handleCaptchaVerify} // Xác thực ReCAPTCHA và cập nhật trạng thái
-                theme={theme === "dark" ? "dark" : undefined}
-              />
-            </div>
-          )}
-
-          <div className="my-2">
-            <FormError message={error || urlError} />
-            <FormSuccess message={success} />
-          </div>
-
-          <Button
-            className="w-full"
-            type="submit"
-            disabled={
-              isPending ||
-              !isPasswordValid ||
-              !isCaptchaVerified ||
-              !isEmailValid
-            }
-          >
-            {showTwoFacTor ? "Confirm" : "Login"}
-          </Button>
-
-          <Button
-            className="w-full my-2 hover:underline"
-            disabled={isPending}
-            variant="link"
-            onClick={() => {
-              if (!isCaptchaVerified) {
-                setError("Vui lòng xác minh tôi không phải là robot trước khi tiếp tục!");
-              } else {
-                setError("")
-                setOpenGuestModal(true);
-              }
-            }}
-          >
-            Đăng nhập tài khoản khách 👉
-          </Button>
-
-          {/* Hiển thị lỗi nếu như chưa ghi password và robot */}
-          <>
-            {loginClicked && !isCaptchaVerified && (
-              <div className="flex items-center space-x-1">
-                <X className="w-5 h-5 mr-1 text-red-500" />
-                <span className="text-red-500 text-xs">
-                  Bạn chưa xác minh bạn không phải là robot.
-                </span>
+            {showTwoFacTor && (
+              <div className="mt-2 mb-6">
+                {countdown > 0 ? (
+                  <p className="text-sm">
+                    {twoFactorExpiryMessage.name1}
+                    <span className="font-bold">{countdown}</span>{" "}
+                    {twoFactorExpiryMessage.name2}.
+                  </p>
+                ) : (
+                  <>
+                    <p className="text-sm">
+                      {twoFactorExpiredMessage.name1}
+                      {countdown === 0 && (
+                        <Label
+                          className={`text-sm cursor-pointer ${
+                            loadingResent
+                              ? "text-gray-400 cursor-not-allowed"
+                              : "hover:underline text-sky-400"
+                          }`}
+                          onClick={loadingResent ? () => {} : handleResendCode}
+                        >
+                          {twoFactorExpiredMessage.name2}
+                        </Label>
+                      )}
+                      .
+                    </p>
+                    {resendCount >= 1 && (
+                      <>
+                        <p className="text-xs text-red-500">
+                          {retryLimitMessage.name1}
+                          <span className="font-bold text-xs text-red-500">
+                            {resendCount}
+                          </span>
+                          {retryLimitMessage.name2}
+                        </p>
+                        <p className="text-xs  text-red-500">
+                          <span className="text-sm text-red-500 font-bold">
+                            {retryLimitMessage.name3}
+                          </span>
+                          {retryLimitMessage.name4}
+                        </p>
+                      </>
+                    )}
+                  </>
+                )}
               </div>
             )}
-          </>
-        </form>
-      </Form>
-      {showTwoFacTor && (
-        <div className="mt-2 text-center">
-          <span onClick={() => window.location.reload()}>
-            <span className="hover:underline cursor-pointer text-sky-600 text-sm">
-              Back to login{" "}
+
+            {showCaptcha && (
+              <div className="mb-1">
+                <ReCAPTCHA
+                  sitekey="6LePtLopAAAAAMq1dib9ylE_qam95hA6CVCNIsRr"
+                  onChange={handleCaptchaVerify} // Xác thực ReCAPTCHA và cập nhật trạng thái
+                  theme={theme === "dark" ? "dark" : undefined}
+                />
+              </div>
+            )}
+
+            <div className="my-2">
+              <FormError message={error || urlError} />
+              <FormSuccess message={success} />
+            </div>
+
+            <Button
+              className="w-full"
+              type="submit"
+              disabled={
+                isPending ||
+                !isPasswordValid ||
+                !isCaptchaVerified ||
+                !isEmailValid
+              }
+            >
+              {showTwoFacTor
+                ? confirmLoginMessage.name1
+                : confirmLoginMessage.name2}
+            </Button>
+
+            <Button
+              className="w-full my-2 hover:underline"
+              disabled={isPending}
+              variant="link"
+              onClick={() => setOpenGuestModal(true)}
+            >
+              {guestLoginMessage}
+            </Button>
+
+            {/* Hiển thị lỗi nếu như chưa ghi password và robot */}
+            <>
+              {loginClicked && !isCaptchaVerified && (
+                <div className="flex items-center space-x-1">
+                  <X className="w-5 h-5 mr-1 text-red-500" />
+                  <span className="text-red-500 text-xs">
+                    {verifyNotRobotMessage}
+                  </span>
+                </div>
+              )}
+            </>
+          </form>
+        </Form>
+        {showTwoFacTor && (
+          <div className="mt-2 text-center">
+            <span onClick={() => window.location.reload()}>
+              <span className="hover:underline cursor-pointer text-sky-600 text-sm">
+                {backToLoginMessage}
+              </span>
             </span>
-          </span>
-        </div>
-      )}
-    </CardWrapper>
+          </div>
+        )}
+      </CardWrapper>
     </>
   );
 };

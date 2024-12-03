@@ -24,227 +24,18 @@ import { Heading } from "@/components/ui/heading";
 import { AlertModal } from "@/components/modals/alert-modal";
 import { Textarea } from "@/components/ui/textarea";
 import Recommend from "@/components/ui/recommend";
-
-const formSchema = z.object({
-  title: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  promotionheading: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  promotiondescription: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  warranty1: z.optional(
-    z.coerce.number().min(0, { message: "Không được nhập số âm." })
-  ),
-  warranty2: z.optional(
-    z.coerce.number().min(0, { message: "Không được nhập số âm." })
-  ),
-  warranty3: z.optional(
-    z.coerce.number().min(0, { message: "Không được nhập số âm." })
-  ),
-  warranty4: z.optional(
-    z.coerce.number().min(0, { message: "Không được nhập số âm." })
-  ),
-  // Specification
-  descriptionspecifications: z
-    .string()
-    .min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  valuespecifications: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  description2specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value2specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  description3specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value3specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  description4specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value4specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  description5specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value5specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  description6specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value6specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  description7specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value7specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  description8specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value8specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  description9specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value9specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  description10specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value10specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  description11specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value11specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  description12specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value12specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  description13specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value13specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  description14specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  value14specifications: z.optional(
-    z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })
-  ),
-  // salientfeatures:
-  descriptionsalientfeatures: z
-    .string()
-    .min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  description2salientfeatures: z
-    .string()
-    .min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  description3salientfeatures: z
-    .string()
-    .min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  description4salientfeatures: z
-    .string()
-    .min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  contentsalientfeatures: z
-    .string()
-    .min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  size1Id: z.string().min(1, { message: "Hãy chọn 1 size phù hợp." }),
-  color1Id: z.string().min(1, { message: "Hãy chọn 1 color phù hợp." }),
-  size2Id: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-  color2Id: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-  size3Id: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-  color3Id: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-  size4Id: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-  color4Id: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-  size5Id: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-  color5Id: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-  price1: z.coerce.number().min(500, { message: "Hãy nhập ít nhất 500 đồng." }),
-  price2: z.optional(
-    z.coerce.number().min(500, { message: "Hãy nhập ít nhất 500 đồng." })
-  ),
-  price3: z.optional(
-    z.coerce.number().min(500, { message: "Hãy nhập ít nhất 500 đồng." })
-  ),
-  price4: z.optional(
-    z.coerce.number().min(500, { message: "Hãy nhập ít nhất 500 đồng." })
-  ),
-  price5: z.optional(
-    z.coerce.number().min(500, { message: "Hãy nhập ít nhất 500 đồng." })
-  ),
-  name1: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  name2: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-  name3: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-  name4: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-  name5: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-  percentpromotion1: z.coerce
-    .number()
-    .int()
-    .min(1, { message: "Hãy nhập phần trăm từ 1 đến 100." })
-    .max(100, { message: "Hãy nhập phần trăm từ 1 đến 100." }),
-  percentpromotion2: z.optional(
-    z.coerce
-      .number()
-      .int()
-      .min(1, { message: "Hãy nhập phần trăm từ 1 đến 100." })
-      .max(100, { message: "Hãy nhập phần trăm từ 1 đến 100." })
-  ),
-  percentpromotion3: z.optional(
-    z.coerce
-      .number()
-      .int()
-      .min(1, { message: "Hãy nhập phần trăm từ 1 đến 100." })
-      .max(100, { message: "Hãy nhập phần trăm từ 1 đến 100." })
-  ),
-  percentpromotion4: z.optional(
-    z.coerce
-      .number()
-      .int()
-      .min(1, { message: "Hãy nhập phần trăm từ 1 đến 100." })
-      .max(100, { message: "Hãy nhập phần trăm từ 1 đến 100." })
-  ),
-  percentpromotion5: z.optional(
-    z.coerce
-      .number()
-      .int()
-      .min(1, { message: "Hãy nhập phần trăm từ 1 đến 100." })
-      .max(100, { message: "Hãy nhập phần trăm từ 1 đến 100." })
-  ),
-  quantity1: z.coerce
-    .number()
-    .int()
-    .min(1, { message: "Hãy nhập số lượng từ 1 đến 9999." })
-    .max(9999, { message: "Hãy nhập số lượng từ 1 đến 9999." }),
-  quantity2: z.optional(
-    z.coerce
-      .number()
-      .int()
-      .min(1, { message: "Hãy nhập số lượng từ 1 đến 9999." })
-      .max(9999, { message: "Hãy nhập số lượng từ 1 đến 9999." })
-  ),
-  quantity3: z.optional(
-    z.coerce
-      .number()
-      .int()
-      .min(1, { message: "Hãy nhập số lượng từ 1 đến 9999." })
-      .max(9999, { message: "Hãy nhập số lượng từ 1 đến 9999." })
-  ),
-  quantity4: z.optional(
-    z.coerce
-      .number()
-      .int()
-      .min(1, { message: "Hãy nhập số lượng từ 1 đến 9999." })
-      .max(9999, { message: "Hãy nhập số lượng từ 1 đến 9999." })
-  ),
-  quantity5: z.optional(
-    z.coerce
-      .number()
-      .int()
-      .min(1, { message: "Hãy nhập số lượng từ 1 đến 9999." })
-      .max(9999, { message: "Hãy nhập số lượng từ 1 đến 9999." })
-  ),
-  categoryId: z.string().min(1, { message: "Hãy chọn 1 category phù hợp." }),
-});
-
-type ProductDetailFormValues = z.infer<typeof formSchema>;
+import {
+  getProductDetailForm,
+  getProductDetailFormSchema,
+  getProductDetailHandle,
+} from "@/translate/translate-dashboard";
 
 interface ProductDetailFormProps {
   initialData: ProductDetail | null;
-
   categories: Category[];
   sizes: Size[];
   colors: Color[];
+  language: string;
 }
 
 export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
@@ -252,9 +43,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
   categories,
   sizes,
   colors,
+  language,
 }) => {
   const params = useParams();
   const router = useRouter();
+
+  //language
+  const productDetailSchemaMessage = getProductDetailFormSchema(language);
+  const productDetailHandleMessgae = getProductDetailHandle(language);
+  const productDetailFormMessgae = getProductDetailForm(language);
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -543,11 +340,363 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
     setName5Value(event.target.value);
   };
 
-  const title = initialData ? "Edit Product Detail" : "Create Product Detail";
+  const formSchema = z.object({
+    title: z
+      .string()
+      .min(2, { message: productDetailSchemaMessage.minTwoCharacters }),
+    promotionheading: z
+      .string()
+      .min(2, { message: productDetailSchemaMessage.minTwoCharacters }),
+    promotiondescription: z
+      .string()
+      .min(2, { message: productDetailSchemaMessage.minTwoCharacters }),
+    warranty1: z.optional(
+      z.coerce
+        .number()
+        .min(0, { message: productDetailSchemaMessage.noNegativeNumbers })
+    ),
+    warranty2: z.optional(
+      z.coerce
+        .number()
+        .min(0, { message: productDetailSchemaMessage.noNegativeNumbers })
+    ),
+    warranty3: z.optional(
+      z.coerce
+        .number()
+        .min(0, { message: productDetailSchemaMessage.noNegativeNumbers })
+    ),
+    warranty4: z.optional(
+      z.coerce
+        .number()
+        .min(0, { message: productDetailSchemaMessage.noNegativeNumbers })
+    ),
+    // Specification
+    descriptionspecifications: z
+      .string()
+      .min(2, { message: productDetailSchemaMessage.minTwoCharacters }),
+    valuespecifications: z
+      .string()
+      .min(2, { message: productDetailSchemaMessage.minTwoCharacters }),
+    description2specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    value2specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    description3specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    value3specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    description4specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    value4specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    description5specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    value5specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    description6specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    value6specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    description7specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    value7specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    description8specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    value8specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    description9specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    value9specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    description10specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    value10specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    description11specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    value11specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    description12specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    value12specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    description13specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    value13specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    description14specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    value14specifications: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    // salientfeatures:
+    descriptionsalientfeatures: z
+      .string()
+      .min(2, { message: productDetailSchemaMessage.minTwoCharacters }),
+    description2salientfeatures: z
+      .string()
+      .min(2, { message: productDetailSchemaMessage.minTwoCharacters }),
+    description3salientfeatures: z
+      .string()
+      .min(2, { message: productDetailSchemaMessage.minTwoCharacters }),
+    description4salientfeatures: z
+      .string()
+      .min(2, { message: productDetailSchemaMessage.minTwoCharacters }),
+    contentsalientfeatures: z
+      .string()
+      .min(2, { message: productDetailSchemaMessage.minTwoCharacters }),
+    size1Id: z
+      .string()
+      .min(1, { message: productDetailSchemaMessage.chooseValidSize }),
+    color1Id: z
+      .string()
+      .min(1, { message: productDetailSchemaMessage.chooseValidColor }),
+    size2Id: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    color2Id: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    size3Id: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    color3Id: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    size4Id: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    color4Id: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    size5Id: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    color5Id: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    price1: z.coerce
+      .number()
+      .min(500, { message: productDetailSchemaMessage.minAmount }),
+    price2: z.optional(
+      z.coerce
+        .number()
+        .min(500, { message: productDetailSchemaMessage.minAmount })
+    ),
+    price3: z.optional(
+      z.coerce
+        .number()
+        .min(500, { message: productDetailSchemaMessage.minAmount })
+    ),
+    price4: z.optional(
+      z.coerce
+        .number()
+        .min(500, { message: productDetailSchemaMessage.minAmount })
+    ),
+    price5: z.optional(
+      z.coerce
+        .number()
+        .min(500, { message: productDetailSchemaMessage.minAmount })
+    ),
+    name1: z
+      .string()
+      .min(2, { message: productDetailSchemaMessage.minTwoCharacters }),
+    name2: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    name3: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    name4: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    name5: z.optional(
+      z
+        .string()
+        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    ),
+    percentpromotion1: z.coerce
+      .number()
+      .int()
+      .min(1, { message: productDetailSchemaMessage.percentageRange })
+      .max(100, { message: productDetailSchemaMessage.percentageRange }),
+    percentpromotion2: z.optional(
+      z.coerce
+        .number()
+        .int()
+        .min(1, { message: productDetailSchemaMessage.percentageRange })
+        .max(100, { message: productDetailSchemaMessage.percentageRange })
+    ),
+    percentpromotion3: z.optional(
+      z.coerce
+        .number()
+        .int()
+        .min(1, { message: productDetailSchemaMessage.percentageRange })
+        .max(100, { message: productDetailSchemaMessage.percentageRange })
+    ),
+    percentpromotion4: z.optional(
+      z.coerce
+        .number()
+        .int()
+        .min(1, { message: productDetailSchemaMessage.percentageRange })
+        .max(100, { message: productDetailSchemaMessage.percentageRange })
+    ),
+    percentpromotion5: z.optional(
+      z.coerce
+        .number()
+        .int()
+        .min(1, { message: productDetailSchemaMessage.percentageRange })
+        .max(100, { message: productDetailSchemaMessage.percentageRange })
+    ),
+    quantity1: z.coerce
+      .number()
+      .int()
+      .min(1, { message: productDetailSchemaMessage.quantityRange })
+      .max(9999, { message: productDetailSchemaMessage.quantityRange }),
+    quantity2: z.optional(
+      z.coerce
+        .number()
+        .int()
+        .min(1, { message: productDetailSchemaMessage.quantityRange })
+        .max(9999, { message: productDetailSchemaMessage.quantityRange })
+    ),
+    quantity3: z.optional(
+      z.coerce
+        .number()
+        .int()
+        .min(1, { message: productDetailSchemaMessage.quantityRange })
+        .max(9999, { message: productDetailSchemaMessage.quantityRange })
+    ),
+    quantity4: z.optional(
+      z.coerce
+        .number()
+        .int()
+        .min(1, { message: productDetailSchemaMessage.quantityRange })
+        .max(9999, { message: productDetailSchemaMessage.quantityRange })
+    ),
+    quantity5: z.optional(
+      z.coerce
+        .number()
+        .int()
+        .min(1, { message: productDetailSchemaMessage.quantityRange })
+        .max(9999, { message: productDetailSchemaMessage.quantityRange })
+    ),
+    categoryId: z
+      .string()
+      .min(1, { message: productDetailSchemaMessage.chooseValidCategory }),
+  });
+
+  type ProductDetailFormValues = z.infer<typeof formSchema>;
+
+  const title = initialData
+    ? productDetailHandleMessgae.editProductDetail
+    : productDetailHandleMessgae.createProductDetail;
   const description = initialData
-    ? "Edit a Product Detail."
-    : "Add a new Product Detail";
-  const action = initialData ? "Save changes" : "Create";
+    ? productDetailHandleMessgae.editAProductDetail
+    : productDetailHandleMessgae.addNewProductDetail;
+  const action = initialData
+    ? productDetailHandleMessgae.saveChanges
+    : productDetailHandleMessgae.create;
 
   const form = useForm<ProductDetailFormValues>({
     resolver: zodResolver(formSchema),
@@ -670,7 +819,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
           color1Id: "",
           size2Id: "",
           color2Id: "",
-          size3Id: "" ,
+          size3Id: "",
           color3Id: "",
           size4Id: "",
           color4Id: "",
@@ -752,22 +901,23 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
           if (initialData) {
             return (
               <p>
-                Product Detail{" "}
+                {productDetailHandleMessgae.productDetail}
                 <span className="font-bold">{response.data?.title}</span>{" "}
-                updated.
+                {productDetailHandleMessgae.updated}.
               </p>
             );
           } else {
             return (
               <p>
-                Product Detail <span className="font-bold">{data.title}</span>{" "}
-                created.
+                {productDetailHandleMessgae.productDetail}{" "}
+                <span className="font-bold">{data.title}</span>{" "}
+                {productDetailHandleMessgae.created}.
               </p>
             );
           }
         }),
         {
-          loading: "Updating product detail...",
+          loading: productDetailHandleMessgae.updatingProductDetail,
           success: (message) => {
             router.refresh();
             router.push(`/${params.storeId}/productdetail`);
@@ -785,7 +935,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Something went wrong.";
+              return productDetailHandleMessgae.somethingWentWrong;
             }
           },
         }
@@ -804,7 +954,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
       );
       router.refresh();
       router.push(`/${params.storeId}/productdetail`);
-      toast.success("Product deleted.");
+      toast.success(productDetailHandleMessgae.productDeleted);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -819,9 +969,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
         );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
-        toast.error(
-          "Make sure you removed all categories using this billboard first."
-        );
+        toast.error(productDetailHandleMessgae.somethingWentWrong);
       }
     } finally {
       setLoading(false);
@@ -836,6 +984,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
         onClose={() => setOpen(false)}
         onConfirm={onDelete}
         loading={loading}
+        languageToUse={language}
       />
       {/* update and create */}
       <div className="flex items-center justify-between">
@@ -866,13 +1015,16 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                      Tiêu đề<span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Hãy nhập tiêu để dễ dàng lựa chọn khi tạo sản phẩm." />
+                    {productDetailFormMessgae.title}
+                    <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message={productDetailFormMessgae.enterTitle} />
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập tiêu đề ..."
+                      placeholder={
+                        productDetailFormMessgae.enterTitlePlaceholder
+                      }
                       {...field}
                     />
                   </FormControl>
@@ -887,13 +1039,18 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Tên sản phẩm 1<span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Nhập đầy đủ tên sản phẩm. Không bao gồm các loại khác như kích thước..." />
+                    {productDetailFormMessgae.productName1}
+                    <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend
+                      message={productDetailFormMessgae.enterProductName1}
+                    />
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập tên sản phẩm 1..."
+                      placeholder={
+                        productDetailFormMessgae.enterProductName1Placeholder
+                      }
                       {...field}
                       onChange={(event) => {
                         handleName1Change(event);
@@ -914,14 +1071,19 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="flex space-x-3 items-center">
-                        Giá sản phẩm 1 <span className="text-red-600 pl-1">(*)</span>
-                        <Recommend message="Nhập giá của sản phẩm." />
+                        {productDetailFormMessgae.productPrice1}{" "}
+                        <span className="text-red-600 pl-1">(*)</span>
+                        <Recommend
+                          message={productDetailFormMessgae.enterProductPrice1}
+                        />
                       </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
                           disabled={loading}
-                          placeholder="Nhập giá sản phẩm 1..."
+                          placeholder={
+                            productDetailFormMessgae.enterProductPrice1Placeholder
+                          }
                           {...field}
                           className="border-2 border-orange-400 "
                         />
@@ -937,14 +1099,19 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="flex space-x-3 items-center">
-                    Giảm giá sản phẩm 1 <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Sản phẩm sẽ giảm giá từ 0% đến 100%." />
-                  </FormLabel>
+                        {productDetailFormMessgae.discountProduct1}{" "}
+                        <span className="text-red-600 pl-1">(*)</span>
+                        <Recommend
+                          message={productDetailFormMessgae.discountDescription}
+                        />
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
                           disabled={loading}
-                          placeholder="Nhập % giảm sản phẩm 1 ..."
+                          placeholder={
+                            productDetailFormMessgae.enterDiscountProduct1
+                          }
                           {...field}
                           className="border-2 border-orange-400 "
                         />
@@ -960,14 +1127,19 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="flex space-x-3 items-center">
-                    Số lượng còn trong kho 1 <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Xem thử số lượng sản phẩm còn trong kho bao nhiêu." />
-                  </FormLabel>
+                        {productDetailFormMessgae.stockProduct1}{" "}
+                        <span className="text-red-600 pl-1">(*)</span>
+                        <Recommend
+                          message={productDetailFormMessgae.stockDescription}
+                        />
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
                           disabled={loading}
-                          placeholder="Nhập số lượng còn trong kho 1..."
+                          placeholder={
+                            productDetailFormMessgae.enterStockProduct1
+                          }
                           {...field}
                           className="border-2 border-orange-400 "
                         />
@@ -983,11 +1155,13 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="name2"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên sản phẩm 2</FormLabel>
+                  <FormLabel>{productDetailFormMessgae.productName2}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập tên sản phẩm 2 ..."
+                      placeholder={
+                        productDetailFormMessgae.enterProductName2Placeholder
+                      }
                       {...field}
                       onChange={(event) => {
                         handleName2Change(event);
@@ -1007,12 +1181,16 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="price2"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Giá sản phẩm 2</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.productPrice2}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
                           disabled={loading}
-                          placeholder="Nhập giá sản phẩm 2..."
+                          placeholder={
+                            productDetailFormMessgae.enterProductPrice2Placeholder
+                          }
                           {...field}
                           className="border-2 border-green-400 "
                         />
@@ -1026,12 +1204,16 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="percentpromotion2"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Giảm giá sản phẩm 2</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.discountProduct2}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
                           disabled={loading}
-                          placeholder="Nhập % giảm sản phẩm 2 ..."
+                          placeholder={
+                            productDetailFormMessgae.enterDiscountProduct2
+                          }
                           {...field}
                           className="border-2 border-green-400 "
                         />
@@ -1045,12 +1227,16 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="quantity2"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Số lượng còn trong kho 2</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.stockProduct2}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
                           disabled={loading}
-                          placeholder="Nhập số lượng còn trong kho 2..."
+                          placeholder={
+                            productDetailFormMessgae.enterStockProduct2
+                          }
                           {...field}
                           className="border-2 border-green-400 "
                         />
@@ -1066,11 +1252,13 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="name3"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên sản phẩm 3</FormLabel>
+                  <FormLabel>{productDetailFormMessgae.productName3}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập tên sản phẩm 3 ..."
+                      placeholder={
+                        productDetailFormMessgae.enterProductName3Placeholder
+                      }
                       {...field}
                       onChange={(event) => {
                         handleName3Change(event);
@@ -1090,12 +1278,16 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="price3"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Giá sản phẩm 3</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.productPrice3}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
                           disabled={loading}
-                          placeholder="Nhập giá sản phẩm 3..."
+                          placeholder={
+                            productDetailFormMessgae.enterProductPrice3Placeholder
+                          }
                           {...field}
                           className="border-2 border-sky-400 "
                         />
@@ -1109,12 +1301,16 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="percentpromotion3"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Giảm giá sản phẩm 3</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.discountProduct3}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
                           disabled={loading}
-                          placeholder="Nhập % giảm sản phẩm 3 ..."
+                          placeholder={
+                            productDetailFormMessgae.enterDiscountProduct3
+                          }
                           {...field}
                           className="border-2 border-sky-400 "
                         />
@@ -1128,12 +1324,16 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="quantity3"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Số lượng còn trong kho 3</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.stockProduct3}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
                           disabled={loading}
-                          placeholder="Nhập số lượng còn trong kho 3..."
+                          placeholder={
+                            productDetailFormMessgae.enterStockProduct3
+                          }
                           {...field}
                           className="border-2 border-sky-400 "
                         />
@@ -1149,11 +1349,13 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="name4"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên sản phẩm 4</FormLabel>
+                  <FormLabel>{productDetailFormMessgae.productName4}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập tên sản phẩm 4 ..."
+                      placeholder={
+                        productDetailFormMessgae.enterProductName4Placeholder
+                      }
                       {...field}
                       onChange={(event) => {
                         handleName4Change(event);
@@ -1173,12 +1375,16 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="price4"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Giá sản phẩm 4</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.productPrice4}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
                           disabled={loading}
-                          placeholder="Nhập giá sản phẩm 4..."
+                          placeholder={
+                            productDetailFormMessgae.enterProductPrice4Placeholder
+                          }
                           {...field}
                           className="border-2 border-violet-400 "
                         />
@@ -1192,12 +1398,16 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="percentpromotion4"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Giảm giá sản phẩm 4</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.discountProduct4}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
                           disabled={loading}
-                          placeholder="Nhập % giảm sản phẩm 4 ..."
+                          placeholder={
+                            productDetailFormMessgae.enterDiscountProduct4
+                          }
                           {...field}
                           className="border-2 border-violet-400 "
                         />
@@ -1211,12 +1421,16 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="quantity4"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Số lượng còn trong kho 4</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.stockProduct4}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
                           disabled={loading}
-                          placeholder="Nhập số lượng còn trong kho 4..."
+                          placeholder={
+                            productDetailFormMessgae.enterStockProduct4
+                          }
                           {...field}
                           className="border-2 border-violet-400 "
                         />
@@ -1232,11 +1446,13 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="name5"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên sản phẩm 5</FormLabel>
+                  <FormLabel>{productDetailFormMessgae.productName5}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập tên sản phẩm 5 ..."
+                      placeholder={
+                        productDetailFormMessgae.enterProductName5Placeholder
+                      }
                       {...field}
                       onChange={(event) => {
                         handleName5Change(event);
@@ -1256,12 +1472,16 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="price5"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Giá sản phẩm 5</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.productPrice5}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
                           disabled={loading}
-                          placeholder="Nhập giá sản phẩm 5..."
+                          placeholder={
+                            productDetailFormMessgae.enterProductPrice5Placeholder
+                          }
                           {...field}
                           className="border-2 border-pink-400 "
                         />
@@ -1276,12 +1496,16 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="percentpromotion5"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Giảm giá sản phẩm 5</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.discountProduct5}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
                           disabled={loading}
-                          placeholder="Nhập % giảm sản phẩm 5 ..."
+                          placeholder={
+                            productDetailFormMessgae.enterDiscountProduct5
+                          }
                           {...field}
                           className="border-2 border-pink-400 "
                         />
@@ -1295,12 +1519,16 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="quantity5"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Số lượng còn trong kho 5</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.stockProduct5}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
                           disabled={loading}
-                          placeholder="Nhập số lượng còn trong kho 5..."
+                          placeholder={
+                            productDetailFormMessgae.enterStockProduct5
+                          }
                           {...field}
                           className="border-2 border-pink-400 "
                         />
@@ -1316,13 +1544,18 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Khuyến mãi sỉ <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Ghi những ưa đãi giành cho khách hàng mua sỉ." />
+                    {productDetailFormMessgae.wholesaleDiscount}{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend
+                      message={productDetailFormMessgae.wholesaleDescription}
+                    />
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập khuyến mãi sỉ ..."
+                      placeholder={
+                        productDetailFormMessgae.enterWholesaleDiscount
+                      }
                       {...field}
                     />
                   </FormControl>
@@ -1336,13 +1569,18 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Khuyến mãi thầu <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Nhập những ưa đãi giành cho những nhà thầu." />
+                    {productDetailFormMessgae.contractorDiscount}{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend
+                      message={productDetailFormMessgae.contractorDescription}
+                    />
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập khuyến mãi thầu ..."
+                      placeholder={
+                        productDetailFormMessgae.enterContractorDiscount
+                      }
                       {...field}
                     />
                   </FormControl>
@@ -1357,14 +1595,18 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex items-center">
-                    <span className="mr-3">Giá tiền bảo hành 1 </span>
-                    <Recommend message="Lưu ý: Sẽ có một vài sản phẩm sẽ bỏ chi phí để bảo hành." />
+                    <span className="mr-3">
+                      {productDetailFormMessgae.warrantyPrice1}{" "}
+                    </span>
+                    <Recommend
+                      message={productDetailFormMessgae.warrantyDescription}
+                    />
                   </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Nhập giá tiền bảo hành ..."
+                      placeholder={productDetailFormMessgae.enterWarrantyPrice1}
                       {...field}
                     />
                   </FormControl>
@@ -1378,12 +1620,14 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="warranty2"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giá tiền bảo hành 2</FormLabel>
+                  <FormLabel>
+                    {productDetailFormMessgae.warrantyPrice2}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Nhập giá tiền bảo hành ..."
+                      placeholder={productDetailFormMessgae.enterWarrantyPrice2}
                       {...field}
                     />
                   </FormControl>
@@ -1397,12 +1641,14 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="warranty3"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giá tiền bảo hành 3</FormLabel>
+                  <FormLabel>
+                    {productDetailFormMessgae.warrantyPrice3}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Nhập giá tiền bảo hành ..."
+                      placeholder={productDetailFormMessgae.enterWarrantyPrice3}
                       {...field}
                     />
                   </FormControl>
@@ -1416,12 +1662,14 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               name="warranty4"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giá tiền bảo hành 4</FormLabel>
+                  <FormLabel>
+                    {productDetailFormMessgae.warrantyPrice4}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       disabled={loading}
-                      placeholder="Nhập giá tiền bảo hành ..."
+                      placeholder={productDetailFormMessgae.enterWarrantyPrice4}
                       {...field}
                     />
                   </FormControl>
@@ -1435,13 +1683,20 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Thông số <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Nhập thông số sản phẩm pin VD: Thời gian sử dụng:" />
+                    {productDetailFormMessgae.specifications}{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend
+                      message={
+                        productDetailFormMessgae.enterSpecifications
+                      }
+                    />
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập thông số ..."
+                      placeholder={
+                        productDetailFormMessgae.enterSpecificationsPlaceholder
+                      }
                       {...field}
                       onChange={(event) => {
                         handleDescription1Change(event);
@@ -1459,13 +1714,20 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Nội dung thông số <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Nhập nội dung thông số VD: 2400 giờ" />
+                    {productDetailFormMessgae.specificationsContent}{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend
+                      message={
+                        productDetailFormMessgae.enterSpecificationsContent
+                      }
+                    />
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập nội dung thông số ..."
+                      placeholder={
+                        productDetailFormMessgae.enterSpecificationsContentPlaceholder
+                      }
                       {...field}
                       onChange={(event) => {
                         handleValue1SpecificationsChange(event);
@@ -1484,11 +1746,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="description2specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specifications}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsPlaceholder
+                          }
                           {...field}
                           onChange={(event) => {
                             handleDescription2Change(event);
@@ -1505,11 +1771,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="value2specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nội dung thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specificationsContent}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập nội dung thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsContentPlaceholder
+                          }
                           {...field}
                           onChange={(event) => {
                             handleValue2SpecificationsChange(event);
@@ -1530,11 +1800,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="description3specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specifications}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsPlaceholder
+                          }
                           {...field}
                           onChange={(event) => {
                             handleDescription3Change(event);
@@ -1551,11 +1825,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="value3specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nội dung thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specificationsContent}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập nội dung thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsContentPlaceholder
+                          }
                           {...field}
                           onChange={(event) => {
                             handleValue3SpecificationsChange(event);
@@ -1576,11 +1854,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="description4specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specifications}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsPlaceholder
+                          }
                           {...field}
                           onChange={(event) => {
                             handleDescription4Change(event);
@@ -1597,11 +1879,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="value4specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nội dung thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specificationsContent}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập nội dung thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsContentPlaceholder
+                          }
                           {...field}
                           onChange={(event) => {
                             handleValue4SpecificationsChange(event);
@@ -1621,11 +1907,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="description5specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specifications}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsPlaceholder
+                          }
                           {...field}
                           onChange={(event) => {
                             handleDescription5Change(event);
@@ -1642,11 +1932,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="value5specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nội dung thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specificationsContent}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập nội dung thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsContentPlaceholder
+                          }
                           {...field}
                           onChange={(event) => {
                             handleValue5SpecificationsChange(event);
@@ -1666,11 +1960,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="description6specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specifications}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsPlaceholder
+                          }
                           {...field}
                           onChange={(event) => {
                             handleDescription6Change(event);
@@ -1687,11 +1985,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="value6specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nội dung thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specificationsContent}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập nội dung thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsContentPlaceholder
+                          }
                           {...field}
                           onChange={(event) => {
                             handleValue6SpecificationsChange(event);
@@ -1711,11 +2013,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="description7specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specifications}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsPlaceholder
+                          }
                           {...field}
                           onChange={(event) => {
                             handleDescription7Change(event);
@@ -1732,11 +2038,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="value7specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nội dung thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specificationsContent}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập nội dung thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsContentPlaceholder
+                          }
                           {...field}
                           onChange={(event) => {
                             handleValue7SpecificationsChange(event);
@@ -1757,11 +2067,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="description8specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specifications}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsPlaceholder
+                          }
                           {...field}
                           onChange={(event) => {
                             handleDescription8Change(event);
@@ -1778,11 +2092,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="value8specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nội dung thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specificationsContent}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập nội dung thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsContentPlaceholder
+                          }
                           {...field}
                           onChange={(event) => {
                             handleValue8SpecificationsChange(event);
@@ -1802,11 +2120,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="description9specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specifications}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsPlaceholder
+                          }
                           {...field}
                           onChange={(event) => {
                             handleDescription9Change(event);
@@ -1823,11 +2145,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="value9specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nội dung thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specificationsContent}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập nội dung thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsContentPlaceholder
+                          }
                           {...field}
                           onChange={(event) => {
                             handleValue9SpecificationsChange(event);
@@ -1847,11 +2173,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="description10specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specifications}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsPlaceholder
+                          }
                           {...field}
                           onChange={(event) => {
                             handleDescription10Change(event);
@@ -1868,11 +2198,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="value10specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nội dung thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specificationsContent}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập nội dung thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsContentPlaceholder
+                          }
                           {...field}
                           onChange={(event) => {
                             handleValue10SpecificationsChange(event);
@@ -1892,11 +2226,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="description11specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specifications}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsPlaceholder
+                          }
                           {...field}
                           onChange={(event) => {
                             handleDescription11Change(event);
@@ -1913,11 +2251,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="value11specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nội dung thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specificationsContent}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập nội dung thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsContentPlaceholder
+                          }
                           {...field}
                           onChange={(event) => {
                             handleValue11SpecificationsChange(event);
@@ -1937,11 +2279,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="description12specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specifications}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsPlaceholder
+                          }
                           {...field}
                           onChange={(event) => {
                             handleDescription12Change(event);
@@ -1958,11 +2304,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="value12specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nội dung thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specificationsContent}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập nội dung thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsContentPlaceholder
+                          }
                           {...field}
                           onChange={(event) => {
                             handleValue12SpecificationsChange(event);
@@ -1982,11 +2332,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="description13specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specifications}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsPlaceholder
+                          }
                           {...field}
                           onChange={(event) => {
                             handleDescription13Change(event);
@@ -2003,11 +2357,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="value13specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nội dung thông số </FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specificationsContent}{" "}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập nội dung thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsContentPlaceholder
+                          }
                           {...field}
                           onChange={(event) => {
                             handleValue13SpecificationsChange(event);
@@ -2027,11 +2385,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="description14specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specifications}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsPlaceholder
+                          }
                           {...field}
                         />
                       </FormControl>
@@ -2044,11 +2406,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="value14specifications"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nội dung thông số</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.specificationsContent}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={loading}
-                          placeholder="Nhập nội dung thông số ..."
+                          placeholder={
+                            productDetailFormMessgae.enterSpecificationsContentPlaceholder
+                          }
                           {...field}
                         />
                       </FormControl>
@@ -2060,7 +2426,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
             )}
 
             <span
-              onClick={!loading ? togglePairs : () => {}} 
+              onClick={!loading ? togglePairs : () => {}}
               className={`dark:bg-white dark:hover:bg-slate-100 bg-black hover:bg-slate-900 flex justify-center space-y-2 items-center rounded-md  h-1/2 my-3 xl:my-auto ${
                 loading ? "cursor-no-drop opacity-50" : "cursor-pointer"
               }`}
@@ -2077,13 +2443,20 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Mô tả tính năng nổi bật <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Mô tả những tính năng nổi bật: Vd: Có thể chông nước và ngoài trời." />
+                    {productDetailFormMessgae.featureDescription}{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend
+                      message={
+                        productDetailFormMessgae.featureDescriptionContent
+                      }
+                    />
                   </FormLabel>
                   <FormControl>
                     <Textarea
                       disabled={loading}
-                      placeholder="Nhập mô tả tính năng nổi bật ..."
+                      placeholder={
+                        productDetailFormMessgae.enterFeatureDescription
+                      }
                       {...field}
                     />
                   </FormControl>
@@ -2097,13 +2470,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Mô tả tính năng nổi bật{" "}
+                    {productDetailFormMessgae.featureDescription}{" "}
                     <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <FormControl>
                     <Textarea
                       disabled={loading}
-                      placeholder="Nhập mô tả tính năng nổi bật ..."
+                      placeholder={
+                        productDetailFormMessgae.enterFeatureDescription
+                      }
                       {...field}
                     />
                   </FormControl>
@@ -2117,13 +2492,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Mô tả tính năng nổi bật{" "}
+                    {productDetailFormMessgae.featureDescription}{" "}
                     <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <FormControl>
                     <Textarea
                       disabled={loading}
-                      placeholder="Nhập mô tả tính năng nổi bật ..."
+                      placeholder={
+                        productDetailFormMessgae.enterFeatureDescription
+                      }
                       {...field}
                     />
                   </FormControl>
@@ -2137,13 +2514,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Mô tả tính năng nổi bật{" "}
+                    {productDetailFormMessgae.featureDescription}{" "}
                     <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <FormControl>
                     <Textarea
                       disabled={loading}
-                      placeholder="Nhập mô tả tính năng nổi bật ..."
+                      placeholder={
+                        productDetailFormMessgae.enterFeatureDescription
+                      }
                       {...field}
                     />
                   </FormControl>
@@ -2157,13 +2536,18 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Nội dung tính năng nổi bật <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Hãy một nội dung dài mô tả chi tiết nhất về sản phẩm và liệt kê ưa và nhược điểm." />
+                    {productDetailFormMessgae.featureContent}{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend
+                      message={
+                        productDetailFormMessgae.featureContentDescription
+                      }
+                    />
                   </FormLabel>
                   <FormControl>
                     <Textarea
                       disabled={loading}
-                      placeholder="Nhập nội dung tính năng nổi bật ..."
+                      placeholder={productDetailFormMessgae.enterFeatureContent}
                       {...field}
                     />
                   </FormControl>
@@ -2179,7 +2563,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Màu sản phẩm 1{" "}
+                        {productDetailFormMessgae.productColor1}
                         <span className="text-red-600 pl-1">(*)</span>
                       </FormLabel>
                       <Input
@@ -2204,7 +2588,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                             : ""
                         }
                         disabled={loading}
-                        placeholder="Select a color"
+                        placeholder={productDetailFormMessgae.selectColor}
                         className="border-2 border-orange-400 "
                       />
                       <datalist id="colors1">
@@ -2222,7 +2606,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Kích cỡ sản phẩm 1{" "}
+                        {productDetailFormMessgae.productSize1}
                         <span className="text-red-600 pl-1">(*)</span>
                       </FormLabel>
                       <Input
@@ -2247,7 +2631,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                             : ""
                         }
                         disabled={loading}
-                        placeholder="Select a size"
+                        placeholder={productDetailFormMessgae.selectSize}
                         className="border-2 border-orange-400 "
                       />
                       <datalist id="sizes1">
@@ -2267,7 +2651,9 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="color2Id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Màu sản phẩm 2</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.productColor2}
+                      </FormLabel>
                       <Input
                         list="colors2"
                         onChange={(e) => {
@@ -2290,7 +2676,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                             : ""
                         }
                         disabled={loading}
-                        placeholder="Select a color"
+                        placeholder={productDetailFormMessgae.selectColor}
                         className="border-2 border-green-400 "
                       />
                       <datalist id="colors2">
@@ -2307,7 +2693,9 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="size2Id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Kích cỡ sản phẩm 2</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.productSize2}
+                      </FormLabel>
                       <Input
                         list="sizes2"
                         onChange={(e) => {
@@ -2330,7 +2718,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                             : ""
                         }
                         disabled={loading}
-                        placeholder="Select a size"
+                        placeholder={productDetailFormMessgae.selectSize}
                         className="border-2 border-green-400 "
                       />
                       <datalist id="sizes2">
@@ -2350,7 +2738,9 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="color3Id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Màu sản phẩm 3</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.productColor3}
+                      </FormLabel>
                       <Input
                         list="colors3"
                         onChange={(e) => {
@@ -2373,7 +2763,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                             : ""
                         }
                         disabled={loading}
-                        placeholder="Select a color"
+                        placeholder={productDetailFormMessgae.selectColor}
                         className="border-2 border-sky-400 "
                       />
                       <datalist id="colors3">
@@ -2390,7 +2780,9 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="size3Id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Kích cỡ sản phẩm 3</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.productSize3}
+                      </FormLabel>
                       <Input
                         list="sizes3"
                         onChange={(e) => {
@@ -2413,7 +2805,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                             : ""
                         }
                         disabled={loading}
-                        placeholder="Select a size"
+                        placeholder={productDetailFormMessgae.selectSize}
                         className="border-2 border-sky-400 "
                       />
                       <datalist id="sizes3">
@@ -2433,7 +2825,9 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="color4Id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Màu sản phẩm 4</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.productColor4}
+                      </FormLabel>
                       <Input
                         list="colors4"
                         onChange={(e) => {
@@ -2456,7 +2850,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                             : ""
                         }
                         disabled={loading}
-                        placeholder="Select a color"
+                        placeholder={productDetailFormMessgae.selectColor}
                         className="border-2 border-violet-400 "
                       />
                       <datalist id="colors4">
@@ -2473,7 +2867,9 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="size4Id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Kích cỡ sản phẩm 4</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.productSize4}
+                      </FormLabel>
                       <Input
                         list="sizes4"
                         onChange={(e) => {
@@ -2496,7 +2892,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                             : ""
                         }
                         disabled={loading}
-                        placeholder="Select a size"
+                        placeholder={productDetailFormMessgae.selectSize}
                         className="border-2 border-violet-400 "
                       />
                       <datalist id="sizes4">
@@ -2516,7 +2912,9 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="color5Id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Màu sản phẩm 5</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.productColor5}
+                      </FormLabel>
                       <Input
                         list="colors5"
                         onChange={(e) => {
@@ -2539,7 +2937,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                             : ""
                         }
                         disabled={loading}
-                        placeholder="Select a color"
+                        placeholder={productDetailFormMessgae.selectColor}
                         className="border-2 border-pink-400 "
                       />
                       <datalist id="colors5">
@@ -2556,7 +2954,9 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   name="size5Id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Kích cỡ sản phẩm 5</FormLabel>
+                      <FormLabel>
+                        {productDetailFormMessgae.productSize5}
+                      </FormLabel>
                       <Input
                         list="sizes5"
                         onChange={(e) => {
@@ -2579,7 +2979,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                             : ""
                         }
                         disabled={loading}
-                        placeholder="Select a size"
+                        placeholder={productDetailFormMessgae.selectSize}
                         className="border-2 border-pink-400 "
                       />
                       <datalist id="sizes5">
@@ -2598,7 +2998,8 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Loại <span className="text-red-600 pl-1">(*)</span>
+                    {productDetailFormMessgae.category}{" "}
+                    <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <Input
                     list="categories"
@@ -2623,7 +3024,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                         : ""
                     }
                     disabled={loading}
-                    placeholder="Select a category"
+                    placeholder={productDetailFormMessgae.selectCategory}
                   />
                   <datalist id="categories">
                     {categories.map((categorie) => (

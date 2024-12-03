@@ -29,6 +29,7 @@ import {
   WorkingTime,
 } from "@prisma/client";
 import { ImageCredential } from "@/types/type";
+import { getManageStaffForm, getManageStaffSchemaFormEdit } from "@/translate/translate-dashboard";
 
 interface LabelFormProps {
   id: string;
@@ -67,92 +68,8 @@ interface LabelFormProps {
   | "workingTime"
   | "degree"
   | "maritalStatus";
+  language: string;
 }
-
-const formSchema = z.object({
-  name: z
-    .string()
-    .min(1, { message: "Bắt buộc nhập name." })
-    .nullable()
-    .optional(),
-  email: z
-    .string()
-    .min(1, { message: "Bắt buộc nhập email." })
-    .nullable()
-    .optional(),
-  role: z.string().min(1, { message: "Bạn thiếu role." }).nullable().optional(),
-  numberCCCD: z
-    .string()
-    .nullable()
-    .optional()
-    .refine(
-      (value) =>
-        value === null || value === undefined || /^[0-9]*$/.test(value),
-      {
-        message: "Vui lòng nhập số CMND hợp lệ chỉ có số.",
-      }
-    ),
-  phonenumber: z
-    .string()
-    .nullable()
-    .optional()
-    .refine(
-      (value) =>
-        value === null || value === undefined || /^[0-9]*$/.test(value),
-      {
-        message: "Vui lòng nhập số điện thoại hợp lệ chỉ có số.",
-      }
-    ),
-  issued: z
-    .string()
-    .min(4, { message: "Nhập ít nhất 4 ký tự." })
-    .nullable()
-    .optional(),
-  imageCredential: z.object({ url: z.string() }).array(),
-  image: z.string().min(1, { message: "Hãy thêm 1 ảnh" }).nullable().optional(),
-  gender: z
-    .string()
-    .min(1, { message: "Bắt buộc chọn 1 gender." })
-    .nullable()
-    .optional(),
-  degree: z
-    .string()
-    .min(1, { message: "Bắt buộc chọn 1 degree." })
-    .nullable()
-    .optional(),
-  maritalStatus: z
-    .string()
-    .min(1, { message: "Bắt buộc chọn 1 maritalStatus." })
-    .nullable()
-    .optional(),
-  workingTime: z
-    .string()
-    .min(1, { message: "Bắt buộc chọn 1 workingTime." })
-    .nullable()
-    .optional(),
-  isCitizen: z.boolean().default(false).nullable().optional(),
-  sentVeirifi: z.boolean().default(false).nullable().optional(),
-  ban: z.boolean().default(false).nullable().optional(),
-  dateRange: z.date().nullable().optional(),
-  dateofbirth: z.union([z.date().nullable(), z.string().nullable()]).optional(),
-  timestartwork: z
-    .string()
-    .min(1, { message: "Hãy nhập giờ bắt đầu làm việc." })
-    .nullable()
-    .optional(),
-  urlimageCheckAttendance: z
-    .string()
-    .min(2, { message: "Nhập ít nhất 2 ký tự." })
-    .nullable()
-    .optional(),
-  codeNFC: z
-    .string()
-    .min(2, { message: "Nhập ít nhất 2 ký tự." })
-    .nullable()
-    .optional(),
-  daywork: z.array(z.string()).nullable().optional(),
-});
-type FormValues = z.input<typeof formSchema>;
 
 const LabelForm: React.FC<LabelFormProps> = ({
   id,
@@ -180,9 +97,100 @@ const LabelForm: React.FC<LabelFormProps> = ({
   data,
   field,
   setOpen,
+  language
 }) => {
   const params = useParams();
   const [loading, setLoading] = useState(false);
+
+  //language
+  const managestaffSchemaFormeditMessage = getManageStaffSchemaFormEdit(language)
+  const managestaffFormMessage = getManageStaffForm(language)
+
+  const formSchema = z.object({
+    name: z
+      .string()
+      .min(1, { message: managestaffSchemaFormeditMessage.requiredName })
+      .nullable()
+      .optional(),
+    email: z
+      .string()
+      .min(1, { message: managestaffSchemaFormeditMessage.requiredEmail })
+      .nullable()
+      .optional(),
+    role: z.string().min(1, { message: managestaffSchemaFormeditMessage.missingRole }).nullable().optional(),
+    numberCCCD: z
+      .string()
+      .nullable()
+      .optional()
+      .refine(
+        (value) =>
+          value === null || value === undefined || /^[0-9]*$/.test(value),
+        {
+          message: managestaffSchemaFormeditMessage.invalidIdCard,
+        }
+      ),
+    phonenumber: z
+      .string()
+      .nullable()
+      .optional()
+      .refine(
+        (value) =>
+          value === null || value === undefined || /^[0-9]*$/.test(value),
+        {
+          message: managestaffSchemaFormeditMessage.invalidPhone,
+        }
+      ),
+    issued: z
+      .string()
+      .min(2, { message: managestaffSchemaFormeditMessage.minLength })
+      .nullable()
+      .optional(),
+    imageCredential: z.object({ url: z.string() }).array(),
+    image: z.string().min(1, { message: managestaffSchemaFormeditMessage.addImage }).nullable().optional(),
+    gender: z
+      .string()
+      .min(1, { message: managestaffSchemaFormeditMessage.requiredGender })
+      .nullable()
+      .optional(),
+    degree: z
+      .string()
+      .min(1, { message: managestaffSchemaFormeditMessage.requiredDegree })
+      .nullable()
+      .optional(),
+    maritalStatus: z
+      .string()
+      .min(1, { message: managestaffSchemaFormeditMessage.requiredMaritalStatus })
+      .nullable()
+      .optional(),
+    workingTime: z
+      .string()
+      .min(1, { message: managestaffSchemaFormeditMessage.requiredWorkingTime })
+      .nullable()
+      .optional(),
+    isCitizen: z.boolean().default(false).nullable().optional(),
+    sentVeirifi: z.boolean().default(false).nullable().optional(),
+    ban: z.boolean().default(false).nullable().optional(),
+    dateRange: z.date().nullable().optional(),
+    dateofbirth: z.union([z.date().nullable(), z.string().nullable()]).optional(),
+    timestartwork: z
+      .string()
+      .min(1, { message: managestaffSchemaFormeditMessage.requiredStartTime })
+      .nullable()
+      .optional(),
+    urlimageCheckAttendance: z
+      .string()
+      .min(2, { message: managestaffSchemaFormeditMessage.minLength })
+      .nullable()
+      .optional(),
+    codeNFC: z
+      .string()
+      .min(2, { message: managestaffSchemaFormeditMessage.minLength })
+      .nullable()
+      .optional(),
+    daywork: z.array(z.string()).nullable().optional(),
+  });
+  type FormValues = z.input<typeof formSchema>;
+  
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -216,7 +224,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
       await axios.patch(`/api/${params.storeId}/managestaff/${id}`, datas);
       setLoading(false);
       setOpen(false);
-      toast.success("Cập nhật thành công!");
+      toast.success(managestaffFormMessage.updateSuccess);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -230,7 +238,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
             .error
         );
       } else {
-        toast.error("Something went wrong.");
+        toast.error(managestaffFormMessage.somethingWentWrong)
       }
     } finally {
       setLoading(false);
@@ -247,12 +255,12 @@ const LabelForm: React.FC<LabelFormProps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Tên <span className="text-red-600 pl-1">(*)</span>
+                  {managestaffFormMessage.name} <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <FormControl>
                   <Input
                     disabled={loading}
-                    placeholder="Nhập tên ..."
+                    placeholder={managestaffFormMessage.enterName}
                     {...field}
                     value={field.value || ""}
                   />
@@ -269,9 +277,9 @@ const LabelForm: React.FC<LabelFormProps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Số điện thoại{" "}
+                {managestaffFormMessage.phoneNumber}
                   <span className="text-red-600 pl-1">
-                    (*) Nhập tối đa 11 số!
+                  {managestaffFormMessage.maxPhoneNumberLength}
                   </span>
                 </FormLabel>
                 <FormControl>
@@ -279,7 +287,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
                     type="tel"
                     pattern="0[0-9]{9,10}"
                     disabled={loading}
-                    placeholder="095348..."
+                    placeholder={managestaffFormMessage.samplePhoneNumber}
                     {...field}
                     value={field.value || ""}
                   />
@@ -297,7 +305,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Ngày hết hạn CMND{" "}
+                {managestaffFormMessage.idCardExpiration}
                   <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <FormControl>
@@ -333,7 +341,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Sinh nhật <span className="text-red-600 pl-1">(*)</span>
+                {managestaffFormMessage.birthday} <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <FormControl>
                   <Input
@@ -368,7 +376,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Thời gian bắt đầu làm việc{" "}
+                {managestaffFormMessage.startWorkingTime}
                   <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <FormControl>
@@ -395,9 +403,9 @@ const LabelForm: React.FC<LabelFormProps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Số CCCD{" "}
+                {managestaffFormMessage.idCardNumber}
                   <span className="text-red-600 pl-1">
-                    (*) Nhập tối đa 12 số!
+                  {managestaffFormMessage.maxIdCardLength}
                   </span>
                 </FormLabel>
                 <FormControl>
@@ -405,7 +413,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
                     type="tel"
                     pattern="^0\d{8}(\d{3})?$"
                     disabled={loading}
-                    placeholder="0582356234..."
+                    placeholder={managestaffFormMessage.sampleIdCard}
                     {...field}
                     value={field.value || ""}
                   />
@@ -423,7 +431,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Giới tính <span className="text-red-600 pl-1">(*)</span>
+                {managestaffFormMessage.gender} <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <Select
                   disabled={loading}
@@ -435,7 +443,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
                     <SelectTrigger>
                       <SelectValue
                         defaultValue={field.value || ""}
-                        placeholder="Select Gender"
+                        placeholder={managestaffFormMessage.selectGender}
                       />
                     </SelectTrigger>
                   </FormControl>
@@ -459,7 +467,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Bằng cấp <span className="text-red-600 pl-1">(*)</span>
+                {managestaffFormMessage.degree} <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <Select
                   disabled={loading}
@@ -471,7 +479,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
                     <SelectTrigger>
                       <SelectValue
                         defaultValue={field.value || ""}
-                        placeholder="Select Degree"
+                        placeholder={managestaffFormMessage.selectDegree}
                       />
                     </SelectTrigger>
                   </FormControl>
@@ -495,7 +503,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Tình trạng hôn nhân{" "}
+                {managestaffFormMessage.maritalStatus}
                   <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <Select
@@ -508,7 +516,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
                     <SelectTrigger>
                       <SelectValue
                         defaultValue={field.value || ""}
-                        placeholder="Select Marital Status"
+                        placeholder={managestaffFormMessage.selectMaritalStatus}
                       />
                     </SelectTrigger>
                   </FormControl>
@@ -532,7 +540,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Thời gian làm việc{" "}
+                {managestaffFormMessage.workingTime}
                   <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <Select
@@ -545,7 +553,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
                     <SelectTrigger>
                       <SelectValue
                         defaultValue={field.value || ""}
-                        placeholder="Select Working Time"
+                        placeholder={managestaffFormMessage.selectWorkingTime}
                       />
                     </SelectTrigger>
                   </FormControl>
@@ -569,12 +577,12 @@ const LabelForm: React.FC<LabelFormProps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Cấp ở đâu <span className="text-red-600 pl-1">(*)</span>
+                {managestaffFormMessage.issuedBy} <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <FormControl>
                   <Input
                     disabled={loading}
-                    placeholder="Bộ Công An Quận ..."
+                    placeholder={managestaffFormMessage.issuedByInfo}
                     {...field}
                     value={field.value || ""}
                   />
@@ -586,7 +594,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
         )}
 
         <Button disabled={loading} className="ml-auto" type="submit">
-          Save Change
+        {managestaffFormMessage.saveChanges}
         </Button>
       </form>
     </Form>

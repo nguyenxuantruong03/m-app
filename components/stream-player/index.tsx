@@ -42,14 +42,16 @@ interface StreamPlayerProps {
   user: CustomUser;
   stream: CustomStream;
   isFollowing: boolean;
+  languageToUse: string;
 }
 
 export const StreamPlayer = ({
   user,
   stream,
   isFollowing,
+  languageToUse
 }: StreamPlayerProps) => {
-  const { token, name, identity } = useViewerToken(user.id);
+  const { token, name, identity } = useViewerToken(user.id,languageToUse);
   const { collapsed } = useChatSidebar((state) => state);
 
   if (!token || !name || !identity) {
@@ -66,6 +68,7 @@ export const StreamPlayer = ({
       isChatEnabled={stream.isChatEnabled}
       isChatDelayed={stream.isChatDelayed}
       isChatFollowersOnly={stream.isChatFollowersOnly}
+      languageToUse={languageToUse}
     />
   );
 
@@ -73,7 +76,7 @@ export const StreamPlayer = ({
     <>
       {collapsed && (
         <div className="hidden lg:block fixed top-[100px] right-2 z-50">
-          <ChatToggle />
+          <ChatToggle languageToUse={languageToUse}/>
         </div>
       )}
       <LiveKitRoom
@@ -91,6 +94,7 @@ export const StreamPlayer = ({
             isCitizen={user.isCitizen}
             role={user.role}
             frameAvatar={user.frameAvatar}
+            languageToUse={languageToUse}
           />
           <div className="block lg:hidden">
             <div className={cn("col-span-1", collapsed && "hidden")}>
@@ -107,12 +111,14 @@ export const StreamPlayer = ({
             isCitizen={user.isCitizen}
             role={user.role}
             frameAvatar={user.frameAvatar}
+            languageToUse={languageToUse}
           />
           <InfoCard
             hostIdentity={user.id}
             viewerIdentity={identity}
             name={stream.name}
             thumbnailUrl={stream.thumbnailUrl}
+            languageToUse={languageToUse}
           />
           <AboutCard
             hostName={user.nameuser}
@@ -122,6 +128,7 @@ export const StreamPlayer = ({
             followedByCount={user._count.followedBy}
             isCitizen={user.isCitizen}
             role={user.role}
+            languageToUse={languageToUse}
           />
         </div>
         <div className="hidden lg:block">

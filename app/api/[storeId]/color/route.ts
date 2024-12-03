@@ -1,49 +1,62 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
-import prismadb from '@/lib/prismadb';
-import { currentRole, currentUser } from '@/lib/auth';
-import { UserRole } from '@prisma/client';
- 
+import prismadb from "@/lib/prismadb";
+import { currentRole, currentUser } from "@/lib/auth";
+import { UserRole } from "@prisma/client";
+import { translateText } from "@/translate/translate-client";
+import {
+  translateColorDelete,
+  translateColorGet,
+  translateColorPost,
+} from "@/translate/translate-api";
+
 export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const colorPostMessage = translateColorPost(LanguageToUse);
   try {
-    const userId = await currentUser();
     const body = await req.json();
     const { name, value } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: colorPostMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền tạo mới color!" }),
+        JSON.stringify({ error: colorPostMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!name) {
       return new NextResponse(
-        JSON.stringify({ error: "Name is required!" }),
-        { status: 400 }
+        JSON.stringify({ error: colorPostMessage.nameRequired }),
+        {
+          status: 400,
+        }
       );
     }
 
     if (!value) {
       return new NextResponse(
-        JSON.stringify({ error: "Color is required!" }),
-        { status: 400 }
+        JSON.stringify({ error: colorPostMessage.colorRequired }),
+        {
+          status: 400,
+        }
       );
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required!" }),
+        JSON.stringify({ error: colorPostMessage.storeIdRequired }),
         { status: 400 }
       );
     }
@@ -51,12 +64,12 @@ export async function POST(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-      }
+      },
     });
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: colorPostMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -66,7 +79,7 @@ export async function POST(
         name,
         value,
         storeId: params.storeId,
-      }
+      },
     });
 
     const sentColor = {
@@ -75,9 +88,7 @@ export async function POST(
     };
 
     // Log sự thay đổi của billboard
-    const changes = [
-      `Name: ${sentColor.name}, Value: ${sentColor.value}`,
-    ];
+    const changes = [`Name: ${sentColor.name}, Value: ${sentColor.value}`];
 
     // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
     await prismadb.system.create({
@@ -85,73 +96,99 @@ export async function POST(
         storeId: params.storeId,
         type: "CREATE-COLOR",
         newChange: changes,
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
-  
+
     return NextResponse.json(color);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error post color." }),
+      JSON.stringify({ error: colorPostMessage.internalError }),
       { status: 500 }
     );
   }
-};
+}
 
 export async function GET(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const colorGetMessage = translateColorGet(LanguageToUse);
+
+  const { searchParams } = new URL(req.url);
+  const language = searchParams.get("language") || "vi"; // Mặc định là "vi" nếu không có language
+
   try {
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required!" }),
+        JSON.stringify({ error: colorGetMessage.storeIdRequired }),
         { status: 400 }
       );
     }
 
-    const color = await prismadb.color.findMany({
+    const colors = await prismadb.color.findMany({
       where: {
-        storeId: params.storeId
-      }
+        storeId: params.storeId,
+      },
     });
-  
-    return NextResponse.json(color);
+
+    const translations = await Promise.all(
+      colors.map(async (color) => {
+        try {
+          // Chỉ dịch name
+          const translatedName = await translateText(color.name, language);
+
+          return {
+            ...color,
+            name: translatedName,
+          };
+        } catch (error) {
+          return color; // Trả về dữ liệu gốc nếu có lỗi
+        }
+      })
+    );
+
+    return NextResponse.json(translations);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get color." }),
+      JSON.stringify({ error: colorGetMessage.internalError }),
       { status: 500 }
     );
   }
-};
-
+}
 
 export async function DELETE(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const colorDeleteMessage = translateColorDelete(LanguageToUse);
   try {
-    const userId = await currentUser();
     const body = await req.json();
     const { ids } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy userId!" }),
+        JSON.stringify({ error: colorDeleteMessage.userNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xóa color!" }),
+        JSON.stringify({ error: colorDeleteMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!ids || ids.length === 0) {
       return new NextResponse(
-        JSON.stringify({ error: "Mảng IDs không được trống!" }),
+        JSON.stringify({ error: colorDeleteMessage.idsRequired }),
         { status: 400 }
       );
     }
@@ -164,7 +201,7 @@ export async function DELETE(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: colorDeleteMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -179,7 +216,7 @@ export async function DELETE(
     });
 
     // Create an array of changes for logging
-    const changesArray = ColorToDelete.map(color => ({
+    const changesArray = ColorToDelete.map((color) => ({
       name: color.name,
       value: color.value,
     }));
@@ -197,16 +234,18 @@ export async function DELETE(
     await prismadb.system.create({
       data: {
         storeId: params.storeId,
-        delete: changesArray.map(change => `DeleteName: ${change.name}, Value: ${change.value}`),
+        delete: changesArray.map(
+          (change) => `DeleteName: ${change.name}, Value: ${change.value}`
+        ),
         type: "DELETEMANYCOLOR",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
-    return NextResponse.json({ message: "Xóa thành công!" });
+    return NextResponse.json({ message: colorDeleteMessage.deleteSuccess });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete color." }),
+      JSON.stringify({ error: colorDeleteMessage.internalError }),
       { status: 500 }
     );
   }

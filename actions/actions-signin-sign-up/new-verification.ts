@@ -6,8 +6,22 @@ import { getVerificationTokenByToken } from "@/data/verification-token";
 import { generateVerificationToken } from "@/lib/tokens";
 import { sendVerificationEmail } from "@/lib/mail";
 import { format } from "date-fns";
+import {
+  translateAccountLockedForVerification,
+  translateEmailNotExist,
+  translateEmailVerified,
+  translateTokenExpired,
+  translateTooManyVerificationRequests,
+} from "@/translate/translate-client";
 
-export const newVerification = async (token: string) => {
+export const newVerification = async (token: string, languageToUse: string) => {
+  //languages
+  const emailVerifiedMessage = translateEmailVerified(languageToUse);
+  const tokenExpiredMessage = translateTokenExpired(languageToUse);
+  const emailNotExitMessage = translateEmailNotExist(languageToUse);
+  const accountLockedForVerificationMessage =
+    translateAccountLockedForVerification(languageToUse);
+
   const existingToken = await getVerificationTokenByToken(token);
   const user = await prismadb.user.findUnique({
     where: { id: existingToken?.id }, // Tìm user theo id
@@ -15,23 +29,23 @@ export const newVerification = async (token: string) => {
   });
 
   if (user?.emailVerified) {
-    return { success: "Email đã xác thực!" };
+    return { success: emailVerifiedMessage };
   }
 
   if (!existingToken) {
     return {
-      error: "Token đã hết hạn! Đã gửi lại token mới. Hãy kiểm tra email.",
+      error: tokenExpiredMessage,
     };
   }
 
   const existingUser = await getUserByEmail(existingToken.email);
   if (!existingUser) {
-    return { error: "Email hiện tại không có!" };
+    return { error: emailNotExitMessage };
   }
 
   // Check ban status again after potential update
   if (existingUser.ban) {
-    return { error: "Tài khoản của bạn đã bị khóa. Không thể gửi lại mã xác thực mới. Hãy kiểm tra Email để biết thời gian mở khóa!" };
+    return { error: accountLockedForVerificationMessage };
   }
 
   let resendTokenVerifyCount = existingUser.resendTokenVerify || 0; // Đếm số lần gửi resendTokenVerify
@@ -53,7 +67,7 @@ export const newVerification = async (token: string) => {
       ? format(banUser.banExpires, "dd/MM/yyyy '-' HH:mm:ss a")
       : "";
     return {
-      error: `Bạn đã gửi lại mã xác thực quá nhiều lần và đã bị khóa tài khoản trong 24 giờ. Hãy vào lại vào lúc ${timeBan}.`,
+      error: translateTooManyVerificationRequests(languageToUse, timeBan),
     };
   }
 
@@ -80,7 +94,7 @@ export const newVerification = async (token: string) => {
       await sendVerificationEmail(existingToken.email, newToken.token);
     }
     return {
-      error: "Token đã hết hạn! Đã gửi lại token mới. Hãy kiểm tra email.",
+      error: tokenExpiredMessage,
     };
   }
 
@@ -97,5 +111,5 @@ export const newVerification = async (token: string) => {
     where: { id: existingToken.id },
   });
 
-  return { success: "Email đã xác thực!" };
+  return { success: emailVerifiedMessage };
 };

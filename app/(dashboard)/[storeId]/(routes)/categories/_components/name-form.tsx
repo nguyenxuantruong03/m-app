@@ -15,21 +15,27 @@ import { Button } from "../../../../../../components/ui/button";
 import { Input } from "../../../../../../components/ui/input";
 import toast from "react-hot-toast";
 import { useState } from "react";
+import { getCategoriesNameFormSheet } from "@/translate/translate-dashboard";
 
 interface LabelFormPorps {
   data: string;
   id: string;
   setOpen: (open: boolean) => void;
+  language: string
 }
 
-const formSchema = z.object({
-  name: z.string().min(2, { message: "Nhập ít nhất 2 ký tự." }),
-});
-type FormValues = z.input<typeof formSchema>;
-
-const LabelForm: React.FC<LabelFormPorps> = ({ data, id,setOpen }) => {
+const LabelForm: React.FC<LabelFormPorps> = ({ data, id,setOpen,language }) => {
   const params = useParams();
   const [loading, setLoading] = useState(false);
+
+  //language
+  const categoriesNameFormSheet = getCategoriesNameFormSheet(language)
+
+  const formSchema = z.object({
+    name: z.string().min(2, { message: categoriesNameFormSheet.minLength }),
+  });
+  type FormValues = z.input<typeof formSchema>;
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -43,7 +49,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({ data, id,setOpen }) => {
       await axios.patch(`/api/${params.storeId}/categories/${id}`, datas);
       setLoading(false);
       setOpen(false)
-      toast.success("Cập nhật thành công!");
+      toast.success(categoriesNameFormSheet.updateSuccess);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -57,7 +63,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({ data, id,setOpen }) => {
             .error
         );
       } else {
-        toast.error("Something went wrong.");
+        toast.error(categoriesNameFormSheet.somethingWentWrong);
       }
     } finally {
       setLoading(false);
@@ -72,12 +78,12 @@ const LabelForm: React.FC<LabelFormPorps> = ({ data, id,setOpen }) => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>
-                Tên sản phẩm <span className="text-red-600 pl-1">(*)</span>
+                {categoriesNameFormSheet.productName} <span className="text-red-600 pl-1">(*)</span>
               </FormLabel>
               <FormControl>
                 <Input
                   disabled={loading}
-                  placeholder="Nhập tên ..."
+                  placeholder={categoriesNameFormSheet.enterName}
                   {...field}
                 />
               </FormControl>
@@ -87,7 +93,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({ data, id,setOpen }) => {
         />
 
         <Button disabled={loading} className="ml-auto" type="submit">
-          Save Change
+        {categoriesNameFormSheet.saveChange}
         </Button>
       </form>
     </Form>

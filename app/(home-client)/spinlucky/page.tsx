@@ -9,6 +9,21 @@ import axios from "axios";
 import { AlertTriangle } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import {
+  translateLuckyWheel,
+  translatePlayToWin,
+  translatePurchaseRewards,
+  translatePurchaseReward,
+  translateCongratulations,
+  translateTotal,
+  translateCoins,
+  translateSpin,
+  translateNote,
+  translateRefreshMessage,
+  getToastError,
+  translateOK,
+} from "@/translate/translate-client";
+import toast from "react-hot-toast";
 export const revalidate = 86400;
 
 const IMAGES = {
@@ -34,6 +49,34 @@ const SpinCoinPage: React.FC = () => {
   const [rotation, setRotation] = useState<number>(0);
   //List-onClick-onBlur click mở blur ra ngoài thì tắt đi
   const modalRef = useRef<HTMLDivElement>(null);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+
+  const toastErrorMessage = getToastError(languageToUse);
+  const luckyWheelMessage = translateLuckyWheel(languageToUse);
+  const playToWinMessage = translatePlayToWin(languageToUse);
+  const purchaseRewardsMessage = translatePurchaseRewards(languageToUse);
+  const purchaseRewardMessage = translatePurchaseReward(languageToUse);
+  const congratulationMessage = translateCongratulations(languageToUse);
+  const totalMessage = translateTotal(languageToUse);
+  const coinMessage = translateCoins(languageToUse);
+  const spinMessage = translateSpin(languageToUse);
+  const noteMessage = translateNote(languageToUse);
+  const refreshMessage = translateRefreshMessage(languageToUse);
+  const OKMessage = translateOK(languageToUse);
 
   useEffect(() => {
     if (user?.role === "GUEST" || !user?.id) {
@@ -117,36 +160,36 @@ const SpinCoinPage: React.FC = () => {
       setTotalCoins(response.data.totalCoins);
       setRotation(response.data.latestRotation);
     } catch (error) {
-      console.error("Failed to save wheel spin data:", error);
+      toast.error(toastErrorMessage);
     }
   };
   return (
     <Container>
       <div className="mt-36 relative">
         <div className="px-2 md:px-0">
-        <h2
-          className="flex items-center justify-center"
-          style={{
-            background:
-              "linear-gradient(to right, #EE4040, #F0CF50, #815CD1, #3DA5E0, #34A24F)",
-            WebkitBackgroundClip: "text",
-            backgroundClip: "text",
-            color: "transparent",
-            fontSize: "3rem",
-            alignItems: "center"
-          }}
-        >
-          Vòng quay May Mắn{" "}
-        </h2>
-        <p className="flex items-center justify-center text-gray-400 mt-2">
-          Vui chơi trúng thưởng{" "}
-        </p>
-        <p className="flex items-center justify-center text-gray-400 mt-2">
-          Khi mua 1.000.000đ sẽ được tặng 2 vòng quay may mắn{" "}
-        </p>
-        <p className="flex items-center justify-center text-gray-400 mt-2">
-          Khi mua 500.000đ sẽ được tặng 1 vòng quay may mắn{" "}
-        </p>
+          <h2
+            className="flex items-center justify-center"
+            style={{
+              background:
+                "linear-gradient(to right, #EE4040, #F0CF50, #815CD1, #3DA5E0, #34A24F)",
+              WebkitBackgroundClip: "text",
+              backgroundClip: "text",
+              color: "transparent",
+              fontSize: "3rem",
+              alignItems: "center",
+            }}
+          >
+            {luckyWheelMessage}
+          </h2>
+          <p className="flex items-center justify-center text-gray-400 mt-2">
+            {playToWinMessage}
+          </p>
+          <p className="flex items-center justify-center text-gray-400 mt-2">
+            {purchaseRewardsMessage}
+          </p>
+          <p className="flex items-center justify-center text-gray-400 mt-2">
+            {purchaseRewardMessage}
+          </p>
         </div>
 
         <div className="flex justify-center pt-8 pb-16 bg-cover bg-center bg-no-repeat">
@@ -161,6 +204,7 @@ const SpinCoinPage: React.FC = () => {
             buttonText="Spin"
             isOnlyOnce={true}
             rotation={rotation}
+            languageToUse={languageToUse}
           />
           {portal ? <TrPortal /> : null}
           {show && (
@@ -183,14 +227,14 @@ const SpinCoinPage: React.FC = () => {
                 />
               </div>
               <h2 className="text-2xl text-center">
-                Chúc mừng bạn đã có {show}
+                {congratulationMessage} {show}
               </h2>
               <div className="flex justify-center">
                 <button
                   className="mt-8 w-48 h-14 cursor-pointer text-xl text-white border-none outline-none bg-blue-500 rounded-2xl"
                   onClick={() => setShow(false)}
                 >
-                  OK
+                  {OKMessage}
                 </button>
               </div>
             </div>
@@ -203,27 +247,27 @@ const SpinCoinPage: React.FC = () => {
         <div className="hidden md:block md:w-40 lg:w-48 absolute md:bottom-[36rem] lg:bottom-80 bg-black bg-opacity-10 p-2 rounded-md">
           <div className="bg-red-300 rounded-md p-2">
             <div className="text-sm text-center">
-              Tổng{" "}
-              <span className="text-blue-800  font-semibold">{totalCoins}</span>{" "}
-              xu
+              {totalMessage}
+              <span className="text-blue-800  font-semibold">{totalCoins}</span>
+              {coinMessage}
             </div>
             <div className="text-sm text-center">
-              Tổng{" "}
-              <span className="text-blue-800 font-semibold">{rotation}</span>{" "}
-              lượt quay
+              {totalMessage}
+              <span className="text-blue-800 font-semibold">
+                {rotation}
+              </span>{" "}
+              {spinMessage}
             </div>
           </div>
 
           <div className="bg-amber-300 rounded-md mt-2 p-1">
             <div className="text-sm flex md:ml-8 lg:ml-12  items-center">
-              Lưu ý <AlertTriangle className=" ml-1 h-5 w-5" />
+              {noteMessage} <AlertTriangle className=" ml-1 h-5 w-5" />
             </div>
           </div>
 
           <p className="font-semibold text-sm text-slate-900 dark:text-slate-200">
-            {" "}
-            Nếu như xu chưa được cập nhật lại bạn có thể F5 để xu được cập nhật
-            lại nhanh nhất.
+            {refreshMessage}
           </p>
         </div>
       </div>

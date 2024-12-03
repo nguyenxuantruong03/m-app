@@ -1,6 +1,6 @@
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
-import { currentRole } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 import { RoleGate } from "@/components/auth/role-gate";
 import { ShippingRatesForm } from "./components/shippingrates-form";
 
@@ -9,6 +9,7 @@ const ShippingRatesPage = async ({
 }: {
   params: { storeId: string; shippingratesId: string };
 }) => {
+  const user = await currentUser()
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN || role === UserRole.STAFF;
   const showShippingRatesRole = isRole;
@@ -22,7 +23,7 @@ const ShippingRatesPage = async ({
       <div className="flex-col">
         <div className={`flex-1 space-y-4 p-8 pt-6 ${showShippingRatesRole}`}>
           {showShippingRatesRole && (
-            <ShippingRatesForm initialData={shippingRates} />
+            <ShippingRatesForm initialData={shippingRates} language={user?.language || "vi"}/>
           )}
         </div>
       </div>

@@ -1,21 +1,22 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
-import { CellAction } from "./cell-action"
-import { Checkbox } from "@/components/ui/checkbox"
-import SpanColumn from "@/components/span-column"
-import { Clock12, Package, Tag } from "lucide-react"
-import EditRow from "../_components/edit-row"
-import FormatDate from "@/components/format-Date"
+import { ColumnDef } from "@tanstack/react-table";
+import { CellAction } from "./cell-action";
+import { Checkbox } from "@/components/ui/checkbox";
+import SpanColumn from "@/components/span-column";
+import { Clock12, Package, Tag } from "lucide-react";
+import EditRow from "../_components/edit-row";
+import FormatDate from "@/components/format-Date";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type FavoriteColumn = {
-  id: string
-  name: string
-  value: string | null
-  createdAt: Date
-}
+  id: string;
+  name: string;
+  value: string | null;
+  createdAt: Date;
+  language: string;
+};
 
 export const columns: ColumnDef<FavoriteColumn>[] = [
   {
@@ -52,7 +53,14 @@ export const columns: ColumnDef<FavoriteColumn>[] = [
         </SpanColumn>
       );
     },
-    cell: ({row}) => <EditRow data={row.original.name} value={row.original.value} id= {row.original.id}/>
+    cell: ({ row }) => (
+      <EditRow
+        data={row.original.name}
+        value={row.original.value}
+        id={row.original.id}
+        language={row.original.language}
+      />
+    ),
   },
   {
     accessorKey: "value",
@@ -80,13 +88,11 @@ export const columns: ColumnDef<FavoriteColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      return (
-      <FormatDate data={row.original.createdAt}/>
-      )
-    }
+      return <FormatDate data={row.original.createdAt} />;
+    },
   },
   {
     id: "actions",
-    cell: ({row}) => <CellAction data={row.original} />
+    cell: ({ row }) => <CellAction data={row.original} />,
   },
-]
+];

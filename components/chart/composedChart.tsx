@@ -13,6 +13,7 @@ import {
   YAxis,
 } from "recharts";
 import { Skeleton } from "../ui/skeleton";
+import { translateSelectDateMessage } from "@/translate/translate-client";
 
 interface GraphData {
   name: string;
@@ -23,12 +24,16 @@ interface GraphData {
 interface ComposedChartProps {
   data: GraphData[];
   loading: boolean;
+  languageToUse: string;
 }
 
 export const ComposedChart: React.FC<ComposedChartProps> = ({
   data,
   loading,
+  languageToUse,
 }) => {
+  //language
+  const selectDataMessgae = translateSelectDateMessage(languageToUse);
   if (loading) {
     return (
       <ResponsiveContainer width="100%" height={350}>
@@ -42,7 +47,9 @@ export const ComposedChart: React.FC<ComposedChartProps> = ({
   if (!data) {
     return (
       <div className="w-full h-[350px] flex items-center justify-center">
-        <span className="text-center dark:text-slate-500 text-slate-900">Please select date to find data...</span>
+        <span className="text-center dark:text-slate-500 text-slate-900">
+          {selectDataMessgae}
+        </span>
       </div>
     );
   }
@@ -58,7 +65,7 @@ export const ComposedChart: React.FC<ComposedChartProps> = ({
           axisLine={false}
           tickFormatter={(value) => `${value}`}
         />
-        <Tooltip labelClassName="dark:text-slate-500 text-slate-900"/>
+        <Tooltip labelClassName="dark:text-slate-500 text-slate-900" />
         <Legend />
         <CartesianGrid stroke="#f5f5f5" />
         <Area

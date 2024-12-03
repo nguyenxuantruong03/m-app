@@ -24,28 +24,36 @@ import { Separator } from "@/components/ui/separator";
 import { Heading } from "@/components/ui/heading";
 import { AlertModal } from "@/components/modals/alert-modal";
 import Recommend from "@/components/ui/recommend";
-
-const formSchema = z.object({
-  name: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  value: z.string().min(1, { message: "Nhập ít nhất 1 ký tự." }),
-});
-
-type SizeFormValues = z.infer<typeof formSchema>;
+import { getSizeForm } from "@/translate/translate-dashboard";
 
 interface SizeFormProps {
   initialData: Size | null;
+  language: string;
 }
 
-export const SizeForm: React.FC<SizeFormProps> = ({ initialData }) => {
+export const SizeForm: React.FC<SizeFormProps> = ({
+  initialData,
+  language,
+}) => {
   const params = useParams();
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const title = initialData ? "Edit size" : "Create size";
-  const description = initialData ? "Edit a size." : "Add a new size";
-  const action = initialData ? "Save changes" : "Create";
+  //language
+  const sizeFormMessage = getSizeForm(language)
+
+  const title = initialData ? sizeFormMessage.editSize : sizeFormMessage.createSize;
+  const description = initialData ? sizeFormMessage.editASize : sizeFormMessage.addANewSize;
+  const action = initialData ? sizeFormMessage.saveChanges : sizeFormMessage.create;
+
+  const formSchema = z.object({
+    name: z.string().min(2, { message: sizeFormMessage.requiredTwoCharacters }),
+    value: z.string().min(1, { message: sizeFormMessage.requiredOneCharacter }),
+  });
+
+  type SizeFormValues = z.infer<typeof formSchema>;
 
   const form = useForm<SizeFormValues>({
     resolver: zodResolver(formSchema),
@@ -74,20 +82,20 @@ export const SizeForm: React.FC<SizeFormProps> = ({ initialData }) => {
           if (initialData) {
             return (
               <p>
-                Size <span className="font-bold">{response.data?.name}</span>{" "}
-                updated.
+                {sizeFormMessage.size} <span className="font-bold">{response.data?.name}</span>{" "}
+                {sizeFormMessage.updated}.
               </p>
             );
           } else {
             return (
               <p>
-                Size <span className="font-bold">{data.name}</span> created.
+                {sizeFormMessage.size} <span className="font-bold">{data.name}</span> {sizeFormMessage.create}.
               </p>
             );
           }
         }),
         {
-          loading: "Updating size...",
+          loading: sizeFormMessage.updatingSize,
           success: (message) => {
             router.refresh();
             router.push(`/${params.storeId}/size`);
@@ -105,7 +113,7 @@ export const SizeForm: React.FC<SizeFormProps> = ({ initialData }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Something went wrong.";
+              return sizeFormMessage.somethingWentWrong;
             }
           },
         }
@@ -122,7 +130,7 @@ export const SizeForm: React.FC<SizeFormProps> = ({ initialData }) => {
       await axios.delete(`/api/${params.storeId}/size/${params.sizeId}`);
       router.refresh();
       router.push(`/${params.storeId}/size`);
-      toast.success("Size deleted.");
+      toast.success(sizeFormMessage.sizeDeleted);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -138,7 +146,7 @@ export const SizeForm: React.FC<SizeFormProps> = ({ initialData }) => {
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
-          "Make sure you removed all categories using this billboard first."
+          sizeFormMessage.somethingWentWrong
         );
       }
     } finally {
@@ -154,6 +162,7 @@ export const SizeForm: React.FC<SizeFormProps> = ({ initialData }) => {
         onClose={() => setOpen(false)}
         onConfirm={onDelete}
         loading={loading}
+        languageToUse={language}
       />
       {/* update and create */}
       <div className="flex items-center justify-between">
@@ -184,14 +193,14 @@ export const SizeForm: React.FC<SizeFormProps> = ({ initialData }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Tên
+                    {sizeFormMessage.name}
                     <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Tên kích thước. VD: Lớn, Trung bình, nhỏ..." />
+                    <Recommend message={sizeFormMessage.sizeNameExample}/>
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Name ..."
+                      placeholder={sizeFormMessage.namePlaceholder}
                       {...field}
                     />
                   </FormControl>
@@ -206,14 +215,14 @@ export const SizeForm: React.FC<SizeFormProps> = ({ initialData }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                     Tên ngắn gọn
+                  {sizeFormMessage.shortName}
                     <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Giông với tên kích thước nhưng chỉ cần ghi chữ cái đầu. VD: S,M,L..." />
+                    <Recommend message={sizeFormMessage.shortNameExample} />
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Value ..."
+                      placeholder={sizeFormMessage.value}
                       {...field}
                     />
                   </FormControl>

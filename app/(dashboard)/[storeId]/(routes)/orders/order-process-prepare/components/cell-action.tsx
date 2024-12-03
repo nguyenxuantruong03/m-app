@@ -17,6 +17,7 @@ import axios from "axios";
 
 import { OrderColumn } from "./columns";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { getOrderProcessPrepareAction } from "@/translate/translate-dashboard";
 
 interface CellActionProps {
   data: OrderColumn;
@@ -28,6 +29,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const user = useCurrentUser();
   const [loading, setLoading] = useState(false);
 
+  //language
+  const orderProcessPrepareActionMessage = getOrderProcessPrepareAction(data.language)
+
   const prepareProcessOrder = async () => {
     try {
       setLoading(true);
@@ -38,7 +42,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Đã soạn xong đơn hàng:
+              {orderProcessPrepareActionMessage.orderPrepared}:
               <span className="font-bold">
                 {data.email || data.emailcurrent} -{" "}
                 <span className="font-bold">
@@ -50,7 +54,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating stutus...",
+          loading: orderProcessPrepareActionMessage.updatingStatus,
           success: (message) => {
             router.refresh();
             return message;
@@ -67,13 +71,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Đã xảy ra lỗi khi chuẩn bị đơn hàng đã xong.";
+              return orderProcessPrepareActionMessage.somethingWentWrong;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi chuẩn bị đơn hàng đã xong.");
+      toast.error(orderProcessPrepareActionMessage.somethingWentWrong);
     } finally {
       setLoading(false);
     }
@@ -92,7 +96,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Đã soạn xong đơn hàng:
+              {orderProcessPrepareActionMessage.orderPrepared}:
               <span className="font-bold">
                 {data.email || data.emailcurrent} -{" "}
                 <span className="font-bold">
@@ -104,7 +108,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating stutus...",
+          loading: orderProcessPrepareActionMessage.updatingStatus,
           success: (message) => {
             router.refresh();
             return message;
@@ -121,13 +125,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Đã xảy ra lỗi khi chuẩn bị đơn hàng đã xong.";
+              return orderProcessPrepareActionMessage.somethingWentWrong;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi chuẩn bị đơn hàng đã xong.");
+      toast.error(orderProcessPrepareActionMessage.somethingWentWrong);
     } finally {
       setLoading(false);
     }
@@ -138,18 +142,18 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
+            <span className="sr-only">{orderProcessPrepareActionMessage.openMenu}</span>
             <MoreHorizontal className="w-4 h-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           {user?.role === "ADMIN" || user?.role === "STAFF" ? (
             <>
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuLabel>{orderProcessPrepareActionMessage.actions}</DropdownMenuLabel>
               {data.status === "Soan_hang_nhan_tai_cua_hang" ? (
                 <DropdownMenuItem disabled={loading} onClick={pickupStore}>
                   <PackageCheck className="h-4 w-4 mr-2" />
-                  Đã soạn xong
+                  {orderProcessPrepareActionMessage.prepared}
                 </DropdownMenuItem>
               ) : (
                 <DropdownMenuItem
@@ -157,13 +161,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                   onClick={prepareProcessOrder}
                 >
                   <PackageCheck className="h-4 w-4 mr-2" />
-                  Bàn giao shipper
+                  {orderProcessPrepareActionMessage.handoverToShipper}
                 </DropdownMenuItem>
               )}
             </>
           ) : (
             <>
-              <DropdownMenuLabel>Trống</DropdownMenuLabel>
+              <DropdownMenuLabel>{orderProcessPrepareActionMessage.empty}</DropdownMenuLabel>
             </>
           )}
         </DropdownMenuContent>

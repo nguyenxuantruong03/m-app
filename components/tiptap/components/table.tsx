@@ -1,16 +1,20 @@
 import { Toggle } from "@/components/ui/toggle";
+import { translateTable } from "@/translate/translate-dashboard";
 import { Editor } from "@tiptap/react";
 
 interface TablePageProps {
   editor: Editor;
   disabled: boolean;
+  languageToUse: string
 }
-const TablePage: React.FC<TablePageProps> = ({ editor, disabled }) => {
+const TablePage: React.FC<TablePageProps> = ({ editor, disabled,languageToUse }) => {
+  //language
+  const tableMessage = translateTable(languageToUse)
   return (
     <div className="  space-x-3  space-y-3">
-      <h2 className="text-lg font-bold text-orange-500">Table</h2>
+      <h2 className="text-lg font-bold text-orange-500">{tableMessage.table}</h2>
       <Toggle
-        title="Tạo bảng"
+        title={tableMessage.createTable}
         variant="outline"
         onClick={() =>
           editor
@@ -21,145 +25,145 @@ const TablePage: React.FC<TablePageProps> = ({ editor, disabled }) => {
         }
         disabled={disabled}
       >
-        insertTable
+        {tableMessage.insertTable}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().addColumnBefore().run()}
-        title="Thêm 1 cột trước"
+        title={tableMessage.addColumnBefore}
         disabled={disabled}
       >
-        addColumnBefore
+        {tableMessage.addColumnBefore}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().addColumnAfter().run()}
-        title="Thêm 1 cột sau"
+        title={tableMessage.addColumnAfter}
         disabled={disabled}
       >
-        addColumnAfter
+        {tableMessage.addColumnAfter}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().deleteColumn().run()}
-        title="Xóa 1 cột"
+        title={tableMessage.deleteColumn}
         disabled={disabled}
       >
-        deleteColumn
+        {tableMessage.deleteColumn}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().addRowBefore().run()}
-        title="Thêm 1 hàng ngang trước"
+        title={tableMessage.addRowBefore}
         disabled={disabled}
       >
-        addRowBefore
+        {tableMessage.addRowBefore}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().addRowAfter().run()}
-        title="Thêm 1 hàng ngang sau"
+        title={tableMessage.addRowAfter}
         disabled={disabled}
       >
-        addRowAfter
+        {tableMessage.addRowAfter}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().deleteRow().run()}
-        title="Xóa 1 hàng ngang"
+        title={tableMessage.deleteRow}
         disabled={disabled}
       >
-        deleteRow
+        {tableMessage.deleteRow}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().deleteTable().run()}
-        title="Xóa bảng "
+        title={tableMessage.deleteTable}
         disabled={disabled}
       >
-        deleteTable
+        {tableMessage.deleteTable}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().mergeCells().run()}
-        title="Hơp nhất các ô"
+        title={tableMessage.mergeCells}
         disabled={disabled}
       >
-        mergeCells
+        {tableMessage.mergeCells}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().splitCell().run()}
-        title="Chia ô"
+        title={tableMessage.splitCell}
         disabled={disabled}
       >
-        splitCell
+        {tableMessage.splitCell}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().toggleHeaderColumn().run()}
-        title="Tô đậm 1 cột"
+        title={tableMessage.toggleHeaderColumn}
         disabled={disabled}
       >
-        toggleHeaderColumn
+        {tableMessage.toggleHeaderColumn}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().toggleHeaderRow().run()}
-        title="Tô đậm 1 hàng ngang"
+        title={tableMessage.toggleHeaderRow}
         disabled={disabled}
       >
-        toggleHeaderRow
+        {tableMessage.toggleHeaderRow}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().toggleHeaderCell().run()}
-        title="Tô đậm 1"
+        title={tableMessage.toggleHeaderCell}
         disabled={disabled}
       >
-        toggleHeaderCell
+        {tableMessage.toggleHeaderCell}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().mergeOrSplit().run()}
-        title="Hợp nhất hoặc tách"
+        title={tableMessage.mergeOrSplit}
         disabled={disabled}
       >
-        mergeOrSplit
+        {tableMessage.mergeOrSplit}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() =>
           editor.chain().focus().setCellAttribute("colspan", 2).run()
         }
-        title="Đặt thuộc tính ô"
+        title={tableMessage.setCellAttribute}
         disabled={disabled}
       >
-        setCellAttribute
+        {tableMessage.setCellAttribute}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().fixTables().run()}
-        title="Sửa bảng"
+        title={tableMessage.fixTables}
         disabled={disabled}
       >
-        fixTables
+        {tableMessage.fixTables}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().goToNextCell().run()}
-        title="Đi đến ô kế"
+        title={tableMessage.goToNextCell}
         disabled={disabled}
       >
-        goToNextCell
+        {tableMessage.goToNextCell}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().goToPreviousCell().run()}
-        title="Đi đến ô trước"
+        title={tableMessage.goToPreviousCell}
         disabled={disabled}
       >
-        goToPreviousCell
+        {tableMessage.goToPreviousCell}
       </Toggle>
     </div>
   );

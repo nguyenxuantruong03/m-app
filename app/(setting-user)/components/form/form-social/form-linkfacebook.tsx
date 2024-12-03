@@ -26,13 +26,25 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import FormSuccess from "@/components/form-success";
 import FormError from "@/components/form-error";
 import { useRouter } from "next/navigation";
+import {
+  getToastError,
+  translateCancel,
+  translateChangeFacebookLink,
+  translateFacebookPath,
+  translateSave,
+} from "@/translate/translate-client";
 
 interface FormLinkFaceBookProps {
   classNames?: string;
   setOpen?: Dispatch<SetStateAction<boolean>>;
+  languageToUse: string;
 }
 
-const FormLinkFaceBook = ({ classNames, setOpen }: FormLinkFaceBookProps) => {
+const FormLinkFaceBook = ({
+  classNames,
+  setOpen,
+  languageToUse,
+}: FormLinkFaceBookProps) => {
   const user = useCurrentUser();
   const router = useRouter();
   const { update } = useSession();
@@ -49,6 +61,13 @@ const FormLinkFaceBook = ({ classNames, setOpen }: FormLinkFaceBookProps) => {
     }
   }, []);
 
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const cancelMessage = translateCancel(languageToUse);
+  const saveMessage = translateSave(languageToUse);
+  const changeFaceBookLinkMessage = translateChangeFacebookLink(languageToUse);
+  const fabookPathMessage = translateFacebookPath(languageToUse);
+
   const form = useForm<z.infer<typeof SettingSchema>>({
     resolver: zodResolver(SettingSchema),
     defaultValues: {
@@ -59,15 +78,13 @@ const FormLinkFaceBook = ({ classNames, setOpen }: FormLinkFaceBookProps) => {
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
     // Kiểm tra giá trị linkfacebook nhập vào và user?.linkfacebook
     if (values.linkfacebook === user?.linkfacebook) {
-      setError(
-        "Hãy thay đổi link Faceboook mới link Facebook trên đang được sử dụng."
-      );
+      setError(changeFaceBookLinkMessage);
       return;
     }
     setSuccess("");
     setError("");
     startTransition(() => {
-      setting(values)
+      setting(values, languageToUse)
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -80,7 +97,7 @@ const FormLinkFaceBook = ({ classNames, setOpen }: FormLinkFaceBookProps) => {
           }
         })
         .catch(() => {
-          setError("Something went wrong");
+          setError(toastErrorMessage);
         });
     });
   };
@@ -96,7 +113,7 @@ const FormLinkFaceBook = ({ classNames, setOpen }: FormLinkFaceBookProps) => {
             name="linkfacebook"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Link FaceBook</FormLabel>
+                <FormLabel>{fabookPathMessage}</FormLabel>
                 <FormControl>
                   <Input
                     id="linkfacebook-input"
@@ -129,7 +146,7 @@ const FormLinkFaceBook = ({ classNames, setOpen }: FormLinkFaceBookProps) => {
               onClick={() => setOpen?.(false)}
               disabled={isPending}
             >
-              Cancel
+              {cancelMessage}
             </Button>
           )}
           <Button
@@ -138,7 +155,7 @@ const FormLinkFaceBook = ({ classNames, setOpen }: FormLinkFaceBookProps) => {
             type="submit"
             disabled={isPending}
           >
-            Save
+            {saveMessage}
           </Button>
         </div>
       </form>

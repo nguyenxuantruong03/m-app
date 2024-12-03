@@ -1,11 +1,20 @@
 import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
-import { currentRole, currentUser } from "@/lib/auth";
+import { currentUser } from "@/lib/auth";
 import { ImageBillboard, UserRole } from "@prisma/client";
+import { translateText } from "@/translate/translate-client";
+import { translateBillboardIdDelete, translateBillboardIdGet, translateBillboardIdPatch } from "@/translate/translate-api";
 
 // Update the BillboardValue type to include the new types
-type BillboardValue = string | number | boolean | string[] | Date | ImageBillboard[] | undefined;
+type BillboardValue =
+  | string
+  | number
+  | boolean
+  | string[]
+  | Date
+  | ImageBillboard[]
+  | undefined;
 
 // Define the type for change records
 interface ChangeRecord {
@@ -17,11 +26,18 @@ export async function GET(
   req: Request,
   { params }: { params: { billboardId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const billboardIdGetMessage = translateBillboardIdGet(LanguageToUse)
+
   try {
+    const { searchParams } = new URL(req.url);
+    const language = searchParams.get("language") || "vi"; // Mặc định là "vi" nếu không có language
 
     if (!params.billboardId) {
       return new NextResponse(
-        JSON.stringify({ error: "Billboard id is required!" }),
+        JSON.stringify({ error: billboardIdGetMessage.name1 }),
         { status: 400 }
       );
     }
@@ -35,10 +51,54 @@ export async function GET(
       },
     });
 
-    return NextResponse.json(billboard);
+    // Kiểm tra nếu không tìm thấy billboard
+    if (!billboard) {
+      return new NextResponse(
+        JSON.stringify({ error: billboardIdGetMessage.name2 }),
+        { status: 404 }
+      );
+    }
+
+    // Dịch label và description của billboard
+    const translatedLabelText = await translateText(
+      billboard.label || "",
+      language
+    );
+    const translatedDescriptionText = await translateText(
+      billboard.description || "",
+      language
+    );
+
+    // Dịch các imagebillboard
+    const translatedImageBillboards = await Promise.all(
+      billboard.imagebillboard.map(async (imageBillboard) => {
+        const translatedImageLabelText = await translateText(
+          imageBillboard.label || "",
+          language
+        );
+        const translatedImageDescriptionText = await translateText(
+          imageBillboard.description || "",
+          language
+        );
+
+        return {
+          ...imageBillboard,
+          label: translatedImageLabelText,
+          description: translatedImageDescriptionText,
+        };
+      })
+    );
+
+    // Trả về kết quả đã dịch
+    return NextResponse.json({
+      ...billboard,
+      label: translatedLabelText,
+      description: translatedDescriptionText,
+      imagebillboard: translatedImageBillboards,
+    });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get billboard." }),
+      JSON.stringify({ error: billboardIdGetMessage.name3 }),
       { status: 500 }
     );
   }
@@ -48,26 +108,29 @@ export async function DELETE(
   req: Request,
   { params }: { params: { billboardId: string; storeId: string } }
 ) {
-  try {
-    const userId = await currentUser();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const billboardIdDeleteMessage = translateBillboardIdDelete(LanguageToUse)
 
-    if (!userId) {
+  try {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy userId!" }),
+        JSON.stringify({ error: billboardIdDeleteMessage.name1 }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền để xóa billboard!" }),
+        JSON.stringify({ error: billboardIdDeleteMessage.name2 }),
         { status: 403 }
       );
     }
 
     if (!params.billboardId) {
       return new NextResponse(
-        JSON.stringify({ error: "Billboard id is required!" }),
+        JSON.stringify({ error: billboardIdDeleteMessage.name3 }),
         { status: 400 }
       );
     }
@@ -80,7 +143,7 @@ export async function DELETE(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: billboardIdDeleteMessage.name4 }),
         { status: 400 }
       );
     }
@@ -118,14 +181,14 @@ export async function DELETE(
         storeId: params.storeId,
         delete: changes,
         type: "DELETEBILLBOARD",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(billboard);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete billboard." }),
+      JSON.stringify({ error: billboardIdDeleteMessage.name5 }),
       { status: 500 }
     );
   }
@@ -135,49 +198,54 @@ export async function PATCH(
   req: Request,
   { params }: { params: { billboardId: string; storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const billboardIdPatchMessage = translateBillboardIdPatch(LanguageToUse)
+
   try {
-    const userId = await currentUser();
-
     const body = await req.json();
+    const { label, imagebillboard, description } = body;
 
-    const { label, imagebillboard,description } = body;
-
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: billboardIdPatchMessage.name1 }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền để cập nhật billboard!" }),
+        JSON.stringify({ error: billboardIdPatchMessage.name2 }),
         { status: 403 }
       );
     }
 
     if (!label) {
-      return new NextResponse(JSON.stringify({ error: "Label is required!" }), {
+      return new NextResponse(JSON.stringify({ error: billboardIdPatchMessage.name3 }), {
         status: 400,
       });
     }
 
     if (!description) {
-      return new NextResponse(JSON.stringify({ error: "Description is required!" }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: billboardIdPatchMessage.name4 }),
+        {
+          status: 400,
+        }
+      );
     }
 
     if (!imagebillboard || !imagebillboard.length) {
       return new NextResponse(
-        JSON.stringify({ error: "Images billboard is required!" }),
+        JSON.stringify({ error: billboardIdPatchMessage.name5 }),
         { status: 400 }
       );
     }
 
     if (!params.billboardId) {
       return new NextResponse(
-        JSON.stringify({ error: "Billboard id is required!" }),
+        JSON.stringify({ error: billboardIdPatchMessage.name6 }),
         { status: 400 }
       );
     }
@@ -190,7 +258,7 @@ export async function PATCH(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: billboardIdPatchMessage.name7 }),
         { status: 405 }
       );
     }
@@ -210,13 +278,20 @@ export async function PATCH(
     const existingImageUrls = existingImages.map((image) => image.url);
 
     // Tìm các hình ảnh cần thêm mới và các hình ảnh cần cập nhật
-    const imagesToCreate = imagebillboard.filter((image: { url: string }) => !existingImageUrls.includes(image.url));
-    const imagesToUpdate = imagebillboard.filter((image: { url: string }) => existingImageUrls.includes(image.url));
+    const imagesToCreate = imagebillboard.filter(
+      (image: { url: string }) => !existingImageUrls.includes(image.url)
+    );
+    const imagesToUpdate = imagebillboard.filter((image: { url: string }) =>
+      existingImageUrls.includes(image.url)
+    );
 
     // Thêm các ảnh mới
     if (imagesToCreate.length > 0) {
       await prismadb.imageBillboard.createMany({
-        data: imagesToCreate.map((image:string[]) => ({ ...image, billboardId: params.billboardId })),
+        data: imagesToCreate.map((image: string[]) => ({
+          ...image,
+          billboardId: params.billboardId,
+        })),
       });
     }
 
@@ -244,7 +319,6 @@ export async function PATCH(
         description,
       },
     });
-
 
     // Danh sách các trường cần loại bỏ
     const ignoredFields = ["createdAt", "updatedAt"];
@@ -297,14 +371,14 @@ export async function PATCH(
         oldChange: oldChanges,
         newChange: newChanges,
         type: "UPDATEBILLBOARD",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(billboard);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error patch billboard." }),
+      JSON.stringify({ error: billboardIdPatchMessage.name8 }),
       { status: 500 }
     );
   }

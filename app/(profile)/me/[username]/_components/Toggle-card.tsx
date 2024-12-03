@@ -1,11 +1,16 @@
 "use client";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
 import { updateInfoDetail } from "@/actions/client/info-detail";
 import toast from "react-hot-toast";
 import { Hint } from "@/components/ui/hint";
+import {
+  getToastError,
+  translateFillInfoBeforePublic,
+  translateSettingsUpdated,
+} from "@/translate/translate-client";
 
 type FieldTypes =
   | "isEmail"
@@ -16,14 +21,14 @@ type FieldTypes =
   | "isAdressOther"
   | "isFavorite"
   | "isSocial"
-  | "isCreatedAt"
-  ;
+  | "isCreatedAt";
 
 interface ToggleCardProps {
   field: FieldTypes;
   label: string;
   value: boolean;
   data: boolean;
+  languageToUse: string;
 }
 
 export const ToggleCard = ({
@@ -31,14 +36,21 @@ export const ToggleCard = ({
   label,
   value = false,
   data,
+  languageToUse,
 }: ToggleCardProps) => {
   const [isPending, startTransition] = useTransition();
+
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const settingUpdatedMessage = translateSettingsUpdated(languageToUse);
+  const fillInfoBeforePublicMessage =
+    translateFillInfoBeforePublic(languageToUse);
 
   const onChange = async () => {
     startTransition(() => {
       updateInfoDetail({ [field]: !value })
-        .then(() => toast.success("Setting updated!"))
-        .catch(() => toast.error("Something went wrong!"));
+        .then(() => toast.success(settingUpdatedMessage))
+        .catch(() => toast.error(toastErrorMessage));
     });
   };
   return (
@@ -48,15 +60,15 @@ export const ToggleCard = ({
         <div className="space-y-2">
           {!data ? (
             <>
-            <Hint label="Bạn hãy điền thông tin trước khi mở công khai.">
-              <Switch
-                onCheckedChange={onChange}
-                checked={value}
-                disabled={isPending || data === false}
-              >
-                {value ? "On" : "Off"}
-              </Switch>
-            </Hint>
+              <Hint label={fillInfoBeforePublicMessage}>
+                <Switch
+                  onCheckedChange={onChange}
+                  checked={value}
+                  disabled={isPending || data === false}
+                >
+                  {value ? "On" : "Off"}
+                </Switch>
+              </Hint>
             </>
           ) : (
             <Switch

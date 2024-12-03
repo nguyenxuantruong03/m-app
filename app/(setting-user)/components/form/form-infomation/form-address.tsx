@@ -26,13 +26,25 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import FormSuccess from "@/components/form-success";
 import FormError from "@/components/form-error";
 import { useRouter } from "next/navigation";
+import {
+  getAddressMessage,
+  getToastError,
+  translateCancel,
+  translateChangeAddressNotification,
+  translateSave,
+} from "@/translate/translate-client";
 
 interface FormAddressProps {
   classNames?: string;
   setOpen?: Dispatch<SetStateAction<boolean>>;
+  languageToUse: string;
 }
 
-const FormAddress = ({ classNames, setOpen }: FormAddressProps) => {
+const FormAddress = ({
+  classNames,
+  setOpen,
+  languageToUse,
+}: FormAddressProps) => {
   const user = useCurrentUser();
   const router = useRouter();
   const { update } = useSession();
@@ -49,6 +61,14 @@ const FormAddress = ({ classNames, setOpen }: FormAddressProps) => {
     }
   }, []);
 
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const cancelMessage = translateCancel(languageToUse);
+  const saveMessage = translateSave(languageToUse);
+  const addressMessage = getAddressMessage(languageToUse);
+  const changeAddressNotificationMessage =
+    translateChangeAddressNotification(languageToUse);
+
   const form = useForm<z.infer<typeof SettingSchema>>({
     resolver: zodResolver(SettingSchema),
     defaultValues: {
@@ -59,13 +79,13 @@ const FormAddress = ({ classNames, setOpen }: FormAddressProps) => {
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
     // Kiểm tra giá trị addreess nhập vào và user?.address
     if (values.address === user?.address) {
-      setError("Hãy thay đổi địa chỉ mới địa chỉ trên đang được sử dụng.");
+      setError(changeAddressNotificationMessage);
       return;
     }
     setSuccess("");
     setError("");
     startTransition(() => {
-      setting(values)
+      setting(values, languageToUse)
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -78,7 +98,7 @@ const FormAddress = ({ classNames, setOpen }: FormAddressProps) => {
           }
         })
         .catch(() => {
-          setError("Something went wrong");
+          setError(toastErrorMessage);
         });
     });
   };
@@ -94,7 +114,7 @@ const FormAddress = ({ classNames, setOpen }: FormAddressProps) => {
             name="address"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Địa chỉ</FormLabel>
+                <FormLabel>{addressMessage}</FormLabel>
                 <FormControl>
                   <Input
                     id="address-input"
@@ -127,7 +147,7 @@ const FormAddress = ({ classNames, setOpen }: FormAddressProps) => {
               onClick={() => setOpen?.(false)}
               disabled={isPending}
             >
-              Cancel
+              {cancelMessage}
             </Button>
           )}
           <Button
@@ -136,7 +156,7 @@ const FormAddress = ({ classNames, setOpen }: FormAddressProps) => {
             type="submit"
             disabled={isPending}
           >
-            Save
+            {saveMessage}
           </Button>
         </div>
       </form>

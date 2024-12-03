@@ -94,27 +94,27 @@ export const menutreecolor ={
 
 //// ----------suggest ---------////
 export const accessorycolor={
-bg_height_width_rounded:"w-[120px] h-[125px] bg-[#f8827a] rounded-lg",
+bg_height_width_rounded:"w-[120px] h-[125px] bg-[#f8827a] rounded-lg overflow-hidden",
 bg_height_width_rounded_overflowhidden:"w-[120px] h-[125px] bg-[#f8827a] rounded-lg overflow-hidden",
-bg_height_width_rounded_mt:"w-[120px] h-[125px] bg-[#f8827a] rounded-lg mt-3",
+bg_height_width_rounded_mt:"w-[120px] h-[125px] bg-[#f8827a] rounded-lg mt-3 overflow-hidden",
 }
 
 export const computerComponentSmallcolor={
   bg_height_width_rounded:"w-[120px] h-[125px] bg-[#ffa4a7] rounded-lg",
   bg_height_width_rounded_overflowhidden:"w-[120px] h-[125px] bg-[#ffa3b0] rounded-lg overflow-hidden",
-  bg:"w-[120px] h-[125px] bg-[#fda8d3] rounded-lg ",
-  bg1:"w-[120px] h-[125px] bg-[#c4b5f9] rounded-lg",
-  bg2: "w-[120px] h-[125px] bg-[#a2b4f8] rounded-lg",
-  bg3: "w-[120px] h-[125px] bg-[#8dc5f9] rounded-lg ",
-  bg4: "w-[120px] h-[125px] bg-[#5fe7b9] rounded-lg",
-  bg5: "w-[120px] h-[125px] bg-[#ffd35e] rounded-lg",
-  bg6:"w-[120px] h-[125px] bg-[#ffba7c] rounded-lg "
+  bg:"w-[120px] h-[125px] bg-[#fda8d3] rounded-lg overflow-hidden",
+  bg1:"w-[120px] h-[125px] bg-[#c4b5f9] rounded-lg overflow-hidden",
+  bg2: "w-[120px] h-[125px] bg-[#a2b4f8] rounded-lg overflow-hidden",
+  bg3: "w-[120px] h-[125px] bg-[#8dc5f9] rounded-lg overflow-hidden",
+  bg4: "w-[120px] h-[125px] bg-[#5fe7b9] rounded-lg overflow-hidden",
+  bg5: "w-[120px] h-[125px] bg-[#ffd35e] rounded-lg overflow-hidden",
+  bg6:"w-[120px] h-[125px] bg-[#ffba7c] rounded-lg overflow-hidden"
 }
 
 export const secondhandcolor = {
-  bg_h_w_rounded:"w-[120px] h-[125px] bg-[#f8827a] rounded-lg",
+  bg_h_w_rounded:"w-[120px] h-[125px] bg-[#f8827a] rounded-lg overflow-hidden",
   bg_h_w_rounded_overflow:"w-[120px] h-[125px] bg-[#f8827a] rounded-lg overflow-hidden",
-  bg_h_w_rounded_special:"w-[120px] h-[125px] bg-[#d64044] rounded-lg mt-3"
+  bg_h_w_rounded_special:"w-[120px] h-[125px] bg-[#d64044] rounded-lg mt-3 overflow-hidden"
 } 
 
 export const suggestcolor ={

@@ -5,6 +5,7 @@ import Modal from "../ui/modal";
 import { format } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import viLocale from "date-fns/locale/vi";
+import { translateChooseAttendance } from "@/translate/translate-dashboard";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 
 interface ChooseAttendanceModalProps {
@@ -15,7 +16,8 @@ interface ChooseAttendanceModalProps {
   handleOpenNFCModal: () => void;
   isCheckAttendanceTitle: string;
   isCheckAttendanceStart: string | Date;
-  isCheckAttendanceEnd:  string | Date;
+  isCheckAttendanceEnd: string | Date;
+  languageToUse: string;
 }
 
 export const ChooseAttendanceModal: React.FC<ChooseAttendanceModalProps> = ({
@@ -26,7 +28,8 @@ export const ChooseAttendanceModal: React.FC<ChooseAttendanceModalProps> = ({
   handleOpenNFCModal,
   isCheckAttendanceTitle,
   isCheckAttendanceStart,
-  isCheckAttendanceEnd
+  isCheckAttendanceEnd,
+  languageToUse,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -39,55 +42,67 @@ export const ChooseAttendanceModal: React.FC<ChooseAttendanceModalProps> = ({
   }
 
   const start = isCheckAttendanceStart
-  ? format(
-      utcToZonedTime(
-        new Date(
-          new Date(isCheckAttendanceStart).setHours(
-            new Date(isCheckAttendanceStart).getHours() - 7
-          )
+    ? format(
+        utcToZonedTime(
+          new Date(
+            new Date(isCheckAttendanceStart).setHours(
+              new Date(isCheckAttendanceStart).getHours() - 7
+            )
+          ),
+          vietnamTimeZone
         ),
-        vietnamTimeZone
-      ),
-      "E '-' dd/MM/yyyy '-' HH:mm:ss",
-      { locale: viLocale }
-    )
-  : null;
+        "E '-' dd/MM/yyyy '-' HH:mm:ss",
+        { locale: viLocale }
+      )
+    : null;
 
-const end = isCheckAttendanceEnd
-  ? format(
-      utcToZonedTime(
-        new Date(
-          new Date(isCheckAttendanceEnd).setHours(
-            new Date(isCheckAttendanceEnd).getHours() - 7
-          )
+  const end = isCheckAttendanceEnd
+    ? format(
+        utcToZonedTime(
+          new Date(
+            new Date(isCheckAttendanceEnd).setHours(
+              new Date(isCheckAttendanceEnd).getHours() - 7
+            )
+          ),
+          vietnamTimeZone
         ),
-        vietnamTimeZone
-      ),
-      "E '-' dd/MM/yyyy '-' HH:mm:ss",
-      { locale: viLocale }
-    )
-  : null;
+        "E '-' dd/MM/yyyy '-' HH:mm:ss",
+        { locale: viLocale }
+      )
+    : null;
+
+  //language
+  const chooseAttendanceMessage = translateChooseAttendance(
+    languageToUse,
+    userId,
+    isCheckAttendanceTitle,
+    start,
+    end
+  );
 
   return (
     <Modal
-      title={`Chụp ảnh điểm danh - Tên:${userId} - Sự kiện:${isCheckAttendanceTitle} - ${isCheckAttendanceTitle === "✅" ? "Kết thúc" : "Bắt đầu"}: ${start || ""}${end ? ` - Kết thúc: ${end}` : ""}`}
-      description="Lựa chọn điểm danh theo phương thức NFC hoặc QrCode!"
+      title={chooseAttendanceMessage.baseMessage}
+      description={chooseAttendanceMessage.chooseMethod}
       isOpen={isOpen}
       onClose={onClose}
       textCenter={true}
       top={true}
     >
-
       <div className="flex items-center justify-around">
-        <div className="p-5 bg-white text-black hover:bg-slate-300 cursor-pointer"onClick={()=> handleOpenNFCModal()} >
-          NFC
+        <div
+          className="p-5 bg-white text-black hover:bg-slate-300 cursor-pointer"
+          onClick={() => handleOpenNFCModal()}
+        >
+          {chooseAttendanceMessage.nfc}
         </div>
-        <div className="p-5 bg-white text-black hover:bg-slate-300 cursor-pointer" onClick={()=> handleOpenCameraModal()}>
-          QrCode
+        <div
+          className="p-5 bg-white text-black hover:bg-slate-300 cursor-pointer"
+          onClick={() => handleOpenCameraModal()}
+        >
+          {chooseAttendanceMessage.qrCode}
         </div>
       </div>
-
-
     </Modal>
   );
 };

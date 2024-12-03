@@ -4,6 +4,7 @@ import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
 import { stripe } from "@/lib/stripe";
+import { translateShippingRateIdDelete, translateShippingRateIdGet, translateShippingRateIdPatch } from "@/translate/translate-api";
 
 type ShippingRateValue = string | number |  Date | boolean | undefined | null;
 
@@ -16,25 +17,29 @@ export async function GET(
   req: Request,
   { params }: { params: { shippingratesId: string } }
 ) {
-  const userId = await currentUser();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const shippingRateIdGetMessage = translateShippingRateIdGet(LanguageToUse)
+
   try {
     if (!params.shippingratesId) {
       return new NextResponse(
-        JSON.stringify({ error: "Shipping Rates id is required!" }),
+        JSON.stringify({ error: shippingRateIdGetMessage.shippingRateIdRequired }),
         { status: 400 }
       );
     }
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: shippingRateIdGetMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xem shipping rate!" }),
+        JSON.stringify({ error: shippingRateIdGetMessage.permissionDenied }),
         { status: 403 }
       );
     }
@@ -48,7 +53,7 @@ export async function GET(
     return NextResponse.json(shippingRates);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get shippingrates." }),
+      JSON.stringify({ error: shippingRateIdGetMessage.internalError }),
       { status: 500 }
     );
   }
@@ -58,26 +63,28 @@ export async function DELETE(
   req: Request,
   { params }: { params: { shippingratesId: string; storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const shippingRateIdDeleteMessage = translateShippingRateIdDelete(LanguageToUse)
   try {
-    const userId = await currentUser();
-
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: shippingRateIdDeleteMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xóa shipping rate!" }),
+        JSON.stringify({ error: shippingRateIdDeleteMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!params.shippingratesId) {
       return new NextResponse(
-        JSON.stringify({ error: "Size id is required!" }),
+        JSON.stringify({ error: shippingRateIdDeleteMessage.shippingRateIdRequired }),
         { status: 400 }
       );
     }
@@ -90,7 +97,7 @@ export async function DELETE(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: shippingRateIdDeleteMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -123,14 +130,14 @@ export async function DELETE(
         storeId: params.storeId,
         type: "DELETESHIPPINGRATES",
         delete: changes,
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(shippingRates);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete shippingRates." }),
+      JSON.stringify({ error: shippingRateIdDeleteMessage.internalError }),
       { status: 500 }
     );
   }
@@ -140,8 +147,11 @@ export async function PATCH(
   req: Request,
   { params }: { params: { shippingratesId: string; storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const shippingRateIdPatchMessage = translateShippingRateIdPatch(LanguageToUse)
   try {
-    const userId = await currentUser();
     const body = await req.json();
     const {
       name,
@@ -154,72 +164,72 @@ export async function PATCH(
       active,
     } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: shippingRateIdPatchMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền cập nhật shipping rate!" }),
+        JSON.stringify({ error: shippingRateIdPatchMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if(!name){
       return new NextResponse(
-        JSON.stringify({ error: "Name is required!" }),
+        JSON.stringify({ error: shippingRateIdPatchMessage.nameRequired }),
         { status: 400 }
       );
     }
 
     if(!taxbehavior){
       return new NextResponse(
-        JSON.stringify({ error: "Taxbehavior is required!" }),
+        JSON.stringify({ error: shippingRateIdPatchMessage.taxBehaviorRequired }),
         { status: 400 }
       );
     }
 
     if(!amount){
       return new NextResponse(
-        JSON.stringify({ error: "Amount is required!" }),
+        JSON.stringify({ error: shippingRateIdPatchMessage.amountRequired }),
         { status: 400 }
       );
     }
 
     if(!unitmin){
       return new NextResponse(
-        JSON.stringify({ error: "Unit min is required!" }),
+        JSON.stringify({ error: shippingRateIdPatchMessage.unitMinRequired }),
         { status: 400 }
       );
     }
 
     if(!valuemin){
       return new NextResponse(
-        JSON.stringify({ error: "Value min is required!" }),
+        JSON.stringify({ error: shippingRateIdPatchMessage.valueMinRequired }),
         { status: 400 }
       );
     }
 
     if(!unitmax){
       return new NextResponse(
-        JSON.stringify({ error: "Unit max required!" }),
+        JSON.stringify({ error: shippingRateIdPatchMessage.unitMaxRequired }),
         { status: 400 }
       );
     }
 
     if(!valuemax){
       return new NextResponse(
-        JSON.stringify({ error: "Value max is required!" }),
+        JSON.stringify({ error: shippingRateIdPatchMessage.valueMaxRequired }),
         { status: 400 }
       );
     }
 
     if (!params.shippingratesId) {
       return new NextResponse(
-        JSON.stringify({ error: "Shipping Rates id is required!" }),
+        JSON.stringify({ error: shippingRateIdPatchMessage.shippingRateIdRequired }),
         { status: 400 }
       );
     }
@@ -232,7 +242,7 @@ export async function PATCH(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: shippingRateIdPatchMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -308,14 +318,14 @@ export async function PATCH(
         oldChange: oldChanges,
         newChange: newChanges,
         type: "UPDATESHIPPINGRATES",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(shippingRateupdate);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error patch shippingrates." }),
+      JSON.stringify({ error: shippingRateIdPatchMessage.internalError }),
       { status: 500 }
     );
   }

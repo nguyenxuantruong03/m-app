@@ -1,24 +1,28 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
+import { translateDeviceDelete, translateDeviceLimitPost1, translateDeviceLimitPost2 } from "@/translate/translate-api";
 import { NextResponse } from "next/server";
 
 export async function PATCH(req: Request) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const deviceLimitPost1Message = translateDeviceLimitPost1(LanguageToUse)
   try {
-    const userId = await currentUser();
 
     const body = await req.json();
 
     const { limitDevice } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: deviceLimitPost1Message.userIdNotFound }),
         { status: 403 }
       );
     }
     if (!limitDevice) {
       return new NextResponse(
-        JSON.stringify({ error: "Limit Device is required!" }),
+        JSON.stringify({ error: deviceLimitPost1Message.limitDeviceRequired }),
         {
           status: 400,
         }
@@ -34,14 +38,14 @@ export async function PATCH(req: Request) {
       if (currentLimitDevices.includes(newLimitDevice)) {
         return new NextResponse(
           JSON.stringify({
-            error: `Cần thay đổi giới hạn mới hơn. Hiện tại bạn đã để ${newLimitDevice} thiết bị.`,
+            error: translateDeviceLimitPost2(LanguageToUse, newLimitDevice ).changeLimitMessage,
           }),
           { status: 400 }
         );
       } else {
         return new NextResponse(
           JSON.stringify({
-            error: `Thêm thiết bị mới có giới hạn ${newLimitDevice}.`,
+            error: translateDeviceLimitPost2(LanguageToUse, newLimitDevice ).addDeviceMessage,
           }),
           { status: 400 }
         );
@@ -51,11 +55,11 @@ export async function PATCH(req: Request) {
     // Cập nhật thuộc tính `limitDevice` và `userId` của phần tử khớp
     const updatedDeviceInfo = await prismadb.deviceInfo.updateMany({
       where: {
-        userId: userId?.id,
+        userId: user?.id,
       },
       data: {
         limitDevice: limitDevice,
-        userId: userId.id || "",
+        userId: user.id || "",
       },
     });
 
@@ -64,7 +68,7 @@ export async function PATCH(req: Request) {
       // Lấy limitDevice của phần tử đầu tiên
       const firstLimitDevice = await prismadb.deviceInfo.findFirst({
         where: {
-          userId: userId.id || "",
+          userId: user.id || "",
           limitDevice: limitDevice,
         },
       });
@@ -80,48 +84,51 @@ export async function PATCH(req: Request) {
         data: {
           type: "CREATE-LIMITDEVICE",
           newChange: changes,
-          user: userId?.email || "",
+          user: user?.email || "",
         },
       });
     }
     return NextResponse.json(updatedDeviceInfo);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error post deveciInfo." }),
+      JSON.stringify({ error: deviceLimitPost1Message.internalError }),
       { status: 500 }
     );
   }
 }
 
 export async function DELETE(req: Request) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const deviceDeleteMessage = translateDeviceDelete(LanguageToUse)
   try {
-    const userId = await currentUser();
     const body = await req.json();
     const { id } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy userId!" }),
+        JSON.stringify({ error: deviceDeleteMessage.userIdNotFound }),
         { status: 403 }
       );
     }
     if (!id) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy id!" }),
+        JSON.stringify({ error: deviceDeleteMessage.idNotFound }),
         { status: 400 }
       );
     }
 
     const findDevice = await prismadb.deviceInfo.findMany({
       where: {
-        userId: userId?.id
+        userId: user?.id
       }
     })
 
     // If there's only one device, do not allow deletion
     if (findDevice.length <= 1) {
       return new NextResponse(
-        JSON.stringify({ error: "Không thể xóa thiết bị duy nhất!" }),
+        JSON.stringify({ error: deviceDeleteMessage.cannotDeleteOnlyDevice }),
         { status: 400 }
       );
     }
@@ -148,15 +155,14 @@ export async function DELETE(req: Request) {
       data: {
         delete: changes,
         type: "DELETE-DEVICE",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(device);
   } catch (error) {
-    console.error("Lỗi khi xóa thiết bị:", error);
     return new NextResponse(
-      JSON.stringify({ error: "Lỗi nội bộ khi xóa thiết bị." }),
+      JSON.stringify({ error: deviceDeleteMessage.internalErrorDeleteDevice }),
       { status: 500 }
     );
   }

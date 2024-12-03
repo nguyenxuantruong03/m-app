@@ -19,6 +19,7 @@ export type BlockUser = {
   role: string;
   isCitizen: boolean | null;
   isLive: boolean | undefined;
+  languageToUse: string
 };
 
 export const columns: ColumnDef<BlockUser>[] = [
@@ -67,6 +68,6 @@ export const columns: ColumnDef<BlockUser>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <UnblockButton userId={row.original.userId} />,
+    cell: ({ row }) => <UnblockButton userId={row.original.userId} languageToUse={row.original.languageToUse}/>,
   },
 ];

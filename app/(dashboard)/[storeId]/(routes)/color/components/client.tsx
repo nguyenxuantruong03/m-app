@@ -19,6 +19,8 @@ import Downloadfile from "@/components/file/downloadfilepage";
 import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { getColorClient } from "@/translate/translate-dashboard";
 
 interface ColorClientProps {
   data: ColorColumn[];
@@ -33,6 +35,10 @@ const ColorClient: React.FC<ColorClientProps> = ({ data }) => {
   const role = useCurrentRole();
   const isRole = role === UserRole.ADMIN;
   const showAPIRole = isRole;
+  //language
+  const user = useCurrentUser();
+  const languageToUse = user?.language || "vi";
+  const colorClientMessage = getColorClient(languageToUse)
 
   const handleDelete = async () => {
     setLoading(true);
@@ -43,7 +49,7 @@ const ColorClient: React.FC<ColorClientProps> = ({ data }) => {
       });
       setLoading(false);
       setOpen(false);
-      toast.success("Color deleted successfully");
+      toast.success(colorClientMessage.colorDeletedSuccessfully);
       // Optionally, refresh data or handle post-delete state
     } catch (error) {
       setLoading(false);
@@ -61,7 +67,7 @@ const ColorClient: React.FC<ColorClientProps> = ({ data }) => {
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
-          "Make sure you removed all color using this color first."
+          colorClientMessage.somethingWrong
         );
       }
     }
@@ -70,14 +76,14 @@ const ColorClient: React.FC<ColorClientProps> = ({ data }) => {
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Màu (${data.length})`}
-          description="Quản lý màu cửa hàng"
+          title={`${colorClientMessage.color} (${data.length})`}
+          description={colorClientMessage.manageStoreColors}
         />
         <div className="flex space-x-3">
-          <Downloadfile data={data} filename="color" />
+          <Downloadfile data={data} filename="color" languageToUse={languageToUse}/>
           <Button onClick={() => router.push(`/${params.storeId}/color/new`)}>
             <Plus className="mr-2 h-4 w-4" />
-            Thêm mới
+            {colorClientMessage.addNew}
           </Button>
         </div>
       </div>
@@ -93,8 +99,9 @@ const ColorClient: React.FC<ColorClientProps> = ({ data }) => {
         onDelete={handleDelete}
         setOpen={setOpen}
         open={open}
+        languageToUse={languageToUse}
       />
-      {showAPIRole && <Heading title="Api" description="API calls for Color" />}
+      {showAPIRole && <Heading title={colorClientMessage.api} description={colorClientMessage.apiCallsForColor} />}
       <Separator />
       <ApiList entityIdName="colorId" entityName="color" />
     </>

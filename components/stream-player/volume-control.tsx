@@ -3,17 +3,20 @@
 import { Volume1, Volume2, VolumeX } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Hint } from "../ui/hint";
+import { translateMute, translateUnmute } from "@/translate/translate-client";
 
 interface VolumeControlProps {
   onToggle: () => void;
   onChange: (value: number) => void;
   value: number;
+  languageToUse: string
 }
 
 export const VolumeControl = ({
   onToggle,
   onChange,
   value,
+  languageToUse
 }: VolumeControlProps) => {
   const isMuted = value === 0;
   const isAboveHalf = value > 50;
@@ -26,7 +29,11 @@ export const VolumeControl = ({
     Icon = Volume2;
   }
 
-  const label = isMuted ? "Unmute" : "Mute";
+  //languages
+  const unMuteMessage = translateUnmute(languageToUse)
+  const muteMessage = translateMute(languageToUse)
+
+  const label = isMuted ? unMuteMessage : muteMessage;
 
   const handleChange = (value: number[]) => {
     onChange(value[0]);

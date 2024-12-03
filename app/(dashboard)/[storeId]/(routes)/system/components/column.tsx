@@ -23,6 +23,7 @@ export type SystemsColumn = {
   type: string | null;
   user: string | null;
   createdAt: Date;
+  language: string
 };
 
 export const columns: ColumnDef<SystemsColumn>[] = [

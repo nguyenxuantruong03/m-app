@@ -4,6 +4,7 @@ import prismadb from "@/lib/prismadb";
 import { Category, Color, Size, UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
 import { Decimal } from "@prisma/client/runtime/library";
+import { translateProductDetailIdDelete, translateProductDetailIdGet, translateProductDetailIdPatch } from "@/translate/translate-api";
 
 type ProductDetailValue = string | number | Date | Decimal | undefined | Category | Size | Color |null;
 
@@ -16,10 +17,14 @@ export async function GET(
   req: Request,
   { params }: { params: { productdetailId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const productDetailIdGetMessage = translateProductDetailIdGet(LanguageToUse)
   try {
     if (!params.productdetailId) {
       return new NextResponse(
-        JSON.stringify({ error: "Productdetail id is required!" }),
+        JSON.stringify({ error: productDetailIdGetMessage.productDetailIdRequired }),
         { status: 400 }
       );
     }
@@ -46,7 +51,7 @@ export async function GET(
     return NextResponse.json(productDetail);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get productdetail." }),
+      JSON.stringify({ error: productDetailIdGetMessage.internalErrorGetProductDetail }),
       { status: 500 }
     );
   }
@@ -56,26 +61,29 @@ export async function DELETE(
   req: Request,
   { params }: { params: { productdetailId: string; storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const productDetailIdDeleteMessage = translateProductDetailIdDelete(LanguageToUse)
   try {
-    const userId = await currentUser();
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: productDetailIdDeleteMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xóa product detail!" }),
+        JSON.stringify({ error: productDetailIdDeleteMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!params.productdetailId) {
       return new NextResponse(
-        JSON.stringify({ error: "Productdetail id is required!" }),
+        JSON.stringify({ error: productDetailIdDeleteMessage.productDetailIdRequired }),
         { status: 400 }
       );
     }
@@ -88,7 +96,7 @@ export async function DELETE(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: productDetailIdDeleteMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -114,14 +122,14 @@ export async function DELETE(
       storeId: params.storeId,
       type: "DELETEPRODUCTDETAIL",
       delete: changes,
-      user: userId?.email || "",
+      user: user?.email || "",
     },
   });
 
     return NextResponse.json(productDetail);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete productdetail." }),
+      JSON.stringify({ error: productDetailIdDeleteMessage.internalErrorDeleteProductDetail }),
       { status: 500 }
     );
   }
@@ -131,9 +139,11 @@ export async function PATCH(
   req: Request,
   { params }: { params: { productdetailId: string; storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const productDetailIdPatchMessage = translateProductDetailIdPatch(LanguageToUse)
   try {
-    const userId = await currentUser();
-
     const body = await req.json();
 
     const {
@@ -210,82 +220,82 @@ export async function PATCH(
       contentsalientfeatures,
     } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: productDetailIdPatchMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền cập nhật product detail!" }),
+        JSON.stringify({ error: productDetailIdPatchMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!title) {
-      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+      return new NextResponse(JSON.stringify({ error: productDetailIdPatchMessage.titleRequired }), {
         status: 400,
       });
     }
 
     if (!categoryId) {
       return new NextResponse(
-        JSON.stringify({ error: "CategoryId is required!" }),
+        JSON.stringify({ error: productDetailIdPatchMessage.categoryIdRequired }),
         { status: 400 }
       );
     }
 
     if (!promotionheading) {
       return new NextResponse(
-        JSON.stringify({ error: "Promotionheading is required!" }),
+        JSON.stringify({ error: productDetailIdPatchMessage.promotionHeadingRequired }),
         { status: 400 }
       );
     }
     if (!promotiondescription) {
       return new NextResponse(
-        JSON.stringify({ error: "Promotiondescription is required!" }),
+        JSON.stringify({ error: productDetailIdPatchMessage.promotionDescriptionRequired }),
         { status: 400 }
       );
     }
 
     if (!size1Id) {
       return new NextResponse(
-        JSON.stringify({ error: "SizeId is required!" }),
+        JSON.stringify({ error: productDetailIdPatchMessage.sizeIdRequired }),
         { status: 400 }
       );
     }
 
     if (!color1Id) {
       return new NextResponse(
-        JSON.stringify({ error: "ColorId is required!" }),
+        JSON.stringify({ error: productDetailIdPatchMessage.colorIdRequired }),
         { status: 400 }
       );
     }
 
     if (!name1) {
-      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+      return new NextResponse(JSON.stringify({ error: productDetailIdPatchMessage.nameRequired }), {
         status: 400,
       });
     }
 
     if (!percentpromotion1) {
       return new NextResponse(
-        JSON.stringify({ error: "Percent Promotion is required!" }),
+        JSON.stringify({ error: productDetailIdPatchMessage.percentPromotionRequired }),
         { status: 400 }
       );
     }
 
     if (!price1) {
-      return new NextResponse(JSON.stringify({ error: "Price is required!" }), {
+      return new NextResponse(JSON.stringify({ error: productDetailIdPatchMessage.priceRequired }), {
         status: 400,
       });
     }
 
     if (!quantity1) {
       return new NextResponse(
-        JSON.stringify({ error: "Quantity is required!" }),
+        JSON.stringify({ error: productDetailIdPatchMessage.quantityRequired }),
         {
           status: 400,
         }
@@ -294,43 +304,43 @@ export async function PATCH(
 
     if (!descriptionspecifications) {
       return new NextResponse(
-        JSON.stringify({ error: "Descriptionspecifications is required!" }),
+        JSON.stringify({ error: productDetailIdPatchMessage.descriptionSpecificationsRequired }),
         { status: 400 }
       );
     }
     if (!valuespecifications) {
       return new NextResponse(
-        JSON.stringify({ error: "Valuespecifications is required!" }),
+        JSON.stringify({ error: productDetailIdPatchMessage.valueSpecificationsRequired }),
         { status: 400 }
       );
     }
     if (!descriptionsalientfeatures) {
       return new NextResponse(
-        JSON.stringify({ error: "Descriptionsalientfeatures is required!" }),
+        JSON.stringify({ error: productDetailIdPatchMessage.descriptionSalientFeaturesRequired }),
         { status: 400 }
       );
     }
     if (!description2salientfeatures) {
       return new NextResponse(
-        JSON.stringify({ error: "Description2salientfeatures is required!" }),
+        JSON.stringify({ error: productDetailIdPatchMessage.description2SalientFeaturesRequired }),
         { status: 400 }
       );
     }
     if (!description3salientfeatures) {
       return new NextResponse(
-        JSON.stringify({ error: "Description3salientfeatures is required!" }),
+        JSON.stringify({ error: productDetailIdPatchMessage.description3SalientFeaturesRequired }),
         { status: 400 }
       );
     }
     if (!description4salientfeatures) {
       return new NextResponse(
-        JSON.stringify({ error: "Description4salientfeatures is required!" }),
+        JSON.stringify({ error: productDetailIdPatchMessage.description4SalientFeaturesRequired }),
         { status: 400 }
       );
     }
     if (!contentsalientfeatures) {
       return new NextResponse(
-        JSON.stringify({ error: "Contentsalientfeatures is required!" }),
+        JSON.stringify({ error: productDetailIdPatchMessage.contentSalientFeaturesRequired }),
         { status: 400 }
       );
     }
@@ -344,7 +354,7 @@ export async function PATCH(
 
     // Nếu sizeId không tồn tại, trả về thông báo lỗi
     if (!size) {
-      return new NextResponse(JSON.stringify({ error: "Hãy chọn lại Size!" }), {
+      return new NextResponse(JSON.stringify({ error: productDetailIdPatchMessage.chooseSize }), {
         status: 404,
       });
     }
@@ -358,7 +368,7 @@ export async function PATCH(
     // Nếu sizeId không tồn tại, trả về thông báo lỗi
     if (!color) {
       return new NextResponse(
-        JSON.stringify({ error: "Hãy chọn lại Color!" }),
+        JSON.stringify({ error: productDetailIdPatchMessage.chooseColor }),
         { status: 404 }
       );
     }
@@ -372,13 +382,16 @@ export async function PATCH(
     // Nếu sizeId không tồn tại, trả về thông báo lỗi
     if (!category) {
       return new NextResponse(
-        JSON.stringify({ error: "Hãy chọn lại Category!" }),
+        JSON.stringify({ error: productDetailIdPatchMessage.chooseCategory }),
         { status: 404 }
       );
     }
 
     if (!params.productdetailId) {
-      return new NextResponse("Product id is required", { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ error: productDetailIdPatchMessage.productDetailIdRequired }),
+        { status: 404 }
+      );
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -389,7 +402,7 @@ export async function PATCH(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: productDetailIdPatchMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -532,14 +545,14 @@ export async function PATCH(
         oldChange: oldChanges,
         newChange: newChanges,
         type: "UPDATEPRODUCTDETAIL",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(productDetail);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error patch productdetail." }),
+      JSON.stringify({ error: productDetailIdPatchMessage.internalError }),
       { status: 500 }
     );
   }

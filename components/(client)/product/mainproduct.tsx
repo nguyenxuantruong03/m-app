@@ -19,7 +19,6 @@ const ProductList = dynamic(() => import("./product-list/product-list"), {
   ssr: false,
 });
 
-import { useEffect, useState } from "react";
 import "./product-list/product-list.css";
 import ProductListSale from "./product-list/product-list-sale";
 import { Zap } from "lucide-react";
@@ -30,6 +29,24 @@ import RelatedTagKeo from "./list-related-tag/related-tag-keo";
 import RelatedTagVatlieunhatam from "./list-related-tag/related-tag-vatlieunhatam";
 import RelatedTagDothuongdung from "./list-related-tag/related-tag-dothuongdung";
 import RelatedTagQuat from "./list-related-tag/related-tag-quat";
+import {
+  translateBathroomMaterials,
+  translateBestSeller,
+  translateCommonItems,
+  translateCuttingStone,
+  translateElectricWire,
+  translateFan,
+  translateGlue,
+  translateLightBulb,
+  translateLock,
+  translatePaint,
+  translatePin,
+  translatePipe,
+  translatePlasticPipe,
+  translateSocket,
+  translateSocketAndFaceplate,
+} from "@/translate/translate-client";
+import { useEffect, useState } from "react";
 
 interface ProductMainListProps {
   saleProduct: Product[];
@@ -47,6 +64,7 @@ interface ProductMainListProps {
   dothuongdung: Product[];
   maxTimeSale: Date | null;
   aggregatedProductTypes: { productType: string; count: number }[];
+  languageToUse: string;
 }
 const MainProduct: React.FC<ProductMainListProps> = ({
   saleProduct,
@@ -64,29 +82,45 @@ const MainProduct: React.FC<ProductMainListProps> = ({
   dothuongdung,
   maxTimeSale,
   aggregatedProductTypes,
+  languageToUse,
 }) => {
+  //language
+  const bestSellerMessage = translateBestSeller(languageToUse);
+  const pinMesage = translatePin(languageToUse);
+  const fanMessage = translateFan(languageToUse);
+  const plasticPipeMessage = translatePlasticPipe(languageToUse);
+  const pipeMessage = translatePipe(languageToUse);
+  const electricWireMessage = translateElectricWire(languageToUse);
+  const cuttingStoneMessage = translateCuttingStone(languageToUse);
+  const lockMessage = translateLock(languageToUse);
+  const glueMessage = translateGlue(languageToUse);
+  const socketAndFaceplateMessage = translateSocketAndFaceplate(languageToUse);
+  const socketMessage = translateSocket(languageToUse);
+  const paintMessage = translatePaint(languageToUse);
+  const bathroomMaterialsMessage = translateBathroomMaterials(languageToUse);
+  const lightBlubMessage = translateLightBulb(languageToUse);
+  const commonItemMessage = translateCommonItems(languageToUse);
+
   const productTypeDisplayNames: Record<string, string> = {
-    PRODUCT: "Pin",
-    PRODUCT1: "Quạt",
-    PRODUCT2: "Ống nhựa",
-    PRODUCT3: "Dây điện",
-    PRODUCT4: "Đá cắt",
-    PRODUCT5: "Ổ khóa",
-    PRODUCT6: "Keo",
-    PRODUCT7: "Ổ cắm",
-    PRODUCT8: "Sơn",
-    PRODUCT9: "Vật liệu nhà tắm",
-    PRODUCT10: "Bóng đèn",
-    PRODUCT11: "Đồ thường dùng",
+    PRODUCT: pinMesage,
+    PRODUCT1: fanMessage,
+    PRODUCT2: pipeMessage,
+    PRODUCT3: electricWireMessage,
+    PRODUCT4: cuttingStoneMessage,
+    PRODUCT5: lockMessage,
+    PRODUCT6: glueMessage,
+    PRODUCT7: socketMessage,
+    PRODUCT8: paintMessage,
+    PRODUCT9: bathroomMaterialsMessage,
+    PRODUCT10: lightBlubMessage,
+    PRODUCT11: commonItemMessage,
   };
 
   return (
     <div className="mx-auto max-w-7xl">
       {saleProduct.length > 0 && (
         <>
-          <div
-            className="bg-black bg-opacity-90 rounded-md p-3"
-          >
+          <div className="bg-black bg-opacity-90 rounded-md p-3">
             <div className="flex item-center justify-between">
               {maxTimeSale ? (
                 <div className="flex items-center space-x-1 mb-3 xl:mb-0">
@@ -120,12 +154,37 @@ const MainProduct: React.FC<ProductMainListProps> = ({
               ) : null}
               <div>
                 <div className="content text-[16px] md:text-[30px] hidden xl:block">
-                  <div className="content__container h-[51px] pl-11 pr-[28rem] mt-2.5">
-                    <p className="content__container__text">Bán chạy</p>
+                  <div
+                    className={`content__container h-[51px] pl-11 ${
+                      languageToUse === "ja" ? "pr-[24rem]" : "pr-[28rem]"
+                    } mt-2.5`}
+                  >
+                    <p className="content__container__text">
+                      {bestSellerMessage}
+                    </p>
 
-                    <ul className="content__container__list pl-[8.5rem] text-[30px] mt-0">
+                    <ul
+                      className={`content__container__list ${
+                        languageToUse === "en" && "pl-[10rem]"
+                      } ${languageToUse === "fr" && "pl-[10rem]"} ${
+                        languageToUse === "ja" && "pl-[12rem]"
+                      } ${languageToUse === "vi" && "pl-[8.5rem]"} ${
+                        languageToUse === "zh" && "pl-[10rem]"
+                      } text-[30px] mt-0`}
+                    >
                       {aggregatedProductTypes.map(({ productType, count }) => (
-                        <li key={productType} className="m-0 leading-[50px]">
+                        <li
+                          key={productType}
+                          className={`m-0 ${
+                            languageToUse === "vi" && "leading-[50px]"
+                          } ${
+                            languageToUse === "ja"
+                              ? "leading-[45px]"
+                              : ["zh", "en", "fr"].includes(languageToUse)
+                              ? "leading-[47px]"
+                              : ""
+                          }`}
+                        >
                           {productTypeDisplayNames[productType] || productType}
                         </li>
                       ))}
@@ -250,124 +309,172 @@ const MainProduct: React.FC<ProductMainListProps> = ({
                 </div>
               </div>
             </div>
-            <ProductListSale data={saleProduct} />
+            <ProductListSale data={saleProduct} languageToUse={languageToUse} />
           </div>
         </>
       )}
 
       <>
         <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
-          Quạt
+          {fanMessage}
         </h1>
-        <RelatedTagQuat />
+        <RelatedTagQuat languageToUse={languageToUse} />
         {quat.length === 0 && <NoResults />}
-        <ProductList data={quat} route="product1" />
+        <ProductList
+          data={quat}
+          route="product1"
+          languageToUse={languageToUse}
+        />
       </>
 
       <>
         <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
-          Dây điện
+          {electricWireMessage}
         </h1>
-        <RelatedTagDaydien />
+        <RelatedTagDaydien languageToUse={languageToUse} />
         {daydien.length === 0 && <NoResults />}
-        <ProductList data={daydien} route="product3" />
+        <ProductList
+          data={daydien}
+          route="product3"
+          languageToUse={languageToUse}
+        />
       </>
 
       <>
         <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
-          Ổ cắm,mặt ổ cắm
+          {socketAndFaceplateMessage}
         </h1>
-        <RelatedTagOcam />
+        <RelatedTagOcam languageToUse={languageToUse} />
         {ocam.length === 0 && <NoResults />}
-        <ProductListSingle data={ocam} route="product7" />
+        <ProductListSingle
+          data={ocam}
+          route="product7"
+          languageToUse={languageToUse}
+        />
       </>
 
       <>
         <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
-          Ống nhựa, Ống lưới xanh
+          {plasticPipeMessage}
         </h1>
-        <RelatedTagOngnhua />
+        <RelatedTagOngnhua languageToUse={languageToUse} />
         {ongnhua.length === 0 && <NoResults />}
-        <ProductListSingle data={ongnhua} route="product2" />
+        <ProductListSingle
+          data={ongnhua}
+          route="product2"
+          languageToUse={languageToUse}
+        />
       </>
 
       <>
         <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
-          Bóng đèn
+          {lightBlubMessage}
         </h1>
-        <RelatedTagBongden />
+        <RelatedTagBongden languageToUse={languageToUse} />
         {bongden.length === 0 && <NoResults />}
-        <ProductList data={bongden} route="product10" />
+        <ProductList
+          data={bongden}
+          route="product10"
+          languageToUse={languageToUse}
+        />
       </>
 
       {/* ------Không được ưa tiên hiển thị nếu ko có isFeatured--------- */}
       {pin.length > 0 && (
         <>
           <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
-            Pin
+            {pinMesage}
           </h1>
-          <RelatedTagPin />
-          <ProductListSingle data={pin} route="product0" />
+          <RelatedTagPin languageToUse={languageToUse} />
+          <ProductListSingle
+            data={pin}
+            route="product0"
+            languageToUse={languageToUse}
+          />
         </>
       )}
 
       {son.length > 0 && (
         <>
           <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
-            Sơn
+            {paintMessage}
           </h1>
-          <RelatedTagSon />
-          <ProductListSingle data={son} route="son" />
+          <RelatedTagSon languageToUse={languageToUse} />
+          <ProductListSingle
+            data={son}
+            route="son"
+            languageToUse={languageToUse}
+          />
         </>
       )}
 
       {dacat.length > 0 && (
         <>
           <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
-            Đá cắt
+            {cuttingStoneMessage}
           </h1>
-          <RelatedTagDaCat />
-          <ProductListSingle data={dacat} route="product4" />
+          <RelatedTagDaCat languageToUse={languageToUse} />
+          <ProductListSingle
+            data={dacat}
+            route="product4"
+            languageToUse={languageToUse}
+          />
         </>
       )}
 
       {okhoa.length > 0 && (
         <>
           <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
-            Ổ khóa
+            {lockMessage}
           </h1>
-          <RelatedTagOkhoa />
-          <ProductListSingle data={okhoa} route="product5" />
+          <RelatedTagOkhoa languageToUse={languageToUse} />
+          <ProductListSingle
+            data={okhoa}
+            route="product5"
+            languageToUse={languageToUse}
+          />
         </>
       )}
 
       {keo.length > 0 && (
         <>
           <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
-            Keo
+            {glueMessage}
           </h1>
-          <RelatedTagKeo />
-          <ProductListSingle data={keo} route="product6" />
+          <RelatedTagKeo languageToUse={languageToUse} />
+          <ProductListSingle
+            data={keo}
+            route="product6"
+            languageToUse={languageToUse}
+          />
         </>
       )}
 
       {vatlieunhatam.length > 0 && (
         <>
           <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
-            Vật liệu nhà tắm
+            {bathroomMaterialsMessage}
           </h1>
-          <RelatedTagVatlieunhatam />
-          <ProductListSingle data={vatlieunhatam} route="product9" />
+          <RelatedTagVatlieunhatam languageToUse={languageToUse} />
+          <ProductListSingle
+            data={vatlieunhatam}
+            route="product9"
+            languageToUse={languageToUse}
+          />
         </>
       )}
 
       {dothuongdung.length > 0 && (
         <>
           <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
-            Đồ thường dùng
+            {commonItemMessage}
           </h1>
-          <RelatedTagDothuongdung />
-          <ProductListSingle data={dothuongdung} route="product11" />
+          <RelatedTagDothuongdung languageToUse={languageToUse} />
+          <ProductListSingle
+            data={dothuongdung}
+            route="product11"
+            languageToUse={languageToUse}
+          />
         </>
       )}
     </div>

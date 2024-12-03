@@ -1,11 +1,12 @@
 import prismadb from "@/lib/prismadb";
 import { RoleGate } from "@/components/auth/role-gate";
-import { currentRole } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
 import { SystemsColumn } from "./components/column";
 import SystemClient from "./components/client";
 
 const System = async () => {
+  const user = await currentUser()
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN;
   const showOrderRole = isRole;
@@ -25,6 +26,7 @@ const System = async () => {
     type: item.type,
     user: item.user,
     createdAt: item.createdAt,
+    language: user?.language || "vi"
   }));
 
   return (

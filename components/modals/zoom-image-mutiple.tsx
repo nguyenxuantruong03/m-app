@@ -37,6 +37,23 @@ export const ZoomImageModal: React.FC<ZoomModalProps> = ({
     setCurrentIndex(initialIndex); // Update currentIndex when initialIndex changes
   }, [initialIndex]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        handlePrev(); // Chuyển ảnh về trước khi bấm mũi tên trái
+      } else if (e.key === "ArrowRight") {
+        handleNext(); // Chuyển ảnh tiếp theo khi bấm mũi tên phải
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    // Xóa sự kiện khi component unmount
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [imageUrl]); // Thêm imageUrl để cập nhật khi danh sách ảnh thay đổi
+
   //Bấm ảnh qua trái hoặc qua phải
   const handlePrev = () => {
     setCurrentIndex((prevIndex) =>
@@ -165,7 +182,13 @@ export const ZoomImageModal: React.FC<ZoomModalProps> = ({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} maxWidth="[60rem]" textCenter={true}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      maxWidth="[60rem]"
+      textCenter={true}
+      isPadding={false}
+    >
       <div className={`flex items-center justify-center space-x-3`}>
         <Button onClick={handlePrev}>
           <ChevronLeft className="size-5" />

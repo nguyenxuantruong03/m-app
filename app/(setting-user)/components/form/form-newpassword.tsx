@@ -32,7 +32,22 @@ import SpotifySVG from "@/public/svg/spotify";
 import TwitterSVG from "@/public/svg/twitter";
 import GithubSVG from "@/public/svg/github";
 import { Hint } from "@/components/ui/hint";
-const FormPassword = () => {
+import {
+  getToastError,
+  translateCannotEnableTwoFactor,
+  translateEnterNewPassword,
+  translateEnterNewPasswordMessage,
+  translateEnterPassword,
+  translateLoggedInWith,
+  translateNewPassword,
+  translatePassword,
+  translateSave,
+} from "@/translate/translate-client";
+
+interface FormPasswordProps {
+  languageToUse: string;
+}
+const FormPassword = ({ languageToUse }: FormPasswordProps) => {
   const user = useCurrentUser();
   const router = useRouter();
   const { update } = useSession();
@@ -64,6 +79,19 @@ const FormPassword = () => {
   }, [password, newPassword, isPasswordValid, isPasswordNewValid]);
 
   const [isPending, startTransition] = useTransition();
+
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const enterPasswordMessage = translateEnterPassword(languageToUse);
+  const enterNewPasswordMessage = translateEnterNewPassword(languageToUse);
+  const passwordMessage = translatePassword(languageToUse);
+  const newPasswordMessage = translateNewPassword(languageToUse);
+  const saveMessage = translateSave(languageToUse);
+  const enterNewPassword = translateEnterNewPasswordMessage(languageToUse);
+  const loggedInWithMessage = translateLoggedInWith(languageToUse);
+  const cannotEnableTwoFactorMessage =
+    translateCannotEnableTwoFactor(languageToUse);
+
   const form = useForm<z.infer<typeof SettingSchema>>({
     resolver: zodResolver(SettingSchema),
     defaultValues: {
@@ -74,12 +102,12 @@ const FormPassword = () => {
 
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
     if (values.password === "") {
-      setError("Hãy nhập mật khẩu!");
+      setError(enterPasswordMessage);
       return;
     }
 
     if (values.newPassword === "") {
-      setError("Hãy nhập mật khẩu mới!");
+      setError(enterNewPasswordMessage);
       return;
     }
 
@@ -87,7 +115,7 @@ const FormPassword = () => {
     setError("");
     setLoginClicked(true);
     startTransition(() => {
-      setting(values)
+      setting(values, languageToUse)
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -106,7 +134,7 @@ const FormPassword = () => {
           }
         })
         .catch(() => {
-          setError("Something went wrong");
+          setError(toastErrorMessage);
         });
     });
   };
@@ -121,7 +149,7 @@ const FormPassword = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>{passwordMessage}</FormLabel>
                     <FormControl>
                       <PasswordField
                         field={field}
@@ -133,6 +161,7 @@ const FormPassword = () => {
                         setSuccess={setSuccess}
                         isSubmitted={isSubmitted}
                         setIsSubmitted={setIsSubmitted}
+                        languageToUse={languageToUse}
                       />
                     </FormControl>
                     <FormMessage />
@@ -144,7 +173,7 @@ const FormPassword = () => {
                 name="newPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>New password</FormLabel>
+                    <FormLabel>{newPasswordMessage}</FormLabel>
                     <FormControl>
                       <PasswordNewField
                         field={field}
@@ -156,6 +185,7 @@ const FormPassword = () => {
                         setError={setError}
                         setSuccess={setSuccess}
                         setIsSubmittedPasswordnew={setIsSubmittedPasswordnew}
+                        languageToUse={languageToUse}
                       />
                     </FormControl>
                     <FormMessage />
@@ -165,13 +195,13 @@ const FormPassword = () => {
               <FormError message={error} />
               <FormSuccess message={success} />
               <Button type="submit" disabled={isPending || isSaveDisabled}>
-                Save
+                {saveMessage}
               </Button>
               {loginClicked && isSaveDisabled && (
                 <div className="flex items-center space-x-1">
                   <X className="w-5 h-5 mr-1 text-red-500" />
                   <span className="text-red-500 text-xs">
-                    Bạn cần nhập mật khẩu mới!
+                    {enterNewPassword}
                   </span>
                 </div>
               )}
@@ -180,7 +210,7 @@ const FormPassword = () => {
           {user?.isOAuth === true && (
             <div className="text-base font-semibold dark:text-gray-500 text-slate-800">
               <Separator className="my-2" />
-              <span>Bạn đã đăng nhập bằng </span>
+              <span>{loggedInWithMessage} </span>
               {user?.provider === "google" ? (
                 <span style={{ whiteSpace: "nowrap" }}>
                   <strong>
@@ -204,31 +234,31 @@ const FormPassword = () => {
               ) : user?.provider === "github" ? (
                 <span className="inline-block">
                   <Hint label="Github">
-                  <GithubSVG width={18} height={18}/>
+                    <GithubSVG width={18} height={18} />
                   </Hint>
                 </span>
               ) : user?.provider === "facebook" ? (
                 <span className="inline-block">
                   <Hint label="Facebook">
-                    <FaceBookSVG width={18} height={18}/>
+                    <FaceBookSVG width={18} height={18} />
                   </Hint>
                 </span>
               ) : user?.provider === "gitlab" ? (
                 <span className="inline-block">
                   <Hint label="Gitlab">
-                    <GitlabSVG width={18} height={18}/>
+                    <GitlabSVG width={18} height={18} />
                   </Hint>
                 </span>
               ) : user?.provider === "reddit" ? (
                 <span className="inline-block">
                   <Hint label="Reddit">
-                    <RedditSVG width={18} height={18}/>
+                    <RedditSVG width={18} height={18} />
                   </Hint>
                 </span>
               ) : user?.provider === "spotify" ? (
                 <span className="inline-block">
                   <Hint label="Spotify">
-                    <SpotifySVG width={18} height={18}/>
+                    <SpotifySVG width={18} height={18} />
                   </Hint>
                 </span>
               ) : user?.provider === "twitter" ? (
@@ -242,7 +272,7 @@ const FormPassword = () => {
                   {user?.provider}
                 </span>
               )}
-              <span> nên không thể bật xác minh 2 bước.</span>
+              <span> {cannotEnableTwoFactorMessage}</span>
             </div>
           )}
         </div>

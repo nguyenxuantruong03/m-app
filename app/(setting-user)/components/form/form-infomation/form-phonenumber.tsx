@@ -26,13 +26,25 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import FormSuccess from "@/components/form-success";
 import FormError from "@/components/form-error";
 import { useRouter } from "next/navigation";
+import {
+  getPhoneNumberMessage,
+  getToastError,
+  translateCancel,
+  translateChangePhoneNumberNotification,
+  translateSave,
+} from "@/translate/translate-client";
 
 interface FormPhoneNumberProps {
   classNames?: string;
   setOpen?: Dispatch<SetStateAction<boolean>>;
+  languageToUse: string;
 }
 
-const FormPhoneNumber = ({ classNames, setOpen }: FormPhoneNumberProps) => {
+const FormPhoneNumber = ({
+  classNames,
+  setOpen,
+  languageToUse,
+}: FormPhoneNumberProps) => {
   const user = useCurrentUser();
   const router = useRouter();
   const { update } = useSession();
@@ -49,6 +61,14 @@ const FormPhoneNumber = ({ classNames, setOpen }: FormPhoneNumberProps) => {
     }
   }, []);
 
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const changePhoneNumberNotificationMessage =
+    translateChangePhoneNumberNotification(languageToUse);
+  const phoneNumberMessage = getPhoneNumberMessage(languageToUse);
+  const cancelMessage = translateCancel(languageToUse);
+  const saveMessage = translateSave(languageToUse);
+
   const form = useForm<z.infer<typeof SettingSchema>>({
     resolver: zodResolver(SettingSchema),
     defaultValues: {
@@ -59,15 +79,13 @@ const FormPhoneNumber = ({ classNames, setOpen }: FormPhoneNumberProps) => {
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
     // Kiểm tra giá trị phonenumber nhập vào và user?.phonenumber
     if (values.phonenumber === user?.phonenumber) {
-      setError(
-        "Hãy thay đổi số điện thoại mới số điện thoại trên đang được sử dụng."
-      );
+      setError(changePhoneNumberNotificationMessage);
       return;
     }
     setSuccess("");
     setError("");
     startTransition(() => {
-      setting(values)
+      setting(values, languageToUse)
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -80,7 +98,7 @@ const FormPhoneNumber = ({ classNames, setOpen }: FormPhoneNumberProps) => {
           }
         })
         .catch(() => {
-          setError("Something went wrong");
+          setError(toastErrorMessage);
         });
     });
   };
@@ -96,7 +114,7 @@ const FormPhoneNumber = ({ classNames, setOpen }: FormPhoneNumberProps) => {
             name="phonenumber"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Số điện thoại</FormLabel>
+                <FormLabel>{phoneNumberMessage}</FormLabel>
                 <FormControl>
                   <Input
                     id="phonenumber-input"
@@ -131,7 +149,7 @@ const FormPhoneNumber = ({ classNames, setOpen }: FormPhoneNumberProps) => {
               onClick={() => setOpen?.(false)}
               disabled={isPending}
             >
-              Cancel
+              {cancelMessage}
             </Button>
           )}
           <Button
@@ -140,7 +158,7 @@ const FormPhoneNumber = ({ classNames, setOpen }: FormPhoneNumberProps) => {
             type="submit"
             disabled={isPending}
           >
-            Save
+            {saveMessage}
           </Button>
         </div>
       </form>

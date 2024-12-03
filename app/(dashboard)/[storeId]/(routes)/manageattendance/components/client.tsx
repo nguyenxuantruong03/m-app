@@ -9,6 +9,8 @@ import { useCurrentRole } from "@/hooks/use-current-role";
 import { ManageAttendancesColumn, columns } from "./column";
 import Downloadfile from "@/components/file/downloadfilepage";
 import { useState } from "react";
+import { getManageAttendanceClient } from "@/translate/translate-dashboard";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 interface AttendanceClientProps {
   data: ManageAttendancesColumn[];
@@ -19,14 +21,19 @@ const AttendanceClient: React.FC<AttendanceClientProps> = ({ data }) => {
   const isRole = role === UserRole.ADMIN;
   const [open, setOpen] = useState(false);
   const showAPIRole = isRole;
+  //language
+  const user = useCurrentUser();
+  const languageToUse = user?.language || "vi";
+  const manageAttendaceClientMessage = getManageAttendanceClient(languageToUse)
+
   return (
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Điểm danh (${data.length})`}
-          description="Quản lý điểm danh"
+          title={`${manageAttendaceClientMessage.attendance} (${data.length})`}
+          description={manageAttendaceClientMessage.manageAttendance}
         />
-        <Downloadfile data={data} filename="manageattendance" />
+        <Downloadfile data={data} filename="manageattendance" languageToUse={languageToUse}/>
       </div>
       <Separator />
       <DataTable
@@ -37,8 +44,9 @@ const AttendanceClient: React.FC<AttendanceClientProps> = ({ data }) => {
         onDelete={() => {}}
         setOpen={setOpen}
         open={open}
+        languageToUse={languageToUse}
       />
-      {showAPIRole && <Heading title="Api" description="API calls for Staff" />}
+      {showAPIRole && <Heading title={manageAttendaceClientMessage.api} description={manageAttendaceClientMessage.apiCalls} />}
       <Separator />
       <ApiList entityIdName="" entityName="manageattendance" />
     </>

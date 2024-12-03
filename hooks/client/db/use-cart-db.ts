@@ -2,14 +2,15 @@ import { CartItemType, Product, User } from "@/types/type";
 import toast from "react-hot-toast";
 import { create } from "zustand";
 import axios from "axios";
-
+import getCart from "@/actions/client/cart";
+import { translateProductRemoved, translateUpdateQuantityError } from "@/translate/translate-client";
 interface CartStore {
   items: CartItemType[];
   userId: string | null;
   addItem: (data: Product, quantity: number, warranty: string | null, userId: string,selectedSize: string, selectedColor:string) => void;
-  removeItem: (id: string, userId: string) => void;
+  removeItem: (id: string, userId: string, languageToUse: string) => void;
   removeAll: (userId: string) => void;
-  updateQuantity: (id: string, quantity: number, warranty: string | null, userId: string) => void;
+  updateQuantity: (id: string, quantity: number, warranty: string | null, userId: string, languageToUse: string) => void;
   selectedItems: string[];
   selectAll: boolean;
   toggleSelectItem: (id: string,userId: string,nonSelectQuantitySold: string, noneSelectQuantityAvailable: string) => void;
@@ -17,8 +18,8 @@ interface CartStore {
   getSelectedItemWarranty: (id: string) => string | null;
   selectWarranty: (id: string, warrantyOption: string | null) => string | null;
   selectedWarranties: Record<string, string | null>;
-  removeSelectedItems: (userId: string) => void;
-  fetchCartItems: (userId: string) => void; // New method to fetch cart items
+  removeSelectedItems: (userId: string,language: string) => void;
+  fetchCartItems: (userId: string,language: string) => void; // New method to fetch cart items
 }
 
 const useCartdb = create<CartStore>((set, get) => ({
@@ -29,13 +30,9 @@ const useCartdb = create<CartStore>((set, get) => ({
   selectedWarranties: {},
   loading: false,
 
-  fetchCartItems: async (userId: string) => {
-    //TODO: Phương thức get nhưng bởi vì api trong Nextjs hạn chế query nene để post
-    const response =  await axios.post("/api/client/cart/get-items", {
-      userId: userId,
-    });
-    const cartItems = response.data;
-    set({ items: cartItems });
+  fetchCartItems: async (userId: string,language: string) => {
+    const getcart = await getCart({userId: userId, language: language})
+    set({ items: getcart });
   },
 
   selectWarranty: (id: string, warrantyOption: string | null) => {
@@ -157,8 +154,8 @@ const useCartdb = create<CartStore>((set, get) => ({
     }));
   },
 
-  removeSelectedItems: async (userId: string) => {
-    await get().fetchCartItems(userId);
+  removeSelectedItems: async (userId: string,lanague: string) => {
+    await get().fetchCartItems(userId,lanague);
 
     // Now that we have the latest cart items, map selected product IDs to cart item IDs
     const cartItemIds = get().items
@@ -195,7 +192,10 @@ const useCartdb = create<CartStore>((set, get) => ({
   },
 
 
-  updateQuantity: async (id: string, quantity: number, warranty: string | null, userId: string) => {
+  updateQuantity: async (id: string, quantity: number, warranty: string | null, userId: string, languageToUse: string) => {
+    //language
+    const updatedQuantityErrorMessage = translateUpdateQuantityError(languageToUse)
+
     // Optimistically update the state first
     set((state) => ({
       items: state.items.map((item) =>
@@ -227,11 +227,14 @@ const useCartdb = create<CartStore>((set, get) => ({
           item.id === id ? { ...item, quantity: item.quantity - quantity } : item
         ),
       }));
-      toast.error("Có lỗi xảy ra khi cập nhật số lượng sản phẩm.");
+      toast.error(updatedQuantityErrorMessage);
     }
   },
 
-  removeItem: async (id: string, userId: string) => {
+  removeItem: async (id: string, userId: string, languageToUse: string) => {
+    //language
+    const productRemoved = translateProductRemoved(languageToUse)
+
     await axios.post("/api/client/cart/removeItem", { id, userId });
 
     set((state) => {
@@ -254,7 +257,7 @@ const useCartdb = create<CartStore>((set, get) => ({
       };
     });
   
-    toast.success("Sản phẩm đã xóa khỏi giỏ hàng.");
+    toast.success(productRemoved);
   },
 
   removeAll: async (userId: string) => {

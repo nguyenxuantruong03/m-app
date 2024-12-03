@@ -24,17 +24,36 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { AlertModal } from "@/components/modals/alert-modal";
+import {
+  getActionIrreversibleMessage,
+  getAmountToPayMessage,
+  getCartItemsDeletedMessage,
+  getCashPaymentMessage,
+  getCoinMessage,
+  getConfirmDeleteMessage,
+  getInsuranceAmountMessage,
+  getItemsSelectedMessage,
+  getPaymentMessage,
+  getPaymentMethodMessage,
+  getProductNotFoundMessage,
+  getSelectAllMessage,
+  getToastError,
+  getTotalAmountMessage,
+  getVisaPaymentMessage,
+} from "@/translate/translate-client";
 
 interface SumaryProps {
   userId: string;
   setLoadingChange: Dispatch<SetStateAction<boolean>>;
   loadingChange: boolean;
+  languageToUse: string;
 }
 
 const Sumary: React.FC<SumaryProps> = ({
   userId,
   loadingChange,
   setLoadingChange,
+  languageToUse,
 }) => {
   const router = useRouter();
   const cart = useCart();
@@ -44,10 +63,30 @@ const Sumary: React.FC<SumaryProps> = ({
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>(
     PaymentMethodType.CashPayment
   );
-
   const [isScrolled, setIsScrolled] = useState(false);
   const [isScrolledPast, setIsScrolledPast] = useState(false); // New state for scrolling past the element
   const scrollToDivRef = useRef<HTMLDivElement>(null);
+
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const toastSuccessCartItemDeleteMessage =
+    getCartItemsDeletedMessage(languageToUse);
+  const toastProductNotFoundMessage = getProductNotFoundMessage(languageToUse);
+  const confirmDeleteMessage = getConfirmDeleteMessage(languageToUse);
+  const actionIrreversibleMessage = getActionIrreversibleMessage(languageToUse);
+  const selectAllMessage = getSelectAllMessage(languageToUse);
+  const selectItemSelectMessage = getItemsSelectedMessage(
+    languageToUse,
+    cart.selectedItems.length
+  );
+  const totalAmountMessage = getTotalAmountMessage(languageToUse);
+  const paymentMethodMessage = getPaymentMethodMessage(languageToUse);
+  const cashPaymentMessage = getCashPaymentMessage(languageToUse);
+  const visaPaymentMessage = getVisaPaymentMessage(languageToUse);
+  const insuranceAmountMessage = getInsuranceAmountMessage(languageToUse);
+  const amountToPayMessage = getAmountToPayMessage(languageToUse);
+  const paymentMessage = getPaymentMessage(languageToUse);
+  const coinMessage = getCoinMessage(languageToUse);
 
   const handleArrowClick = () => {
     scrollToDivRef.current?.scrollIntoView();
@@ -83,10 +122,10 @@ const Sumary: React.FC<SumaryProps> = ({
     try {
       setLoadingChange(true);
       await cart.removeSelectedItems();
-      toast.success("Tất cả lựa chọn trong giỏ hàng đã được xóa.");
+      toast.success(toastSuccessCartItemDeleteMessage);
     } catch (error) {
       setLoadingChange(false);
-      toast.error("Xảy ra vấn đề khi xóa!");
+      toast.error(toastErrorMessage);
     } finally {
       setLoadingChange(false);
     }
@@ -153,7 +192,7 @@ const Sumary: React.FC<SumaryProps> = ({
 
       if (!itemInCart || !itemInCart) {
         // Nếu itemInCart hoặc itemInCart.product là undefined, bỏ qua item này
-        toast.error("Không tìm thấy sản phẩm!");
+        toast.error(toastProductNotFoundMessage);
         return total;
       }
       //GetPrice dựa vào size
@@ -253,7 +292,7 @@ const Sumary: React.FC<SumaryProps> = ({
         );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
-        toast.error("An error occurred during check cash.");
+        toast.error(toastErrorMessage);
       }
     } finally {
       setLoadingChange(false);
@@ -295,7 +334,7 @@ const Sumary: React.FC<SumaryProps> = ({
         );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
-        toast.error("An error occurred during checkout.");
+        toast.error(toastErrorMessage);
       }
     } finally {
       setLoadingChange(false);
@@ -312,22 +351,24 @@ const Sumary: React.FC<SumaryProps> = ({
         handleCheckoutVisa(event);
       }
     } catch (error) {
-      toast.error("An error occurred during checkout.");
+      toast.error(toastErrorMessage);
     }
   };
 
   return (
     <>
       <AlertModal
-        title="Bạn có chắc chắn xóa tất cả sản phẩm đã chọn không?"
-        message="Hành động này không thể hoàn tác."
+        title={confirmDeleteMessage}
+        message={actionIrreversibleMessage}
         isOpen={openRemoveAll}
         onClose={() => setOpenRemoveAll(false)}
         onConfirm={onRemoveAll}
+        languageToUse={languageToUse}
       />
       <SeePaymentWarningModal
         isOpen={openPaymentWarning}
         onClose={() => setOpenPaymentWarning(false)}
+        languageToUse={languageToUse}
       />
 
       {/* Handle cho điện thoại hiển thị scroll nhanh chống xuống thanh toán */}
@@ -377,12 +418,12 @@ const Sumary: React.FC<SumaryProps> = ({
               disabled={loadingChange}
             />
             <h2 className="text-base md:text-lg font-medium text-gray-900">
-              Chọn tất cả{" "}
+              {selectAllMessage}
               {cart.selectedItems.length <= 0 ? (
                 ""
               ) : (
                 <span className="text-gray-400 text-xs md:text-sm">
-                  (Đã chọn {cart.selectedItems.length} sản phẩm)
+                  ({selectItemSelectMessage})
                 </span>
               )}
             </h2>
@@ -398,7 +439,9 @@ const Sumary: React.FC<SumaryProps> = ({
         </div>
         <div className="mt-2 space-y-2">
           <div className="flex items-center justify-between border-t border-gray-200 py-2">
-            <div className="text-base font-medium text-gray-900">Tổng tiền</div>
+            <div className="text-base font-medium text-gray-900">
+              {totalAmountMessage}
+            </div>
             <Currency
               value={totalAmount}
               valueold={totalAmounts.totalPriceOld}
@@ -407,7 +450,7 @@ const Sumary: React.FC<SumaryProps> = ({
 
           <div className="flex items-center justify-between border-t border-gray-200 py-2">
             <div className="text-base font-medium text-gray-900">
-              Hình thức thanh toán
+              {paymentMethodMessage}
             </div>
             <Select
               disabled={selectedItems.length === 0}
@@ -419,36 +462,38 @@ const Sumary: React.FC<SumaryProps> = ({
               <SelectTrigger className="w-[180px] md:w-[200px] py-2 px-4 text-left bg-slate-200 dark:bg-slate-900 text-slate-900 dark:text-slate-200 rounded-md shadow-sm border border-gray-300 focus:outline-none">
                 <SelectValue placeholder="Chọn phương thức thanh toán">
                   {paymentMethod === PaymentMethodType.CashPayment
-                    ? "Thanh toán tiền mặt"
-                    : "Thanh toán Visa"}
+                    ? `${cashPaymentMessage}`
+                    : `${visaPaymentMessage}`}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent className="z-[99999]">
                 <SelectItem value={PaymentMethodType.CashPayment}>
-                  Thanh toán tiền mặt
+                  {cashPaymentMessage}
                 </SelectItem>
                 <SelectItem value={PaymentMethodType.VisaPayment}>
-                  Thanh toán Visa
+                  {visaPaymentMessage}
                 </SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="flex items-center justify-between border-t border-gray-200 py-2">
-            <div className="text-base font-medium text-gray-900">Xu</div>
+            <div className="text-base font-medium text-gray-900">
+              {coinMessage}
+            </div>
             <Currency value={-0} />
           </div>
 
           <div className="flex items-center justify-between border-t border-gray-200 py-2">
             <div className="text-base font-medium text-gray-900">
-              Tiền bảo hiểm
+              {insuranceAmountMessage}
             </div>
             <Currency value={totalWarrantyAmount} />
           </div>
 
           <div className="flex items-center justify-between border-t border-gray-200 py-2">
             <div className="text-base font-medium text-gray-900">
-              Số tiền cần thanh toán
+              {amountToPayMessage}
             </div>
             <Currency value={TotalAmountCoins} />
           </div>
@@ -474,14 +519,14 @@ const Sumary: React.FC<SumaryProps> = ({
                 <div className="post">
                   <div className="post-line"></div>
                   <div className="screen">
-                    <div className="dollar">$</div>
+                    <div className="dollar">₫</div>
                   </div>
                   <div className="numbers"></div>
                   <div className="numbers-line2"></div>
                 </div>
               </div>
               <div className="right-side">
-                <div className="new">Thanh toán</div>
+                <div className="new">{paymentMessage}</div>
 
                 <svg
                   viewBox="0 0 451.846 451.847"

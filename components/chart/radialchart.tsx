@@ -6,6 +6,22 @@ import {
   Tooltip,
 } from "recharts";
 import { Skeleton } from "../ui/skeleton";
+import {
+  translateCuttingStone,
+  translateElectricWire,
+  translateFan,
+  translateGlue,
+  translateLightBulb,
+  translateLock,
+  translatePaint,
+  translatePin,
+  translatePipe,
+  translateSocket,
+  translateBathroom,
+  translateCommonUse,
+  translateSelectDateMessage,
+  translateSalesData,
+} from "@/translate/translate-client";
 
 interface ProductData {
   totalSold: number;
@@ -19,25 +35,44 @@ type RadialChartData = Record<string, ProductData>;
 interface RadialChartProps {
   radialChartData: RadialChartData | null | undefined; // Định nghĩa kiểu cho phép null hoặc undefined
   loading: boolean;
+  languageToUse: string;
 }
 
-// Tên sản phẩm
-const productTypeDisplayNames: Record<string, string> = {
-  PRODUCT: "Pin",
-  PRODUCT1: "Quạt",
-  PRODUCT2: "Ống nhựa, ống lưới xanh",
-  PRODUCT3: "Dây điện",
-  PRODUCT4: "Đá cắt",
-  PRODUCT5: "Ổ khóa",
-  PRODUCT6: "Keo",
-  PRODUCT7: "Ổ cắm, mặt ổ cắm",
-  PRODUCT8: "Sơn",
-  PRODUCT9: "Vật liệu nhà tắm",
-  PRODUCT10: "Bóng đèn",
-  PRODUCT11: "Đồ thường dùng",
-};
+const RadialChart = ({
+  radialChartData,
+  loading,
+  languageToUse,
+}: RadialChartProps) => {
+  //languages
+  const selectDataMessgae = translateSelectDateMessage(languageToUse);
+  const pinMesage = translatePin(languageToUse);
+  const fanMessage = translateFan(languageToUse);
+  const pipeMessage = translatePipe(languageToUse);
+  const electricWireMessage = translateElectricWire(languageToUse);
+  const cuttingStoneMessage = translateCuttingStone(languageToUse);
+  const lockMessage = translateLock(languageToUse);
+  const glueMessage = translateGlue(languageToUse);
+  const socketMessage = translateSocket(languageToUse);
+  const paintMessage = translatePaint(languageToUse);
+  const bathroomMessage = translateBathroom(languageToUse);
+  const lightBlubMessage = translateLightBulb(languageToUse);
+  const commonUseMessage = translateCommonUse(languageToUse);
+  const salesDataMessage = translateSalesData(languageToUse);
 
-const RadialChart = ({ radialChartData, loading }: RadialChartProps) => {
+  const productTypeDisplayNames: Record<string, string> = {
+    PRODUCT: pinMesage,
+    PRODUCT1: fanMessage,
+    PRODUCT2: pipeMessage,
+    PRODUCT3: electricWireMessage,
+    PRODUCT4: cuttingStoneMessage,
+    PRODUCT5: lockMessage,
+    PRODUCT6: glueMessage,
+    PRODUCT7: socketMessage,
+    PRODUCT8: paintMessage,
+    PRODUCT9: bathroomMessage,
+    PRODUCT10: lightBlubMessage,
+    PRODUCT11: commonUseMessage,
+  };
   if (loading) {
     return (
       <ResponsiveContainer width="100%" height={350}>
@@ -51,7 +86,9 @@ const RadialChart = ({ radialChartData, loading }: RadialChartProps) => {
   if (!radialChartData) {
     return (
       <div className="w-full h-[350px] flex items-center justify-center">
-        <span className="text-center dark:text-slate-500 text-slate-900">Please select date to find data...</span>
+        <span className="text-center dark:text-slate-500 text-slate-900">
+          {selectDataMessgae}
+        </span>
       </div>
     );
   }
@@ -97,80 +134,83 @@ const RadialChart = ({ radialChartData, loading }: RadialChartProps) => {
   if (!data) {
     return (
       <div className="w-full h-[350px] flex items-center justify-center">
-        <span className="text-center dark:text-slate-500 text-slate-900">Please select date to find data...</span>
+        <span className="text-center dark:text-slate-500 text-slate-900">
+          {selectDataMessgae}
+        </span>
       </div>
     );
   }
 
   return (
     <div
-    style={{
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "flex-start",
-    }}
-  >
-    <div style={{ width: "50%", paddingRight: "10px" }}>
-      <ResponsiveContainer width="100%" height={350}>
-        <RadialBarChart
-          innerRadius="10%"
-          outerRadius="80%"
-          data={data}
-          startAngle={180}
-          endAngle={0}
-        >
-          <RadialBar
-            label={{ fill: "#666", position: "insideStart" }}
-            background
-            dataKey="totalSold" // Biểu đồ cho totalSold
-          />
-          <Legend
-            iconSize={10}
-            layout="horizontal"
-            verticalAlign="bottom"
-            align="center"
-          />
-          <Tooltip
-            labelClassName="dark:text-slate-500 text-slate-900"
-            formatter={(value, name, props) => [props.payload.name, value]}
-          />
-        </RadialBarChart>
-      </ResponsiveContainer>
-      <h4 className="text-center font-semibold text-red-500">Total Sold</h4>
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "flex-start",
+      }}
+    >
+      <div style={{ width: "50%", paddingRight: "10px" }}>
+        <ResponsiveContainer width="100%" height={350}>
+          <RadialBarChart
+            innerRadius="10%"
+            outerRadius="80%"
+            data={data}
+            startAngle={180}
+            endAngle={0}
+          >
+            <RadialBar
+              label={{ fill: "#666", position: "insideStart" }}
+              background
+              dataKey="totalSold" // Biểu đồ cho totalSold
+            />
+            <Legend
+              iconSize={10}
+              layout="horizontal"
+              verticalAlign="bottom"
+              align="center"
+            />
+            <Tooltip
+              labelClassName="dark:text-slate-500 text-slate-900"
+              formatter={(value, name, props) => [props.payload.name, value]}
+            />
+          </RadialBarChart>
+        </ResponsiveContainer>
+        <h4 className="text-center font-semibold text-red-500">
+          {salesDataMessage.name1}
+        </h4>
+      </div>
+
+      <div style={{ width: "50%", paddingLeft: "10px" }}>
+        <ResponsiveContainer width="100%" height={350}>
+          <RadialBarChart
+            innerRadius="10%"
+            outerRadius="80%"
+            data={data}
+            startAngle={180}
+            endAngle={0}
+          >
+            <RadialBar
+              label={{ fill: "#666", position: "insideStart" }}
+              background
+              dataKey="totalOrderItems" // Biểu đồ cho totalOrderItems
+            />
+            <Legend
+              iconSize={10}
+              layout="horizontal"
+              verticalAlign="bottom"
+              align="center"
+            />
+            <Tooltip
+              labelClassName="dark:text-slate-500 text-slate-900"
+              formatter={(value, name, props) => [props.payload.name, value]}
+            />
+          </RadialBarChart>
+        </ResponsiveContainer>
+        <h4 className="text-center font-semibold text-green-500">
+          {salesDataMessage.name2}
+        </h4>
+      </div>
     </div>
-  
-    <div style={{ width: "50%", paddingLeft: "10px" }}>
-      <ResponsiveContainer width="100%" height={350}>
-        <RadialBarChart
-          innerRadius="10%"
-          outerRadius="80%"
-          data={data}
-          startAngle={180}
-          endAngle={0}
-        >
-          <RadialBar
-            label={{ fill: "#666", position: "insideStart" }}
-            background
-            dataKey="totalOrderItems" // Biểu đồ cho totalOrderItems
-          />
-          <Legend
-            iconSize={10}
-            layout="horizontal"
-            verticalAlign="bottom"
-            align="center"
-          />
-          <Tooltip
-            labelClassName="dark:text-slate-500 text-slate-900"
-            formatter={(value, name, props) => [props.payload.name, value]}
-          />
-        </RadialBarChart>
-      </ResponsiveContainer>
-      <h4 className="text-center font-semibold text-green-500">
-        Total Order Items
-      </h4>
-    </div>
-  </div>
-  
   );
 };
 

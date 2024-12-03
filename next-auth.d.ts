@@ -22,7 +22,8 @@ export type ExtendedUser = DefaultSession["user"] & {
   frameAvatar:string
   dateofbirth: DateTime;
   isCitizen: boolean;
-  createdAt: DateTime
+  createdAt: DateTime;
+  language: string;
   linkyoutube: string;
   linkfacebook: string;
   linkinstagram: string;

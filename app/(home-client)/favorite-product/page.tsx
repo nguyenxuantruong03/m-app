@@ -15,67 +15,101 @@ import SortPriceRange from "./components/sort-price-change-favorite-item";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
 import { useRouter } from "next/navigation";
-
-const sortButtons = [
-  {
-    label: "Giá cao đến thấp",
-    sortType: "priceHighToLow",
-    icon: <ArrowDownWideNarrow className="w-5 h-5" />,
-  },
-  {
-    label: "Giá thấp đến cao",
-    sortType: "priceLowToHigh",
-    icon: <ArrowUpNarrowWide className="w-5 h-5 " />,
-  },
-  {
-    label: "Tên A đến Z",
-    sortType: "nameAToZ",
-    icon: <ArrowDownAZ className="w-5 h-5 " />,
-  },
-  {
-    label: "Tên Z đến A",
-    sortType: "nameZToA",
-    icon: <ArrowDownZA className="w-5 h-5" />,
-  },
-  {
-    label: "Khuyến mãi hot",
-    sortType: "percentPromotionHighToLow",
-    icon: <Percent className="w-5 h-5" />,
-  },
-];
+import {
+  translateHeart,
+  translateNoItemsLiked,
+  getToastError,
+  translateSortHighToLow,
+  translateSortLowToHigh,
+  translateSortNameAToZ,
+  translateSortNameZToA,
+  translateHotDeals,
+} from "@/translate/translate-client";
+import toast from "react-hot-toast";
 
 const LikePage = () => {
   const favorite = useFavorite();
   const user = useCurrentUser();
-  const router = useRouter()
+  const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
   const [sortType, setSortType] = useState(null);
   const [alertGuestModal, setAlertGuestModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+  const toastErrorMessage = getToastError(languageToUse);
+  const heartMessage = translateHeart(languageToUse);
+  const noItemLikeMessage = translateNoItemsLiked(languageToUse);
+  const sortHighToLowMessage = translateSortHighToLow(languageToUse);
+  const sortLowtoHighMessage = translateSortLowToHigh(languageToUse);
+  const sortNameAToZMessage = translateSortNameAToZ(languageToUse);
+  const sortNameZToAMessage = translateSortNameZToA(languageToUse);
+  const hotDealsMessage = translateHotDeals(languageToUse);
+
+  const sortButtons = [
+    {
+      label: sortHighToLowMessage,
+      sortType: "priceHighToLow",
+      icon: <ArrowDownWideNarrow className="w-5 h-5" />,
+    },
+    {
+      label: sortLowtoHighMessage,
+      sortType: "priceLowToHigh",
+      icon: <ArrowUpNarrowWide className="w-5 h-5 " />,
+    },
+    {
+      label: sortNameAToZMessage,
+      sortType: "nameAToZ",
+      icon: <ArrowDownAZ className="w-5 h-5 " />,
+    },
+    {
+      label: sortNameZToAMessage,
+      sortType: "nameZToA",
+      icon: <ArrowDownZA className="w-5 h-5" />,
+    },
+    {
+      label: hotDealsMessage,
+      sortType: "percentPromotionHighToLow",
+      icon: <Percent className="w-5 h-5" />,
+    },
+  ];
 
   useEffect(() => {
     if (user?.role !== "GUEST" && user?.id) {
       const fetchData = async () => {
-        setLoading(true)
+        setLoading(true);
         try {
-          await favorite.fetchFavoriteItems(user?.id || "");
+          await favorite.fetchFavoriteItems(user?.id || "", languageToUse);
         } catch (error) {
-          console.error(error);
-        }finally{
-          setLoading(false)
+          toast.error(toastErrorMessage);
+        } finally {
+          setLoading(false);
         }
       };
       fetchData();
     } else {
-      setAlertGuestModal(true)
-      router.push("/home-product")
+      setAlertGuestModal(true);
+      router.push("/home-product");
     }
   }, []);
 
   //Handle sort product
   const handleSortChange = (sortType: any) => {
     if (!sortType) {
-      console.error("Sort type is null or undefined");
+      toast.error(toastErrorMessage);
       return;
     }
 
@@ -98,22 +132,27 @@ const LikePage = () => {
       <AlertGuestModal
         isOpen={alertGuestModal}
         onClose={() => setAlertGuestModal(false)}
+        languageToUse={languageToUse}
       />
       <div className="mt-16 mx-auto max-w-7xl px-2 pt-16 sm:px-6 lg:px-8">
         <div className="lg:grid-cols-12 lg:items-start gap-x-12 lg:col-span-7">
           {favorite.items.length === 0 && (
             <>
-              <div className="text-3xl font-semibold dark:text-slate-200 text-slate-900">Thả tim</div>
+              <div className="text-3xl font-semibold dark:text-slate-200 text-slate-900">
+                {heartMessage}
+              </div>
               <div className="flex items-center pb-2 font-bold dark:text-slate-200 text-slate-900 space-x-2">
-                Chưa có sản phẩm được thả
+                {noItemLikeMessage}
                 <Heart className="fill-red-500 text-red-500" />
               </div>
             </>
           )}
           {favorite.items.length > 0 && (
             <div className="space-y-2 mb-2">
-              <div className="flex items-center space-x-2 text-3xl font-semibold dark:text-slate-200 text-slate-900">Yêu thích <Heart className="fill-red-500 text-red-500" /></div>
-              <SortPriceRange />
+              <div className="flex items-center space-x-2 text-3xl font-semibold dark:text-slate-200 text-slate-900">
+                {heartMessage} <Heart className="fill-red-500 text-red-500" />
+              </div>
+              <SortPriceRange languageToUse={languageToUse} />
               <div className="flex justify-start items-center w-full overflow-x-auto">
                 <div className="flex space-x-2">
                   {sortButtons.map((button, index) => (
@@ -131,7 +170,13 @@ const LikePage = () => {
           )}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-6 lg:col-span-4 lg:mt-0 m-4">
             {favorite.filteredItems.map((item) => (
-              <FavoriteItem key={item.productId} data={item} loading={loading} setLoading={setLoading}/>
+              <FavoriteItem
+                key={item.productId}
+                data={item}
+                loading={loading}
+                setLoading={setLoading}
+                languageToUse={languageToUse}
+              />
             ))}
           </div>
         </div>

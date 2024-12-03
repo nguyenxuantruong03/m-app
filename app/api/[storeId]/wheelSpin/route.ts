@@ -1,7 +1,6 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
-import { UserRole } from "@prisma/client";
-
+import { translateWheelSpinGet, translateWheelSpinPost } from "@/translate/translate-api";
 import { NextResponse } from "next/server";
 
 export async function POST(
@@ -11,9 +10,17 @@ export async function POST(
   const body = await req.json();
   let { coin, rotation, userId, isCheckPayment, idOrderItem } = body;
 
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const wheelSpinPostMessage = translateWheelSpinPost(LanguageToUse);
+
   try {
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: wheelSpinPostMessage.userIdNotFound }),
+        { status: 403 }
+      );
     }
     // Convert coin and rotation to numbers if they are strings representing numbers or set to 0 if invalid
     // Check and convert coin to number if it is a string
@@ -83,21 +90,29 @@ export async function POST(
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error("Error processing request:", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: wheelSpinPostMessage.internalError }),
+      { status: 500 }
+    );
   }
 }
 
 export async function GET() {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const wheelSpinGetMessage = translateWheelSpinGet(LanguageToUse)
   try {
-    const userId = await currentUser();
-    if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+    if (!user) {
+      return new NextResponse(
+        JSON.stringify({ error: wheelSpinGetMessage.userIdNotFound }),
+        { status: 403 }
+      );
     }
 
     const coins = await prismadb.wheelSpin.findMany({
       where: {
-        userId: userId.id || "",
+        userId: user.id || "",
       },
     });
     // Return the sum of all coins
@@ -112,8 +127,10 @@ export async function GET() {
     }, 0);
     return NextResponse.json({ totalCoins, latestRotation });
   } catch (error) {
-    console.error("Error fetching comments:", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: wheelSpinGetMessage.internalError }),
+      { status: 500 }
+    );
   }
 }
 //--------------Delete xóa tất cả bao gôm rotation và coin --------------------------------

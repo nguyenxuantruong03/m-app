@@ -9,6 +9,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import LabelForm from "./form-edit";
+import { translateSentEmailUserSheet } from "@/translate/translate-dashboard";
 
 const taxTypeMapping: Record<string, string> = {
   vat: "VAT",
@@ -21,9 +22,12 @@ interface EditRowProps {
   subject: string;
   description: string;
   field: "subject" | "description"
+  language: string
 }
-const EditRow: React.FC<EditRowProps> = ({ data, id, subject, description, field }) => {
+const EditRow: React.FC<EditRowProps> = ({ data, id, subject, description, field, language }) => {
   const [open, setOpen] = useState(false);
+  //language
+  const sentEmailUserSheetMessage = translateSentEmailUserSheet(language)
   const handleClick = () => {
     setOpen(true);
   };
@@ -34,20 +38,20 @@ const EditRow: React.FC<EditRowProps> = ({ data, id, subject, description, field
   // Mô tả sẽ thay đổi dựa trên trường 'field'
   let fieldDescription = "";
   if (field === "subject") {
-    fieldDescription = `an existing subject ${subject}`;
+    fieldDescription = `${sentEmailUserSheetMessage.subject} ${subject}`;
   } else if (field === "description") {
-    fieldDescription = `an existing description ${subject}`;
+    fieldDescription = `${sentEmailUserSheetMessage.existingdescription} ${subject}`;
   }
 
   return (
     <>
-      <div onClick={handleClick} className="hover:underline cursor-pointer">{data || "Không tìm thấy!"}</div>
+      <div onClick={handleClick} className="hover:underline cursor-pointer">{data || sentEmailUserSheetMessage.notfound}</div>
       <Sheet open={open} onOpenChange={handleonClose}>
         <SheetContent className="space-y-4">
           <SheetHeader>
-            <SheetTitle>Edit {subject}</SheetTitle>
+            <SheetTitle>{sentEmailUserSheetMessage.edit} {subject}</SheetTitle>
             {/* Sử dụng biến fieldDescription */}
-            <SheetDescription>Edit {fieldDescription}.</SheetDescription>
+            <SheetDescription>{sentEmailUserSheetMessage.edit} {fieldDescription}.</SheetDescription>
           </SheetHeader>
           <LabelForm
             data={data}
@@ -56,6 +60,7 @@ const EditRow: React.FC<EditRowProps> = ({ data, id, subject, description, field
             description={description}
             field={field}
             setOpen={setOpen}
+            language={language}
           />
         </SheetContent>
       </Sheet>

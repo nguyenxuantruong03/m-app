@@ -24,28 +24,44 @@ import { Separator } from "@/components/ui/separator";
 import { Heading } from "@/components/ui/heading";
 import { AlertModal } from "@/components/modals/alert-modal";
 import Recommend from "@/components/ui/recommend";
-
-const formSchema = z.object({
-  name: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  value: z.optional(z.string().min(4, { message: "Nhập ít nhất 4 ký tự." })),
-});
-
-type FavoriteFormValues = z.infer<typeof formSchema>;
+import { getFavoriteForm } from "@/translate/translate-dashboard";
 
 interface FavoriteProps {
   initialData: Favorite | null;
+  language: string;
 }
 
-export const FavoriteForm: React.FC<FavoriteProps> = ({ initialData }) => {
+export const FavoriteForm: React.FC<FavoriteProps> = ({
+  initialData,
+  language,
+}) => {
   const params = useParams();
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const title = initialData ? "Edit favorite" : "Create favorite";
-  const description = initialData ? "Edit a favorite." : "Add a new favorite";
-  const action = initialData ? "Save changes" : "Create";
+  //language
+  const favoriteFormMessage = getFavoriteForm(language);
+
+  const title = initialData
+    ? favoriteFormMessage.editFavorite
+    : favoriteFormMessage.createFavorite;
+  const description = initialData
+    ? favoriteFormMessage.editAFavorite
+    : favoriteFormMessage.addNewFavorite;
+  const action = initialData
+    ? favoriteFormMessage.saveChanges
+    : favoriteFormMessage.create;
+
+  const formSchema = z.object({
+    name: z.string().min(2, { message: favoriteFormMessage.minLength }),
+    value: z.optional(
+      z.string().min(2, { message: favoriteFormMessage.minLength })
+    ),
+  });
+
+  type FavoriteFormValues = z.infer<typeof formSchema>;
 
   const form = useForm<FavoriteFormValues>({
     resolver: zodResolver(formSchema),
@@ -91,21 +107,23 @@ export const FavoriteForm: React.FC<FavoriteProps> = ({ initialData }) => {
           if (initialData) {
             return (
               <p>
-                Favorite{" "}
+                {favoriteFormMessage.favorite}
                 <span className="font-bold">{response.data?.name}</span>{" "}
-                updated.
+                {favoriteFormMessage.updated}.
               </p>
             );
           } else {
             return (
               <p>
-                Favorite <span className="font-bold">{data.name}</span> created.
+                {favoriteFormMessage.favorite}{" "}
+                <span className="font-bold">{data.name}</span>{" "}
+                {favoriteFormMessage.created}.
               </p>
             );
           }
         }),
         {
-          loading: "Updating favorite...",
+          loading: favoriteFormMessage.updatingFavorite,
           success: (message) => {
             router.refresh();
             router.push(`/${params.storeId}/favorite`);
@@ -123,7 +141,7 @@ export const FavoriteForm: React.FC<FavoriteProps> = ({ initialData }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Something went wrong.";
+              return favoriteFormMessage.somethingWentWrong;
             }
           },
         }
@@ -142,7 +160,7 @@ export const FavoriteForm: React.FC<FavoriteProps> = ({ initialData }) => {
       );
       router.refresh();
       router.push(`/${params.storeId}/favorite`);
-      toast.success("Favorite deleted.");
+      toast.success(favoriteFormMessage.favoriteDeleted);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -158,7 +176,7 @@ export const FavoriteForm: React.FC<FavoriteProps> = ({ initialData }) => {
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
-          "Make sure you removed all favorite using this favorite first."
+          favoriteFormMessage.somethingWentWrong
         );
       }
     } finally {
@@ -174,6 +192,7 @@ export const FavoriteForm: React.FC<FavoriteProps> = ({ initialData }) => {
         onClose={() => setOpen(false)}
         onConfirm={onDelete}
         loading={loading}
+        languageToUse={language}
       />
       {/* update and create */}
       <div className="flex items-center justify-between">
@@ -204,13 +223,13 @@ export const FavoriteForm: React.FC<FavoriteProps> = ({ initialData }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Tên <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Các loại sản phẩm mà khách hàng ưa thích." />
+                    {favoriteFormMessage.label} <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message={favoriteFormMessage.favoriteTypesDescription} />
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Enter label ..."
+                      placeholder={favoriteFormMessage.enterLabel}
                       {...field}
                     />
                   </FormControl>

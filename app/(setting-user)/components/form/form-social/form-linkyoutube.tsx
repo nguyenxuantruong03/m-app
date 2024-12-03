@@ -26,13 +26,25 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import FormSuccess from "@/components/form-success";
 import FormError from "@/components/form-error";
 import { useRouter } from "next/navigation";
+import {
+  getToastError,
+  translateCancel,
+  translateChangeYoutubeLink,
+  translateSave,
+  translateYoutubePath,
+} from "@/translate/translate-client";
 
 interface FormLinkYoutubeProps {
   classNames?: string;
   setOpen?: Dispatch<SetStateAction<boolean>>;
+  languageToUse: string;
 }
 
-const FormLinkYoutube = ({ classNames, setOpen }: FormLinkYoutubeProps) => {
+const FormLinkYoutube = ({
+  classNames,
+  setOpen,
+  languageToUse,
+}: FormLinkYoutubeProps) => {
   const user = useCurrentUser();
   const router = useRouter();
   const { update } = useSession();
@@ -49,6 +61,13 @@ const FormLinkYoutube = ({ classNames, setOpen }: FormLinkYoutubeProps) => {
     }
   }, []);
 
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const cancelMessage = translateCancel(languageToUse);
+  const saveMessage = translateSave(languageToUse);
+  const changeYoutubeLinkMessage = translateChangeYoutubeLink(languageToUse);
+  const youtubePathMessage = translateYoutubePath(languageToUse);
+
   const form = useForm<z.infer<typeof SettingSchema>>({
     resolver: zodResolver(SettingSchema),
     defaultValues: {
@@ -59,15 +78,13 @@ const FormLinkYoutube = ({ classNames, setOpen }: FormLinkYoutubeProps) => {
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
     // Kiểm tra giá trị linkyoutube nhập vào và user?.linkyoutube
     if (values.linkyoutube === user?.linkyoutube) {
-      setError(
-        "Hãy thay đổi link Youtube mới link Youtube trên đang được sử dụng."
-      );
+      setError(changeYoutubeLinkMessage);
       return;
     }
     setSuccess("");
     setError("");
     startTransition(() => {
-      setting(values)
+      setting(values, languageToUse)
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -80,7 +97,7 @@ const FormLinkYoutube = ({ classNames, setOpen }: FormLinkYoutubeProps) => {
           }
         })
         .catch(() => {
-          setError("Something went wrong");
+          setError(toastErrorMessage);
         });
     });
   };
@@ -96,7 +113,7 @@ const FormLinkYoutube = ({ classNames, setOpen }: FormLinkYoutubeProps) => {
             name="linkyoutube"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Link Youtube</FormLabel>
+                <FormLabel>{youtubePathMessage}</FormLabel>
                 <FormControl>
                   <Input
                     id="linkyoutube-input"
@@ -129,7 +146,7 @@ const FormLinkYoutube = ({ classNames, setOpen }: FormLinkYoutubeProps) => {
               onClick={() => setOpen?.(false)}
               disabled={isPending}
             >
-              Cancel
+              {cancelMessage}
             </Button>
           )}
           <Button
@@ -138,7 +155,7 @@ const FormLinkYoutube = ({ classNames, setOpen }: FormLinkYoutubeProps) => {
             type="submit"
             disabled={isPending}
           >
-            Save
+            {saveMessage}
           </Button>
         </div>
       </form>

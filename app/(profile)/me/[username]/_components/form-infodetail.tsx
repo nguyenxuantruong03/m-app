@@ -36,12 +36,26 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
+import {
+  translateAccountInfo,
+  translateDone,
+  translateNoData,
+  translateNotChange,
+  translatePopular,
+  translatePrivateInfo,
+  translateSocialInfo,
+} from "@/translate/translate-client";
 
 interface FormInfoDetailProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
   self: any;
+  languageToUse: string;
 }
-const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
+const FormInfoDetail = ({
+  setOpen,
+  self,
+  languageToUse,
+}: FormInfoDetailProps) => {
   const [isOpenGender, setIsOpenGender] = useState(false);
   const [isOpenPhone, setIsOpenPhone] = useState(false);
   const [isOpenBirthday, setIsOpenBirthday] = useState(false);
@@ -59,33 +73,48 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
   const [isOpenGithub, setIsOpenGitHub] = useState(false);
   const [isOpenOther, setIsOpenOther] = useState(false);
 
+  //language
+  const accountInfoMessage = translateAccountInfo(languageToUse);
+  const privateInfoMessage = translatePrivateInfo(languageToUse);
+  const noDataMessage = translateNoData(languageToUse);
+  const popularMessage = translatePopular(languageToUse);
+  const notChangeMessage = translateNotChange(languageToUse);
+  const socialInfoMessage = translateSocialInfo(languageToUse);
+  const doneMessage = translateDone(languageToUse);
+
   return (
     <div className="space-y-2">
-      <span className="text-xl font-semibold"> Infomation Account </span>
+      <span className="text-xl font-semibold">{accountInfoMessage}</span>
       <ToggleCard
         field="isEmail"
         label="Enable Email"
         value={self.showInfomation?.isEmail}
         data={!!self.email}
+        languageToUse={languageToUse}
       />
-       <ToggleCard
+      <ToggleCard
         field="isCreatedAt"
         label="Enable Created Account"
         value={self.showInfomation?.isCreatedAt}
         data={!!self.createdAt}
+        languageToUse={languageToUse}
       />
-      <span className="flex items center pt-4 text-xl font-semibold"> Infomation Private </span>
+      <span className="flex items center pt-4 text-xl font-semibold">
+        {privateInfoMessage}
+      </span>
       <ToggleCard
         field="isGender"
         label="Enable Gender"
         value={self.showInfomation?.isGender}
         data={!!self.gender}
+        languageToUse={languageToUse}
       />
 
       {isOpenGender ? (
         <FormGender
           classNames="md:flex justify-between"
           setOpen={setIsOpenGender}
+          languageToUse={languageToUse}
         />
       ) : (
         <>
@@ -94,7 +123,11 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
               <span className="mr-2">
                 <User className="w-5 h-5" />
               </span>
-              {self.gender === "None" ? <>Không có</> : <>{self.gender}</>}
+              {self.gender === "None" ? (
+                <>{noDataMessage}</>
+              ) : (
+                <>{self.gender}</>
+              )}
             </div>
             <Pencil
               className="h-8 w-8 p-1 border border-slate-900 rounded-full cursor-pointer hover:opacity-50"
@@ -109,11 +142,13 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
         label="Enable Phone"
         value={self.showInfomation?.isPhone}
         data={!!self.phonenumber}
+        languageToUse={languageToUse}
       />
       {isOpenPhone ? (
         <FormPhoneNumber
           classNames="md:flex justify-between"
           setOpen={setIsOpenPhone}
+          languageToUse={languageToUse}
         />
       ) : (
         <>
@@ -122,7 +157,18 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
               <span className="mr-2">
                 <Phone className="h-5 w-5" />
               </span>
-              {self.phonenumber ? <><Link className="cursor-pointer underline" href={`tel:${self.phonenumber}`}>{self.phonenumber}</Link></> : <>Không có</>}
+              {self.phonenumber ? (
+                <>
+                  <Link
+                    className="cursor-pointer underline"
+                    href={`tel:${self.phonenumber}`}
+                  >
+                    {self.phonenumber}
+                  </Link>
+                </>
+              ) : (
+                <>{noDataMessage}</>
+              )}
             </div>
             <Pencil
               className="h-8 w-8 p-1 border border-slate-900 rounded-full cursor-pointer hover:opacity-50"
@@ -136,11 +182,13 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
         label="Enable Birdthday"
         value={self.showInfomation?.isDateofBirth}
         data={!!self.dateofbirth}
+        languageToUse={languageToUse}
       />
       {isOpenBirthday ? (
         <FormDateOfBirth
           classNames="md:flex justify-between"
           setOpen={setIsOpenBirthday}
+          languageToUse={languageToUse}
         />
       ) : (
         <>
@@ -149,7 +197,11 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
               <span className="mr-2">
                 <Cake className="h-5 w-5" />
               </span>
-              {self.dateofbirth ? <>{format(new Date(self.dateofbirth), "dd/MM/yyyy")}</> : <>Không có</>}
+              {self.dateofbirth ? (
+                <>{format(new Date(self.dateofbirth), "dd/MM/yyyy")}</>
+              ) : (
+                <>{noDataMessage}</>
+              )}
             </div>
             <Pencil
               className="h-8 w-8 p-1 border border-slate-900 rounded-full cursor-pointer hover:opacity-50"
@@ -163,11 +215,13 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
         label="Enable Adress"
         value={self.showInfomation?.isAddress}
         data={!!self.address}
+        languageToUse={languageToUse}
       />
       {isOpenAddress ? (
         <FormAddress
           classNames="md:flex justify-between"
           setOpen={setIsOpenAdress}
+          languageToUse={languageToUse}
         />
       ) : (
         <>
@@ -176,7 +230,7 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
               <span className="mr-2">
                 <MapPin className="h-5 w-5" />
               </span>
-              {self.address ? <>{self.address}</> : <>Không có</>}
+              {self.address ? <>{self.address}</> : <>{noDataMessage}</>}
             </div>
             <Pencil
               className="h-8 w-8 p-1 border border-slate-900 rounded-full cursor-pointer hover:opacity-50"
@@ -190,11 +244,13 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
         label="Enable AdressOther"
         value={self.showInfomation?.isAdressOther}
         data={!!self.addressother}
+        languageToUse={languageToUse}
       />
       {isOpenAddressOther ? (
         <FormAddressOther
           classNames="md:flex justify-between"
           setOpen={setIsOpenAdressOther}
+          languageToUse={languageToUse}
         />
       ) : (
         <>
@@ -203,7 +259,11 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
               <span className="mr-2">
                 <MapPin className="h-5 w-5" />
               </span>
-              {self.addressother ? <>{self.addressother}</> : <>Không có</>}
+              {self.addressother ? (
+                <>{self.addressother}</>
+              ) : (
+                <>{noDataMessage}</>
+              )}
             </div>
             <Pencil
               className="h-8 w-8 p-1 border border-slate-900 rounded-full cursor-pointer hover:opacity-50"
@@ -217,12 +277,14 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
         label="Enable Favorite"
         value={self.showInfomation?.isFavorite}
         data={!!self.favorite}
+        languageToUse={languageToUse}
       />
       {isOpenFavorite ? (
         <FormFavorite
           dataallfavorite={self.favorite}
           classNames="md:flex justify-between"
           setOpen={setIsOpenFavorite}
+          languageToUse={languageToUse}
         />
       ) : (
         <>
@@ -237,14 +299,14 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
                     ? self.favorite
                         .map((item: string) =>
                           item === "phobien"
-                            ? "Phổ biến"
-                            : item || "Chưa thay đổi"
+                            ? popularMessage
+                            : item || notChangeMessage
                         )
                         .join(", ")
-                    : ["Chưa thay đổi"]}{" "}
+                    : [notChangeMessage]}{" "}
                 </>
               ) : (
-                <>Không có</>
+                <>{noDataMessage}</>
               )}
             </div>
             <Pencil
@@ -254,28 +316,32 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
           </div>
         </>
       )}
-      <span className="flex items center pt-4 text-xl font-semibold"> Infomation Social </span>
+      <span className="flex items center pt-4 text-xl font-semibold">
+        {socialInfoMessage}
+      </span>
       <ToggleCard
         field="isSocial"
         label="Enable Social"
         value={self.showInfomation?.isSocial}
         data={
-          !!self.socialLink.linkfacebook || 
-          !!self.socialLink.linkinstagram || 
-          !!self.socialLink.linkyoutube || 
+          !!self.socialLink.linkfacebook ||
+          !!self.socialLink.linkinstagram ||
+          !!self.socialLink.linkyoutube ||
           !!self.socialLink.linktiktok ||
           !!self.socialLink.linktwitter ||
-          !!self.socialLink.linklinkedin || 
+          !!self.socialLink.linklinkedin ||
           !!self.socialLink.linkwebsite ||
-          !!self.socialLink.linkgithub || 
+          !!self.socialLink.linkgithub ||
           !!self.socialLink.linkother
         }
+        languageToUse={languageToUse}
       />
 
       {isOpenFacebook ? (
         <FormLinkFaceBook
           classNames="md:flex justify-between"
           setOpen={setIsOpenFacebook}
+          languageToUse={languageToUse}
         />
       ) : (
         <>
@@ -302,7 +368,7 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
                   </p>
                 </>
               ) : (
-                <>Không có</>
+                <>{noDataMessage}</>
               )}
             </div>
             <Pencil
@@ -317,6 +383,7 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
         <FormLinkInstagram
           classNames="md:flex justify-between"
           setOpen={setIsOpenInstagram}
+          languageToUse={languageToUse}
         />
       ) : (
         <>
@@ -343,7 +410,7 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
                   </p>
                 </>
               ) : (
-                <>Không có</>
+                <>{noDataMessage}</>
               )}
             </div>
             <Pencil
@@ -358,6 +425,7 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
         <FormLinkYoutube
           classNames="md:flex justify-between"
           setOpen={setIsOpenYoutube}
+          languageToUse={languageToUse}
         />
       ) : (
         <>
@@ -384,7 +452,7 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
                   </p>
                 </>
               ) : (
-                <>Không có</>
+                <>{noDataMessage}</>
               )}
             </div>
             <Pencil
@@ -399,6 +467,7 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
         <FormLinkTiktok
           classNames="md:flex justify-between"
           setOpen={setIsOpenTiktok}
+          languageToUse={languageToUse}
         />
       ) : (
         <>
@@ -425,7 +494,7 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
                   </p>
                 </>
               ) : (
-                <>Không có</>
+                <>{noDataMessage}</>
               )}
             </div>
             <Pencil
@@ -440,6 +509,7 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
         <FormLinkTwitter
           classNames="md:flex justify-between"
           setOpen={setIsOpenTwitter}
+          languageToUse={languageToUse}
         />
       ) : (
         <>
@@ -466,7 +536,7 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
                   </p>
                 </>
               ) : (
-                <>Không có</>
+                <>{noDataMessage}</>
               )}
             </div>
             <Pencil
@@ -481,6 +551,7 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
         <FormLinkLinkedIn
           classNames="md:flex justify-between"
           setOpen={setIsOpenLinkedIn}
+          languageToUse={languageToUse}
         />
       ) : (
         <>
@@ -507,7 +578,7 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
                   </p>
                 </>
               ) : (
-                <>Không có</>
+                <>{noDataMessage}</>
               )}
             </div>
             <Pencil
@@ -522,6 +593,7 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
         <FormLinkWebSite
           classNames="md:flex justify-between"
           setOpen={setIsOpenWebsite}
+          languageToUse={languageToUse}
         />
       ) : (
         <>
@@ -548,7 +620,7 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
                   </p>
                 </>
               ) : (
-                <>Không có</>
+                <>{noDataMessage}</>
               )}
             </div>
             <Pencil
@@ -563,6 +635,7 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
         <FormLinkGithub
           classNames="md:flex justify-between"
           setOpen={setIsOpenGitHub}
+          languageToUse={languageToUse}
         />
       ) : (
         <>
@@ -589,7 +662,7 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
                   </p>
                 </>
               ) : (
-                <>Không có</>
+                <>{noDataMessage}</>
               )}
             </div>
             <Pencil
@@ -604,6 +677,7 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
         <FormLinkOther
           classNames="md:flex justify-between"
           setOpen={setIsOpenOther}
+          languageToUse={languageToUse}
         />
       ) : (
         <>
@@ -630,7 +704,7 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
                   </p>
                 </>
               ) : (
-                <>Không có</>
+                <>{noDataMessage}</>
               )}
             </div>
             <Pencil
@@ -648,7 +722,7 @@ const FormInfoDetail = ({ setOpen, self }: FormInfoDetailProps) => {
           onClick={() => setOpen(false)}
           className="text-white"
         >
-          Xong
+          {doneMessage}
         </Button>
       </div>
     </div>

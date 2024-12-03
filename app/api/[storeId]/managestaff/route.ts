@@ -4,6 +4,7 @@ import prismadb from "@/lib/prismadb";
 import { sendVerifyAccountisCitizen } from "@/lib/mail";
 import { currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
+import { translateManageStaffGet, translateManageStaffPatch, translateManageStaffPost } from "@/translate/translate-api";
 
 type ManageStaffValue = boolean | undefined | null;
 
@@ -13,18 +14,21 @@ interface ChangeRecord {
 }
 
 export async function GET(req: Request) {
-  const userId = await currentUser();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const manageStaffGetMessage = translateManageStaffGet(LanguageToUse);
   try {
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: manageStaffGetMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN) {
+    if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xem Manage Staff!" }),
+        JSON.stringify({ error: manageStaffGetMessage.permissionDenied }),
         { status: 403 }
       );
     }
@@ -34,7 +38,7 @@ export async function GET(req: Request) {
     return NextResponse.json(managestaff);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get managestaff." }),
+      JSON.stringify({ error: manageStaffGetMessage.internalError }),
       { status: 500 }
     );
   }
@@ -44,21 +48,24 @@ export async function PATCH(
   req: Request,
   { params }: { params: { managestaffId: string; storeId: string } }
 ) {
+  const userId = await currentUser();
+  //language
+  const LanguageToUse = userId?.language || "vi";
+  const manageStaffPatchMessage = translateManageStaffPatch(LanguageToUse)
   try {
-    const userId = await currentUser();
     const body = await req.json();
     const { id, sentVeirifi } = body;
 
     if (!userId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: manageStaffPatchMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
     if (userId.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền cập nhật Manage Staff!" }),
+        JSON.stringify({ error: manageStaffPatchMessage.permissionDenied }),
         { status: 403 }
       );
     }
@@ -112,7 +119,7 @@ export async function PATCH(
     });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error patch managestaff." }),
+      JSON.stringify({ error: manageStaffPatchMessage.internalError }),
       { status: 500 }
     );
   }
@@ -122,19 +129,22 @@ export async function POST(
   req: Request,
   { params }: { params: { managestaffId: string; storeId: string } }
 ) {
-  const userId = await currentUser();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const manageStaffPostMessage = translateManageStaffPost(LanguageToUse)
 
   try {
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: manageStaffPostMessage.userIdNotFound }),
         { status: 403 }
       );
     }
   
-    if (userId.role !== UserRole.ADMIN) {
+    if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền tạo mới Manage Staff!" }),
+        JSON.stringify({ error: manageStaffPostMessage.permissionDenied}),
         { status: 403 }
       );
     }
@@ -190,7 +200,7 @@ export async function POST(
         oldChange: oldChanges,
         newChange: newChanges,
         type: "UPDATE-SENTVERIFY-ALL-MANAGESTAFF",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
@@ -202,7 +212,7 @@ export async function POST(
     });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error post managestaff." }),
+      JSON.stringify({ error: manageStaffPostMessage.internalError }),
       { status: 500 }
     );
   }

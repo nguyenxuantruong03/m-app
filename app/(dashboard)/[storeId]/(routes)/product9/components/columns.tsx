@@ -32,6 +32,7 @@ export type ProductColumn = {
   imagesalientfeaturesUrl: { url: string }[];
   imagesUrl: { url: string }[];
   createdAt: Date;
+  language: string;
 };
 
 export const columns: ColumnDef<ProductColumn>[] = [
@@ -83,6 +84,7 @@ export const columns: ColumnDef<ProductColumn>[] = [
         isArchived={row.original.isArchived}
         productdetailId={row.original.productdetailId}
         field="heading"
+        language={row.original.language}
       />
     ),
   },
@@ -190,10 +192,8 @@ export const columns: ColumnDef<ProductColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      return (
-      <FormatDate data={row.original.createdAt}/>
-      )
-    }
+      return <FormatDate data={row.original.createdAt} />;
+    },
   },
   {
     id: "actions",

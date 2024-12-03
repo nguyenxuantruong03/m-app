@@ -9,6 +9,10 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import FormInfoDevice from "../components/form/form-device";
+import {
+  translateDeviceLimitMessage,
+  translateLoggedInDeviceSystem,
+} from "@/translate/translate-client";
 
 interface DeviceInfoData {
   id: string;
@@ -23,7 +27,6 @@ interface DeviceInfoData {
   limitDevice: number | null;
   createdAt: Date;
   updatedAt: Date;
-  
 }
 
 interface SheetInfoDeviceProps {
@@ -31,8 +34,9 @@ interface SheetInfoDeviceProps {
   children: React.ReactNode;
   type: "device";
   role: string | undefined;
-  userId: string
+  userId: string;
   setAlertGuestModal: React.Dispatch<React.SetStateAction<boolean>>;
+  languageToUse: string;
 }
 
 const SheetDevice: React.FC<SheetInfoDeviceProps> = ({
@@ -41,7 +45,8 @@ const SheetDevice: React.FC<SheetInfoDeviceProps> = ({
   type,
   role,
   userId,
-  setAlertGuestModal
+  setAlertGuestModal,
+  languageToUse,
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -59,9 +64,11 @@ const SheetDevice: React.FC<SheetInfoDeviceProps> = ({
 
   const infoMap = {
     device: {
-      title: `Thiết bị đăng nhập vào hệ thống`,
-      description: `Hãy thay đổi giới hạn thiết bị tùy chỉnh 1-5 thiết bị có thể đăng nhập vào hệ thống`,
-      form: <FormInfoDevice findDevice={findDevice} />,
+      title: translateLoggedInDeviceSystem(languageToUse),
+      description: translateDeviceLimitMessage(languageToUse),
+      form: (
+        <FormInfoDevice findDevice={findDevice} languageToUse={languageToUse} />
+      ),
     },
   };
 
@@ -69,9 +76,7 @@ const SheetDevice: React.FC<SheetInfoDeviceProps> = ({
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
-      <SheetTrigger asChild>
-        {children}
-      </SheetTrigger>
+      <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent className="space-y-4" side="center">
         <SheetHeader>
           <SheetTitle>{title}</SheetTitle>

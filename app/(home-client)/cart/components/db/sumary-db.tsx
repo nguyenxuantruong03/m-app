@@ -23,6 +23,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import {
+  getActionIrreversibleMessage,
+  getAmountToPayMessage,
+  getCartItemsDeletedMessage,
+  getCashPaymentMessage,
+  getCoinMessage,
+  getConfirmDeleteMessage,
+  getInsuranceAmountMessage,
+  getItemsSelectedMessage,
+  getPaymentMessage,
+  getPaymentMethodMessage,
+  getProductNotFoundMessage,
+  getSelectAllMessage,
+  getToastError,
+  getTotalAmountMessage,
+  getVisaPaymentMessage,
+} from "@/translate/translate-client";
 
 interface SumaryProps {
   userId: string;
@@ -31,6 +48,7 @@ interface SumaryProps {
   setLoadingfetchData: Dispatch<SetStateAction<boolean>>;
   loadingChange: boolean;
   loadingfetchData: boolean;
+  languageToUse: string;
 }
 
 export enum PaymentMethodType {
@@ -45,6 +63,7 @@ const SumaryDb: React.FC<SumaryProps> = ({
   loadingfetchData,
   setLoadingChange,
   setLoadingfetchData,
+  languageToUse,
 }) => {
   const router = useRouter();
   const cartdb = useCartdb();
@@ -60,20 +79,42 @@ const SumaryDb: React.FC<SumaryProps> = ({
   const [isScrolled, setIsScrolled] = useState(false);
   const [isScrolledPast, setIsScrolledPast] = useState(false); // New state for scrolling past the element
   const scrollToDivRef = useRef<HTMLDivElement>(null);
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const toastSuccessCartItemDeleteMessage =
+    getCartItemsDeletedMessage(languageToUse);
+  const toastProductNotFoundMessage = getProductNotFoundMessage(languageToUse);
+  const confirmDeleteMessage = getConfirmDeleteMessage(languageToUse);
+  const actionIrreversibleMessage = getActionIrreversibleMessage(languageToUse);
+  const selectAllMessage = getSelectAllMessage(languageToUse);
+  const selectItemSelectMessage = getItemsSelectedMessage(
+    languageToUse,
+    cartdb.selectedItems.length
+  );
+  const totalAmountMessage = getTotalAmountMessage(languageToUse);
+  const paymentMethodMessage = getPaymentMethodMessage(languageToUse);
+  const cashPaymentMessage = getCashPaymentMessage(languageToUse);
+  const visaPaymentMessage = getVisaPaymentMessage(languageToUse);
+  const insuranceAmountMessage = getInsuranceAmountMessage(languageToUse);
+  const amountToPayMessage = getAmountToPayMessage(languageToUse);
+  const paymentMessage = getPaymentMessage(languageToUse);
+  const coinMessage = getCoinMessage(languageToUse);
 
   const handleArrowClick = () => {
     scrollToDivRef.current?.scrollIntoView();
   };
 
-   // Monitor scroll position
-   useEffect(() => {
+  // Monitor scroll position
+  useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         // When the element is partially out of view, show ArrowDown
         setIsScrolled(!entry.isIntersecting);
 
         // When the element is entirely out of view (scrolled past), show ArrowUp
-        setIsScrolledPast(entry.boundingClientRect.top < 0 && !entry.isIntersecting);
+        setIsScrolledPast(
+          entry.boundingClientRect.top < 0 && !entry.isIntersecting
+        );
       },
       { threshold: 0.1 } // Adjusts visibility threshold to trigger when 10% of the element is out of view
     );
@@ -92,12 +133,13 @@ const SumaryDb: React.FC<SumaryProps> = ({
   const onRemoveAll = async () => {
     try {
       setLoadingChange(true);
-      await cartdb.removeSelectedItems(userId);
+
+      await cartdb.removeSelectedItems(userId, languageToUse);
       // Sau khi xóa, đảm bảo rằng các trạng thái được cập nhật
-      await cartdb.fetchCartItems(userId); // Làm mới dữ liệu giỏ hàng
-      toast.success("Tất cả lựa chọn trong giỏ hàng đã được xóa.");
+      await cartdb.fetchCartItems(userId, languageToUse); // Làm mới dữ liệu giỏ hàng
+      toast.success(toastSuccessCartItemDeleteMessage);
     } catch (error) {
-      toast.error("Xảy ra vấn đề khi xóa!");
+      toast.error(toastErrorMessage);
     } finally {
       setLoadingChange(false);
     }
@@ -181,7 +223,7 @@ const SumaryDb: React.FC<SumaryProps> = ({
             );
           } else {
             // Hiển thị thông báo lỗi mặc định cho người dùng
-            toast.error("An error occurred during checkout.");
+            toast.error(toastErrorMessage);
           }
         } finally {
           setLoadingfetchData(false);
@@ -197,7 +239,8 @@ const SumaryDb: React.FC<SumaryProps> = ({
       const fetchData = async () => {
         try {
           setLoadingChange(true);
-          await cartdb.fetchCartItems(userId);
+
+          await cartdb.fetchCartItems(userId, languageToUse);
         } catch (error) {
           console.error(error);
         } finally {
@@ -215,7 +258,7 @@ const SumaryDb: React.FC<SumaryProps> = ({
 
       if (!itemInCart || !itemInCart.product) {
         // Nếu itemInCart hoặc itemInCart.product là undefined, bỏ qua item này
-        toast.error("Không tìm thấy sản phẩm!");
+        toast.error(toastProductNotFoundMessage);
         return total;
       }
       //GetPrice dựa vào size
@@ -313,7 +356,7 @@ const SumaryDb: React.FC<SumaryProps> = ({
         );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
-        toast.error("An error occurred during check cash.");
+        toast.error(toastErrorMessage);
       }
     } finally {
       setLoadingChange(false);
@@ -355,7 +398,7 @@ const SumaryDb: React.FC<SumaryProps> = ({
         );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
-        toast.error("An error occurred during checkout.");
+        toast.error(toastErrorMessage);
       }
     } finally {
       setLoadingChange(false);
@@ -372,22 +415,24 @@ const SumaryDb: React.FC<SumaryProps> = ({
         handleCheckoutVisa(event);
       }
     } catch (error) {
-      toast.error("An error occurred during checkout.");
+      toast.error(toastErrorMessage);
     }
   };
 
   return (
     <>
       <AlertModal
-        title="Bạn có chắc chắn xóa tất cả sản phẩm đã chọn không?"
-        message="Hành động này không thể hoàn tác."
+        title={confirmDeleteMessage}
+        message={actionIrreversibleMessage}
         isOpen={openRemoveAll}
         onClose={() => setOpenRemoveAll(false)}
         onConfirm={onRemoveAll}
+        languageToUse={languageToUse}
       />
       <SeePaymentWarningModal
         isOpen={openPaymentWarning}
         onClose={() => setOpenPaymentWarning(false)}
+        languageToUse={languageToUse}
       />
 
       {/* Handle cho điện thoại hiển thị scroll nhanh chống xuống thanh toán */}
@@ -397,11 +442,18 @@ const SumaryDb: React.FC<SumaryProps> = ({
           onClick={handleArrowClick}
         >
           {/* Show ArrowDown if not scrolled past, ArrowUp if scrolled past */}
-          {isScrolledPast ? <ArrowUp className="w-5 h-5" /> : <ArrowDown className="w-5 h-5" />}
+          {isScrolledPast ? (
+            <ArrowUp className="w-5 h-5" />
+          ) : (
+            <ArrowDown className="w-5 h-5" />
+          )}
         </div>
       )}
 
-      <div ref={scrollToDivRef} className="md:sticky bottom-20 md:bottom-0 z-[9998] rounded-lg dark:bg-slate-600 bg-gray-50 p-4 lg:col-span-5 lg:mt-0">
+      <div
+        ref={scrollToDivRef}
+        className="md:sticky bottom-20 md:bottom-0 z-[9998] rounded-lg dark:bg-slate-600 bg-gray-50 p-4 lg:col-span-5 lg:mt-0"
+      >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-x-3">
             {/* Input ngăn chặn sản phẩm "hết hàng" quantity ===0 và "Không đủ hàng" nếu quantity hiện tại lớn hơn quantity trong kho  */}
@@ -432,12 +484,12 @@ const SumaryDb: React.FC<SumaryProps> = ({
             />
 
             <h2 className="text-base md:text-lg font-medium text-gray-900">
-              Chọn tất cả{" "}
+              {selectAllMessage}
               {cartdb.selectedItems.length <= 0 ? (
                 ""
               ) : (
                 <span className="text-gray-400 text-xs md:text-sm">
-                  (Đã chọn {cartdb.selectedItems.length} sản phẩm)
+                  ({selectItemSelectMessage})
                 </span>
               )}
             </h2>
@@ -453,7 +505,9 @@ const SumaryDb: React.FC<SumaryProps> = ({
         </div>
         <div className="mt-2 space-y-2">
           <div className="flex items-center justify-between border-t border-gray-200 py-2">
-            <div className="text-base font-medium text-gray-900">Tổng tiền</div>
+            <div className="text-base font-medium text-gray-900">
+              {totalAmountMessage}
+            </div>
             <Currency
               value={totalAmount}
               valueold={totalAmounts.totalPriceOld}
@@ -462,7 +516,7 @@ const SumaryDb: React.FC<SumaryProps> = ({
 
           <div className="flex items-center justify-between border-t border-gray-200 py-2">
             <div className="text-base font-medium text-gray-900">
-              Hình thức thanh toán
+              {paymentMethodMessage}
             </div>
             <Select
               disabled={loadingChange || selectedItems.length === 0}
@@ -474,36 +528,38 @@ const SumaryDb: React.FC<SumaryProps> = ({
               <SelectTrigger className="w-[180px] md:w-[200px] py-2 px-4 text-left bg-slate-200 dark:bg-slate-900 text-slate-900 dark:text-slate-200 rounded-md shadow-sm border border-gray-300 focus:outline-none">
                 <SelectValue placeholder="Chọn phương thức thanh toán">
                   {paymentMethod === PaymentMethodType.CashPayment
-                    ? "Thanh toán tiền mặt"
-                    : "Thanh toán Visa"}
+                    ? `${cashPaymentMessage}`
+                    : `${visaPaymentMessage}`}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent className="z-[99999]">
                 <SelectItem value={PaymentMethodType.CashPayment}>
-                  Thanh toán tiền mặt
+                  {cashPaymentMessage}
                 </SelectItem>
                 <SelectItem value={PaymentMethodType.VisaPayment}>
-                  Thanh toán Visa
+                  {visaPaymentMessage}
                 </SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="flex items-center justify-between border-t border-gray-200 py-2">
-            <div className="text-base font-medium text-gray-900">Xu</div>
+            <div className="text-base font-medium text-gray-900">
+              {coinMessage}
+            </div>
             <Currency value={-totalCoins} />
           </div>
 
           <div className="flex items-center justify-between border-t border-gray-200 py-2">
             <div className="text-base font-medium text-gray-900">
-              Tiền bảo hiểm
+              {insuranceAmountMessage}
             </div>
             <Currency value={totalWarrantyAmount} />
           </div>
 
           <div className="flex items-center justify-between border-t border-gray-200 py-2">
             <div className="text-base font-medium text-gray-900">
-              Số tiền cần thanh toán
+              {amountToPayMessage}
             </div>
             <Currency value={TotalAmountCoins} />
           </div>
@@ -529,14 +585,14 @@ const SumaryDb: React.FC<SumaryProps> = ({
                 <div className="post">
                   <div className="post-line"></div>
                   <div className="screen">
-                    <div className="dollar">$</div>
+                    <div className="dollar">₫</div>
                   </div>
                   <div className="numbers"></div>
                   <div className="numbers-line2"></div>
                 </div>
               </div>
               <div className="right-side">
-                <div className="new">Thanh toán</div>
+                <div className="new">{paymentMessage}</div>
 
                 <svg
                   viewBox="0 0 451.846 451.847"

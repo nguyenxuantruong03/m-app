@@ -2,7 +2,6 @@
 import { useState, useEffect, useTransition } from "react";
 import {
   Ellipsis,
-  User,
   Earth,
   Lock,
   SquarePen,
@@ -26,13 +25,26 @@ import { AlertModal } from "@/components/modals/alert-modal";
 import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
 import EmojiReview from "@/app/(profile)/me/[username]/_components/emoji";
 import Link from "next/link";
-import ImageCellOne from "@/components/image-cell-one";
 import { LiveKitRoom } from "@livekit/components-react";
 import { Video } from "@/components/stream-player/video";
 import { useViewerToken } from "@/hooks/use-viewer-token";
-import { cn } from "@/lib/utils";
-import { LiveBadge } from "@/components/live-badge";
 import CircleAvatar from "@/components/ui/circle-avatar";
+import {
+  getToastError,
+  translateBad,
+  translateDeletePost,
+  translateEditPost,
+  translateFollowers,
+  translateItemType,
+  translateNotSatisfied,
+  translatePersonal,
+  translateProduct,
+  translatePublic,
+  translateQuiteSatisfied,
+  translateUpdate,
+  translateVerySatisfied,
+  translateViewProduct,
+} from "@/translate/translate-client";
 
 interface postCardProps {
   self: any;
@@ -40,6 +52,7 @@ interface postCardProps {
   user: any;
   showFunction?: boolean;
   postFilter: any;
+  languageToUse: string;
 }
 
 interface ImageObject {
@@ -52,10 +65,11 @@ const PostCard = ({
   user,
   showFunction = true,
   postFilter,
+  languageToUse,
 }: postCardProps) => {
   const { update } = useSession();
   const router = useRouter();
-  const { token, name, identity } = useViewerToken(user?.id || "");
+  const { token, name, identity } = useViewerToken(user?.id || "", languageToUse);
 
   const [isOpenOneImage, setIsOpenOneImage] = useState(false);
   const [valueImage, setValueImage] = useState("");
@@ -69,6 +83,21 @@ const PostCard = ({
   const [alertGuestModal, setAlertGuestModal] = useState(false);
 
   const [isPending, startTransition] = useTransition();
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const verySatisfiedMessage = translateVerySatisfied(languageToUse);
+  const quiteSatisfiedMessage = translateQuiteSatisfied(languageToUse);
+  const notSatisfiedMessage = translateNotSatisfied(languageToUse);
+  const badMessage = translateBad(languageToUse);
+  const editPostMessage = translateEditPost(languageToUse);
+  const updateMessage = translateUpdate(languageToUse);
+  const deletePostMessage = translateDeletePost(languageToUse);
+  const itemTypeMessage = translateItemType(languageToUse);
+  const productMessage = translateProduct(languageToUse);
+  const publicMessage = translatePublic(languageToUse);
+  const personalMessage = translatePersonal(languageToUse);
+  const followerMessage = translateFollowers(languageToUse);
+  const viewProductMessage = translateViewProduct(languageToUse);
 
   useEffect(() => {
     if (openPost) {
@@ -113,10 +142,10 @@ const PostCard = ({
   };
 
   const ratingMessages: { [key: number]: string } = {
-    1: "🤩Rất hài lòng",
-    2: "🥰Khá hài lòng",
-    3: "🤨Không hài lòng",
-    4: "😔Tệ",
+    1: verySatisfiedMessage,
+    2: quiteSatisfiedMessage,
+    3: notSatisfiedMessage,
+    4: badMessage,
   };
 
   //1.Logic follow hiện tại nếu như người dùng follow mình thì không thể xem được bài viết người theo dõi.
@@ -184,7 +213,7 @@ const PostCard = ({
       // Use the Link component for navigation
       router.push(href);
     } else {
-      console.error("Invalid route:", route);
+      toast.error(toastErrorMessage);
     }
   };
 
@@ -200,7 +229,7 @@ const PostCard = ({
           }
         })
         .catch(() => {
-          toast.error("Something went wrong");
+          toast.error(toastErrorMessage);
         });
     });
   };
@@ -212,11 +241,13 @@ const PostCard = ({
         onClose={() => setIsOpenDeletePost(false)}
         onConfirm={onSubmit}
         loading={isPending}
+        languageToUse={languageToUse}
       />
       <ZoomImageAttendanceModal
         isOpen={isOpenOneImage}
         onClose={() => setIsOpenOneImage(false)}
         imageUrl={valueImage}
+        languageToUse={languageToUse}
       />
       <ZoomImageModal
         imageUrl={currentImages} // Pass the current images to the modal
@@ -227,6 +258,7 @@ const PostCard = ({
       <AlertGuestModal
         isOpen={alertGuestModal}
         onClose={() => setAlertGuestModal(false)}
+        languageToUse={languageToUse}
       />
       {openPost && (
         <>
@@ -234,7 +266,7 @@ const PostCard = ({
             <div className="h-[400px] md:h-[500px] overflow-y-auto w-3/4 max-w-md border rounded-md gap-4 bg-slate-900 p-6 shadow-lg transition ease-in-out z-[9999999]">
               <div className="flex items-center justify-between">
                 <span className="text-lg font-semibold text-foreground break-all line-clamp-2 text-white">
-                  Chỉnh sửa bài viết
+                  {editPostMessage}
                 </span>
                 <span
                   onClick={() => setOpenPost(false)}
@@ -278,6 +310,7 @@ const PostCard = ({
                 role={self.stream.user.role}
                 showInfo={true}
                 showExtension={false}
+                languageToUse={languageToUse}
               />
             </LiveKitRoom>
           </div>
@@ -287,9 +320,13 @@ const PostCard = ({
       {filteredReviews.map((item: any) => (
         <>
           <div key={item.id} className="bg-slate-900 rounded-md p-2 text-white">
-          <div className={`flex items-center justify-between ${self.stream?.isLive ? "ml-[4.5rem]" : ""}`}>
+            <div
+              className={`flex items-center justify-between ${
+                self.stream?.isLive ? "ml-[4.5rem]" : ""
+              }`}
+            >
               <div className="space-x-2 flex">
-              {self.stream?.isLive ? (
+                {self.stream?.isLive ? (
                   <Link href={`/live/${self.nameuser}`}>
                     <CircleAvatar
                       nameuser={self.nameuser || ""}
@@ -316,7 +353,9 @@ const PostCard = ({
                 )}
                 <div>
                   <Hint label={`${self.nameuser}`} side="bottom">
-                    <p className="font-semibold truncate max-w-[7rem] md:max-w-md overflow-hidden">{self.name}</p>
+                    <p className="font-semibold truncate max-w-[7rem] md:max-w-md overflow-hidden">
+                      {self.name}
+                    </p>
                   </Hint>
                   <p className="text-sm text-gray-300">
                     {formatDistanceToNow(new Date(item.createdAt), {
@@ -331,7 +370,7 @@ const PostCard = ({
                     handleClick(item.product.name, item.product.productType)
                   }
                 >
-                  <Hint label="Xem sản phẩm">
+                  <Hint label={viewProductMessage}>
                     <SquarePen className="h-7 w-7 p-1 text-white hover:text-opacity-70 cursor-pointer hover:p-1 hover:bg-slate-300 hover:bg-opacity-50 rounded-md" />
                   </Hint>
                 </div>
@@ -357,7 +396,8 @@ const PostCard = ({
                                 handleClickIdPost(item.id, event);
                               }}
                             >
-                              <Pencil className="w-5 h-5 mr-2" /> Cập nhật
+                              <Pencil className="w-5 h-5 mr-2" />{" "}
+                              {updateMessage}
                             </p>
                             <p
                               className="hover:bg-gray-500 hover:bg-opacity-50 cursor-pointer p-2 rounded-md flex items-center"
@@ -366,7 +406,7 @@ const PostCard = ({
                               }
                             >
                               <Trash className="w-5 h-5 mr-2" />
-                              Xóa bài viết
+                              {deletePostMessage}
                             </p>
                           </div>
                         </div>
@@ -382,22 +422,26 @@ const PostCard = ({
                   <span>{ratingMessages[item.rating]}</span>
                 )}
               </span>
-              <span>Loại hàng: {item.categoryName}</span>
-              <span>Sản phẩm: {item.product.heading}</span>
+              <span>
+                {itemTypeMessage} {item.categoryName}
+              </span>
+              <span>
+                {productMessage}: {item.product.heading}
+              </span>
               <span className="flex items-center">
                 {item.isPublic === "public" && (
                   <span className="flex items-center">
-                    <Earth className="mr-1 h-3 w-3" /> Công khai
+                    <Earth className="mr-1 h-3 w-3" /> {publicMessage}
                   </span>
                 )}
                 {item.isPublic === "individual" && (
                   <span className="flex items-center">
-                    <Lock className="w-3 h-3 mr-1" /> Cá nhân
+                    <Lock className="w-3 h-3 mr-1" /> {personalMessage}
                   </span>
                 )}
                 {item.isPublic === "follow" && (
                   <span className="flex items-center">
-                    <Users className="w-3 h-3 mr-1" /> Người theo dõi
+                    <Users className="w-3 h-3 mr-1" /> {followerMessage}
                   </span>
                 )}
               </span>
@@ -448,6 +492,7 @@ const PostCard = ({
               product={item.product}
               productId={item.product.id}
               loading={isPending}
+              languageToUse={languageToUse}
             />
           </div>
         </>

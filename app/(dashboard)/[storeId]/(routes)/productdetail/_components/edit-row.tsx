@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/sheet";
 import LabelForm from "./form-edit";
 import { Decimal } from "@prisma/client/runtime/library";
+import { getProductDetailEditRow } from "@/translate/translate-dashboard";
 
 interface EditRowProps {
   id: string;
@@ -87,6 +88,7 @@ interface EditRowProps {
   description3salientfeatures: string;
   description4salientfeatures: string;
   contentsalientfeatures: string;
+  language: string;
   field:
     | "title"
     | "name1"
@@ -225,8 +227,13 @@ const EditRow: React.FC<EditRowProps> = ({
   description4salientfeatures,
   contentsalientfeatures,
   field,
+  language
 }) => {
   const [open, setOpen] = useState(false);
+
+  //language
+  const productDetailEditRowMessage = getProductDetailEditRow(language)
+
   const handleClick = () => {
     setOpen(true);
   };
@@ -248,8 +255,8 @@ const EditRow: React.FC<EditRowProps> = ({
       <Sheet open={open} onOpenChange={handleOnClose}>
         <SheetContent className="space-y-4">
           <SheetHeader>
-            <SheetTitle>Edit {title}.</SheetTitle>
-            <SheetDescription>Edit an existing {data}.</SheetDescription>
+            <SheetTitle>{productDetailEditRowMessage.edit} {title}.</SheetTitle>
+            <SheetDescription>{productDetailEditRowMessage.editAnExisting} {data}.</SheetDescription>
           </SheetHeader>
           <LabelForm
             data={data}
@@ -327,6 +334,7 @@ const EditRow: React.FC<EditRowProps> = ({
             description4salientfeatures={description4salientfeatures}
             contentsalientfeatures={contentsalientfeatures}
             field={field}
+            language={language}
           />
         </SheetContent>
       </Sheet>

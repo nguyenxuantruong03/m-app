@@ -37,16 +37,57 @@ import { Loader, Earth, Lock, User } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { getAllCategory } from "@/actions/client/categories/get-all-category";
 import { getAllProductNotQuery } from "@/actions/client/products/get-products";
+import {
+  getToastError,
+  translateBad,
+  translateCancel,
+  translateCategory,
+  translateEmpty,
+  translateEnterDetailedContent,
+  translateEnterProductContent,
+  translateFollowers,
+  translateLoading,
+  translateMode,
+  translateNotSatisfied,
+  translatePersonal,
+  translatePostLimitHourse,
+  translatePostLimitMinute,
+  translateProduct,
+  translateProductImageDescription,
+  translatePublic,
+  translateQuiteSatisfied,
+  translateRemainingChars,
+  translateSave,
+  translateSelectCategory,
+  translateSelectPostMode,
+  translateSelectProduct,
+  translateSelectProductCategory,
+  translateSelectProductImages,
+  translateSelectProductQuality,
+  translateSelectSuitableProduct,
+  translateStatus,
+  translateVerySatisfied,
+  translateWhatAreYouThinking,
+} from "@/translate/translate-client";
 interface FormPostExploreProps {
   setOpen?: Dispatch<SetStateAction<boolean>>;
   reviews: any;
   id?: string;
   userId?: string;
+  language: string;
+  role?: string;
 }
 
 const MAX_CHAR_COUNT = 200;
 
-const FormPostExplore = ({ setOpen, reviews, id, userId }: FormPostExploreProps) => {
+const FormPostExplore = ({
+  setOpen,
+  reviews,
+  id,
+  userId,
+  language,
+  role,
+}: FormPostExploreProps) => {
   const router = useRouter();
   const { update } = useSession();
 
@@ -66,6 +107,60 @@ const FormPostExplore = ({ setOpen, reviews, id, userId }: FormPostExploreProps)
   const [isPending, startTransition] = useTransition();
   const [loadingProduct, setLoadingProduct] = useState(false);
   const [loadingCategory, setLoadingCategory] = useState(false);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    userId && role !== "GUEST" ? language : storedLanguage || "vi";
+
+  const toastErrorMessage = getToastError(languageToUse);
+  const enterProductContentMessage =
+    translateEnterProductContent(languageToUse);
+  const enterDetailedContentMessage =
+    translateEnterDetailedContent(languageToUse);
+  const selectPostModeMessage = translateSelectPostMode(languageToUse);
+  const selectProductQualityMessage =
+    translateSelectProductQuality(languageToUse);
+  const selectProductCategoryMessage =
+    translateSelectProductCategory(languageToUse);
+  const selectSuitableProductMessage =
+    translateSelectSuitableProduct(languageToUse);
+  const whatAreYouThinkingMessage = translateWhatAreYouThinking(languageToUse);
+  const remainingCharsMessage = translateRemainingChars(
+    languageToUse,
+    remainingChars
+  );
+  const modeMessage = translateMode(languageToUse);
+  const publicMessage = translatePublic(languageToUse);
+  const personalMessage = translatePersonal(languageToUse);
+  const followerMessage = translateFollowers(languageToUse);
+  const statusMessage = translateStatus(languageToUse);
+  const verySatisfiedMessage = translateVerySatisfied(languageToUse);
+  const quiteSatisfiedMessage = translateQuiteSatisfied(languageToUse);
+  const notSatisfiedMessage = translateNotSatisfied(languageToUse);
+  const badMessage = translateBad(languageToUse);
+  const productImageDescriptionMessage =
+    translateProductImageDescription(languageToUse);
+  const selectProductImageMessage = translateSelectProductImages(
+    languageToUse,
+    4
+  );
+  const categoryMessage = translateCategory(languageToUse);
+  const selectCategoryMessage = translateSelectCategory(languageToUse);
+  const productMessage = translateProduct(languageToUse);
+  const selectProductMessage = translateSelectProduct(languageToUse);
+  const emptyMessage = translateEmpty(languageToUse);
+  const saveMessage = translateSave(languageToUse);
+  const cancelMessage = translateCancel(languageToUse);
+  const loadingMessage = translateLoading(languageToUse);
 
   useEffect(() => {
     const inputElement = document.getElementById("content-input");
@@ -81,10 +176,10 @@ const FormPostExplore = ({ setOpen, reviews, id, userId }: FormPostExploreProps)
         setLoadingCategory(true);
 
         // Lấy categories
-        const allCategories = await getAllCategory();
+        const allCategories = await getAllCategory(languageToUse);
         setCategories(allCategories);
       } catch {
-        toast.error("Dữ liệu hệ thống không tìm thấy!");
+        toast.error(toastErrorMessage);
       } finally {
         setLoadingCategory(false);
       }
@@ -105,11 +200,15 @@ const FormPostExplore = ({ setOpen, reviews, id, userId }: FormPostExploreProps)
       try {
         setLoadingProduct(true);
 
+        // Ensure a valid string is passed to getAllCategory
+        const languageToUse =
+          userId && role !== "GUEST" ? language : storedLanguage || "vi";
+
         // Lấy products
-        const allProducts = await getAllProductNotQuery();
+        const allProducts = await getAllProductNotQuery(languageToUse);
         setProducts(allProducts);
       } catch {
-        toast.error("Dữ liệu hệ thống không tìm thấy!");
+        toast.error(toastErrorMessage);
       } finally {
         setLoadingProduct(false);
       }
@@ -193,47 +292,55 @@ const FormPostExplore = ({ setOpen, reviews, id, userId }: FormPostExploreProps)
     )[0]?.createdAt;
 
     if (!id) {
-    if (createdAt) {
-      const now = new Date();
-      const diff = now.getTime() - new Date(createdAt).getTime(); // Chuyển đổi createdAt thành đối tượng Date
-      const diffHours = diff / (1000 * 60 * 60); // Tính sự khác biệt về giờ
-      const diffMinutes = Math.ceil((diff % (1000 * 60 * 60)) / (1000 * 60)); // Tính số phút còn lại
-    
-      // Nếu dưới 24 giờ
-      if (diffHours < 24) {
-        if (diffHours < 1) {
-          // Nếu còn dưới 1 giờ
-          return toast.error(`Mỗi ngày chỉ được đăng 1 bài. Hãy quay lại sau ${diffMinutes} phút nữa!`); // Hiển thị số phút còn lại
-        } else {
-          const hoursRemaining = Math.ceil(24 - diffHours); // Tính số giờ còn lại và làm tròn lên
-          return toast.error(`Mỗi ngày chỉ được đăng 1 bài. Hãy quay lại sau ${hoursRemaining} giờ nữa!`); // Hiển thị số giờ còn lại
+      if (createdAt) {
+        const now = new Date();
+        const diff = now.getTime() - new Date(createdAt).getTime(); // Chuyển đổi createdAt thành đối tượng Date
+        const diffHours = diff / (1000 * 60 * 60); // Tính sự khác biệt về giờ
+        const diffMinutes = Math.ceil((diff % (1000 * 60 * 60)) / (1000 * 60)); // Tính số phút còn lại
+
+        // Nếu dưới 24 giờ
+        if (diffHours < 24) {
+          if (diffHours < 1) {
+            const postLimitMinute = translatePostLimitMinute(
+              languageToUse,
+              diffMinutes
+            );
+            // Nếu còn dưới 1 giờ
+            return toast.error(postLimitMinute); // Hiển thị số phút còn lại
+          } else {
+            const hoursRemaining = Math.ceil(24 - diffHours); // Tính số giờ còn lại và làm tròn lên
+            const postLimitHourse = translatePostLimitHourse(
+              languageToUse,
+              hoursRemaining
+            );
+            return toast.error(postLimitHourse); // Hiển thị số giờ còn lại
+          }
         }
       }
     }
-  }
-    
+
     if (!values.content) {
-      return toast.error("Vui lòng nhập nội dung sản phẩm!");
+      return toast.error(enterProductContentMessage);
     }
 
     if (values.content.length < 2) {
-      return toast.error("Vui lòng nhập nội dung chi tiết hơn!");
+      return toast.error(enterDetailedContentMessage);
     }
 
     if (!values.isPublic) {
-      return toast.error("Vui lòng chọn chế độ bài viết!");
+      return toast.error(selectPostModeMessage);
     }
 
     if (!values.rating) {
-      return toast.error("Vui lòng chọn chất lượng sản phẩm!");
+      return toast.error(selectProductQualityMessage);
     }
 
     if (!values.categoryName || values.categoryName === "empty") {
-      return toast.error("Vui lòng chọn danh mục sản phẩm!");
+      return toast.error(selectProductCategoryMessage);
     }
 
     if (!values.productId || values.productId === "empty") {
-      return toast.error("Vui lòng chọn sản phẩm phù hợp!");
+      return toast.error(selectSuitableProductMessage);
     }
 
     // Automatically remove only trailing spaces from content
@@ -253,7 +360,7 @@ const FormPostExplore = ({ setOpen, reviews, id, userId }: FormPostExploreProps)
           }
         })
         .catch(() => {
-          toast.error("Something went wrong");
+          toast.error(toastErrorMessage);
         });
     });
   };
@@ -272,7 +379,7 @@ const FormPostExplore = ({ setOpen, reviews, id, userId }: FormPostExploreProps)
                     <Textarea
                       id="content-input"
                       {...field}
-                      placeholder="Bạn đang nghĩ gì?"
+                      placeholder={whatAreYouThinkingMessage}
                       disabled={isPending}
                       autoComplete="off"
                       onChange={handleContentChange} // Attach the change handler
@@ -284,7 +391,7 @@ const FormPostExplore = ({ setOpen, reviews, id, userId }: FormPostExploreProps)
               )}
             />
             <p className="text-end text-sm text-gray-500">
-              Còn {remainingChars} ký tự nữa
+              {remainingCharsMessage}
             </p>
           </div>
           <FormField
@@ -292,7 +399,7 @@ const FormPostExplore = ({ setOpen, reviews, id, userId }: FormPostExploreProps)
             name="isPublic"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-blue-500">Chế độ</FormLabel>
+                <FormLabel className="text-blue-500">{modeMessage}</FormLabel>
                 <FormControl>
                   <div className="flex space-x-4">
                     <div
@@ -304,7 +411,7 @@ const FormPostExplore = ({ setOpen, reviews, id, userId }: FormPostExploreProps)
                         isPublic === "public" ? "border border-green-600 " : ""
                       }`}
                     >
-                      <Earth className="mr-1 h-5 w-5" /> Công khai
+                      <Earth className="mr-1 h-5 w-5" /> {publicMessage}
                     </div>
                     <div
                       onClick={() => {
@@ -312,21 +419,23 @@ const FormPostExplore = ({ setOpen, reviews, id, userId }: FormPostExploreProps)
                         field.onChange("individual"); // Update form field
                       }}
                       className={`cursor-pointer px-4 py-2 rounded-md text-white flex items-center ${
-                        isPublic === "individual" ? "border border-green-600" : ""
+                        isPublic === "individual"
+                          ? "border border-green-600"
+                          : ""
                       }`}
                     >
-                      <Lock className="w-5 h-5 mr-1" /> Cá nhân
+                      <Lock className="w-5 h-5 mr-1" /> {personalMessage}
                     </div>
                     <div
                       onClick={() => {
-                        setIsPublic("follow"); // Set state to false for Cá nhân
+                        setIsPublic("follow"); // Set state to false for Theo dõi
                         field.onChange("follow"); // Update form field
                       }}
                       className={`cursor-pointer px-4 py-2 rounded-md text-white flex items-center ${
                         isPublic === "follow" ? "border border-green-600" : ""
                       }`}
                     >
-                      <User className="w-5 h-5 mr-1" /> Theo dõi
+                      <User className="w-5 h-5 mr-1" /> {followerMessage}
                     </div>
                   </div>
                 </FormControl>
@@ -338,16 +447,16 @@ const FormPostExplore = ({ setOpen, reviews, id, userId }: FormPostExploreProps)
             name="rating"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-blue-500">Trạng thái</FormLabel>
+                <FormLabel className="text-blue-500">{statusMessage}</FormLabel>
                 <FormControl>
                   <div className="grid grid-cols-2 gap-4">
                     {" "}
                     {/* Adjusted grid layout */}
                     {[
-                      "🤩Rất hài lòng",
-                      "🥰Khá hài lòng",
-                      "🤨Không hài lòng",
-                      "😔Tệ",
+                      verySatisfiedMessage,
+                      quiteSatisfiedMessage,
+                      notSatisfiedMessage,
+                      badMessage,
                     ].map((rating, index) => (
                       <p
                         key={index}
@@ -375,7 +484,7 @@ const FormPostExplore = ({ setOpen, reviews, id, userId }: FormPostExploreProps)
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-blue-500">
-                  Hình ảnh mô tả sản phẩm
+                  {productImageDescriptionMessage}
                 </FormLabel>
                 <FormControl>
                   <ImageUpload
@@ -385,7 +494,7 @@ const FormPostExplore = ({ setOpen, reviews, id, userId }: FormPostExploreProps)
                       if (field.value.length < 4) {
                         field.onChange([...field.value, { url }]);
                       } else {
-                        toast.error("Chỉ chọn 4 ảnh sản phẩm chi tiết nhất.");
+                        toast.error(selectProductImageMessage);
                       }
                     }}
                     onRemove={(url) =>
@@ -394,6 +503,7 @@ const FormPostExplore = ({ setOpen, reviews, id, userId }: FormPostExploreProps)
                       ])
                     }
                     maxFiles={4}
+                    language={languageToUse}
                   />
                 </FormControl>
               </FormItem>
@@ -405,7 +515,9 @@ const FormPostExplore = ({ setOpen, reviews, id, userId }: FormPostExploreProps)
               name="categoryName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-blue-500">Category</FormLabel>
+                  <FormLabel className="text-blue-500">
+                    {categoryMessage}
+                  </FormLabel>
                   <Select
                     onValueChange={(id) => {
                       const selectedCategory = categories.find(
@@ -436,12 +548,12 @@ const FormPostExplore = ({ setOpen, reviews, id, userId }: FormPostExploreProps)
                     disabled={isPending || loadingCategory}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a category" />
+                      <SelectValue placeholder={selectCategoryMessage} />
                     </SelectTrigger>
                     <SelectContent>
                       {categories.length === 0 ? (
                         <SelectItem disabled value="empty">
-                          Trống
+                          {emptyMessage}
                         </SelectItem>
                       ) : (
                         categories.map((categorie: Category) => (
@@ -462,21 +574,23 @@ const FormPostExplore = ({ setOpen, reviews, id, userId }: FormPostExploreProps)
               name="productId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-blue-500">Product</FormLabel>
+                  <FormLabel className="text-blue-500">
+                    {productMessage}
+                  </FormLabel>
                   <Select
                     onValueChange={(value) => {
                       field.onChange(value);
                     }}
                     value={field.value || ""}
-                    disabled={isPending || loadingProduct}
+                    disabled={isPending || loadingProduct || !selectedCategory}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a product" />
+                      <SelectValue placeholder={selectProductMessage} />
                     </SelectTrigger>
                     <SelectContent>
                       {filteredProducts.length === 0 ? (
                         <SelectItem disabled value="empty">
-                          Trống
+                          {emptyMessage}
                         </SelectItem>
                       ) : (
                         filteredProducts.map((product: Product) => (
@@ -497,7 +611,7 @@ const FormPostExplore = ({ setOpen, reviews, id, userId }: FormPostExploreProps)
           {(loadingCategory || loadingProduct) && (
             <>
               <Loader className="h-10 w-10 text-muted-foreground animate-spin" />
-              <p className="text-gray-300 mt-2">Loading...</p>
+              <p className="text-gray-300 mt-2">{loadingMessage}</p>
             </>
           )}
         </div>
@@ -508,7 +622,7 @@ const FormPostExplore = ({ setOpen, reviews, id, userId }: FormPostExploreProps)
             onClick={() => setOpen?.(false)}
             disabled={isPending}
           >
-            Cancel
+            {cancelMessage}
           </Button>
           <Button
             className="text-white"
@@ -516,7 +630,7 @@ const FormPostExplore = ({ setOpen, reviews, id, userId }: FormPostExploreProps)
             type="submit"
             disabled={isPending || loadingCategory || loadingProduct}
           >
-            Save
+            {saveMessage}
           </Button>
         </div>
       </form>

@@ -10,38 +10,7 @@ import {
 } from "@/components/ui/sheet";
 import LabelForm from "./form-edit";
 import { ImageCredential } from "@/types/type";
-
-const degreeMappings: Record<string, string> = {
-  None: "Không xác định",
-  Elementary: "Tiểu học",
-  JuniorHighSchool: "Trung học",
-  HighSchool: "Trung học phổ thông",
-  JuniorColleges: "Cao đẳng",
-  University: "Đại học",
-  MastersDegree: "Thạc sĩ",
-};
-
-const maritalStatusMappings: Record<string, string> = {
-  None: "Không xác định",
-  Single: "Độc thân",
-  Married: "Kết hôn",
-  Separated: "Ly hôn",
-  Remarried: "Tái hôn",
-};
-
-const wokingTimeMappings: Record<string, string> = {
-  None: "Không xác định",
-  Parttime4h: "4 tiếng",
-  Parttime8h: "8 tiếng",
-  Fulltime: "Cả ngày",
-  SeasonalJob: "Thời vụ",
-};
-
-const genderMappings: Record<string, string> = {
-  None: "Không xác định",
-  Male: "Nam",
-  Female: "Nữ",
-};
+import { getManageStaffEditRow } from "@/translate/translate-dashboard";
 
 interface EditRowProps {
   id: string;
@@ -80,6 +49,7 @@ interface EditRowProps {
     | "degree"
     | "maritalStatus";
   isBanned: boolean | null;
+  language: string;
 }
 const EditRow: React.FC<EditRowProps> = ({
   id,
@@ -107,8 +77,13 @@ const EditRow: React.FC<EditRowProps> = ({
   data,
   isBanned,
   field,
+  language
 }) => {
   const [open, setOpen] = useState(false);
+
+  //language
+  const manageStaffEditRowMessage = getManageStaffEditRow(language)
+
   const handleClick = () => {
     setOpen(true);
   };
@@ -116,24 +91,6 @@ const EditRow: React.FC<EditRowProps> = ({
     setOpen(false);
   };
 
-  // Hàm chuyển đổi giá trị data thành tiếng Việt tương ứng
-  const convertDataToVietnamese = (
-    dataKey: string,
-    dataValue: string | null
-  ) => {
-    switch (dataKey) {
-      case "gender":
-        return genderMappings[dataValue || "None"];
-      case "degree":
-        return degreeMappings[dataValue || "None"];
-      case "maritalStatus":
-        return maritalStatusMappings[dataValue || "None"];
-      case "workingTime":
-        return wokingTimeMappings[dataValue || "None"];
-      default:
-        return dataValue;
-    }
-  };
   return (
     <>
       <div
@@ -144,14 +101,14 @@ const EditRow: React.FC<EditRowProps> = ({
             : "hover:underline cursor-pointer"
         }
       >
-        {data || "Không tìm thấy!"}
+        {data || manageStaffEditRowMessage.notFound}
       </div>
 
       <Sheet open={open} onOpenChange={handleonClose}>
         <SheetContent className="space-y-4">
           <SheetHeader>
-            <SheetTitle>Edit {data}</SheetTitle>
-            <SheetDescription>Edit an existing {data}.</SheetDescription>
+            <SheetTitle>{manageStaffEditRowMessage.edit} {data}</SheetTitle>
+            <SheetDescription>{manageStaffEditRowMessage.editAnExisting} {data}.</SheetDescription>
           </SheetHeader>
           <LabelForm
             data={data}
@@ -179,6 +136,7 @@ const EditRow: React.FC<EditRowProps> = ({
             dateofbirth={dateofbirth}
             field={field}
             setOpen={setOpen}
+            language={language}
           />
         </SheetContent>
       </Sheet>

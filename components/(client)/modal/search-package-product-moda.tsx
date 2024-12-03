@@ -2,7 +2,7 @@
 
 import Modal from "@/components/ui/modal";
 import { Order, OrderItem, ProductType } from "@/types/type";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   getColorPrice,
   getSizePrice,
@@ -14,11 +14,45 @@ import StatusProduct from "@/app/(home-client)/warehouse/components/ui/statusPro
 import Currency from "@/components/ui/currency";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import {
+  getToastError,
+  translateColorCategory,
+  translateSizeCategory,
+  translateWaitingForConfirmation,
+  translateProcessing,
+  translatePreparingGoods,
+  translatePackingGoods,
+  translateShippedToShipper,
+  translateHandedOverToShipper,
+  translateOrderShipping,
+  translateDelivering,
+  translateReDelivering,
+  translateReDeliveringNow,
+  translateDeliverySuccessful,
+  translateCompleted,
+  translateOrderCancelled,
+  translateCancelOrder,
+  translateReturnToShop,
+  translateReturnItem,
+  translateShipperConfirmingOrder,
+  translateShipperPreparingToArrive,
+  translateShipperPickingUpOrder,
+  translateReceiveItem,
+  translateItemReceivedWithIssue,
+  translateReturnItemSuccess,
+  translatePickUpAtStore,
+  translatePickUpAtStoreUpperCase,
+  translatePreparingOrder,
+  translatePrepareOrder,
+  translateOrderPrepared,
+  translateCustomerPickUp,
+} from "@/translate/translate-client";
 
 interface SeatchPackageProductProps {
   isOpen: boolean;
   onClose: () => void;
   order: Order[];
+  languageToUse: string;
   inputValue: string;
 }
 
@@ -27,13 +61,55 @@ export const SeatchPackageProduct: React.FC<SeatchPackageProductProps> = ({
   onClose,
   order,
   inputValue,
+  languageToUse,
 }) => {
-  const router = useRouter()
+  const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  //languages
+  const colorCategoryMessage = translateColorCategory(languageToUse);
+  const sizeCategoryMessage = translateSizeCategory(languageToUse);
+  const toastErrorMessage = getToastError(languageToUse);
+
+  const waitingforConfirmationMessage =
+    translateWaitingForConfirmation(languageToUse);
+  const processingMessage = translateProcessing(languageToUse);
+  const preparingGoodsMessage = translatePreparingGoods(languageToUse);
+  const packingGoodsMessage = translatePackingGoods(languageToUse);
+  const shippedToShipperMessage = translateShippedToShipper(languageToUse);
+  const handedOverToShipperMessage =
+    translateHandedOverToShipper(languageToUse);
+  const OrderShippingMessage = translateOrderShipping(languageToUse);
+  const deliveringMessage = translateDelivering(languageToUse);
+  const reDeliveringMessage = translateReDelivering(languageToUse);
+  const reDeliveringNowMessage = translateReDeliveringNow(languageToUse);
+  const deliverySuccessfulMessage = translateDeliverySuccessful(languageToUse);
+  const completedMessage = translateCompleted(languageToUse);
+  const orderCancelledMessage = translateOrderCancelled(languageToUse);
+  const cancelOrderMessage = translateCancelOrder(languageToUse);
+  const returnToShopMessage = translateReturnToShop(languageToUse);
+  const returnItemMessage = translateReturnItem(languageToUse);
+  const shipperConfirmingOrderMessage =
+    translateShipperConfirmingOrder(languageToUse);
+  const shipperPreparingToArriveMessage =
+    translateShipperPreparingToArrive(languageToUse);
+  const shipperPickingUpOrderMessage =
+    translateShipperPickingUpOrder(languageToUse);
+  const receiveItemMessage = translateReceiveItem(languageToUse);
+  const itemReceivedWithIssueMessage =
+    translateItemReceivedWithIssue(languageToUse);
+  const returnItemSuccessMessage = translateReturnItemSuccess(languageToUse);
+  const PickUpAtStoreMessage = translatePickUpAtStore(languageToUse);
+  const pickUpAtStoreUpperCaseMessage =
+    translatePickUpAtStoreUpperCase(languageToUse);
+  const preparingOrderMessage = translatePreparingOrder(languageToUse);
+  const prepareOrderMessage = translatePrepareOrder(languageToUse);
+  const oderPreparedMessage = translateOrderPrepared(languageToUse);
+  const customerPickUpMessage = translateCustomerPickUp(languageToUse);
 
   if (!isMounted) {
     return null;
@@ -81,7 +157,7 @@ export const SeatchPackageProduct: React.FC<SeatchPackageProductProps> = ({
       // Use the Link component for navigation
       router.push(href);
     } else {
-      console.error("Invalid route:", route);
+      toast.error(toastErrorMessage);
     }
   };
 
@@ -109,14 +185,14 @@ export const SeatchPackageProduct: React.FC<SeatchPackageProductProps> = ({
 
   return (
     <Modal
-      title={ "Chi tiết sản phẩm"}
+      title={"Chi tiết sản phẩm"}
       description={""}
       isOpen={isOpen}
       onClose={onClose}
     >
-        {matchId.length=== 0 &&(
-            <>Không tìm thấy id của sản phẩm. Hãy thử lại!</>
-        )}
+      {matchId.length === 0 && (
+        <>Không tìm thấy id của sản phẩm. Hãy thử lại!</>
+      )}
       {matchId.map((order: Order) => (
         <div key={order.id} className="bg-zinc-400 bg-opacity-10 p-5 mt-5">
           {order.orderItem.map((orderItem: OrderItem, index: number) => {
@@ -176,7 +252,7 @@ export const SeatchPackageProduct: React.FC<SeatchPackageProductProps> = ({
                         orderItem.product.name
                       );
                     } else {
-                      toast.error("Sản phẩm đang gặp vấn đề!");
+                      toast.error(toastErrorMessage);
                     }
                   }}
                 >
@@ -203,14 +279,14 @@ export const SeatchPackageProduct: React.FC<SeatchPackageProductProps> = ({
                       {orderItem.product?.heading}
                     </p>
                     <p className="flex text-xs text-gray-500">
-                      Phân loại màu:
+                      {colorCategoryMessage}
                       <div
                         className="h-4 w-4 rounded-full ml-2"
                         style={{ backgroundColor: selectedColor }}
                       />
                     </p>
                     <p className="text-xs text-gray-500">
-                      Phân loại kích thước: {selectedSize}
+                      {sizeCategoryMessage} {selectedSize}
                     </p>
                     <p>x{orderItem.quantity}</p>
                   </div>
@@ -230,135 +306,165 @@ export const SeatchPackageProduct: React.FC<SeatchPackageProductProps> = ({
               {order.status === "Cho_xac_nhan" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Chờ xác nhận"
+                  titleStatus={waitingforConfirmationMessage}
                   classTitleStatus="text-yellow-600"
-                  status="ĐANG XỬ LÝ"
+                  noneTitleStatus={true}
+                  status={processingMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Soan_hang" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Chuẩn bị hàng"
+                  titleStatus={preparingGoodsMessage}
                   classTitleStatus="text-yellow-600"
-                  status="SOẠN HÀNG"
+                  noneTitleStatus={true}
+                  status={packingGoodsMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Cho_lay_hang" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Chuyển hàng cho shipper"
+                  titleStatus={shippedToShipperMessage}
                   classTitleStatus="text-yellow-600"
-                  status="BÀN GIAO SHIPPER"
+                  noneTitleStatus={true}
+                  status={handedOverToShipperMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Dang_giao" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Đơn hàng đang giao"
+                  titleStatus={OrderShippingMessage}
                   classTitleStatus="text-yellow-600"
-                  status="ĐANG GIAO"
+                  noneTitleStatus={true}
+                  status={deliveringMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Giao_lai_hang" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Giao lại hàng"
+                  titleStatus={reDeliveringMessage}
                   classTitleStatus="text-yellow-600"
-                  status="ĐANG GIAO LẠI HÀNG"
+                  noneTitleStatus={true}
+                  status={reDeliveringNowMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Da_giao" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Giao hàng thành công"
+                  titleStatus={deliverySuccessfulMessage}
                   classTitleStatus="text-green-600"
-                  status="HOÀN THÀNH"
+                  noneTitleStatus={true}
+                  status={completedMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Da_huy" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Đơn hơn đã hủy"
+                  titleStatus={orderCancelledMessage}
                   classTitleStatus="text-red-600"
-                  status="HỦY ĐƠN HÀNG"
+                  noneTitleStatus={true}
+                  status={cancelOrderMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Tra_hang" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Trả hàng lại shop"
+                  titleStatus={returnToShopMessage}
                   classTitleStatus="text-red-600"
-                  status="TRẢ HÀNG"
+                  noneTitleStatus={true}
+                  status={returnItemMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Shipper_chuan_bi" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Shipper đang xác nhận đơn hàng"
+                  titleStatus={shipperConfirmingOrderMessage}
                   classTitleStatus="text-red-600"
-                  status="SHIPPER CHUẨN BỊ ĐẾN"
+                  noneTitleStatus={true}
+                  status={shipperPreparingToArriveMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Shipper_dang_den" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Shipper đang đến nhận lại hàng"
+                  titleStatus={shipperPickingUpOrderMessage}
                   classTitleStatus="text-red-600"
-                  status="NHẬN HÀNG"
+                  noneTitleStatus={true}
+                  status={receiveItemMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Da_nhan_tra_hang" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Đã nhận lại hàng có vấn đề"
+                  titleStatus={itemReceivedWithIssueMessage}
                   classTitleStatus="text-red-600"
-                  status="TRẢ HÀNG THÀNH CÔNG"
+                  noneTitleStatus={true}
+                  status={returnItemSuccessMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Nhan_tai_cua_hang" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Nhận tại cửa hàng"
+                  titleStatus={PickUpAtStoreMessage}
                   classTitleStatus="text-yellow-600"
-                  status="NHẬN HÀNG TẠI CỬA HÀNG"
+                  noneTitleStatus={true}
+                  status={pickUpAtStoreUpperCaseMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Soan_hang_nhan_tai_cua_hang" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Đang soạn hàng"
+                  titleStatus={preparingOrderMessage}
                   classTitleStatus="text-yellow-600"
-                  status="Soạn hàng"
+                  noneTitleStatus={true}
+                  status={prepareOrderMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Da_soan_hang_xong" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Đã soạn hàng xong"
+                  titleStatus={oderPreparedMessage}
                   classTitleStatus="text-yellow-600"
-                  status="KHÁCH HÀNG ĐẾN NHẬN"
+                  noneTitleStatus={true}
+                  status={customerPickUpMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Da_nhan_tai_cua_hang" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Giao hàng thành công"
+                  titleStatus={deliverySuccessfulMessage}
                   classTitleStatus="text-green-600"
-                  status="HOÀN THÀNH"
+                  noneTitleStatus={true}
+                  status={completedMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}

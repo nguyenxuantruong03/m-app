@@ -13,6 +13,8 @@ import { UserRole } from "@prisma/client";
 import axios from "axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { getImageBillboardClient } from "@/translate/translate-dashboard";
 
 interface BillboardClientProps {
   data: BillboardColumn[];
@@ -26,6 +28,10 @@ const BillboardClient: React.FC<BillboardClientProps> = ({ data }) => {
   const role = useCurrentRole();
   const isRole = role === UserRole.ADMIN;
   const showAPIRole = isRole;
+  //language
+  const user = useCurrentUser();
+  const languageToUse = user?.language || "vi";
+  const imageBillboardClientMessage = getImageBillboardClient(languageToUse);
 
   const handleDelete = async () => {
     setLoading(true);
@@ -36,7 +42,7 @@ const BillboardClient: React.FC<BillboardClientProps> = ({ data }) => {
       });
       setLoading(false);
       setOpen(false);
-      toast.success("Billboards deleted successfully");
+      toast.success(imageBillboardClientMessage.imageBillboardsDeletedSuccessfully);
       // Optionally, refresh data or handle post-delete state
     } catch (error) {
       setLoading(false);
@@ -54,7 +60,7 @@ const BillboardClient: React.FC<BillboardClientProps> = ({ data }) => {
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
-          "Make sure you removed all billboard using this billboard first."
+          imageBillboardClientMessage.somethingWentWrong
         );
       }
     }
@@ -64,8 +70,8 @@ const BillboardClient: React.FC<BillboardClientProps> = ({ data }) => {
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Ảnh quảng cáo (${data.length})`}
-          description="Quản lý ảnh quảng cáo cửa hàng"
+          title={`${imageBillboardClientMessage.description} (${data.length})`}
+          description={imageBillboardClientMessage.manageDescription}
         />
       </div>
       <Separator />
@@ -80,12 +86,13 @@ const BillboardClient: React.FC<BillboardClientProps> = ({ data }) => {
         onDelete={handleDelete}
         setOpen={setOpen}
         open={open}
+        languageToUse={languageToUse}
       />
       {showAPIRole && (
         <>
-          <Heading title="Api" description="API calls for Billboards" />
+          <Heading title={imageBillboardClientMessage.api} description={imageBillboardClientMessage.apiCalls} />
           <Separator />
-          <ApiList entityIdName="billboardId" entityName="billboards" />
+          <ApiList entityIdName="imagebillboardId" entityName="imagebillboards" />
         </>
       )}
     </>

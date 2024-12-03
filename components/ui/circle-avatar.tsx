@@ -9,7 +9,7 @@ import Link from "next/link";
 import { LiveBadge } from "../live-badge";
 import { cn } from "@/lib/utils";
 import ImageCellOne from "../image-cell-one";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Skeleton } from "./skeleton";
 
 const avatarSizes = cva("", {
@@ -125,6 +125,19 @@ const CircleAvatar = ({
   const user = useCurrentUser();
   const { width, height } = getFrameDimensions(user?.frameAvatar);
   const [showImage, setShowImage] = useState(false);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []); 
+
+  //language
+  const languageToUse =
+  user?.id && user?.role !== "GUEST" ? user?.language : storedLanguage || "vi";
 
   const openImage = () => setShowImage(true);
 
@@ -156,7 +169,7 @@ const CircleAvatar = ({
                 )}
               >
                 {avatarImage ? (
-                  <ImageCellOne imageUrl={avatarImage} showImage={showImage} />
+                <ImageCellOne imageUrl={avatarImage} showImage={showImage} languageToUse={languageToUse}/>
                 ) : (
                   <AvatarFallback className="bg-sky-500">
                     <User className="text-white" />

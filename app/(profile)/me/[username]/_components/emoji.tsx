@@ -1,7 +1,7 @@
 "use client";
 import "./emoji.scss";
 import React, { useEffect, useRef, useState } from "react";
-import {ThumbsUp, Share } from "lucide-react";
+import { ThumbsUp, Share } from "lucide-react";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
@@ -13,6 +13,23 @@ import FaceBookSVG from "@/public/svg/facebook";
 import TiktokSVG from "@/public/svg/tiktok";
 import InstagramSVG from "@/public/svg/instagram";
 import ZaloSVG from "@/public/svg/zalo";
+import {
+  getToastError,
+  translateAngry,
+  translateCopyLink,
+  translateFavorites,
+  translateHaha,
+  translateLike,
+  translateLinkCopied,
+  translateProduct,
+  translateSad,
+  translateSendToFacebook,
+  translateSendToInstagram,
+  translateSendToTikTok,
+  translateSendToZalo,
+  translateShare,
+  translateWow,
+} from "@/translate/translate-client";
 
 interface EmojiProps {
   reviewId: string;
@@ -22,6 +39,7 @@ interface EmojiProps {
   userId: string | undefined;
   productId: string;
   loading: boolean;
+  languageToUse: string;
 }
 const EmojiReview: React.FC<EmojiProps> = ({
   reviewId,
@@ -31,6 +49,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
   productId,
   userId,
   role,
+  languageToUse,
 }) => {
   const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
   const [selectedEmojiLength, setSelectedEmojiLength] = useState<number>(0);
@@ -39,6 +58,23 @@ const EmojiReview: React.FC<EmojiProps> = ({
   const [open, setOpen] = useState(false);
   const [emojiUserIdModal, setEmojiUserIdModal] = useState<[]>([]); // New state for emoji user ID
   const shareOptionsRef = useRef<HTMLDivElement | null>(null);
+
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const linkCopiedMessage = translateLinkCopied(languageToUse);
+  const productMessage = translateProduct(languageToUse);
+  const likeMessage = translateLike(languageToUse);
+  const favoriteMessage = translateFavorites(languageToUse);
+  const hahaMessage = translateHaha(languageToUse);
+  const wowMessage = translateWow(languageToUse);
+  const sadMessage = translateSad(languageToUse);
+  const angryMessage = translateAngry(languageToUse);
+  const sendToFacebookMessage = translateSendToFacebook(languageToUse);
+  const sendToInstagramMessage = translateSendToInstagram(languageToUse);
+  const sendToTiktokMessage = translateSendToTikTok(languageToUse);
+  const sendToZaloMessage = translateSendToZalo(languageToUse);
+  const copyLinkMessage = translateCopyLink(languageToUse);
+  const shareMessage = translateShare(languageToUse);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -118,7 +154,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
               emojilengthWow: 0,
               emojilengthAngry: 0,
               emojilengthLove: 0,
-              emojilengthSad:0,
+              emojilengthSad: 0,
             };
           }
 
@@ -132,7 +168,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
             emoji.emojilengthAngry || 0;
           aggregatedEmojiLengths[reviewId].emojilengthLove +=
             emoji.emojilengthLove || 0;
-            aggregatedEmojiLengths[reviewId].emojilengthSad +=
+          aggregatedEmojiLengths[reviewId].emojilengthSad +=
             emoji.emojilengthSad || 0;
         });
 
@@ -155,7 +191,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
         response.data.filter((emoji: any) => emoji.reviewId === reviewId)
       );
     } catch (error) {
-      console.error("Failed to fetch emojis:", error);
+      toast.error(toastErrorMessage);
     }
   };
 
@@ -182,7 +218,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
         setAlertGuestModal(true);
       }
     } catch (error) {
-      console.error("Failed to handle emoji click:", error);
+      toast.error(toastErrorMessage);
     }
   };
 
@@ -207,7 +243,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
         setAlertGuestModal(true);
       }
     } catch (error) {
-      console.error("Failed to handle emoji delete:", error);
+      toast.error(toastErrorMessage);
     }
   };
 
@@ -244,26 +280,26 @@ const EmojiReview: React.FC<EmojiProps> = ({
             if (!aggregatedEmojiLengths[reviewId]) {
               aggregatedEmojiLengths[reviewId] = {
                 emojilengthLike: 0,
-              emojilengthHaha: 0,
-              emojilengthWow: 0,
-              emojilengthAngry: 0,
-              emojilengthLove: 0,
-              emojilengthSad:0,
+                emojilengthHaha: 0,
+                emojilengthWow: 0,
+                emojilengthAngry: 0,
+                emojilengthLove: 0,
+                emojilengthSad: 0,
               };
             }
 
             aggregatedEmojiLengths[reviewId].emojilengthLike +=
-            emoji.emojilengthLike || 0;
-          aggregatedEmojiLengths[reviewId].emojilengthHaha +=
-            emoji.emojilengthHaha || 0;
-          aggregatedEmojiLengths[reviewId].emojilengthWow +=
-            emoji.emojilengthWow || 0;
-          aggregatedEmojiLengths[reviewId].emojilengthAngry +=
-            emoji.emojilengthAngry || 0;
-          aggregatedEmojiLengths[reviewId].emojilengthLove +=
-            emoji.emojilengthLove || 0;
+              emoji.emojilengthLike || 0;
+            aggregatedEmojiLengths[reviewId].emojilengthHaha +=
+              emoji.emojilengthHaha || 0;
+            aggregatedEmojiLengths[reviewId].emojilengthWow +=
+              emoji.emojilengthWow || 0;
+            aggregatedEmojiLengths[reviewId].emojilengthAngry +=
+              emoji.emojilengthAngry || 0;
+            aggregatedEmojiLengths[reviewId].emojilengthLove +=
+              emoji.emojilengthLove || 0;
             aggregatedEmojiLengths[reviewId].emojilengthSad +=
-            emoji.emojilengthSad || 0;
+              emoji.emojilengthSad || 0;
           });
 
           // Chuyển aggregatedEmojiLengths thành Array
@@ -283,7 +319,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
           response.data.filter((emoji: any) => emoji.reviewId === reviewId)
         );
       } catch (error) {
-        console.error("Failed to fetch emojis:", error);
+        toast.error(toastErrorMessage);
       }
     };
     updateEmojis();
@@ -294,14 +330,14 @@ const EmojiReview: React.FC<EmojiProps> = ({
   };
 
   const handleCopy = (url: string, product: string) => {
-    const productUrl = `${url} - Sản phẩm: ${product}`;
+    const productUrl = `${url} - ${productMessage}: ${product}`;
     navigator.clipboard.writeText(productUrl).then(() => {});
   };
 
   const handleCopyLinkToast = (url: string, product: string) => {
-    const productUrl = `${url} - Sản phẩm: ${product}`;
+    const productUrl = `${url} - ${productMessage}: ${product}`;
     navigator.clipboard.writeText(productUrl).then(() => {
-      toast.success("Đã sao chép liên kết!");
+      toast.success(linkCopiedMessage);
     });
   };
 
@@ -407,7 +443,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
         onClick={() => handleEmojiClick("like")}
       >
         <ThumbsUp className="w-5 h-5" />
-        <kbd className="mx-1">Thích</kbd>
+        <kbd className="mx-1">{likeMessage}</kbd>
       </div>
     );
   };
@@ -419,7 +455,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
       case "like":
         emojiInfo = {
           imageSrc: "/icon-image/like-icon.png",
-          altText: "Thích",
+          altText: likeMessage,
           width: 27,
           height: 27,
           textColor: "#5890ff",
@@ -428,7 +464,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
       case "love":
         emojiInfo = {
           imageSrc: "/icon-image/love.png",
-          altText: "Yêu",
+          altText: favoriteMessage,
           width: 25,
           height: 25,
           textColor: "#f25268",
@@ -437,7 +473,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
       case "haha":
         emojiInfo = {
           imageSrc: "/icon-image/haha.png",
-          altText: "Haha",
+          altText: hahaMessage,
           width: 26,
           height: 26,
           textColor: "#ffd972",
@@ -446,7 +482,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
       case "wow":
         emojiInfo = {
           imageSrc: "/icon-image/wow-icon.png",
-          altText: "Wow",
+          altText: wowMessage,
           width: 25,
           height: 25,
           textColor: "#ffd972",
@@ -455,7 +491,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
       case "sad":
         emojiInfo = {
           imageSrc: "/icon-image/sad.png",
-          altText: "Buồn",
+          altText: sadMessage,
           width: 25,
           height: 25,
           textColor: "#ffd972",
@@ -464,7 +500,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
       case "angry":
         emojiInfo = {
           imageSrc: "/icon-image/angry.png",
-          altText: "Phẫn nộ",
+          altText: angryMessage,
           width: 25,
           height: 25,
           textColor: "orange", // Màu văn bản
@@ -497,6 +533,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
         isOpen={open}
         onClose={() => setOpen(false)}
         emojiUserIdModal={emojiUserIdModal}
+        languageToUse={languageToUse}
       />
       <div className="flex items-center mb-2 border-b-2">
         <div
@@ -504,7 +541,10 @@ const EmojiReview: React.FC<EmojiProps> = ({
           onClick={() => setOpen(true)}
         >
           {mapEmojiToComponent()}
-          <p className="mt-3 mb-2 ml-3 text-[#7f8286]"> {selectedEmojiLength}</p>
+          <p className="mt-3 mb-2 ml-3 text-[#7f8286]">
+            {" "}
+            {selectedEmojiLength}
+          </p>
         </div>
       </div>
       <div className="flex items-center max-w-3xl space-y-3 md:space-y-0">
@@ -555,7 +595,10 @@ const EmojiReview: React.FC<EmojiProps> = ({
             onClick={handleShareClick}
             className="whitespace-nowrap text-white mx-1 hover:text-gray-300 hover:bg-[#a9a9a94d] hover:rounded-md py-2 px-4 cursor-pointer mb-2.5 md:mb-0"
           >
-            <span className="flex item-center justify-center"><Share className="w-5 h-5 mr-1" /> Chia sẻ </span>
+            <span className="flex item-center justify-center">
+              <Share className="w-5 h-5 mr-1" />
+              {shareMessage}
+            </span>
           </div>
 
           {showShareOptions && (
@@ -575,7 +618,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
                 }}
               >
                 <FaceBookSVG />
-                Gửi đến Facebook
+                {sendToFacebookMessage}
               </Link>
               <Link
                 href={`https://www.instagram.com/`}
@@ -589,7 +632,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
                 }}
               >
                 <InstagramSVG />
-                Gửi đến Instagram
+                {sendToInstagramMessage}
               </Link>
               <Link
                 href={`https://www.tiktok.com/`}
@@ -603,7 +646,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
                 }}
               >
                 <TiktokSVG />
-                Gửi đến TikTok
+                {sendToTiktokMessage}
               </Link>
               <Link
                 href={`https://zalo.me/`}
@@ -617,7 +660,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
                 }}
               >
                 <ZaloSVG />
-                Gửi đến Zalo
+                {sendToZaloMessage}
               </Link>
               <button
                 disabled={loading}
@@ -626,7 +669,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
                 }
                 className="flex items-center whitespace-nowrap gap-1 p-2 text-gray-800 hover:bg-gray-100 rounded-md w-full"
               >
-                <LinkIcon className="h-3 w-3" /> Sao chép liên kết
+                <LinkIcon className="h-3 w-3" /> {copyLinkMessage}
               </button>
             </div>
           )}

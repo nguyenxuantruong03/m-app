@@ -7,6 +7,10 @@ import {
   Sector,
 } from "recharts";
 import { Skeleton } from "../ui/skeleton";
+import {
+  translateDeliveryOptions,
+  translateSelectDateMessage,
+} from "@/translate/translate-client";
 
 interface PieChartProps {
   pieChartData: {
@@ -16,6 +20,7 @@ interface PieChartProps {
     createdAt: string;
   };
   loading: boolean;
+  languageToUse: string;
 }
 
 const COLORS = [
@@ -32,7 +37,7 @@ const renderCustomizedLabel = ({ x, y, name, value }: any) => {
         y={y}
         textAnchor="middle"
         dominantBaseline="central"
-         fill="#6b7280"
+        fill="#6b7280"
         style={{ fontSize: "10px", fontWeight: "bold" }}
       >
         {`${name}: ${value}`}
@@ -47,7 +52,6 @@ const activeShape = (props: any) => {
   const {
     cx,
     cy,
-    midAngle,
     innerRadius,
     outerRadius,
     startAngle,
@@ -56,13 +60,17 @@ const activeShape = (props: any) => {
     payload,
     value,
   } = props;
-  const RADIAN = Math.PI / 180;
-  const sin = Math.sin(-RADIAN * midAngle);
-  const cos = Math.cos(-RADIAN * midAngle);
 
   return (
     <g>
-      <text x={cx} y={cy} dy={8} textAnchor="middle"  fill="#6b7280" style={{ fontSize: "10px", fontWeight: "bold" }}>
+      <text
+        x={cx}
+        y={cy}
+        dy={8}
+        textAnchor="middle"
+        fill="#6b7280"
+        style={{ fontSize: "10px", fontWeight: "bold" }}
+      >
         {`${payload.name}: ${value}`}
       </text>
       <Sector
@@ -87,7 +95,11 @@ const activeShape = (props: any) => {
   );
 };
 
-const PieChart = ({ pieChartData, loading }: PieChartProps) => {
+const PieChart = ({ pieChartData, loading, languageToUse }: PieChartProps) => {
+  //languages
+  const selectDataMessgae = translateSelectDateMessage(languageToUse);
+  const deliveryOptionMessage = translateDeliveryOptions(languageToUse);
+
   if (loading) {
     return (
       <ResponsiveContainer width="100%" height={200}>
@@ -101,34 +113,44 @@ const PieChart = ({ pieChartData, loading }: PieChartProps) => {
   if (!pieChartData) {
     return (
       <div className="w-full h-[350px] flex items-center justify-center">
-        <span className="text-center dark:text-slate-500 text-slate-900">Please select date to find data...</span>
+        <span className="text-center dark:text-slate-500 text-slate-900">
+          {selectDataMessgae}
+        </span>
       </div>
     );
   }
 
   const data01 = [
-    { name: "Pickup Delivery", value: pieChartData?.deliveryMethod?.pickup },
-    { name: "Online Delivery", value: pieChartData?.deliveryMethod?.online },
+    {
+      name: deliveryOptionMessage.name1,
+      value: pieChartData?.deliveryMethod?.pickup,
+    },
+    {
+      name: deliveryOptionMessage.name2,
+      value: pieChartData?.deliveryMethod?.online,
+    },
   ];
 
   const data02 = [
-    { name: "Male", value: pieChartData?.gender?.male },
-    { name: "Female", value: pieChartData?.gender?.female },
-    { name: "Other", value: pieChartData?.gender?.other },
+    { name: deliveryOptionMessage.name3, value: pieChartData?.gender?.male },
+    { name: deliveryOptionMessage.name4, value: pieChartData?.gender?.female },
+    { name: deliveryOptionMessage.name5, value: pieChartData?.gender?.other },
   ];
 
   const data03 = [
-    { name: "Pickup Return", value: pieChartData?.returnProduct?.pickup },
-    { name: "Online Return", value: pieChartData?.returnProduct?.online },
+    {
+      name: deliveryOptionMessage.name6,
+      value: pieChartData?.returnProduct?.pickup,
+    },
+    {
+      name: deliveryOptionMessage.name7,
+      value: pieChartData?.returnProduct?.online,
+    },
   ];
 
   return (
-    <div
-    className="flex flex-col items-center"
-    >
-      <div
-      className="flex justify-around w-full"
-      >
+    <div className="flex flex-col items-center">
+      <div className="flex justify-around w-full">
         {/* Pie for Delivery Method */}
         <ResponsiveContainer width="30%" height={200}>
           <ChartPie>
@@ -146,7 +168,7 @@ const PieChart = ({ pieChartData, loading }: PieChartProps) => {
                 <Cell key={`cell-${index}`} fill={COLORS[0][index]} />
               ))}
             </Pie>
-            <Tooltip labelClassName="dark:text-slate-500 text-slate-900"/>
+            <Tooltip labelClassName="dark:text-slate-500 text-slate-900" />
           </ChartPie>
         </ResponsiveContainer>
 
@@ -169,7 +191,7 @@ const PieChart = ({ pieChartData, loading }: PieChartProps) => {
                 <Cell key={`cell-${index}`} fill={COLORS[1][index]} />
               ))}
             </Pie>
-            <Tooltip labelClassName="dark:text-slate-500 text-slate-900"/>
+            <Tooltip labelClassName="dark:text-slate-500 text-slate-900" />
           </ChartPie>
         </ResponsiveContainer>
 
@@ -191,7 +213,7 @@ const PieChart = ({ pieChartData, loading }: PieChartProps) => {
                 <Cell key={`cell-${index}`} fill={COLORS[2][index]} />
               ))}
             </Pie>
-            <Tooltip labelClassName="dark:text-slate-500 text-slate-900"/>
+            <Tooltip labelClassName="dark:text-slate-500 text-slate-900" />
           </ChartPie>
         </ResponsiveContainer>
       </div>
@@ -206,17 +228,31 @@ const PieChart = ({ pieChartData, loading }: PieChartProps) => {
         }}
       >
         <div>
-          <div style={{ color: COLORS[0][0] }}>● Pickup Delivery</div>
-          <div style={{ color: COLORS[0][1] }}>● Online Delivery</div>
+          <div style={{ color: COLORS[0][0] }}>
+            ● {deliveryOptionMessage.name1}
+          </div>
+          <div style={{ color: COLORS[0][1] }}>
+            ● {deliveryOptionMessage.name2}
+          </div>
         </div>
         <div>
-          <div style={{ color: COLORS[1][0] }}>● Male</div>
-          <div style={{ color: COLORS[1][1] }}>● Female</div>
-          <div style={{ color: COLORS[1][2] }}>● Other</div>
+          <div style={{ color: COLORS[1][0] }}>
+            ● {deliveryOptionMessage.name3}
+          </div>
+          <div style={{ color: COLORS[1][1] }}>
+            ● {deliveryOptionMessage.name4}
+          </div>
+          <div style={{ color: COLORS[1][2] }}>
+            ● {deliveryOptionMessage.name5}
+          </div>
         </div>
         <div>
-          <div style={{ color: COLORS[2][0] }}>● Pickup Return</div>
-          <div style={{ color: COLORS[2][1] }}>● Online Return</div>
+          <div style={{ color: COLORS[2][0] }}>
+            ● {deliveryOptionMessage.name6}
+          </div>
+          <div style={{ color: COLORS[2][1] }}>
+            ● {deliveryOptionMessage.name7}
+          </div>
         </div>
       </div>
     </div>

@@ -16,6 +16,17 @@ import { Button } from "@/components/ui/button";
 import { ChatMessage } from "@/types/type";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import ImageCellOne from "@/components/image-cell-one";
+import {
+  getToastError,
+  translateAskQuestion,
+  translateEnterYourContent,
+  translateGoodAfternoonAskQuestion,
+  translateGoodEveningAskQuestion,
+  translateGoodMorningAskQuestion,
+  translateGoodNightAskQuestion,
+  translateToday,
+} from "@/translate/translate-client";
+import toast from "react-hot-toast";
 
 type ModelResponse = {
   response: {
@@ -26,9 +37,14 @@ type ModelResponse = {
 interface ChatGeminiProps {
   setChatHistory: Dispatch<SetStateAction<ChatMessage[]>>;
   chatHistory: ChatMessage[];
+  languageToUse: string;
 }
 
-const ChatGemini = ({ setChatHistory, chatHistory }: ChatGeminiProps) => {
+const ChatGemini = ({
+  setChatHistory,
+  chatHistory,
+  languageToUse,
+}: ChatGeminiProps) => {
   const user = useCurrentUser();
   const [userInput, setUserInput] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -39,6 +55,20 @@ const ChatGemini = ({ setChatHistory, chatHistory }: ChatGeminiProps) => {
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const askQuestionMessage = translateAskQuestion(languageToUse);
+  const goodMorningAskQuestionMessage =
+    translateGoodMorningAskQuestion(languageToUse);
+  const goodAfternoonAskQuestionMessage =
+    translateGoodAfternoonAskQuestion(languageToUse);
+  const goodEveningAskQuestionMessage =
+    translateGoodEveningAskQuestion(languageToUse);
+  const goodNightAskQuestionMessage =
+    translateGoodNightAskQuestion(languageToUse);
+  const todayMessage = translateToday(languageToUse);
+  const enterYourContentMessage = translateEnterYourContent(languageToUse);
 
   // Scroll to bottom function
   const scrollToBottom = () => {
@@ -93,7 +123,7 @@ const ChatGemini = ({ setChatHistory, chatHistory }: ChatGeminiProps) => {
       ]);
       scrollToBottom();
     } catch (error) {
-      console.error("Error sending message", error);
+      toast.error(toastErrorMessage);
     } finally {
       setUserInput("");
       setMinHeight(40);
@@ -102,15 +132,15 @@ const ChatGemini = ({ setChatHistory, chatHistory }: ChatGeminiProps) => {
   };
 
   const currentHour = new Date().getHours();
-  let greetingMessage = "Vui lòng đặt câu hỏi cho tôi!";
+  let greetingMessage = askQuestionMessage;
   if (currentHour >= 6 && currentHour < 12) {
-    greetingMessage = "Chào mừng buổi sáng. Hãy đặt câu hỏi cho tôi!";
+    greetingMessage = goodMorningAskQuestionMessage;
   } else if (currentHour >= 12 && currentHour < 14) {
-    greetingMessage = "Chào mừng buổi trưa. Hãy đặt câu hỏi cho tôi!";
+    greetingMessage = goodAfternoonAskQuestionMessage;
   } else if (currentHour >= 14 && currentHour < 18) {
-    greetingMessage = "Chào mừng buổi chiều. Hãy đặt câu hỏi cho tôi!";
+    greetingMessage = goodEveningAskQuestionMessage;
   } else {
-    greetingMessage = "Chào mừng buổi tối. Hãy đặt câu hỏi cho tôi!";
+    greetingMessage = goodNightAskQuestionMessage;
   }
 
   return (
@@ -119,7 +149,7 @@ const ChatGemini = ({ setChatHistory, chatHistory }: ChatGeminiProps) => {
         {!isLoading && chatHistory.length <= 0 ? (
           <div className="space-y-3 mt-10">
             <div className="line-with-text">
-              <span className="text-sm text-gray-400">Hôm nay</span>
+              <span className="text-sm text-gray-400">{todayMessage}</span>
             </div>
             <div className="flex items-center space-x-5">
               <Avatar>
@@ -127,14 +157,17 @@ const ChatGemini = ({ setChatHistory, chatHistory }: ChatGeminiProps) => {
                   <Bot className="text-white" />
                 </AvatarFallback>
               </Avatar>
-              <div className="bg-slaet-50 p-2.5 rounded-lg shadow-md">
+              <div className="bg-slate-50 p-2.5 rounded-lg shadow-md">
                 {greetingMessage}
               </div>
             </div>
           </div>
         ) : (
           <div className="mb-10">
-            <ChatHistory chatHistory={chatHistory} />
+            <ChatHistory
+              chatHistory={chatHistory}
+              languageToUse={languageToUse}
+            />
           </div>
         )}
         <div className="mt-10">
@@ -156,6 +189,7 @@ const ChatGemini = ({ setChatHistory, chatHistory }: ChatGeminiProps) => {
                     email={user?.email || ""}
                     isClient={true}
                     customClassFeedBack="z-[9999999]"
+                    languageToUse={languageToUse}
                   />
                   <AvatarFallback className="bg-sky-500">
                     <User className="text-white" />
@@ -178,7 +212,7 @@ const ChatGemini = ({ setChatHistory, chatHistory }: ChatGeminiProps) => {
               <Textarea
                 disabled={isLoading}
                 className="bg-white dark:text-slate-900 flex-grow p-3 pr-12 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none overflow-y-auto"
-                placeholder="Type your message..."
+                placeholder={enterYourContentMessage}
                 rows={1}
                 style={{ minHeight: `${minHeight}px`, maxHeight: "150px" }}
                 value={userInput}

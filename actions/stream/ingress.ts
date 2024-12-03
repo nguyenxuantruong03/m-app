@@ -14,6 +14,7 @@ import { TrackSource } from "livekit-server-sdk/dist/proto/livekit_models";
 import { getSelf } from "@/lib/stream/auth-service";
 import { revalidatePath } from "next/cache";
 import prismadb from "@/lib/prismadb";
+import { translateFailedToCreateIngress, translateNoPermission } from "@/translate/translate-client";
 
 const roomServider = new RoomServiceClient(
   process.env.LIVEKIT_API_URL!,
@@ -41,15 +42,18 @@ export const resetIngresses = async (hostIdentity: string) => {
   }
 };
 
-export const createIngress = async (ingressType: IngressInput) => {
+export const createIngress = async (ingressType: IngressInput, languageToUse: string) => {
   const self = await getSelf();
+  //language
+  const noPermissionMessage = translateNoPermission(languageToUse)
+  const failedToCreateIngressMessage = translateFailedToCreateIngress(languageToUse)
   
   if (
     self.role !== "ADMIN" &&
     self.role !== "STAFF" &&
     self.role !== "MARKETING"
   ) {
-    throw new Error("Bạn không có quyền!");
+    throw new Error(noPermissionMessage);
   }
 
   await resetIngresses(self.id);
@@ -78,7 +82,7 @@ export const createIngress = async (ingressType: IngressInput) => {
   const ingress = await ingressClient.createIngress(ingressType, options)
 
   if (!ingress || !ingress.url || !ingress.streamKey ) {
-    throw new Error("Failed to create ingress");
+    throw new Error(failedToCreateIngressMessage);
   }
 
   const existingStream = await prismadb.stream.findUnique({

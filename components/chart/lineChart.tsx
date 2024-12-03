@@ -11,6 +11,7 @@ import {
   YAxis,
 } from "recharts";
 import { Skeleton } from "../ui/skeleton";
+import { translateSelectDateMessage } from "@/translate/translate-client";
 
 interface GraphData {
   name: string;
@@ -19,9 +20,17 @@ interface GraphData {
 interface LineChartProps {
   data: GraphData[];
   loading: boolean;
+  languageToUse: string;
 }
 
-export const LineChart: React.FC<LineChartProps> = ({ data, loading }) => {
+export const LineChart: React.FC<LineChartProps> = ({
+  data,
+  loading,
+  languageToUse,
+}) => {
+  //language
+  const selectDataMessgae = translateSelectDateMessage(languageToUse);
+
   if (loading) {
     return (
       <ResponsiveContainer width="100%" height={350}>
@@ -35,7 +44,7 @@ export const LineChart: React.FC<LineChartProps> = ({ data, loading }) => {
   if (!data) {
     return (
       <div className="w-full h-[350px] flex items-center justify-center">
-        <span className="text-center">Please select date to find data...</span>
+        <span className="text-center">{selectDataMessgae}</span>
       </div>
     );
   }
@@ -52,7 +61,7 @@ export const LineChart: React.FC<LineChartProps> = ({ data, loading }) => {
           axisLine={false}
           tickFormatter={(value) => `${value}`}
         />
-        <Tooltip labelClassName="dark:text-slate-500 text-slate-900"/>
+        <Tooltip labelClassName="dark:text-slate-500 text-slate-900" />
         <Legend />
         <Line type="monotone" dataKey="totaldate" stroke="#ff7300" />
       </ChartLine>

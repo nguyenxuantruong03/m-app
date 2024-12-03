@@ -5,6 +5,7 @@ import {
   HoverCardContent,
 } from "@/components/ui/hover-card";
 import { Separator } from "@/components/ui/separator";
+import { translateLatestUpdateDate } from "@/translate/translate-client";
 import { Truck, CircleHelp } from "lucide-react";
 
 interface StatusProductProps {
@@ -14,6 +15,7 @@ interface StatusProductProps {
   titleStatus?: string;
   classTitleStatus?: string;
   noneTitleStatus?: boolean;
+  languageToUse: string;
 }
 
 const StatusProduct: React.FC<StatusProductProps> = ({
@@ -23,13 +25,17 @@ const StatusProduct: React.FC<StatusProductProps> = ({
   titleStatus,
   classTitleStatus,
   noneTitleStatus = true,
+  languageToUse,
 }) => {
+  const latestUpdateDataMessage = translateLatestUpdateDate(languageToUse);
   return (
     <div className="flex space-x-2">
       {noneTitleStatus && (
         <>
           <div className="flex items-center space-x-2">
-            <span className={`text-xs md:text-sm flex items-center ${classTitleStatus}`}>
+            <span
+              className={`text-xs md:text-sm flex items-center ${classTitleStatus}`}
+            >
               <Truck className="w-6 h-6 md:w-4 md:h-4 mr-1" /> {titleStatus}
             </span>
 
@@ -38,7 +44,7 @@ const StatusProduct: React.FC<StatusProductProps> = ({
                 <CircleHelp className="w-4 h-4 text-gray-500" />
               </HoverCardTrigger>
               <HoverCardContent>
-                <p>Cập nhật mới nhất ngày</p>
+                <p>{latestUpdateDataMessage}</p>
                 <p>
                   <FormatDate subtractiontime={true} data={updatedAt} />
                 </p>

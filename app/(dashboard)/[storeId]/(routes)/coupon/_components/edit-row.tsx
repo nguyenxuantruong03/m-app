@@ -9,6 +9,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import LabelForm from "./form-edit";
+import { getCouponEditRow } from "@/translate/translate-dashboard";
 
 interface EditRowProps {
   data: string | null | number;
@@ -21,6 +22,7 @@ interface EditRowProps {
   redeemby: Date | null;
   imagecoupon: { url: string }[];
   field: "name"
+  language: string
 }
 
 const EditRow: React.FC<EditRowProps> = ({
@@ -34,8 +36,13 @@ const EditRow: React.FC<EditRowProps> = ({
   maxredemptions,
   redeemby,
   imagecoupon,
+  language
 }) => {
   const [open, setOpen] = useState(false);
+
+  //language
+  const couponEditRowMessage = getCouponEditRow(language)
+
   const handleClick = () => {
     setOpen(true);
   };
@@ -53,10 +60,10 @@ const EditRow: React.FC<EditRowProps> = ({
         <SheetContent className="space-y-4">
           <SheetHeader>
             <SheetTitle>
-              Edit {data}.
+              {couponEditRowMessage.edit} {data}.
             </SheetTitle>
             <SheetDescription>
-              Edit an existing {data}.
+            {couponEditRowMessage.editExisting} {data}.
             </SheetDescription>
           </SheetHeader>
           <LabelForm
@@ -71,6 +78,7 @@ const EditRow: React.FC<EditRowProps> = ({
             redeemby={redeemby}
             imagecoupon={imagecoupon}
             field={field}
+            language={language}
           />
         </SheetContent>
       </Sheet>

@@ -22,28 +22,69 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SendHorizontal, X } from "lucide-react";
 import Link from "next/link";
-
-const formSchema = z.object({
-  description: z.string().min(2, { message: "Nhập ít nhất 2 ký tự." }),
-  imagereturnProduct: z.object({ url: z.string() }).array(),
-});
-
-type ReturnProductFormValues = z.infer<typeof formSchema>;
+import {
+  getToastError,
+  translateCancel,
+  translateCaptureProductImages,
+  translateCharCount,
+  translateEnterReturnDescription,
+  translateMinCharacters,
+  translateOrderReturnSuccess,
+  translateProductImage,
+  translateReturnProductDescription,
+  translateReturnProductInfo,
+  translateSelectClearProductImages,
+  translateShortReturnProductDescription,
+  translateSubmit,
+} from "@/translate/translate-client";
 
 interface ReturnProductProps {
   order: Order | undefined;
   onClose: () => void;
   user: any;
+  languageToUse: string;
 }
 
 export const ReturnProduct: React.FC<ReturnProductProps> = ({
   order,
   onClose,
   user,
+  languageToUse,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
   const [charCount, setCharCount] = useState(0); // State to track character count
   const [loading, setLoading] = useState(false);
+
+  //languages
+  const toastErrorMessage = getToastError(languageToUse);
+  const orderReturnSuccessMessage = translateOrderReturnSuccess(languageToUse);
+  const minCharacterMessage = translateMinCharacters(languageToUse, 2);
+  const returnProductInfoMessage = translateReturnProductInfo(languageToUse);
+  const productImageMessage = translateProductImage(languageToUse);
+  const captureProductImageMessage = translateCaptureProductImages(
+    languageToUse,
+    5
+  );
+  const selectClearProductImageMessage = translateSelectClearProductImages(
+    languageToUse,
+    5
+  );
+  const returnProductDescriptionMessage =
+    translateReturnProductDescription(languageToUse);
+  const shortReturnProductDescriptopnMessage =
+    translateShortReturnProductDescription(languageToUse);
+  const enterReturnDescriptionMessage =
+    translateEnterReturnDescription(languageToUse);
+  const charCountMessage = translateCharCount(languageToUse, 120);
+  const cancelMessage = translateCancel(languageToUse);
+  const submitMessage = translateSubmit(languageToUse);
+
+  const formSchema = z.object({
+    description: z.string().min(2, { message: minCharacterMessage }),
+    imagereturnProduct: z.object({ url: z.string() }).array(),
+  });
+
+  type ReturnProductFormValues = z.infer<typeof formSchema>;
 
   const form = useForm<ReturnProductFormValues>({
     resolver: zodResolver(formSchema),
@@ -77,7 +118,7 @@ export const ReturnProduct: React.FC<ReturnProductProps> = ({
         }
       );
 
-      toast.success("Đơn hàng đã gửi trả thành công!");
+      toast.success(orderReturnSuccessMessage);
     } catch (error: unknown) {
       if (
         (error as { response?: { order?: { error?: string } } }).response &&
@@ -92,7 +133,7 @@ export const ReturnProduct: React.FC<ReturnProductProps> = ({
             .error
         );
       } else {
-        toast.error("Something went wrong.");
+        toast.error(toastErrorMessage);
       }
     } finally {
       setLoading(false);
@@ -100,20 +141,18 @@ export const ReturnProduct: React.FC<ReturnProductProps> = ({
     }
   };
 
-
   return (
     <>
       {order.returnProduct ? (
         <>
           <div className="flex items-center justify-end ">
             <X
-              className="w-8 h-8 hover:bg-gray-400 hover:bg-opacity-30 text-white rounded-full p-2 cursor-pointer"
+              className="w-8 h-8 hover:bg-gray-400 hover:bg-opacity-30 text-slate-200 rounded-full p-2 cursor-pointer"
               onClick={() => onClose()}
             />
           </div>
-          <span className="text-white">
-            Thông tin sản phẩm trả hàng đã được gửi đến cửa hàng. Bạn chờ trong
-            1 ngày để shipper đến nhận. Nếu chưa được phản hồi liên hệ{" "}
+          <span className="text-slate-200">
+            {returnProductInfoMessage}
             <Link href="tel:0352261103" className="underline">
               0352261103
             </Link>
@@ -123,7 +162,7 @@ export const ReturnProduct: React.FC<ReturnProductProps> = ({
         <>
           <div className="flex items-center justify-end">
             <X
-              className="w-8 h-8 hover:bg-gray-400 hover:bg-opacity-30 text-white rounded-full p-2 cursor-pointer"
+              className="w-8 h-8 hover:bg-gray-400 hover:bg-opacity-30 text-slate-200 rounded-full p-2 cursor-pointer"
               onClick={() => onClose()}
             />
           </div>
@@ -139,9 +178,11 @@ export const ReturnProduct: React.FC<ReturnProductProps> = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="flex space-x-3 items-center w-full">
-                        <span className="text-white">Hình ảnh sản phẩm</span>
+                        <span className="text-white">
+                          {productImageMessage}
+                        </span>
                         <span className="text-red-600 pl-1">(*)</span>
-                        <Recommend message="Hãy chụp 5 ảnh sản phẩm bị lỗi." />
+                        <Recommend message={captureProductImageMessage} />
                       </FormLabel>
                       <FormControl>
                         <ImageUpload
@@ -151,7 +192,7 @@ export const ReturnProduct: React.FC<ReturnProductProps> = ({
                             if (field.value.length < 5) {
                               field.onChange([...field.value, { url }]);
                             } else {
-                              toast.error("Chỉ chọn 5 ảnh sản phẩm rõ nét.");
+                              toast.error(selectClearProductImageMessage);
                             }
                           }}
                           onRemove={(url) =>
@@ -161,6 +202,7 @@ export const ReturnProduct: React.FC<ReturnProductProps> = ({
                               ),
                             ])
                           }
+                          language={languageToUse}
                         />
                       </FormControl>
                       <FormMessage />
@@ -187,22 +229,24 @@ export const ReturnProduct: React.FC<ReturnProductProps> = ({
                       <FormItem>
                         <FormLabel className="flex space-x-3 items-center w-full">
                           <span className="text-white">
-                            Mô tả chi tiết trả hàng
+                            {returnProductDescriptionMessage}
                           </span>
                           <span className="text-red-600 pl-1">(*)</span>
-                          <Recommend message="Mô tả ngắn về sản phẩm cần trả." />
+                          <Recommend
+                            message={`${shortReturnProductDescriptopnMessage}.`}
+                          />
                         </FormLabel>
                         <FormControl>
                           <Input
                             disabled={loading}
-                            placeholder="Nhập mô tả chi tiết trả hàng ..."
+                            placeholder={enterReturnDescriptionMessage}
                             className="text-white"
                             value={field.value}
                             onChange={handleInputChange} // Use the custom handler
                           />
                         </FormControl>
                         <div className="text-white mt-1 text-sm">
-                          {charCount} / 120 ký tự
+                          {charCount} / {charCountMessage}
                         </div>{" "}
                         {/* Character count display */}
                         <FormMessage />
@@ -212,7 +256,7 @@ export const ReturnProduct: React.FC<ReturnProductProps> = ({
                 />
                 <div className="flex items-center justify-end space-x-3">
                   <Button disabled={loading} onClick={onClose}>
-                    Cancel
+                    {cancelMessage}
                   </Button>
 
                   <Button
@@ -221,7 +265,8 @@ export const ReturnProduct: React.FC<ReturnProductProps> = ({
                     variant="destructive"
                   >
                     <span className="flex items-center">
-                      Gửi <SendHorizontal className="w-5 h-5 ml-1" />
+                      {submitMessage}{" "}
+                      <SendHorizontal className="w-5 h-5 ml-1" />
                     </span>
                   </Button>
                 </div>

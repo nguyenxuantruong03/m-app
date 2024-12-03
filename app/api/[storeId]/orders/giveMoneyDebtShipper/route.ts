@@ -1,17 +1,22 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
+import { translateReturnMoneyFromShipperOrder } from "@/translate/translate-api";
 import { NextResponse } from "next/server";
 
 export async function PATCH(req: Request) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const returnMoneyFromShipperOrderMessage = translateReturnMoneyFromShipperOrder(LanguageToUse)
+
     try {
-      const userId = await currentUser();
       const body = await req.json();
   
       const { orderId } = body;
   
-      if (!userId) {
+      if (!user) {
         return new NextResponse(
-          JSON.stringify({ error: "Không tìm thấy user id!" }),
+          JSON.stringify({ error: returnMoneyFromShipperOrderMessage.userIdNotFound }),
           { status: 403 }
         );
       }
@@ -22,14 +27,14 @@ export async function PATCH(req: Request) {
         },
         data: {
           debtShipper : false,
-          userIdRecieveDebt: userId?.id || "",
+          userIdRecieveDebt: user?.id || "",
         },
       });
   
       return NextResponse.json(order);
     } catch (error) {
       return new NextResponse(
-        JSON.stringify({ error: "Internal error patch delivery order." }),
+        JSON.stringify({ error: returnMoneyFromShipperOrderMessage.internalError }),
         { status: 500 }
       );
     }

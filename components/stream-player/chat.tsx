@@ -23,6 +23,7 @@ interface ChatProps {
   isChatEnabled: boolean;
   isChatDelayed: boolean;
   isChatFollowersOnly: boolean;
+  languageToUse: string;
 }
 
 export const Chat = ({
@@ -34,6 +35,7 @@ export const Chat = ({
   isChatEnabled,
   isChatDelayed,
   isChatFollowersOnly,
+  languageToUse
 }: ChatProps) => {
   const matches = useMediaQuery("(max-width:1024px)");
   const { variant, onExpand } = useChatSidebar((state) => state);
@@ -71,10 +73,10 @@ export const Chat = ({
 
   return (
     <div className="flex flex-col bg-slate-900 border-l border-b pt-0 h-[calc(100vh-80px)]">
-      <ChatHeader />
+      <ChatHeader languageToUse={languageToUse}/>
       {variant === ChatVariant.CHAT && (
         <>
-          <ChatList messages={reverseMessages} isHidden={isHidden} />
+          <ChatList messages={reverseMessages} isHidden={isHidden} languageToUse={languageToUse}/>
           <ChatForm
             onSubmit={onSubmit}
             value={value}
@@ -84,6 +86,7 @@ export const Chat = ({
             isDelayed={isChatDelayed}
             isFollowing={isFollowing}
             timeDelay={timeDelay}
+            languageToUse={languageToUse}
           />
         </>
       )}
@@ -93,6 +96,7 @@ export const Chat = ({
             viewerName={viewerName}
             hostName={hostName}
             isHidden={isHidden}
+            languageToUse={languageToUse}
           />
         </>
       )}

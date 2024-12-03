@@ -11,13 +11,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import { Image as ImageData, Product, ProductDetail } from "@prisma/client";
+import { getAllProductNotQuery } from "@/actions/client/products/get-products";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 type ToogleCardFormValues = z.infer<typeof ToogleCardForm>;
-
-interface ProductWithImages extends Product {
-  images: ImageData[];
-  productdetail: ProductDetail;
-}
 
 interface ToggleCardProps {
   id: string;
@@ -28,7 +25,7 @@ interface ToggleCardProps {
   disabled: boolean;
   totalQuantity: number;
   setLoading: Dispatch<SetStateAction<boolean>>;
-  setData: Dispatch<SetStateAction<ProductWithImages[]>>;
+  setData: any;
 }
 
 export const FormToggleCard = ({
@@ -42,6 +39,17 @@ export const FormToggleCard = ({
   setData,
   totalQuantity,
 }: ToggleCardProps) => {
+  const user = useCurrentUser();
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []); 
+  
   const form = useForm<ToogleCardFormValues>({
     resolver: zodResolver(ToogleCardForm),
     defaultValues: {
@@ -74,10 +82,12 @@ export const FormToggleCard = ({
         `${process.env.NEXT_PUBLIC_API_URL}/getAllProductNotQuery`,
         updatedData
       );
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/getAllProductNotQuery`
-      );
-      setData(response.data);
+      const languageToUse =
+      user?.id && user?.role !== "GUEST" ? user?.language : storedLanguage || "vi";
+
+      const product = await getAllProductNotQuery(languageToUse);
+
+      setData(product);
       toast.success("Product updated.");
     } catch (error: unknown) {
       if (

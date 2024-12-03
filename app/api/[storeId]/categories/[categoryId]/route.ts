@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { CategoryType, UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
+import { translateCategoriesIdDelete, translateCategoriesIdGet, translateCategoriesIdPatch } from "@/translate/translate-api";
 
 type CategoryValue = string | CategoryType | Date | undefined;
 
@@ -16,25 +17,29 @@ export async function GET(
   { params }: { params: { categoryId: string } }
 ) {
   const categoryType = CategoryType.CATEGORY;
-  const userId = await currentUser();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const categoriesIdGetMessage = translateCategoriesIdGet(LanguageToUse);
+
   try {
     if (!params.categoryId) {
       return new NextResponse(
-        JSON.stringify({ error: "Category id is required!" }),
+        JSON.stringify({ error: categoriesIdGetMessage.name1 }),
         { status: 400 }
       );
     }
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: categoriesIdGetMessage.name2 }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xem categories!" }),
+        JSON.stringify({ error: categoriesIdGetMessage.name3 }),
         { status: 403 }
       );
     }
@@ -49,7 +54,7 @@ export async function GET(
     return NextResponse.json(category);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get categories." }),
+      JSON.stringify({ error: categoriesIdGetMessage.name4 }),
       { status: 500 }
     );
   }
@@ -60,26 +65,29 @@ export async function DELETE(
   { params }: { params: { categoryId: string; storeId: string } }
 ) {
   const categoryType = CategoryType.CATEGORY;
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const categoriesIdDeleteMessage = translateCategoriesIdDelete(LanguageToUse)
   try {
-    const userId = await currentUser();
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: categoriesIdDeleteMessage.name1 }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xóa categories!" }),
+        JSON.stringify({ error: categoriesIdDeleteMessage.name2 }),
         { status: 403 }
       );
     }
 
     if (!params.categoryId) {
       return new NextResponse(
-        JSON.stringify({ error: "Category id is required!" }),
+        JSON.stringify({ error: categoriesIdDeleteMessage.name3 }),
         { status: 400 }
       );
     }
@@ -92,7 +100,7 @@ export async function DELETE(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: categoriesIdDeleteMessage.name4 }),
         { status: 405 }
       );
     }
@@ -120,14 +128,14 @@ export async function DELETE(
         storeId: params.storeId,
         type: "DELETEPIN-CATEGORY",
         delete: changes,
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(category);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete categories." }),
+      JSON.stringify({ error: categoriesIdDeleteMessage.name5 }),
       { status: 500 }
     );
   }
@@ -138,36 +146,38 @@ export async function PATCH(
   { params }: { params: { categoryId: string; storeId: string } }
 ) {
   const categoryType = CategoryType.CATEGORY;
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const categoriesIdPatchMessage = translateCategoriesIdPatch(LanguageToUse)
+
   try {
-    const userId = await currentUser();
-
     const body = await req.json();
-
     const { name } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: categoriesIdPatchMessage.name1 }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền cập nhật categories!" }),
+        JSON.stringify({ error: categoriesIdPatchMessage.name2 }),
         { status: 403 }
       );
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+      return new NextResponse(JSON.stringify({ error: categoriesIdPatchMessage.name3 }), {
         status: 400,
       });
     }
 
     if (!params.categoryId) {
       return new NextResponse(
-        JSON.stringify({ error: "Category id is required!" }),
+        JSON.stringify({ error: categoriesIdPatchMessage.name4 }),
         { status: 400 }
       );
     }
@@ -180,7 +190,7 @@ export async function PATCH(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: categoriesIdPatchMessage.name5 }),
         { status: 405 }
       );
     }
@@ -242,14 +252,14 @@ export async function PATCH(
         oldChange: oldChanges,
         newChange: newChanges,
         type: "UPDATEPIN-CATEGORY",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(category);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error patch categories." }),
+      JSON.stringify({ error: categoriesIdPatchMessage.name6 }),
       { status: 500 }
     );
   }

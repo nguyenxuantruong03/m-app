@@ -46,6 +46,7 @@ interface DataTableProps<TData, TValue> {
   setOpen?: (open: boolean) => void;
   showSelected?: boolean;
   showTotal?: boolean;
+  languageToUse: string;
 }
 
 interface DataTableRow {
@@ -64,6 +65,7 @@ export function DataTable<TData, TValue>({
   setOpen,
   showSelected = true,
   showTotal = false,
+  languageToUse
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -150,6 +152,7 @@ export function DataTable<TData, TValue>({
           table.resetRowSelection();
         }}
         loading={disable}
+        languageToUse={languageToUse}
       />
       <div className="lg:flex items-center py-4 space-y-2 lg:space-y-0 lg:space-x-3 grid grid-rows-2">
         <Input

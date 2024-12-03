@@ -4,8 +4,13 @@ import { MessageSquare, Users } from "lucide-react";
 import { Button } from "../ui/button";
 import { ChatVariant, useChatSidebar } from "@/hooks/stream/use-chat-sidebar";
 import { Hint } from "../ui/hint";
+import { translateCommunity, translateGoBackToChat } from "@/translate/translate-client";
 
-export const VariantToggle = () => {
+interface VariantToggleProps{
+  languageToUse: string;
+}
+
+export const VariantToggle = ({languageToUse}:VariantToggleProps) => {
   const { variant, onChangeVariant } = useChatSidebar((state) => state);
 
   const isChat = variant === ChatVariant.CHAT;
@@ -17,7 +22,11 @@ export const VariantToggle = () => {
     onChangeVariant(newVariant);
   };
 
-  const label = isChat ? "Community" : "Go back to chat";
+  //languages
+  const communityMessage = translateCommunity(languageToUse)
+  const gobacktoChatMessage = translateGoBackToChat(languageToUse)
+
+  const label = isChat ? communityMessage : gobacktoChatMessage;
 
   return (
     <Hint label={label} side="left" asChild>

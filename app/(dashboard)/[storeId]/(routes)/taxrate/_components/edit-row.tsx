@@ -9,6 +9,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import LabelForm from "./form-edit";
+import { getTaxrateEditRow } from "@/translate/translate-dashboard";
 
 const taxTypeMapping: Record<string, string> = {
   vat: "VAT",
@@ -24,10 +25,26 @@ interface EditRowProps {
   inclusive: boolean;
   active: boolean;
   taxtype: string | null;
-  field: "name" | "description"
+  field: "name" | "description";
+  language: string;
 }
-const EditRow: React.FC<EditRowProps> = ({ data, id, name,description,percentage,inclusive,taxtype,active, field }) => {
+const EditRow: React.FC<EditRowProps> = ({
+  data,
+  id,
+  name,
+  description,
+  percentage,
+  inclusive,
+  taxtype,
+  active,
+  field,
+  language,
+}) => {
   const [open, setOpen] = useState(false);
+
+  //language
+  const taxrateEditRowMessage = getTaxrateEditRow(language)
+
   const handleClick = () => {
     setOpen(true);
   };
@@ -37,24 +54,27 @@ const EditRow: React.FC<EditRowProps> = ({ data, id, name,description,percentage
 
   return (
     <>
-      <div onClick={handleClick} className="hover:underline cursor-pointer">{data || "Không tìm thấy!"}</div>
+      <div onClick={handleClick} className="hover:underline cursor-pointer">
+        {data || taxrateEditRowMessage.notFound}
+      </div>
       <Sheet open={open} onOpenChange={handleonClose}>
         <SheetContent className="space-y-4">
           <SheetHeader>
-            <SheetTitle>Edit {name}</SheetTitle>
-            <SheetDescription>Edit an existing {data}.</SheetDescription>
+            <SheetTitle>{taxrateEditRowMessage.edit} {name}</SheetTitle>
+            <SheetDescription>{taxrateEditRowMessage.editAnExisting} {data}.</SheetDescription>
           </SheetHeader>
           <LabelForm
-          data={data}
-          id={id}
-          name={name}
-          description={description}
-          percentage={percentage}
-          inclusive={inclusive}
-          taxtype={taxtype}
-          active={active}
-          field={field}
-          setOpen={setOpen}
+            data={data}
+            id={id}
+            name={name}
+            description={description}
+            percentage={percentage}
+            inclusive={inclusive}
+            taxtype={taxtype}
+            active={active}
+            field={field}
+            setOpen={setOpen}
+            language={language}
           />
         </SheetContent>
       </Sheet>

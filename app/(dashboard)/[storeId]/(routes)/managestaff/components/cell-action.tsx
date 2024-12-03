@@ -17,6 +17,7 @@ import axios from "axios";
 
 import { AlertModal } from "@/components/modals/alert-modal";
 import { ManageStaffsColumn } from "./column";
+import { getManageStaffAction } from "@/translate/translate-dashboard";
 
 interface CellActionProps {
   data: ManageStaffsColumn;
@@ -29,9 +30,12 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
+  //language
+  const manageStaffActionMessage = getManageStaffAction(data.language)
+
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id);
-    toast.success("STAFF Id copied to the clipboard.");
+    toast.success(manageStaffActionMessage.staffIdCopied);
   };
 
   const onDelete = async () => {
@@ -39,7 +43,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       setLoading(true);
       await axios.delete(`/api/${params.storeId}/managestaff/${data.id}`);
       router.refresh();
-      toast.success("Đuổi việc thành công!");
+      toast.success(manageStaffActionMessage.firedSuccessfully);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -51,7 +55,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
-          "Make sure you removed all categories using this billboard first."
+          manageStaffActionMessage.somethingWentWrong
         );
       }
     } finally {
@@ -66,7 +70,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       let promise;
 
       if (data.sentVeirifi === true) {
-        toast.error("Email đã được gửi!");
+        toast.error(manageStaffActionMessage.emailSent);
         setLoading(false);
         return;
       } else {
@@ -80,10 +84,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       await toast.promise(
         promise.then((response) => {
           const userEmail = response.data.userEmail;
-          return `Verification email sent to: ${userEmail}`;
+          return `${manageStaffActionMessage.verificationEmailSentTo}: ${userEmail}`;
         }),
         {
-          loading: "Updating verification email...",
+          loading: manageStaffActionMessage.updatingVerificationEmail,
           success: (message) => {
             router.refresh();
             return message;
@@ -96,7 +100,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             ) {
               return error.response.data.error;
             } else {
-              return "Failed to send verification email.";
+              return manageStaffActionMessage.somethingWentWrong;
             }
           },
         }
@@ -114,19 +118,20 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         onClose={() => setOpen(false)}
         onConfirm={onDelete}
         loading={loading}
+        languageToUse={data.language}
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
+            <span className="sr-only">{manageStaffActionMessage.openMenu}</span>
             <MoreHorizontal className="w-4 h-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuLabel>{manageStaffActionMessage.actions}</DropdownMenuLabel>
           <DropdownMenuItem onClick={() => onCopy(data.id)}>
             <Copy className="h-4 w-4 mr-2" />
-            CopyId
+            {manageStaffActionMessage.copyId}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() =>
@@ -134,15 +139,15 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             }
           >
             <Edit className="h-4 w-4 mr-2" />
-            Update
+            {manageStaffActionMessage.update}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>
             <CircleSlash className="h-4 w-4 mr-2" />
-            Đuổi việc
+            {manageStaffActionMessage.fireStaff}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={onSentVerify}>
             <Send className="h-4 w-4 mr-2" />
-            Sent Verify
+            {manageStaffActionMessage.sentVerify}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

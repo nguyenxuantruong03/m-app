@@ -34,6 +34,65 @@ import { ReturnProduct } from "@/components/(client)/modal/returnProduct-modal";
 import { ReviewModal } from "@/components/(client)/modal/review-product-packageProduct-modal";
 import FormatDate from "@/components/format-Date";
 import StatusProduct from "../../../components/ui/statusProduct";
+import getWareHouse from "@/actions/client/warehouse";
+import {
+  getToastError,
+  translateInsufficientStock,
+  getProductNotFoundMessage,
+  translateEmptyOrder,
+  getBuyNowTranslation,
+  translateColorCategory,
+  translateSizeCategory,
+  translateWaitingForConfirmation,
+  translateProcessing,
+  translatePreparingGoods,
+  translatePackingGoods,
+  translateShippedToShipper,
+  translateHandedOverToShipper,
+  translateOrderShipping,
+  translateDelivering,
+  translateReDelivering,
+  translateReDeliveringNow,
+  translateDeliverySuccessful,
+  translateCompleted,
+  translateOrderCancelled,
+  translateCancelOrder,
+  translateReturnToShop,
+  translateReturnItem,
+  translateShipperConfirmingOrder,
+  translateShipperPreparingToArrive,
+  translateShipperPickingUpOrder,
+  translateReceiveItem,
+  translateItemReceivedWithIssue,
+  translateReturnItemSuccess,
+  translatePickUpAtStore,
+  translatePickUpAtStoreUpperCase,
+  translatePreparingOrder,
+  translatePrepareOrder,
+  translateOrderPrepared,
+  translateCustomerPickUp,
+  translateReturnRequestInfo,
+  translateResolveOrderFirst,
+  translateOrderIssueContact,
+  translateRate,
+  translateReturnRefund,
+  translateContactStore,
+  translateBuyAgain,
+  translateTotalAmount,
+  translateDeliveryAddress,
+  translateBack,
+  translateOrderCodeUpperCase,
+  translatePaymentMethod,
+  translateCashPayment,
+  translateOnlinePayment,
+  translateWaitForPickup,
+  translateDeliveringNormal,
+  translateCancelled,
+  translateDelivered,
+  translateReturnItemNormal,
+  translateShipperOnTheWay,
+  translateReturnedItem,
+} from "@/translate/translate-client";
 
 const WareHouseDetail = ({
   params,
@@ -50,6 +109,87 @@ const WareHouseDetail = ({
   const [openReview, setOpenReview] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [matchingItemData, setmatchingItemData] = useState<Order>();
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+  const toastErrorMessage = getToastError(languageToUse);
+  const insufficientStockMessage = translateInsufficientStock(languageToUse);
+  const productNotFoundMessage = getProductNotFoundMessage(languageToUse);
+  const emptyOrderMessage = translateEmptyOrder(languageToUse);
+  const BuyNowMessage = getBuyNowTranslation(languageToUse);
+  const colorCategoryMessage = translateColorCategory(languageToUse);
+  const sizeCategoryMessage = translateSizeCategory(languageToUse);
+
+  const waitingforConfirmationMessage =
+    translateWaitingForConfirmation(languageToUse);
+  const processingMessage = translateProcessing(languageToUse);
+  const preparingGoodsMessage = translatePreparingGoods(languageToUse);
+  const packingGoodsMessage = translatePackingGoods(languageToUse);
+  const shippedToShipperMessage = translateShippedToShipper(languageToUse);
+  const handedOverToShipperMessage =
+    translateHandedOverToShipper(languageToUse);
+  const OrderShippingMessage = translateOrderShipping(languageToUse);
+  const deliveringMessage = translateDelivering(languageToUse);
+  const reDeliveringMessage = translateReDelivering(languageToUse);
+  const reDeliveringNowMessage = translateReDeliveringNow(languageToUse);
+  const deliverySuccessfulMessage = translateDeliverySuccessful(languageToUse);
+  const completedMessage = translateCompleted(languageToUse);
+  const orderCancelledMessage = translateOrderCancelled(languageToUse);
+  const cancelOrderMessage = translateCancelOrder(languageToUse);
+  const returnToShopMessage = translateReturnToShop(languageToUse);
+  const returnItemMessage = translateReturnItem(languageToUse);
+  const shipperConfirmingOrderMessage =
+    translateShipperConfirmingOrder(languageToUse);
+  const shipperPreparingToArriveMessage =
+    translateShipperPreparingToArrive(languageToUse);
+  const shipperPickingUpOrderMessage =
+    translateShipperPickingUpOrder(languageToUse);
+  const receiveItemMessage = translateReceiveItem(languageToUse);
+  const itemReceivedWithIssueMessage =
+    translateItemReceivedWithIssue(languageToUse);
+  const returnItemSuccessMessage = translateReturnItemSuccess(languageToUse);
+  const PickUpAtStoreMessage = translatePickUpAtStore(languageToUse);
+  const pickUpAtStoreUpperCaseMessage =
+    translatePickUpAtStoreUpperCase(languageToUse);
+  const preparingOrderMessage = translatePreparingOrder(languageToUse);
+  const prepareOrderMessage = translatePrepareOrder(languageToUse);
+  const oderPreparedMessage = translateOrderPrepared(languageToUse);
+  const customerPickUpMessage = translateCustomerPickUp(languageToUse);
+
+  const waitForPickUpMessage = translateWaitForPickup(languageToUse);
+  const DeliveringNormalMessage = translateDeliveringNormal(languageToUse);
+  const cancelledMessage = translateCancelled(languageToUse);
+  const deliveredMessage = translateDelivered(languageToUse);
+  const returnItemNormalMessage = translateReturnItemNormal(languageToUse);
+  const shipperOnTheWayMessage = translateShipperOnTheWay(languageToUse);
+  const returnedItemMessage = translateReturnedItem(languageToUse);
+
+  const backMessage = translateBack(languageToUse);
+  const orderCodeUpperCaseMessage = translateOrderCodeUpperCase(languageToUse);
+  const returnRequestInfoMessage = translateReturnRequestInfo(languageToUse);
+  const resolveOrderFirstMessage = translateResolveOrderFirst(languageToUse);
+  const orderIssueContactMessage = translateOrderIssueContact(languageToUse);
+  const RateMessage = translateRate(languageToUse);
+  const returnRefundMessage = translateReturnRefund(languageToUse);
+  const contactStoreMessage = translateContactStore(languageToUse);
+  const buyAgaginMessage = translateBuyAgain(languageToUse);
+  const deliveryAddressMessage = translateDeliveryAddress(languageToUse);
+  const totalAmountMessage = translateTotalAmount(languageToUse);
+  const paymentMethodMessage = translatePaymentMethod(languageToUse);
+  const cashPayementMessage = translateCashPayment(languageToUse);
+  const onlinePaymentMessage = translateOnlinePayment(languageToUse);
 
   const handleBuyNow = () => {
     router.push("/home-product");
@@ -59,13 +199,10 @@ const WareHouseDetail = ({
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/warehouse`
-        );
-
-        setData(response.data);
+        const warehouse = await getWareHouse(languageToUse);
+        setData(warehouse);
       } catch (error) {
-        toast.error("Fetch data error!");
+        toast.error(toastErrorMessage);
       } finally {
         setLoading(false);
       }
@@ -110,61 +247,61 @@ const WareHouseDetail = ({
 
   const generateNavbarOrder = (order: Order) => [
     {
-      label: "Chờ xác nhận",
+      label: waitingforConfirmationMessage,
       icon: <Pin className="w-4 h-4" />,
       active: order.status === "Cho_xac_nhan",
       status: "Cho_xac_nhan",
     },
     {
-      label: "Soạn hàng",
+      label: prepareOrderMessage,
       icon: <PackageSearch className="w-4 h-4" />,
       active: order.status === "Soan_hang",
       status: "Soan_hang",
     },
     {
-      label: "Chờ lấy hàng",
+      label: waitForPickUpMessage,
       icon: <Truck className="w-4 h-4" />,
       active: order.status === "Cho_lay_hang",
       status: "Cho_lay_hang",
     },
     {
-      label: "Đang giao",
+      label: DeliveringNormalMessage,
       icon: <ChevronsRight className="w-4 h-4" />,
       active: order.status === "Dang_giao",
       status: "Dang_giao",
     },
     {
-      label: "Đã hủy",
+      label: cancelledMessage,
       icon: <PackageX className="w-4 h-4" />,
       active: order.status === "Da_huy",
       status: "Da_huy",
     },
     {
-      label: "Giao lại hàng",
+      label: reDeliveringMessage,
       icon: <Repeat className="w-4 h-4" />,
       active: order.status === "Giao_lai_hang",
       status: "Giao_lai_hang",
     },
     {
-      label: "Đã giao",
+      label: deliveredMessage,
       icon: <PackageCheck className="w-4 h-4" />,
       active: order.status === "Da_giao",
       status: "Da_giao",
     },
     {
-      label: "Trả hàng",
+      label: returnItemNormalMessage,
       icon: <PackageMinus className="w-4 h-4" />,
       active: order.status === "Tra_hang",
       status: "Tra_hang",
     },
     {
-      label: "Shipper đang đến",
+      label: shipperOnTheWayMessage,
       icon: <PackageCheck className="w-4 h-4" />,
       active: order.status === "Shipper_dang_den",
       status: "Shipper_dang_den",
     },
     {
-      label: "Hàng đã trả",
+      label: returnedItemMessage,
       icon: <PackageCheck className="w-4 h-4" />,
       active: order.status === "Da_nhan_tra_hang",
       status: "Da_nhan_tra_hang",
@@ -213,7 +350,7 @@ const WareHouseDetail = ({
       // Use the Link component for navigation
       router.push(href);
     } else {
-      console.error("Invalid route:", route);
+      toast.error(toastErrorMessage);
     }
   };
 
@@ -289,12 +426,12 @@ const WareHouseDetail = ({
         if (user?.role === "GUEST" || !user?.id) return;
 
         if (!orderItem.size && !orderItem.color) {
-          toast.error("Không tìm thấy số lượng của sản phẩm!");
+          toast.error(insufficientStockMessage);
           return;
         }
 
         if (!orderItem.product) {
-          toast.error("Không tìm thấy sản phẩm!");
+          toast.error(productNotFoundMessage);
           return;
         }
 
@@ -347,7 +484,8 @@ const WareHouseDetail = ({
                 existingCartItem.id,
                 existingCartItem.quantity + 1,
                 orderItem.warranty || null,
-                user.id
+                user.id,
+                languageToUse
               );
             } else {
               // Add the product to the cart
@@ -362,7 +500,7 @@ const WareHouseDetail = ({
             }
           }
         } catch (error) {
-          toast.error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
+          toast.error(toastErrorMessage);
         } finally {
           router.push("/cart");
           setLoading(false);
@@ -387,6 +525,7 @@ const WareHouseDetail = ({
                 isOpen={openReview}
                 order={matchId[0]}
                 onClose={() => setOpenReview(false)}
+                languageToUse={languageToUse}
               />
             </div>
           </div>
@@ -397,6 +536,7 @@ const WareHouseDetail = ({
         order={matchingItemData || undefined}
         onClose={() => setOpen(false)}
         user={user}
+        languageToUse={languageToUse}
       />
       {!loading && matchId.length === 0 && (
         <>
@@ -404,7 +544,7 @@ const WareHouseDetail = ({
             <Image src="/images/no-cart.png" alt="" width="108" height="98" />
           </div>
           <div className="flex justify-center my-2">
-            <p className="text-neutral-500">Đơn hàng của bạn còn trống</p>
+            <p className="text-neutral-500">{emptyOrderMessage}</p>
           </div>
           <div className="flex justify-center my-2">
             <Button
@@ -412,7 +552,7 @@ const WareHouseDetail = ({
               onClick={handleBuyNow}
               className="hover:underline"
             >
-              Mua ngay
+              {BuyNowMessage}
             </Button>
           </div>
         </>
@@ -431,11 +571,14 @@ const WareHouseDetail = ({
               className="text-sm flex items-center text-slate-900 dark:text-slate-300 hover:text-slate-800 dark:hover:text-slate-200"
             >
               <ChevronLeft className="w-7 h-7 md:w-5 md:h-5 mr-1" />{" "}
-              <span className="hidden md:block">TRỞ LẠI</span>
+              <span className="hidden md:block">{backMessage}</span>
             </Link>
             <div className="flex items-center">
               <span className="w-9/12 md:w-6/12 lg:w-full text-sm text-slate-900 dark:text-slate-200">
-                <span className="font-semibold">MÃ ĐƠN HÀNG:</span> {order.id}
+                <span className="font-semibold">
+                  {orderCodeUpperCaseMessage}
+                </span>{" "}
+                {order.id}
               </span>
               <Separator
                 orientation="vertical"
@@ -444,150 +587,165 @@ const WareHouseDetail = ({
               {order.status === "Cho_xac_nhan" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Chờ xác nhận"
-                  noneTitleStatus={false}
+                  titleStatus={waitingforConfirmationMessage}
                   classTitleStatus="text-yellow-600"
-                  status="ĐANG XỬ LÝ"
+                  noneTitleStatus={true}
+                  status={processingMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Soan_hang" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Chuẩn bị hàng"
-                  noneTitleStatus={false}
+                  titleStatus={preparingGoodsMessage}
                   classTitleStatus="text-yellow-600"
-                  status="SOẠN HÀNG"
+                  noneTitleStatus={true}
+                  status={packingGoodsMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Cho_lay_hang" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Chuyển hàng cho shipper"
-                  noneTitleStatus={false}
+                  titleStatus={shippedToShipperMessage}
                   classTitleStatus="text-yellow-600"
-                  status="BÀN GIAO SHIPPER"
+                  noneTitleStatus={true}
+                  status={handedOverToShipperMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Dang_giao" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Đơn hàng đang giao"
-                  noneTitleStatus={false}
+                  titleStatus={OrderShippingMessage}
                   classTitleStatus="text-yellow-600"
-                  status="ĐANG GIAO"
+                  noneTitleStatus={true}
+                  status={deliveringMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Giao_lai_hang" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Giao lại hàng"
-                  noneTitleStatus={false}
+                  titleStatus={reDeliveringMessage}
                   classTitleStatus="text-yellow-600"
-                  status="ĐANG GIAO LẠI HÀNG"
+                  noneTitleStatus={true}
+                  status={reDeliveringNowMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Da_giao" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Giao hàng thành công"
-                  noneTitleStatus={false}
+                  titleStatus={deliverySuccessfulMessage}
                   classTitleStatus="text-green-600"
-                  status="HOÀN THÀNH"
+                  noneTitleStatus={true}
+                  status={completedMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Da_huy" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Đơn hàng đã hủy"
-                  noneTitleStatus={false}
+                  titleStatus={orderCancelledMessage}
                   classTitleStatus="text-red-600"
-                  status="HỦY ĐƠN HÀNG"
+                  noneTitleStatus={true}
+                  status={cancelOrderMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Tra_hang" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Trả hàng lại shop"
-                  noneTitleStatus={false}
+                  titleStatus={returnToShopMessage}
                   classTitleStatus="text-red-600"
-                  status="TRẢ HÀNG"
+                  noneTitleStatus={true}
+                  status={returnItemMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Shipper_chuan_bi" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Shipper đang xác nhận đơn hàng"
-                  noneTitleStatus={false}
+                  titleStatus={shipperConfirmingOrderMessage}
                   classTitleStatus="text-red-600"
-                  status="SHIPPER CHUẨN BỊ ĐẾN"
+                  noneTitleStatus={true}
+                  status={shipperPreparingToArriveMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Shipper_dang_den" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Shipper đang đến nhận lại hàng"
-                  noneTitleStatus={false}
+                  titleStatus={shipperPickingUpOrderMessage}
                   classTitleStatus="text-red-600"
-                  status="NHẬN HÀNG"
+                  noneTitleStatus={true}
+                  status={receiveItemMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Da_nhan_tra_hang" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Đã nhận lại hàng có vấn đề"
-                  noneTitleStatus={false}
+                  titleStatus={itemReceivedWithIssueMessage}
                   classTitleStatus="text-red-600"
-                  status="TRẢ HÀNG THÀNH CÔNG"
+                  noneTitleStatus={true}
+                  status={returnItemSuccessMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Nhan_tai_cua_hang" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Nhận tại cửa hàng"
-                  noneTitleStatus={false}
+                  titleStatus={PickUpAtStoreMessage}
                   classTitleStatus="text-yellow-600"
-                  status="NHẬN TẠI CỬA HÀNG"
+                  noneTitleStatus={true}
+                  status={pickUpAtStoreUpperCaseMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Soan_hang_nhan_tai_cua_hang" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Đang soạn hàng"
-                  noneTitleStatus={false}
+                  titleStatus={preparingOrderMessage}
                   classTitleStatus="text-yellow-600"
-                  status="SOẠN HÀNG"
+                  noneTitleStatus={true}
+                  status={prepareOrderMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Da_soan_hang_xong" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Đã soạn hàng xong"
-                  noneTitleStatus={false}
+                  titleStatus={oderPreparedMessage}
                   classTitleStatus="text-yellow-600"
-                  status="KHÁCH HÀNG ĐẾN NHẬN"
+                  noneTitleStatus={true}
+                  status={customerPickUpMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
               {order.status === "Da_nhan_tai_cua_hang" && (
                 <StatusProduct
                   updatedAt={order.updatedAt}
-                  titleStatus="Giao hàng thành công"
-                  noneTitleStatus={false}
+                  titleStatus={deliverySuccessfulMessage}
                   classTitleStatus="text-green-600"
-                  status="HOÀN THÀNH"
+                  noneTitleStatus={true}
+                  status={completedMessage}
+                  languageToUse={languageToUse}
                   classStatus="text-red-500"
                 />
               )}
@@ -620,7 +778,9 @@ const WareHouseDetail = ({
                     } ${i + 1 < currentStep && "complete"} `}
                   >
                     <div className="step">{item.icon}</div>
-                    <p className="text-slate-900 dark:text-slate-200 text-sm">{item.label}</p>
+                    <p className="text-slate-900 dark:text-slate-200 text-sm">
+                      {item.label}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -633,6 +793,7 @@ const WareHouseDetail = ({
                       order={order}
                       onClose={() => setOpenReturnProduct(false)}
                       user={user}
+                      languageToUse={languageToUse}
                     />
                   </div>
                 </div>
@@ -648,12 +809,10 @@ const WareHouseDetail = ({
                     <div className="flex">
                       <div className="w-3/4">
                         <p className="text-xs text-gray-400 dark:text-slate-200">
-                          Nếu hàng nhận được có vấn đề, bạn có thể gửi yêu cầu
-                          Trả hàng/Hoàn tiền trước trước 3 ngày kể từ ngày bạn
-                          nhận.
+                          {returnRequestInfoMessage}
                         </p>
                         <p className="text-xs text-gray-400">
-                          Giải quyết đơn hàng trước{" "}
+                          {resolveOrderFirstMessage}
                           {
                             <FormatDate
                               subtractiontime={true}
@@ -663,7 +822,7 @@ const WareHouseDetail = ({
                           .
                         </p>
                         <p className="text-xs text-gray-400 dark:text-slate-200">
-                          Có vấn đề về đơn hàng liên hệ số điện thoại{" "}
+                          {orderIssueContactMessage}
                           <Link href="tel:0352261103" className="underline">
                             0352261103
                           </Link>{" "}
@@ -675,7 +834,7 @@ const WareHouseDetail = ({
                           className="bg-red-500 text-slate-900 dark:text-slate-200 dark:hover:text-slate-900"
                           onClick={() => setOpenReview(true)}
                         >
-                          Đánh giá
+                          {RateMessage}
                         </Button>
                       </div>
                     </div>
@@ -692,7 +851,7 @@ const WareHouseDetail = ({
                           variant="outline"
                           className="bg-transparent text-slate-900 dark:text-slate-200 dark:border px-1 dark:border-white text-xs md:text-sm"
                         >
-                          Trả Hàng/Hoàn Tiền
+                          {returnRefundMessage}
                         </Button>
                       </div>
                     </div>
@@ -706,7 +865,9 @@ const WareHouseDetail = ({
                           variant="outline"
                           className="bg-transparent text-slate-900 dark:text-slate-200 dark:border dark:border-white text-xs md:text-sm"
                         >
-                          <Link href="tel:0352261103">Liên hệ cửa hàng</Link>
+                          <Link href="tel:0352261103">
+                            {contactStoreMessage}
+                          </Link>
                         </Button>
                       </div>
                     </div>
@@ -721,7 +882,7 @@ const WareHouseDetail = ({
                           className="bg-transparent text-slate-900 dark:text-slate-200 dark:border dark:border-white text-xs md:text-sm"
                           onClick={() => handleBuyAgainClick(order)}
                         >
-                          Mua lại
+                          {buyAgaginMessage}
                         </Button>
                       </div>
                     </div>
@@ -731,8 +892,12 @@ const WareHouseDetail = ({
                   <div className="bg-zinc-400 bg-opacity-10 px-5 py-3">
                     <div className="flex">
                       <div className="w-1/2 space-y-2">
-                        <p className="font-semibold text-slate-900 dark:text-slate-200">Địa chỉ nhận hàng</p>
-                        <p className="text-sm text-slate-900 dark:text-slate-200">{order.name}</p>
+                        <p className="font-semibold text-slate-900 dark:text-slate-200">
+                          {deliveryAddressMessage}
+                        </p>
+                        <p className="text-sm text-slate-900 dark:text-slate-200">
+                          {order.name}
+                        </p>
                         <p className="text-gray-400 text-xs">{order.phone}</p>
                         <p className="text-gray-400 text-xs">{order.address}</p>
                         <p className="text-gray-400 text-xs">
@@ -788,7 +953,7 @@ const WareHouseDetail = ({
                         orderItem.product.name
                       );
                     } else {
-                      toast.error("Sản phẩm đang gặp vấn đề!");
+                      toast.error(toastErrorMessage);
                     }
                   }}
                   className="flex items-center cursor-pointer"
@@ -816,16 +981,18 @@ const WareHouseDetail = ({
                       {orderItem.product?.heading}
                     </p>
                     <p className="flex text-xs text-gray-500 dark:text-gray-400">
-                      Phân loại màu:
+                      {colorCategoryMessage}
                       <div
                         className="h-4 w-4 rounded-full ml-2"
                         style={{ backgroundColor: orderItem.color }}
                       />
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Phân loại kích thước: {orderItem.size}
+                      {sizeCategoryMessage} {orderItem.size}
                     </p>
-                    <p className="text-slate-900 dark:text-slate-200">x{orderItem.quantity}</p>
+                    <p className="text-slate-900 dark:text-slate-200">
+                      x{orderItem.quantity}
+                    </p>
                   </div>
                   <div className="w-4/12 md:w-1/5 text-end text-slate-900 dark:text-slate-200">
                     {formatter.format(getPriceMatchColorandSize())}
@@ -839,18 +1006,26 @@ const WareHouseDetail = ({
 
           {/* Đây là return ngoài order còn bên trong kia orderItem nó sẽ lặp lại trên mỗi Item còn đây chỉ lặp trên 1 order 1 cái*/}
           <div className="flex items-center justify-between mt-8">
-            <span className="text-slate-900 dark:text-slate-200 text-sm md:text-base">Thành tiền:</span>{" "}
+            <span className="text-slate-900 dark:text-slate-200 text-sm md:text-base">
+              {totalAmountMessage}
+            </span>{" "}
             <Currency value={calculateTotalPrice(order)} />
           </div>
           <div>
             <Separator className="my-2 bg-gray-300" />
             <div className="flex items-center justify-between">
-              <div className="text-slate-900 dark:text-slate-200 text-sm md:text-base">Phương thức thanh toán:</div>
+              <div className="text-slate-900 dark:text-slate-200 text-sm md:text-base">
+                {paymentMethodMessage}
+              </div>
               <div>
                 {order.isPaid === false ? (
-                  <span className="text-yellow-500 text-sm md:text-base">Thanh toán tiền mặt</span>
+                  <span className="text-yellow-500 text-sm md:text-base">
+                    {cashPayementMessage}
+                  </span>
                 ) : (
-                  <span className="text-green-500 text-sm md:text-base">Thanh toán online</span>
+                  <span className="text-green-500 text-sm md:text-base">
+                    {onlinePaymentMessage}
+                  </span>
                 )}
               </div>
             </div>

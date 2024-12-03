@@ -1,103 +1,148 @@
 import { UserRole } from "@prisma/client";
-import { ResponsiveContainer, Treemap as TreeMapChart, Tooltip } from "recharts";
+import {
+  ResponsiveContainer,
+  Treemap as TreeMapChart,
+  Tooltip,
+} from "recharts";
 import { Skeleton } from "../ui/skeleton";
 import { format } from "date-fns";
+import {
+  translateCreatedAt,
+  translateName,
+  translateRole,
+  translateSelectDateMessage,
+} from "@/translate/translate-client";
 
 interface User {
-    name: string;
-    email: string;
-    createdAt: Date; // Thêm createdAt vào giao diện User
+  name: string;
+  email: string;
+  createdAt: Date; // Thêm createdAt vào giao diện User
 }
 
 interface RoleData {
-    role: UserRole;
-    user: User[];
+  role: UserRole;
+  user: User[];
 }
 
 interface TreeMapProps {
-    data: RoleData[];
-    loading: boolean;
+  data: RoleData[];
+  loading: boolean;
+  languageToUse: string;
 }
 
 const sizeMapping: { [key in UserRole]: number } = {
-    USER: 100,
-    STAFF: 220,
-    GUEST: 120,
-    ADMIN: 300,
-    SHIPPER: 150,
-    MARKETING: 250,
+  USER: 100,
+  STAFF: 220,
+  GUEST: 120,
+  ADMIN: 300,
+  SHIPPER: 150,
+  MARKETING: 250,
 };
 
 // Tạo một hệ số để điều chỉnh kích thước của user
 const userSizeFactor = 0.2; // Kích thước của user sẽ là 20% của kích thước role
 
-const TreeMap = ({ data, loading }: TreeMapProps) => {
-    if (loading) {
-        return (
-            <ResponsiveContainer width="100%" height={350}>
-                <div className="flex justify-center h-full">
-                    <Skeleton className="h-[350px] w-full max-w-5xl rounded-md" />
-                </div>
-            </ResponsiveContainer>
-        );
-    }
-    
-    if (!data) {
-        return (
-            <div className="w-full h-[350px] flex items-center justify-center">
-                <span className="text-center dark:text-slate-500 text-slate-900">Please select date to find data...</span>
-            </div>
-        );
-    }
+const TreeMap = ({ data, loading, languageToUse }: TreeMapProps) => {
+  //language
+  const selectDataMessgae = translateSelectDateMessage(languageToUse);
+  const nameMessage = translateName(languageToUse);
+  const roleMessgae = translateRole(languageToUse);
+  const createdAtMessgae = translateCreatedAt(languageToUse);
 
-    const treemapData = data?.map(roleData => {
-        const roleSize = sizeMapping[roleData.role];
+  if (loading) {
+    return (
+      <ResponsiveContainer width="100%" height={350}>
+        <div className="flex justify-center h-full">
+          <Skeleton className="h-[350px] w-full max-w-5xl rounded-md" />
+        </div>
+      </ResponsiveContainer>
+    );
+  }
 
-        return {
-            name: roleData.role,
-            children: roleData.user.map(user => ({
-                name: user.name,
-                email: user.email, // Thêm email vào data
-                createdAt: user.createdAt, // Thêm createdAt vào data
-                role: roleData.role, // Thêm role vào data
-                size: roleSize * userSizeFactor, // Kích thước của user sẽ nhỏ hơn kích thước của role
-                fill: '#8884d8', // Màu sắc của user
-            })),
-        };
-    });
+  if (!data) {
+    return (
+      <div className="w-full h-[350px] flex items-center justify-center">
+        <span className="text-center dark:text-slate-500 text-slate-900">
+          {selectDataMessgae}
+        </span>
+      </div>
+    );
+  }
 
-    // Tooltip content
-    const renderTooltip = (props: any) => {
-        const { payload, label } = props;
-        if (!payload || payload.length === 0) return null;
+  const treemapData = data?.map((roleData) => {
+    const roleSize = sizeMapping[roleData.role];
 
-        const { name, email, role, createdAt } = payload[0].payload;
-
-        return (
-            <div style={{ backgroundColor: '#fff', padding: '10px', border: '1px solid #ccc' }}>
-                <p className="dark:text-slate-500 text-slate-900"><strong className="dark:text-slate-500 text-slate-900">Name:</strong> {name}</p>
-                <p className="dark:text-slate-500 text-slate-900"><strong className="dark:text-slate-500 text-slate-900">Email:</strong> {email}</p>
-                <p className="dark:text-slate-500 text-slate-900"><strong className="dark:text-slate-500 text-slate-900">Role:</strong> {role}</p>
-                <p className="dark:text-slate-500 text-slate-900"><strong className="dark:text-slate-500 text-slate-900">Created At:</strong> {createdAt ? format(new Date(createdAt), "E '-' dd/MM/yyyy '-' HH:mm:ss a") : 'N/A'}</p>
-            </div>
-        );
+    return {
+      name: roleData.role,
+      children: roleData.user.map((user) => ({
+        name: user.name,
+        email: user.email, // Thêm email vào data
+        createdAt: user.createdAt, // Thêm createdAt vào data
+        role: roleData.role, // Thêm role vào data
+        size: roleSize * userSizeFactor, // Kích thước của user sẽ nhỏ hơn kích thước của role
+        fill: "#8884d8", // Màu sắc của user
+      })),
     };
+  });
+
+  // Tooltip content
+  const renderTooltip = (props: any) => {
+    const { payload, label } = props;
+    if (!payload || payload.length === 0) return null;
+
+    const { name, email, role, createdAt } = payload[0].payload;
 
     return (
-        <ResponsiveContainer width="100%" height={350}>
-            <TreeMapChart
-                width={730}
-                height={250}
-                data={treemapData}
-                dataKey="size"
-                aspectRatio={4 / 3}
-                stroke="#fff"
-                fill="#8884d8"
-            >
-                <Tooltip content={renderTooltip} />
-            </TreeMapChart>
-        </ResponsiveContainer>
+      <div
+        style={{
+          backgroundColor: "#fff",
+          padding: "10px",
+          border: "1px solid #ccc",
+        }}
+      >
+        <p className="dark:text-slate-500 text-slate-900">
+          <strong className="dark:text-slate-500 text-slate-900">
+            {nameMessage}:
+          </strong>{" "}
+          {name}
+        </p>
+        <p className="dark:text-slate-500 text-slate-900">
+          <strong className="dark:text-slate-500 text-slate-900">Email:</strong>{" "}
+          {email}
+        </p>
+        <p className="dark:text-slate-500 text-slate-900">
+          <strong className="dark:text-slate-500 text-slate-900">
+            {roleMessgae}:
+          </strong>{" "}
+          {role}
+        </p>
+        <p className="dark:text-slate-500 text-slate-900">
+          <strong className="dark:text-slate-500 text-slate-900">
+            {createdAtMessgae}:
+          </strong>{" "}
+          {createdAt
+            ? format(new Date(createdAt), "E '-' dd/MM/yyyy '-' HH:mm:ss a")
+            : "N/A"}
+        </p>
+      </div>
     );
+  };
+
+  return (
+    <ResponsiveContainer width="100%" height={350}>
+      <TreeMapChart
+        width={730}
+        height={250}
+        data={treemapData}
+        dataKey="size"
+        aspectRatio={4 / 3}
+        stroke="#fff"
+        fill="#8884d8"
+      >
+        <Tooltip content={renderTooltip} />
+      </TreeMapChart>
+    </ResponsiveContainer>
+  );
 };
 
 export default TreeMap;

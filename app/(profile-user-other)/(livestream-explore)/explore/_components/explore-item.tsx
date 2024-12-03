@@ -14,6 +14,12 @@ import { ImageCredential, UserRole } from "@prisma/client";
 import CircleAvatar from "@/components/ui/circle-avatar";
 import { useSidebar } from "@/hooks/stream/use-sidebar";
 import { cn } from "@/lib/utils";
+import {
+  translateCreatePost,
+  translateLiveVideo,
+  translateNoPost,
+  translateWhatAreYouThinking,
+} from "@/translate/translate-client";
 
 type CustomUser = {
   id: string;
@@ -44,12 +50,31 @@ interface ExploreCardProps {
 const ExploreItem = ({ streams, review }: ExploreCardProps) => {
   const { hideAll } = useSidebar((state) => state);
   const user = useCurrentUser();
-  const { token, name, identity } = useViewerToken(user?.id || "");
   const [openPost, setOpenPost] = useState(false);
   const [sortedPostReview, setSortedPostReview] = useState<any[]>(review);
   const [sortCriteria, setSortCriteria] = useState<string>("newest"); // Default to newest
   const [isMounted, setIsMounted] = useState(false);
   const isLive = streams.some((stream: any) => stream?.isLive === true);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+  const { token, name, identity } = useViewerToken(user?.id || "",languageToUse);
+  const cretaePostMessage = translateCreatePost(languageToUse);
+  const whatAreYouThinkingMessage = translateWhatAreYouThinking(languageToUse);
+  const liveVideoMessage = translateLiveVideo(languageToUse);
+  const noPostMessage = translateNoPost(languageToUse);
 
   useEffect(() => {
     // Sort posts when criteria changes
@@ -133,7 +158,6 @@ const ExploreItem = ({ streams, review }: ExploreCardProps) => {
     return null;
   }
 
-
   return (
     <div
       className={cn(
@@ -147,7 +171,7 @@ const ExploreItem = ({ streams, review }: ExploreCardProps) => {
             <div className="h-[400px] md:h-[500px] overflow-y-auto w-3/4 max-w-md border rounded-md gap-4 bg-slate-900 p-6 shadow-lg transition ease-in-out z-50">
               <div className="flex items-center justify-between">
                 <span className="text-lg font-semibold text-foreground break-all line-clamp-2 text-white">
-                  Tạo bài viết
+                  {cretaePostMessage}
                 </span>
                 <span
                   onClick={() => setOpenPost(false)}
@@ -160,6 +184,8 @@ const ExploreItem = ({ streams, review }: ExploreCardProps) => {
                 setOpen={setOpenPost}
                 reviews={review}
                 userId={user?.id}
+                language={user?.language || "vi"}
+                role={user?.role}
               />
             </div>
           </div>
@@ -211,7 +237,7 @@ const ExploreItem = ({ streams, review }: ExploreCardProps) => {
                 className="w-full bg-gray-300 rounded-full text-slate-900 hover:bg-white hover:bg-opacity-70 p-3 cursor-pointer"
                 onClick={() => setOpenPost(true)}
               >
-                Bạn đang nghĩ gì ?
+                {whatAreYouThinkingMessage}
               </div>
             </div>
             <Separator className="my-4 bg-gray-300 bg-opacity-30" />
@@ -230,7 +256,7 @@ const ExploreItem = ({ streams, review }: ExploreCardProps) => {
                   </>
                 )}
               </div>
-              Video trực tiếp
+              {liveVideoMessage}
             </Link>
           </div>
         )}
@@ -261,6 +287,7 @@ const ExploreItem = ({ streams, review }: ExploreCardProps) => {
                       role={stream.user.role}
                       showInfo={true}
                       showExtension={false}
+                      languageToUse={languageToUse}
                     />
                   </LiveKitRoom>
                 </div>
@@ -273,16 +300,17 @@ const ExploreItem = ({ streams, review }: ExploreCardProps) => {
           <ExploreCard review={sortedPostReview} user={user} />
         </div>
 
-        {streams.length <=0 && sortedPostReview.length <=0 && (
+        {streams.length <= 0 && sortedPostReview.length <= 0 && (
           <div className="text-center text-gray-400 font-semibold text-xl ">
-              Không có bài viết!
+            {noPostMessage}
           </div>
-        ) 
-
-        }
+        )}
       </div>
 
-      <SortItem setSortCriteria={setSortCriteria} />
+      <SortItem
+        setSortCriteria={setSortCriteria}
+        languageToUse={languageToUse}
+      />
     </div>
   );
 };

@@ -17,12 +17,16 @@ import axios from "axios";
 
 import { SentEmailUserColumn } from "./columns";
 import { AlertModal } from "@/components/modals/alert-modal";
+import { translateSentEmailAction } from "@/translate/translate-dashboard";
 
 interface CellActionProps {
   data: SentEmailUserColumn;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
+  //language
+  const sentEmailActionMessage = translateSentEmailAction(data.language)
+
   const router = useRouter();
   const params = useParams();
 
@@ -31,7 +35,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id);
-    toast.success("Sent Email User Id copied to the clipboard.");
+    toast.success(sentEmailActionMessage.sentEmailUserIdCopied);
   };
 
   const onDelete = async () => {
@@ -39,7 +43,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       setLoading(true);
       await axios.delete(`/api/${params.storeId}/sentmailuser/${data.id}`);
       router.refresh();
-      toast.success("Sent Email User deleted.");
+      toast.success(sentEmailActionMessage.sentEmailUserDeleted);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -50,9 +54,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         toast.error((error as { response: { data: { error: string } } }).response.data.error);
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
-        toast.error(
-          "Make sure you removed all categories using this billboard first."
-        );
+        toast.error(sentEmailActionMessage.somethingWentWrong);
       }
     } finally {
       setLoading(false);
@@ -70,13 +72,12 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              {" "}
-              Sent Email with Subject: <span className="font-bold">{data.subject}</span>.
+              {sentEmailActionMessage.sentEmailWithSubject} <span className="font-bold">{data.subject}</span>.
             </p>
           );
         }),
         {
-          loading: "Updating sent Email...",
+          loading: sentEmailActionMessage.updatingSentEmail,
           success: (message) => {
             router.refresh();
             return message;
@@ -89,12 +90,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             ) {
               return (error as { response: { data: { error: string } } }).response.data.error
             } else {
-              return "Sent Email Error.";
+              return sentEmailActionMessage.sentEmailError;
             }
           },
         }
       );
-    } catch (error) {} 
+    } catch (error) {
+      toast.error(sentEmailActionMessage.somethingWentWrong);
+    } 
       finally {
       setLoading(false);
       setOpen(false);
@@ -108,19 +111,20 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         onClose={() => setOpen(false)}
         onConfirm={onDelete}
         loading={loading}
+        languageToUse={data.language}
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
+            <span className="sr-only">{sentEmailActionMessage.openMenu}</span>
             <MoreHorizontal className="w-4 h-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuLabel>{sentEmailActionMessage.actions}</DropdownMenuLabel>
           <DropdownMenuItem onClick={() => onCopy(data.id)}>
             <Copy className="h-4 w-4 mr-2" />
-            CopyId
+            {sentEmailActionMessage.copyId}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() =>
@@ -128,15 +132,15 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             }
           >
             <Edit className="h-4 w-4 mr-2" />
-            Update
+            {sentEmailActionMessage.update}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>
             <Trash className="h-4 w-4 mr-2" />
-            Delete
+            {sentEmailActionMessage.delete}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={onSent}>
             <SendHorizontal className="h-4 w-4 mr-2" />
-            Sent user
+            {sentEmailActionMessage.sentUser}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

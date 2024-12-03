@@ -14,6 +14,8 @@ import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useParams } from "next/navigation";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { translateFeedbackClient } from "@/translate/translate-dashboard";
 
 interface SizeClientProps {
   data: FeedBackColumn[];
@@ -27,6 +29,10 @@ const FeedBackClient: React.FC<SizeClientProps> = ({ data }) => {
   const role = useCurrentRole();
   const isRole = role === UserRole.ADMIN;
   const showAPIRole = isRole;
+  const user = useCurrentUser()
+  //language
+  const languageToUse = user?.language || "vi"
+  const feedBackClientMessage = translateFeedbackClient(languageToUse)
 
   const handleDelete = async () => {
     setLoading(true);
@@ -37,7 +43,7 @@ const FeedBackClient: React.FC<SizeClientProps> = ({ data }) => {
       });
       setLoading(false);
       setOpen(false);
-      toast.success("FeedBack deleted successfully");
+      toast.success(feedBackClientMessage.feedbackDeletedSuccess);
       // Optionally, refresh data or handle post-delete state
     } catch (error) {
       setLoading(false);
@@ -54,7 +60,7 @@ const FeedBackClient: React.FC<SizeClientProps> = ({ data }) => {
         );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
-        toast.error("Make sure you removed all using this first.");
+        toast.error(feedBackClientMessage.somethingWentWrong);
       }
     }
   };
@@ -62,11 +68,11 @@ const FeedBackClient: React.FC<SizeClientProps> = ({ data }) => {
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Feedback (${data.length})`}
-          description="Quản lý Feedback cửa hàng"
+          title={`${feedBackClientMessage.feedback} (${data.length})`}
+          description={feedBackClientMessage.manageFeedbackStore}
         />
         <div className="flex space-x-3">
-          <Downloadfile data={data} filename="feedback" />
+          <Downloadfile data={data} filename="feedback" languageToUse={languageToUse}/>
         </div>
       </div>
       <Separator />
@@ -81,8 +87,9 @@ const FeedBackClient: React.FC<SizeClientProps> = ({ data }) => {
         onDelete={handleDelete}
         setOpen={setOpen}
         open={open}
+        languageToUse={languageToUse}
       />
-      {showAPIRole && <Heading title="Api" description="API calls for FeedBack" />}
+      {showAPIRole && <Heading title={feedBackClientMessage.api} description={feedBackClientMessage.apiCallsForFeedback} />}
       <Separator />
       <ApiList entityIdName="" entityName="feedback" />
     </>

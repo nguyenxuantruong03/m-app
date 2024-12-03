@@ -1,4 +1,5 @@
 "use client";
+import { getDayNameMultipleSelct } from "@/translate/translate-dashboard";
 import Select, { MultiValue, StylesConfig } from "react-select";
 
 type Option = {
@@ -16,16 +17,6 @@ type DayColors = {
   Sunday: string;
 };
 
-const options: Option[] = [
-  { value: "Monday", label: "Thứ 2" },
-  { value: "Tuesday", label: "Thứ 3" },
-  { value: "Wednesday", label: "Thứ 4" },
-  { value: "Thursday", label: "Thứ 5" },
-  { value: "Friday", label: "Thứ 6" },
-  { value: "Saturday", label: "Thứ 7" },
-  { value: "Sunday", label: "Chủ nhật" },
-];
-
 interface MutipleOptionProps {
   selectedOption: Option[];
   setSelectedOption: React.Dispatch<React.SetStateAction<Option[]>>;
@@ -34,14 +25,28 @@ interface MutipleOptionProps {
     value: string | string[];
   };
   disabled?: boolean;
+  language: string
 }
 
 const MutipleOption: React.FC<MutipleOptionProps> = ({
   selectedOption,
   setSelectedOption,
   field,
-  disabled
+  disabled,
+  language
 }) => {
+  const daynameMultipleSelectMessage = getDayNameMultipleSelct(language)
+
+  const options: Option[] = [
+    { value: "Monday", label: daynameMultipleSelectMessage.Monday },
+    { value: "Tuesday", label: daynameMultipleSelectMessage.Tuesday },
+    { value: "Wednesday", label: daynameMultipleSelectMessage.Wednesday },
+    { value: "Thursday", label: daynameMultipleSelectMessage.Thursday },
+    { value: "Friday", label: daynameMultipleSelectMessage.Friday },
+    { value: "Saturday", label: daynameMultipleSelectMessage.Saturday },
+    { value: "Sunday", label: daynameMultipleSelectMessage.Sunday },
+  ];
+
   // Define the custom styles using strongly typed StylesConfig
   const customStyles: StylesConfig<Option, true> = {
     option: (provided, state) => {

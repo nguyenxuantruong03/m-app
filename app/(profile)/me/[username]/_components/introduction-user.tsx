@@ -22,20 +22,44 @@ import {
   Cake,
   MapPin,
   BookHeart,
-  UserPlus 
+  UserPlus,
 } from "lucide-react";
 import FormInfoDetail from "./form-infodetail";
 import FormatDate from "@/components/format-Date";
+import {
+  translateAddBio,
+  translateEditDetails,
+  translateEditProfile,
+  translateIntroduction,
+  translateNoData,
+  translateNotChange,
+  translatePopular,
+} from "@/translate/translate-client";
 
 interface IntroductionUserProps {
   self: any;
   showFunction?: boolean;
-  user: any
+  user: any;
+  languageToUse: string;
 }
 
-const IntroductionUser = ({ self, showFunction= true,user }: IntroductionUserProps) => {
+const IntroductionUser = ({
+  self,
+  showFunction = true,
+  user,
+  languageToUse,
+}: IntroductionUserProps) => {
   const [openBio, setOpenBio] = useState(false);
   const [openInfoDetail, setOpenInfoDetail] = useState(false);
+
+  //language
+  const introductionMessage = translateIntroduction(languageToUse);
+  const editProfileMessage = translateEditProfile(languageToUse);
+  const addBioMessage = translateAddBio(languageToUse);
+  const noDataMessage = translateNoData(languageToUse);
+  const popularMessage = translatePopular(languageToUse);
+  const notChangeMessage = translateNotChange(languageToUse);
+  const editDetailsMessage = translateEditDetails(languageToUse);
 
   return (
     <div className="bg-slate-900 rounded-md text-white py-2 px-5 space-y-">
@@ -44,7 +68,7 @@ const IntroductionUser = ({ self, showFunction= true,user }: IntroductionUserPro
         userId={self.id}
         title=""
         description=""
-        form={<FormBio setOpen={setOpenBio} />}
+        form={<FormBio setOpen={setOpenBio} languageToUse={languageToUse} />}
         open={openBio}
         setOpen={setOpenBio}
         side="center"
@@ -55,16 +79,26 @@ const IntroductionUser = ({ self, showFunction= true,user }: IntroductionUserPro
         userId={self.id}
         title=""
         description=""
-        form={<FormInfoDetail setOpen={setOpenInfoDetail} self={self} />}
+        form={
+          <FormInfoDetail
+            languageToUse={languageToUse}
+            setOpen={setOpenInfoDetail}
+            self={self}
+          />
+        }
         open={openInfoDetail}
         setOpen={setOpenInfoDetail}
         side="custom"
       />
 
-      <span className="text-2xl font-bold pb-5 flex">Giới thiệu</span>
+      <span className="text-2xl font-bold pb-5 flex">
+        {introductionMessage}
+      </span>
       {self.bio ? (
         <>
-          <p className="w-full text-center break-words max-w-xs md:max-w-xl mb-6">{self.bio}</p>
+          <p className="w-full text-center break-words max-w-xs md:max-w-xl mb-6">
+            {self.bio}
+          </p>
           {showFunction && (
             <>
               {self.id === user?.id && (
@@ -74,7 +108,7 @@ const IntroductionUser = ({ self, showFunction= true,user }: IntroductionUserPro
                   size="sm"
                   onClick={() => setOpenBio(true)}
                 >
-                  Chỉnh sửa tiểu sử
+                  {editProfileMessage}
                 </Button>
               )}
             </>
@@ -91,7 +125,7 @@ const IntroductionUser = ({ self, showFunction= true,user }: IntroductionUserPro
                   size="sm"
                   onClick={() => setOpenBio(true)}
                 >
-                  Thêm tiểu sử{" "}
+                  {addBioMessage}
                 </Button>
               )}
             </>
@@ -99,17 +133,33 @@ const IntroductionUser = ({ self, showFunction= true,user }: IntroductionUserPro
         </>
       )}
 
-    {self.showInfomation?.isCreatedAt && (
+      {self.showInfomation?.isCreatedAt && (
         <p className="flex items-center my-2">
-          <UserPlus  className="h-5 w-5 mr-2" />{" "}
-          <span>{self.createdAt ? <span className="truncate w-80 md:w-96 overflow-hidden whitespace-nowrap"><FormatDate data={self.createdAt}/></span> : <>Không có</>} </span>
+          <UserPlus className="h-5 w-5 mr-2" />{" "}
+          <span>
+            {self.createdAt ? (
+              <span className="truncate w-80 md:w-96 overflow-hidden whitespace-nowrap">
+                <FormatDate data={self.createdAt} />
+              </span>
+            ) : (
+              <>{noDataMessage}</>
+            )}{" "}
+          </span>
         </p>
       )}
 
       {self.showInfomation?.isEmail && (
         <p className="flex items-center my-2">
           <Contact className="h-5 w-5 mr-2" />{" "}
-          <span>{self.email ? <span className="truncate w-80 md:w-96 overflow-hidden whitespace-nowrap">{self.email}</span> : <>Không có</>} </span>
+          <span>
+            {self.email ? (
+              <span className="truncate w-80 md:w-96 overflow-hidden whitespace-nowrap">
+                {self.email}
+              </span>
+            ) : (
+              <>{noDataMessage}</>
+            )}{" "}
+          </span>
         </p>
       )}
 
@@ -117,7 +167,7 @@ const IntroductionUser = ({ self, showFunction= true,user }: IntroductionUserPro
         <p className="flex items-center my-2">
           <User className="h-5 w-5 mr-2" />{" "}
           <span>
-            {self.gender === "None" ? <>Không có</> : <>{self.gender}</>}
+            {self.gender === "None" ? <>{noDataMessage}</> : <>{self.gender}</>}
           </span>
         </p>
       )}
@@ -136,7 +186,7 @@ const IntroductionUser = ({ self, showFunction= true,user }: IntroductionUserPro
                 </Link>
               </>
             ) : (
-              <>Không có</>
+              <>{noDataMessage}</>
             )}
           </span>
         </p>
@@ -149,7 +199,7 @@ const IntroductionUser = ({ self, showFunction= true,user }: IntroductionUserPro
             {self.dateofbirth ? (
               <>{format(new Date(self.dateofbirth), "dd/MM/yyyy")}</>
             ) : (
-              <>Không có</>
+              <>{noDataMessage}</>
             )}{" "}
           </span>
         </p>
@@ -158,7 +208,15 @@ const IntroductionUser = ({ self, showFunction= true,user }: IntroductionUserPro
       {self.showInfomation?.isAddress && (
         <p className="flex items-center my-2">
           <MapPin className="h-5 w-5 mr-2" />{" "}
-          <span>{self.address ? <span className="truncate w-80 md:w-96 overflow-hidden whitespace-nowrap">{self.address}</span> : <>Không có</>} </span>
+          <span>
+            {self.address ? (
+              <span className="truncate w-80 md:w-96 overflow-hidden whitespace-nowrap">
+                {self.address}
+              </span>
+            ) : (
+              <>{noDataMessage}</>
+            )}{" "}
+          </span>
         </p>
       )}
 
@@ -166,7 +224,13 @@ const IntroductionUser = ({ self, showFunction= true,user }: IntroductionUserPro
         <p className="flex items-center my-2">
           <MapPin className="h-5 w-5 mr-2" />{" "}
           <span>
-            {self.addressother ? <span className="truncate w-80 md:w-96 overflow-hidden whitespace-nowrap">{self.addressother}</span> : <>Không có</>}
+            {self.addressother ? (
+              <span className="truncate w-80 md:w-96 overflow-hidden whitespace-nowrap">
+                {self.addressother}
+              </span>
+            ) : (
+              <>{noDataMessage}</>
+            )}
           </span>
         </p>
       )}
@@ -178,10 +242,12 @@ const IntroductionUser = ({ self, showFunction= true,user }: IntroductionUserPro
             {self.favorite.length > 0
               ? self.favorite
                   .map((item: string) =>
-                    item === "phobien" ? "Phổ biến" : item || "Chưa thay đổi"
+                    item === "phobien"
+                      ? popularMessage
+                      : item || notChangeMessage
                   )
                   .join(", ")
-              : ["Chưa thay đổi"]}{" "}
+              : [notChangeMessage]}
           </span>
         </p>
       )}
@@ -361,7 +427,9 @@ const IntroductionUser = ({ self, showFunction= true,user }: IntroductionUserPro
         !self.showInfomation?.isAdressOther &&
         !self.showInfomation?.isFavorite &&
         !self.showInfomation?.isSocial && (
-          <div className="text-gray-600 py-3 w-full text-center">Không có.</div>
+          <div className="text-gray-600 py-3 w-full text-center">
+            {noDataMessage}.
+          </div>
         )}
       {showFunction && (
         <>
@@ -372,7 +440,7 @@ const IntroductionUser = ({ self, showFunction= true,user }: IntroductionUserPro
               size="sm"
               onClick={() => setOpenInfoDetail(true)}
             >
-              Chỉnh sửa chi tiết
+              {editDetailsMessage}
             </Button>
           )}
         </>

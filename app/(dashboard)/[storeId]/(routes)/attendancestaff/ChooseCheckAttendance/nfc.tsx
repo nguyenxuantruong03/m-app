@@ -15,6 +15,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useParams } from "next/navigation";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { translateNfc } from "@/translate/translate-dashboard";
 
 declare class NDEFReader {
   constructor();
@@ -44,6 +45,7 @@ interface NFCProrps {
   loading: boolean;
   dataEventNFC: string | undefined;
   setShowNFCModal: Dispatch<SetStateAction<boolean>>;
+  languageToUse: string
 }
 
 const NFC: React.FC<NFCProrps> = ({
@@ -51,6 +53,7 @@ const NFC: React.FC<NFCProrps> = ({
   loading,
   dataEventNFC,
   setShowNFCModal,
+  languageToUse
 }) => {
   const params = useParams();
   const userId = useCurrentUser();
@@ -63,6 +66,9 @@ const NFC: React.FC<NFCProrps> = ({
   const [showMessage, setShowMessage] = useState(false);
   const [showMessagecamera, setShowMessageCamera] = useState(false);
   const [NFCCodeValid, setNFCCodeValid] = useState<boolean | null>(null);
+
+  //language
+  const  nfcMessage = translateNfc(languageToUse)
 
   useEffect(() => {
     const log = (message: string) => {
@@ -77,19 +83,19 @@ const NFC: React.FC<NFCProrps> = ({
         try {
           const ndef = new NDEFReader();
           await ndef.scan();
-          log("> Scan started");
+          log(nfcMessage.scanStarted);
 
           ndef.addEventListener("readingerror", () => {
-            log("Argh! Cannot read data from the NFC tag. Try another one?");
+            log(nfcMessage.cannotReadNfcData);
           });
 
           ndef.addEventListener("reading", ({ message, serialNumber }: any) => {
-            log(`> Serial Number: ${serialNumber}`);
-            log(`> Records: (${message.records.length})`);
+            log(`${nfcMessage.serialNumber}: ${serialNumber}`);
+            log(`${nfcMessage.records}: (${message.records.length})`);
             setSerialNumber(serialNumber); // Cập nhật serial number mới nhất
           });
         } catch (error) {
-          log("Argh! " + error);
+          log(`${nfcMessage.argh}` + error);
         }
       });
     }
@@ -114,20 +120,20 @@ const NFC: React.FC<NFCProrps> = ({
             .then((response) => {
               setLoadingData(false);
               setShowNFCModal(false);
-              toast.success("Quét mã thành công!");
+              toast.success(nfcMessage.scanSuccess);
             })
             .catch((error) => {
               setLoadingData(false);
-              toast.error("Error uploading photo:", error);
+              toast.error(nfcMessage.somethingWentWrong);
             });
         } else {
-          toast.error("Bạn đã checkin ngày hôm nay!");
+          toast.error(nfcMessage.alreadyCheckedInToday);
         }
       } else {
-        toast.error("NFC của bạn không đúng!");
+        toast.error(nfcMessage.invalidNfc);
       }
     } else {
-      toast.error("Không tìm thấy mã NFC!");
+      toast.error(nfcMessage.nfcNotFound);
     }
   };
 
@@ -156,7 +162,7 @@ const NFC: React.FC<NFCProrps> = ({
           );
         } else {
           // Hiển thị thông báo lỗi mặc định cho người dùng
-          toast.error("Error fetching data.");
+          toast.error(nfcMessage.somethingWentWrong);
         }
       }
     };
@@ -190,7 +196,7 @@ const NFC: React.FC<NFCProrps> = ({
         className="mb-5"
         id="scanButton"
       >
-        Bắt đầu Scan
+        {nfcMessage.startScan}
       </Button>
       <div className="max-w-xl">
         <div
@@ -206,7 +212,7 @@ const NFC: React.FC<NFCProrps> = ({
           >
             <span className="flex justify-center">
               <Nfc className="w-6 h-6 p-1 rounded-full text-black bg-white mr-1" />{" "}
-              Đầu đọc thẻ NFC
+              {nfcMessage.nfcReader}
             </span>
 
             <div className="flex justify-center">
@@ -219,7 +225,7 @@ const NFC: React.FC<NFCProrps> = ({
               />
             </div>
             <span className="flex justify-center text-[#7c7c7ced]">
-              Giữ gần thẻ
+             {nfcMessage.holdNfcCardClose}
             </span>
           </div>
         </div>
@@ -238,16 +244,14 @@ const NFC: React.FC<NFCProrps> = ({
       {showMessage && (
         // Sử dụng showMessage để kiểm soát việc hiển thị thông báo
         <p className="mt-5 mx-auto border-yellow-400 border-2 flex items-center p-3">
-          <TriangleAlert className="w-4 h-4 text-yellow-400 mr-3" /> Ngày hôm
-          nay bạn đã checkin. Hãy quay lại ngày sau!
+          <TriangleAlert className="w-4 h-4 text-yellow-400 mr-3" /> {nfcMessage.alreadyCheckedIn}
         </p>
       )}
 
       {showMessagecamera && (
         // Sử dụng showMessage để kiểm soát việc hiển thị thông báo
         <p className="mt-5 mx-auto border-yellow-400 border-2 flex items-center p-3">
-          <TriangleAlert className="w-4 h-4 text-yellow-400 mr-3" /> Bạn đã
-          checkin bằng QrCode!
+          <TriangleAlert className="w-4 h-4 text-yellow-400 mr-3" /> {nfcMessage.checkedInByQrCode}
         </p>
       )}
 
@@ -260,12 +264,12 @@ const NFC: React.FC<NFCProrps> = ({
           {NFCCodeValid ? (
             <>
               <Check className="w-4 h-4 text-green-400 mr-3" />
-              NFC của bạn đã đúng.
+              {nfcMessage.nfcCorrect}
             </>
           ) : (
             <>
               <X className="w-4 h-4 text-red-500 mr-3" />
-              NFC của bạn không đúng.
+              {nfcMessage.nfcIncorrect}
             </>
           )}
         </p>
@@ -276,7 +280,7 @@ const NFC: React.FC<NFCProrps> = ({
           variant="outline"
           onClick={onClose}
         >
-          <ArrowLeftToLine className="w-5 h-5 mr-1" /> <span>Thoát </span>
+          <ArrowLeftToLine className="w-5 h-5 mr-1" /> <span>{nfcMessage.exit}</span>
         </Button>
 
         <Button

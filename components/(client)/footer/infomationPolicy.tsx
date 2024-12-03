@@ -1,19 +1,38 @@
+import {
+  translateDiscountCode,
+  translateOrderingPolicyAndLegalTerms,
+  translatePreOrderAndPayOnDelivery,
+  translatePurchaseAndPayOnline,
+} from "@/translate/translate-client";
 import Link from "next/link";
 
-const InformationPolicy = () => {
+interface InformationPolicyProps {
+  languageToUse: string;
+}
+
+const InformationPolicy = ({ languageToUse }: InformationPolicyProps) => {
+  //language
+  const purchaseAndPayOnlineMessage =
+    translatePurchaseAndPayOnline(languageToUse);
+  const preOrderAndPayOnDeliveryMessage =
+    translatePreOrderAndPayOnDelivery(languageToUse);
+  const orderingToPolicyandLegaltermsMesage =
+    translateOrderingPolicyAndLegalTerms(languageToUse);
+  const discountCodeMessage = translateDiscountCode(languageToUse);
+
   return (
     <>
       <Link href="/payment-online">
-        <div>Mua hàng và thanh toán online</div>
+        <div>{purchaseAndPayOnlineMessage}</div>
       </Link>
       <Link href="/preorder">
-        <div>Đặt hàng trước trả tiền khi nhận</div>
+        <div>{preOrderAndPayOnDeliveryMessage}</div>
       </Link>
       <Link href="/policy">
-        <div>Chính sách và pháp lý đặt hàng</div>
+        <div>{orderingToPolicyandLegaltermsMesage}</div>
       </Link>
       <Link href="/promotional-code">
-        <div>Mã ưa đãi</div>
+        <div>{discountCodeMessage}</div>
       </Link>
     </>
   );

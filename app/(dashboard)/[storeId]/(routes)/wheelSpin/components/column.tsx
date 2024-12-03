@@ -13,6 +13,7 @@ export type WheelSpinColumn = {
   coin: number[];
   rotation: number[];
   createdAt: Date;
+  language: string;
 };
 
 export const columns: ColumnDef<WheelSpinColumn>[] = [

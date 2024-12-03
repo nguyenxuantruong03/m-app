@@ -5,13 +5,15 @@ const URL = `${process.env.NEXT_PUBLIC_API_URL}/product10`
 
 interface Query{
     isFeatured?: boolean
+    language?: string; // Thêm tham số language
 }
 
 const getProduct10 = async (query: Query):Promise<Product[]> =>{
     const url = qs.stringifyUrl({
         url: URL,
         query:{
-            isFeatured: query.isFeatured
+            isFeatured: query.isFeatured,
+            language: query.language || "vi", // Mặc định là "vi" nếu không truyền language
         }
     })
     const res = await fetch(url)

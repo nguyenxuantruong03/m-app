@@ -12,6 +12,8 @@ import "./style.css";
 import axios from "axios";
 import { useParams } from "next/navigation";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { getToastError } from "@/translate/translate-client";
+import toast from "react-hot-toast";
 export const revalidate = 86400;
 
 const Game2048 = () => {
@@ -23,6 +25,23 @@ const Game2048 = () => {
   const [message, setMessage] = useState<string | null>(null);
   const [gameState, setGameState] = useState("initial");
   const gameContainerRef = useRef<HTMLDivElement | null>(null);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+
+  const toastErrorMessage = getToastError(languageToUse);
 
   useEffect(() => {
     const audio = new Audio("/images/game-over.mp3");
@@ -51,7 +70,7 @@ const Game2048 = () => {
 
       // Update the state with the new totalCoins
     } catch (error) {
-      console.error("Error saving totalCoins:", error);
+      toast.error(toastErrorMessage);
     }
   };
 
@@ -388,10 +407,7 @@ const Game2048 = () => {
 
   return (
     <>
-      <div
-        id="game-container"
-        ref={gameContainerRef}
-      >
+      <div id="game-container" ref={gameContainerRef}>
         <div className="my-8">
           <Button
             className="p-2 bg-gray-800 text-blue-500 rounded no-outline"

@@ -6,6 +6,7 @@ import { utcToZonedTime } from "date-fns-tz";
 import viLocale from "date-fns/locale/vi";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 import { format } from "date-fns";
+import { getSystemAction } from "@/translate/translate-dashboard";
 
 type System = {
   id: string;
@@ -15,6 +16,7 @@ type System = {
   type: string | null;
   user: string | null;
   createdAt: Date | null;
+  language: string;
 };
 
 interface ShowSystemProps {
@@ -29,6 +31,9 @@ export const ShowSystem: React.FC<ShowSystemProps> = ({
   data,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
+
+  //language
+  const systemActionMessage = getSystemAction(data.language)
 
   useEffect(() => {
     setIsMounted(true);
@@ -48,8 +53,8 @@ export const ShowSystem: React.FC<ShowSystemProps> = ({
 
   return (
     <Modal
-      title="Quá trình người dùng thực hiện"
-      description="Thông tin người dùng trong hệ thống"
+      title={systemActionMessage.userProcess}
+      description={systemActionMessage.userInfo}
       isOpen={isOpen}
       onClose={onClose}
       textCenter={false}

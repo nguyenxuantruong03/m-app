@@ -13,6 +13,60 @@ import CircleAvatar from "@/components/ui/circle-avatar";
 import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
 import Link from "next/link";
 import { ResponseComment, Comment as CommentType } from "@/types/type";
+import {
+  getToastError,
+  translateCancel,
+  translateCollapse,
+  translateComment,
+  translateConfirmDeleteComment,
+  translateConfirmDeleteFeedback,
+  translateDayAgo,
+  translateDelete,
+  translateDeleteSuccess,
+  translateDeleteUnsuccessful,
+  translateDeleting,
+  translateEdit,
+  translateEditedTimes,
+  translateEditFailure,
+  translateEditing,
+  translateEditSuccess,
+  translateEnterFeedback,
+  translateEnterFeedbackContent,
+  translateEnterReviewContent,
+  translateEvaluating,
+  translateEvaluationFailure,
+  translateEvaluationSuccess,
+  translateFeedbackEmpty,
+  translateFeedbackFailure,
+  translateHourAgo,
+  translateInputTooLong,
+  translateJustNow,
+  translateMinutesAgo,
+  translateMonthAgo,
+  translateNotRatedYet,
+  translateOneDayAgo,
+  translateOneHourAgo,
+  translateOneMonthAgo,
+  translateOneYearAgo,
+  translatePleaseChooseStar,
+  translateProcessingResponse,
+  translateProduct,
+  translateRate,
+  translateRating,
+  translateResponse,
+  translateRetryAfter,
+  translateRetryAfterMinutes,
+  translateRetryFeedback,
+  translateReviewAndComment,
+  translateReviewAndCommentLowercase,
+  translateReviewLowercase,
+  translateSeeAll,
+  translateStarsLowercase,
+  translateSuccessResponse,
+  translateUpdate,
+  translateUpdateError,
+  translateYearAgo,
+} from "@/translate/translate-client";
 
 interface CommentProps {
   data: string;
@@ -71,6 +125,15 @@ const Comment: React.FC<CommentProps> = ({
   const scrollPositionRef = useRef<number | null>(null);
   const textareaResponseRef = useRef<HTMLDivElement>(null);
   const scrollPositionResponseRef = useRef<number | null>(null);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
 
   const user = useCurrentUser();
 
@@ -86,6 +149,67 @@ const Comment: React.FC<CommentProps> = ({
       setShowOptions(null);
     }
   };
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+  const toastErrorMessage = getToastError(languageToUse);
+  const feedbackEmptyMessage = translateFeedbackEmpty(languageToUse);
+  const processingReponseMessage = translateProcessingResponse(languageToUse);
+  const successResponseMessage = translateSuccessResponse(languageToUse);
+  const feedBackFailureMessage = translateFeedbackFailure(languageToUse);
+  const deletingMessage = translateDeleting(languageToUse);
+  const deleteSuccessMessage = translateDeleteSuccess(languageToUse);
+  const deleteUnsuccessfulMessage = translateDeleteUnsuccessful(languageToUse);
+  const editingMessage = translateEditing(languageToUse);
+  const editSuccessMessage = translateEditSuccess(languageToUse);
+  const editFailureMessage = translateEditFailure(languageToUse);
+  const updateErrorMessage = translateUpdateError(languageToUse);
+  const pleaseChooseStarMessage = translatePleaseChooseStar(languageToUse);
+  const enterFeedBackMessage = translateEnterFeedback(languageToUse);
+  const productMessage = translateProduct(languageToUse);
+  const evaluatingMessage = translateEvaluating(languageToUse);
+  const evaluationSuccessMessage = translateEvaluationSuccess(languageToUse);
+  const evaluationFailureMessage = translateEvaluationFailure(languageToUse);
+  const oneYearAgoMessage = translateOneYearAgo(languageToUse);
+  const yearAgoMessage = translateYearAgo(languageToUse);
+  const oneMonthAgoMessage = translateOneMonthAgo(languageToUse);
+  const monthAgoMessage = translateMonthAgo(languageToUse);
+  const oneDayAgoMessage = translateOneDayAgo(languageToUse);
+  const dayAgoMessage = translateDayAgo(languageToUse);
+  const oneHourAgoMessage = translateOneHourAgo(languageToUse);
+  const hourAgoMessage = translateHourAgo(languageToUse);
+  const minuteAgoMessage = translateMinutesAgo(languageToUse);
+  const justNowMessage = translateJustNow(languageToUse);
+  const confirmDeleteCommentMessage = translateConfirmDeleteComment(
+    languageToUse,
+    commentNameToDelete
+  );
+  const confirmDeleteResponseMessage = translateConfirmDeleteFeedback(
+    languageToUse,
+    commentNameToDelete
+  );
+  const reviewAndCommentMessage = translateReviewAndComment(languageToUse);
+  const reviewAndCommentMessageLowercaseMessage =
+    translateReviewAndCommentLowercase(languageToUse);
+  const reviewLowercaseMessage = translateReviewLowercase(languageToUse);
+  const ratingMessage = translateRating(languageToUse);
+  const enterReviewContentMessage = translateEnterReviewContent(languageToUse);
+  const enterFeedbackContentMessage =
+    translateEnterFeedbackContent(languageToUse);
+  const updateMessage = translateUpdate(languageToUse);
+  const cancelMessage = translateCancel(languageToUse);
+  const rateMessage = translateRate(languageToUse);
+  const commentMessage = translateComment(languageToUse);
+  const editMessage = translateEdit(languageToUse);
+  const deleteMessage = translateDelete(languageToUse);
+  const responseMessage = translateResponse(languageToUse);
+  const collapseMessage = translateCollapse(languageToUse);
+  const seeAllMessage = translateSeeAll(languageToUse);
+  const startLowercaseMessagae = translateStarsLowercase(languageToUse);
+  const notRatedYetMessage = translateNotRatedYet(languageToUse);
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
@@ -119,7 +243,7 @@ const Comment: React.FC<CommentProps> = ({
           })
           // Sort by createdAt in descending order
           .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0]; // Get the latest createdAt
-  
+
         if (firstCreatedAt) {
           const createdAtDate = new Date(firstCreatedAt);
           // Cộng thêm 30 giây vào createdAt
@@ -128,83 +252,86 @@ const Comment: React.FC<CommentProps> = ({
           const diffMilliseconds = futureTime.getTime() - now.getTime();
           const diffSeconds = Math.floor(diffMilliseconds / 1000);
 
-           // Kiểm tra nếu thời gian hiện tại chưa vượt quá futureTime
+          // Kiểm tra nếu thời gian hiện tại chưa vượt quá futureTime
           if (now < futureTime) {
             if (diffSeconds > 0) {
-              setErrorResponse(`Bạn có thể đánh giá lại trong ${diffSeconds} giây nữa.`);
+              setErrorResponse(
+                translateRetryFeedback(languageToUse, diffSeconds)
+              );
               return;
             }
           }
         }
-  
+
         if (
           responseDescriptions === null ||
           responseDescriptions === undefined ||
           !responseDescriptions.trim()
         ) {
-          setErrorResponse("Nội dung phản hồi không thể trống.");
+          setErrorResponse(feedbackEmptyMessage);
           return;
         }
-  
+
         if (responseDescriptions.length >= 121) {
-          setErrorResponse("Bạn đã nhập quá 120 ký tự.");
+          setErrorResponse(translateInputTooLong(languageToUse, 120));
           return;
         } else {
           setErrorResponse("");
         }
-  
+
         setLoading(true);
-  
+
         await toast.promise(
-          axios.post(
-            `/api/${param.storeId}/comments/${commentId}/responsecomment`,
-            {
-              description: responseDescriptions,
-              product: data,
-              comment: commentId,
-            }
-          ).then((responses) => {
-            // Cập nhật savedComments sau khi thêm phản hồi
-            setSavedComments((prevComments) => {
-              const updatedComments = [...prevComments];
-              const commentToUpdate = updatedComments.find(
-                (comment) => comment.id === commentId
-              );
-              if (commentToUpdate) {
-                // Kiểm tra nếu phản hồi đã tồn tại
-                const existingResponse = commentToUpdate.responses?.find(
-                  (response) => response.id === responses.data.id
-                );
-                if (!existingResponse) {
-                  commentToUpdate.responses = [
-                    ...(commentToUpdate.responses || []),
-                    {
-                      ...responses.data,
-                      id: responses.data.id,
-                      description: responseDescriptions,
-                      commentId: commentId,
-                      user: responses.data.user,
-                      createdAt: responses.data.createdAt,
-                    },
-                  ];
-                }
+          axios
+            .post(
+              `/api/${param.storeId}/comments/${commentId}/responsecomment`,
+              {
+                description: responseDescriptions,
+                product: data,
+                comment: commentId,
               }
-              return updatedComments;
-            });
-  
-            setShowResponseForm(null);
-            setResponseDescriptions("");
-            setEditingResponseId(null);
-          }),
+            )
+            .then((responses) => {
+              // Cập nhật savedComments sau khi thêm phản hồi
+              setSavedComments((prevComments) => {
+                const updatedComments = [...prevComments];
+                const commentToUpdate = updatedComments.find(
+                  (comment) => comment.id === commentId
+                );
+                if (commentToUpdate) {
+                  // Kiểm tra nếu phản hồi đã tồn tại
+                  const existingResponse = commentToUpdate.responses?.find(
+                    (response) => response.id === responses.data.id
+                  );
+                  if (!existingResponse) {
+                    commentToUpdate.responses = [
+                      ...(commentToUpdate.responses || []),
+                      {
+                        ...responses.data,
+                        id: responses.data.id,
+                        description: responseDescriptions,
+                        commentId: commentId,
+                        user: responses.data.user,
+                        createdAt: responses.data.createdAt,
+                      },
+                    ];
+                  }
+                }
+                return updatedComments;
+              });
+
+              setShowResponseForm(null);
+              setResponseDescriptions("");
+              setEditingResponseId(null);
+            }),
           {
-            loading: 'Đang phản hồi...',
-            success: <span>Phản hồi thành công.</span>,
-            error: <span>Hãy thử lại.</span>,
+            loading: processingReponseMessage,
+            success: <span>{successResponseMessage}</span>,
+            error: <span>{feedBackFailureMessage}</span>,
           }
         );
-  
       } catch (error) {
-        console.error("Error submitting response:", error);
+        toast.error(toastErrorMessage);
       } finally {
         setLoading(false);
       }
@@ -212,7 +339,6 @@ const Comment: React.FC<CommentProps> = ({
       setAlertGuestModal(true);
     }
   };
-  
 
   const handleDeleteCommentresponse = async (
     commentId: string | undefined,
@@ -222,38 +348,40 @@ const Comment: React.FC<CommentProps> = ({
       setLoading(true);
       try {
         await toast.promise(
-          axios.delete(
-            `/api/${param.storeId}/comments/${commentId}/responsecomment`,
-            {
-              data: { id: id },
-            }
-          ).then(() => {
-            // Update the local state to remove the deleted comment
-            setSavedComments((prevComments) =>
-              prevComments.map((comment) => {
-                // Find the comment to update
-                if (comment.id === commentId) {
-                  // Remove the response with the specified id
-                  comment.responses = comment.responses?.filter(
-                    (response) => response.id !== id
-                  );
-                }
-                return comment;
-              })
-            );
-            setOpenCommentResponse(false);
-            setEditingResponseId(null);
-            setResponseDescriptions("");
-            setShowResponseForm(null);
-          }),
+          axios
+            .delete(
+              `/api/${param.storeId}/comments/${commentId}/responsecomment`,
+              {
+                data: { id: id },
+              }
+            )
+            .then(() => {
+              // Update the local state to remove the deleted comment
+              setSavedComments((prevComments) =>
+                prevComments.map((comment) => {
+                  // Find the comment to update
+                  if (comment.id === commentId) {
+                    // Remove the response with the specified id
+                    comment.responses = comment.responses?.filter(
+                      (response) => response.id !== id
+                    );
+                  }
+                  return comment;
+                })
+              );
+              setOpenCommentResponse(false);
+              setEditingResponseId(null);
+              setResponseDescriptions("");
+              setShowResponseForm(null);
+            }),
           {
-            loading: 'Đang xóa...',
-            success: <span>Xóa thành công.</span>,
-            error: <span>Xóa không thành công. Hãy thử lại.</span>,
+            loading: deletingMessage,
+            success: <span>{deleteSuccessMessage}</span>,
+            error: <span>{deleteUnsuccessfulMessage}</span>,
           }
         );
       } catch (error) {
-        console.error("Error deleting comment:", error);
+        toast.error(toastErrorMessage);
       } finally {
         setLoading(false);
       }
@@ -261,7 +389,6 @@ const Comment: React.FC<CommentProps> = ({
       setAlertGuestModal(true);
     }
   };
-  
 
   const handleResponseEditClick = (
     commentId: string | undefined,
@@ -307,72 +434,74 @@ const Comment: React.FC<CommentProps> = ({
         responseDescriptions === undefined ||
         !responseDescriptions.trim()
       ) {
-        setErrorResponse("Nội dung phản hồi không thể trống.");
+        setErrorResponse(feedbackEmptyMessage);
         return;
       }
-  
+
       if (responseDescriptions.length >= 121) {
-        setErrorResponse("Bạn đã nhập quá 120 ký tự.");
+        setErrorResponse(translateInputTooLong(languageToUse, 120));
         return;
       } else {
         setErrorResponse("");
       }
-  
+
       setLoading(true);
       if (commentId) {
         try {
           await toast.promise(
-            axios.patch(
-              `/api/${param.storeId}/comments/${commentId}/responsecomment`,
-              {
-                id: editingResponseId,
-                description: responseDescriptions,
-                changeReview: true,
-              }
-            ).then((response) => {
-              const updatedCommentData: CommentType = response.data;
-  
-              // Reset the response description and update local state
-              setResponseDescriptions("");
-              setEditingResponseId(null);
-  
-              // Update the savedComments state to reflect the changes
-              setSavedComments((prevComments) =>
-                prevComments.map((comment) => {
-                  // Find the comment to update
-                  if (comment.id === commentId) {
-                    // Find the response to update
-                    comment.responses = comment.responses?.map((response) => {
-                      if (response.id === editingResponseId) {
-                        // Update the response description
-                        response.description = responseDescriptions;
-                        response.changeReview = true;
-                        response.totalchange = updatedCommentData.totalchange;
-                      }
-                      return response;
-                    });
-                  }
-                  return comment;
-                })
-              );
-  
-              if (scrollPositionResponseRef.current !== null) {
-                window.scrollTo({
-                  top: scrollPositionResponseRef.current,
-                  behavior: "smooth",
-                });
-              }
-              setShowResponseForm(null);
-            }),
+            axios
+              .patch(
+                `/api/${param.storeId}/comments/${commentId}/responsecomment`,
+                {
+                  id: editingResponseId,
+                  description: responseDescriptions,
+                  changeReview: true,
+                }
+              )
+              .then((response) => {
+                const updatedCommentData: CommentType = response.data;
+
+                // Reset the response description and update local state
+                setResponseDescriptions("");
+                setEditingResponseId(null);
+
+                // Update the savedComments state to reflect the changes
+                setSavedComments((prevComments) =>
+                  prevComments.map((comment) => {
+                    // Find the comment to update
+                    if (comment.id === commentId) {
+                      // Find the response to update
+                      comment.responses = comment.responses?.map((response) => {
+                        if (response.id === editingResponseId) {
+                          // Update the response description
+                          response.description = responseDescriptions;
+                          response.changeReview = true;
+                          response.totalchange = updatedCommentData.totalchange;
+                        }
+                        return response;
+                      });
+                    }
+                    return comment;
+                  })
+                );
+
+                if (scrollPositionResponseRef.current !== null) {
+                  window.scrollTo({
+                    top: scrollPositionResponseRef.current,
+                    behavior: "smooth",
+                  });
+                }
+                setShowResponseForm(null);
+              }),
             {
-              loading: "Đang chỉnh sửa...",
-              success: <span>Chỉnh sửa thành công.</span>,
-              error: <span>Hãy thử lại.</span>,
+              loading: editingMessage,
+              success: <span>{editSuccessMessage}</span>,
+              error: <span>{editFailureMessage}</span>,
             }
           );
         } catch (error) {
-          console.error("Error updating response:", error);
-          setErrorResponse("Error updating response.");
+          toast.error(toastErrorMessage);
+          setErrorResponse(updateErrorMessage);
         } finally {
           setLoading(false);
         }
@@ -381,7 +510,6 @@ const Comment: React.FC<CommentProps> = ({
       setAlertGuestModal(true);
     }
   };
-  
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -403,10 +531,7 @@ const Comment: React.FC<CommentProps> = ({
               const responseComments: ResponseComment[] = responsecommentData;
               return { ...comment, responses: responseComments };
             } catch (error) {
-              console.error(
-                `Error fetching responses for comment ID: ${comment.id}`,
-                error
-              );
+              toast.error(toastErrorMessage);
               return comment; // Return the original comment if there's an error
             } finally {
               setLoading(false);
@@ -427,7 +552,7 @@ const Comment: React.FC<CommentProps> = ({
 
         setCommentsByRating(commentsByRating);
       } catch (error) {
-        console.error("Error fetching comments:", error);
+        toast.error(toastErrorMessage);
       } finally {
         setLoading(false);
       }
@@ -488,64 +613,67 @@ const Comment: React.FC<CommentProps> = ({
         changeReview: true,
       };
       if (updatedComment.comment.length >= 120) {
-        setErrorResponse("Bạn đã nhập quá 120 ký tự.");
+        setErrorResponse(translateInputTooLong(languageToUse, 120));
         return;
       }
-  
+
       setLoading(true);
-  
+
       try {
         await toast.promise(
-          axios.patch(`/api/${param.storeId}/comments`, updatedComment).then((response) => {
-            const updatedCommentData: CommentType = response.data;
-  
-            // Update the comment in the state
-            setSavedComments((prevComments) =>
-              prevComments.map((comment) =>
-                comment.id === updatedCommentData.id
-                  ? { ...comment, ...updatedCommentData, changeReview: true }
-                  : comment
-              )
-            );
-  
-            // Update the commentsByRating state to reflect the changes
-            setCommentsByRating((prevCommentsByRating) => {
-              const updatedCommentsByRating = { ...prevCommentsByRating };
-              const commentToUpdate = updatedCommentsByRating[
-                updatedCommentData.rating
-              ]?.find((comment) => comment.id === updatedCommentData.id);
-              if (commentToUpdate) {
-                // Update the comment in commentsByRating if found
-                commentToUpdate.rating = updatedCommentData.rating;
-                commentToUpdate.comment = updatedCommentData.comment;
-                commentToUpdate.changeReview = updatedCommentData.changeReview;
-                commentToUpdate.totalchange = updatedCommentData.totalchange;
-              }
-              return updatedCommentsByRating;
-            });
-  
-            setEditingCommentId(null);
-            setRating(null);
-            setCurrentValue(null);
-            setComment("");
-            setCommentError("");
-            setRatingError("");
-  
-            if (scrollPositionRef.current !== null) {
-              window.scrollTo({
-                top: scrollPositionRef.current,
-                behavior: "smooth",
+          axios
+            .patch(`/api/${param.storeId}/comments`, updatedComment)
+            .then((response) => {
+              const updatedCommentData: CommentType = response.data;
+
+              // Update the comment in the state
+              setSavedComments((prevComments) =>
+                prevComments.map((comment) =>
+                  comment.id === updatedCommentData.id
+                    ? { ...comment, ...updatedCommentData, changeReview: true }
+                    : comment
+                )
+              );
+
+              // Update the commentsByRating state to reflect the changes
+              setCommentsByRating((prevCommentsByRating) => {
+                const updatedCommentsByRating = { ...prevCommentsByRating };
+                const commentToUpdate = updatedCommentsByRating[
+                  updatedCommentData.rating
+                ]?.find((comment) => comment.id === updatedCommentData.id);
+                if (commentToUpdate) {
+                  // Update the comment in commentsByRating if found
+                  commentToUpdate.rating = updatedCommentData.rating;
+                  commentToUpdate.comment = updatedCommentData.comment;
+                  commentToUpdate.changeReview =
+                    updatedCommentData.changeReview;
+                  commentToUpdate.totalchange = updatedCommentData.totalchange;
+                }
+                return updatedCommentsByRating;
               });
-            }
-          }),
+
+              setEditingCommentId(null);
+              setRating(null);
+              setCurrentValue(null);
+              setComment("");
+              setCommentError("");
+              setRatingError("");
+
+              if (scrollPositionRef.current !== null) {
+                window.scrollTo({
+                  top: scrollPositionRef.current,
+                  behavior: "smooth",
+                });
+              }
+            }),
           {
-            loading: "Đang cập nhật...",
-            success: <span>Cập nhật thành công.</span>,
-            error: <span>Xin vui lòng thử lại!</span>,
+            loading: "editingMessage",
+            success: <span>{editSuccessMessage}</span>,
+            error: <span>{editFailureMessage}</span>,
           }
         );
       } catch (error) {
-        console.error("Error updating comment:", error);
+        toast.error(toastErrorMessage);
       } finally {
         setLoading(false);
       }
@@ -557,38 +685,40 @@ const Comment: React.FC<CommentProps> = ({
   const handleDeleteComment = async (commentId: string | undefined) => {
     if (user?.role !== "GUEST" && user?.id) {
       setLoading(true);
-  
+
       try {
         await toast.promise(
-          axios.delete(`/api/${param.storeId}/comments/`, {
-            data: { id: commentId },
-          }).then(() => {
-            // Remove the deleted comment from the state
-            setSavedComments((prevComments) =>
-              prevComments.filter((comment) => comment.id !== commentId)
-            );
-  
-            // Update commentsByRating if needed
-            setCommentsByRating((prevCommentsByRating) => {
-              const newCommentsByRating = { ...prevCommentsByRating };
-              Object.keys(newCommentsByRating).forEach((rating) => {
-                newCommentsByRating[rating as any] = newCommentsByRating[
-                  rating as any
-                ].filter((comment) => comment.id !== commentId);
+          axios
+            .delete(`/api/${param.storeId}/comments/`, {
+              data: { id: commentId },
+            })
+            .then(() => {
+              // Remove the deleted comment from the state
+              setSavedComments((prevComments) =>
+                prevComments.filter((comment) => comment.id !== commentId)
+              );
+
+              // Update commentsByRating if needed
+              setCommentsByRating((prevCommentsByRating) => {
+                const newCommentsByRating = { ...prevCommentsByRating };
+                Object.keys(newCommentsByRating).forEach((rating) => {
+                  newCommentsByRating[rating as any] = newCommentsByRating[
+                    rating as any
+                  ].filter((comment) => comment.id !== commentId);
+                });
+                return newCommentsByRating;
               });
-              return newCommentsByRating;
-            });
-  
-            setOpenComment(false);
-          }),
+
+              setOpenComment(false);
+            }),
           {
-            loading: "Đang xóa bình luận...",
-            success: <span>Xóa thành công.</span>,
-            error: <span>Xóa không thành công. Hãy thử lại.</span>,
+            loading: deletingMessage,
+            success: <span>{deleteSuccessMessage}</span>,
+            error: <span>{deleteUnsuccessfulMessage}</span>,
           }
         );
       } catch (error) {
-        console.error("Error deleting comment:", error);
+        toast.error(toastErrorMessage);
       } finally {
         setLoading(false);
       }
@@ -596,7 +726,6 @@ const Comment: React.FC<CommentProps> = ({
       setAlertGuestModal(true);
     }
   };
-  
 
   const handleRatingChange = (newRating: number) => {
     setRating(newRating);
@@ -606,8 +735,8 @@ const Comment: React.FC<CommentProps> = ({
 
   const handleCommentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newComment = e.target.value;
-    if (newComment.length >= 122) {
-      setCommentError("Bạn đã nhập quá 120 ký tự.");
+    if (newComment.length >= 121) {
+      setCommentError(translateInputTooLong(languageToUse, 120));
     } else {
       setComment(newComment);
       setCommentError("");
@@ -616,8 +745,8 @@ const Comment: React.FC<CommentProps> = ({
 
   const handleResponseCommentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newComment = e.target.value;
-    if (newComment.length >= 122) {
-      setErrorResponse("Bạn đã nhập quá 120 ký tự.");
+    if (newComment.length >= 121) {
+      setErrorResponse(translateInputTooLong(languageToUse, 120));
     } else {
       setResponseDescriptions(newComment);
       setErrorResponse("");
@@ -634,7 +763,7 @@ const Comment: React.FC<CommentProps> = ({
           (a, b) =>
             new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime()
         )[0]?.createdAt; // Lấy phần tử đầu tiên (thời gian mới nhất)
-  
+
       if (firstCreatedAt) {
         const createdAtDate = new Date(firstCreatedAt);
 
@@ -644,77 +773,84 @@ const Comment: React.FC<CommentProps> = ({
         const diffMilliseconds = futureTime.getTime() - now.getTime(); // Sự chênh lệch tính bằng milliseconds
         const diffMinutes = Math.floor(diffMilliseconds / (1000 * 60)); // Tính số phút còn lại
         const diffSeconds = Math.floor((diffMilliseconds % (1000 * 60)) / 1000); // Tính số giây còn lại
-  
+
         // Kiểm tra nếu thời gian hiện tại chưa vượt quá futureTime
         if (now < futureTime) {
           if (diffMinutes > 0) {
-            setCommentError(`Bạn có thể đánh giá lại trong ${diffMinutes} phút nữa.`);
+            setCommentError(
+              translateRetryAfterMinutes(languageToUse, diffMinutes)
+            );
           } else {
-            setCommentError(`Bạn có thể đánh giá lại trong ${diffSeconds} giây nữa.`);
+            setCommentError(translateRetryAfter(languageToUse, diffSeconds));
           }
           return;
         }
       }
-  
+
       if (rating === null) {
-        setRatingError("Hãy lựa chọn sao.");
+        setRatingError(pleaseChooseStarMessage);
         return;
       }
-  
+
       if (comment.trim() === "") {
-        setCommentError("Hãy nhập nội dung đánh giá.");
+        setCommentError(enterFeedBackMessage);
         return;
       }
-  
+
       if (comment.length >= 121) {
-        setCommentError("Bạn đã nhập quá 120 ký tự.");
+        setCommentError(translateInputTooLong(languageToUse, 120));
         return;
       } else {
         setCommentError("");
       }
-  
+
       setLoading(true);
-  
+
       try {
         await toast.promise(
-          axios.post(`/api/${param.storeId}/comments/`, {
-            rating: rating as number,
-            comment,
-            productId: data || "Sản phẩm",
-          }).then((response) => {
-            // Tạo bản sao của response.data và thêm thông tin user
-            const savedComment: CommentType = {
-              ...response.data,
-              id: response.data.id,
-              user: response.data.user,
-              product: response.data.product,
-            };
-            // Cập nhật savedComments sau khi thêm phản hồi mới
-            setSavedComments((prevComments) => [...prevComments, savedComment]);
-  
-            const updatedCommentsByRating = {
-              ...commentsByRating,
-              [savedComment.rating]: [
-                ...(commentsByRating[savedComment.rating] || []),
+          axios
+            .post(`/api/${param.storeId}/comments/`, {
+              rating: rating as number,
+              comment,
+              productId: data || productMessage,
+            })
+            .then((response) => {
+              // Tạo bản sao của response.data và thêm thông tin user
+              const savedComment: CommentType = {
+                ...response.data,
+                id: response.data.id,
+                user: response.data.user,
+                product: response.data.product,
+              };
+              // Cập nhật savedComments sau khi thêm phản hồi mới
+              setSavedComments((prevComments) => [
+                ...prevComments,
                 savedComment,
-              ],
-            };
-            setCommentsByRating(updatedCommentsByRating);
-  
-            setRating(null);
-            setCurrentValue(null);
-            setComment("");
-            setCommentError("");
-            setRatingError("");
-          }),
+              ]);
+
+              const updatedCommentsByRating = {
+                ...commentsByRating,
+                [savedComment.rating]: [
+                  ...(commentsByRating[savedComment.rating] || []),
+                  savedComment,
+                ],
+              };
+              setCommentsByRating(updatedCommentsByRating);
+
+              setRating(null);
+              setCurrentValue(null);
+              setComment("");
+              setCommentError("");
+              setRatingError("");
+            }),
           {
-            loading: "Đang gửi đánh giá...",
-            success: "Đánh giá thành công.",
-            error: "Hãy thử lại.",
+            loading: evaluatingMessage,
+            success: evaluationSuccessMessage,
+            error: evaluationFailureMessage,
           }
         );
       } catch (error) {
-        console.error("Error submitting comment:", error);
+        toast.error(toastErrorMessage);
       } finally {
         setLoading(false);
       }
@@ -722,7 +858,6 @@ const Comment: React.FC<CommentProps> = ({
       setAlertGuestModal(true);
     }
   };
-  
 
   // Theo dõi sự thay đổi của savedComments và log dữ liệu
   useEffect(() => {}, [savedComments]);
@@ -841,24 +976,24 @@ const Comment: React.FC<CommentProps> = ({
 
     if (yearDifference >= 1) {
       return yearDifference === 1
-        ? "1 năm trước"
-        : `${yearDifference} năm trước`;
+        ? oneYearAgoMessage
+        : `${yearDifference} ${yearAgoMessage}`;
     } else if (monthDifference >= 1) {
       return monthDifference === 1
-        ? "1 tháng trước"
-        : `${monthDifference} tháng trước`;
+        ? oneMonthAgoMessage
+        : `${monthDifference} ${monthAgoMessage}`;
     } else if (dayDifference >= 2) {
-      return `${dayDifference} ngày trước`;
+      return `${dayDifference} ${dayAgoMessage}`;
     } else if (dayDifference === 1) {
-      return "1 ngày trước";
+      return oneDayAgoMessage;
     } else if (hourDifference >= 2) {
-      return `${hourDifference} giờ trước`;
+      return `${hourDifference} ${hourAgoMessage}`;
     } else if (hourDifference === 1) {
-      return "1 giờ trước";
+      return oneHourAgoMessage;
     } else if (minuteDifference >= 2) {
-      return `${minuteDifference} phút trước`;
+      return `${minuteDifference} ${minuteAgoMessage}`;
     } else {
-      return "Vừa xong";
+      return justNowMessage;
     }
   };
 
@@ -874,18 +1009,20 @@ const Comment: React.FC<CommentProps> = ({
       <AlertGuestModal
         isOpen={alertGuestModal}
         onClose={() => setAlertGuestModal(false)}
+        languageToUse={languageToUse}
       />
 
       <AlertModal
-        message={`Bạn có chắc chắn xóa đánh giá ${commentNameToDelete}.`}
+        message={confirmDeleteCommentMessage}
         isOpen={openComment}
         onClose={() => setOpenComment(false)}
         onConfirm={() => handleDeleteComment(commentIdToDelete)}
         loading={loading}
+        languageToUse={languageToUse}
       />
 
       <AlertModal
-        message={`Bạn có chắc chắn xóa đánh giá ${commentNameToDelete}.`}
+        message={confirmDeleteResponseMessage}
         isOpen={openCommentResponse}
         onClose={() => setOpenCommentResponse(false)}
         onConfirm={() =>
@@ -895,11 +1032,12 @@ const Comment: React.FC<CommentProps> = ({
           )
         }
         loading={loading}
+        languageToUse={languageToUse}
       />
 
       <div className="p-4 shadow-lg dark:border-slate-800 dark:border my-6 rounded-md">
         <h2 className="text-xl font-semibold mb-4 text-slate-900 dark:text-slate-200">
-          Đánh giá và Bình luận - {nameProduct}
+          {reviewAndCommentMessage} - {nameProduct}
         </h2>
         <div className="grid md:grid-cols-2 shadow-inner p-2">
           <div className="m-auto">
@@ -913,7 +1051,7 @@ const Comment: React.FC<CommentProps> = ({
               )}
             </h3>
             <h3 className="text-slate-900 dark:text-slate-200">
-              {totalReviews} đánh giá và nhận xét
+              {totalReviews} {reviewAndCommentMessageLowercaseMessage}
             </h3>
           </div>
 
@@ -945,7 +1083,7 @@ const Comment: React.FC<CommentProps> = ({
                 </div>
               ) : (
                 <h3 className="absolute right-0 text-slate-900 dark:text-slate-200">
-                  {starReviewCounts[4]} đánh giá
+                  {starReviewCounts[4]} {reviewLowercaseMessage}
                 </h3>
               )}
             </div>
@@ -977,7 +1115,7 @@ const Comment: React.FC<CommentProps> = ({
                 </div>
               ) : (
                 <h3 className="absolute right-0 text-slate-900 dark:text-slate-200">
-                  {starReviewCounts[3]} đánh giá
+                  {starReviewCounts[3]} {reviewLowercaseMessage}
                 </h3>
               )}
             </div>
@@ -1009,7 +1147,7 @@ const Comment: React.FC<CommentProps> = ({
                 </div>
               ) : (
                 <h3 className="absolute right-0 text-slate-900 dark:text-slate-200">
-                  {starReviewCounts[2]} đánh giá
+                  {starReviewCounts[2]} {reviewLowercaseMessage}
                 </h3>
               )}
             </div>
@@ -1041,7 +1179,7 @@ const Comment: React.FC<CommentProps> = ({
                 </div>
               ) : (
                 <h3 className="absolute right-0 text-slate-900 dark:text-slate-200">
-                  {starReviewCounts[1]} đánh giá
+                  {starReviewCounts[1]} {reviewLowercaseMessage}
                 </h3>
               )}
             </div>
@@ -1070,12 +1208,12 @@ const Comment: React.FC<CommentProps> = ({
                   }}
                 >
                   <h3 className={commentcolor.text}>
-                    {starReviewCounts[0]} đánh giá
+                    {starReviewCounts[0]} {reviewLowercaseMessage}
                   </h3>
                 </div>
               ) : (
                 <h3 className="absolute right-0 text-slate-900 dark:text-slate-200">
-                  {starReviewCounts[0]} đánh giá
+                  {starReviewCounts[0]} {reviewLowercaseMessage}
                 </h3>
               )}
             </div>
@@ -1084,7 +1222,10 @@ const Comment: React.FC<CommentProps> = ({
 
         <div className="my-4" ref={textareaRef}>
           <span className="text-lg text-slate-900 dark:text-slate-200">
-            Rating: {rating !== null ? `${rating} stars` : "Not rated yet"}
+            {ratingMessage}:{" "}
+            {rating !== null
+              ? `${rating} ${startLowercaseMessagae}`
+              : notRatedYetMessage}
           </span>
           <div className="flex space-x-2">
             {stars.map((_, index) => (
@@ -1131,7 +1272,7 @@ const Comment: React.FC<CommentProps> = ({
             disabled={loading}
             value={comment}
             onChange={handleCommentChange}
-            placeholder="Nhập nội dung đánh giá..........."
+            placeholder={enterReviewContentMessage}
             className={`w-full p-2 bg-white border rounded focus:outline-none focus:ring focus:border-blue-300 ${
               commentError ? "border-red-500" : ""
             }`}
@@ -1154,7 +1295,7 @@ const Comment: React.FC<CommentProps> = ({
                   commentcolor.gradient;
               }}
             >
-              Cập nhật
+              {updateMessage}
             </button>
             <button
               disabled={loading}
@@ -1170,7 +1311,7 @@ const Comment: React.FC<CommentProps> = ({
                   commentcolor.gradient;
               }}
             >
-              Hủy
+              {cancelMessage}
             </button>
           </div>
         ) : (
@@ -1187,7 +1328,7 @@ const Comment: React.FC<CommentProps> = ({
               event.currentTarget.style.backgroundImage = commentcolor.gradient;
             }}
           >
-            Đánh giá
+            {rateMessage}
           </button>
         )}
 
@@ -1260,7 +1401,10 @@ const Comment: React.FC<CommentProps> = ({
                                   (
                                   {(comment.totalchange ?? 0) === 0
                                     ? ""
-                                    : `(Đã chỉnh sửa ${comment.totalchange} lần)`}
+                                    : `(${translateEditedTimes(
+                                        languageToUse,
+                                        comment.totalchange
+                                      )})`}
                                   )
                                 </span>
                               ) : (
@@ -1280,11 +1424,14 @@ const Comment: React.FC<CommentProps> = ({
                           >
                             <div>
                               <p className="text-slate-900 whitespace-pre-wrap break-words max-w-[18rem] md:max-w-2xl lg:max-w-4xl xl:max-w-7xl">
-                                Nhận xét: {comment.comment}
+                                {commentMessage}: {comment.comment}
                               </p>
                               {/* Format the date and time */}
                               <div className="flex space-x-2 items-center text-sm">
-                                <p className="text-slate-900"> Đánh giá: </p>
+                                <p className="text-slate-900">
+                                  {" "}
+                                  {rateMessage}:{" "}
+                                </p>
                                 {stars.map((_, starIndex) => (
                                   <Star
                                     key={starIndex}
@@ -1331,7 +1478,7 @@ const Comment: React.FC<CommentProps> = ({
                                           className="text-gray-900 hover:text-opacity-60 hover:text-gray-800 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1 whitespace-nowrap"
                                         >
                                           <Pencil className="w-5 h-5" />
-                                          Chỉnh sửa
+                                          {editMessage}
                                         </button>
                                         <button
                                           disabled={loading}
@@ -1344,7 +1491,8 @@ const Comment: React.FC<CommentProps> = ({
                                           }}
                                           className="text-gray-900 hover:text-opacity-60 hover:text-gray-800 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1"
                                         >
-                                          <Trash2 className="w-5 h-5" /> Xóa
+                                          <Trash2 className="w-5 h-5" />{" "}
+                                          {deleteMessage}
                                         </button>
                                       </div>
                                     </div>
@@ -1473,7 +1621,10 @@ const Comment: React.FC<CommentProps> = ({
                                                           {(response.totalchange ??
                                                             0) === 0
                                                             ? ""
-                                                            : `(Đã chỉnh sửa ${response.totalchange} lần)`}
+                                                            : `(${translateEditedTimes(
+                                                                languageToUse,
+                                                                response.totalchange
+                                                              )})`}
                                                         </span>
                                                       ) : (
                                                         ""
@@ -1539,7 +1690,9 @@ const Comment: React.FC<CommentProps> = ({
                                                                     className="text-gray-900 hover:text-opacity-60 hover:text-gray-800 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1 whitespace-nowrap"
                                                                   >
                                                                     <Pencil className="w-5 h-5" />{" "}
-                                                                    Chỉnh sửa
+                                                                    {
+                                                                      editMessage
+                                                                    }
                                                                   </button>
                                                                   <button
                                                                     disabled={
@@ -1565,7 +1718,9 @@ const Comment: React.FC<CommentProps> = ({
                                                                     className="text-gray-900 hover:text-opacity-60 hover:text-gray-800 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1"
                                                                   >
                                                                     <Trash2 className="w-5 h-5" />{" "}
-                                                                    Xóa
+                                                                    {
+                                                                      deleteMessage
+                                                                    }
                                                                   </button>
                                                                 </div>
                                                               </div>
@@ -1650,7 +1805,10 @@ const Comment: React.FC<CommentProps> = ({
                                                           {(response.totalchange ??
                                                             0) === 0
                                                             ? ""
-                                                            : `(Đã chỉnh sửa ${response.totalchange} lần)`}
+                                                            : `(${translateEditedTimes(
+                                                                languageToUse,
+                                                                response.totalchange
+                                                              )})`}
                                                         </span>
                                                       ) : (
                                                         ""
@@ -1740,7 +1898,9 @@ const Comment: React.FC<CommentProps> = ({
                                                                     className="text-gray-900 hover:text-opacity-60 hover:text-gray-800 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1 whitespace-nowrap"
                                                                   >
                                                                     <Pencil className="w-5 h-5" />{" "}
-                                                                    Chỉnh sửa
+                                                                    {
+                                                                      editMessage
+                                                                    }
                                                                   </button>
                                                                   <button
                                                                     disabled={
@@ -1766,7 +1926,9 @@ const Comment: React.FC<CommentProps> = ({
                                                                     className="text-gray-900 hover:text-opacity-60 hover:text-gray-800 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1"
                                                                   >
                                                                     <Trash2 className="w-5 h-5" />{" "}
-                                                                    Xóa
+                                                                    {
+                                                                      deleteMessage
+                                                                    }
                                                                   </button>
                                                                 </div>
                                                               </div>
@@ -1796,7 +1958,7 @@ const Comment: React.FC<CommentProps> = ({
                                   disabled={loading}
                                   value={responseDescriptions}
                                   onChange={handleResponseCommentChange}
-                                  placeholder="Nhập nội dung phản hồi..........."
+                                  placeholder={enterFeedbackContentMessage}
                                   className={`w-full bg-white p-2 border rounded focus:outline-none focus:ring focus:border-blue-300 ${
                                     errorResponse ? "border-red-500" : ""
                                   }`}
@@ -1828,7 +1990,7 @@ const Comment: React.FC<CommentProps> = ({
                                         commentcolor.gradient;
                                     }}
                                   >
-                                    Cập nhật
+                                    {updateMessage}
                                   </button>
                                   <button
                                     disabled={loading}
@@ -1848,7 +2010,7 @@ const Comment: React.FC<CommentProps> = ({
                                         commentcolor.gradient;
                                     }}
                                   >
-                                    Hủy
+                                    {cancelMessage}
                                   </button>
                                 </div>
                               ) : (
@@ -1870,7 +2032,7 @@ const Comment: React.FC<CommentProps> = ({
                                       commentcolor.gradient;
                                   }}
                                 >
-                                  Phản hồi
+                                  {responseMessage}
                                 </button>
                               )}
                             </>
@@ -1899,6 +2061,7 @@ const Comment: React.FC<CommentProps> = ({
                               ).length || 0
                             }
                             loading={loading}
+                            languageToUse={languageToUse}
                           />
                         </li>
                       ))}
@@ -1921,7 +2084,7 @@ const Comment: React.FC<CommentProps> = ({
               : commentcolor.gradient,
           }}
         >
-          {collapsedComments ? "Thu gọn" : "Xem tất cả"}
+          {collapsedComments ? collapseMessage : seeAllMessage}
         </button>
       </div>
     </Container>

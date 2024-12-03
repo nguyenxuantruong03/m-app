@@ -6,12 +6,36 @@ import { AlertTriangle } from "lucide-react";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import {
+  translateDesktopOnlyMessage,
+  translateNote,
+  translateExperienceMessage,
+} from "@/translate/translate-client";
 export const revalidate = 86400;
 
 const TetrisPage = () => {
   const user = useCurrentUser();
   const router = useRouter();
   const [isMobile, setIsMobile] = useState(false);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+
+  const desktopOnlyMessage = translateDesktopOnlyMessage(languageToUse);
+  const noteMessage = translateNote(languageToUse);
+  const experienceMessage = translateExperienceMessage(languageToUse);
 
   useEffect(() => {
     if (user?.role === "GUEST" || !user?.id) {
@@ -36,7 +60,7 @@ const TetrisPage = () => {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center text-xl font-bold text-slate-900 dark:text-slate-200">
-          Sorry, this game only works on desktop!
+          {desktopOnlyMessage}
         </div>
       </div>
     );
@@ -47,12 +71,11 @@ const TetrisPage = () => {
         <div className="relative">
           <div className="absolute xl:left-16 2xl:left-36 top-60">
             <div className="w-20 h-10 bg-amber-300 rounded-md flex items-center text-sm px-2 mx-auto my-1 font-semibold">
-              Lưu ý
+              {noteMessage}
               <AlertTriangle className=" ml-1 h-5 w-5" />
             </div>
             <div className="font-semibold w-48 rounded p-1 mx-auto bg-opacity-50 bg-gray-300">
-              Để trải nghiệm tốt xem bảng điều khiển để di chuyển khối theo
-              hướng.
+              {experienceMessage}
             </div>
           </div>
           <div className="mt-28 max-w-4xl mx-auto bg-black my-4">

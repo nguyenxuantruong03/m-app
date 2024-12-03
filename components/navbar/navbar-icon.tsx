@@ -37,27 +37,36 @@ import {
   checkoutTitle,
   settingTitle,
 } from "./export-name-navbar";
+import { translateMainNav } from "@/translate/translate-client";
+
+interface NavbarIconProps extends React.HTMLAttributes<HTMLElement> {
+  languageToUse: string;
+}
 
 const NavbarIcon = ({
   className,
+  languageToUse,
   ...props
-}: React.HTMLAttributes<HTMLElement>) => {
+}: NavbarIconProps) => {
   const pathname = usePathname();
   const params = useParams();
   const storeId = Array.isArray(params.storeId)
     ? params.storeId[0]
     : params.storeId;
 
-  const routes = route(storeId, pathname);
-  const staffs = staff(storeId, pathname);
-  const billboards = billboard(storeId, pathname);
-  const category = categories(storeId, pathname);
-  const parameters = parameter(storeId, pathname);
-  const products = product(storeId, pathname);
-  const orders = order(storeId, pathname);
-  const users = user(storeId, pathname);
-  const checkouts = checkout(storeId, pathname);
-  const settings = setting(storeId, pathname);
+  const routes = route(storeId, pathname, languageToUse);
+  const staffs = staff(storeId, pathname, languageToUse);
+  const billboards = billboard(storeId, pathname, languageToUse);
+  const category = categories(storeId, pathname, languageToUse);
+  const parameters = parameter(storeId, pathname, languageToUse);
+  const products = product(storeId, pathname, languageToUse);
+  const orders = order(storeId, pathname, languageToUse);
+  const users = user(storeId, pathname, languageToUse);
+  const checkouts = checkout(storeId, pathname, languageToUse);
+  const settings = setting(storeId, pathname, languageToUse);
+
+  //language
+  const mainNavMessage = translateMainNav(languageToUse);
   return (
     <>
       {/* Overview */}
@@ -72,9 +81,9 @@ const NavbarIcon = ({
             <AccordionTrigger className="accordion-trigger">
               <HoverCard>
                 <HoverCardTrigger>
-                  {routeTitle.map((route) => route.icon)}
+                  {routeTitle(languageToUse).map((route) => route.icon)}
                 </HoverCardTrigger>
-                <HoverCardContent>Tổng quan</HoverCardContent>
+                <HoverCardContent>{mainNavMessage.name1}</HoverCardContent>
               </HoverCard>
             </AccordionTrigger>
             <AccordionContent>
@@ -109,9 +118,11 @@ const NavbarIcon = ({
             <AccordionTrigger className="accordion-trigger">
               <HoverCard>
                 <HoverCardTrigger>
-                  {staffTitle.map((staff) => staff.icon)}
+                  {staffTitle(languageToUse).map((staff, index) => (
+                    <div key={index}>{staff.icon}</div>
+                  ))}
                 </HoverCardTrigger>
-                <HoverCardContent>Nhân viên</HoverCardContent>
+                <HoverCardContent>{mainNavMessage.name2}</HoverCardContent>
               </HoverCard>
             </AccordionTrigger>
             <AccordionContent>
@@ -143,9 +154,11 @@ const NavbarIcon = ({
             <AccordionTrigger className="accordion-trigger">
               <HoverCard>
                 <HoverCardTrigger>
-                  {billboardTitle.map((billboard) => billboard.icon)}
+                  {billboardTitle(languageToUse).map((billboard, index) => (
+                    <div key={index}>{billboard.icon}</div>
+                  ))}
                 </HoverCardTrigger>
-                <HoverCardContent>Ảnh quảng cáo</HoverCardContent>
+                <HoverCardContent>{mainNavMessage.name3}</HoverCardContent>
               </HoverCard>
             </AccordionTrigger>
             <AccordionContent>
@@ -177,9 +190,11 @@ const NavbarIcon = ({
             <AccordionTrigger className="accordion-trigger">
               <HoverCard>
                 <HoverCardTrigger>
-                  {categoryTitle.map((category) => category.icon)}
+                  {categoryTitle(languageToUse).map((category, index) => (
+                    <div key={index}>{category.icon}</div>
+                  ))}
                 </HoverCardTrigger>
-                <HoverCardContent>Loại hàng</HoverCardContent>
+                <HoverCardContent>{mainNavMessage.name4}</HoverCardContent>
               </HoverCard>
             </AccordionTrigger>
             <AccordionContent>
@@ -211,9 +226,11 @@ const NavbarIcon = ({
             <AccordionTrigger className="accordion-trigger">
               <HoverCard>
                 <HoverCardTrigger>
-                  {parameterTitle.map((parameter) => parameter.icon)}
+                  {parameterTitle(languageToUse).map((parameter, index) => (
+                    <div key={index}>{parameter.icon}</div>
+                  ))}
                 </HoverCardTrigger>
-                <HoverCardContent>Thông số</HoverCardContent>
+                <HoverCardContent>{mainNavMessage.name5}</HoverCardContent>
               </HoverCard>
             </AccordionTrigger>
             <AccordionContent>
@@ -246,9 +263,11 @@ const NavbarIcon = ({
               {" "}
               <HoverCard>
                 <HoverCardTrigger>
-                  {productTitle.map((product) => product.icon)}
+                  {productTitle(languageToUse).map((product, index) => (
+                    <div key={index}>{product.icon}</div>
+                  ))}
                 </HoverCardTrigger>
-                <HoverCardContent>Sản phẩm</HoverCardContent>
+                <HoverCardContent>{mainNavMessage.name6}</HoverCardContent>
               </HoverCard>
             </AccordionTrigger>
             <AccordionContent>
@@ -280,9 +299,11 @@ const NavbarIcon = ({
             <AccordionTrigger className="accordion-trigger">
               <HoverCard>
                 <HoverCardTrigger>
-                  {orderTitle.map((order) => order.icon)}
+                  {orderTitle(languageToUse).map((order, index) => (
+                    <div key={index}>order.icon</div>
+                  ))}
                 </HoverCardTrigger>
-                <HoverCardContent>Đơn hàng</HoverCardContent>
+                <HoverCardContent>{mainNavMessage.name7}</HoverCardContent>
               </HoverCard>
             </AccordionTrigger>
             <AccordionContent>
@@ -314,9 +335,11 @@ const NavbarIcon = ({
             <AccordionTrigger className="accordion-trigger">
               <HoverCard>
                 <HoverCardTrigger>
-                  {userTitle.map((user) => user.icon)}
+                  {userTitle(languageToUse).map((user, index) => (
+                    <div key={index}>{user.icon}</div>
+                  ))}
                 </HoverCardTrigger>
-                <HoverCardContent>Người dùng</HoverCardContent>
+                <HoverCardContent>{mainNavMessage.name8}</HoverCardContent>
               </HoverCard>
             </AccordionTrigger>
             <AccordionContent>
@@ -348,9 +371,11 @@ const NavbarIcon = ({
             <AccordionTrigger className="accordion-trigger">
               <HoverCard>
                 <HoverCardTrigger>
-                  {checkoutTitle.map((checkout) => checkout.icon)}
+                  {checkoutTitle(languageToUse).map((checkout, index) => (
+                    <div key={index}>{checkout.icon}</div>
+                  ))}
                 </HoverCardTrigger>
-                <HoverCardContent>Thanh toán</HoverCardContent>
+                <HoverCardContent>{mainNavMessage.name9}</HoverCardContent>
               </HoverCard>
             </AccordionTrigger>
             <AccordionContent>
@@ -382,9 +407,11 @@ const NavbarIcon = ({
             <AccordionTrigger className="accordion-trigger">
               <HoverCard>
                 <HoverCardTrigger>
-                  {settingTitle.map((setting) => setting.icon)}
+                  {settingTitle(languageToUse).map((setting, index) => (
+                    <div key={index}>{setting.icon}</div>
+                  ))}
                 </HoverCardTrigger>
-                <HoverCardContent>Cài đặt</HoverCardContent>
+                <HoverCardContent>{mainNavMessage.name10}</HoverCardContent>
               </HoverCard>
             </AccordionTrigger>
             <AccordionContent>

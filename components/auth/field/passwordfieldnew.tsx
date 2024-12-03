@@ -2,6 +2,19 @@
 import React, { useState, useRef, ChangeEvent, useEffect } from "react";
 import { Check, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import {
+  translateCharacterLength,
+  translateCompletedNumbers,
+  translateCompletedPassword,
+  translateCompletedPasswordUpperCase,
+  translateHasDigit,
+  translateHasLowercase,
+  translateHasUppercaseLetter,
+  translateNoAccentedCharactersInPassword,
+  translateNoSpacesInPassword,
+  translateNoValidAccent,
+  translateNoValidSpace,
+} from "@/translate/translate-client";
 
 interface PasswordFieldProps {
   field: {
@@ -15,6 +28,7 @@ interface PasswordFieldProps {
   setError: (value: string) => void;
   setSuccess: (value: string) => void;
   setIsSubmittedPasswordnew: (value: boolean) => void;
+  languageToUse: string;
 }
 
 const PasswordNewField: React.FC<PasswordFieldProps> = ({
@@ -27,6 +41,7 @@ const PasswordNewField: React.FC<PasswordFieldProps> = ({
   setError,
   setSuccess,
   setIsSubmittedPasswordnew,
+  languageToUse,
 }) => {
   const [validations, setValidations] = useState({
     hasUpperCase: false,
@@ -199,14 +214,14 @@ const PasswordNewField: React.FC<PasswordFieldProps> = ({
             <>
               <Check className="w-5 h-5 text-green-400" />
               <span className="text-xs text-green-400">
-                Đã hoàn thành (A-Z)!
+                {translateCompletedPasswordUpperCase(languageToUse)}
               </span>
             </>
           ) : (
             <>
               <X className="w-5 h-5 text-red-500" />
               <span className="text-xs text-red-500">
-                Có ít nhất một chữ cái viết hoa (A-Z)
+                {translateHasUppercaseLetter(languageToUse)}
               </span>
             </>
           )}
@@ -216,14 +231,14 @@ const PasswordNewField: React.FC<PasswordFieldProps> = ({
             <>
               <Check className="w-5 h-5 text-green-400" />
               <span className="text-xs text-green-400">
-                Đã hoàn thành (a-z)!
+                {translateCompletedPassword(languageToUse)}
               </span>
             </>
           ) : (
             <>
               <X className="w-5 h-5 text-red-500" />
               <span className="text-xs text-red-500">
-                Có ít nhất một chữ cái thường (a-z)
+                {translateHasLowercase(languageToUse)}
               </span>
             </>
           )}
@@ -233,14 +248,14 @@ const PasswordNewField: React.FC<PasswordFieldProps> = ({
             <>
               <Check className="w-5 h-5 text-green-400" />
               <span className="text-xs text-green-400">
-                Đã hoàn thành (0-9)!
+                {translateCompletedNumbers(languageToUse, 0, 9)}
               </span>
             </>
           ) : (
             <>
               <X className="w-5 h-5 text-red-500" />
               <span className="text-xs text-red-500">
-                Có ít nhất một chữ số (0-9)
+                {translateHasDigit(languageToUse)}
               </span>
             </>
           )}
@@ -250,14 +265,14 @@ const PasswordNewField: React.FC<PasswordFieldProps> = ({
             <>
               <Check className="w-5 h-5 text-green-400" />
               <span className="text-xs text-green-400">
-                Đã hoàn thành (6-20)!
+                {translateCompletedNumbers(languageToUse, 6, 20)}
               </span>
             </>
           ) : (
             <>
               <X className="w-5 h-5 text-red-500" />
               <span className="text-xs text-red-500">
-                6 đến 20 ký tự (6-20)
+                {translateCharacterLength(languageToUse)}
               </span>
             </>
           )}
@@ -285,14 +300,14 @@ const PasswordNewField: React.FC<PasswordFieldProps> = ({
           <div className="flex items-center space-x-1">
             <X className="w-5 h-5 text-red-500" />
             <span className="text-xs text-red-500">
-              Mật khẩu không được chứa khoảng trắng
+              {translateNoSpacesInPassword(languageToUse)}
             </span>
           </div>
         ) : (
           <div className="flex items-center space-x-1">
             <Check className="w-5 h-5 text-green-400" />
             <span className="text-xs text-green-400">
-              Không chứa khoảng cách hợp lệ!
+              {translateNoValidSpace(languageToUse)}
             </span>
           </div>
         )}
@@ -300,14 +315,14 @@ const PasswordNewField: React.FC<PasswordFieldProps> = ({
           <div className="flex items-center space-x-1">
             <X className="w-5 h-5 text-red-500" />
             <span className="text-xs text-red-500">
-              Mật khẩu không thể chứa ký tự có dấu
+              {translateNoAccentedCharactersInPassword(languageToUse)}
             </span>
           </div>
         ) : (
           <div className="flex items-center space-x-1">
             <Check className="w-5 h-5 text-green-400" />
             <span className="text-xs text-green-400">
-              Không chứa dấu hợp lệ!
+              {translateNoValidAccent(languageToUse)}
             </span>
           </div>
         )}

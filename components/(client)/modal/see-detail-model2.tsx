@@ -1,41 +1,86 @@
 import Modal from "@/components/ui/modal";
+import {
+  getProcessingTime,
+  translate12Months,
+  translateApplicableProduct,
+  translateApplicableProducts,
+  translateExchangePolicy,
+  translateExchangeWarrantyProduct,
+  translateFullExchangePolicy,
+  translateManufacturerDefect,
+  translateNotWarrantyNote,
+  translateProcessingTime,
+  translateVIPExchange,
+  translateVIPExchangePolicy,
+  translateWarrantyBenefitsAndServices,
+  translateWarrantyConditions,
+  translateWarrantyPeriod,
+} from "@/translate/translate-client";
 
 interface SeeDetail2Props {
-    isOpen: boolean;
-    onClose: () => void;
-    message?: string;
-    title?: string
+  isOpen: boolean;
+  onClose: () => void;
+  message?: string;
+  title?: string;
+  languageToUse: string;
 }
 
-const SeeDetail2Modal:React.FC<SeeDetail2Props> = ({ isOpen, onClose,message,title }) => {
-    return ( 
-        <Modal
-            title={title || "1 đổi 1 VIP 12 tháng"}
-            description={message || "Đổi máy mới tương đương khi có lỗi từ NSX trong 12 tháng"}
-            isOpen={isOpen}
-            onClose={onClose}
-        >
-           <div>
-                <h1 className=" bg-[#e5002d] rounded-md text-white font-bold p-2"> 1 đổi 1 VIP 12 tháng: Đổi sản phẩm mới tương đương khi có lỗi từ NSX trong 12 tháng</h1>
-                    <p className="font-bold">Sản phẩm áp dụng:</p>
-                    <p>+ Những đồ điện tử, quạt, có phiếu bảo hành.</p>
-                <div className="flex">
-                    <p className="font-bold">Thời gian bảo hành:</p>
-                    <p className="ml-2"> 12 tháng</p>
-                </div>
-                    <p className="font-bold">Quyền lợi và dịch vụ bảo hành:</p>
-                    <p className="mt-3">+ Bao test 1 đổi 1 toàn bộ nếu như lỗi. </p>
-                    <p>+ Đổi sản phẩm tương đương sản phẩm bảo hành.</p>
-                    <div className="flex mt-3">
-                    <p className="font-bold">Điều kiện bảo hành:</p>
-                    <p className="ml-2">Sản phẩm bị lỗi do nhà sản xuất.</p>
-                </div>
-                <p>Lưu ý: Gói bảo hành không có hiệu lực với các sản phẩm bị biến dạng so với ban đầu (cấn, móp,cong,vênh, nứt,…) và các sản phẩm bị vào nước hoặc đã được sửa chữa.</p>
-                    <p className="font-bold"> Thời gian xử lý:</p>
-                    <p className="">+ Trong vòng 24h và tối đa 14 ngày làm việc tùy thuộc vào tình trạng của sản phẩm.</p>
-            </div>
-        </Modal>
-     );
-}
- 
+const SeeDetail2Modal: React.FC<SeeDetail2Props> = ({
+  isOpen,
+  onClose,
+  message,
+  title,
+  languageToUse,
+}) => {
+  const VIPExchangeMessage = translateVIPExchange(languageToUse);
+  const exchangePolicyMessage = translateExchangePolicy(languageToUse);
+  const VIPExchangePolicyMessage = translateVIPExchangePolicy(languageToUse);
+  const applicableProductMessage = translateApplicableProduct(languageToUse);
+  const applicableProductsMessage = translateApplicableProducts(languageToUse);
+  const warrantyPeriodMessage = translateWarrantyPeriod(languageToUse);
+  const month12Message = translate12Months(languageToUse);
+  const warrantyBenefitAndServiceMessage =
+    translateWarrantyBenefitsAndServices(languageToUse);
+  const fullExchangePolicyMessage = translateFullExchangePolicy(languageToUse);
+  const exchangeWarrantyProductMessage =
+    translateExchangeWarrantyProduct(languageToUse);
+  const warrantyConditionMessage = translateWarrantyConditions(languageToUse);
+  const ManufacturerDefectMessage = translateManufacturerDefect(languageToUse);
+  const notWarrantyNoteMessage = translateNotWarrantyNote(languageToUse);
+  const processingTimeMessage = getProcessingTime(languageToUse);
+  const processingTimeMessages = translateProcessingTime(languageToUse);
+
+  return (
+    <Modal
+      title={title || VIPExchangeMessage}
+      description={message || exchangePolicyMessage}
+      isOpen={isOpen}
+      onClose={onClose}
+    >
+      <div>
+        <h1 className=" bg-[#e5002d] rounded-md text-white font-bold p-2">
+          {" "}
+          {VIPExchangePolicyMessage}
+        </h1>
+        <p className="font-bold">{applicableProductMessage}:</p>
+        <p>+ {applicableProductsMessage}.</p>
+        <div className="flex">
+          <p className="font-bold">{warrantyPeriodMessage}:</p>
+          <p className="ml-2">{month12Message}</p>
+        </div>
+        <p className="font-bold">{warrantyBenefitAndServiceMessage}:</p>
+        <p className="mt-3">+ {fullExchangePolicyMessage}. </p>
+        <p>+ {exchangeWarrantyProductMessage}.</p>
+        <div className="flex mt-3">
+          <p className="font-bold">{warrantyConditionMessage}:</p>
+          <p className="ml-2">{ManufacturerDefectMessage}.</p>
+        </div>
+        <p>{notWarrantyNoteMessage}.</p>
+        <p className="font-bold"> {processingTimeMessage}:</p>
+        <p className="">+ {processingTimeMessages}.</p>
+      </div>
+    </Modal>
+  );
+};
+
 export default SeeDetail2Modal;

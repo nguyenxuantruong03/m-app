@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
-import { CellAction } from "./cell-action"
+import { ColumnDef } from "@tanstack/react-table";
+import { CellAction } from "./cell-action";
 import { Checkbox } from "@/components/ui/checkbox";
 import SpanColumn from "@/components/span-column";
 import { Clock12, Package, Ruler } from "lucide-react";
@@ -11,11 +11,12 @@ import FormatDate from "@/components/format-Date";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type SizeColumn = {
-  id: string
-  name: string
-  value: string
-  createdAt: Date
-}
+  id: string;
+  name: string;
+  value: string;
+  createdAt: Date;
+  language: string;
+};
 
 export const columns: ColumnDef<SizeColumn>[] = [
   {
@@ -52,7 +53,16 @@ export const columns: ColumnDef<SizeColumn>[] = [
         </SpanColumn>
       );
     },
-    cell: ({row}) =>  <EditRow data={row.original.name} name={row.original.name} value={row.original.value} id={row.original.id} field="name"/>
+    cell: ({ row }) => (
+      <EditRow
+        data={row.original.name}
+        name={row.original.name}
+        value={row.original.value}
+        id={row.original.id}
+        field="name"
+        language={row.original.language}
+      />
+    ),
   },
   {
     accessorKey: "value",
@@ -66,7 +76,16 @@ export const columns: ColumnDef<SizeColumn>[] = [
         </SpanColumn>
       );
     },
-    cell: ({row}) =>  <EditRow data={row.original.name} name={row.original.name} value={row.original.value} id={row.original.id} field="value"/>
+    cell: ({ row }) => (
+      <EditRow
+        data={row.original.name}
+        name={row.original.name}
+        value={row.original.value}
+        id={row.original.id}
+        field="value"
+        language={row.original.language}
+      />
+    ),
   },
   {
     accessorKey: "createdAt",
@@ -81,13 +100,11 @@ export const columns: ColumnDef<SizeColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      return (
-      <FormatDate data={row.original.createdAt}/>
-      )
-    }
+      return <FormatDate data={row.original.createdAt} />;
+    },
   },
   {
     id: "actions",
-    cell: ({row}) => <CellAction data={row.original} />
+    cell: ({ row }) => <CellAction data={row.original} />,
   },
-]
+];

@@ -5,6 +5,10 @@ import Modal from "../ui/modal";
 import { Button } from "../ui/button";
 import { ZoomIn, ZoomOut } from "lucide-react";
 import Image from "next/image";
+import {
+  translateAccountCreatedMessage,
+  translateUserAndEmailMessage,
+} from "@/translate/translate-client";
 
 interface ZoomModalProps {
   isOpen: boolean;
@@ -14,6 +18,7 @@ interface ZoomModalProps {
   email?: string | null | undefined;
   isClient?: boolean;
   customClassFeedBack?: string;
+  languageToUse: string;
 }
 
 export const ZoomImageAttendanceModal: React.FC<ZoomModalProps> = ({
@@ -23,7 +28,8 @@ export const ZoomImageAttendanceModal: React.FC<ZoomModalProps> = ({
   createdAt,
   email,
   isClient,
-  customClassFeedBack
+  customClassFeedBack,
+  languageToUse,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
   const [scale, setScale] = useState(1);
@@ -151,15 +157,21 @@ export const ZoomImageAttendanceModal: React.FC<ZoomModalProps> = ({
 
   return (
     <Modal
-      title={email ? `Người dùng: ${email}` : undefined}
+      title={
+        email ? translateUserAndEmailMessage(languageToUse, email) : undefined
+      }
       description={
-        createdAt ? `Tài khoản đã thành lập ngày - ${createdAt}` : undefined
+        createdAt
+          ? translateAccountCreatedMessage(languageToUse, createdAt)
+          : undefined
       }
       isOpen={isOpen}
       onClose={onClose}
       maxWidth="4xl"
       textCenter={true}
-      classNameCustom={`${customClassFeedBack} ${isClient && `${window.scrollY >= 30 ? "top-[53%]" : "top-[55%]"}`}`}
+      classNameCustom={`${customClassFeedBack} ${
+        isClient && `${window.scrollY >= 30 ? "top-[53%]" : "top-[55%]"}`
+      }`}
     >
       <div className="flex items-center justify-center">
         <div className="relative overflow-hidden">

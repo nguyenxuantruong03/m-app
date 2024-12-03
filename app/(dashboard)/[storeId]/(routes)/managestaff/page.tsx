@@ -1,7 +1,7 @@
 import prismadb from "@/lib/prismadb";
 import { format } from "date-fns";
 import { RoleGate } from "@/components/auth/role-gate";
-import { currentRole } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
 import { ManageStaffsColumn } from "./components/column";
 import ManageStaffClient from "./components/client";
@@ -10,6 +10,7 @@ import viLocale from "date-fns/locale/vi";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 
 const ManageStaff = async ({ params }: { params: { storeId: string } }) => {
+  const currentUsers = await currentUser()
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN;
   const showOrderRole = isRole;
@@ -35,6 +36,7 @@ const ManageStaff = async ({ params }: { params: { storeId: string } }) => {
 
   const formattedUser: ManageStaffsColumn[] = user.map((item) => ({
     id: item.id,
+    language: currentUsers?.language || "vi",
     isCitizen: item.isCitizen,
     numberCCCD: item.numberCCCD,
     imageCredential: item.imageCredential[0]?.url,

@@ -26,6 +26,17 @@ import { NfcModal } from "@/components/modals/nfc-modal";
 import { Hint } from "@/components/ui/hint";
 import { RoleGate } from "@/components/auth/role-gate";
 import { UserRole } from "@prisma/client";
+import {
+  translateAttendanceEnd,
+  translateAttendanceStaff,
+  translateAttendanceStart,
+  translateDeleteEvent,
+  translateEvent,
+  translateEventLimit,
+  translateEventTypes,
+  translateInvalidIdToDelete,
+  translateWorkTimeMessages,
+} from "@/translate/translate-dashboard";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 
 interface Event {
@@ -69,13 +80,23 @@ export default function Home() {
   const params = useParams();
   const userId = useCurrentUser();
   const router = useRouter();
+  //language
+  const languageToUse = userId?.language || "vi";
+  const eventTypeMessage = translateEventTypes(languageToUse);
+  const workTimeMessage = translateWorkTimeMessages(languageToUse);
+  const attendanceStartMessage = translateAttendanceStart(languageToUse);
+  const attendanceEndMessage = translateAttendanceEnd(languageToUse);
+  const eventMessage = translateEvent(languageToUse);
+  const deleteEventMessage = translateDeleteEvent(languageToUse);
+  const attendanceStaffMessage = translateAttendanceStaff(languageToUse);
+
   const [events, setEvents] = useState([
-    { title: "Sinh nhật", id: "1" },
-    { title: "Tăng ca", id: "2" },
-    { title: "Đổi giờ", id: "3" },
-    { title: "Nghỉ làm", id: "4" },
-    { title: "Bận", id: "5" },
-    { title: "Khác", id: "6" },
+    { title: eventTypeMessage.birthday, id: "1" },
+    { title: eventTypeMessage.overtime, id: "2" },
+    { title: eventTypeMessage.shiftChange, id: "3" },
+    { title: eventTypeMessage.dayOff, id: "4" },
+    { title: eventTypeMessage.busy, id: "5" },
+    { title: eventTypeMessage.other, id: "6" },
   ]);
   const [allEvents, setAllEvents] = useState<AllEventProps[]>([]);
   const [showModal, setShowModal] = useState(false);
@@ -133,8 +154,8 @@ export default function Home() {
   useEffect(() => {
     if (userId) {
       if (!userId.timestartwork) {
-        toast.error("Bạn không có thời gian làm việc!");
-        throw new Error("Missing Working Time!");
+        toast.error(workTimeMessage.noWorkTime);
+        return;
       }
       const now = new Date();
       const [hours, minutes] = userId.timestartwork.split(":");
@@ -146,12 +167,12 @@ export default function Home() {
       const delayHours = delayTime / (1000 * 60 * 60); // 1000 milliseconds * 60 seconds * 60 minutes = 1 hour
       if (delayHours >= 1) {
         setDelayCheckAttendaceText(
-          `Bạn đã điểm danh trễ ${
+          `${workTimeMessage.lateCheckIn} ${
             Math.floor(delayHours) +
-            " giờ " +
+            `${workTimeMessage.hours}` +
             Math.floor((delayHours % 1) * 60) +
-            " phút"
-          } và bị -50.000đ. Lý do: Điểm danh trễ.`
+            `${workTimeMessage.minutes}`
+          } ${workTimeMessage.penalty}`
         );
       } else {
         setDelayCheckAttendaceText("");
@@ -276,7 +297,7 @@ export default function Home() {
           );
         } else {
           // Hiển thị thông báo lỗi mặc định cho người dùng
-          toast.error("Error fetching data.");
+          toast.error(workTimeMessage.somethingWentWrong);
         }
       }
     };
@@ -302,7 +323,7 @@ export default function Home() {
 
       if (!isToday) {
         // Show a message or handle the case where it's not today
-        toast.error("Không thể điểm danh cho ngày khác!");
+        toast.error(attendanceStartMessage.cannotCheckInForAnotherDay);
         setIsCheckingAttendanceStart(false);
         setIsCheckingAttendanceEnd(false);
         setIsAddingEvent(false);
@@ -313,7 +334,7 @@ export default function Home() {
       const dateWorkAttendance = userId?.daywork.join(", ");
 
       if (dateWorkAttendance && !dateWorkAttendance.includes(dayName)) {
-        toast.error("Hôm nay không phải lịch làm của bạn!");
+        toast.error(attendanceStartMessage.notYourWorkday);
         setIsCheckingAttendanceStart(false);
         setIsCheckingAttendanceEnd(false);
         setIsAddingEvent(false);
@@ -334,7 +355,7 @@ export default function Home() {
           currentDate.setMinutes(parseInt(minutes, 10));
           if (currentTime.getTime() <= currentDate.getTime()) {
             toast.error(
-              `Chưa đến giờ điểm danh hãy quay lại lúc:${userId?.timestartwork}!`
+              `${attendanceStartMessage.checkInNotYetTime}:${userId?.timestartwork}!`
             );
           } else {
             const existingEventToday = allEvents.find((event) => {
@@ -361,7 +382,7 @@ export default function Home() {
 
             if (existingEventToday || existingEventTomorrow) {
               // If attendance record already exists for the day, show a message
-              toast.error("Đã điểm danh cho hôm nay!");
+              toast.error(attendanceStartMessage.alreadyCheckedIn);
               setIsCheckingAttendanceEnd(false);
               setIsCheckingAttendanceStart(false);
               setIsAddingEvent(false);
@@ -420,15 +441,15 @@ export default function Home() {
                       <div className="ml-3 flex-1">
                         <p className="text-green-500 font-bold flex">
                           <Check className="w-5 h-5 rounded-full bg-green-500 text-white mx-1" />
-                          Điểm danh thành công!
+                          {attendanceStartMessage.checkInSuccess}
                         </p>
                         <p className="mt-1 text-sm text-gray-500">
-                          Người dùng{" "}
+                          {attendanceStartMessage.user}
                           <span className="font-bold text-blue-500">
                             {userId?.name}
-                          </span>{" "}
+                          </span>
                           - <span className="font-bold">{userId?.email}</span>.
-                          Bắt đầu làm vào lúc:{" "}
+                          {attendanceStartMessage.startTime}:
                           <span className="font-bold">
                             {response.data?.start
                               ? format(
@@ -441,7 +462,7 @@ export default function Home() {
                                 )
                               : null}
                           </span>{" "}
-                          và kết thúc vào lúc:{" "}
+                          {attendanceStartMessage.endTime}:{" "}
                           <span className="font-bold">
                             {response.data?.end
                               ? format(
@@ -467,7 +488,7 @@ export default function Home() {
                       onClick={() => toast.dismiss(t.id)}
                       className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     >
-                      Close
+                      {attendanceStartMessage.close}
                     </button>
                   </div>
                 </div>
@@ -490,7 +511,7 @@ export default function Home() {
           );
         } else {
           // Hiển thị thông báo lỗi mặc định cho người dùng
-          toast.error("Đã xảy ra lỗi khi thêm sự kiện.");
+          toast.error(attendanceStartMessage.checkOutNotYetTime);
         }
         // Handle request error
         setIsCheckingAttendanceStart(false);
@@ -517,7 +538,7 @@ export default function Home() {
 
       if (!isToday) {
         // Show a message or handle the case where it's not today
-        toast.error("Không thể kết thúc cho ngày khác!");
+        toast.error(attendanceEndMessage.cannotCheckOutForAnotherDay);
         setIsCheckingAttendanceEnd(false);
         setIsCheckingAttendanceStart(false);
         setIsAddingEvent(false);
@@ -528,7 +549,7 @@ export default function Home() {
       const dateWorkAttendance = userId?.daywork.join(", ");
 
       if (dateWorkAttendance && !dateWorkAttendance.includes(dayName)) {
-        toast.error("Hôm nay không phải lịch làm của bạn!");
+        toast.error(attendanceEndMessage.notYourWorkday);
         setIsCheckingAttendanceStart(false);
         setIsCheckingAttendanceEnd(false);
         setIsAddingEvent(false);
@@ -538,7 +559,7 @@ export default function Home() {
 
       try {
         if (isEnd === true) {
-          toast.error("Đã kết thúc cho ngày hiện tại!");
+          toast.error(attendanceEndMessage.alreadyCheckedOut);
           setIsCheckingAttendanceEnd(false);
           setIsCheckingAttendanceStart(false);
           setIsAddingEvent(false);
@@ -599,15 +620,15 @@ export default function Home() {
                   <div className="ml-3 flex-1">
                     <p className="text-green-500 font-bold flex">
                       <Check className="w-5 h-5 rounded-full bg-green-500 text-white mx-1" />
-                      Kết thúc thành công!
+                      {attendanceEndMessage.checkOutSuccess}
                     </p>
                     <p className="mt-1 text-sm text-gray-500">
-                      Người dùng{" "}
+                      {attendanceEndMessage.user}
                       <span className="font-bold text-blue-500">
                         {userId?.name}
                       </span>{" "}
-                      - <span className="font-bold">{userId?.email}</span>. Bạn
-                      đã kết thúc vào lúc:{" "}
+                      - <span className="font-bold">{userId?.email}</span>.{" "}
+                      {attendanceEndMessage.endTime}:
                       <span className="font-bold">
                         {postResponse.data?.start
                           ? format(
@@ -630,7 +651,7 @@ export default function Home() {
                   onClick={() => toast.dismiss(t.id)}
                   className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
-                  Close
+                  {attendanceEndMessage.close}
                 </button>
               </div>
             </div>
@@ -655,7 +676,7 @@ export default function Home() {
           );
         } else {
           // Hiển thị thông báo lỗi mặc định cho người dùng
-          toast.error("Chưa đến lúc để kêt thúc!");
+          toast.error(attendanceEndMessage.checkOutNotYetTime);
         }
         setIsCheckingAttendanceEnd(false);
         setIsCheckingAttendanceStart(false);
@@ -740,19 +761,19 @@ export default function Home() {
                       <div className="ml-3 flex-1">
                         <p className="text-green-500 font-bold flex">
                           <Check className="w-5 h-5 rounded-full bg-green-500 text-white mx-1" />
-                          Thêm sự kiện thành công!
+                          {eventMessage.eventAddedSuccess}
                         </p>
                         <p className="mt-1 text-sm text-gray-500">
-                          Người dùng{" "}
+                          {eventMessage.user}
                           <span className="font-bold text-blue-500">
                             {userId?.name}
-                          </span>{" "}
+                          </span>
                           - <span className="font-bold">{userId?.email}</span>.
-                          Bạn thêm sự kiện{" "}
+                          {eventMessage.eventAddedMessage}
                           <span className="font-bold text-red-500">
                             {event.title}
                           </span>{" "}
-                          vào lúc:{" "}
+                          {eventMessage.eventAddedAt}:{" "}
                           <span className="font-bold">
                             {response.data?.start
                               ? format(
@@ -775,7 +796,7 @@ export default function Home() {
                       onClick={() => toast.dismiss(t.id)}
                       className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     >
-                      Close
+                      {eventMessage.close}
                     </button>
                   </div>
                 </div>
@@ -792,7 +813,7 @@ export default function Home() {
                 toast.error(error.response.data.error);
               } else {
                 // Hiển thị thông báo lỗi mặc định cho người dùng
-                toast.error("Đã xảy ra lỗi khi thêm sự kiện.");
+                toast.error(eventMessage.eventAddError);
               }
               setIsCheckingAttendanceEnd(false);
               setIsCheckingAttendanceStart(false);
@@ -801,9 +822,7 @@ export default function Home() {
             });
         } else {
           // Notify the user that the limit is reached
-          toast.error(
-            "Đã quá số lần sự kiện trong 1 ngày. Không thể thêm: " + event.title
-          );
+          toast.error(translateEventLimit(languageToUse, event.title));
           setIsCheckingAttendanceEnd(false);
           setIsCheckingAttendanceStart(false);
           setIsAddingEvent(false);
@@ -863,7 +882,7 @@ export default function Home() {
 
       if (isEventFound) {
         // If the event with title "❎" or "✅" is found, show an error message
-        toast.error("Không thể xóa sự kiện này.");
+        toast.error(deleteEventMessage.cannotDeleteEvent);
         setIsDeleting(false);
         return;
       }
@@ -914,15 +933,16 @@ export default function Home() {
                   <div className="ml-3 flex-1">
                     <p className="text-green-500 font-bold flex">
                       <Check className="w-5 h-5 rounded-full bg-green-500 text-white mx-1" />
-                      Xóa sự kiện thành công!
+                      {deleteEventMessage.eventDeletedSuccess}
                     </p>
                     <p className="mt-1 text-sm text-gray-500">
-                      Người dùng{" "}
+                      {deleteEventMessage.user}
                       <span className="font-bold text-blue-500">
                         {userId?.name}
                       </span>{" "}
-                      - <span className="font-bold">{userId?.email}</span>. Bạn
-                      đã xóa sự kiện {response.data.title} vào lúc:{" "}
+                      - <span className="font-bold">{userId?.email}</span>.{" "}
+                      {deleteEventMessage.eventDeletedMessage}{" "}
+                      {response.data.title} {deleteEventMessage.eventDeletedAt}:{" "}
                       <span className="font-bold">{currentTime}</span>.
                     </p>
                   </div>
@@ -933,7 +953,7 @@ export default function Home() {
                   onClick={() => toast.dismiss(t.id)}
                   className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
-                  Close
+                  {deleteEventMessage.close}
                 </button>
               </div>
             </div>
@@ -951,7 +971,7 @@ export default function Home() {
             toast.error(error.response.data.error);
           } else {
             // Hiển thị thông báo lỗi mặc định cho người dùng
-            toast.error("Đã xảy ra lỗi khi xóa sự kiện.");
+            toast.error(deleteEventMessage.eventDeleteError);
           }
         })
         .finally(() => {
@@ -960,7 +980,7 @@ export default function Home() {
     } else {
       // Handle the case where idToDelete is null
       if (idToDelete !== null) {
-        toast.error("Invalid idToDelete:", idToDelete);
+        toast.error(translateInvalidIdToDelete(languageToUse, idToDelete));
       }
     }
   }
@@ -986,7 +1006,7 @@ export default function Home() {
     <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>
       <nav className="flex justify-center xl:justify-between mb-12 xl:mb-0 p-8">
         <h1 className="font-bold text-2xl text-gray-700 absolute dark:text-slate-400">
-          Nhân viên điểm danh
+          {attendanceStaffMessage.user}
         </h1>
       </nav>
       <main className="flex flex-col items-center justify-between">
@@ -996,7 +1016,7 @@ export default function Home() {
             className="grid grid-rows-[auto,1fr] ml-0 mb-8 xl:mb-0 w-full border-2 p-2 rounded-md xl:-ml-8 xl:h-[55%] 2xl:h-[35%] bg-violet-50 dark:bg-[#2a3e4f]"
           >
             <h1 className="flex items-center justify-center gap-x-1 font-bold text-lg mb-2 text-center text-black dark:text-white">
-              Drag Event
+              {attendanceStaffMessage.dragEvent}
               <Hint label="Drag and drop events onto the date." side="top">
                 <Info className="w-4 h-4" />
               </Hint>
@@ -1057,6 +1077,7 @@ export default function Home() {
           onClose={handleCloseModal}
           onConfirm={handleDelete}
           loading={isDeleting}
+          languageToUse={languageToUse}
         />
 
         <CameraModal
@@ -1069,6 +1090,7 @@ export default function Home() {
           onClose={() => setShowCameraModal(false)}
           loading={false}
           userId={userId?.name}
+          languageToUse={languageToUse}
         />
 
         <NfcModal
@@ -1081,6 +1103,7 @@ export default function Home() {
           setShowNFCModal={setShowNFCModal}
           onClose={() => setShowNFCModal(false)}
           dataEventNFC={dataEventCamera}
+          languageToUse={languageToUse}
         />
 
         <ChooseAttendanceModal
@@ -1092,6 +1115,7 @@ export default function Home() {
           userId={userId?.name}
           handleOpenCameraModal={handleOpenCameraModal}
           handleOpenNFCModal={handleOpenNFCModal}
+          languageToUse={languageToUse}
         />
 
         <div className="xl:fixed bottom-4 right-0 z-[9999] my-3 mr-5 w-full flex item-center justify-end space-x-5">
@@ -1100,7 +1124,7 @@ export default function Home() {
             className="px-4 py-2 rounded-md"
             disabled={isCheckingAttendanceStart}
           >
-            Điểm danh
+            {attendanceStaffMessage.attendance}
           </Button>
 
           <Button
@@ -1112,7 +1136,7 @@ export default function Home() {
               isEnd === true
             }
           >
-            Kết thúc
+            {attendanceStaffMessage.finish}
           </Button>
         </div>
       </main>

@@ -4,16 +4,19 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { Duration, UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
+import { translateText } from "@/translate/translate-client";
+import { translateCouponDelete, translateCouponGet, translateCouponPost } from "@/translate/translate-api";
 
 export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const couponPostMessage = translateCouponPost(LanguageToUse);
   try {
-    const userId = await currentUser();
-
     const body = await req.json();
-
     const {
       id,
       name,
@@ -26,42 +29,45 @@ export async function POST(
       description,
     } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: couponPostMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền tạo mới coupon!" }),
+        JSON.stringify({ error: couponPostMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+      return new NextResponse(JSON.stringify({ error: couponPostMessage.nameRequired }), {
         status: 400,
       });
     }
 
     if (!percent) {
-      return new NextResponse(JSON.stringify({ error: "Percent is required!" }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: couponPostMessage.percentRequired }),
+        {
+          status: 400,
+        }
+      );
     }
 
     if (!imagecoupon || !imagecoupon.length) {
       return new NextResponse(
-        JSON.stringify({ error: "Imagecoupon is required!" }),
+        JSON.stringify({ error: couponPostMessage.imageRequired }),
         { status: 400 }
       );
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required!" }),
+        JSON.stringify({ error: couponPostMessage.storeIdRequired }),
         { status: 400 }
       );
     }
@@ -74,7 +80,7 @@ export async function POST(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: couponPostMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -89,12 +95,12 @@ export async function POST(
         duration_in_months = durationinmoth;
       } else {
         return new NextResponse(
-          JSON.stringify({ error: "Invalid duration_in_months!" }),
+          JSON.stringify({ error: couponPostMessage.invalidDurationMonths }),
           { status: 400 }
         );
       }
     } else {
-      return new NextResponse(JSON.stringify({ error: "Invalid duration!" }), {
+      return new NextResponse(JSON.stringify({ error: couponPostMessage.invalidDuration }), {
         status: 400,
       });
     }
@@ -151,7 +157,7 @@ export async function POST(
       percent: createdCoupon?.percent,
       maxredemptions: createdCoupon?.maxredemptions,
       redeemby: createdCoupon?.redeemby,
-      imagecoupon: imagecoupon.map((image: { url: string }) => image)
+      imagecoupon: imagecoupon.map((image: { url: string }) => image),
     };
 
     // Log sự thay đổi của billboard
@@ -165,14 +171,14 @@ export async function POST(
         storeId: params.storeId,
         type: "CREATECOUPON",
         newChange: changes,
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(createdCoupon);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error post coupon." }),
+      JSON.stringify({ error: couponPostMessage.internalError }),
       { status: 500 }
     );
   }
@@ -182,15 +188,23 @@ export async function GET(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const couponGetMessage = translateCouponGet(LanguageToUse);
+
+  const { searchParams } = new URL(req.url);
+  const language = searchParams.get("language") || "vi"; // Mặc định là "vi" nếu không có language
+
   try {
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required!" }),
+        JSON.stringify({ error: couponGetMessage.storeIdRequired }),
         { status: 400 }
       );
     }
 
-    const getcoupon = await prismadb.coupon.findMany({
+    const coupons = await prismadb.coupon.findMany({
       where: {
         storeId: params.storeId,
       },
@@ -202,43 +216,63 @@ export async function GET(
       },
     });
 
-    return NextResponse.json(getcoupon);
+    const translations = await Promise.all(
+      coupons.map(async (coupon) => {
+        try {
+          // Chỉ dịch description
+          const translatedDescription = await translateText(
+            coupon.description ?? "",
+            language
+          );
+
+          return {
+            ...coupon,
+            description: translatedDescription,
+          };
+        } catch (error) {
+          return coupon; // Trả về dữ liệu gốc nếu lỗi
+        }
+      })
+    );
+
+    return NextResponse.json(translations);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get coupon." }),
+      JSON.stringify({ error: couponGetMessage.internalError }),
       { status: 500 }
     );
   }
 }
 
-
-
 export async function DELETE(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const couponDeleteMessage = translateCouponDelete(LanguageToUse);
   try {
-    const userId = await currentUser();
     const body = await req.json();
     const { ids } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy userId!" }),
+        JSON.stringify({ error: couponDeleteMessage.userNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xóa coupon!" }),
+        JSON.stringify({ error: couponDeleteMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!ids || ids.length === 0) {
       return new NextResponse(
-        JSON.stringify({ error: "Mảng IDs không được trống!" }),
+        JSON.stringify({ error: couponDeleteMessage.emptyIdsArray }),
         { status: 400 }
       );
     }
@@ -251,7 +285,7 @@ export async function DELETE(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: couponDeleteMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -269,13 +303,13 @@ export async function DELETE(
     });
 
     // Create an array of changes for logging
-    const changesArray = CouponToDelete.map(coupon => ({
+    const changesArray = CouponToDelete.map((coupon) => ({
       name: coupon.name,
       description: coupon.description,
       duration: coupon.duration,
       durationinmoth: coupon.durationinmoth,
       percent: coupon.percent,
-      imagecoupon: coupon.imagecoupon.map((item)=>item.url),
+      imagecoupon: coupon.imagecoupon.map((item) => item.url),
       maxredemptions: coupon.maxredemptions,
       redeemby: coupon.redeemby,
     }));
@@ -293,16 +327,19 @@ export async function DELETE(
     await prismadb.system.create({
       data: {
         storeId: params.storeId,
-        delete: changesArray.map(change => `DeleteName: ${change.name}, Description: ${change.description}, Duration: ${change.duration}, DurationInMoth: ${change.durationinmoth}, Percent: ${change.percent}, ImageCoupon: ${change.imagecoupon}, MaxRedemptions: ${change.maxredemptions}, Redeemby: ${change.redeemby}`),
+        delete: changesArray.map(
+          (change) =>
+            `DeleteName: ${change.name}, Description: ${change.description}, Duration: ${change.duration}, DurationInMoth: ${change.durationinmoth}, Percent: ${change.percent}, ImageCoupon: ${change.imagecoupon}, MaxRedemptions: ${change.maxredemptions}, Redeemby: ${change.redeemby}`
+        ),
         type: "DELETEMANY-COUPON",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
-    return NextResponse.json({ message: "Xóa thành công!" });
+    return NextResponse.json({ message: couponDeleteMessage.deleteSuccess });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete category." }),
+      JSON.stringify({ error: couponDeleteMessage.internalError }),
       { status: 500 }
     );
   }

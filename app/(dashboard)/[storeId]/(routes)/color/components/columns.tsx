@@ -13,6 +13,7 @@ export type ColorColumn = {
   name: string;
   value: string;
   createdAt: Date
+  language: string;
 };
 
 export const columns: ColumnDef<ColorColumn>[] = [
@@ -57,6 +58,7 @@ export const columns: ColumnDef<ColorColumn>[] = [
         id={row.original.id}
         value={row.original.value}
         field="name"
+        language={row.original.language}
       />
     ),
   },
@@ -79,6 +81,7 @@ export const columns: ColumnDef<ColorColumn>[] = [
         id={row.original.id}
         value={row.original.value}
         field="value"
+        language={row.original.language}
       />
     ),
   },

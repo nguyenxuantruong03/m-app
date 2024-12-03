@@ -8,6 +8,12 @@ import CardWrapper from "@/components/auth/card-wrapper";
 import { newVerification } from "@/actions/actions-signin-sign-up/new-verification";
 import FormError from "@/components/form-error";
 import FormSuccess from "@/components/form-success";
+import {
+  getToastError,
+  translateBackToLogin,
+  translateConfirmingVerification,
+  translateMissingToken,
+} from "@/translate/translate-client";
 
 const NewVerificationForm = () => {
   const [error, setError] = useState<string | undefined>();
@@ -16,14 +22,34 @@ const NewVerificationForm = () => {
   //get token bên mail.ts
   const token = searchParams.get("token");
 
+  //language
+  const [language, setLanguage] = useState("vi");
+  const [isOpen, setOpen] = useState(false);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  const languageToUse = storedLanguage || language;
+  const toastErrorMessage = getToastError(languageToUse);
+  const missingTokenMessage = translateMissingToken(languageToUse);
+  const confirmingVerificationMessage =
+    translateConfirmingVerification(languageToUse);
+  const backToLoginMessage = translateBackToLogin(languageToUse);
+
   const onSubmit = useCallback(() => {
     if (success || error) return;
 
     if (!token) {
-      setError("Thiếu Token!");
+      setError(missingTokenMessage);
       return;
     }
-    newVerification(token)
+    newVerification(token, languageToUse)
       .then((data) => {
         if (data.success) {
           setSuccess(data.success);
@@ -32,7 +58,7 @@ const NewVerificationForm = () => {
         }
       })
       .catch(() => {
-        setError("Something went wrong!");
+        setError(toastErrorMessage);
       });
   }, [token, success, error]);
 
@@ -42,9 +68,13 @@ const NewVerificationForm = () => {
 
   return (
     <CardWrapper
-      headerLabel="Confirming your verification"
+      headerLabel={confirmingVerificationMessage}
       backButtonHref="/auth/login"
-      backButtonLabel="Back to Login"
+      backButtonLabel={backToLoginMessage}
+      setLanguage={setLanguage}
+      languageToUse={languageToUse}
+      setOpen={setOpen}
+      isOpen={isOpen}
     >
       <div className="flex items-center w-full justify-center">
         {!success && !error && <BeatLoader color="#66b0de" />}

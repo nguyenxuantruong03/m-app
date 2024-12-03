@@ -21,13 +21,27 @@ import FormSuccess from "@/components/form-success";
 import FormError from "@/components/form-error";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import {
+  getToastError,
+  translateBirthday,
+  translateCancel,
+  translateChangeBirthdayNotification,
+  translateDateLimitNotification,
+  translateDateValidation,
+  translateSave,
+} from "@/translate/translate-client";
 
 interface FormDateOfBirthProps {
   classNames?: string;
   setOpen?: Dispatch<SetStateAction<boolean>>;
+  languageToUse: string;
 }
 
-const FormDateOfBirth = ({ classNames, setOpen }: FormDateOfBirthProps) => {
+const FormDateOfBirth = ({
+  classNames,
+  setOpen,
+  languageToUse,
+}: FormDateOfBirthProps) => {
   const user = useCurrentUser();
   const router = useRouter();
   const { update } = useSession();
@@ -35,6 +49,17 @@ const FormDateOfBirth = ({ classNames, setOpen }: FormDateOfBirthProps) => {
   const [success, setSuccess] = useState<string>();
 
   const [isPending, startTransition] = useTransition();
+
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const cancelMessage = translateCancel(languageToUse);
+  const saveMessage = translateSave(languageToUse);
+  const birthDayMessage = translateBirthday(languageToUse);
+  const changeBirthDayNotificationMessage =
+    translateChangeBirthdayNotification(languageToUse);
+  const dateValidationMessage = translateDateValidation(languageToUse);
+  const dateLimitNotificationMessage =
+    translateDateLimitNotification(languageToUse);
 
   const form = useForm<z.infer<typeof SettingSchema>>({
     resolver: zodResolver(SettingSchema),
@@ -46,13 +71,13 @@ const FormDateOfBirth = ({ classNames, setOpen }: FormDateOfBirthProps) => {
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
     // Kiểm tra giá trị dateofbirth nhập vào và user?.dateofbirth
     if (values.dateofbirth === user?.dateofbirth) {
-      setError("Hãy thay đổi ngày sinh mới ngày sinh trên đang được sử dụng.");
+      setError(changeBirthDayNotificationMessage);
       return;
     }
     setSuccess("");
     setError("");
     startTransition(() => {
-      setting(values)
+      setting(values, languageToUse)
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -65,7 +90,7 @@ const FormDateOfBirth = ({ classNames, setOpen }: FormDateOfBirthProps) => {
           }
         })
         .catch(() => {
-          setError("Something went wrong");
+          setError(toastErrorMessage);
         });
     });
   };
@@ -82,7 +107,8 @@ const FormDateOfBirth = ({ classNames, setOpen }: FormDateOfBirthProps) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Sinh nhật <span className="text-red-600 pl-1">(*)</span>
+                  {birthDayMessage}{" "}
+                  <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <FormControl>
                   <Input
@@ -103,21 +129,21 @@ const FormDateOfBirth = ({ classNames, setOpen }: FormDateOfBirthProps) => {
                     onChange={(e) => {
                       const dateValue = e.target.value;
                       const parsedDate = Date.parse(dateValue);
-                      
+
                       // Check if the selected date is greater than the current date
                       if (parsedDate > Date.now()) {
-                        toast.error("Ngày chọn không được lớn hơn ngày hiện tại!"); // Show error message for future date
+                        toast.error(dateValidationMessage); // Show error message for future date
                         field.onChange(""); // Return value ""
                         return;
                       }
-                  
+
                       // Check if the selected date is earlier than January 1, 1900
                       if (parsedDate < new Date(1900, 0, 1).getTime()) {
-                        toast.error("Ngày chọn không được nhỏ hơn ngày 01/01/1900!"); // Show error message for dates before 1900
+                        toast.error(dateLimitNotificationMessage); // Show error message for dates before 1900
                         field.onChange(""); // Return value ""
                         return;
                       }
-                  
+
                       field.onChange(
                         isNaN(parsedDate) ? dateValue : new Date(parsedDate)
                       );
@@ -145,7 +171,7 @@ const FormDateOfBirth = ({ classNames, setOpen }: FormDateOfBirthProps) => {
               }}
               disabled={isPending}
             >
-              Cancel
+              {cancelMessage}
             </Button>
           )}
           <Button
@@ -154,7 +180,7 @@ const FormDateOfBirth = ({ classNames, setOpen }: FormDateOfBirthProps) => {
             type="submit"
             disabled={isPending}
           >
-            Save
+            {saveMessage}
           </Button>
         </div>
       </form>

@@ -31,31 +31,37 @@ import { Separator } from "@/components/ui/separator";
 import { Heading } from "@/components/ui/heading";
 import { TaxRate, TaxType } from "@prisma/client";
 import Recommend from "@/components/ui/recommend";
-
-const formSchema = z.object({
-  name: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  taxtype: z.string().min(1, { message: "Hãy chọn 1 loại thuế." }),
-  description: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  percentage: z.coerce.number().min(1, { message: "Hãy nhập ít nhất 1%." }),
-  inclusive: z.boolean().default(false).optional(),
-  active: z.boolean().default(false).optional(),
-});
-
-type TaxrateFormValues = z.infer<typeof formSchema>;
+import { getTaxRateForm, getTaxRateSchema } from "@/translate/translate-dashboard";
 
 interface TaxrateFormProps {
   initialData: TaxRate | null;
+  language: string;
 }
 
-export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
+export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData,language }) => {
   const params = useParams();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const isEditing = !!initialData;
 
-  const title = initialData ? "Edit tax rate" : "Create tax rate";
-  const description = initialData ? "Edit a tax rate" : "Add a new tax rate";
-  const action = initialData ? "Save changes" : "Create";
+  //language
+  const taxrateSchemaMessage = getTaxRateSchema(language)
+  const taxrateFormMessage = getTaxRateForm(language)
+
+  const formSchema = z.object({
+    name: z.string().min(2, { message: taxrateSchemaMessage.requiredName }),
+    taxtype: z.string().min(1, { message: taxrateSchemaMessage.requiredTaxtype }),
+    description: z.string().min(2, { message: taxrateSchemaMessage.requiredName }),
+    percentage: z.coerce.number().min(1, { message: taxrateSchemaMessage.enterMinPrice }),
+    inclusive: z.boolean().default(false).optional(),
+    active: z.boolean().default(false).optional(),
+  });
+  
+  type TaxrateFormValues = z.infer<typeof formSchema>;
+
+  const title = initialData ? taxrateSchemaMessage.editTaxRate : taxrateSchemaMessage.createTaxRate;
+  const description = initialData ? taxrateSchemaMessage.editATaxRate : taxrateSchemaMessage.addNewTaxRate;
+  const action = initialData ? taxrateSchemaMessage.saveChanges : taxrateSchemaMessage.create;
 
   const form = useForm<TaxrateFormValues>({
     resolver: zodResolver(formSchema),
@@ -98,21 +104,21 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
           if (initialData) {
             return (
               <p>
-                Tax rate{" "}
+                {taxrateFormMessage.taxRate}
                 <span className="font-bold">{response.data?.name}</span>{" "}
-                updated.
+                {taxrateFormMessage.updated}.
               </p>
             );
           } else {
             return (
               <p>
-                Tax rate <span className="font-bold">{data.name}</span> created.
+                {taxrateFormMessage.taxRate} <span className="font-bold">{data.name}</span> {taxrateFormMessage.created}.
               </p>
             );
           }
         }),
         {
-          loading: "Updating tax rate...",
+          loading: taxrateFormMessage.updatingTaxRate,
           success: (message) => {
             router.refresh();
             router.push(`/${params.storeId}/taxrate`);
@@ -130,7 +136,7 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Something went wrong.";
+              return taxrateFormMessage.somethingWentWrong;
             }
           },
         }
@@ -162,14 +168,14 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Tên thuế
+                    {taxrateFormMessage.taxName}
                     <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Tên loại thuế là gì ?" />
+                    <Recommend message={taxrateFormMessage.taxNamePrompt} />
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập tên thuế ..."
+                      placeholder={taxrateFormMessage.enterTaxName}
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
@@ -187,14 +193,14 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Mô tả thuế
+                  {taxrateFormMessage.taxDescription}
                     <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Giải thích sơ qua về thuế cần phải đóng." />
+                    <Recommend message={taxrateFormMessage.taxDescriptionPrompt} />
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập mô tả thuế ..."
+                      placeholder={taxrateFormMessage.enterTaxDescription}
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
@@ -211,13 +217,10 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
               name="taxtype"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Loại thuế <span className="text-red-600 pl-1">(*)</span>
-                  </FormLabel>
                   <FormLabel className="flex space-x-3 items-center">
-                    Loại thuế
+                  {taxrateFormMessage.taxType}
                     <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Hãy lựa chọn loại thuế là VAT hoặc là thuế mua sắm." />
+                    <Recommend message={taxrateFormMessage.taxTypePrompt} />
                   </FormLabel>
                   <Select
                     disabled={loading || isEditing}
@@ -229,7 +232,7 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
                       <SelectTrigger>
                         <SelectValue
                           defaultValue={field.value}
-                          placeholder="Select TaxType"
+                          placeholder={taxrateFormMessage.selectTaxType}
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -263,15 +266,15 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
                 return (
                   <FormItem>
                     <FormLabel className="flex space-x-3 items-center">
-                      Phần trăm thuế
+                    {taxrateFormMessage.taxPercentage}
                       <span className="text-red-600 pl-1">(*)</span>
-                      <Recommend message="Phần trăm thuế sẽ bắt đầu từ mốc 0% - 100%" />
+                      <Recommend message={taxrateFormMessage.taxPercentagePrompt} />
                     </FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         disabled={loading || isEditing}
-                        placeholder="Nhập phần trăm thuế ..."
+                        placeholder={taxrateFormMessage.enterTaxPercentage}
                         {...field}
                         onChange={handleInputChange}
                       />
@@ -296,11 +299,11 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel className="flex space-x-3 items-center">
-                      Hoạt động
+                      {taxrateFormMessage.activity}
                       <span className="text-red-600 pl-1">(*)</span>
-                      <Recommend message="Mặc định thuế sễ ngừng nếu muốn hoạt động thì mở lên." />
+                      <Recommend message={taxrateFormMessage.taxActivityPrompt} />
                     </FormLabel>
-                    <FormDescription>Ngừng hoặc mở thuế</FormDescription>
+                    <FormDescription>{taxrateFormMessage.taxStatusOptions}</FormDescription>
                   </div>
                 </FormItem>
               )}
@@ -321,11 +324,11 @@ export const TaxrateForm: React.FC<TaxrateFormProps> = ({ initialData }) => {
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel className="flex space-x-3 items-center">
-                    Bao gôm
+                    {taxrateFormMessage.includes}
                     <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Xem thử loại thuế này do sản phẩm độc quyền hay do các nguyên nhân khác." />
+                    <Recommend message={taxrateFormMessage.includesPrompt} />
                   </FormLabel>
-                    <FormDescription>Bao gồm hay độc quyền.</FormDescription>
+                    <FormDescription>{taxrateFormMessage.includesExclusive}.</FormDescription>
                   </div>
                 </FormItem>
               )}

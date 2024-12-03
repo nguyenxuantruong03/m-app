@@ -26,13 +26,25 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import FormSuccess from "@/components/form-success";
 import FormError from "@/components/form-error";
 import { useRouter } from "next/navigation";
+import {
+  getToastError,
+  translateCancel,
+  translateChangeGithubLink,
+  translateGithubPath,
+  translateSave,
+} from "@/translate/translate-client";
 
 interface FormLinkGithubProps {
   classNames?: string;
   setOpen?: Dispatch<SetStateAction<boolean>>;
+  languageToUse: string;
 }
 
-const FormLinkGithub = ({ classNames, setOpen }: FormLinkGithubProps) => {
+const FormLinkGithub = ({
+  classNames,
+  setOpen,
+  languageToUse,
+}: FormLinkGithubProps) => {
   const user = useCurrentUser();
   const router = useRouter();
   const { update } = useSession();
@@ -49,6 +61,13 @@ const FormLinkGithub = ({ classNames, setOpen }: FormLinkGithubProps) => {
     }
   }, []);
 
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const cancelMessage = translateCancel(languageToUse);
+  const saveMessage = translateSave(languageToUse);
+  const changeGitHubMessage = translateChangeGithubLink(languageToUse);
+  const githubPathMessage = translateGithubPath(languageToUse);
+
   const form = useForm<z.infer<typeof SettingSchema>>({
     resolver: zodResolver(SettingSchema),
     defaultValues: {
@@ -59,15 +78,13 @@ const FormLinkGithub = ({ classNames, setOpen }: FormLinkGithubProps) => {
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
     // Kiểm tra giá trị linkgithub nhập vào và user?.linkgithub
     if (values.linkgithub === user?.linkgithub) {
-      setError(
-        "Hãy thay đổi link Github mới link Github trên đang được sử dụng."
-      );
+      setError(changeGitHubMessage);
       return;
     }
     setSuccess("");
     setError("");
     startTransition(() => {
-      setting(values)
+      setting(values, languageToUse)
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -80,7 +97,7 @@ const FormLinkGithub = ({ classNames, setOpen }: FormLinkGithubProps) => {
           }
         })
         .catch(() => {
-          setError("Something went wrong");
+          setError(toastErrorMessage);
         });
     });
   };
@@ -96,7 +113,7 @@ const FormLinkGithub = ({ classNames, setOpen }: FormLinkGithubProps) => {
             name="linkgithub"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Link Github</FormLabel>
+                <FormLabel>{githubPathMessage}</FormLabel>
                 <FormControl>
                   <Input
                     id="linkgithub-input"
@@ -129,7 +146,7 @@ const FormLinkGithub = ({ classNames, setOpen }: FormLinkGithubProps) => {
               onClick={() => setOpen?.(false)}
               disabled={isPending}
             >
-              Cancel
+              {cancelMessage}
             </Button>
           )}
           <Button
@@ -138,7 +155,7 @@ const FormLinkGithub = ({ classNames, setOpen }: FormLinkGithubProps) => {
             type="submit"
             disabled={isPending}
           >
-            Save
+            {saveMessage}
           </Button>
         </div>
       </form>

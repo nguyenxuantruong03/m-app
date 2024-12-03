@@ -3,24 +3,28 @@ import { currentUser } from "@/lib/auth";
 
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
+import { translateImageBillboardDelete, translateImageBillboardGet } from "@/translate/translate-api";
 
 
 export async function GET(
   req: Request,
 ) {
-  const userId = await currentUser();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const imageBillboardGetMessage = translateImageBillboardGet(LanguageToUse)
 
   try {
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: imageBillboardGetMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xem imagebillboard!" }),
+        JSON.stringify({ error: imageBillboardGetMessage.permissionDenied }),
         { status: 403 }
       );
     }
@@ -34,7 +38,7 @@ export async function GET(
     return NextResponse.json(billboards);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get imagebillboard." }),
+      JSON.stringify({ error: imageBillboardGetMessage.internalError }),
       { status: 500 }
     );
   }
@@ -44,29 +48,32 @@ export async function DELETE(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const imageBillboardDeleteMessage = translateImageBillboardDelete(LanguageToUse)
   try {
-    const userId = await currentUser();
     const body = await req.json();
 
     const { ids } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy userId!" }),
+        JSON.stringify({ error: imageBillboardDeleteMessage.userNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xóa imagebillboard!" }),
+        JSON.stringify({ error: imageBillboardDeleteMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!ids || ids.length === 0) {
       return new NextResponse(
-        JSON.stringify({ error: "Mảng IDs không được trống!" }),
+        JSON.stringify({ error: imageBillboardDeleteMessage.emptyIdsArray }),
         { status: 400 }
       );
     }
@@ -104,14 +111,14 @@ export async function DELETE(
         storeId: params.storeId,
         delete: changesArray.map(change => `DeleteLabel: ${change.label}, ImageBillboard: ${change.valueImage}, Description: ${change.description}`),
         type: "DELETEMANYIMAGEBILLBOARD",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
-    return NextResponse.json({ message: "Xóa thành công!" });
+    return NextResponse.json({ message: imageBillboardDeleteMessage.deleteSuccess });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete imagebillboards." }),
+      JSON.stringify({ error: imageBillboardDeleteMessage.internalError }),
       { status: 500 }
     );
   }

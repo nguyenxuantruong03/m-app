@@ -4,26 +4,67 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import { Autoplay, FreeMode } from "swiper/modules";
 import HeadingEffect from "../uis-home/HeadingEffect";
-import { ChevronsRight } from 'lucide-react';
+import { ChevronsRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import {
+  translateCableOffer,
+  translateElectricWire,
+  translateFan,
+  translateFanOffer,
+  translateLightBulb,
+  translatePipe,
+  translatePipeOffer,
+  translateProductOffer,
+  translateSeeMore,
+  translateSocket,
+  translateSocketOffer,
+} from "@/translate/translate-client";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 const SellingProduct = () => {
-    const router = useRouter();
-    const [activeIndex, setActiveIndex] = useState(0);
-  
-    const handleSlideChange = (swiper:any) => {
-      setActiveIndex(swiper.activeIndex);
-    };
-  
-    const handleClickProduct = () => {
-      router.push("/home-product");
-    };
-  
-    useEffect(() => {
-      // Initialize the active index when the component mounts
-      setActiveIndex(0);
-    }, []);
+  const user = useCurrentUser();
+  const router = useRouter();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+  const productOfferMessage = translateProductOffer(languageToUse);
+  const pipeOfferMessage = translatePipeOffer(languageToUse);
+  const cableOfferMessage = translateCableOffer(languageToUse);
+  const fanOfferMessage = translateFanOffer(languageToUse);
+  const socketOfferMessage = translateSocketOffer(languageToUse);
+  const seeMoreMessage = translateSeeMore(languageToUse);
+  const lightBlulbMessage = translateLightBulb(languageToUse);
+  const pipeMessage = translatePipe(languageToUse);
+  const electricWireMessage = translateElectricWire(languageToUse);
+  const fanMessage = translateFan(languageToUse);
+  const socketMessage = translateSocket(languageToUse);
+
+  const handleSlideChange = (swiper: any) => {
+    setActiveIndex(swiper.activeIndex);
+  };
+
+  const handleClickProduct = () => {
+    router.push("/home-product");
+  };
+
+  useEffect(() => {
+    // Initialize the active index when the component mounts
+    setActiveIndex(0);
+  }, []);
   return (
     <div>
       <div className="cover-image">
@@ -35,10 +76,10 @@ const SellingProduct = () => {
               disableOnInteraction: false,
             }}
             breakpoints={{
-            320: { slidesPerView: 2, spaceBetween: 20 },
-            768: { slidesPerView: 3, spaceBetween: 20 },
-            1024: { slidesPerView: 3, spaceBetween: 20 },
-            1920: { slidesPerView: 3, spaceBetween: 20 }
+              320: { slidesPerView: 2, spaceBetween: 20 },
+              768: { slidesPerView: 3, spaceBetween: 20 },
+              1024: { slidesPerView: 3, spaceBetween: 20 },
+              1920: { slidesPerView: 3, spaceBetween: 20 },
             }}
             slidesPerView={3}
             spaceBetween={30}
@@ -49,50 +90,119 @@ const SellingProduct = () => {
             className="mySwiper"
             onSlideChange={handleSlideChange}
           >
-            <SwiperSlide className={`p-1 md:p-4 ${activeIndex >= 0 ? 'active-slide' : 'bg-slate-200 dark:bg-slate-900'}`}>
-                <HeadingEffect heading="Bóng đèn"/>
-                <p className="text-base px-2 xl:px-5 2xl:px-12 text-slate-900 dark:text-slate-200 font-semibold">Chuyên cung cấp các sản phẩm Điện Quang, MPE, Rạng Đông và có hợp tác với các thương hiệu giá ưa đãi,bảo hành chính hãng công ty.</p>
-                
-                <p onClick={handleClickProduct} className='hover:text-gray-600 cursor-pointer text-lg text-[#e53350] font-bold mt-4 flex items-center justify-center'> Xem thêm <ChevronsRight className="pl-1 w-8" /></p> 
-                <div className="float-right font-bold text-4xl md:text-7xl text-[#eaeaea] dark:text-slate-200"> 01 </div>
+            <SwiperSlide
+              className={`p-1 md:p-4 ${
+                activeIndex >= 0
+                  ? "active-slide"
+                  : "bg-slate-200 dark:bg-slate-900"
+              }`}
+            >
+              <HeadingEffect heading={lightBlulbMessage} />
+              <p className="text-base px-2 xl:px-5 2xl:px-12 text-slate-900 dark:text-slate-200 font-semibold">
+                {productOfferMessage}
+              </p>
+              <p
+                onClick={handleClickProduct}
+                className="hover:text-gray-600 cursor-pointer text-lg text-[#e53350] font-bold mt-4 flex items-center justify-center"
+              >
+                {seeMoreMessage} <ChevronsRight className="pl-1 w-8" />
+              </p>
+              <div className="float-right font-bold text-4xl md:text-7xl text-[#eaeaea] dark:text-slate-200">
+                01
+              </div>
             </SwiperSlide>
 
-            <SwiperSlide className={`p-1 md:p-4 ${activeIndex >= 1 ? 'active-slide' : 'bg-slate-200 dark:bg-slate-900'}`}>
-                
-                <HeadingEffect heading="Ống nhựa"/>
-                <p className="text-base px-2 xl:px-5 2xl:px-12 text-slate-900 dark:text-slate-200 font-semibold">Chuyên cung cấp các loại ống điện,ống bình mình,ống hoa sen, ống thường mua số lượng lớn có chiết khấu cao và xuất hóa đơn đỏ.</p>
+            <SwiperSlide
+              className={`p-1 md:p-4 ${
+                activeIndex >= 1
+                  ? "active-slide"
+                  : "bg-slate-200 dark:bg-slate-900"
+              }`}
+            >
+              <HeadingEffect heading={pipeMessage} />
+              <p className="text-base px-2 xl:px-5 2xl:px-12 text-slate-900 dark:text-slate-200 font-semibold">
+                {pipeOfferMessage}
+              </p>
 
-                <p onClick={handleClickProduct} className='hover:text-gray-600 cursor-pointer text-lg text-[#e53350] font-bold mt-4 flex items-center justify-center'> Xem thêm <ChevronsRight className="pl-1 w-8" /></p> 
-                <div className="float-right font-bold text-4xl md:text-7xl text-[#eaeaea] dark:text-slate-200"> 02 </div>
+              <p
+                onClick={handleClickProduct}
+                className="hover:text-gray-600 cursor-pointer text-lg text-[#e53350] font-bold mt-4 flex items-center justify-center"
+              >
+                {seeMoreMessage} <ChevronsRight className="pl-1 w-8" />
+              </p>
+              <div className="float-right font-bold text-4xl md:text-7xl text-[#eaeaea] dark:text-slate-200">
+                02
+              </div>
             </SwiperSlide>
 
-            <SwiperSlide className={`p-1 md:p-4 ${activeIndex >= 2 ? 'active-slide' : 'bg-slate-200 dark:bg-slate-900'}`}>
-                
-                <HeadingEffect heading="Dây điện"/>
-                <p className="text-base px-2 xl:px-5 2xl:px-12 text-slate-900 dark:text-slate-200 font-semibold">Chuyên cung cấp các loại dây điện cadivi,daphaco cho nhà ở và cho công ty có tải trọng lớn. Có bán lẻ và bán sỉ.</p>
+            <SwiperSlide
+              className={`p-1 md:p-4 ${
+                activeIndex >= 2
+                  ? "active-slide"
+                  : "bg-slate-200 dark:bg-slate-900"
+              }`}
+            >
+              <HeadingEffect heading={electricWireMessage} />
+              <p className="text-base px-2 xl:px-5 2xl:px-12 text-slate-900 dark:text-slate-200 font-semibold">
+                {cableOfferMessage}
+              </p>
 
-                <p onClick={handleClickProduct} className='hover:text-gray-600 cursor-pointer text-lg text-[#e53350] font-bold mt-4 flex items-center justify-center'> Xem thêm <ChevronsRight className="pl-1 w-8" /></p> 
-                <div className="float-right font-bold text-4xl md:text-7xl text-[#eaeaea] dark:text-slate-200"> 03 </div>
+              <p
+                onClick={handleClickProduct}
+                className="hover:text-gray-600 cursor-pointer text-lg text-[#e53350] font-bold mt-4 flex items-center justify-center"
+              >
+                {seeMoreMessage} <ChevronsRight className="pl-1 w-8" />
+              </p>
+              <div className="float-right font-bold text-4xl md:text-7xl text-[#eaeaea] dark:text-slate-200">
+                03
+              </div>
             </SwiperSlide>
 
-            <SwiperSlide className={`p-1 md:p-4 ${activeIndex >= 3 ? 'active-slide' : 'bg-slate-200 dark:bg-slate-900'}`}>
-                
-                <HeadingEffect heading="Quạt"/>
-                <p className="text-base px-2 xl:px-5 2xl:px-12 text-slate-900 dark:text-slate-200 font-semibold">Chuyên cung cấp quạt senko treo, để bàn hoặc quạt công nghiệp cho các công ty và bảo hành 1 năm cho các sản phẩm từ công ty.</p>
+            <SwiperSlide
+              className={`p-1 md:p-4 ${
+                activeIndex >= 3
+                  ? "active-slide"
+                  : "bg-slate-200 dark:bg-slate-900"
+              }`}
+            >
+              <HeadingEffect heading={fanMessage} />
+              <p className="text-base px-2 xl:px-5 2xl:px-12 text-slate-900 dark:text-slate-200 font-semibold">
+                {fanOfferMessage}
+              </p>
 
-                <p onClick={handleClickProduct} className='hover:text-gray-600 cursor-pointer text-lg text-[#e53350] font-bold mt-4 flex items-center justify-center'> Xem thêm <ChevronsRight className="pl-1 w-8" /></p> 
-                <div className="float-right font-bold text-4xl md:text-7xl text-[#eaeaea] dark:text-slate-200"> 04 </div>
+              <p
+                onClick={handleClickProduct}
+                className="hover:text-gray-600 cursor-pointer text-lg text-[#e53350] font-bold mt-4 flex items-center justify-center"
+              >
+                {seeMoreMessage} <ChevronsRight className="pl-1 w-8" />
+              </p>
+              <div className="float-right font-bold text-4xl md:text-7xl text-[#eaeaea] dark:text-slate-200">
+                04
+              </div>
             </SwiperSlide>
 
-            <SwiperSlide className={`p-1 md:p-4 ${activeIndex >= 4 ? 'active-slide' : 'bg-slate-200 dark:bg-slate-900'}`}>
-                
-                <HeadingEffect heading="Ổ cắm"/>
-                <p className="text-base px-2 xl:px-5 2xl:px-12 text-slate-900 dark:text-slate-200 font-semibold">Chuyên cung cấp ổ cắm sino,panasonic và các loại ổ cắm chống cháy đủ loại bên cạnh đó còn có cp sino, mặt nạ sino, và tủ chống cháy sino...</p>
+            <SwiperSlide
+              className={`p-1 md:p-4 ${
+                activeIndex >= 4
+                  ? "active-slide"
+                  : "bg-slate-200 dark:bg-slate-900"
+              }`}
+            >
+              <HeadingEffect heading={socketMessage} />
+              <p className="text-base px-2 xl:px-5 2xl:px-12 text-slate-900 dark:text-slate-200 font-semibold">
+                {socketOfferMessage}
+              </p>
 
-                <p onClick={handleClickProduct} className='hover:text-gray-600 cursor-pointer text-lg text-[#e53350] font-bold mt-4 flex items-center justify-center'> Xem thêm <ChevronsRight className="pl-1 w-8" /></p> 
-                <div className="float-right font-bold text-4xl md:text-7xl text-[#eaeaea] dark:text-slate-200"> 05 </div>
+              <p
+                onClick={handleClickProduct}
+                className="hover:text-gray-600 cursor-pointer text-lg text-[#e53350] font-bold mt-4 flex items-center justify-center"
+              >
+                {seeMoreMessage} <ChevronsRight className="pl-1 w-8" />
+              </p>
+              <div className="float-right font-bold text-4xl md:text-7xl text-[#eaeaea] dark:text-slate-200">
+                05
+              </div>
             </SwiperSlide>
-           
           </Swiper>
         </div>
       </div>

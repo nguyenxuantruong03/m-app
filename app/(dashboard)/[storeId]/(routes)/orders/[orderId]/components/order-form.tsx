@@ -14,11 +14,35 @@ import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { OrderColumn } from "../../components/columns";
 import { toast } from "react-hot-toast";
 import { EyeOff, Search } from "lucide-react";
+import { getOrderFormLeaflet } from "@/translate/translate-dashboard";
 interface OrderProps {
   data: OrderColumn[];
+  language: string;
 }
-//Customer Tiếng Việt
-L.Routing.Localization["vi"] = {
+
+interface Coordinates {
+  lat: number;
+  lon: number;
+}
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconUrl: markerIcon.src,
+  iconRetinaUrl: markerIcon2x.src,
+  shadowUrl: markerShadow.src,
+});
+
+//-----------------------Code LeftLet----------------------
+const OrderForm: React.FC<OrderProps> = ({ data,language }) => {
+  const [searchValue, setSearchValue] = useState("");
+  const [isSearchVisible, setIsSearchVisible] = useState(true);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  //language
+  const orderFormLeafletMessage = getOrderFormLeaflet(language)
+
+  //Customer Tiếng Việt
+L.Routing.Localization[language] = {
   directions: {
     north: "Bắc",
     northeast: "Đông Bắc",
@@ -71,23 +95,6 @@ L.Routing.Localization["vi"] = {
   },
 };
 
-interface Coordinates {
-  lat: number;
-  lon: number;
-}
-
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconUrl: markerIcon.src,
-  iconRetinaUrl: markerIcon2x.src,
-  shadowUrl: markerShadow.src,
-});
-
-//-----------------------Code LeftLet----------------------
-const OrderForm: React.FC<OrderProps> = ({ data }) => {
-  const [searchValue, setSearchValue] = useState("");
-  const [isSearchVisible, setIsSearchVisible] = useState(true);
-  const searchInputRef = useRef<HTMLInputElement>(null);
   // Function to toggle search visibility ẩn hoặc mở
   const toggleSearchVisibility = () => {
     setIsSearchVisible(!isSearchVisible);
@@ -134,7 +141,7 @@ const OrderForm: React.FC<OrderProps> = ({ data }) => {
         waypointsLatLng.slice(1).forEach((coord, index) => {
           const destinationMarker = L.marker(coord).addTo(map);
           destinationMarker
-            .bindPopup(`Điểm đến - ${addressOrder[index]}`)
+            .bindPopup(`${orderFormLeafletMessage.destination} - ${addressOrder[index]}`)
             .openPopup();
         });
         // Dùng để hiển thị vị trí hiện tại
@@ -142,11 +149,10 @@ const OrderForm: React.FC<OrderProps> = ({ data }) => {
         //Dùng để routting giữa điểm A và điểm B
         L.Routing.control({
           waypoints: waypointsLatLng,
-          language: "vi",
+          language: language,
         })
           .on("routesfound", function (e: L.Routing.Control) {
             const routes = e.routes;
-            console.log("2", routes);
 
             e.routes[0].coordinates.forEach(function (
               coord: L.Routing.Control,
@@ -159,8 +165,7 @@ const OrderForm: React.FC<OrderProps> = ({ data }) => {
           })
           .addTo(map);
       } catch (error) {
-        console.error(error);
-        toast.error("Địa chỉ không đúng");
+        toast.error(orderFormLeafletMessage.invalidAddress);
       }
     };
 
@@ -212,11 +217,11 @@ const OrderForm: React.FC<OrderProps> = ({ data }) => {
     );
 
     const baseMaps = {
-      "Map mặc định": osm,
-      "Map màu nước ": watercolor,
-      Tối: dark,
-      "Google Street": googleStreets,
-      "Google Satellite": googleSat,
+      "OSM": osm,
+      "Water": watercolor,
+      "Dark": dark,
+      "Street": googleStreets,
+      "Satellite": googleSat,
     };
     //Hiển thị các loại map
     L.control.layers(baseMaps).addTo(map);
@@ -246,11 +251,10 @@ const OrderForm: React.FC<OrderProps> = ({ data }) => {
           // Update routing control with new waypoints
           L.Routing.control({
             waypoints: waypointsLatLng,
-            language: "vi",
+            language: language,
           })
             .on("routesfound", function (e: L.Routing.Control) {
               const routes = e.routes;
-              console.log("2", routes);
 
               e.routes[0].coordinates.forEach(function (
                 coord: L.Routing.Control,
@@ -265,8 +269,7 @@ const OrderForm: React.FC<OrderProps> = ({ data }) => {
           setSearchValue("");
         }
       } catch (error) {
-        console.error(error);
-        toast.error("Địa chỉ không đúng");
+        toast.error(orderFormLeafletMessage.invalidAddress);
       }
     };
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -313,10 +316,11 @@ const OrderForm: React.FC<OrderProps> = ({ data }) => {
         const { lat, lon } = data[0];
         return L.latLng(lat, lon);
       } else {
-        throw new Error(`Geocoding failed for location: ${location}`);
+        const { lat, lon } = data[0];
+        return L.latLng(lat, lon);
       }
     } catch (error) {
-      console.error(error);
+      toast.error(orderFormLeafletMessage.somethingWentWrong);
       throw error;
     }
   };
@@ -331,7 +335,7 @@ const OrderForm: React.FC<OrderProps> = ({ data }) => {
             ref={searchInputRef}
             id="search-map"
             type="text"
-            placeholder="Nhập địa chỉ."
+            placeholder={orderFormLeafletMessage.enterAddress}
             className="border-slate-800 border-solid border-2 p-2 rounded-md mr-2"
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}

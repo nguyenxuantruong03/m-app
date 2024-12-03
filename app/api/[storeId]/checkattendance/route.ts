@@ -1,22 +1,30 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
+import {
+  translateCheckAttendanceGet,
+  translateCheckAttendancePatch,
+  translateCheckAttendancePost,
+} from "@/translate/translate-api";
 import { Degree, UserRole } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
-  try {
-    const userId = await currentUser();
+  const userId = await currentUser();
+  //language
+  const LanguageToUse = userId?.language || "vi";
+  const checkAttendanceGetMessage = translateCheckAttendanceGet(LanguageToUse);
 
+  try {
     if (!userId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: checkAttendanceGetMessage.name1 }),
         { status: 403 }
       );
     }
 
     if (userId.role === UserRole.GUEST || userId.role === UserRole.USER) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xem attendance!" }),
+        JSON.stringify({ error: checkAttendanceGetMessage.name2 }),
         { status: 403 }
       );
     }
@@ -29,7 +37,7 @@ export async function GET(req: Request) {
     return NextResponse.json(eventCalendar);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get eventcalendar." }),
+      JSON.stringify({ error: checkAttendanceGetMessage.name3 }),
       { status: 500 }
     );
   }
@@ -39,28 +47,32 @@ export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const userId = await currentUser();
+  //language
+  const LanguageToUse = userId?.language || "vi";
+  const checkAttendancePostMessage =
+    translateCheckAttendancePost(LanguageToUse);
   try {
-    const userId = await currentUser();
     const body = await req.json();
     const { photo, qrResult, datacamera } = body;
 
     if (!userId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: checkAttendancePostMessage.name1 }),
         { status: 403 }
       );
     }
 
     if (userId.role === UserRole.GUEST || userId.role === UserRole.USER) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền check attendance!" }),
+        JSON.stringify({ error: checkAttendancePostMessage.name2 }),
         { status: 403 }
       );
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required!" }),
+        JSON.stringify({ error: checkAttendancePostMessage.name3 }),
         { status: 400 }
       );
     }
@@ -73,36 +85,39 @@ export async function POST(
 
     if (!qrResult) {
       return new NextResponse(
-        JSON.stringify({ error: "Ảnh quá mờ hoặc không tìm thấy!" }),
+        JSON.stringify({ error: checkAttendancePostMessage.name4 }),
         { status: 405 }
       );
     }
 
     if (!photo) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy ảnh!" }),
+        JSON.stringify({ error: checkAttendancePostMessage.name5 }),
         { status: 405 }
       );
     }
 
     if (!datacamera) {
       return new NextResponse(
-        JSON.stringify({ error: "Eventcalendar id is required!" }),
+        JSON.stringify({ error: checkAttendancePostMessage.name6 }),
         { status: 405 }
       );
     }
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: checkAttendancePostMessage.name7 }),
         { status: 405 }
       );
     }
 
     if (qrResult !== userId?.urlimageCheckAttendance) {
-      return new NextResponse(JSON.stringify({ error: "Mã qr không đúng!" }), {
-        status: 405,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: checkAttendancePostMessage.name8 }),
+        {
+          status: 405,
+        }
+      );
     }
 
     const data = await prismadb.eventCalendar.findMany({
@@ -119,14 +134,14 @@ export async function POST(
 
     if (isCheckAttendanceImage[0] === true) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn đã cập nhật ảnh!" }),
+        JSON.stringify({ error: checkAttendancePostMessage.name9 }),
         { status: 405 }
       );
     }
 
     if (isCheckAttendanceNFC[0] === true) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn đã cập nhật bằng NFC!" }),
+        JSON.stringify({ error: checkAttendancePostMessage.name10 }),
         { status: 405 }
       );
     }
@@ -252,7 +267,7 @@ export async function POST(
     return NextResponse.json(eventCalendar);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error post eventcalendar." }),
+      JSON.stringify({ error: checkAttendancePostMessage.name11 }),
       { status: 500 }
     );
   }
@@ -262,27 +277,33 @@ export async function PATCH(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const userId = await currentUser();
+  //language
+  const LanguageToUse = userId?.language || "vi";
+  const checkAttendancePatchMessage = translateCheckAttendancePatch(LanguageToUse)
+
   try {
-    const userId = await currentUser();
     const body = await req.json();
     const { serialNumber, dataEventNFC } = body;
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required!" }),
+        JSON.stringify({ error: checkAttendancePatchMessage.name1 }),
         { status: 400 }
       );
     }
     if (!userId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: checkAttendancePatchMessage.name2 }),
         { status: 403 }
       );
     }
 
     if (userId.role === UserRole.GUEST || userId.role === UserRole.USER) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền cập nhật check attendance!" }),
+        JSON.stringify({
+          error: checkAttendancePatchMessage.name3,
+        }),
         { status: 403 }
       );
     }
@@ -294,27 +315,27 @@ export async function PATCH(
     });
 
     if (!serialNumber) {
-      return new NextResponse(JSON.stringify({ error: "Không tìm mã thẻ!" }), {
+      return new NextResponse(JSON.stringify({ error: checkAttendancePatchMessage.name4 }), {
         status: 405,
       });
     }
 
     if (!dataEventNFC) {
       return new NextResponse(
-        JSON.stringify({ error: "Eventcalendar id is required!" }),
+        JSON.stringify({ error: checkAttendancePatchMessage.name5 }),
         { status: 405 }
       );
     }
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: checkAttendancePatchMessage.name6 }),
         { status: 405 }
       );
     }
 
     if (serialNumber !== userId?.codeNFC) {
-      return new NextResponse(JSON.stringify({ error: "Mã NFC không đúng!" }), {
+      return new NextResponse(JSON.stringify({ error: checkAttendancePatchMessage.name7 }), {
         status: 405,
       });
     }
@@ -334,14 +355,14 @@ export async function PATCH(
 
     if (isCheckAttendanceImage[0] === true) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn đã cập nhật bằng ảnh!" }),
+        JSON.stringify({ error: checkAttendancePatchMessage.name8 }),
         { status: 405 }
       );
     }
 
     if (isCheckAttendanceNFC[0] === true) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn đã cập nhật NFC!" }),
+        JSON.stringify({ error: checkAttendancePatchMessage.name9 }),
         { status: 405 }
       );
     }
@@ -464,7 +485,7 @@ export async function PATCH(
     return NextResponse.json(eventCalendar);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error post eventcalendar." }),
+      JSON.stringify({ error: checkAttendancePatchMessage.name10 }),
       { status: 500 }
     );
   }

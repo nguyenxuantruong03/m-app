@@ -7,12 +7,14 @@ import FormSuccess from "@/components/form-success";
 import FormError from "@/components/form-error";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
+import { getSettingUserFormBanUser } from "@/translate/translate-dashboard";
 
 interface FormBanUserProps {
   userId: string | undefined;
   name: string | undefined;
   email: string | undefined;
   banTime: Date | null;
+  language: string
 }
 
 const FormBanUser: React.FC<FormBanUserProps> = ({
@@ -20,6 +22,7 @@ const FormBanUser: React.FC<FormBanUserProps> = ({
   name,
   email,
   banTime,
+  language
 }) => {
   const params = useParams();
   const router = useRouter();
@@ -39,6 +42,9 @@ const FormBanUser: React.FC<FormBanUserProps> = ({
     }
   });
 
+  //language
+  const settingUserFormBanUserMessage = getSettingUserFormBanUser(language)
+
   useEffect(() => {
     // Kiểm tra xem input đã được render chưa và focus vào nó
     const inputElement = document.getElementById("address-input");
@@ -56,7 +62,7 @@ const FormBanUser: React.FC<FormBanUserProps> = ({
     // Kiểm tra nếu descriptionBan trống
     if (descriptionBan.trim().length < 3) {
       setError(
-        "Nội dung ban cần ít nhất 3 ký tự và không khoảng trắng đầu dòng."
+        settingUserFormBanUserMessage.banContentMinLength
       );
       setLoading(false);
       return;
@@ -65,16 +71,16 @@ const FormBanUser: React.FC<FormBanUserProps> = ({
     try {
       const checkTime = new Date(time);
       const now = new Date();
-      const thirtyMinutesFromNow = new Date(now.getTime() + 30 * 60 * 1000);
+      const thirtyMinutesFromNow = new Date(now.getTime() + 10 * 60 * 1000);
       // Kiểm tra nếu thời gian ban nhỏ hơn thời gian hiện tại
       if (checkTime <= now) {
-        setError("Bạn không thể ban vào một thời điểm đã qua.");
+        setError(settingUserFormBanUserMessage.cannotBanPastTime);
         setLoading(false);
         return;
       }
-      // Kiểm tra nếu thời gian ban ít nhất là 30 phút từ bây giờ
+      // Kiểm tra nếu thời gian ban ít nhất là 10 phút từ bây giờ
       if (checkTime < thirtyMinutesFromNow) {
-        setError("Thời gian ban phải ít nhất là 30 phút.");
+        setError(settingUserFormBanUserMessage.banTimeMin10Min);
         setLoading(false);
         return;
       }
@@ -90,7 +96,7 @@ const FormBanUser: React.FC<FormBanUserProps> = ({
 
       router.refresh();
       setLoading(true)
-      setSuccess(`Ban thành công người dùng: ${name} - email: ${email}.`);
+      setSuccess(`${settingUserFormBanUserMessage.banSuccess}: ${name} - email: ${email}.`);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -105,7 +111,7 @@ const FormBanUser: React.FC<FormBanUserProps> = ({
         );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
-        setError("Có vấn đề ở server khi ban.");
+        setError(settingUserFormBanUserMessage.somethingWentWrong);
       }
     }finally {
       setLoading(false)
@@ -115,21 +121,21 @@ const FormBanUser: React.FC<FormBanUserProps> = ({
   return (
     <form onSubmit={onSubmit}>
       <div className="space-y-4">
-        <p className="text-white font-semibold text-sm">Nội dung</p>
+        <p className="text-white font-semibold text-sm">{settingUserFormBanUserMessage.content}</p>
         <Input
           id="address-input"
           value={descriptionBan}
           onChange={(e) => setDescriptionBan(e.target.value)}
-          placeholder="Hãy nhập nội dung ban."
+          placeholder={settingUserFormBanUserMessage.enterBanContent}
           disabled={loading}
         />
 
-        <p className="text-white font-semibold text-sm">Thời gian ban</p>
+        <p className="text-white font-semibold text-sm">{settingUserFormBanUserMessage.banTime}</p>
         <Input
           value={time}
           onChange={(e) => setTime(e.target.value)}
           type="datetime-local"
-          placeholder="Thời gian mở ban."
+          placeholder={settingUserFormBanUserMessage.unbanTime}
           disabled={loading}
         />
       </div>
@@ -138,7 +144,7 @@ const FormBanUser: React.FC<FormBanUserProps> = ({
         <FormSuccess message={success} />
       </div>
       <Button type="submit" disabled={loading}>
-        Save
+      {settingUserFormBanUserMessage.save}
       </Button>
     </form>
   );

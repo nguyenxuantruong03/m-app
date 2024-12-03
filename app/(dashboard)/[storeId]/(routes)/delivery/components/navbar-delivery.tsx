@@ -4,28 +4,36 @@ import { usePathname, useRouter, useParams } from "next/navigation";
 
 import "./style.css";
 import { useState, useEffect } from "react";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { getNavDelivery } from "@/translate/translate-dashboard";
 const NabarOrder = () => {
+  //language
+  const user = useCurrentUser();
+  const languageToUse = user?.language || "vi";
   const params = useParams();
   const pathname = usePathname();
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
 
+  //language
+  const navDeliveryMessage = getNavDelivery(languageToUse)
+
   const navbarOrder = [
     {
       href: `/${params.storeId}/delivery`,
-      label: "Nhận đơn hàng",
+      label: navDeliveryMessage.receiveOrder,
       icon: <Package className="w-4 h-4" />,
       active: pathname === `/${params.storeId}/delivery`,
     },
     {
       href: `/${params.storeId}/delivery/delivery-confirmation`,
-      label: "Giao hàng",
+      label: navDeliveryMessage.delivery,
       icon: <Truck className="w-4 h-4" />,
       active: pathname === `/${params.storeId}/delivery/delivery-confirmation`,
     },
     {
       href: `/${params.storeId}/delivery/my-order-delivered`,
-      label: "Đơn hàng đã giao của bạn",
+      label: navDeliveryMessage.deliveredOrders,
       icon: <PackageCheck className="w-4 h-4" />,
       active: pathname === `/${params.storeId}/delivery/my-order-delivered`,
     },

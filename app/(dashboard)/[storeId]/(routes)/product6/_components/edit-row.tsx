@@ -9,6 +9,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import LabelForm from "./form-edit";
+import { getProductEditRow } from "@/translate/translate-dashboard";
 
 interface EditRowProps {
   id: string;
@@ -22,7 +23,8 @@ interface EditRowProps {
   isArchived: boolean;
   imagesalientfeatures: { url: string }[];
   images: { url: string }[];
-  field: "heading"
+  field: "heading";
+  language: string;
 }
 
 const EditRow: React.FC<EditRowProps> = ({
@@ -37,9 +39,14 @@ const EditRow: React.FC<EditRowProps> = ({
   isArchived,
   imagesalientfeatures,
   productdetailId,
-  images
+  images,
+  language,
 }) => {
   const [open, setOpen] = useState(false);
+
+  //language
+  const productEditRowMessage = getProductEditRow(language)
+
   const handleClick = () => {
     setOpen(true);
   };
@@ -49,17 +56,17 @@ const EditRow: React.FC<EditRowProps> = ({
   return (
     <>
       <div onClick={handleClick} className="hover:underline cursor-pointer">
-      {data}
+        {data}
       </div>
 
       <Sheet open={open} onOpenChange={handleOnClose}>
         <SheetContent className="space-y-4">
           <SheetHeader>
             <SheetTitle>
-              Edit {data}.
+              {productEditRowMessage.edit} {data}.
             </SheetTitle>
             <SheetDescription>
-              Edit an existing {data}.
+              {productEditRowMessage.editExisting} {data}.
             </SheetDescription>
           </SheetHeader>
           <LabelForm
@@ -71,11 +78,12 @@ const EditRow: React.FC<EditRowProps> = ({
             description={description}
             productdetail={productdetail}
             imagesalientfeatures={imagesalientfeatures}
-            productdetailId= {productdetailId}
+            productdetailId={productdetailId}
             images={images}
             isFeatured={isFeatured}
             isArchived={isArchived}
             field={field}
+            language={language}
           />
         </SheetContent>
       </Sheet>

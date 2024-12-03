@@ -16,6 +16,7 @@ import { Input } from "../../../../../../components/ui/input";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import unorm from "unorm";
+import { getProductFormEdit } from "@/translate/translate-dashboard";
 
 //Loại bỏ dấu
 const removeDiacritics = (str: String) => {
@@ -36,21 +37,8 @@ interface LabelFormProps {
   imagesalientfeatures: { url: string }[];
   images: { url: string }[];
   field: "heading";
+  language: string;
 }
-
-const formSchema = z.object({
-  name: z.optional(z.string().min(2, { message: "Nhập ít nhất 2 ký tự." })),
-  heading: z.optional(z.string().min(2, { message: "Nhập ít nhất 2 ký tự." })),
-  description: z.optional(
-    z.string().min(2, { message: "Nhập ít nhất 2 ký tự." })
-  ),
-  productdetailId: z.string().min(1, { message: "Hãy chọn 1 ProductDetail." }),
-  isFeatured: z.boolean().default(false).optional(),
-  isArchived: z.boolean().default(false).optional(),
-  imagesalientfeatures: z.object({ url: z.string() }).array(),
-  images: z.object({ url: z.string() }).array(),
-});
-type FormValues = z.input<typeof formSchema>;
 
 const LabelForm: React.FC<LabelFormProps> = ({
   data,
@@ -66,9 +54,28 @@ const LabelForm: React.FC<LabelFormProps> = ({
   imagesalientfeatures,
   images,
   setOpen,
+  language
 }) => {
   const params = useParams();
   const [loading, setLoading] = useState(false);
+
+  //language
+  const productFormEditMessage = getProductFormEdit(language)
+
+  const formSchema = z.object({
+    name: z.optional(z.string().min(2, { message: productFormEditMessage.minCharacters })),
+    heading: z.optional(z.string().min(2, { message: productFormEditMessage.minCharacters })),
+    description: z.optional(
+      z.string().min(2, { message: productFormEditMessage.minCharacters })
+    ),
+    productdetailId: z.string().min(1, { message: productFormEditMessage.selectProductDetail }),
+    isFeatured: z.boolean().default(false).optional(),
+    isArchived: z.boolean().default(false).optional(),
+    imagesalientfeatures: z.object({ url: z.string() }).array(),
+    images: z.object({ url: z.string() }).array(),
+  });
+  type FormValues = z.input<typeof formSchema>;
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -99,7 +106,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
       await axios.patch(`/api/${params.storeId}/product4/${id}`, datas);
       setLoading(false);
       setOpen(false);
-      toast.success("Cập nhật thành công!");
+      toast.success(productFormEditMessage.updateSuccess);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -112,7 +119,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
             .error
         );
       } else {
-        toast.error("Something went wrong.");
+        toast.error(productFormEditMessage.error);
       }
     } finally {
       setLoading(false);
@@ -129,12 +136,12 @@ const LabelForm: React.FC<LabelFormProps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Tên sản phẩm <span className="text-red-600 pl-1">(*)</span>
+                  {productFormEditMessage.productName} <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <FormControl>
                   <Input
                     disabled={loading}
-                    placeholder="Nhập tên sản phẩm ..."
+                    placeholder={productFormEditMessage.enterProductName}
                     {...field}
                     onChange={(e) => {
                       field.onChange(e);
@@ -148,7 +155,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
           />
         )}
         <Button disabled={loading} className="ml-auto" type="submit">
-          Save Change
+        {productFormEditMessage.saveChanges}
         </Button>
       </form>
     </Form>

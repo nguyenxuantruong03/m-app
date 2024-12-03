@@ -4,6 +4,7 @@ import prismadb from "@/lib/prismadb";
 import { currentRole, currentUser } from "@/lib/auth";
 import { User, UserRole } from "@prisma/client";
 import { sendSpamEmail } from "@/lib/mail";
+import { translateSentEmailIdGet, translateSentEmailIdDelete, translateSentEmailIdPatch, translateSentEmailIdPost } from "@/translate/translate-api";
 
 type SentEmailUserValue = string | boolean | Date | User | string[] | undefined | null;
 
@@ -16,25 +17,28 @@ export async function GET(
   req: Request,
   { params }: { params: { sentmailuserId: string } }
 ) {
-  const userId = await currentUser();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const sentEmailUserIdGetMessage = translateSentEmailIdGet(LanguageToUse)
   try {
     if (!params.sentmailuserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Sentmailuser id is required!" }),
+        JSON.stringify({ error: sentEmailUserIdGetMessage.sentMailUserIdRequired }),
         { status: 400 }
       );
     }
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: sentEmailUserIdGetMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xem sent Email!" }),
+        JSON.stringify({ error: sentEmailUserIdGetMessage.permissionDenied }),
         { status: 403 }
       );
     }
@@ -51,7 +55,7 @@ export async function GET(
     return NextResponse.json(sentEmailUser);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get sentmailUser." }),
+      JSON.stringify({ error: sentEmailUserIdGetMessage.internalError }),
       { status: 500 }
     );
   }
@@ -61,27 +65,30 @@ export async function DELETE(
   req: Request,
   { params }: { params: { sentmailuserId: string; storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const sentEmailUserIdDeleteMessage = translateSentEmailIdDelete(LanguageToUse)
   try {
-    const userId = await currentUser();
     const role = await currentRole();
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: sentEmailUserIdDeleteMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xóa sent Email!" }),
+        JSON.stringify({ error: sentEmailUserIdDeleteMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!params.sentmailuserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Sentmailuser id is required!" }),
+        JSON.stringify({ error: sentEmailUserIdDeleteMessage.sentMailUserIdRequired }),
         { status: 400 }
       );
     }
@@ -94,14 +101,14 @@ export async function DELETE(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: sentEmailUserIdDeleteMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
 
     if (role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: "Vai trò hiện tại của bạn không được quyền!" }),
+        JSON.stringify({ error: sentEmailUserIdDeleteMessage.rolePermissionDenied }),
         { status: 403 }
       );
     }
@@ -128,14 +135,14 @@ export async function DELETE(
         storeId: params.storeId,
         type: "DELETESENTMAILUSER",
         delete: changes,
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(sentEmailUser);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete sentmailUser." }),
+      JSON.stringify({ error: sentEmailUserIdDeleteMessage.internalError }),
       { status: 500 }
     );
   }
@@ -145,51 +152,52 @@ export async function PATCH(
   req: Request,
   { params }: { params: { sentmailuserId: string; storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const sentEmailUserIdPatchMessage = translateSentEmailIdPatch(LanguageToUse)
   try {
-    const userId = await currentUser();
-
     const body = await req.json();
-
     const { subject, description, sentemailuser } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: sentEmailUserIdPatchMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền cập nhật sent Email!" }),
+        JSON.stringify({ error: sentEmailUserIdPatchMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!subject) {
       return new NextResponse(
-        JSON.stringify({ error: "Subject is required!" }),
+        JSON.stringify({ error: sentEmailUserIdPatchMessage.subjectRequired }),
         { status: 400 }
       );
     }
 
     if (!description) {
       return new NextResponse(
-        JSON.stringify({ error: "Description is required!" }),
+        JSON.stringify({ error: sentEmailUserIdPatchMessage.descriptionRequired }),
         { status: 400 }
       );
     }
 
     if (!sentemailuser) {
       return new NextResponse(
-        JSON.stringify({ error: "Yêu cầu chọn người dùng!" }),
+        JSON.stringify({ error: sentEmailUserIdPatchMessage.userRequired }),
         { status: 400 }
       );
     }
 
     if (!params.sentmailuserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Sentmailuser id is required!" }),
+        JSON.stringify({ error: sentEmailUserIdPatchMessage.sentMailUserIdRequired }),
         { status: 400 }
       );
     }
@@ -202,7 +210,7 @@ export async function PATCH(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: sentEmailUserIdPatchMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -270,14 +278,14 @@ export async function PATCH(
         oldChange: oldChanges,
         newChange: newChanges,
         type: "UPDATESENTMAILUSER",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(sentEmailUser);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error patch sentmailUser." }),
+      JSON.stringify({ error: sentEmailUserIdPatchMessage.internalError }),
       { status: 500 }
     );
   }
@@ -287,21 +295,24 @@ export async function POST(
   req: Request,
   { params }: { params: { sentmailuserId: string; storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const sentEmailUserIdPostMessage = translateSentEmailIdPost(LanguageToUse)
   try {
-    const userId = await currentUser();
     const body = await req.json();
     const { sentuser } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy id người dùng!" }),
+        JSON.stringify({ error: sentEmailUserIdPostMessage.userIdNotFound }),
         { status: 404 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền cập nhật sent Email!" }),
+        JSON.stringify({ error: sentEmailUserIdPostMessage.permissionDenied }),
         { status: 403 }
       );
     }
@@ -310,14 +321,14 @@ export async function POST(
 
     if (!sentuser || !cleanedStrsentuser) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy người dùng để gửi!" }),
+        JSON.stringify({ error: sentEmailUserIdPostMessage.userNotFound }),
         { status: 404 }
       );
     }
 
     if (!params.sentmailuserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Sentmailuser Id  is required!" }),
+        JSON.stringify({ error: sentEmailUserIdPostMessage.sentMailUserIdRequired }),
         { status: 404 }
       );
     }
@@ -329,7 +340,7 @@ export async function POST(
     });
 
     if (!storeByUserId) {
-      return new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
+      return new NextResponse(JSON.stringify({ error: sentEmailUserIdPostMessage.storeIdNotFound }), {
         status: 405,
       });
     }
@@ -346,7 +357,7 @@ export async function POST(
     // Check if the sentEmailUser update was successful before proceeding
     if (!sentEmailUser) {
       return new NextResponse(
-        JSON.stringify({ error: "Error updating sentEmailUser" }),
+        JSON.stringify({ error: sentEmailUserIdPostMessage.errorUpdating }),
         { status: 405 }
       );
     }
@@ -425,14 +436,14 @@ export async function POST(
         storeId: params.storeId,
         type: "CREATESENTMAILUSER",
         newChange: changes,
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(sentEmailUser);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error patch sentmailUser." }),
+      JSON.stringify({ error: sentEmailUserIdPostMessage.internalError }),
       { status: 500 }
     );
   }

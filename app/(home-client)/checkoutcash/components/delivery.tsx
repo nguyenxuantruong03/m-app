@@ -1,7 +1,14 @@
 "use client";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import ApiProvinces from "./api-provinces";
 import { Provinces } from "@/types/type";
+import {
+  getDeliveryMethodMessage,
+  getHomeDeliveryMessage,
+  getPhoneNumberMessage,
+  getPickupLocationMessage,
+  getStorePickupMessage,
+} from "@/translate/translate-client";
 type DeliveryOption = "delivery" | "pickup";
 
 interface DeliveryProps {
@@ -36,6 +43,7 @@ interface DeliveryProps {
   userRole: string;
   userId: string;
   loading: boolean;
+  language: string;
 }
 const Delivery: React.FC<DeliveryProps> = ({
   deliveryOption,
@@ -68,15 +76,23 @@ const Delivery: React.FC<DeliveryProps> = ({
   isNoneSelectDb,
   userRole,
   userId,
-  loading
+  loading,
+  language,
 }) => {
+  //language
+  const deliveryMethodMessage = getDeliveryMethodMessage(language);
+  const homeDeliveryMessage = getHomeDeliveryMessage(language);
+  const storePickupMessage = getStorePickupMessage(language);
+  const pickupLocationMessage = getPickupLocationMessage(language);
+  const phomeNumberMessage = getPhoneNumberMessage(language);
+
   const handleOptionChange = (option: DeliveryOption) => {
     setDeliveryOption(option);
   };
 
   return (
     <div className="bg-gray-50 dark:bg-slate-600 rounded-md shadow-lg p-4 mb-2">
-      <h1 className="font-bold text-blue-500">Hình thức nhận hàng </h1>
+      <h1 className="font-bold text-blue-500">{deliveryMethodMessage}</h1>
       <div className="flex mt-4 items-center">
         <div>
           <input
@@ -87,10 +103,13 @@ const Delivery: React.FC<DeliveryProps> = ({
             checked={deliveryOption === "delivery"}
             onChange={() => handleOptionChange("delivery")}
             required
-            disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
+            disabled={
+              loading ||
+              (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)
+            }
           />
           <label htmlFor="male" className="ml-2">
-            Giao hàng tận nơi
+            {homeDeliveryMessage}
           </label>
         </div>
         <div className="ml-4">
@@ -102,10 +121,13 @@ const Delivery: React.FC<DeliveryProps> = ({
             checked={deliveryOption === "pickup"}
             onChange={() => handleOptionChange("pickup")}
             required
-            disabled={loading || (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)}
+            disabled={
+              loading ||
+              (userRole === "GUEST" || !userId ? isNoneSelect : isNoneSelectDb)
+            }
           />
           <label htmlFor="female" className="ml-2">
-            Nhận tại cửa hàng
+            {storePickupMessage}
           </label>
         </div>
       </div>
@@ -140,17 +162,15 @@ const Delivery: React.FC<DeliveryProps> = ({
           userRole={userRole}
           userId={userId}
           loading={loading}
+          language={language}
         />
       )}
       {deliveryOption === "pickup" && (
         <div className="">
-          <p className="p-4 font-bold text-xl">
-            Nhận hàng tại: 457 Lê Văn Quới, Phường Bình Trị Đông A, Quận Bình
-            Tân
-          </p>
+          <p className="p-4 font-bold text-xl">{pickupLocationMessage}</p>
           <p className=" px-4 text-red-500 font-bold text-xl">
             {" "}
-            Số điện thoại: 0352261103{" "}
+            {phomeNumberMessage}: 0352261103
           </p>
         </div>
       )}

@@ -5,11 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Package,
-  Settings,
-  User,
-} from "lucide-react";
+import { Package, Settings, User } from "lucide-react";
 import { LogOut } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useCurrentUser } from "@/hooks/use-current-user";
@@ -24,6 +20,11 @@ import { utcToZonedTime } from "date-fns-tz";
 import { format } from "date-fns";
 import CircleAvatar from "../ui/circle-avatar";
 import viLocale from "date-fns/locale/vi";
+import {
+  translateMenuItems,
+  translateName,
+  translateNameuser,
+} from "@/translate/translate-client";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 
 export interface AccountItem {
@@ -49,6 +50,24 @@ export const UserButton = () => {
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
   const [isGrabbing, setIsGrabbing] = useState(false);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    userId?.id && userId?.role !== "GUEST"
+      ? userId?.language
+      : storedLanguage || "vi";
+  const menuItemMessage = translateMenuItems(languageToUse);
+  const nameMessage = translateName(languageToUse);
+  const nameUserMessage = translateNameuser(languageToUse);
 
   const handleMouseDown = (e: React.MouseEvent<HTMLParagraphElement>) => {
     setIsDragging(true);
@@ -121,6 +140,7 @@ export const UserButton = () => {
                 createdAt={formatcreatedAt || ""}
                 email={userId?.email || ""}
                 isClient={true}
+                languageToUse={languageToUse}
               />
             ) : avatarImage ? (
               <ImageCellOne
@@ -128,6 +148,7 @@ export const UserButton = () => {
                 createdAt={formatcreatedAt || ""}
                 email={userId?.email || ""}
                 isClient={true}
+                languageToUse={languageToUse}
               />
             ) : (
               <AvatarFallback className="bg-sky-500">
@@ -143,18 +164,18 @@ export const UserButton = () => {
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
             >
-              {userId?.name || "Người dùng"}
+              {userId?.name || nameMessage}
             </p>
 
             <p className="text-xs text-gray-300 ">
-              {userId?.nameuser || "@Người dùng"}
+              {userId?.nameuser || `@${nameUserMessage}`}
             </p>
           </div>
         </div>
 
         <Link href={`/me/${userId?.nameuser}`}>
           <DropdownMenuItem className="mt-4 mb-2 flex items-center">
-            <User className="h-5 w-5 mr-2" /> Trang cá nhân
+            <User className="h-5 w-5 mr-2" /> {menuItemMessage.name1}
           </DropdownMenuItem>
         </Link>
         <Separator />
@@ -167,19 +188,19 @@ export const UserButton = () => {
 
         <Link href="/warehouse/package-product/delivered-product">
           <DropdownMenuItem className="my-2 flex items-center">
-            <Package className="h-5 w-5 mr-2" /> Sản phẩm đã mua
+            <Package className="h-5 w-5 mr-2" /> {menuItemMessage.name2}
           </DropdownMenuItem>
         </Link>
 
         <Link href="/warehouse/package-product">
           <DropdownMenuItem className="my-2 flex items-center">
-            <Package className="h-5 w-5 mr-2" /> Đơn vận chuyển
+            <Package className="h-5 w-5 mr-2" /> {menuItemMessage.name3}
           </DropdownMenuItem>
         </Link>
 
         <Link href="/warehouse">
           <DropdownMenuItem className="my-2 flex items-center">
-            <Package className="h-5 w-5 mr-2" /> Kho voucher
+            <Package className="h-5 w-5 mr-2" /> {menuItemMessage.name4}
           </DropdownMenuItem>
           <Separator />
         </Link>
@@ -187,7 +208,7 @@ export const UserButton = () => {
         <Separator />
         <Link href="/setting-profile">
           <DropdownMenuItem className="flex items-center cursor-pointer">
-            <Settings className="h-5 w-5 mr-2" /> Cài đặt
+            <Settings className="h-5 w-5 mr-2" /> {menuItemMessage.name5}
           </DropdownMenuItem>
         </Link>
 
@@ -195,7 +216,7 @@ export const UserButton = () => {
         <LogoutButton>
           <DropdownMenuItem className="cursor-pointer mt-2">
             <LogOut className="h-5 w-5 mr-2" />
-            Logout
+            {menuItemMessage.name6}
           </DropdownMenuItem>
         </LogoutButton>
       </DropdownMenuContent>

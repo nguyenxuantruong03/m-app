@@ -4,10 +4,11 @@ import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { ZoomImageAttendanceModal } from "./modals/zoom-image-one-modal";
 import { cn } from "@/lib/utils";
-import { Camera, Image as ImageIcon, ImageUp, X, Radio  } from "lucide-react";
+import { Camera, Image as ImageIcon, ImageUp, X, Radio } from "lucide-react";
 import FormImageCredential from "@/app/(setting-user)/components/form/form-infomation/form-imageCredential";
 import { LiveBadge } from "./live-badge";
 import Link from "next/link";
+import { translateImageCellOne } from "@/translate/translate-client";
 
 const ImageCellOne: React.FC<{
   imageUrl: string;
@@ -21,7 +22,8 @@ const ImageCellOne: React.FC<{
   self?: any;
   showImage?: boolean;
   isClient?: boolean;
-  customClassFeedBack?: string
+  customClassFeedBack?: string;
+  languageToUse: string;
 }> = ({
   imageUrl,
   createdAt,
@@ -33,13 +35,17 @@ const ImageCellOne: React.FC<{
   user,
   self,
   showImage,
-  isClient= false,
-  customClassFeedBack
+  isClient = false,
+  customClassFeedBack,
+  languageToUse,
 }) => {
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [openUpdateImage, setOpenupdateImage] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null); // Khai báo ref cho dropdown
+
+  //language
+  const imagecellOneMessage = translateImageCellOne(languageToUse);
 
   const openImageModal = () => setIsImageModalOpen(true);
   const closeImageModal = () => setIsImageModalOpen(false);
@@ -74,27 +80,29 @@ const ImageCellOne: React.FC<{
               alt="404"
               width={widthImage}
               height={heightImage}
-              className={cn("rounded-full", self.stream?.isLive && "ring-2 ring-rose-500 border border-background",classNames)}
+              className={cn(
+                "rounded-full",
+                self.stream?.isLive &&
+                  "ring-2 ring-rose-500 border border-background",
+                classNames
+              )}
             />
             <div className="absolute inset-0 bg-white opacity-0 transition-opacity duration-200 hover:opacity-20 rounded-full" />
             <Camera className="absolute bottom-2.5 left-24 bg-slate-900 text-white rounded-full h-7 w-7 p-1" />
-            {
-              self.stream?.isLive && (
+            {self.stream?.isLive && (
               <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2">
                 <LiveBadge />
               </div>
-              )
-            }
+            )}
           </div>
 
           {open && (
             <div className="absolute top-32 -inset-x-12 bg-slate-900 p-3 rounded-md">
-              {self.stream?.isLive &&  (
+              {self.stream?.isLive && (
                 <Link href={`/live/${self.nameuser}`}>
-                  <div
-                    className="mb-2 flex items-center text-white hover:bg-white hover:bg-opacity-10 p-1 cursor-pointer rounded-md"
-                  >
-                    <Radio className="h-5 w-5 mr-2" /> Xem Live
+                  <div className="mb-2 flex items-center text-white hover:bg-white hover:bg-opacity-10 p-1 cursor-pointer rounded-md">
+                    <Radio className="h-5 w-5 mr-2" />{" "}
+                    {imagecellOneMessage.name1}
                   </div>
                 </Link>
               )}
@@ -102,16 +110,18 @@ const ImageCellOne: React.FC<{
                 className="mb-2 flex items-center text-white hover:bg-white hover:bg-opacity-10 p-1 cursor-pointer rounded-md"
                 onClick={openImageModal}
               >
-                <ImageIcon className="h-5 w-5 mr-2" /> Xem ảnh đại diện
+                <ImageIcon className="h-5 w-5 mr-2" />{" "}
+                {imagecellOneMessage.name2}
               </div>
 
               {user?.id === self?.id && (
-                  <div
-                    onClick={() => setOpenupdateImage(true)}
-                    className="flex items-center text-white hover:bg-white hover:bg-opacity-10 p-1 cursor-pointer rounded-md"
-                  >
-                    <ImageUp className="h-5 w-5 mr-2" /> Thay ảnh đại diện
-                  </div>
+                <div
+                  onClick={() => setOpenupdateImage(true)}
+                  className="flex items-center text-white hover:bg-white hover:bg-opacity-10 p-1 cursor-pointer rounded-md"
+                >
+                  <ImageUp className="h-5 w-5 mr-2" />{" "}
+                  {imagecellOneMessage.name3}
+                </div>
               )}
             </div>
           )}
@@ -122,7 +132,7 @@ const ImageCellOne: React.FC<{
                 <div className="h-max w-3/4 max-w-md border rounded-md gap-4 bg-slate-900 p-6 shadow-lg transition ease-in-out z-50">
                   <div className="flex items-center justify-between">
                     <span className="text-lg font-semibold text-foreground break-all line-clamp-2 text-white">
-                      Chỉnh sửa ảnh đại diện{" "}
+                      {imagecellOneMessage.name4}
                     </span>
                     <span
                       onClick={() => setOpenupdateImage(false)}
@@ -132,10 +142,12 @@ const ImageCellOne: React.FC<{
                     </span>
                   </div>
                   <div className="text-sm text-muted-foreground break-all line-clamp-3">
-                    Ảnh đại diện giúp mọi người nhận biết bạn dễ dàng hơn qua
-                    các bài viết, bình luận, tin nhắn...
+                    {imagecellOneMessage.name5}
                   </div>
-                  <FormImageCredential setOpen={setOpenupdateImage} />
+                  <FormImageCredential
+                    setOpen={setOpenupdateImage}
+                    languageToUse={languageToUse}
+                  />
                 </div>
               </div>
             </>
@@ -166,6 +178,7 @@ const ImageCellOne: React.FC<{
           isOpen={true}
           isClient={isClient}
           customClassFeedBack={customClassFeedBack}
+          languageToUse={languageToUse}
         />
       )}
     </div>

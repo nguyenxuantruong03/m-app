@@ -7,6 +7,7 @@ import { Follow, User as UserData, Review } from "@prisma/client";
 import { useCreatorSidebar } from "@/hooks/stream/use-creator-sidebar";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import { translateNoPost } from "@/translate/translate-client";
 
 interface UserItemProps {
   self: any;
@@ -24,10 +25,27 @@ const UserItem = ({
   const user = useCurrentUser();
   const { hideAll } = useCreatorSidebar((state) => state);
   const [isMounted, setIsMounted] = useState(false);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
 
   if (!user) {
     throw new Error("User is not found");
   }
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+
+  const noPostMessage = translateNoPost(languageToUse);
 
   // If imageCredentials is an array, take the first image's url
   const imageCredentials = Array.isArray(self?.imageCredential)
@@ -80,6 +98,7 @@ const UserItem = ({
         isFollowing={isFollowing}
         user={user}
         avatarImage={avatarImage}
+        languageToUse={languageToUse}
       />
       <div className="flex flex-col lg:flex-row lg:mt-5 lg:space-x-2">
         <div className="w-full xl:w-[490px] lg:max-w-sm xl:max-w-xl my-3 lg:my-0">
@@ -87,6 +106,7 @@ const UserItem = ({
             self={self}
             showFunction={showFunction}
             user={user}
+            languageToUse={languageToUse}
           />
         </div>
         <div className="lg:flex-1 w-full">
@@ -96,10 +116,11 @@ const UserItem = ({
             showFunction={showFunction}
             user={user}
             avatarImage={avatarImage}
+            languageToUse={languageToUse}
           />
           {filteredReviews.length === 0 && (
             <p className="text-center text-gray-400 font-semibold text-xl">
-              Không có bài viết
+              {noPostMessage}
             </p>
           )}
         </div>

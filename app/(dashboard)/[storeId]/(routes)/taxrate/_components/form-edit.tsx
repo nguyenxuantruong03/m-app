@@ -15,6 +15,7 @@ import { Button } from "../../../../../../components/ui/button";
 import { Input } from "../../../../../../components/ui/input";
 import toast from "react-hot-toast";
 import { useState } from "react";
+import { getTaxrateFormEdit } from "@/translate/translate-dashboard";
 
 interface LabelFormPorps {
   data: string | null;
@@ -25,33 +26,10 @@ interface LabelFormPorps {
   inclusive: boolean;
   active: boolean;
   taxtype: string | null;
-  field: "name" | "description"
+  field: "name" | "description";
   setOpen: (open: boolean) => void;
+  language: string;
 }
-
-const formSchema = z.object({
-  name: z
-    .string()
-    .min(1, { message: "Bắt buộc nhập name." })
-    .nullable()
-    .optional(),
-  taxtype: z
-    .string()
-    .min(1, { message: "Bắt buộc chọn taxtype." })
-    .nullable()
-    .optional(),
-  description: z
-    .string()
-    .min(1, { message: "Bắt buộc nhập description." })
-    .nullable()
-    .optional(),
-  percentage: z.optional(
-    z.coerce.number().min(1, { message: "Hãy nhập giá ít nhất 1%." })
-  ),
-  inclusive: z.boolean().default(false).nullable().optional(),
-  active: z.boolean().default(false).nullable().optional(),
-});
-type FormValues = z.input<typeof formSchema>;
 
 const LabelForm: React.FC<LabelFormPorps> = ({
   data,
@@ -63,9 +41,40 @@ const LabelForm: React.FC<LabelFormPorps> = ({
   active,
   field,
   setOpen,
+  language,
 }) => {
   const params = useParams();
   const [loading, setLoading] = useState(false);
+
+  //language
+  const taxrateFormEditMessage = getTaxrateFormEdit(language);
+
+  const formSchema = z.object({
+    name: z
+      .string()
+      .min(2, { message: taxrateFormEditMessage.requiredName })
+      .nullable()
+      .optional(),
+    taxtype: z
+      .string()
+      .min(1, { message: taxrateFormEditMessage.requiredTaxtype })
+      .nullable()
+      .optional(),
+    description: z
+      .string()
+      .min(2, { message: taxrateFormEditMessage.requiredDescription })
+      .nullable()
+      .optional(),
+    percentage: z.optional(
+      z.coerce
+        .number()
+        .min(1, { message: taxrateFormEditMessage.enterMinPrice })
+    ),
+    inclusive: z.boolean().default(false).nullable().optional(),
+    active: z.boolean().default(false).nullable().optional(),
+  });
+  type FormValues = z.input<typeof formSchema>;
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -83,7 +92,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({
       await axios.patch(`/api/${params.storeId}/taxrate/${id}`, datas);
       setLoading(false);
       setOpen(false);
-      toast.success("Cập nhật thành công!");
+      toast.success(taxrateFormEditMessage.updateSuccess);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -97,7 +106,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({
             .error
         );
       } else {
-        toast.error("Something went wrong.");
+        toast.error(taxrateFormEditMessage.somethingWentWrong);
       }
     } finally {
       setLoading(false);
@@ -113,12 +122,13 @@ const LabelForm: React.FC<LabelFormPorps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Tên sản phẩm <span className="text-red-600 pl-1">(*)</span>
+                  {taxrateFormEditMessage.productName}{" "}
+                  <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <FormControl>
                   <Input
                     disabled={loading}
-                    placeholder="Nhập tên ..."
+                    placeholder={taxrateFormEditMessage.enterName}
                     {...field}
                     value={field.value || ""}
                   />
@@ -136,12 +146,13 @@ const LabelForm: React.FC<LabelFormPorps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Mô tả thuế <span className="text-red-600 pl-1">(*)</span>
+                  {taxrateFormEditMessage.taxDescription}{" "}
+                  <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <FormControl>
                   <Input
                     disabled={loading}
-                    placeholder="Nhập mô tả thuế ..."
+                    placeholder={taxrateFormEditMessage.enterTaxDescription}
                     {...field}
                     onChange={(e) => {
                       field.onChange(e);
@@ -156,7 +167,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({
         )}
 
         <Button disabled={loading} className="ml-auto" type="submit">
-          Save Change
+          {taxrateFormEditMessage.saveChange}
         </Button>
       </form>
     </Form>

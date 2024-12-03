@@ -37,6 +37,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Recommend from "@/components/ui/recommend";
 import ImageUpload from "@/components/ui/image-upload";
+import { getDeliveryComfirmationAction } from "@/translate/translate-dashboard";
 
 interface CellActionProps {
   data: OrderColumn;
@@ -56,6 +57,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [open, setOpen] = useState(false);
   const [openCustomImage, setOpenCustomImage] = useState(false);
   const [value, setValue] = useState<string>("");
+
+  //language
+  const deliveryConfirmActionMessage = getDeliveryComfirmationAction(data.language)
 
   // Function to prevent closing modal when clicking inside modal content
   const handleModalClick = (
@@ -86,7 +90,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       // If more than 2 days have passed, show an error
       if (diffInDays > 2) {
         toast.error(
-          "Đơn hàng đã quá hạn 2 ngày, không thể xác thực thành công."
+          deliveryConfirmActionMessage.overdueOrder
         );
         return;
       }
@@ -104,7 +108,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Đã giao thành công:
+              {deliveryConfirmActionMessage.deliveredSuccessfully}:
               <span className="font-bold">
                 {data.email || data.emailcurrent} -{" "}
                 <span className="font-bold">
@@ -116,7 +120,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating stutus...",
+          loading: deliveryConfirmActionMessage.updatingStatus,
           success: (message) => {
             router.refresh();
             return message;
@@ -133,13 +137,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Đã xảy ra lỗi khi xác thực đơn hàng thành công.";
+              return deliveryConfirmActionMessage.errorOccurred;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi xác thực đơn hàng thành công.");
+      toast.error(deliveryConfirmActionMessage.errorOccurred);
     } finally {
       setLoading(false);
       setOpenCustomImage(false);
@@ -161,7 +165,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       // If more than 2 days have passed, show an error
       if (diffInDays > 2) {
         setLoading(true);
-        toast.error("Đơn hàng đã quá hạn 2 ngày, không thể hủy đơn hàng.");
+        toast.error(deliveryConfirmActionMessage.overdueCancelOrder);
         return;
       }
     }
@@ -171,7 +175,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
     // Check if the trimmed value is empty
     if (!trimmedValue) {
-      toast.error("Hãy nhập nội dung trạng thái đơn hàng!");
+      toast.error(deliveryConfirmActionMessage.enterOrderStatus);
       return;
     }
 
@@ -188,7 +192,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Đã hủy thành công đơn hàng:
+              {deliveryConfirmActionMessage.canceledSuccessfully}:
               <span className="font-bold">
                 {data.email || data.emailcurrent} -{" "}
                 <span className="font-bold">
@@ -200,7 +204,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating stutus...",
+          loading: deliveryConfirmActionMessage.updatingStatus,
           success: (message) => {
             router.refresh();
             return message;
@@ -217,13 +221,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Đã xảy ra lỗi khi hủy đơn hàng.";
+              return deliveryConfirmActionMessage.errorOccurred;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi hủy đơn hàng.");
+      toast.error(deliveryConfirmActionMessage.errorOccurred);
     } finally {
       setOpen(false);
       setLoading(false);
@@ -243,7 +247,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Đã nhận sản phẩm trả lại:
+              {deliveryConfirmActionMessage.returnedProductReceived}:
               <span className="font-bold">
                 {data.email || data.emailcurrent} -{" "}
                 <span className="font-bold">
@@ -255,7 +259,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating stutus...",
+          loading: deliveryConfirmActionMessage.updatingStatus,
           success: (message) => {
             router.refresh();
             return message;
@@ -272,13 +276,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Đã xảy ra lỗi khi nhận đơn.";
+              return deliveryConfirmActionMessage.errorOccurred;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi nhận đơn.");
+      toast.error(deliveryConfirmActionMessage.errorOccurred);
     } finally {
       setLoading(false);
     }
@@ -289,21 +293,21 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
+            <span className="sr-only">{deliveryConfirmActionMessage.openMenu}</span>
             <MoreHorizontal className="w-4 h-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           {user?.role === "ADMIN" || user?.role === "SHIPPER" ? (
             <>
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuLabel>{deliveryConfirmActionMessage.actions}</DropdownMenuLabel>
               {data.returnProduct ? (
                 <DropdownMenuItem
                   disabled={loading}
                   onClick={returnedProductReceived}
                 >
                   <PackageCheck className="h-4 w-4 mr-2" />
-                  Đã nhận lại hàng
+                  {deliveryConfirmActionMessage.receivedReturnedGoods}
                 </DropdownMenuItem>
               ) : (
                 <>
@@ -313,7 +317,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                       onClick={() => setOpenCustomImage(true)}
                     >
                       <PackageCheck className="h-4 w-4 mr-2" />
-                      Đã giao
+                      {deliveryConfirmActionMessage.delivered}
                     </DropdownMenuItem>
                   )}
                   {data.status !== "Da_huy" && (
@@ -322,7 +326,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                       onClick={() => setOpen(true)}
                     >
                       <PackageX className="h-4 w-4 mr-2" />
-                      Hủy đơn hàng (lý do)
+                      {deliveryConfirmActionMessage.cancelOrderReason}
                     </DropdownMenuItem>
                   )}
                   {data.address !== "" &&
@@ -335,7 +339,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                         }
                       >
                         <Pin className="h-4 w-4 mr-2" />
-                        Địa chỉ
+                        {deliveryConfirmActionMessage.address}
                       </DropdownMenuItem>
                     )}
                 </>
@@ -343,7 +347,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             </>
           ) : (
             <>
-              <DropdownMenuLabel>Trống</DropdownMenuLabel>{" "}
+              <DropdownMenuLabel>{deliveryConfirmActionMessage.empty}</DropdownMenuLabel>{" "}
             </>
           )}
         </DropdownMenuContent>
@@ -363,9 +367,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex space-x-3 items-center w-full">
-                          <span className="text-white">Hình ảnh đã giao</span>
+                          <span className="text-white">{deliveryConfirmActionMessage.deliveredImage}</span>
                           <span className="text-red-600 pl-1">(*)</span>
-                          <Recommend message="Hãy chụp 2 ảnh sản phẩm đã giao." />
+                          <Recommend message={deliveryConfirmActionMessage.takeTwoDeliveredImages}/>
                         </FormLabel>
                         <FormControl>
                           <ImageUpload
@@ -375,7 +379,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                               if (field.value.length < 2) {
                                 field.onChange([...field.value, { url }]);
                               } else {
-                                toast.error("Chỉ chọn 2 ảnh sản phẩm rõ nét.");
+                                toast.error(deliveryConfirmActionMessage.selectClearImages);
                               }
                             }}
                             onRemove={(url) =>
@@ -385,6 +389,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                                 ),
                               ])
                             }
+                            language={data.language}
                           />
                         </FormControl>
                         <FormMessage />
@@ -397,7 +402,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                       disabled={loading}
                       onClick={() => setOpenCustomImage(false)}
                     >
-                      Cancel
+                      {deliveryConfirmActionMessage.cancel}
                     </Button>
 
                     <Button
@@ -406,7 +411,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                       variant="destructive"
                     >
                       <span className="flex items-center">
-                        Gửi <SendHorizontal className="w-5 h-5 ml-1" />
+                      {deliveryConfirmActionMessage.send} <SendHorizontal className="w-5 h-5 ml-1" />
                       </span>
                     </Button>
                   </div>
@@ -426,7 +431,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                 type="text"
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
-                placeholder="Nhập lý do hủy đơn..."
+                placeholder={deliveryConfirmActionMessage.enterCancelReason}
                 disabled={loading}
               />
               <div className="flex justify-between px-2 mt-3">
@@ -435,14 +440,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                   onClick={cancelOrder}
                   className="dark:bg-black dark:text-white"
                 >
-                  Save
+                  {deliveryConfirmActionMessage.save}
                 </Button>
                 <Button
                   disabled={loading}
                   onClick={() => setOpen(false)}
                   className="dark:bg-black dark:text-white"
                 >
-                  Cancel
+                  {deliveryConfirmActionMessage.cancel}
                 </Button>
               </div>
             </div>

@@ -29,14 +29,7 @@ import Image from "next/image";
 
 import "./mention.css";
 import Recommend from "@/components/ui/recommend";
-
-const formSchema = z.object({
-  subject: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  description: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  sentemailuser: z.array(z.string()),
-});
-
-type SentEmailUserFormValues = z.infer<typeof formSchema>;
+import { translateSentEmailForm } from "@/translate/translate-dashboard";
 
 interface UserSuggestion {
   imageCredential?: string;
@@ -66,12 +59,14 @@ interface SentEmailUserFormProps {
   initialData: SentEmailUser | null;
   associatedUser: (string | null | undefined)[];
   associatedFavorite: (string | null | undefined)[];
+  language: string
 }
 
 export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
   initialData,
   associatedUser,
   associatedFavorite,
+  language
 }) => {
   const params = useParams();
   const router = useRouter();
@@ -81,9 +76,20 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
   const [dataUser, setDataUser] = useState<User[]>([]); // Allow the array to contain USER type
   const [favorites, setFavorites] = useState<Favorite[]>([]); // Favorites array
 
-  const title = initialData ? "Edit sent" : "Create sent";
-  const description = initialData ? "Edit a sent." : "Add a new sent";
-  const action = initialData ? "Save changes" : "Create";
+  //language
+  const sentEmailFormMessage = translateSentEmailForm(language)
+
+  const title = initialData ? sentEmailFormMessage.editSent : sentEmailFormMessage.createSent;
+  const description = initialData ? sentEmailFormMessage.editASent : sentEmailFormMessage.addANewSent;
+  const action = initialData ? sentEmailFormMessage.saveChanges : sentEmailFormMessage.create;
+
+  const formSchema = z.object({
+    subject: z.string().min(2, { message: sentEmailFormMessage.enterAtLeastTwoChars}),
+    description: z.string().min(2, { message: sentEmailFormMessage.enterAtLeastTwoChars}),
+    sentemailuser: z.array(z.string()),
+  });
+  
+  type SentEmailUserFormValues = z.infer<typeof formSchema>;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -129,7 +135,7 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
         setDataUser(mappedUsers);
         setFavorites(mappedFavorites);
       } catch (error) {
-        toast.error("Something went wrong.");
+        toast.error(sentEmailFormMessage.somethingWentWrong);
       }
     };
     fetchData();
@@ -172,7 +178,7 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
     try {
       // Hiển thị toast error nếu cả ba trường không thay đổi
       if (isSentEmailUserUnchanged && isSubjectUnchanged && isDescriptionUnchanged) {
-        toast.error("Không có thay đổi nào được thực hiện.");
+        toast.error(sentEmailFormMessage.noChangesMade);
         return;
       }
       //Check xem dữ liệu có giống nhau không của data.sentemailuser
@@ -226,7 +232,7 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
 
       if (duplicates.length > 0) {
         const duplicatedEmails = duplicates.join(", ");
-        toast.error(`Duplicate entries found: ${duplicatedEmails}`);
+        toast.error(`${sentEmailFormMessage.duplicateEntriesFound}: ${duplicatedEmails}`);
         return;
       }
 
@@ -237,7 +243,7 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
       if (gmailFormatEmails.length > 0 && otherFormatEmails.length > 0) {
         const gmailEmails = gmailFormatEmails.join(", ");
         const otherEmails = otherFormatEmails.join(", ");
-        toast.error(`Email: (${gmailEmails}) và Ưa thích: (${otherEmails}) không thể cùng tồn tại. Chỉ chọn 1 trong 2.`);
+        toast.error(`${sentEmailFormMessage.email}: (${gmailEmails}) ${sentEmailFormMessage.andFavorites}: (${otherEmails}) ${sentEmailFormMessage.cannotExistTogether}`);
         return;
       }
 
@@ -277,22 +283,22 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
           if (initialData) {
             return (
               <p>
-                Sent email user{" "}
-                <span className="font-bold">{response.data?.subject}</span>{" "}
-                updated.
+                {sentEmailFormMessage.sentEmailUser}
+                <span className="font-bold">{response.data?.subject}</span>
+                {sentEmailFormMessage.updated}.
               </p>
             );
           } else {
             return (
               <p>
-                Sent email user{" "}
-                <span className="font-bold">{data.subject}</span> created.
+                {sentEmailFormMessage.sentEmailUser}
+                <span className="font-bold">{data.subject}</span> {sentEmailFormMessage.created}.
               </p>
             );
           }
         }),
         {
-          loading: "Updating sent email user...",
+          loading: sentEmailFormMessage.updatingSentEmailUser,
           success: (message) => {
             router.refresh();
             router.push(`/${params.storeId}/sentmailuser`);
@@ -310,7 +316,7 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Something went wrong.";
+              return sentEmailFormMessage.somethingWentWrong;
             }
           },
         }
@@ -329,7 +335,7 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
       );
       router.refresh();
       router.push(`/${params.storeId}/sentmailuser`);
-      toast.success("SentEmailUser deleted.");
+      toast.success(sentEmailFormMessage.sentEmailUserDeleted);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -343,7 +349,7 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
         );
       } else {
         toast.error(
-          "Make sure you removed all categories using this billboard first."
+          sentEmailFormMessage.somethingWentWrong
         );
       }
     } finally {
@@ -356,14 +362,14 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
     const value = e.target.value;
   
     if (value.includes("@[All](all)") && value.includes("@[Phổbiến](phobien)")) {
-      toast('Bạn chỉ có thể chọn All hoặc Phổ biến, không thể chọn cả hai.', {
+      toast(sentEmailFormMessage.onlySelectAllOrPopular, {
         icon: '😙',
       });
       return;
     }
 
     if (value.includes("@[Phổbiến](phobien)")) {
-      toast('Nếu bạn chọn phổ biến mặc định sẽ xóa tất cả lựa chọn khác.', {
+      toast(sentEmailFormMessage.ifChoosePopular, {
         icon: '😮',
       });
       const filteredValue = value
@@ -375,7 +381,7 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
     }
 
     if (value.includes("@[All](all)")) {
-      toast("Nếu bạn chọn All mặc định sẽ xóa tất cả lựa chọn khác.", {
+      toast(sentEmailFormMessage.ifChooseAll, {
         icon: '🥰',
       });
       const filteredValue = value
@@ -395,23 +401,23 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
 
   const handleCopy = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
-    toast.error("Copying is not allowed.");
+    toast.error(sentEmailFormMessage.copyingNotAllowed);
   };
 
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
-    toast.error("Pasting is not allowed.");
+    toast.error(sentEmailFormMessage.pastingNotAllowed);
   };
 
   const handleCut = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
-    toast.error("Cutting is not allowed.");
+    toast.error(sentEmailFormMessage.cuttingNotAllowed);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if ((e.ctrlKey && e.key === "c") || (e.ctrlKey && e.key === "v")) {
       e.preventDefault();
-      toast.error("Copying and pasting are not allowed.");
+      toast.error(sentEmailFormMessage.copyingPastingNotAllowed);
     }
   };
 
@@ -422,6 +428,7 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
         onClose={() => setOpen(false)}
         onConfirm={onDelete}
         loading={loading}
+        languageToUse={language}
       />
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
@@ -451,13 +458,13 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Chủ đề <span className="text-red-600 pl-1">(*)</span>{" "}
-                    <Recommend message="Nhập chủ đề, để người dùng dễ dàng nhận biết về chủ đề gì ?" />
+                    {sentEmailFormMessage.subject} <span className="text-red-600 pl-1">(*)</span>{" "}
+                    <Recommend message={sentEmailFormMessage.enterSubjectToMakeItClear} />
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập chủ đề ..."
+                      placeholder={sentEmailFormMessage.enterSubject} 
                       {...field}
                     />
                   </FormControl>
@@ -472,8 +479,8 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Người dùng <span className="text-red-600 pl-1">(*)</span>{" "}
-                    <Recommend message="Khi @ sẽ gọi người dùng. Đối với $ sử dụng cho ưa thích của người dùng." />
+                    {sentEmailFormMessage.user} <span className="text-red-600 pl-1">(*)</span>{" "}
+                    <Recommend message={sentEmailFormMessage.mentionUserWithAt} />
                   </FormLabel>
                   <FormControl>
                     <MentionsInput
@@ -484,7 +491,7 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
                       onCut={handleCut}
                       onPaste={handlePaste}
                       disabled={loading}
-                      placeholder="Nhập tên người dùng và dùng @ để mention"
+                      placeholder={sentEmailFormMessage.enterUserNameWithAt}
                       className="mentions"
                     >
                       <Mention
@@ -508,7 +515,7 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
                                     suggestion?.imageCredential ||
                                     suggestion.image || "/device/404.png"
                                   }
-                                  alt={`Error avatar của ${suggestion.email}`}
+                                  alt={`${sentEmailFormMessage.errorAvatar} ${suggestion.email}`}
                                   className="rounded-full"
                                 />
                               ) : (
@@ -557,12 +564,13 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mô tả</FormLabel>
+                  <FormLabel>{sentEmailFormMessage.description}</FormLabel>
                   <FormControl>
                     <Tiptap
                       disabled={loading}
                       value={field.value}
                       onChange={field.onChange}
+                      languageToUse={language}
                     />
                   </FormControl>
                   <FormMessage />

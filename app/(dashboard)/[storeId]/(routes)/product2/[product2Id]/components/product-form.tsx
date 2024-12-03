@@ -39,23 +39,12 @@ import viLocale from "date-fns/locale/vi";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 import Imagee from "next/image";
 import Recommend from "@/components/ui/recommend";
+import { getProductForm } from "@/translate/translate-dashboard";
 
 //Loại bỏ dấu
 const removeDiacritics = (str: String) => {
   return unorm.nfd(str).replace(/[\u0300-\u036f]/g, "");
 };
-const formSchema = z.object({
-  name: z.string().min(2, { message: "Nhập ít nhất 2 ký tự." }),
-  heading: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  description: z.string().min(4, { message: "Nhập ít nhất 4 ký tự." }),
-  images: z.object({ url: z.string() }).array(),
-  imagesalientfeatures: z.object({ url: z.string() }).array(),
-  isFeatured: z.boolean().default(false).optional(),
-  isArchived: z.boolean().default(false).optional(),
-  productdetailId: z.string().min(1, { message: "Hãy chọn 1 ProductDetail." }),
-});
-
-type ProductFormValues = z.infer<typeof formSchema>;
 
 interface ProductFormProps {
   initialData:
@@ -66,11 +55,13 @@ interface ProductFormProps {
     | null;
 
   productDetail: ProductDetail[];
+  language: string
 }
 
 export const ProductForm: React.FC<ProductFormProps> = ({
   initialData,
   productDetail,
+  language
 }) => {
   const params = useParams();
   const router = useRouter();
@@ -78,9 +69,25 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const title = initialData ? "Edit product" : "Create product";
-  const description = initialData ? "Edit a product." : "Add a new product";
-  const action = initialData ? "Save changes" : "Create";
+   //language
+   const productFormMessage = getProductForm(language)
+
+   const title = initialData ? productFormMessage.editProduct : productFormMessage.createProduct;
+   const description = initialData ? productFormMessage.editAProduct : productFormMessage.addNewProduct;
+   const action = initialData ? productFormMessage.saveChanges : productFormMessage.create;
+ 
+   const formSchema = z.object({
+     name: z.string().min(2, { message: productFormMessage.min2Characters }),
+     heading: z.string().min(2, { message: productFormMessage.min2Characters }),
+     description: z.string().min(4, { message: productFormMessage.min4Characters }),
+     images: z.object({ url: z.string() }).array(),
+     imagesalientfeatures: z.object({ url: z.string() }).array(),
+     isFeatured: z.boolean().default(false).optional(),
+     isArchived: z.boolean().default(false).optional(),
+     productdetailId: z.string().min(1, { message: productFormMessage.selectProductDetail }),
+   });
+   
+   type ProductFormValues = z.infer<typeof formSchema>;
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(formSchema),
@@ -141,15 +148,15 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       if (initialData) {
         message = (
           <p>
-            Product <span className="font-bold">{response?.data.heading}</span>{" "}
-            updated.
-          </p>
+          {productFormMessage.product} <span className="font-bold">{response?.data.heading}</span>{" "}
+          {productFormMessage.updated}.
+        </p>
         );
       } else {
         message = (
           <p>
-            Product <span className="font-bold">{data.heading}</span> created.
-          </p>
+          {productFormMessage.product} <span className="font-bold">{data.heading}</span> {productFormMessage.created}.
+        </p>
         );
       }
 
@@ -159,7 +166,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           <div className="flex items-center justify-between text-sm">
             <p className="text-green-500 font-bold flex">
               <Check className="w-5 h-5 rounded-full bg-green-500 text-white mx-1" />
-              Product updated!
+              {productFormMessage.productUpdated}
             </p>
             <span className="text-gray-500">
               {response?.data.createdAt
@@ -180,7 +187,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           <div className="flex items-center justify-between text-sm">
             <p className="text-green-500 font-bold flex">
               <Check className="w-4 h-4 rounded-full bg-green-500 text-white mx-1" />
-              Product created!
+              {productFormMessage.productCreated}
             </p>
             <span className="text-gray-500">
               {response.data?.createdAt
@@ -233,7 +240,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               onClick={() => toast.dismiss(t.id)}
               className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
-              Close
+              {productFormMessage.close}
             </button>
           </div>
         </div>
@@ -253,7 +260,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             .error
         );
       } else {
-        toast.error("Something went wrong.");
+        toast.error(productFormMessage.error);
       }
     } finally {
       setLoading(false);
@@ -268,7 +275,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       );
       router.refresh();
       router.push(`/${params.storeId}/product2`);
-      toast.success("Product deleted.");
+      toast.success(productFormMessage.productDeleted);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -284,7 +291,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
-          "Make sure you removed all categories using this billboard first."
+          productFormMessage.error
         );
       }
     } finally {
@@ -300,6 +307,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         onClose={() => setOpen(false)}
         onConfirm={onDelete}
         loading={loading}
+        languageToUse={language}
       />
       {/* update and create */}
       <div className="flex items-center justify-between">
@@ -329,9 +337,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex space-x-3 items-center">
-                  Hình ảnh sản phẩm{" "}
+                  {productFormMessage.productImages}
                   <span className="text-red-600 pl-1">(*)</span>
-                  <Recommend message="Hãy chụp ảnh sản phẩm rõ nết xóa phông." />
+                  <Recommend message={productFormMessage.productImageHint} />
                 </FormLabel>
                 <FormControl>
                   <ImageUpload
@@ -341,7 +349,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       if (field.value.length < 10) {
                         field.onChange([...field.value, { url }]);
                       } else {
-                        toast.error("Chỉ chọn 10 ảnh sản phẩm rõ nét.");
+                        toast.error(productFormMessage.selectImagesLimit);
                       }
                     }}
                     onRemove={(url) =>
@@ -349,6 +357,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         ...field.value.filter((current) => current.url !== url),
                       ])
                     }
+                    language={language}
                   />
                 </FormControl>
                 <FormMessage />
@@ -362,9 +371,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex space-x-3 items-center">
-                  Hình ảnh mô tả sản phẩm{" "}
+                  {productFormMessage.productDescriptionImages}
                   <span className="text-red-600 pl-1">(*)</span>
-                  <Recommend message="Chỉ chọn 2 ảnh sản phẩm chi tiết nhất." />
+                  <Recommend message={productFormMessage.productDescriptionImagesHint} />
                 </FormLabel>
                 <FormControl>
                   <ImageUpload
@@ -374,7 +383,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       if (field.value.length < 2) {
                         field.onChange([...field.value, { url }]);
                       } else {
-                        toast.error("Chỉ chọn 2 ảnh sản phẩm chi tiết nhất.");
+                        toast.error(productFormMessage.productDescriptionImagesHint);
                       }
                     }}
                     onRemove={(url) =>
@@ -383,6 +392,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       ])
                     }
                     maxFiles={2}
+                    language={language}
                   />
                 </FormControl>
                 <FormMessage />
@@ -397,13 +407,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Tên sản phẩm<span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Hãy nhập đầy đủ tên sản phẩm." />
+                    {productFormMessage.productName}<span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message={productFormMessage.productNameHint} />
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập tên sản phẩm ..."
+                      placeholder={productFormMessage.enterProductName}
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
@@ -422,13 +432,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Mô tả <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Mô tả ngắn về sản phẩm." />
+                    {productFormMessage.description} <span className="text-red-600 pl-1">(*)</span>
+                    <Recommend message={productFormMessage.descriptionHint} />
                   </FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Nhập tên mô tả ..."
+                      placeholder={productFormMessage.enterDescriptionName}
                       {...field}
                     />
                   </FormControl>
@@ -443,9 +453,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex space-x-3 items-center">
-                    Chi tiết sản phẩm{" "}
+                  {productFormMessage.productDetail}
                     <span className="text-red-600 pl-1">(*)</span>
-                    <Recommend message="Lựa chọn chi tiết sản phẩm phù hợp." />
+                    <Recommend message={productFormMessage.selectProductDetailHint} />
                   </FormLabel>
                   <Input
                     list="productdetails"
@@ -469,7 +479,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         : ""
                     }
                     disabled={loading}
-                    placeholder="Select a productdetail"
+                    placeholder={productFormMessage.selectProductDetailLabel}
                   />
                   <datalist id="productdetails">
                     {productDetail.map((item) => (
@@ -494,9 +504,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel>Hiển thị trang chủ</FormLabel>
+                    <FormLabel>{productFormMessage.showOnHomePage}</FormLabel>
                     <FormDescription>
-                      Sản phẩm này sẽ xuất hiện trên trang chủ
+                    {productFormMessage.homePageHint}
                     </FormDescription>
                   </div>
                 </FormItem>
@@ -517,8 +527,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel>Hết hàng</FormLabel>
-                    <FormDescription>Sản phẩm sẽ bị ẩn</FormDescription>
+                    <FormLabel>{productFormMessage.outOfStock}</FormLabel>
+                    <FormDescription>{productFormMessage.productHidden}</FormDescription>
                   </div>
                 </FormItem>
               )}

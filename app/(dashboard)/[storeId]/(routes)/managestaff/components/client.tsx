@@ -15,6 +15,8 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import Downloadfile from "@/components/file/downloadfilepage";
 import { useState } from "react";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { getManagestaffClient } from "@/translate/translate-dashboard";
 
 interface SettingUserClientProps {
   data: ManageStaffsColumn[];
@@ -26,6 +28,11 @@ const SettingUserClient: React.FC<SettingUserClientProps> = ({ data }) => {
   const [open, setOpen] = useState(false);
   const isRole = role === UserRole.ADMIN;
   const showAPIRole = isRole;
+  //language
+  const user = useCurrentUser();
+  const languageToUse = user?.language || "vi";
+  const manageStaffClientMessage = getManagestaffClient(languageToUse)
+
   const onSentVerifyAll = async () => {
     try {
       // Make the POST request
@@ -34,9 +41,9 @@ const SettingUserClient: React.FC<SettingUserClientProps> = ({ data }) => {
       const sentEmails = response.data;
       // Display a success toast
       if (sentEmails.length === 0) {
-        return toast.error("Đã gửi tất cả cho người dùng!");
+        return toast.error(manageStaffClientMessage.sentAllToUser);
       } else {
-        toast.success(`Verification emails sent to: ${sentEmails.join(", ")}`);
+        toast.success(`${manageStaffClientMessage.verificationEmailsSentTo}: ${sentEmails.join(", ")}`);
       }
     } catch (error: unknown) {
       if (
@@ -52,7 +59,7 @@ const SettingUserClient: React.FC<SettingUserClientProps> = ({ data }) => {
         );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
-        toast.error("Failed to send verification emails.");
+        toast.error(manageStaffClientMessage.somethingWentWrong);
       }
     }
   };
@@ -61,17 +68,17 @@ const SettingUserClient: React.FC<SettingUserClientProps> = ({ data }) => {
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Nhân viên (${data.length})`}
-          description="Quản lý nhân viên"
+          title={`${manageStaffClientMessage.staff} (${data.length})`}
+          description={manageStaffClientMessage.manageStaff}
         />
         <div className="flex space-x-3">
-          <Downloadfile data={data} filename="managestaff" />
+          <Downloadfile data={data} filename="managestaff" languageToUse={languageToUse}/>
           <Button
             onClick={onSentVerifyAll}
             disabled={data.every((item) => item.sentVeirifi)}
           >
             <ReplyAll className="mr-2 h-4 w-4" />
-            Sent All
+            {manageStaffClientMessage.sentAll}
           </Button>
         </div>
       </div>
@@ -84,8 +91,9 @@ const SettingUserClient: React.FC<SettingUserClientProps> = ({ data }) => {
         onDelete={() => {}}
         setOpen={setOpen}
         open={open}
+        languageToUse={languageToUse}
       />
-      {showAPIRole && <Heading title="Api" description="API calls for Staff" />}
+      {showAPIRole && <Heading title={manageStaffClientMessage.api} description={manageStaffClientMessage.apiCallsForStaff} />}
       <Separator />
       <ApiList entityIdName="managestaffId" entityName="managestaff" />
     </>

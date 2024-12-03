@@ -9,6 +9,17 @@ import FormSuccess from "@/components/form-success";
 import FormError from "@/components/form-error";
 import { useRouter } from "next/navigation";
 import { appleDeviceLookup, samsungDeviceLookup } from "../../export-device";
+import {
+  getToastError,
+  translateDevice,
+  translateDeviceLimitChanged,
+  translateDeviceLimitError,
+  translateDeviceLimitInputPrompt,
+  translateDeviceLimitSet,
+  translateLoading,
+  translateSave,
+} from "@/translate/translate-client";
+import toast from "react-hot-toast";
 
 interface DeviceInfo {
   type: string;
@@ -64,9 +75,13 @@ interface DeviceInfoData {
 
 interface FormInfoDeviceProps {
   findDevice: DeviceInfoData[];
+  languageToUse: string;
 }
 
-const FormInfoDevice: React.FC<FormInfoDeviceProps> = ({ findDevice }) => {
+const FormInfoDevice: React.FC<FormInfoDeviceProps> = ({
+  findDevice,
+  languageToUse,
+}) => {
   const router = useRouter();
   const [uaInfo, setUaInfo] = useState<UAInfo | null>(null);
   const [getUa, setUa] = useState("");
@@ -75,6 +90,20 @@ const FormInfoDevice: React.FC<FormInfoDeviceProps> = ({ findDevice }) => {
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
+
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const deviceLimitChangedMessage = translateDeviceLimitChanged(
+    languageToUse,
+    inputValue
+  );
+  const deviceLimitErrorMessgae = translateDeviceLimitError(languageToUse);
+  const saveMessage = translateSave(languageToUse);
+  const deviceLimitInputPromptMessage =
+    translateDeviceLimitInputPrompt(languageToUse);
+  const deviceLimitSetMessage = translateDeviceLimitSet(languageToUse);
+  const deviceMessage = translateDevice(languageToUse);
+  const loadingMessage = translateLoading(languageToUse);
 
   //Thông tin thiêt bị
   useEffect(() => {
@@ -144,7 +173,7 @@ const FormInfoDevice: React.FC<FormInfoDeviceProps> = ({ findDevice }) => {
           version: browserInfo.version || "unknown",
         };
       } catch (error) {
-        console.error("Error parsing browser info:", error);
+        toast.error(toastErrorMessage);
         uaData.browser = { name: "unknown", version: "unknown" };
       }
 
@@ -154,7 +183,7 @@ const FormInfoDevice: React.FC<FormInfoDeviceProps> = ({ findDevice }) => {
           architecture: cpuInfo.architecture || "unknown",
         };
       } catch (error) {
-        console.error("Error parsing CPU info:", error);
+        toast.error(toastErrorMessage);
         uaData.cpu = { architecture: "unknown" };
       }
 
@@ -165,13 +194,13 @@ const FormInfoDevice: React.FC<FormInfoDeviceProps> = ({ findDevice }) => {
           version: engineInfo.version || "unknown",
         };
       } catch (error) {
-        console.error("Error parsing engine info:", error);
+        toast.error(toastErrorMessage);
         uaData.engine = { name: "unknown", version: "unknown" };
       }
 
       setUaInfo(uaData);
     } catch (error) {
-      console.error("Error in useEffect:", error);
+      toast.error(toastErrorMessage);
     }
   }, []);
 
@@ -206,9 +235,7 @@ const FormInfoDevice: React.FC<FormInfoDeviceProps> = ({ findDevice }) => {
         .then((response) => {
           setLoading(false);
           router.refresh();
-          setSuccessMessage(
-            `Bạn đã thay đổi giới hạn thành ${inputValue} thiết bị.`
-          );
+          setSuccessMessage(deviceLimitChangedMessage);
         })
         .catch((error) => {
           if (
@@ -226,16 +253,16 @@ const FormInfoDevice: React.FC<FormInfoDeviceProps> = ({ findDevice }) => {
             );
           } else {
             setLoading(false);
-            setErrorMessage("Some thing went wrong!");
+            setErrorMessage(toastErrorMessage);
           }
         });
     } else {
-      setErrorMessage("bạn chỉ có thể nhập 1 đến 5 thiết bị");
+      setErrorMessage(deviceLimitErrorMessgae);
       setLoading(false);
     }
   };
   // TODO
-  if (!uaInfo) return <div>Loading...</div>;
+  if (!uaInfo) return <div>{loadingMessage}</div>;
 
   return (
     <div>
@@ -244,7 +271,7 @@ const FormInfoDevice: React.FC<FormInfoDeviceProps> = ({ findDevice }) => {
         min="1"
         max="5"
         pattern="^[1-9]$|^5$"
-        placeholder="Nhập giới hạn 1-5 thiết bị..."
+        placeholder={deviceLimitInputPromptMessage}
         onChange={handleInputChange}
         disabled={loading}
         value={
@@ -256,10 +283,10 @@ const FormInfoDevice: React.FC<FormInfoDeviceProps> = ({ findDevice }) => {
         }
       />
       <Button className="my-3" disabled={loading} onClick={handleButtonClick}>
-        Lưu
+        {saveMessage}
       </Button>
       <div className="mb-3 text-sm text-gray-400">
-        Bạn đã đặt giới hạn cho{" "}
+        {deviceLimitSetMessage}
         <span
           className={
             findDevice.length === limitDevice
@@ -269,8 +296,11 @@ const FormInfoDevice: React.FC<FormInfoDeviceProps> = ({ findDevice }) => {
         >
           {`${findDevice.length}`}
         </span>
-        /<span className="text-sky-500 font-semibold">{`${limitDevice || 0}`}</span>{" "}
-        thiết bị.
+        /
+        <span className="text-sky-500 font-semibold">{`${
+          limitDevice || 0
+        }`}</span>{" "}
+        {deviceMessage}.
       </div>
 
       {successMessage && <FormSuccess message={successMessage} />}

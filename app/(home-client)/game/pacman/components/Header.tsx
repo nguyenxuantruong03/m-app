@@ -7,36 +7,59 @@ import { GAME_STATUS } from "@/types/type";
 import axios from "axios";
 import { useParams } from "next/navigation";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { toast } from "react-hot-toast";
+import { getToastError } from "@/translate/translate-client";
 
 const Header = () => {
-  const param = useParams()
-  const user = useCurrentUser()
+  const param = useParams();
+  const user = useCurrentUser();
   const { points, foodAmount, gameStatus } = useGameContext();
   const [timeElapsed, setTimeElapsed] = React.useState(0);
   const [totalCoins, setTotalCoins] = useState<number>(0);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+  const toastErrorMessage = getToastError(languageToUse);
+
   useEffect(() => {
     const audio = new Audio("/images/game-over.mp3");
-   // Check for game over and calculate totalCoins when the game is over
-   if (gameStatus === GAME_STATUS.LOST) {
-     // Calculate the newTotalCoins when the game is over
-     const newTotalCoins = totalCoins + Math.floor(points / 15);
- 
-     // Save the new totalCoins to the database
-     updateTotalCoinsAndSave(newTotalCoins);
-     audio.play();
-   }
- }, [points,gameStatus]);
- const updateTotalCoinsAndSave = async (newTotalCoins: number) => {
-   try {
-     // Save the new totalCoins to the database
-     await axios.post(`/api/${param.storeId}/wheelSpin`, {userId: user?.id, coin: newTotalCoins });
- 
-     // Update the state with the new totalCoins
-     setTotalCoins(newTotalCoins);
-   } catch (error) {
-     console.error("Error saving totalCoins:", error);
-   }
- };
+    // Check for game over and calculate totalCoins when the game is over
+    if (gameStatus === GAME_STATUS.LOST) {
+      // Calculate the newTotalCoins when the game is over
+      const newTotalCoins = totalCoins + Math.floor(points / 15);
+
+      // Save the new totalCoins to the database
+      updateTotalCoinsAndSave(newTotalCoins);
+      audio.play();
+    }
+  }, [points, gameStatus]);
+
+  const updateTotalCoinsAndSave = async (newTotalCoins: number) => {
+    try {
+      // Save the new totalCoins to the database
+      await axios.post(`/api/${param.storeId}/wheelSpin`, {
+        userId: user?.id,
+        coin: newTotalCoins,
+      });
+
+      // Update the state with the new totalCoins
+      setTotalCoins(newTotalCoins);
+    } catch (error) {
+      toast.error(toastErrorMessage);
+    }
+  };
   React.useEffect(() => {
     document.addEventListener("restart-game", gameRestarted);
     return () => document.removeEventListener("restart-game", gameRestarted);

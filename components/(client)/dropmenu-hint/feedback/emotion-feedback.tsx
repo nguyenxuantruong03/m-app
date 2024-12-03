@@ -1,4 +1,12 @@
 import { Hint } from "@/components/ui/hint";
+import {
+  translateBadNotIcon,
+  translateGood,
+  translatePoor,
+  translateSelectEmotion,
+  translateTemporary,
+  translateTooBad,
+} from "@/translate/translate-client";
 import { Smile, Meh, Frown, Annoyed, Angry } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
 
@@ -7,6 +15,7 @@ interface EmotionFeedBackProps {
   indexEmotion: number | null;
   setErrorEmotion: Dispatch<SetStateAction<boolean>>;
   errorEmotion: boolean;
+  languageToUse: string;
 }
 
 const EmotionFeedBack = ({
@@ -14,7 +23,16 @@ const EmotionFeedBack = ({
   indexEmotion,
   setErrorEmotion,
   errorEmotion,
+  languageToUse,
 }: EmotionFeedBackProps) => {
+  //language
+  const goodMessage = translateGood(languageToUse);
+  const temporaryMessage = translateTemporary(languageToUse);
+  const badNotIconMessage = translateBadNotIcon(languageToUse);
+  const poorMessage = translatePoor(languageToUse);
+  const tooBadMessage = translateTooBad(languageToUse);
+  const selectEmotionMessage = translateSelectEmotion(languageToUse);
+
   const handleClick = (emotionIndex: number) => {
     if (indexEmotion === emotionIndex) {
       // If the same emotion is clicked, deselect it (set indexEmotion to null)
@@ -30,7 +48,7 @@ const EmotionFeedBack = ({
   return (
     <div className="space-y-2">
       <div className="flex items-center space-x-2 justify-center">
-        <Hint label="Tốt">
+        <Hint label={goodMessage}>
           <Smile
             onClick={() => handleClick(1)}
             className={`w-14 h-14 stroke-current  ${
@@ -39,7 +57,7 @@ const EmotionFeedBack = ({
             strokeWidth="0.75"
           />
         </Hint>
-        <Hint label="Tạm">
+        <Hint label={temporaryMessage}>
           <Meh
             onClick={() => handleClick(2)}
             className={`w-14 h-14 stroke-current  ${
@@ -48,7 +66,7 @@ const EmotionFeedBack = ({
             strokeWidth="0.75"
           />
         </Hint>
-        <Hint label="Tệ">
+        <Hint label={badNotIconMessage}>
           <Frown
             onClick={() => handleClick(3)}
             className={`w-14 h-14 stroke-current  ${
@@ -57,7 +75,7 @@ const EmotionFeedBack = ({
             strokeWidth="0.75"
           />
         </Hint>
-        <Hint label="Phục vụ kém">
+        <Hint label={poorMessage}>
           <Annoyed
             onClick={() => handleClick(4)}
             className={`w-14 h-14 stroke-current  ${
@@ -66,7 +84,7 @@ const EmotionFeedBack = ({
             strokeWidth="0.75"
           />
         </Hint>
-        <Hint label="Quá tệ">
+        <Hint label={tooBadMessage}>
           <Angry
             onClick={() => handleClick(5)}
             className={`w-14 h-14 stroke-current  ${
@@ -77,7 +95,7 @@ const EmotionFeedBack = ({
         </Hint>
       </div>
       {errorEmotion && (
-        <p className="text-red-500 text-xs">Please select an emotion</p>
+        <p className="text-red-500 text-xs">{selectEmotionMessage}</p>
       )}
     </div>
   );

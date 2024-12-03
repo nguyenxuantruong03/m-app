@@ -29,19 +29,55 @@ import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
 import { CartItemType, FavoriteProduct, ProductDetail } from "@/types/type";
 import axios from "axios";
 import cuid from "cuid";
+import {
+  getToastError,
+  translateCannotRemoveSavedProduct,
+  translateCannotSaveProduct,
+  translateInsufficientStock,
+  translateProductQuantityUpdated,
+  translateProductAddedToCart,
+  getOutOfStockMessage,
+  translateSize,
+  translateColor,
+  translateAdded,
+  translateAddNew,
+  translateDecrease,
+} from "@/translate/translate-client";
 
 interface LikeItemProps {
   data: FavoriteUnion;
   loading: boolean;
   setLoading: Dispatch<SetStateAction<boolean>>;
+  languageToUse: string;
 }
 
-const LikeItem: React.FC<LikeItemProps> = ({ data, loading, setLoading }) => {
+const LikeItem: React.FC<LikeItemProps> = ({
+  data,
+  loading,
+  setLoading,
+  languageToUse,
+}) => {
   const favorite = useFavorite();
   const user = useCurrentUser();
   const router = useRouter();
   const cartdb = useCartdb();
   const [alertGuestModal, setAlertGuestModal] = useState(false);
+
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const cannotRemoveSavedProductMessage =
+    translateCannotRemoveSavedProduct(languageToUse);
+  const cannotSaveProductMessage = translateCannotSaveProduct(languageToUse);
+  const insufficientStockMessage = translateInsufficientStock(languageToUse);
+  const productQuantityUpdatedMessage =
+    translateProductQuantityUpdated(languageToUse);
+  const productAddedToCart = translateProductAddedToCart(languageToUse);
+  const outOfStockMessage = getOutOfStockMessage(languageToUse);
+  const sizeMessage = translateSize(languageToUse);
+  const colorMessage = translateColor(languageToUse);
+  const addedMessage = translateAdded(languageToUse);
+  const addNewMessage = translateAddNew(languageToUse);
+  const decreaseMessage = translateDecrease(languageToUse);
 
   const debouncedHandleIconClick = debounce(
     async (
@@ -56,9 +92,8 @@ const LikeItem: React.FC<LikeItemProps> = ({ data, loading, setLoading }) => {
           item.id === id &&
           item.productName === productName &&
           (selectedSize
-                ? item.selectedSize === selectedSize
-                : item.selectedSize === data.product.productdetail.size1.value
-            ) &&
+            ? item.selectedSize === selectedSize
+            : item.selectedSize === data.product.productdetail.size1.value) &&
           (selectedColor
             ? item.selectedColor === selectedColor
             : item.selectedColor === data.product.productdetail.color1.value)
@@ -80,15 +115,15 @@ const LikeItem: React.FC<LikeItemProps> = ({ data, loading, setLoading }) => {
         try {
           setLoading(true);
           if (favoriteData && favoriteData.id) {
-            await favorite.removeItem(favoriteData.id, user?.id || "");
+            await favorite.removeItem(favoriteData.id, user?.id || "", languageToUse);
           } else {
-            await favorite.addItem(favoriteProduct);
+            await favorite.addItem(favoriteProduct, languageToUse);
           }
         } catch (error) {
           toast.error(
             favoriteData
-              ? `Không thể xóa lưu sản phẩm!`
-              : `Không thể lưu sản phẩm!`
+              ? cannotRemoveSavedProductMessage
+              : cannotSaveProductMessage
           );
         } finally {
           setLoading(false);
@@ -201,7 +236,7 @@ const LikeItem: React.FC<LikeItemProps> = ({ data, loading, setLoading }) => {
               matchingQuantity >= maxQuantity && maxQuantity > 0;
 
             if (compareQuantityExistingAndAvailable) {
-              throw new Error("Số lượng sản phẩm trong kho không đủ!");
+              toast.error(insufficientStockMessage);
             }
 
             const existingCartItem = cartdb.items.find(
@@ -217,7 +252,8 @@ const LikeItem: React.FC<LikeItemProps> = ({ data, loading, setLoading }) => {
                 existingCartItem.id,
                 existingCartItem.quantity + 1,
                 null,
-                user?.id || ""
+                user?.id || "",
+                languageToUse
               );
             } else {
               cartdb.addItem(
@@ -231,11 +267,11 @@ const LikeItem: React.FC<LikeItemProps> = ({ data, loading, setLoading }) => {
             }
 
             return existingCartItem
-              ? "Sản phẩm đã được cập nhật số lượng trong giỏ hàng."
-              : "Sản phẩm đã thêm vào giỏ hàng.";
+              ? productQuantityUpdatedMessage
+              : productAddedToCart;
           },
           error: (error) => {
-            return error.message || "Failed to add product to cart!";
+            return error.message || toastErrorMessage;
           },
         }
       );
@@ -287,7 +323,7 @@ const LikeItem: React.FC<LikeItemProps> = ({ data, loading, setLoading }) => {
       // Use the Link component for navigation
       router.push(href);
     } else {
-      console.error("Invalid route:", route);
+      toast.error(toastErrorMessage);
     }
   };
 
@@ -301,6 +337,7 @@ const LikeItem: React.FC<LikeItemProps> = ({ data, loading, setLoading }) => {
       <AlertGuestModal
         isOpen={alertGuestModal}
         onClose={() => setAlertGuestModal(false)}
+        languageToUse={languageToUse}
       />
       <div className="relative" onClick={handleClick}>
         <div className="bg-white group cursor-pointer rounded-xl border p-3 space-y-4">
@@ -313,7 +350,7 @@ const LikeItem: React.FC<LikeItemProps> = ({ data, loading, setLoading }) => {
               >
                 <div className="fixed z-[9999] top-[3px] right-[-95px] bg-red-500 text-white py-[15px] w-[350px] text-center transform rotate-[45deg] font-bold text-lg tracking-[2px] overflow-hidden">
                   <span className="inline-block duration-500 ease-in-out transform transition-transform w-full absolute left-[13%] top-1/2 translate-y-[-50%]">
-                    Hết hàng
+                    {outOfStockMessage}
                   </span>
                 </div>
               </div>
@@ -337,7 +374,7 @@ const LikeItem: React.FC<LikeItemProps> = ({ data, loading, setLoading }) => {
                 {data.product.heading}
               </p>
               <p>
-                <span className="text-sm text-gray-600">Size:</span>{" "}
+                <span className="text-sm text-gray-600">{sizeMessage}</span>{" "}
                 <span className="font-semibold ml-1">{data.selectedSize}</span>
               </p>
             </div>
@@ -347,7 +384,7 @@ const LikeItem: React.FC<LikeItemProps> = ({ data, loading, setLoading }) => {
               </p>
 
               <p className="flex items-center">
-                <span className="text-sm text-gray-600">Màu:</span>{" "}
+                <span className="text-sm text-gray-600">{colorMessage}</span>{" "}
                 <div
                   className="h-6 w-6 rounded-full ml-1"
                   style={{ backgroundColor: data.selectedColor }}
@@ -409,8 +446,8 @@ const LikeItem: React.FC<LikeItemProps> = ({ data, loading, setLoading }) => {
                         : item.selectedColor ===
                           data.product.productdetail.color1.value)
                   )
-                    ? "Đã lưu"
-                    : "Thả mới"
+                    ? addedMessage
+                    : addNewMessage
                 }
               />
               <IconButton
@@ -440,17 +477,17 @@ const LikeItem: React.FC<LikeItemProps> = ({ data, loading, setLoading }) => {
                       item.size === data.selectedSize &&
                       item.color === data.selectedColor
                   )
-                    ? "Đã thêm"
-                    : "Thêm mới"
+                    ? addedMessage
+                    : addNewMessage
                 }
               />
             </div>
           </div>
-          <CommentStar data={data.product.id} comment={data.product.comment}/>
+          <CommentStar data={data.product.id} comment={data.product.comment} languageToUse={languageToUse}/>
         </div>
         <div className="home-product-item__favorite">
           <span className="ml-1">
-            Giảm {getPriceMatchColorandSize().percentpromotion}%
+            {decreaseMessage} {getPriceMatchColorandSize().percentpromotion}%
           </span>
         </div>
       </div>

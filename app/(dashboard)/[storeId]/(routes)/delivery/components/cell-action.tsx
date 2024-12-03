@@ -17,6 +17,7 @@ import axios from "axios";
 
 import { OrderColumn } from "./columns";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { getDelivery } from "@/translate/translate-dashboard";
 
 interface CellActionProps {
   data: OrderColumn;
@@ -28,6 +29,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const user = useCurrentUser();
   const [loading, setLoading] = useState(false);
 
+  //language
+  const deliveryMessage = getDelivery(data.language)
+
   const comfirmOrderDelivery = async () => {
     try {
       setLoading(true);
@@ -38,7 +42,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Nhận đơn khách hàng:
+              {deliveryMessage.receiveOrder}:
               <span className="font-bold">
                 {data.email || data.emailcurrent} -{" "}
                 <span className="font-bold">
@@ -50,7 +54,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating stutus...",
+          loading: deliveryMessage.updatingStatus,
           success: (message) => {
             router.refresh();
             return message;
@@ -67,13 +71,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Đã xảy ra lỗi khi nhận đơn.";
+              return deliveryMessage.somethingWentWrong;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi nhận đơn.");
+      toast.error(deliveryMessage.somethingWentWrong);
     } finally {
       setLoading(false);
     }
@@ -92,7 +96,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              Nhận đơn khách hàng trả lại:
+              {deliveryMessage.receiveReturnOrder}:
               <span className="font-bold">
                 {data.email || data.emailcurrent} -{" "}
                 <span className="font-bold">
@@ -104,7 +108,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           );
         }),
         {
-          loading: "Updating stutus...",
+          loading: deliveryMessage.updatingStatus,
           success: (message) => {
             router.refresh();
             return message;
@@ -121,13 +125,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Đã xảy ra lỗi khi nhận đơn.";
+              return deliveryMessage.somethingWentWrong;
             }
           },
         }
       );
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi nhận đơn.");
+      toast.error(deliveryMessage.somethingWentWrong);
     } finally {
       setLoading(false);
     }
@@ -138,18 +142,18 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
+            <span className="sr-only">{deliveryMessage.openMenu}</span>
             <MoreHorizontal className="w-4 h-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           {user?.role === "ADMIN" || user?.role === "SHIPPER" ? (
             <>
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuLabel>{deliveryMessage.actions}</DropdownMenuLabel>
               {data.returnProduct ? (
                 <DropdownMenuItem disabled={loading} onClick={receiveReturn}>
                   <Pin className="h-4 w-4 mr-2" />
-                  Nhận hàng trả
+                  {deliveryMessage.receiveReturnedGoods}
                 </DropdownMenuItem>
               ) : (
                 <DropdownMenuItem
@@ -157,13 +161,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                   onClick={comfirmOrderDelivery}
                 >
                   <Pin className="h-4 w-4 mr-2" />
-                  Nhận đơn
+                  {deliveryMessage.receiveOrderPlaceholder}
                 </DropdownMenuItem>
               )}
             </>
           ) : (
             <>
-              <DropdownMenuLabel>Trống</DropdownMenuLabel>
+              <DropdownMenuLabel>{deliveryMessage.empty}</DropdownMenuLabel>
             </>
           )}
         </DropdownMenuContent>

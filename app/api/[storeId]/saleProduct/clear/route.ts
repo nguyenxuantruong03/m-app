@@ -1,28 +1,32 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
+import { translateProductSalePatch } from "@/translate/translate-api";
 import { UserRole } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function DELETE(req: Request) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const productSalatePatchMessage = translateProductSalePatch(LanguageToUse)
   try {
-    const userId = await currentUser();
     const body = await req.json();
 
     const { id } = body;
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: productSalatePatchMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
     if (
-      userId.role !== UserRole.ADMIN &&
-      userId.role !== UserRole.STAFF &&
-      userId.role !== UserRole.MARKETING
+      user.role !== UserRole.ADMIN &&
+      user.role !== UserRole.STAFF &&
+      user.role !== UserRole.MARKETING
     ) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền cập nhật product!" }),
+        JSON.stringify({ error: productSalatePatchMessage.permissionDenied }),
         { status: 403 }
       );
     }
@@ -42,7 +46,7 @@ export async function DELETE(req: Request) {
   } catch (error) {
     console.error(error); // Log the error for debugging
     return new NextResponse(
-      JSON.stringify({ error: "Internal error patch product sale." }),
+      JSON.stringify({ error: productSalatePatchMessage.internalError }),
       { status: 500 }
     );
   }

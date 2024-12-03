@@ -15,6 +15,7 @@ interface WheelProps {
   buttonText?: string;
   isOnlyOnce?: boolean;
   rotation?: number;
+  languageToUse: string
 }
 
 const WheelComponent: React.FC<WheelProps> = ({
@@ -27,6 +28,7 @@ const WheelComponent: React.FC<WheelProps> = ({
   buttonText,
   isOnlyOnce,
   rotation,
+  languageToUse
 }) => {
   const [openWarningSpin, setOpenWarningSpin] = useState(false);
 
@@ -277,6 +279,7 @@ const WheelComponent: React.FC<WheelProps> = ({
       <SeeWarningSpinModal
         isOpen={openWarningSpin}
         onClose={() => setOpenWarningSpin(false)}
+        languageToUse={languageToUse}
       />
      <canvas
       id="canvas"

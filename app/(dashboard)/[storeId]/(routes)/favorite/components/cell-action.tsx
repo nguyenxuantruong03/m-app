@@ -17,6 +17,7 @@ import axios from "axios";
 
 import { FavoriteColumn } from "./columns";
 import { AlertModal } from "@/components/modals/alert-modal";
+import { getFavoriteAction } from "@/translate/translate-dashboard";
 
 interface CellActionProps {
   data: FavoriteColumn;
@@ -29,9 +30,12 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
+  //language
+  const favoriteActionMessage = getFavoriteAction(data.language)
+
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id);
-    toast.success("Favorite Id copied to the clipboard.");
+    toast.success(favoriteActionMessage.favoriteIdCopied);
   };
 
   const onDelete = async () => {
@@ -39,7 +43,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       setLoading(true);
       await axios.delete(`/api/${params.storeId}/favorite/${data.id}`);
       router.refresh();
-      toast.success("Favorite deleted.");
+      toast.success(favoriteActionMessage.favoriteDeleted);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -51,7 +55,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(
-          "Make sure you removed all favorite using this favorite first."
+          favoriteActionMessage.somethingWentWrong
         );
       }
     } finally {
@@ -67,19 +71,20 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         onClose={() => setOpen(false)}
         onConfirm={onDelete}
         loading={loading}
+        languageToUse={data.language}
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
+            <span className="sr-only">{favoriteActionMessage.openMenu}</span>
             <MoreHorizontal className="w-4 h-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuLabel>{favoriteActionMessage.actions}</DropdownMenuLabel>
           <DropdownMenuItem onClick={() => onCopy(data.name)}>
             <Copy className="h-4 w-4 mr-2" />
-            CopyId
+            {favoriteActionMessage.copyId}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() =>
@@ -87,11 +92,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             }
           >
             <Edit className="h-4 w-4 mr-2" />
-            Update
+            {favoriteActionMessage.update}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>
             <Trash className="h-4 w-4 mr-2" />
-            Delete
+            {favoriteActionMessage.delete}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

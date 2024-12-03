@@ -1,55 +1,114 @@
-import { currentUser } from "@/lib/auth";
+"use client";
 import InfoSocial from "@/app/(setting-user)/components/info-social";
 import InfoUser from "@/app/(setting-user)/components/info-user";
 import prismadb from "@/lib/prismadb";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { useEffect, useState } from "react";
+import {
+  translateBasicInfo,
+  translateManagePersonalInfo,
+  translateManageProfile,
+  translateManageSocialLinks,
+  translatePersonalInfo,
+  translateSocialInfo,
+} from "@/translate/translate-client";
+import { notFound } from "next/navigation";
 
 interface SettingProfileProps {
   isCustomWarehouse?: boolean;
 }
 
-const SettingProfilePage = async ({isCustomWarehouse = false}:SettingProfileProps) => {
-  const userId = await currentUser()
-  const user = await prismadb.user.findUnique({
-    where: {
-      id: userId?.id,
-    },
-    include: {
-      socialLink: true,
-      imageCredential: {
-        orderBy: {
-            createdAt: 'desc'
-        }
+const SettingProfilePage = ({
+  isCustomWarehouse = false,
+}: SettingProfileProps) => {
+  const userId = useCurrentUser();
+  const [user, setUser] = useState<any>();
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
     }
-    },
-  });
-  const favorite = await prismadb.favorite.findMany()
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+  const personalInfoMessage = translatePersonalInfo(languageToUse);
+  const managePersonalInfoMessage = translateManagePersonalInfo(languageToUse);
+  const basicInfoMessage = translateBasicInfo(languageToUse);
+  const manageProfileMessage = translateManageProfile(languageToUse);
+  const socialInfoMessage = translateSocialInfo(languageToUse);
+  const manageSocialLinkMessage = translateManageSocialLinks(languageToUse);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const user = await prismadb.user.findUnique({
+        where: {
+          id: userId?.id,
+        },
+        include: {
+          socialLink: true,
+          imageCredential: {
+            orderBy: {
+              createdAt: "desc",
+            },
+          },
+        },
+      });
+      if (!user) {
+        notFound();
+      }
+      setUser(user);
+    };
+    fetchData;
+  }, []);
+
   return (
     <>
-      <div className={`${ isCustomWarehouse ? "w-full h-full md:pl-5 lg:pl-12 my-8" : "w-full h-full ml-5 lg:pl-12 my-8"}`}>
+      <div
+        className={`${
+          isCustomWarehouse
+            ? "w-full h-full md:pl-5 lg:pl-12 my-8"
+            : "w-full h-full ml-5 lg:pl-12 my-8"
+        }`}
+      >
         <div className="font-semibold text-lg md:text-2xl text-salte-900 dark:text-slate-200">
-          Thông tin cá nhân
+          {personalInfoMessage}
         </div>
         <div className="text-sm text-gray-500 dark:text-gray-400 py-2">
-          Quản lý thông tin cá nhân của bạn.
+          {managePersonalInfoMessage}
         </div>
         <div className="font-semibold text-lg md:text-xl mt-5 text-salte-900 dark:text-slate-200">
-          Thông tin cơ bản
+          {basicInfoMessage}
         </div>
         <div className="text-sm text-gray-500 dark:text-gray-400 py-2 ">
-          Quản lý tên hiển thị, tên người dùng, bio và avatar của bạn.
+          {manageProfileMessage}
         </div>
-        <InfoUser isCustomWarehouse={isCustomWarehouse} user={user! ?? undefined} imageCredential={user?.imageCredential[0]?.url || ""} favorite={favorite}/>
+        <InfoUser
+          isCustomWarehouse={isCustomWarehouse}
+          user={user! ?? undefined}
+          imageCredential={user?.imageCredential[0]?.url || ""}
+          languageToUse={languageToUse}
+        />
 
         <div className="font-semibold text-lg md:text-xl mt-5 text-salte-900 dark:text-slate-200">
-          Thông tin mạng xã hội
+          {socialInfoMessage}
         </div>
         <div className="text-sm text-gray-500 dark:text-gray-400 py-2">
-          Quản lý liên kết tới các trang mạng xã hội của bạn.
+          {manageSocialLinkMessage}
         </div>
-        <InfoSocial existingUser={user! ?? undefined} userSocial={user?.socialLink! ?? undefined}/>
+        <InfoSocial
+          existingUser={user! ?? undefined}
+          userSocial={user?.socialLink! ?? undefined}
+          languageToUse={languageToUse}
+        />
       </div>
-      
     </>
   );
-}
+};
 export default SettingProfilePage;

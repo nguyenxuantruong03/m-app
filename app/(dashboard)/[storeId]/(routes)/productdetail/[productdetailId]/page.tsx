@@ -1,6 +1,6 @@
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
-import { currentRole } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 import { RoleGate } from "@/components/auth/role-gate";
 import { ProductDetailForm } from "./components/productdetailform";
 
@@ -9,6 +9,7 @@ const ProductDetailPage = async ({
 }: {
   params: { storeId: string; productdetailId: string };
 }) => {
+  const user = await currentUser()
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN || role === UserRole.STAFF;
   const showProductDetailRole = isRole;
@@ -45,6 +46,7 @@ const ProductDetailPage = async ({
               categories={categories}
               sizes={sizes}
               colors={colors}
+              language={user?.language || "vi"}
             />
           )}
         </div>

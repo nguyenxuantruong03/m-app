@@ -19,6 +19,7 @@ export type BillboardColumn = {
   imagebillboard: string[];
   imagebillboardpatch: { url: string }[];
   createdAt: Date;
+  language: string;
 };
 
 export const columns: ColumnDef<BillboardColumn>[] = [
@@ -64,6 +65,7 @@ export const columns: ColumnDef<BillboardColumn>[] = [
         description={row.original.description}
         imagebillboard={row.original.imagebillboardpatch}
         field= "label"
+        language= {row.original.language}
       />
     ),
   },
@@ -87,6 +89,7 @@ export const columns: ColumnDef<BillboardColumn>[] = [
         description={row.original.description}
         imagebillboard={row.original.imagebillboardpatch}
         field= "description"
+        language= {row.original.language}
       />
     ),
   },
@@ -116,7 +119,7 @@ export const columns: ColumnDef<BillboardColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Thời gian tạo
+          CreatedAt
           <Clock12 className="ml-2 h-4 w-4" />
         </SpanColumn>
       );

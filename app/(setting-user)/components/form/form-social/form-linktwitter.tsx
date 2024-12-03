@@ -26,13 +26,25 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import FormSuccess from "@/components/form-success";
 import FormError from "@/components/form-error";
 import { useRouter } from "next/navigation";
+import {
+  getToastError,
+  translateCancel,
+  translateChangeTwitterLink,
+  translateSave,
+  translateTwitterPath,
+} from "@/translate/translate-client";
 
 interface FormLinkTwitterProps {
   classNames?: string;
   setOpen?: Dispatch<SetStateAction<boolean>>;
+  languageToUse: string;
 }
 
-const FormLinkTwitter = ({ classNames, setOpen }: FormLinkTwitterProps) => {
+const FormLinkTwitter = ({
+  classNames,
+  setOpen,
+  languageToUse,
+}: FormLinkTwitterProps) => {
   const user = useCurrentUser();
   const router = useRouter();
   const { update } = useSession();
@@ -49,6 +61,13 @@ const FormLinkTwitter = ({ classNames, setOpen }: FormLinkTwitterProps) => {
     }
   }, []);
 
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const cancelMessage = translateCancel(languageToUse);
+  const saveMessage = translateSave(languageToUse);
+  const changeTwitterLinkMessage = translateChangeTwitterLink(languageToUse);
+  const twitterPathMessage = translateTwitterPath(languageToUse);
+
   const form = useForm<z.infer<typeof SettingSchema>>({
     resolver: zodResolver(SettingSchema),
     defaultValues: {
@@ -59,15 +78,13 @@ const FormLinkTwitter = ({ classNames, setOpen }: FormLinkTwitterProps) => {
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
     // Kiểm tra giá trị linktwitter nhập vào và user?.linktwitter
     if (values.linktwitter === user?.linktwitter) {
-      setError(
-        "Hãy thay đổi link Twitter mới link Twitter trên đang được sử dụng."
-      );
+      setError(changeTwitterLinkMessage);
       return;
     }
     setSuccess("");
     setError("");
     startTransition(() => {
-      setting(values)
+      setting(values, languageToUse)
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -80,7 +97,7 @@ const FormLinkTwitter = ({ classNames, setOpen }: FormLinkTwitterProps) => {
           }
         })
         .catch(() => {
-          setError("Something went wrong");
+          setError(toastErrorMessage);
         });
     });
   };
@@ -96,7 +113,7 @@ const FormLinkTwitter = ({ classNames, setOpen }: FormLinkTwitterProps) => {
             name="linktwitter"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Link Twitter</FormLabel>
+                <FormLabel>{twitterPathMessage}</FormLabel>
                 <FormControl>
                   <Input
                     id="linktwitter-input"
@@ -129,7 +146,7 @@ const FormLinkTwitter = ({ classNames, setOpen }: FormLinkTwitterProps) => {
               onClick={() => setOpen?.(false)}
               disabled={isPending}
             >
-              Cancel
+              {cancelMessage}
             </Button>
           )}
           <Button
@@ -138,7 +155,7 @@ const FormLinkTwitter = ({ classNames, setOpen }: FormLinkTwitterProps) => {
             type="submit"
             disabled={isPending}
           >
-            Save
+            {saveMessage}
           </Button>
         </div>
       </form>

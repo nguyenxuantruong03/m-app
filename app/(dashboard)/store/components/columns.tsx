@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { CellAction } from "./cell-action"
 import { Checkbox } from "@/components/ui/checkbox";
 import SpanColumn from "@/components/span-column";
-import { Clock12, Package, Ruler } from "lucide-react";
+import { Clock12, Package } from "lucide-react";
 import FormatDate from "@/components/format-Date";
 
 // This type is used to define the shape of our data.
@@ -13,6 +13,7 @@ export type StoreColumn = {
   id: string
   name: string
   createdAt: Date
+  language: string;
 }
 
 export const columns: ColumnDef<StoreColumn>[] = [
@@ -58,7 +59,7 @@ export const columns: ColumnDef<StoreColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Thời gian tạo
+          CreatedAt
           <Clock12 className="ml-2 h-4 w-4" />
         </SpanColumn>
       );

@@ -1,26 +1,30 @@
 "use client";
 import "./listproduct.css";
 import { useState, useEffect } from "react";
-import {
-  getCategories,
-  getCategories1,
-  getCategories2,
-  getCategories3,
-  getCategories4,
-  getCategories5,
-  getCategories6,
-  getCategories7,
-  getCategories8,
-  getCategories9,
-  getCategories10,
-  getCategories11,
-} from "@/actions/client/categories/get-categories";
 import { notFound, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { Category } from "@prisma/client";
+import { getAllCategory } from "@/actions/client/categories/get-all-category";
+import { Category } from "@/types/type";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import {
+  translateElectricWire,
+  translatePipe,
+  translateGlue,
+  translateLightBulb,
+  translatePaint,
+  translatePin,
+  translateSocket,
+  translateFan,
+  translateCuttingStone,
+  translateLock,
+  translateBathroom,
+  translateCommonUse,
+} from "@/translate/translate-client";
 
 const Menu = () => {
+  const user = useCurrentUser();
+  const pathname = usePathname();
   const [categories, setCategories] = useState<Category[]>([]);
   const [categories1, setCategories1] = useState<Category[]>([]);
   const [categories2, setCategories2] = useState<Category[]>([]);
@@ -35,7 +39,33 @@ const Menu = () => {
   const [categories11, setCategories11] = useState<Category[]>([]);
   const [selectedTab, setSelectedTab] = useState("home");
   const [isSmallScreen, setIsSmallScreen] = useState(true);
-  const pathname = usePathname();
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+  const pinMessage = translatePin(languageToUse);
+  const fanMessage = translateFan(languageToUse);
+  const pipeMessage = translatePipe(languageToUse);
+  const electricWireMessage = translateElectricWire(languageToUse);
+  const cuttingStoneMessage = translateCuttingStone(languageToUse);
+  const lockMessage = translateLock(languageToUse);
+  const glueMessage = translateGlue(languageToUse);
+  const socketMessage = translateSocket(languageToUse);
+  const paintMessage = translatePaint(languageToUse);
+  const bathRoomMessage = translateBathroom(languageToUse);
+  const lighBulbMessage = translateLightBulb(languageToUse);
+  const commonMessage = translateCommonUse(languageToUse);
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -115,50 +145,44 @@ const Menu = () => {
     label: categories.name,
     active: pathname === `/category11/${categories.id}`,
   }));
+
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchCategories = async () => {
       try {
-        const data1 = await getCategories();
-        setCategories(data1);
+        // Gọi API để lấy danh sách categories
+        const category = await getAllCategory(languageToUse);
 
-        const data2 = await getCategories1();
-        setCategories1(data2);
+        // Tạo một object để lưu các categories theo categoryType
+        const categorized = category.reduce(
+          (acc: Record<string, any[]>, item: any) => {
+            if (!acc[item.categoryType]) {
+              acc[item.categoryType] = [];
+            }
+            acc[item.categoryType].push(item);
+            return acc;
+          },
+          {}
+        );
 
-        const data3 = await getCategories2();
-        setCategories2(data3);
-
-        const data4 = await getCategories3();
-        setCategories3(data4);
-
-        const data5 = await getCategories4();
-        setCategories4(data5);
-
-        const data6 = await getCategories5();
-        setCategories5(data6);
-
-        const data7 = await getCategories6();
-        setCategories6(data7);
-
-        const data8 = await getCategories7();
-        setCategories7(data8);
-
-        const data9 = await getCategories8();
-        setCategories8(data9);
-
-        const data10 = await getCategories9();
-        setCategories9(data10);
-
-        const data11 = await getCategories10();
-        setCategories10(data11);
-
-        const data12 = await getCategories11();
-        setCategories11(data12);
+        // Set các state tương ứng
+        setCategories(categorized["CATEGORY"] || []);
+        setCategories1(categorized["CATEGORY1"] || []);
+        setCategories2(categorized["CATEGORY2"] || []);
+        setCategories3(categorized["CATEGORY3"] || []);
+        setCategories4(categorized["CATEGORY4"] || []);
+        setCategories5(categorized["CATEGORY5"] || []);
+        setCategories6(categorized["CATEGORY6"] || []);
+        setCategories7(categorized["CATEGORY7"] || []);
+        setCategories8(categorized["CATEGORY8"] || []);
+        setCategories9(categorized["CATEGORY9"] || []);
+        setCategories10(categorized["CATEGORY10"] || []);
+        setCategories11(categorized["CATEGORY11"] || []);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching categories:", error);
       }
     };
 
-    fetchData();
+    fetchCategories();
   }, []);
 
   if (!isSmallScreen) {
@@ -256,40 +280,64 @@ const Menu = () => {
             />
             <div className="list">
               <label htmlFor="home" className="home">
-                <span className="text-base text-slate-900 dark:text-slate-200">Pin</span>
+                <span className="text-base text-slate-900 dark:text-slate-200">
+                  {pinMessage}
+                </span>
               </label>
               <label htmlFor="blog" className="blog">
-                <span className="text-base text-slate-900 dark:text-slate-200">Quạt</span>
+                <span className="text-base text-slate-900 dark:text-slate-200">
+                  {fanMessage}
+                </span>
               </label>
               <label htmlFor="help" className="help">
-                <span className="text-base text-slate-900 dark:text-slate-200">Ống</span>
+                <span className="text-base text-slate-900 dark:text-slate-200">
+                  {pipeMessage}
+                </span>
               </label>
               <label htmlFor="code" className="code">
-                <span className="text-base text-slate-900 dark:text-slate-200">Dây điện</span>
+                <span className="text-base text-slate-900 dark:text-slate-200">
+                  {electricWireMessage}
+                </span>
               </label>
               <label htmlFor="about" className="about">
-                <span className="text-base text-slate-900 dark:text-slate-200">Đá cắt</span>
+                <span className="text-base text-slate-900 dark:text-slate-200">
+                  {cuttingStoneMessage}
+                </span>
               </label>
               <label htmlFor="category" className="category">
-                <span className="text-base text-slate-900 dark:text-slate-200">Ổ khóa</span>
+                <span className="text-base text-slate-900 dark:text-slate-200">
+                  {lockMessage}
+                </span>
               </label>
               <label htmlFor="category1" className="category1">
-                <span className="text-base text-slate-900 dark:text-slate-200">Keo</span>
+                <span className="text-base text-slate-900 dark:text-slate-200">
+                  {glueMessage}
+                </span>
               </label>
               <label htmlFor="category2" className="category2">
-                <span className="text-base text-slate-900 dark:text-slate-200">Ổ cắm</span>
+                <span className="text-base text-slate-900 dark:text-slate-200">
+                  {socketMessage}
+                </span>
               </label>
               <label htmlFor="category3" className="category3">
-                <span className="text-base text-slate-900 dark:text-slate-200">Sơn</span>
+                <span className="text-base text-slate-900 dark:text-slate-200">
+                  {paintMessage}
+                </span>
               </label>
               <label htmlFor="category4" className="category4">
-                <span className="text-base text-slate-900 dark:text-slate-200">Nhà tắm</span>
+                <span className="text-base text-slate-900 dark:text-slate-200">
+                  {bathRoomMessage}
+                </span>
               </label>
               <label htmlFor="category5" className="category5">
-                <span className="text-base text-slate-900 dark:text-slate-200">Bóng đèn</span>
+                <span className="text-base text-slate-900 dark:text-slate-200">
+                  {lighBulbMessage}
+                </span>
               </label>
               <label htmlFor="category6" className="category6">
-                <span className="text-base text-slate-900 dark:text-slate-200">Thường dùng</span>
+                <span className="text-base text-slate-900 dark:text-slate-200">
+                  {commonMessage}
+                </span>
               </label>
               <div className="slider"></div>
             </div>

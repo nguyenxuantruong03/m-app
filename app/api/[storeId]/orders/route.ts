@@ -1,18 +1,22 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
+import { translateOrders } from "@/translate/translate-api";
 import { StatusOrder } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function PATCH(req: Request) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const orderMessage = translateOrders(LanguageToUse);
   try {
-    const userId = await currentUser();
     const body = await req.json();
 
     const { orderId } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: orderMessage.userIdNotFound }),
         { status: 403 }
       );
     }
@@ -23,29 +27,33 @@ export async function PATCH(req: Request) {
       },
       data: {
         status: StatusOrder.Soan_hang,
-        userIdStaff: userId?.id || "",
+        userIdStaff: user?.id || "",
       },
     });
 
     return NextResponse.json(order);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error patch order." }),
+      JSON.stringify({ error: orderMessage.internalError }),
       { status: 500 }
     );
   }
 }
 
 export async function POST(req: Request) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const orderMessage = translateOrders(LanguageToUse);
   try {
-    const userId = await currentUser();
+    const user = await currentUser();
     const body = await req.json();
 
     const { orderId } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: orderMessage.userIdNotFound }),
         { status: 403 }
       );
     }
@@ -56,14 +64,14 @@ export async function POST(req: Request) {
       },
       data: {
         status: StatusOrder.Cho_lay_hang,
-        userIdStaff: userId?.id || "",
+        userIdStaff: user?.id || "",
       },
     });
 
     return NextResponse.json(order);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error patch order." }),
+      JSON.stringify({ error: orderMessage.internalError }),
       { status: 500 }
     );
   }

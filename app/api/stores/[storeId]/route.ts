@@ -1,5 +1,9 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
+import {
+  translateStoreIdDelete,
+  translateStoreIdPatch,
+} from "@/translate/translate-api";
 import { UserRole } from "@prisma/client";
 import { NextResponse } from "next/server";
 
@@ -7,34 +11,43 @@ export async function PATCH(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
-  try {
-    const userId = await currentUser();
-    const body = await req.json();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const storePatchMessage = translateStoreIdPatch(LanguageToUse);
 
+  try {
+    const body = await req.json();
     const { name } = body;
-    
-    if (!userId) {
-      return new NextResponse(JSON.stringify({ error: "Unauthenticated" }), {
-        status: 403,
-      });
+
+    if (!user) {
+      return new NextResponse(
+        JSON.stringify({ error: storePatchMessage.userIdNotFound }),
+        {
+          status: 403,
+        }
+      );
     }
 
-    if (userId.role !== UserRole.ADMIN) {
+    if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền để sửa đổi cửa hàng!" }),
+        JSON.stringify({ error: storePatchMessage.permissionDenied }),
         { status: 405 }
       );
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: "Name is required" }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: storePatchMessage.nameRequired }),
+        {
+          status: 400,
+        }
+      );
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required" }),
+        JSON.stringify({ error: storePatchMessage.storeIdRequired }),
         { status: 400 }
       );
     }
@@ -49,8 +62,12 @@ export async function PATCH(
     });
     return NextResponse.json(store);
   } catch (error) {
-    console.log("[STORES_PATCH] ", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: storePatchMessage.internalErrorPatchStore }),
+      {
+        status: 500,
+      }
+    );
   }
 }
 
@@ -58,37 +75,42 @@ export async function DELETE(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const storeIdDeleteMessage = translateStoreIdDelete(LanguageToUse);
   try {
-    const userId = await currentUser();
-
-    if (!userId) {
-      return new NextResponse(JSON.stringify({ error: "Unauthenticated" }), {
-        status: 403,
-      });
+    if (!user) {
+      return new NextResponse(
+        JSON.stringify({ error: storeIdDeleteMessage.userIdNotFound }),
+        {
+          status: 403,
+        }
+      );
     }
 
-    if (userId.role !== UserRole.ADMIN) {
+    if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền để xóa cửa hàng!" }),
+        JSON.stringify({ error: storeIdDeleteMessage.permissionDenied }),
         { status: 405 }
       );
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required" }),
+        JSON.stringify({ error: storeIdDeleteMessage.storeIdRequired }),
         { status: 400 }
       );
     }
 
-     // Kiểm tra tổng số cửa hàng hiện tại
-     const totalStores = await prismadb.store.count();
-     if (totalStores <= 1) {
-       return new NextResponse(
-         JSON.stringify({ error: "Không thể xóa cửa hàng. Hệ thống cần ít nhất 1 cửa hàng." }),
-         { status: 400 }
-       );
-     }
+    // Kiểm tra tổng số cửa hàng hiện tại
+    const totalStores = await prismadb.store.count();
+    if (totalStores <= 1) {
+      return new NextResponse(
+        JSON.stringify({ error: storeIdDeleteMessage.cannotDeleteStore }),
+        { status: 400 }
+      );
+    }
 
     const store = await prismadb.store.delete({
       where: {
@@ -97,7 +119,11 @@ export async function DELETE(
     });
     return NextResponse.json(store);
   } catch (error) {
-    console.log("[STORES_PATCH] ", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({ error: storeIdDeleteMessage.internalErrorDeleteStore }),
+      {
+        status: 500,
+      }
+    );
   }
 }

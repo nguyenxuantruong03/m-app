@@ -2,7 +2,6 @@ import prismadb from "@/lib/prismadb";
 
 import { redirect } from "next/navigation";
 import { currentUser } from "@/lib/auth";
-import { UserRole } from "@prisma/client";
 import CustomNav from "./custom-nav";
 
 const Navbar= async () => {
@@ -19,7 +18,7 @@ const Navbar= async () => {
 
   return (
     <>
-    <CustomNav store={store} avatarImage={avatarImage}/>
+    <CustomNav store={store} avatarImage={avatarImage} userId={userId}/>
     </>
   );
 };

@@ -1,11 +1,12 @@
 import prismadb from "@/lib/prismadb";
 import ColorClient from "./components/client";
 import { ColorColumn } from "./components/columns";
-import { currentRole } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
 import { RoleGate } from "@/components/auth/role-gate";
 
 const ColorPage = async ({ params }: { params: { storeId: string } }) => {
+  const user = await currentUser()
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN || role === UserRole.STAFF;
   const showColorRole = isRole;
@@ -22,7 +23,8 @@ const ColorPage = async ({ params }: { params: { storeId: string } }) => {
     id: item.id,
     name: item.name,
     value: item.value,
-    createdAt: item.createdAt
+    createdAt: item.createdAt,
+    language: user?.language || "vi"
   }));
   return (
       <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>

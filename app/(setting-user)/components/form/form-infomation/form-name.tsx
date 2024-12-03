@@ -20,8 +20,18 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import FormSuccess from "@/components/form-success";
 import FormError from "@/components/form-error";
 import { useRouter } from "next/navigation";
+import {
+  getToastError,
+  translateChangeNameNotification,
+  translateName,
+  translateSave,
+} from "@/translate/translate-client";
 
-const FormName = () => {
+interface FormNameProps {
+  languageToUse: string;
+}
+
+const FormName = ({ languageToUse }: FormNameProps) => {
   const user = useCurrentUser();
   const router = useRouter();
   const { update } = useSession();
@@ -32,11 +42,18 @@ const FormName = () => {
 
   useEffect(() => {
     // Kiểm tra xem input đã được render chưa và focus vào nó
-    const inputElement = document.getElementById('name-input');
+    const inputElement = document.getElementById("name-input");
     if (inputElement) {
       inputElement.focus();
     }
   }, []);
+
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const changeNameNotificationMessage =
+    translateChangeNameNotification(languageToUse);
+  const saveMessage = translateSave(languageToUse);
+  const nameMessage = translateName(languageToUse);
 
   const form = useForm<z.infer<typeof SettingSchema>>({
     resolver: zodResolver(SettingSchema),
@@ -51,11 +68,11 @@ const FormName = () => {
 
     // Kiểm tra giá trị name nhập vào và user?.name
     if (values.name === user?.name) {
-      setError("Hãy thay đổi tên mới tên cũ đang được sử dụng.");
+      setError(changeNameNotificationMessage);
       return;
     }
     startTransition(() => {
-      setting(values)
+      setting(values, languageToUse)
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -67,7 +84,7 @@ const FormName = () => {
           }
         })
         .catch(() => {
-          setError("Something went wrong");
+          setError(toastErrorMessage);
         });
     });
   };
@@ -81,7 +98,7 @@ const FormName = () => {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>{nameMessage}</FormLabel>
                 <FormControl>
                   <Input
                     id="name-input"
@@ -102,7 +119,7 @@ const FormName = () => {
         <FormError message={error || form.formState.errors.name?.message} />
         <FormSuccess message={success} />
         <Button type="submit" disabled={isPending}>
-          Save
+          {saveMessage}
         </Button>
       </form>
     </Form>

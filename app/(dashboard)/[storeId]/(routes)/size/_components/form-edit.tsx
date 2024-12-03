@@ -15,6 +15,7 @@ import { Button } from "../../../../../../components/ui/button";
 import { Input } from "../../../../../../components/ui/input";
 import toast from "react-hot-toast";
 import { useState } from "react";
+import { getSizeFormEdit } from "@/translate/translate-dashboard";
 
 interface LabelFormPorps {
   data: string;
@@ -23,13 +24,8 @@ interface LabelFormPorps {
   value: string;
   field: "name" | "value";
   setOpen: (open: boolean) => void;
+  language: string;
 }
-
-const formSchema = z.object({
-  name: z.string().min(2, { message: "Nhập ít nhất 2 ký tự." }),
-  value: z.optional(z.string().min(1, { message: "Nhập ít nhất 1 ký tự." })),
-});
-type FormValues = z.input<typeof formSchema>;
 
 const LabelForm: React.FC<LabelFormPorps> = ({
   data,
@@ -38,9 +34,22 @@ const LabelForm: React.FC<LabelFormPorps> = ({
   setOpen,
   name,
   value,
+  language,
 }) => {
   const params = useParams();
   const [loading, setLoading] = useState(false);
+
+  //language
+  const sizeFormEditMessage = getSizeFormEdit(language);
+
+  const formSchema = z.object({
+    name: z.string().min(2, { message: sizeFormEditMessage.requiredName }),
+    value: z.optional(
+      z.string().min(1, { message: sizeFormEditMessage.requiredMinLength })
+    ),
+  });
+  type FormValues = z.input<typeof formSchema>;
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -55,7 +64,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({
       await axios.patch(`/api/${params.storeId}/size/${id}`, datas);
       setLoading(false);
       setOpen(false);
-      toast.success("Cập nhật thành công!");
+      toast.success(sizeFormEditMessage.updateSuccess);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -69,7 +78,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({
             .error
         );
       } else {
-        toast.error("Something went wrong.");
+        toast.error(sizeFormEditMessage.somethingWentWrong);
       }
     } finally {
       setLoading(false);
@@ -85,12 +94,13 @@ const LabelForm: React.FC<LabelFormPorps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Tên sản phẩm <span className="text-red-600 pl-1">(*)</span>
+                  {sizeFormEditMessage.productName}{" "}
+                  <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <FormControl>
                   <Input
                     disabled={loading}
-                    placeholder="Nhập tên ..."
+                    placeholder={sizeFormEditMessage.enterName}
                     {...field}
                   />
                 </FormControl>
@@ -106,12 +116,13 @@ const LabelForm: React.FC<LabelFormPorps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Giá trị <span className="text-red-600 pl-1">(*)</span>
+                  {sizeFormEditMessage.value}{" "}
+                  <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <FormControl>
                   <Input
                     disabled={loading}
-                    placeholder="Value ..."
+                    placeholder={sizeFormEditMessage.valuePlaceholder}
                     {...field}
                   />
                 </FormControl>
@@ -122,7 +133,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({
         )}
 
         <Button disabled={loading} className="ml-auto" type="submit">
-          Save Change
+          {sizeFormEditMessage.saveChange}
         </Button>
       </form>
     </Form>

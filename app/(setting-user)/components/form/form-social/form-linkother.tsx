@@ -26,13 +26,25 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import FormSuccess from "@/components/form-success";
 import FormError from "@/components/form-error";
 import { useRouter } from "next/navigation";
+import {
+  getToastError,
+  translateCancel,
+  translateChangeOtherLink,
+  translateOtherPath,
+  translateSave,
+} from "@/translate/translate-client";
 
 interface FormLinkOtherProps {
   classNames?: string;
   setOpen?: Dispatch<SetStateAction<boolean>>;
+  languageToUse: string;
 }
 
-const FormLinkOther = ({ classNames, setOpen }: FormLinkOtherProps) => {
+const FormLinkOther = ({
+  classNames,
+  setOpen,
+  languageToUse,
+}: FormLinkOtherProps) => {
   const user = useCurrentUser();
   const router = useRouter();
   const { update } = useSession();
@@ -49,6 +61,13 @@ const FormLinkOther = ({ classNames, setOpen }: FormLinkOtherProps) => {
     }
   }, []);
 
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const cancelMessage = translateCancel(languageToUse);
+  const saveMessage = translateSave(languageToUse);
+  const changeOtherLinkMessage = translateChangeOtherLink(languageToUse);
+  const otherPathMessage = translateOtherPath(languageToUse);
+
   const form = useForm<z.infer<typeof SettingSchema>>({
     resolver: zodResolver(SettingSchema),
     defaultValues: {
@@ -59,15 +78,13 @@ const FormLinkOther = ({ classNames, setOpen }: FormLinkOtherProps) => {
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
     // Kiểm tra giá trị linkother nhập vào và user?.linkother
     if (values.linkother === user?.linkother) {
-      setError(
-        "Hãy thay đổi link Other mới link Other trên đang được sử dụng."
-      );
+      setError(changeOtherLinkMessage);
       return;
     }
     setSuccess("");
     setError("");
     startTransition(() => {
-      setting(values)
+      setting(values, languageToUse)
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -80,7 +97,7 @@ const FormLinkOther = ({ classNames, setOpen }: FormLinkOtherProps) => {
           }
         })
         .catch(() => {
-          setError("Something went wrong");
+          setError(toastErrorMessage);
         });
     });
   };
@@ -96,7 +113,7 @@ const FormLinkOther = ({ classNames, setOpen }: FormLinkOtherProps) => {
             name="linkother"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Link Other</FormLabel>
+                <FormLabel>{otherPathMessage}</FormLabel>
                 <FormControl>
                   <Input
                     id="linkother-input"
@@ -129,7 +146,7 @@ const FormLinkOther = ({ classNames, setOpen }: FormLinkOtherProps) => {
               onClick={() => setOpen?.(false)}
               disabled={isPending}
             >
-              Cancel
+              {cancelMessage}
             </Button>
           )}
           <Button
@@ -138,7 +155,7 @@ const FormLinkOther = ({ classNames, setOpen }: FormLinkOtherProps) => {
             type="submit"
             disabled={isPending}
           >
-            Save
+            {saveMessage}
           </Button>
         </div>
       </form>

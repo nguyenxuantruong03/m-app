@@ -23,9 +23,11 @@ import { toast } from "react-hot-toast";
 import axios from "axios";
 import { ApiAlert } from "@/components/ui/api-alert";
 import { useOrigin } from "@/hooks/use-origin";
+import { getSettingForm } from "@/translate/translate-dashboard";
 
 interface SettingFormProps {
   initialData: Store;
+  language: string;
 }
 
 const formSchema = z.object({
@@ -34,13 +36,16 @@ const formSchema = z.object({
 
 type SettingFormValues = z.infer<typeof formSchema>;
 
-export const SettingsForm: React.FC<SettingFormProps> = ({ initialData }) => {
+export const SettingsForm: React.FC<SettingFormProps> = ({ initialData,language }) => {
   const params = useParams();
   const router = useRouter();
   const origin = useOrigin();
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  //language
+  const settingFormMessage = getSettingForm(language)
 
   const form = useForm<SettingFormValues>({
     /* Dòng `resolver: zodResolver(formSchema)` đang thiết lập trình phân giải biểu mẫu cho
@@ -54,9 +59,9 @@ export const SettingsForm: React.FC<SettingFormProps> = ({ initialData }) => {
       setLoading(true);
       await axios.patch(`/api/stores/${params.storeId}`, data);
       router.refresh();
-      toast.success("Store updated");
+      toast.success(settingFormMessage.storeUpdated);
     } catch (error) {
-      toast.error("Something went wrong");
+      toast.error(settingFormMessage.somethingWentWrong);
     } finally {
       setLoading(false);
     }
@@ -68,9 +73,9 @@ export const SettingsForm: React.FC<SettingFormProps> = ({ initialData }) => {
       await axios.delete(`api/stores/${params.storeId}`);
       router.refresh();
       router.push("/");
-      toast.success("store deleted");
+      toast.success(settingFormMessage.storeDeleted);
     } catch (error) {
-      toast.error("Something went wrong");
+      toast.error(settingFormMessage.somethingWentWrong);
     } finally {
       setLoading(false);
       setOpen(false);
@@ -84,9 +89,10 @@ export const SettingsForm: React.FC<SettingFormProps> = ({ initialData }) => {
         onClose={() => setOpen(false)}
         onConfirm={onDelete}
         loading={loading}
+        languageToUse={language}
       />
       <div className="flex items-center justify-between">
-        <Heading title="Cài đặt" description="Quản lý cửa hàng" />
+        <Heading title={settingFormMessage.settings} description={settingFormMessage.manageStore} />
         <Button
           disabled={loading}
           variant="destructive"
@@ -108,11 +114,11 @@ export const SettingsForm: React.FC<SettingFormProps> = ({ initialData }) => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên</FormLabel>
+                  <FormLabel>{settingFormMessage.name}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Tên cửa hàng"
+                      placeholder={settingFormMessage.storeNamePlaceholder}
                       {...field}
                     />
                   </FormControl>
@@ -121,7 +127,7 @@ export const SettingsForm: React.FC<SettingFormProps> = ({ initialData }) => {
             />
           </div>
           <Button disabled={loading} className="ml-auto" type="submit">
-            Lưu thay đổi
+          {settingFormMessage.saveChanges}
           </Button>
         </form>
       </Form>

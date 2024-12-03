@@ -4,8 +4,13 @@ import { ArrowLeftFromLine, ArrowRightFromLine } from "lucide-react";
 import { Button } from "../ui/button";
 import { useChatSidebar } from "@/hooks/stream/use-chat-sidebar";
 import { Hint } from "../ui/hint";
+import { translateCollapse, translateExpand } from "@/translate/translate-client";
 
-export const ChatToggle = () => {
+interface ChatToggleProps{
+  languageToUse: string
+}
+
+export const ChatToggle = ({languageToUse}:ChatToggleProps) => {
   const { collapsed, onExpand, onCollapsed } = useChatSidebar((state) => state);
 
   const Icon = collapsed ? ArrowLeftFromLine : ArrowRightFromLine;
@@ -18,7 +23,11 @@ export const ChatToggle = () => {
     }
   };
 
-  const label = collapsed ? "Expand" : "Collapse";
+  //languages
+  const expandMessage = translateExpand(languageToUse)
+  const collapseMessage = translateCollapse(languageToUse)
+
+  const label = collapsed ? expandMessage : collapseMessage;
 
   return (
     <Hint label={label} side="left" asChild>

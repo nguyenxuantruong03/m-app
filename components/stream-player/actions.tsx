@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 import { Button } from "../ui/button";
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { onFollow, onUnfollow } from "@/actions/stream/follow";
 
 import { Heart } from "lucide-react";
@@ -10,43 +10,54 @@ import { cn } from "@/lib/utils";
 import { toast } from "react-hot-toast";
 import { Skeleton } from "../ui/skeleton";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { getToastError, translateFollow, translateFollowings, translateUnfollow, translateUnfollowed } from "@/translate/translate-client";
 
 interface ActionsProps {
   hostIdentity: string;
   isFollowing: boolean;
   isHost: boolean;
+  languageToUse: string
 }
 
 export const Actions = ({
   hostIdentity,
   isFollowing,
   isHost,
+  languageToUse
 }: ActionsProps) => {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const userId = useCurrentUser();
 
+  //language
+  const toastErrorMessage = getToastError(languageToUse)
+  const followingsMessage = translateFollowings(languageToUse)
+  const unFollowedMessage = translateUnfollowed(languageToUse)
+  const unFollowMessage = translateUnfollow(languageToUse)
+  const followMessage = translateFollow(languageToUse)
+
+
   if(!userId){
-    throw new Error("Not found user!")
+    notFound()
   }
 
   const handleFollow = () => {
     startTransition(() => {
-      onFollow(hostIdentity)
+      onFollow(hostIdentity,languageToUse)
         .then((data) =>
-          toast.success(`You are now following ${data.following.nameuser}`)
+          toast.success(`${followingsMessage} ${data.following.nameuser}`)
         )
-        .catch(() => toast.error("Something went wrong"));
+        .catch(() => toast.error(toastErrorMessage));
     });
   };
 
   const handleUnFollow = () => {
     startTransition(() => {
-      onUnfollow(hostIdentity)
+      onUnfollow(hostIdentity,languageToUse)
         .then((data) =>
-          toast.success(`You have unfollowed ${data.following.nameuser}`)
+          toast.success(`${unFollowedMessage} ${data.following.nameuser}`)
         )
-        .catch(() => toast.error("Something went wrong"));
+        .catch(() => toast.error(toastErrorMessage));
     });
   };
 
@@ -80,7 +91,7 @@ export const Actions = ({
               isFollowing ? "fill-red-500 text-red-500" : "fill-none"
             )}
           />
-          {isFollowing ? "Unfollow" : "Follow"}
+          {isFollowing ? unFollowMessage : followMessage}
         </Button>
       )}
     </>

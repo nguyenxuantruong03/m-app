@@ -15,6 +15,7 @@ import { Button } from "../../../../../../components/ui/button";
 import { Input } from "../../../../../../components/ui/input";
 import toast from "react-hot-toast";
 import { useState } from "react";
+import { getShippingRateFormEdit } from "@/translate/translate-dashboard";
 
 interface LabelFormPorps {
   data: string;
@@ -30,40 +31,8 @@ interface LabelFormPorps {
   active: boolean | null;
   field: "name"
   setOpen: (open: boolean) => void;
+  language: string;
 }
-
-const formSchema = z.object({
-  name: z
-  .string()
-  .min(1, { message: "Bắt buộc nhập name." })
-  .nullable()
-  .optional(),
-  taxcode: z
-  .string()
-  .min(1, { message: "Bắt buộc nhập taxcode." })
-  .nullable()
-  .optional(),
-  taxbehavior: z
-  .string()
-  .min(1, { message: "Bắt buộc nhập taxbehavior." })
-  .nullable()
-  .optional(),
-  amount: z.optional(z.coerce.number().min(500,{message: "Hãy nhập giá ít nhất 500đ."})),
-  unitmin: z
-  .string()
-  .min(1, { message: "Bắt buộc nhập unitmin." })
-  .nullable()
-  .optional(),
-  valuemin: z.optional(z.coerce.number().min(1,{message: "Hãy nhập valumin."})),
-  unitmax: z
-  .string()
-  .min(1, { message: "Bắt buộc nhập unitmin." })
-  .nullable()
-  .optional(),
-  valuemax:  z.optional(z.coerce.number().min(1,{message: "Hãy nhập valuemax."})),
-  active: z.boolean().default(false).nullable().optional(),
-});
-type FormValues = z.input<typeof formSchema>;
 
 const LabelForm: React.FC<LabelFormPorps> = ({
   data,
@@ -79,9 +48,47 @@ const LabelForm: React.FC<LabelFormPorps> = ({
   active,
   field,
   setOpen,
+  language
 }) => {
   const params = useParams();
   const [loading, setLoading] = useState(false);
+
+  //language
+  const shippingRateFormEditMessage = getShippingRateFormEdit(language)
+
+  const formSchema = z.object({
+    name: z
+    .string()
+    .min(2, { message: shippingRateFormEditMessage.requiredName })
+    .nullable()
+    .optional(),
+    taxcode: z
+    .string()
+    .min(1, { message: shippingRateFormEditMessage.requiredTaxcode })
+    .nullable()
+    .optional(),
+    taxbehavior: z
+    .string()
+    .min(1, { message: shippingRateFormEditMessage.requiredTaxbehavior })
+    .nullable()
+    .optional(),
+    amount: z.optional(z.coerce.number().min(500,{message: shippingRateFormEditMessage.enterMinPrice})),
+    unitmin: z
+    .string()
+    .min(1, { message: shippingRateFormEditMessage.requiredUnitmin })
+    .nullable()
+    .optional(),
+    valuemin: z.optional(z.coerce.number().min(1,{message: shippingRateFormEditMessage.enterValumin})),
+    unitmax: z
+    .string()
+    .min(1, { message: shippingRateFormEditMessage.requiredUnitmax })
+    .nullable()
+    .optional(),
+    valuemax:  z.optional(z.coerce.number().min(1,{message: shippingRateFormEditMessage.enterValuemax})),
+    active: z.boolean().default(false).nullable().optional(),
+  });
+  type FormValues = z.input<typeof formSchema>;
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -103,7 +110,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({
       await axios.patch(`/api/${params.storeId}/shippingrates/${id}`, datas);
       setLoading(false);
       setOpen(false);
-      toast.success("Cập nhật thành công!");
+      toast.success(shippingRateFormEditMessage.updateSuccess);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -117,7 +124,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({
             .error
         );
       } else {
-        toast.error("Something went wrong.");
+        toast.error(shippingRateFormEditMessage.somethingWentWrong);
       }
     } finally {
       setLoading(false);
@@ -133,12 +140,12 @@ const LabelForm: React.FC<LabelFormPorps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Tên sản phẩm <span className="text-red-600 pl-1">(*)</span>
+                  {shippingRateFormEditMessage.productName} <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <FormControl>
                   <Input
                     disabled={loading}
-                    placeholder="Nhập tên ..."
+                    placeholder={shippingRateFormEditMessage.enterName}
                     {...field}
                     value={field.value || ""}
                   />
@@ -150,7 +157,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({
         )}
 
         <Button disabled={loading} className="ml-auto" type="submit">
-          Save Change
+        {shippingRateFormEditMessage.saveChange}
         </Button>
       </form>
     </Form>

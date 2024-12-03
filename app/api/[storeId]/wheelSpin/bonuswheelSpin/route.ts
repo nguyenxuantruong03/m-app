@@ -1,20 +1,20 @@
 import { currentUser } from "@/lib/auth";
 import { sendSpin, sendUnSpin } from "@/lib/mail";
 import prismadb from "@/lib/prismadb";
+import { translateBonusWheelSpinGet, translateBonusWheelSpinPatch, translateUnbonusWheelSpinPost } from "@/translate/translate-api";
 import { UserRole } from "@prisma/client";
 import { format } from "date-fns";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const bonusWheelSpinGetMessage = translateBonusWheelSpinGet(LanguageToUse)
   try {
-    const userId = await currentUser();
-    if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
-    }
-
-    if (userId.role !== UserRole.ADMIN) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xem wheel spin!" }),
+        JSON.stringify({ error: bonusWheelSpinGetMessage.userIdNotFound }),
         { status: 403 }
       );
     }
@@ -27,7 +27,7 @@ export async function GET(req: Request) {
     return NextResponse.json(WheelSpin);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get wheelspin." }),
+      JSON.stringify({ error: bonusWheelSpinGetMessage.internalError }),
       { status: 500 }
     );
   }
@@ -37,28 +37,32 @@ export async function PATCH(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
-  const userId = await currentUser();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const bonusWheelSpinPatchMessage = translateBonusWheelSpinPatch(LanguageToUse)
+
   const body = await req.json();
   const { bonusAmount, bonusTitle, bonus, coinAmount, coinbonus, data } = body;
 
   try {
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: bonusWheelSpinPatchMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN) {
+    if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền cập nhật wheel spin!" }),
+        JSON.stringify({ error: bonusWheelSpinPatchMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!bonusTitle) {
       return new NextResponse(
-        JSON.stringify({ error: "Bonus title is required." }),
+        JSON.stringify({ error: bonusWheelSpinPatchMessage.bonusTitleRequired }),
         { status: 400 }
       );
     }
@@ -86,7 +90,7 @@ export async function PATCH(
 
     if (!existingWheelSpin) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy bản ghi cần cập nhật." }),
+        JSON.stringify({ error: bonusWheelSpinPatchMessage.recordNotFound }),
         { status: 404 }
       );
     }
@@ -142,7 +146,7 @@ export async function PATCH(
           oldChange: Oldchanges,
           newChange: Newchanges,
           type: "UPDATEWHEELSPIN",
-          user: userId?.email || "",
+          user: user?.email || "",
         },
       });
       return NextResponse.json(updatedWheelSpin);
@@ -172,14 +176,14 @@ export async function PATCH(
           storeId: params.storeId,
           newChange: changes,
           type: "CREATEWHEELSPIN",
-          user: userId?.email || "",
+          user: user?.email || "",
         },
       });
       return NextResponse.json(createWheelSpin);
     }
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Lỗi nội bộ khi cập nhật vòng quay." }),
+      JSON.stringify({ error: bonusWheelSpinPatchMessage.internalError }),
       { status: 500 }
     );
   }
@@ -189,9 +193,12 @@ export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
-  const userId = await currentUser();
-  const body = await req.json();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const unBonusWheelSpinPostMessage = translateUnbonusWheelSpinPost(LanguageToUse)
 
+  const body = await req.json();
   const {
     unbonusAmount,
     unbonusTitle,
@@ -202,23 +209,23 @@ export async function POST(
   } = body;
 
   try {
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: unBonusWheelSpinPostMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN) {
+    if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền cập nhật wheel spin!" }),
+        JSON.stringify({ error: unBonusWheelSpinPostMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!unbonusTitle) {
       return new NextResponse(
-        JSON.stringify({ error: "Unbonus title is required." }),
+        JSON.stringify({ error: unBonusWheelSpinPostMessage.unbonusTitleRequired }),
         { status: 400 }
       );
     }
@@ -246,7 +253,7 @@ export async function POST(
 
     if (!existingWheelSpin) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy bản ghi cần cập nhật." }),
+        JSON.stringify({ error: unBonusWheelSpinPostMessage.recordNotFound }),
         { status: 404 }
       );
     }
@@ -303,7 +310,7 @@ export async function POST(
           oldChange: Oldchanges,
           newChange: Newchanges,
           type: "UPDATEWHEELSPIN",
-          user: userId?.email || "",
+          user: user?.email || "",
         },
       });
       return NextResponse.json(updatedUnWheelSpin);
@@ -332,14 +339,14 @@ export async function POST(
           storeId: params.storeId,
           newChange: changes,
           type: "CREATEUNWHEELSPIN",
-          user: userId?.email || "",
+          user: user?.email || "",
         },
       });
       return NextResponse.json(createUnWheelSpin);
     }
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error post wheelspin." }),
+      JSON.stringify({ error: unBonusWheelSpinPostMessage.internalError }),
       { status: 500 }
     );
   }

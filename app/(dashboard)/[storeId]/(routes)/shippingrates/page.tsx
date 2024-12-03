@@ -2,7 +2,7 @@ import prismadb from "@/lib/prismadb";
 import ShippingRatesClient from "./components/client";
 import { ShippingRatesColumn } from "./components/columns";
 import { UserRole } from "@prisma/client";
-import { currentRole } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 import { RoleGate } from "@/components/auth/role-gate";
 import { formatter } from "@/lib/utils";
 
@@ -11,6 +11,7 @@ const ShippingRatesPage = async ({
 }: {
   params: { storeId: string };
 }) => {
+  const user = await currentUser()
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN || role === UserRole.STAFF;
   const showShippingRatesRole = isRole;
@@ -36,6 +37,7 @@ const ShippingRatesPage = async ({
       unitmax: item.unitmax,
       valuemax: item.valuemax,
       createdAt: item.createdAt,
+      language: user?.language || "vi"
     })
   );
   return (

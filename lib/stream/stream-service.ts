@@ -56,6 +56,7 @@ export const getAllStream = async () => {
             frameAvatar: true,
             nameuser: true,
             isCitizen: true,
+            language: true,
             role: true,
             image: true,
             imageCredential: {

@@ -2,10 +2,11 @@ import prismadb from "@/lib/prismadb";
 import CouponClient from "./components/client";
 import { CouponColumn } from "./components/columns";
 import { UserRole } from "@prisma/client";
-import { currentRole } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 import { RoleGate } from "@/components/auth/role-gate";
 
 const CouponPage = async ({ params }: { params: { storeId: string } }) => {
+  const user = await currentUser()
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN || role === UserRole.STAFF;
   const showCouponRole = isRole;
@@ -33,6 +34,7 @@ const CouponPage = async ({ params }: { params: { storeId: string } }) => {
     redeembypatch: item.redeemby,
     redeemby: item.redeemby,
     createdAt: item.createdAt,
+    language: user?.language || "vi"
   }));
   return (
     <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>

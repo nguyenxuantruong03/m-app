@@ -1,7 +1,13 @@
+import { currentUser } from '@/lib/auth';
 import prismadb from '@/lib/prismadb';
+import { translateQuantityItemUpdate } from '@/translate/translate-api';
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const quantityItemUpdate = translateQuantityItemUpdate(LanguageToUse)
   try {
     const body = await req.json();
     const { id, quantity,warranty } = body;
@@ -14,7 +20,7 @@ export async function POST(req: Request) {
     return NextResponse.json(updatedItem);
   } catch(error) {
     return new NextResponse(
-        JSON.stringify({ error: "Internal error update cartItem." }),
+        JSON.stringify({ error: quantityItemUpdate }),
         { status: 500 }
       );
   }

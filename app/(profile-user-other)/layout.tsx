@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { Container } from "./_components/container";
 import { Navbar } from "./_components/navbar";
 import { Sidebar, SidebarSkeleton } from "./_components/sidebar";
+import DropMenuHint from "@/components/(client)/dropmenu-hint";
 
 const BrowseLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -13,6 +14,7 @@ const BrowseLayout = ({ children }: { children: React.ReactNode }) => {
         </Suspense>
         <Container>{children} </Container>
       </div>
+      <DropMenuHint />
     </>
   );
 };

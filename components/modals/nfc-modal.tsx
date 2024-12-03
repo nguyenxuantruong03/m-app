@@ -6,6 +6,7 @@ import NFC from "@/app/(dashboard)/[storeId]/(routes)/attendancestaff/ChooseChec
 import { format } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import viLocale from "date-fns/locale/vi";
+import { translateNfcAttendance } from "@/translate/translate-dashboard";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 
 interface NfcModalProps {
@@ -18,6 +19,7 @@ interface NfcModalProps {
   isCheckAttendanceTitle: string;
   isCheckAttendanceStart: string | Date;
   isCheckAttendanceEnd:  string | Date;
+  languageToUse: string;
 }
 
 export const NfcModal: React.FC<NfcModalProps> = ({
@@ -29,7 +31,8 @@ export const NfcModal: React.FC<NfcModalProps> = ({
   userId,
   isCheckAttendanceTitle,
   isCheckAttendanceStart,
-  isCheckAttendanceEnd
+  isCheckAttendanceEnd,
+  languageToUse
 }) => {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -71,10 +74,19 @@ const end = isCheckAttendanceEnd
     )
   : null;
 
+  //language
+  const nfcAttendanceMessage = translateNfcAttendance(
+    languageToUse,
+    userId,
+    isCheckAttendanceTitle,
+    start,
+    end
+  )
+
   return (
     <Modal
-    title={`NFC điểm danh - Tên:${userId} - Sự kiện:${isCheckAttendanceTitle} - ${isCheckAttendanceTitle === "✅" ? "Kết thúc" : "Bắt đầu"}: ${start || ""}${end ? ` - Kết thúc: ${end}` : ""}`}
-      description="Nhân viên sẽ được trả lương thông qua việc quét NFC."
+    title={nfcAttendanceMessage.attendanceMessage}
+      description={nfcAttendanceMessage.salaryInfo}
       isOpen={isOpen}
       onClose={onClose}
       textCenter={true}
@@ -84,6 +96,7 @@ const end = isCheckAttendanceEnd
         loading={loading}
         dataEventNFC={dataEventNFC}
         setShowNFCModal={setShowNFCModal}
+        languageToUse={languageToUse}
       />
     </Modal>
   );

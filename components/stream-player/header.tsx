@@ -9,6 +9,7 @@ import { UserIcon } from "lucide-react";
 import { Actions, ActionSkeleton } from "./actions";
 import { Skeleton } from "../ui/skeleton";
 import CircleAvatar, { UserAvatarSkeleton } from "../ui/circle-avatar";
+import { translateOfflines } from "@/translate/translate-client";
 
 interface HeaderProps {
   imageUrl: string;
@@ -20,6 +21,7 @@ interface HeaderProps {
   isCitizen: boolean;
   role: string;
   frameAvatar: string;
+  languageToUse: string
 }
 
 export const Header = ({
@@ -31,10 +33,14 @@ export const Header = ({
   name,
   isCitizen,
   role,
-  frameAvatar
+  frameAvatar,
+  languageToUse
 }: HeaderProps) => {
   const participants = useParticipants();
   const participant = useRemoteParticipant(hostIdentity);
+
+  //language
+  const offlinesMessage = translateOfflines(languageToUse)
 
   const isLive = !!participant;
   const participantCount = participants.length - 1;
@@ -73,7 +79,7 @@ export const Header = ({
             </div>
           ) : (
             <p className="font-semibold text-xs text-muted-foreground">
-              Offline
+              {offlinesMessage}
             </p>
           )}
         </div>
@@ -82,6 +88,7 @@ export const Header = ({
         isFollowing={isFollowing}
         hostIdentity={hostIdentity}
         isHost={isHost}
+        languageToUse={languageToUse}
       />
     </div>
   );

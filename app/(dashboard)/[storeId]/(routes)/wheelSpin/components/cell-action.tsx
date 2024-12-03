@@ -16,6 +16,7 @@ import axios from "axios";
 import { WheelSpinColumn } from "./column";
 import { Input } from "@/components/ui/input";
 import "./styles.css";
+import { getwheelSpinAction } from "@/translate/translate-dashboard";
 
 interface CellActionProps {
   data: WheelSpinColumn;
@@ -44,6 +45,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [openBonus, setOpenBonus] = useState(false);
   const [openUnbonus, setOpenUnbonus] = useState(false);
+
+  //language
+  const wheelSpinActionMessage = getwheelSpinAction(data.language);
 
   // Hàm để kiểm tra xem tất cả ba input có giá trị không
   const areAllInputsFilledbonus = () => {
@@ -140,17 +144,34 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           return (
             <p>
               {" "}
-              Đã thêm <span className="font-bold">{bonusTitle}</span>. Đã cộng
-              thêm <span className="font-bold">+{newBonus}vòng quay</span> và{" "}
-              <span className="font-bold">+{newCoins}xu</span>. Tổng{" "}
-              <span className="font-bold pr-1">{updatedBonus}vòng quay</span>
-              và
-              <span className="font-bold pl-1">{updatedCoin}xu</span>.
+              {wheelSpinActionMessage.content}{" "}
+              <span className="font-bold">{bonusTitle}</span>.
+              {wheelSpinActionMessage.addedBonus}{" "}
+              <span className="font-bold">
+                +{newBonus}
+                {wheelSpinActionMessage.rotation}
+              </span>{" "}
+              {wheelSpinActionMessage.and}{" "}
+              <span className="font-bold">
+                +{newCoins}
+                {wheelSpinActionMessage.coin}
+              </span>
+              . {wheelSpinActionMessage.total}{" "}
+              <span className="font-bold pr-1">
+                {updatedBonus}
+                {wheelSpinActionMessage.rotation}
+              </span>
+              {wheelSpinActionMessage.and}
+              <span className="font-bold pl-1">
+                {updatedCoin}
+                {wheelSpinActionMessage.coin}
+              </span>
+              .
             </p>
           );
         }),
         {
-          loading: "Updating bonus...",
+          loading: wheelSpinActionMessage.updatingBonus,
           success: (message) => {
             router.refresh();
             return message;
@@ -167,7 +188,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "Bonus Error.";
+              return wheelSpinActionMessage.somethingWentWrong;
             }
           },
         }
@@ -230,16 +251,34 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           return (
             <p>
               {" "}
-              Đã thêm <span className="font-bold">{unbonusTitle}</span>. Đã bị
-              trừ <span className="font-bold">{newBonus}vòng quay</span> và{" "}
-              <span className="font-bold">{newCoin}xu</span>. Tổng{" "}
-              <span className="font-bold pr-1">{updatedBonus}vòng quay</span> và{" "}
-              <span className="font-bold pl-1">{updatedCoin}xu</span>.
+              {wheelSpinActionMessage.content}{" "}
+              <span className="font-bold">{unbonusTitle}</span>.{" "}
+              {wheelSpinActionMessage.deducted}{" "}
+              <span className="font-bold">
+                {newBonus}
+                {wheelSpinActionMessage.rotation}
+              </span>{" "}
+              {wheelSpinActionMessage.and}{" "}
+              <span className="font-bold">
+                {newCoin}
+                {wheelSpinActionMessage.coin}
+              </span>
+              . {wheelSpinActionMessage.total}
+              <span className="font-bold pr-1">
+                {updatedBonus}
+                {wheelSpinActionMessage.rotation}
+              </span>{" "}
+              {wheelSpinActionMessage.and}{" "}
+              <span className="font-bold pl-1">
+                {updatedCoin}
+                {wheelSpinActionMessage.coin}
+              </span>
+              .
             </p>
           );
         }),
         {
-          loading: "Updating unbonus...",
+          loading: wheelSpinActionMessage.updatingUnbonus,
           success: (message) => {
             router.refresh();
             return message;
@@ -256,7 +295,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return "UnBonus Error.";
+              return wheelSpinActionMessage.somethingWentWrong;
             }
           },
         }
@@ -275,19 +314,19 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="h-8 w-8 p-0">
-          <span className="sr-only">Open menu</span>
+          <span className="sr-only">{wheelSpinActionMessage.openMenu}</span>
           <MoreHorizontal className="w-4 h-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+        <DropdownMenuLabel>{wheelSpinActionMessage.actions}</DropdownMenuLabel>
         <DropdownMenuItem onClick={() => setOpenBonus(true)}>
           <BadgeDollarSign className="h-4 w-4 mr-2" />
-          Bonus
+          {wheelSpinActionMessage.bonus}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setOpenUnbonus(true)}>
           <WalletCards className="h-4 w-4 mr-2" />
-          UnBonus
+          {wheelSpinActionMessage.unbonus}
         </DropdownMenuItem>
       </DropdownMenuContent>
 
@@ -298,14 +337,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               type="text"
               value={bonusTitle}
               onChange={(e) => setbonusTitle(e.target.value)}
-              placeholder="Enter title..."
+              placeholder={wheelSpinActionMessage.enterTitle}
               disabled={loading}
             />
             <Input
               type="number"
               value={bonusAmount}
               onChange={(e) => setBonusAmount(e.target.value)}
-              placeholder="Enter bonus rotation..."
+              placeholder={wheelSpinActionMessage.enterBonusRotation}
               disabled={loading}
               className="mt-3"
             />
@@ -313,7 +352,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               type="number"
               value={coinAmount}
               onChange={(e) => setCoinAmount(e.target.value)}
-              placeholder="Enter coin..."
+              placeholder={wheelSpinActionMessage.enterCoin}
               disabled={loading}
               className="mt-3"
             />
@@ -323,14 +362,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                 onClick={onBonus}
                 className="dark:bg-black dark:text-white"
               >
-                Save
+                {wheelSpinActionMessage.save}
               </Button>
               <Button
                 disabled={loading}
                 onClick={() => setOpenBonus(false)}
                 className="dark:bg-black dark:text-white"
               >
-                Cancel
+                {wheelSpinActionMessage.cancel}
               </Button>
             </div>
           </div>
@@ -344,14 +383,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               type="text"
               value={unbonusTitle}
               onChange={(e) => setUnbonusTitle(e.target.value)}
-              placeholder="Enter title..."
+              placeholder={wheelSpinActionMessage.enterTitle}
               disabled={loading}
             />
             <Input
               type="number"
               value={unbonusAmount}
               onChange={(e) => setUnbonusAmount(e.target.value)}
-              placeholder="Enter unbonus rotation..."
+              placeholder={wheelSpinActionMessage.enterUnbonusRotation}
               disabled={loading}
               className="mt-3"
             />
@@ -359,7 +398,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               type="number"
               value={unCoinAmount}
               onChange={(e) => setUnCoinAmount(e.target.value)}
-              placeholder="Enter uncoin..."
+              placeholder={wheelSpinActionMessage.enterUncoin}
               disabled={loading}
               className="mt-3"
             />
@@ -369,14 +408,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                 onClick={onUnbonus}
                 className="dark:bg-black dark:text-white"
               >
-                Save
+                {wheelSpinActionMessage.save}
               </Button>
               <Button
                 disabled={loading}
                 onClick={() => setOpenUnbonus(false)}
                 className="dark:bg-black dark:text-white"
               >
-                Cancle
+                {wheelSpinActionMessage.cancel}
               </Button>
             </div>
           </div>

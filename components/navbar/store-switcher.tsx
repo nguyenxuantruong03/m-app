@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
-import { RotateCw } from 'lucide-react';
+import { RotateCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { Check, ChevronsUpDown, PlusCircle, Store } from "lucide-react";
@@ -17,6 +17,12 @@ import {
   CommandItem,
   CommandList,
 } from "../ui/command";
+import {
+  translateCreateStore,
+  translateSearchStore,
+  translateSelectStore,
+  translateStoreNotFound,
+} from "@/translate/translate-client";
 
 type PopoverTrigger = React.ComponentPropsWithoutRef<typeof PopoverTrigger>;
 
@@ -26,11 +32,13 @@ interface Item {
 }
 interface StoreSwitcherProps extends PopoverTrigger {
   items: Item[];
+  languageToUse: string;
 }
 
 export default function StoreSwitcher({
   className,
   items = [],
+  languageToUse,
 }: StoreSwitcherProps) {
   const chooseModal = usechoosestoreModal();
   const params = useParams();
@@ -38,8 +46,14 @@ export default function StoreSwitcher({
   const [open, setOpen] = useState(false);
   const [isRotating, setIsRotating] = useState(false);
 
+  //language
+  const selectStoreMessage = translateSelectStore(languageToUse);
+  const searchStoreMessage = translateSearchStore(languageToUse);
+  const storeNotFoundMessage = translateStoreNotFound(languageToUse);
+  const createStoremessgae = translateCreateStore(languageToUse);
+
   const handleClick = () => {
-    router.refresh()
+    router.refresh();
     setIsRotating(true);
     setTimeout(() => {
       setIsRotating(false);
@@ -62,75 +76,71 @@ export default function StoreSwitcher({
 
   return (
     <div className="flex space-x-2">
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          role="combobox"
-          aria-expanded={open}
-          aria-label="Vui lòng chọn một cửa hàng"
-          className={cn("w-[200px] justify-between", className)}
-        >
-          <Store className="mr-2 h-4 w-4" />
-          {currentStore?.label}
-          <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            role="combobox"
+            aria-expanded={open}
+            aria-label={selectStoreMessage}
+            className={cn("w-[200px] justify-between", className)}
+          >
+            <Store className="mr-2 h-4 w-4" />
+            {currentStore?.label}
+            <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
 
-      <PopoverContent className="w-[200px] p-0">
-        <Command>
-          <CommandList>
-            <CommandInput placeholder="Tìm kiếm cửa hàng" />
-            <CommandEmpty>Không tìm thấy cửa hàng</CommandEmpty>
-            <CommandGroup heading="Stores">
-              {fomattedItems.map((store) => (
-                <CommandItem
-                  key={store.value}
-                  onSelect={() => onStoreSelect(store)}
-                  className="text-sm"
-                >
-                  <Store className="mr-2 h-4 w-4" />
-                  {store.label}
-                  <Check
-                    className={cn(
-                      "ml-auto h-4 w-4",
-                      currentStore?.value === store.value
-                        ? "opacity-100"
-                        : "opacity-0"
-                    )}
-                  />
-                </CommandItem>
-              ))}
-
-              <CommandList>
-                <CommandGroup>
+        <PopoverContent className="w-[200px] p-0">
+          <Command>
+            <CommandList>
+              <CommandInput placeholder={searchStoreMessage} />
+              <CommandEmpty>{storeNotFoundMessage}</CommandEmpty>
+              <CommandGroup heading="Stores">
+                {fomattedItems.map((store) => (
                   <CommandItem
-                    onSelect={() => {
-                      setOpen(false);
-                      chooseModal.onOpen();
-                    }}
+                    key={store.value}
+                    onSelect={() => onStoreSelect(store)}
+                    className="text-sm"
                   >
-                    <PlusCircle className="mr-2 h-5 w-5" />
-                    Tạo cửa hàng
+                    <Store className="mr-2 h-4 w-4" />
+                    {store.label}
+                    <Check
+                      className={cn(
+                        "ml-auto h-4 w-4",
+                        currentStore?.value === store.value
+                          ? "opacity-100"
+                          : "opacity-0"
+                      )}
+                    />
                   </CommandItem>
-                </CommandGroup>
-              </CommandList>
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+                ))}
 
-    <div>
-    <Button
-      variant="outline"
-      size="icon"
-      onClick={handleClick}
-    >
-      <RotateCw className={`w-5 h-5 ${isRotating ? 'rotation' : ''}`} />
-    </Button>
-    </div>
+                <CommandList>
+                  <CommandGroup>
+                    <CommandItem
+                      onSelect={() => {
+                        setOpen(false);
+                        chooseModal.onOpen();
+                      }}
+                    >
+                      <PlusCircle className="mr-2 h-5 w-5" />
+                      {createStoremessgae}
+                    </CommandItem>
+                  </CommandGroup>
+                </CommandList>
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+
+      <div>
+        <Button variant="outline" size="icon" onClick={handleClick}>
+          <RotateCw className={`w-5 h-5 ${isRotating ? "rotation" : ""}`} />
+        </Button>
+      </div>
     </div>
   );
 }

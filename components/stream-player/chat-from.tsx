@@ -9,6 +9,7 @@ import { Skeleton } from "../ui/skeleton";
 import { ChatInfo } from "./chat-info";
 import ShoppingCardInLive from "./shopping-cart";
 import { SendHorizontal } from "lucide-react";
+import { translateSendMessage } from "@/translate/translate-client";
 
 interface ChatFormProps {
   onSubmit: () => void;
@@ -19,6 +20,7 @@ interface ChatFormProps {
   isFollowing: boolean;
   isDelayed: boolean;
   timeDelay: number;
+  languageToUse: string
 }
 
 export const ChatForm = ({
@@ -30,11 +32,15 @@ export const ChatForm = ({
   isFollowing,
   isDelayed,
   timeDelay,
+  languageToUse
 }: ChatFormProps) => {
   const [isDelayBlocked, setIsDelayBlocked] = useState(false);
   const isFollowersOnlyAndNoteFollowing = isFollowersOnly && !isFollowing;
   const isDisabled =
     isHidden || isDelayBlocked || isFollowersOnlyAndNoteFollowing;
+
+  //language
+  const sendMessage = translateSendMessage(languageToUse)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -63,12 +69,12 @@ export const ChatForm = ({
     >
       <div className="w-full">
         <div className="flex items-center space-x-2 relative">
-        <ShoppingCardInLive />
+        <ShoppingCardInLive languageToUse={languageToUse}/>
         <Input
           onChange={(e) => onChange(e.target.value)}
           value={value}
           disabled={isDisabled}
-          placeholder="Send a message"
+          placeholder={sendMessage}
           className={cn(
             "border-white/10 pr-10",
             (isFollowersOnly || isDelayed) && "rounded-b-none border-b-0"
@@ -82,6 +88,7 @@ export const ChatForm = ({
           timeDelay={timeDelay}
           isDelayed={isDelayed}
           isFollowersOnly={isFollowersOnly}
+          languageToUse={languageToUse}
         />
       </div>
     </form>

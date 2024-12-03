@@ -14,7 +14,8 @@ import {
 import { Button } from "../../../../../../components/ui/button";
 import { Input } from "../../../../../../components/ui/input";
 import toast from "react-hot-toast";
-import {useState } from "react";
+import { useState } from "react";
+import { getCouponFormEdit } from "@/translate/translate-dashboard";
 
 interface LabelFormProps {
   setOpen: (open: boolean) => void;
@@ -28,24 +29,8 @@ interface LabelFormProps {
   redeemby: Date | null;
   imagecoupon: { url: string }[];
   field: "name";
+  language: string;
 }
-
-const formSchema = z.object({
-  name: z.optional(z.string().min(2, { message: "Nhập ít nhất 2 ký tự." })),
-  duration: z.optional(z.string().min(2, { message: "Nhập ít nhất 2 ký tự." })),
-  percent: z.optional(
-    z.coerce.number().min(5, { message: "Hãy nhập ít nhất 5%." })
-  ),
-  durationinmoth: z.optional(
-    z.coerce.number().min(0, { message: "Hãy nhập ít nhất 1%." })
-  ),
-  maxredemptions: z.optional(
-    z.coerce.number().min(5, { message: "Hãy nhập ít nhất 5%." })
-  ),
-  redeemby: z.optional(z.date()),
-  imagecoupon: z.object({ url: z.string() }).array(),
-});
-type FormValues = z.input<typeof formSchema>;
 
 const LabelForm: React.FC<LabelFormProps> = ({
   data,
@@ -59,9 +44,35 @@ const LabelForm: React.FC<LabelFormProps> = ({
   redeemby,
   imagecoupon,
   setOpen,
+  language,
 }) => {
   const params = useParams();
   const [loading, setLoading] = useState(false);
+
+  //language
+  const couponFormEditMessage = getCouponFormEdit(language);
+
+  const formSchema = z.object({
+    name: z.optional(
+      z.string().min(2, { message: couponFormEditMessage.minLength })
+    ),
+    duration: z.optional(
+      z.string().min(2, { message: couponFormEditMessage.minLength })
+    ),
+    percent: z.optional(
+      z.coerce.number().min(1, { message: couponFormEditMessage.minPercentage })
+    ),
+    durationinmoth: z.optional(
+      z.coerce.number().min(0, { message: couponFormEditMessage.minMonth })
+    ),
+    maxredemptions: z.optional(
+      z.coerce.number().min(1, { message: couponFormEditMessage.minPerson })
+    ),
+    redeemby: z.optional(z.date()),
+    imagecoupon: z.object({ url: z.string() }).array(),
+  });
+  type FormValues = z.input<typeof formSchema>;
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -81,7 +92,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
       await axios.patch(`/api/${params.storeId}/coupon/${id}`, datas);
       setLoading(false);
       setOpen(false);
-      toast.success("Cập nhật thành công!");
+      toast.success(couponFormEditMessage.updateSuccess);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -94,7 +105,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
             .error
         );
       } else {
-        toast.error("Something went wrong.");
+        toast.error(couponFormEditMessage.somethingWentWrong);
       }
     } finally {
       setLoading(false);
@@ -111,12 +122,13 @@ const LabelForm: React.FC<LabelFormProps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Tên sản phẩm <span className="text-red-600 pl-1">(*)</span>
+                  {couponFormEditMessage.productName}{" "}
+                  <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <FormControl>
                   <Input
                     disabled={loading}
-                    placeholder="Nhập tên ..."
+                    placeholder={couponFormEditMessage.enterProductName}
                     {...field}
                   />
                 </FormControl>
@@ -126,7 +138,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
           />
         )}
         <Button disabled={loading} className="ml-auto" type="submit">
-          Save Change
+          {couponFormEditMessage.saveChange}
         </Button>
       </form>
     </Form>

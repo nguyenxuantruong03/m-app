@@ -6,43 +6,51 @@ import { format, subHours } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import { NextResponse } from "next/server";
 import viLocale from "date-fns/locale/vi";
+import {
+  translateEvenCalendarDelete,
+  translateEvenCalendarGet,
+  translateEvenCalendarPatch,
+  translateEvenCalendarPost,
+} from "@/translate/translate-api";
 
 export async function GET(req: Request) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const eventCalendarGetMessage = translateEvenCalendarGet(LanguageToUse);
   try {
-    const userId = await currentUser();
-
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: eventCalendarGetMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role === UserRole.GUEST || userId.role === UserRole.USER) {
+    if (user.role === UserRole.GUEST || user.role === UserRole.USER) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xem attendance!" }),
+        JSON.stringify({ error: eventCalendarGetMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     const eventCalendar = await prismadb.eventCalendar.findMany({
       where: {
-        userId: userId?.id,
+        userId: user?.id,
       },
     });
     return NextResponse.json(eventCalendar);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get eventcalendar." }),
+      JSON.stringify({ error: eventCalendarGetMessage.internalError }),
       { status: 500 }
     );
   }
 }
 
 //Dùng để chuyển timestartwork thành Date nếu không chuyển nó là string
-async function getCurrentTimeWithWorkingTime(user: User) {
+async function getCurrentTimeWithWorkingTime(user: User, toastError: string) {
   if (!user || !user.timestartwork) {
-    throw new Error("Invalid user or missing working time!");
+    throw new Error(toastError);
   }
 
   const currentTime = new Date();
@@ -58,34 +66,48 @@ export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
-  try {
-    const userId = await currentUser();
+  const userId = await currentUser();
     const body = await req.json();
     const { title, start, allDay, attendancestart, attendanceend } = body;
 
+    const user = await prismadb.user.findUnique({
+      where: { id: userId?.id },
+    });
+
+    //language
+    const LanguageToUse = user?.language || "vi";
+    const eventCalendarPostMessage = translateEvenCalendarPost(LanguageToUse, user?.timestartwork);
+    
+    if (!user?.timestartwork) {
+      return new NextResponse(
+        JSON.stringify({ error: eventCalendarPostMessage.missingTimeStartWork }),
+        { status: 403 }
+      );
+    }
+  try {
     if (!userId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: eventCalendarPostMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
     if (userId.role === UserRole.GUEST || userId.role === UserRole.USER) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền check attendance!" }),
+        JSON.stringify({ error: eventCalendarPostMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!start) {
-      return new NextResponse(JSON.stringify({ error: "Start is required!" }), {
+      return new NextResponse(JSON.stringify({ error: eventCalendarPostMessage.startRequired }), {
         status: 403,
       });
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required!" }),
+        JSON.stringify({ error: eventCalendarPostMessage.storeIdRequired  }),
         { status: 400 }
       );
     }
@@ -98,7 +120,7 @@ export async function POST(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: eventCalendarPostMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -110,20 +132,9 @@ export async function POST(
     let totalPoints = 0; // Khởi tạo tổng điểm
     let delayHours: number | undefined; // Khỏi tạo delayHours
 
-    const user = await prismadb.user.findUnique({
-      where: { id: userId?.id },
-    });
-
     if (!user?.workingTime) {
       return new NextResponse(
-        JSON.stringify({ error: "Missing working time!" }),
-        { status: 403 }
-      );
-    }
-
-    if (!user?.timestartwork) {
-      return new NextResponse(
-        JSON.stringify({ error: "Missing time start work!" }),
+        JSON.stringify({ error: eventCalendarPostMessage.missingWorkingTime }),
         { status: 403 }
       );
     }
@@ -137,14 +148,14 @@ export async function POST(
 
     if (dateWorkAttendance && !dateWorkAttendance.includes(dayName)) {
       return new NextResponse(
-        JSON.stringify({ error: "Hôm nay không phải lịch làm của bạn!" }),
+        JSON.stringify({ error: eventCalendarPostMessage.notYourWorkingDay }),
         { status: 403 }
       );
     }
 
     //currentTime: là thời gian hiện tại  còn curentDate là chuyển đổi thành Date của user.timestartwork
     const { currentTime, currentDate } = await getCurrentTimeWithWorkingTime(
-      user
+      user,eventCalendarPostMessage.invalidUserOrMissingWorkingTime
     );
 
     // Tính toán thời gian chậm trễ (tính bằng mili giây)
@@ -162,7 +173,7 @@ export async function POST(
     if (delayHours >= 2) {
       return new NextResponse(
         JSON.stringify({
-          error: "Bạn đã điểm danh trễ nên hãy quay lại vào ngày mai!",
+          error: eventCalendarPostMessage.lateAttendance,
         }),
         { status: 500 }
       );
@@ -227,7 +238,7 @@ export async function POST(
         break;
       default:
         return new NextResponse(
-          JSON.stringify({ error: "Invalid working time!" }),
+          JSON.stringify({ error: eventCalendarPostMessage.invalidWorkingTime }),
           { status: 400 }
         );
     }
@@ -291,14 +302,14 @@ export async function POST(
     } else {
       return new NextResponse(
         JSON.stringify({
-          error: `Hãy quay lại vào lúc ${user.timestartwork}!`,
+          error: eventCalendarPostMessage.timeStartWorkMessage,
         }),
         { status: 500 }
       );
     }
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error post eventcalendar." }),
+      JSON.stringify({ error: eventCalendarPostMessage.internalError }),
       { status: 500 }
     );
   }
@@ -308,34 +319,37 @@ export async function PATCH(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const eventCalendarPatchMessage = translateEvenCalendarPatch(LanguageToUse)
   try {
-    const userId = await currentUser();
     const body = await req.json();
     const { title, start, allDay, attendancestart, attendanceend } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: eventCalendarPatchMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role === UserRole.GUEST || userId.role === UserRole.USER) {
+    if (user.role === UserRole.GUEST || user.role === UserRole.USER) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền cập nhật attendance!" }),
+        JSON.stringify({ error: eventCalendarPatchMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!start) {
-      return new NextResponse(JSON.stringify({ error: "Start is required!" }), {
+      return new NextResponse(JSON.stringify({ error: eventCalendarPatchMessage.startRequired }), {
         status: 403,
       });
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required!" }),
+        JSON.stringify({ error: eventCalendarPatchMessage.storeIdRequired }),
         { status: 400 }
       );
     }
@@ -348,7 +362,7 @@ export async function PATCH(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: eventCalendarPatchMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -362,14 +376,14 @@ export async function PATCH(
         storeId: params.storeId,
         attendancestart,
         attendanceend,
-        userId: userId?.id || "",
+        userId: user?.id || "",
       },
     });
 
     return NextResponse.json(eventCalendar);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error patch eventcalendar." }),
+      JSON.stringify({ error: eventCalendarPatchMessage.internalError }),
       { status: 500 }
     );
   }
@@ -379,32 +393,39 @@ export async function DELETE(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const eventCalendarDeleteMessage = translateEvenCalendarDelete(LanguageToUse)
+
   try {
-    const userId = await currentUser();
     // Extract event ID from the request body
     const { eventId } = await req.json();
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: eventCalendarDeleteMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role === UserRole.GUEST || userId.role === UserRole.USER) {
+    if (user.role === UserRole.GUEST || user.role === UserRole.USER) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xóa attendance!" }),
+        JSON.stringify({ error: eventCalendarDeleteMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!eventId) {
-      return new NextResponse("Event id is required!", { status: 403 });
+      return new NextResponse(
+        JSON.stringify({ error: eventCalendarDeleteMessage.eventIdRequired }),
+        { status: 403 }
+      );
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required!" }),
+        JSON.stringify({ error: eventCalendarDeleteMessage.storeIdRequired }),
         { status: 400 }
       );
     }
@@ -418,7 +439,7 @@ export async function DELETE(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: eventCalendarDeleteMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -427,14 +448,14 @@ export async function DELETE(
     const deletedEvent = await prismadb.eventCalendar.delete({
       where: {
         id: eventId,
-        userId: userId?.id,
+        userId: user?.id,
       },
     });
 
     return NextResponse.json(deletedEvent);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete eventcalendar." }),
+      JSON.stringify({ error: eventCalendarDeleteMessage.internalError }),
       { status: 500 }
     );
   }

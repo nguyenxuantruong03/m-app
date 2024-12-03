@@ -3,12 +3,21 @@ import { Image as ImageType, Product, ProductDetail } from "@/types/type";
 import { Tab } from "@headlessui/react";
 import GalleryTab from "./gallery-tab";
 import NextImage from "next/image";
-import "./gallery.css"
+import "./gallery.css";
+import { getOutOfStockMessage } from "@/translate/translate-client";
 interface GalleryProps {
   images: ImageType[];
   data: Product;
+  languageToUse: string;
 }
-const Gallery: React.FC<GalleryProps> = ({ images = [], data }) => {
+const Gallery: React.FC<GalleryProps> = ({
+  images = [],
+  data,
+  languageToUse,
+}) => {
+  //language
+  const outOfStockMessage = getOutOfStockMessage(languageToUse);
+
   //Kiểm tra tất cả sản phẩm có === 0 không
   const productQuantityAll = [1, 2, 3, 4, 5].every(
     (i) => data.productdetail[`quantity${i}` as keyof ProductDetail] === 0
@@ -33,7 +42,7 @@ const Gallery: React.FC<GalleryProps> = ({ images = [], data }) => {
               {productQuantityAll && (
                 <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center z-10">
                   <div className="w-full h-16 flex items-center justify-center text-white text-center font-bold text-2xl zigzag">
-                    Hết hàng
+                    {outOfStockMessage}
                   </div>
                 </div>
               )}

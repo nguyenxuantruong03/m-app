@@ -3,18 +3,25 @@ import { stripe } from "@/lib/stripe";
 import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
-import { TaxBehavior, Unit, UserRole,ShippingTaxcode } from "@prisma/client";
+import { TaxBehavior, Unit, UserRole, ShippingTaxcode } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
+import {
+  translateShippingRateDelete,
+  translateShippingRateGet,
+  translateShippingRatePost,
+} from "@/translate/translate-api";
 
 export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const shippingRatePostMessage = translateShippingRatePost(LanguageToUse);
+
   try {
-    const userId = await currentUser();
-
     const body = await req.json();
-
     const {
       name,
       taxcode,
@@ -26,30 +33,30 @@ export async function POST(
       valuemin,
     } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: shippingRatePostMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền tạo mới shipping rate!" }),
+        JSON.stringify({ error: shippingRatePostMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!name) {
       return new NextResponse(
-        JSON.stringify({ error: "Name is required!" }),
+        JSON.stringify({ error: shippingRatePostMessage.nameRequired }),
         { status: 400 }
       );
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required!" }),
+        JSON.stringify({ error: shippingRatePostMessage.storeIdRequired }),
         { status: 400 }
       );
     }
@@ -62,7 +69,7 @@ export async function POST(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: shippingRatePostMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -70,21 +77,21 @@ export async function POST(
     // Tạo coupon bằng Stripe
     const shippingRates = await stripe.shippingRates.create({
       display_name: name,
-      type: 'fixed_amount',
+      type: "fixed_amount",
       fixed_amount: {
         amount: amount,
-        currency: 'vnd',
+        currency: "vnd",
       },
       tax_code: taxcode,
-      delivery_estimate:{
-        maximum:{
+      delivery_estimate: {
+        maximum: {
           unit: unitmax,
-          value: valuemax
+          value: valuemax,
         },
-        minimum:{
+        minimum: {
           unit: unitmin,
-          value: valuemin
-        }
+          value: valuemin,
+        },
       },
       tax_behavior: taxbehavior,
     });
@@ -95,7 +102,7 @@ export async function POST(
         id: shippingRates.id,
         name: shippingRates.display_name || "",
         amount: shippingRates.fixed_amount?.amount || 0,
-        taxcode: shippingRates.tax_code as ShippingTaxcode, 
+        taxcode: shippingRates.tax_code as ShippingTaxcode,
         unitmax: shippingRates.delivery_estimate?.maximum?.unit as Unit,
         valuemax: shippingRates.delivery_estimate?.maximum?.value || 0,
         unitmin: shippingRates.delivery_estimate?.minimum?.unit as Unit,
@@ -127,14 +134,14 @@ export async function POST(
         storeId: params.storeId,
         type: "CREATESHIPPINGRATES",
         newChange: changes,
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(createdCoupon);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error post shippingrates." }),
+      JSON.stringify({ error: shippingRatePostMessage.internalError }),
       { status: 500 }
     );
   }
@@ -144,10 +151,14 @@ export async function GET(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const shippingRateGetMessage = translateShippingRateGet(LanguageToUse);
   try {
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Store id is required!" }),
+        JSON.stringify({ error: shippingRateGetMessage.storeIdRequired }),
         { status: 400 }
       );
     }
@@ -164,40 +175,41 @@ export async function GET(
     return NextResponse.json(getshippingRates);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get shippingrates." }),
+      JSON.stringify({ error: shippingRateGetMessage.internalError }),
       { status: 500 }
     );
   }
 }
 
-
 export async function DELETE(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const shippingRateDeleteMessage = translateShippingRateDelete(LanguageToUse);
   try {
-    const userId = await currentUser();
     const body = await req.json();
-
     const { ids } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy userId!" }),
+        JSON.stringify({ error: shippingRateDeleteMessage.userNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xóa shipping rate!" }),
+        JSON.stringify({ error: shippingRateDeleteMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!ids || ids.length === 0) {
       return new NextResponse(
-        JSON.stringify({ error: "Mảng IDs không được trống!" }),
+        JSON.stringify({ error: shippingRateDeleteMessage.idsArrayNotEmpty }),
         { status: 400 }
       );
     }
@@ -210,7 +222,7 @@ export async function DELETE(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: shippingRateDeleteMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -225,7 +237,7 @@ export async function DELETE(
     });
 
     // Create an array of changes for logging
-    const changesArray = ShipingRateToDelete.map(item => ({
+    const changesArray = ShipingRateToDelete.map((item) => ({
       name: item.name,
       taxcode: item.taxbehavior,
       taxbehavior: item.taxbehavior,
@@ -250,16 +262,21 @@ export async function DELETE(
     await prismadb.system.create({
       data: {
         storeId: params.storeId,
-        delete: changesArray.map(change => `DeleteName: ${change.name}, DeleteTaxcode: ${change.taxcode}, DeleteTaxbehavior: ${change.taxbehavior}, DeleteAmount: ${change.amount}, DeleteValuemin: ${change.valuemin}, DeleteUnitmin: ${change.unitmin}, DeleteValuemax: ${change.valuemax}, DeleteUnitmax: ${change.unitmax}, DeleteActive: ${change.active}`),
+        delete: changesArray.map(
+          (change) =>
+            `DeleteName: ${change.name}, DeleteTaxcode: ${change.taxcode}, DeleteTaxbehavior: ${change.taxbehavior}, DeleteAmount: ${change.amount}, DeleteValuemin: ${change.valuemin}, DeleteUnitmin: ${change.unitmin}, DeleteValuemax: ${change.valuemax}, DeleteUnitmax: ${change.unitmax}, DeleteActive: ${change.active}`
+        ),
         type: "DELETEMANY-SHIPPINGRATES",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
-    return NextResponse.json({ message: "Xóa thành công!" });
+    return NextResponse.json({
+      message: shippingRateDeleteMessage.deleteSuccess,
+    });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete category." }),
+      JSON.stringify({ error: shippingRateDeleteMessage.internalError }),
       { status: 500 }
     );
   }

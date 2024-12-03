@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { currentUser } from "@/lib/auth";
 import NavbarProfile from "./components/nav-profile";
+import DropMenuHint from "@/components/(client)/dropmenu-hint";
 
 export default async function SetupLayout({
   children,
@@ -16,9 +17,12 @@ export default async function SetupLayout({
   }
 
   return (
-    <div className="flex px-3 max-w-7xl mx-auto">
-      <NavbarProfile dateofbirth={userId.dateofbirth} name={userId.name}/>
-      {children}
-    </div>
+    <>
+      <div className="flex px-3 max-w-7xl mx-auto">
+        <NavbarProfile dateofbirth={userId.dateofbirth} name={userId.name} />
+        {children}
+      </div>
+      <DropMenuHint />
+    </>
   );
 }

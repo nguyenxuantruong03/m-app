@@ -5,15 +5,21 @@ import { revalidatePath } from "next/cache"
 import { getSelf } from "@/lib/stream/auth-service"
 import { Stream } from "@prisma/client"
 import prismadb from "@/lib/prismadb"
+import { getToastError, translateStreamNotFound } from "@/translate/translate-client"
 
-export const updateStream = async (values: Partial<Stream>) =>{
+export const updateStream = async (values: Partial<Stream>, languageToUse: string) =>{
+    //languages
+    const toastErrorMessage = getToastError(languageToUse)
+    const streamNotFoundMessage = translateStreamNotFound(languageToUse)
+
     try{
         const self = await getSelf()
         const selfStream = await prismadb.stream.findUnique({
             where: { userId: self.id }
         })
+        
         if(!selfStream) {
-            throw new Error("Stream not found")
+            throw new Error(streamNotFoundMessage)
         }
 
         const valiData = {
@@ -39,6 +45,6 @@ export const updateStream = async (values: Partial<Stream>) =>{
 
         return stream
     }catch{
-        throw new Error("Internal error")
+        throw new Error(toastErrorMessage)
     }
 }

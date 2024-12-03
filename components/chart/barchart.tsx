@@ -10,6 +10,7 @@ import {
   YAxis,
 } from "recharts";
 import { Skeleton } from "../ui/skeleton";
+import { translateSelectDateMessage } from "@/translate/translate-client";
 
 interface GraphData {
   name: string;
@@ -18,9 +19,17 @@ interface GraphData {
 interface OverViewProps {
   data: GraphData[];
   loading: boolean;
+  languageToUse: string;
 }
 
-export const BarChart: React.FC<OverViewProps> = ({ data, loading }) => {
+export const BarChart: React.FC<OverViewProps> = ({
+  data,
+  loading,
+  languageToUse,
+}) => {
+  //language
+  const selectDataMessgae = translateSelectDateMessage(languageToUse);
+
   if (loading) {
     return (
       <ResponsiveContainer width="100%" height={350}>
@@ -34,7 +43,9 @@ export const BarChart: React.FC<OverViewProps> = ({ data, loading }) => {
   if (!data) {
     return (
       <div className="w-full h-[350px] flex items-center justify-center">
-        <span className="text-center dark:text-slate-500 text-slate-900">Please select date to find data...</span>
+        <span className="text-center dark:text-slate-500 text-slate-900">
+          {selectDataMessgae}
+        </span>
       </div>
     );
   }
@@ -49,7 +60,7 @@ export const BarChart: React.FC<OverViewProps> = ({ data, loading }) => {
           axisLine={false}
           tickFormatter={(value) => `${value}`}
         />
-        <Tooltip labelClassName="dark:text-slate-500 text-slate-900"/>
+        <Tooltip labelClassName="dark:text-slate-500 text-slate-900" />
         <Legend />
         <Bar dataKey="total" fill="#3498db" radius={[4, 4, 0, 0]} />
       </ChartBar>

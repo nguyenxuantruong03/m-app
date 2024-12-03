@@ -26,13 +26,25 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import FormSuccess from "@/components/form-success";
 import FormError from "@/components/form-error";
 import { useRouter } from "next/navigation";
+import {
+  getToastError,
+  translateCancel,
+  translateChangeTiktokLink,
+  translateSave,
+  translateTiktokPath,
+} from "@/translate/translate-client";
 
 interface FormLinkTiktokProps {
   classNames?: string;
   setOpen?: Dispatch<SetStateAction<boolean>>;
+  languageToUse: string;
 }
 
-const FormLinkTiktok = ({ classNames, setOpen }: FormLinkTiktokProps) => {
+const FormLinkTiktok = ({
+  classNames,
+  setOpen,
+  languageToUse,
+}: FormLinkTiktokProps) => {
   const user = useCurrentUser();
   const router = useRouter();
   const { update } = useSession();
@@ -49,6 +61,13 @@ const FormLinkTiktok = ({ classNames, setOpen }: FormLinkTiktokProps) => {
     }
   }, []);
 
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const cancelMessage = translateCancel(languageToUse);
+  const saveMessage = translateSave(languageToUse);
+  const changeTiktokLinkMessage = translateChangeTiktokLink(languageToUse);
+  const tiktokPathMessage = translateTiktokPath(languageToUse);
+
   const form = useForm<z.infer<typeof SettingSchema>>({
     resolver: zodResolver(SettingSchema),
     defaultValues: {
@@ -59,15 +78,13 @@ const FormLinkTiktok = ({ classNames, setOpen }: FormLinkTiktokProps) => {
   const onSubmit = (values: z.infer<typeof SettingSchema>) => {
     // Kiểm tra giá trị linktiktok nhập vào và user?.linktiktok
     if (values.linktiktok === user?.linktiktok) {
-      setError(
-        "Hãy thay đổi link Tiktok mới link Tiktok trên đang được sử dụng."
-      );
+      setError(changeTiktokLinkMessage);
       return;
     }
     setSuccess("");
     setError("");
     startTransition(() => {
-      setting(values)
+      setting(values, languageToUse)
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -80,7 +97,7 @@ const FormLinkTiktok = ({ classNames, setOpen }: FormLinkTiktokProps) => {
           }
         })
         .catch(() => {
-          setError("Something went wrong");
+          setError(toastErrorMessage);
         });
     });
   };
@@ -96,7 +113,7 @@ const FormLinkTiktok = ({ classNames, setOpen }: FormLinkTiktokProps) => {
             name="linktiktok"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Link Tiktok</FormLabel>
+                <FormLabel>{tiktokPathMessage}</FormLabel>
                 <FormControl>
                   <Input
                     id="linktiktok-input"
@@ -129,7 +146,7 @@ const FormLinkTiktok = ({ classNames, setOpen }: FormLinkTiktokProps) => {
               onClick={() => setOpen?.(false)}
               disabled={isPending}
             >
-              Cancel
+              {cancelMessage}
             </Button>
           )}
           <Button
@@ -138,7 +155,7 @@ const FormLinkTiktok = ({ classNames, setOpen }: FormLinkTiktokProps) => {
             type="submit"
             disabled={isPending}
           >
-            Save
+            {saveMessage}
           </Button>
         </div>
       </form>

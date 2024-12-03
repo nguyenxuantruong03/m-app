@@ -8,15 +8,18 @@ import { updateStream } from "@/actions/stream/stream";
 import { toast } from "react-hot-toast";
 import ImageUpload from "../ui/image-upload";
 import { X } from "lucide-react";
+import { getToastError, translateCancel, translateEdit, translateEditInfoStream, translateName, translateSave, translateStreamName, translateStreamUpdated, translateThumbnail } from "@/translate/translate-client";
 
 interface InfoModalProps {
   initialName: string;
   initialThumbnailUrl: string | null;
+  languageToUse: string;
 }
 
 export const InfoModal = ({
   initialName,
   initialThumbnailUrl,
+  languageToUse
 }: InfoModalProps) => {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -24,6 +27,17 @@ export const InfoModal = ({
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(
     initialThumbnailUrl
   );
+
+  //language
+  const toastErrorMessage = getToastError(languageToUse)
+  const streamUpdatedMessage = translateStreamUpdated(languageToUse)
+  const editMessage = translateEdit(languageToUse)
+  const editInfoStreamMessage = translateEditInfoStream(languageToUse)
+  const nameMessage = translateName(languageToUse)
+  const thumbnailMessage = translateThumbnail(languageToUse)
+  const cancelMessage = translateCancel(languageToUse)
+  const saveMessage = translateSave(languageToUse)
+  const streamNameMessage = translateStreamName(languageToUse)
 
   useEffect(() => {
     if (open) {
@@ -42,12 +56,12 @@ export const InfoModal = ({
     e.preventDefault();
 
     startTransition(() => {
-      updateStream({ name: name, thumbnailUrl: thumbnailUrl })
+      updateStream({ name: name, thumbnailUrl: thumbnailUrl},languageToUse)
         .then(() => {
-          toast.success("Stream updated");
+          toast.success(streamUpdatedMessage);
           setOpen(false);
         })
-        .catch(() => toast.error("Something went wrong"));
+        .catch(() => toast.error(toastErrorMessage));
     });
   };
 
@@ -71,7 +85,7 @@ export const InfoModal = ({
         className="ml-auto"
         onClick={() => setOpen(true)}
       >
-        Edit
+        {editMessage}
       </Button>
       {open && (
         <>
@@ -79,7 +93,7 @@ export const InfoModal = ({
             <div className="h-max w-3/4 max-w-md border rounded-md gap-4 bg-slate-900 p-6 shadow-lg transition ease-in-out z-50">
               <div className="flex items-center justify-between">
                 <span className="text-lg font-semibold text-foreground break-all line-clamp-2 text-white">
-                  Edit stream info
+                  {editInfoStreamMessage}
                 </span>
                 <span
                   onClick={() => setOpen(false)}
@@ -90,16 +104,16 @@ export const InfoModal = ({
               </div>
               <form onSubmit={onSumbit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label className="text-gray-300">Name</Label>
+                  <Label className="text-gray-300">{nameMessage}</Label>
                   <Input
                     disabled={isPending}
-                    placeholder="Stream's name"
+                    placeholder={streamNameMessage}
                     onChange={onChange}
                     value={name}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-gray-300">Thumbnail</Label>
+                  <Label className="text-gray-300">{thumbnailMessage}</Label>
                   <div className="flex items-center justify-center">
                     <ImageUpload
                       value={thumbnailUrl ? [thumbnailUrl] : []} // Pass an array with the single string
@@ -107,6 +121,7 @@ export const InfoModal = ({
                       onChange={handleImageChange} // Handle the new image
                       onRemove={handleImageRemove} // Handle removing the image
                       maxFiles={1}
+                      language={languageToUse}
                     />
                   </div>
                 </div>
@@ -117,10 +132,10 @@ export const InfoModal = ({
                     variant="secondary"
                     onClick={() => setOpen(false)}
                   >
-                    Cancel
+                    {cancelMessage}
                   </Button>
                   <Button disabled={isPending} variant="primary" type="submit">
-                    Save
+                    {saveMessage}
                   </Button>
                 </div>
               </form>

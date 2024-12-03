@@ -2,6 +2,10 @@
 import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Check, X } from "lucide-react";
+import {
+  translateEmailAdded,
+  translateEmailFormat,
+} from "@/translate/translate-client";
 
 interface EmailFieldProps {
   field: {
@@ -15,6 +19,7 @@ interface EmailFieldProps {
   setError: (value: string) => void;
   setSuccess: (value: string) => void;
   setIsSubmittedEmail: (value: boolean) => void;
+  languageToUse: string;
 }
 
 const EmailField: React.FC<EmailFieldProps> = ({
@@ -27,6 +32,7 @@ const EmailField: React.FC<EmailFieldProps> = ({
   setError,
   setSuccess,
   setIsSubmittedEmail,
+  languageToUse,
 }) => {
   const [showEmailPrompt, setShowEmailPrompt] = useState(false);
   const [isValidEmail, setIsValidEmail] = useState(false);
@@ -34,6 +40,10 @@ const EmailField: React.FC<EmailFieldProps> = ({
   const [allValid, setAllValid] = useState(false); // Thêm state để theo dõi tất cả các yêu cầu đều hợp lệ
 
   const inputRef = useRef<HTMLInputElement>(null);
+
+  //languages
+  const emailAddedMessage = translateEmailAdded(languageToUse);
+  const emailFormatMessage = translateEmailFormat(languageToUse);
 
   //Kiếm tra nếu tất cả các valid đều đúng thì ẩn đi
   useEffect(() => {
@@ -116,13 +126,10 @@ const EmailField: React.FC<EmailFieldProps> = ({
           <span className="text-xs">
             {isValidEmail ? (
               <span className="text-xs text-green-400">
-                Đã thêm đây đủ mail!
+                {emailAddedMessage}
               </span>
             ) : (
-              <span className="text-xs text-red-500">
-                Bạn phải nhập email bao gồm @gmail.com hoặc các loại
-                @example.com khác!
-              </span>
+              <span className="text-xs text-red-500">{emailFormatMessage}</span>
             )}
           </span>
         </div>

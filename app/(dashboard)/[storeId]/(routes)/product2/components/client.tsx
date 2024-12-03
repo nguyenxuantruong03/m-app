@@ -19,6 +19,8 @@ import Downloadfile from "@/components/file/downloadfilepage";
 import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { getProductClient } from "@/translate/translate-dashboard";
 
 interface ProductClientProps {
   data: ProductColumn[];
@@ -33,6 +35,10 @@ const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
   const role = useCurrentRole();
   const isRole = role === UserRole.ADMIN;
   const showAPIRole = isRole;
+  //language
+  const user = useCurrentUser();
+  const languageToUse = user?.language || "vi";
+  const productClientMessage = getProductClient(languageToUse);
 
   const handleDelete = async () => {
     setLoading(true);
@@ -43,7 +49,7 @@ const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
       });
       setLoading(false);
       setOpen(false);
-      toast.success("Product deleted successfully");
+      toast.success(productClientMessage.productDeletedSuccessfully);
       // Optionally, refresh data or handle post-delete state
     } catch (error) {
       setLoading(false);
@@ -60,9 +66,7 @@ const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
         );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
-        toast.error(
-          "Make sure you removed all product using this product first."
-        );
+        toast.error(productClientMessage.error);
       }
     }
   };
@@ -70,16 +74,20 @@ const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Sản phẩm (${data.length})`}
-          description="Quản lý sản phẩm cửa hàng"
+          title={`${productClientMessage.product} (${data.length})`}
+          description={productClientMessage.manageProduct}
         />
         <div className="flex space-x-3">
-          <Downloadfile data={data} filename="product2" />
+          <Downloadfile
+            data={data}
+            filename="product2"
+            languageToUse={languageToUse}
+          />
           <Button
             onClick={() => router.push(`/${params.storeId}/product2/new`)}
           >
             <Plus className="mr-2 h-4 w-4" />
-            Thêm mới
+            {productClientMessage.addNew}
           </Button>
         </div>
       </div>
@@ -95,9 +103,13 @@ const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
         onDelete={handleDelete}
         setOpen={setOpen}
         open={open}
+        languageToUse={languageToUse}
       />
       {showAPIRole && (
-        <Heading title="Api" description="API calls for Product" />
+        <Heading
+          title={productClientMessage.api}
+          description={productClientMessage.apiCallsForProduct}
+        />
       )}
       <Separator />
       <ApiList entityIdName="product2Id" entityName="product2" />

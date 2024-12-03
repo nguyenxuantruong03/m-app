@@ -1,7 +1,7 @@
 "use client";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
@@ -19,6 +19,11 @@ import FormError from "@/components/form-error";
 import FormSuccess from "@/components/form-success";
 import EmailField from "./field/emailfield";
 import { reset } from "@/actions/actions-signin-sign-up/reset";
+import {
+  translateBackToLogin,
+  translateForgotPassword,
+  translateSentToEmail,
+} from "@/translate/translate-client";
 
 const ResetPasswordForm = () => {
   const [error, setError] = useState<string | undefined>("");
@@ -27,6 +32,24 @@ const ResetPasswordForm = () => {
   const [email, setEmail] = useState<string>("");
   const [isEmailValid, setEmailValid] = useState(false);
   const [isSubmittedEmail, setIsSubmittedEmail] = useState(false);
+  //language
+  const [language, setLanguage] = useState("vi");
+  const [isOpen, setOpen] = useState(false);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  const languageToUse = storedLanguage || language;
+  const backToLoginMessage = translateBackToLogin(languageToUse);
+  const forgotPasswordMessage = translateForgotPassword(languageToUse);
+  const sentToEmailMessage = translateSentToEmail(languageToUse);
+
   // form bên dưới dùng để validate trường nhập theo loginForm bên dưới gọi form đẻ validate code đã xử lý ở  đây và bên dưới dùng destructuring để gọi hết vào
   const form = useForm<z.infer<typeof ResetSchema>>({
     resolver: zodResolver(ResetSchema),
@@ -40,7 +63,7 @@ const ResetPasswordForm = () => {
     setSuccess("");
     setIsSubmittedEmail(true);
     startTransition(() => {
-      reset(values).then((data) => {
+      reset(values, languageToUse).then((data) => {
         if (data.error) {
           setError(data?.error);
         } else if (data?.success) {
@@ -52,9 +75,13 @@ const ResetPasswordForm = () => {
   };
   return (
     <CardWrapper
-      headerLabel="Forgot your password"
+      headerLabel={forgotPasswordMessage}
       backButtonHref="/auth/login"
-      backButtonLabel="Back to login"
+      backButtonLabel={backToLoginMessage}
+      setLanguage={setLanguage}
+      languageToUse={languageToUse}
+      setOpen={setOpen}
+      isOpen={isOpen}
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -67,6 +94,7 @@ const ResetPasswordForm = () => {
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <EmailField
+                      languageToUse={languageToUse}
                       field={field}
                       isPending={isPending}
                       email={email}
@@ -94,7 +122,7 @@ const ResetPasswordForm = () => {
             type="submit"
             disabled={isPending || !isEmailValid}
           >
-            Send reset Email
+            {sentToEmailMessage}
           </Button>
         </form>
       </Form>

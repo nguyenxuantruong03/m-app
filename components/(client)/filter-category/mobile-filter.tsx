@@ -11,15 +11,16 @@ import Filter from "./filter";
 interface MobileFilterProps {
   size: Size[];
   color: Color[];
+  name: string
 }
-const MobileFilter: React.FC<MobileFilterProps> = ({ size, color }) => {
+const MobileFilter: React.FC<MobileFilterProps> = ({ size, color, name }) => {
   const [open, setOpen] = useState(false);
   const onOpen = () => setOpen(true);
   const onClose = () => setOpen(false);
   return (
     <>
       <Button onClick={onOpen} className="flex items-center gap-x-2 lg:hidden">
-        Filter
+        {name}
         <Plus size={20} />
       </Button>
 

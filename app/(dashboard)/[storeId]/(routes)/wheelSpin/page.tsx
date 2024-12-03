@@ -1,11 +1,12 @@
 import prismadb from "@/lib/prismadb";
 import { RoleGate } from "@/components/auth/role-gate";
-import { currentRole } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 import { WheelSpinColumn } from "./components/column";
 import SalaryStaffClient from "./components/client";
 import { UserRole } from "@prisma/client";
 
 const SalaryStaff = async () => {
+  const currentuser = await currentUser()
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN;
   const showOrderRole = isRole;
@@ -22,6 +23,7 @@ const SalaryStaff = async () => {
     rotation: item.WheelSpin.map((item) => item.rotation),
     email: item.email,
     createdAt: item.createdAt,
+    language: currentuser?.language || "vi"
   }));
 
   return (

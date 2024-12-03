@@ -32,6 +32,7 @@ export type ProductColumn = {
   imagesalientfeaturesUrl: { url: string }[];
   imagesUrl: { url: string }[];
   createdAt: Date;
+  language: string
 };
 
 export const columns: ColumnDef<ProductColumn>[] = [
@@ -83,6 +84,7 @@ export const columns: ColumnDef<ProductColumn>[] = [
         isArchived={row.original.isArchived}
         productdetailId={row.original.productdetailId}
         field="heading"
+        language={row.original.language}
       />
     ),
   },

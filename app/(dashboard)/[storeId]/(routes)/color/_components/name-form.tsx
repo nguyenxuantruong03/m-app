@@ -16,6 +16,7 @@ import { Input } from "../../../../../../components/ui/input";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { ChromePicker } from "react-color";
+import { getColorNameFormSheet } from "@/translate/translate-dashboard";
 
 interface LabelFormProps {
   data: string;
@@ -24,18 +25,22 @@ interface LabelFormProps {
   setOpen: (open: boolean) => void;
   name: string;
   field: "name" | "value";
+  language: string
 }
 
-const formSchema = z.object({
-  name: z.optional(z.string().min(2, { message: "Nhập ít nhất 2 ký tự." })),
-  value: z.optional(z.string().min(2, { message: "Nhập ít nhất 2 ký tự." })),
-});
-type FormValues = z.input<typeof formSchema>;
-
-const LabelForm: React.FC<LabelFormProps> = ({ data, id, setOpen, value, field,name }) => {
+const LabelForm: React.FC<LabelFormProps> = ({ data, id, setOpen, value, field,name,language }) => {
   const params = useParams();
   const [loading, setLoading] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
+
+  //language
+  const colorNameFormSheetMessage = getColorNameFormSheet(language)
+
+  const formSchema = z.object({
+    name: z.optional(z.string().min(2, { message: colorNameFormSheetMessage.minLength2 })),
+    value: z.optional(z.string().min(2, { message: colorNameFormSheetMessage.minLength2 })),
+  });
+  type FormValues = z.input<typeof formSchema>;
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -51,7 +56,7 @@ const LabelForm: React.FC<LabelFormProps> = ({ data, id, setOpen, value, field,n
       await axios.patch(`/api/${params.storeId}/color/${id}`, datas);
       setLoading(false);
       setOpen(false);
-      toast.success("Cập nhật thành công!");
+      toast.success(colorNameFormSheetMessage.updateSuccess);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -62,7 +67,7 @@ const LabelForm: React.FC<LabelFormProps> = ({ data, id, setOpen, value, field,n
           (error as { response: { data: { error: string } } }).response.data.error
         );
       } else {
-        toast.error("Something went wrong.");
+        toast.error(colorNameFormSheetMessage.somethingWrong);
       }
     } finally {
       setLoading(false);
@@ -79,12 +84,12 @@ const LabelForm: React.FC<LabelFormProps> = ({ data, id, setOpen, value, field,n
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Tên sản phẩm <span className="text-red-600 pl-1">(*)</span>
+                  {colorNameFormSheetMessage.productName} <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <FormControl>
                   <Input
                     disabled={loading}
-                    placeholder="Nhập tên ..."
+                    placeholder={colorNameFormSheetMessage.enterProductName}
                     {...field}
                   />
                 </FormControl>
@@ -101,13 +106,13 @@ const LabelForm: React.FC<LabelFormProps> = ({ data, id, setOpen, value, field,n
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Màu <span className="text-red-600 pl-1">(*)</span>
+                {colorNameFormSheetMessage.color} <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <FormControl>
                   <div>
                     <Input
                       disabled={loading}
-                      placeholder="Enter color ..."
+                      placeholder={colorNameFormSheetMessage.enterColor}
                       onFocus={() => setShowColorPicker(false)}
                       {...field}
                     />
@@ -139,7 +144,7 @@ const LabelForm: React.FC<LabelFormProps> = ({ data, id, setOpen, value, field,n
         )}
 
         <Button disabled={loading} className="ml-auto" type="submit">
-          Save Change
+        {colorNameFormSheetMessage.saveChange}
         </Button>
       </form>
     </Form>

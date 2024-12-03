@@ -5,6 +5,8 @@ import { Separator } from "@/components/ui/separator";
 import { DataTable } from "@/components/ui/data-table";
 import { OrderColumn, columns } from "./columns";
 import Downloadfile from "@/components/file/downloadfilepage";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { getOrderClient } from "@/translate/translate-dashboard";
 
 interface OrderProps {
   data: OrderColumn[];
@@ -13,14 +15,18 @@ interface OrderProps {
 
 
 const OrderClient: React.FC<OrderProps> = ({ data }) => {
+  //language
+  const user = useCurrentUser();
+  const languageToUse = user?.language || "vi";
+  const orderClientMessage = getOrderClient(languageToUse)
   return (
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Đơn hàng (${data.length})`}
-          description="Quản lý đơn hàng sản phẩm"
+          title={`${orderClientMessage.order} (${data.length})`}
+          description={orderClientMessage.manageProductOrders}
         />
-        <Downloadfile data={data} filename="orders" />
+        <Downloadfile data={data} filename="orders" languageToUse={languageToUse}/>
       </div>
       <Separator />
       <DataTable
@@ -32,6 +38,7 @@ const OrderClient: React.FC<OrderProps> = ({ data }) => {
         open={false}
         setOpen={() => false}
         showTotal={true}
+        languageToUse={languageToUse}
       />
     </>
   );

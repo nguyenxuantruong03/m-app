@@ -3,12 +3,24 @@ import { formatter } from "@/lib/utils";
 import LeafletMap from "./datastatistics_form";
 import { OrderColumn } from "@/app/(dashboard)/[storeId]/(routes)/orders/components/columns";
 import { Skeleton } from "../ui/skeleton";
+import {
+  translateProduct,
+  translateQuantity,
+} from "@/translate/translate-client";
 
 interface DatastatisticsProps {
   storeId: string;
+  languageToUse: string;
 }
 
-const Datastatistics = async ({ storeId }: DatastatisticsProps) => {
+const Datastatistics = async ({
+  storeId,
+  languageToUse,
+}: DatastatisticsProps) => {
+  //languages
+  const productMessage = translateProduct(languageToUse);
+  const quantityMessage = translateQuantity(languageToUse);
+
   const datastatistics = await prismadb.order.findMany({
     where: {
       storeId: storeId,
@@ -56,7 +68,7 @@ const Datastatistics = async ({ storeId }: DatastatisticsProps) => {
     returnProduct: item.returnProduct,
     products: item.orderItem
       .map((orderItem) => {
-        return `Số lượng: ${orderItem.quantity} - Sản phẩm: ${orderItem.product.heading}`;
+        return `${quantityMessage}: ${orderItem.quantity} - ${productMessage}: ${orderItem.product.heading}`;
       })
       .join(", "),
     totalPrice: formatter.format(
@@ -77,6 +89,7 @@ const Datastatistics = async ({ storeId }: DatastatisticsProps) => {
     isGift: item.orderItem.map((item) => item?.isGift),
     createdAt: item.createdAt,
     updatedAt: item.updatedAt,
+    language: languageToUse
   }));
 
   return (
@@ -86,8 +99,11 @@ const Datastatistics = async ({ storeId }: DatastatisticsProps) => {
           <div className="flex justify-center h-full">
             <Skeleton className="h-[800px] w-full max-w-full rounded-md" />
           </div>
-        ): (
-        <LeafletMap data={formattedDatastatistics} />
+        ) : (
+          <LeafletMap
+            data={formattedDatastatistics}
+            languageToUse={languageToUse}
+          />
         )}
       </div>
     </div>

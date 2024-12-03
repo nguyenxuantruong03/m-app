@@ -17,6 +17,7 @@ export type SentEmailUserColumn = {
   isSent: boolean | null;
   sentemailuser: string[];
   createdAt: Date;
+  language: string;
 };
 
 export const columns: ColumnDef<SentEmailUserColumn>[] = [
@@ -49,7 +50,7 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Người dùng
+          User
           <User className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -62,7 +63,7 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Chủ đề
+          Subject
           <Tag className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -74,6 +75,7 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
         subject={row.original.subject}
         description={row.original.description}
         field="subject"
+        language={row.original.language}
       />
     ),
   },
@@ -84,7 +86,7 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Gửi đến người dùng
+          Sent Email User
           <SendHorizontal className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -105,7 +107,7 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Mô tả
+          Description
           <NotebookPen className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -117,6 +119,7 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
         subject={row.original.subject}
         description={row.original.description}
         field="description"
+        language={row.original.language}
       />
     ),
   },
@@ -127,7 +130,7 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Gửi
+          IsSent
           <SendHorizontal className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -148,7 +151,7 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Thời gian tạo
+          CreatedAt
           <Clock12 className="ml-2 h-4 w-4" />
         </SpanColumn>
       );

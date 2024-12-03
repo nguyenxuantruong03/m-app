@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
+import { translateSizeIdDelete, translateSizeIdGet, translateSizeIdPatch } from "@/translate/translate-api";
 
 type SizeValue = string | Date | undefined;
 
@@ -15,25 +16,28 @@ export async function GET(
   req: Request,
   { params }: { params: { sizeId: string } }
 ) {
-  const userId = await currentUser();
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const sizeIdGetMessgae = translateSizeIdGet(LanguageToUse)
   try {
     if (!params.sizeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Size id is required!" }),
+        JSON.stringify({ error: sizeIdGetMessgae.sizeIdRequired }),
         { status: 400 }
       );
     }
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: sizeIdGetMessgae.userNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xem size!" }),
+        JSON.stringify({ error: sizeIdGetMessgae.permissionDenied }),
         { status: 403 }
       );
     }
@@ -47,7 +51,7 @@ export async function GET(
     return NextResponse.json(size);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get size." }),
+      JSON.stringify({ error: sizeIdGetMessgae.internalError }),
       { status: 500 }
     );
   }
@@ -57,26 +61,28 @@ export async function DELETE(
   req: Request,
   { params }: { params: { sizeId: string; storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const sizeIdDeleteMessage = translateSizeIdDelete(LanguageToUse)
   try {
-    const userId = await currentUser();
-
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: sizeIdDeleteMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền xóa size!" }),
+        JSON.stringify({ error: sizeIdDeleteMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!params.sizeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Size id is required!" }),
+        JSON.stringify({ error: sizeIdDeleteMessage.sizeIdRequired }),
         { status: 400 }
       );
     }
@@ -89,7 +95,7 @@ export async function DELETE(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: sizeIdDeleteMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -114,14 +120,14 @@ export async function DELETE(
         storeId: params.storeId,
         type: "DELETESIZE",
         delete: changes,
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(size);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error delete size." }),
+      JSON.stringify({ error: sizeIdDeleteMessage.internalError }),
       { status: 500 }
     );
   }
@@ -131,40 +137,43 @@ export async function PATCH(
   req: Request,
   { params }: { params: { sizeId: string; storeId: string } }
 ) {
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const sizeIdPatchMessage = translateSizeIdPatch(LanguageToUse)
   try {
-    const userId = await currentUser();
     const body = await req.json();
     const { name, value } = body;
 
-    if (!userId) {
+    if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error:  sizeIdPatchMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
-    if (userId.role !== UserRole.ADMIN && userId.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền cập nhật size!" }),
+        JSON.stringify({ error: sizeIdPatchMessage.permissionDenied }),
         { status: 403 }
       );
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: "Name is required!" }), {
+      return new NextResponse(JSON.stringify({ error: sizeIdPatchMessage.nameRequired }), {
         status: 400,
       });
     }
 
     if (!value) {
-      return new NextResponse(JSON.stringify({ error: "Value is required!" }), {
+      return new NextResponse(JSON.stringify({ error: sizeIdPatchMessage.valueRequired }), {
         status: 400,
       });
     }
 
     if (!params.sizeId) {
       return new NextResponse(
-        JSON.stringify({ error: "Size id is required!" }),
+        JSON.stringify({ error: sizeIdPatchMessage.sizeIdRequired }),
         { status: 400 }
       );
     }
@@ -177,7 +186,7 @@ export async function PATCH(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy store id!" }),
+        JSON.stringify({ error: sizeIdPatchMessage.storeIdNotFound }),
         { status: 405 }
       );
     }
@@ -235,14 +244,14 @@ export async function PATCH(
         oldChange: oldChanges,
         newChange: newChanges,
         type: "UPDATESIZE",
-        user: userId?.email || "",
+        user: user?.email || "",
       },
     });
 
     return NextResponse.json(size);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error patch size." }),
+      JSON.stringify({ error: sizeIdPatchMessage.internalError }),
       { status: 500 }
     );
   }

@@ -3,34 +3,45 @@ import prismadb from "@/lib/prismadb";
 import { NextResponse } from "next/server";
 import { currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
+import { translateSettingUserUnban } from "@/translate/translate-api";
 
-type SettingUserUnbanValue = string | number | boolean | Date | string[] | null | undefined;
+type SettingUserUnbanValue =
+  | string
+  | number
+  | boolean
+  | Date
+  | string[]
+  | null
+  | undefined;
 
 interface ChangeRecord {
   oldValue: SettingUserUnbanValue;
   newValue: SettingUserUnbanValue;
 }
 
-
 export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
-  const user = await currentUser()
+  const user = await currentUser();
+  //language
+  const LanguageToUse = user?.language || "vi";
+  const settingUserUnbanMessage = translateSettingUserUnban(LanguageToUse);
+
   const body = await req.json();
   const { userId } = body;
 
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: "Không tìm thấy user id!" }),
+        JSON.stringify({ error: settingUserUnbanMessage.userIdNotFound }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: "Bạn không có quyền cập nhật settinguser!" }),
+        JSON.stringify({ error: settingUserUnbanMessage.permissionDenied }),
         { status: 403 }
       );
     }
@@ -41,17 +52,17 @@ export async function POST(
 
     if (!existingUser?.ban && !existingUser?.isbanforever) {
       return new NextResponse(
-        JSON.stringify({ error: "Người dùng này hiện tại không bị ban!" }),
+        JSON.stringify({ error: settingUserUnbanMessage.userNotBanned }),
         {
           status: 404,
         }
       );
     }
 
-    if(user?.id === userId) {
+    if (user?.id === userId) {
       return new NextResponse(
         JSON.stringify({
-          error: "Bạn không thể unban bản thân!",
+          error: settingUserUnbanMessage.cannotUnbanSelf,
         }),
         { status: 400 }
       );
@@ -68,7 +79,7 @@ export async function POST(
         resendBanUserNotStart: 0,
         resendUnBanUser: 0,
         banExpires: null,
-        isbanforever: false
+        isbanforever: false,
       },
     });
 
@@ -117,7 +128,11 @@ export async function POST(
 
     return NextResponse.json(unbanUser);
   } catch (error) {
-    console.error("Error unbanning user:", error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new NextResponse(
+      JSON.stringify({
+        error: settingUserUnbanMessage.internalError,
+      }),
+      { status: 500 }
+    );
   }
 }

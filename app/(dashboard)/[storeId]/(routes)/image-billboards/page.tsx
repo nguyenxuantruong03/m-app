@@ -3,13 +3,14 @@ import BillboardClient from "./components/client";
 import { BillboardColumn } from "./components/columns";
 import { RoleGate } from "@/components/auth/role-gate";
 import { UserRole } from "@prisma/client";
-import { currentRole } from "@/lib/auth";
+import { currentRole, currentUser } from "@/lib/auth";
 
 const ImageBillboardsPage = async ({
   params,
 }: {
   params: { storeId: string };
 }) => {
+  const user = await currentUser();
   const role = await currentRole();
   const isRole = role === UserRole.ADMIN || role === UserRole.STAFF;
   const showBillboardRole = isRole;
@@ -32,6 +33,7 @@ const ImageBillboardsPage = async ({
       url: item.url,
       link: item.link,
       createdAt: item.createdAt,
+      language: user?.language || "vi"
     })),
   ];
 

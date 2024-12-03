@@ -18,12 +18,19 @@ import { Button } from "../ui/button";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { translateStoreModal } from "@/translate/translate-dashboard";
 
 const formSchema = z.object({
   name: z.string().min(6),
 });
 
 export const ChoosestoreModal = () => {
+  const user = useCurrentUser();
+  //language
+  const languagetoUse = user?.language || "vi";
+  const storeModalMessage = translateStoreModal(languagetoUse);
+
   const storeModal = usechoosestoreModal();
   const [loading, setLoading] = useState(false);
 
@@ -43,15 +50,17 @@ export const ChoosestoreModal = () => {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
         (error as { response: { data?: { error?: string } } }).response.data &&
-        (error as { response: { data: { error?: string } } }).response.data.error
+        (error as { response: { data: { error?: string } } }).response.data
+          .error
       ) {
         // Hiển thị thông báo lỗi cho người dùng
-        toast.error((error as { response: { data: { error: string } } }).response.data.error);
+        toast.error(
+          (error as { response: { data: { error: string } } }).response.data
+            .error
+        );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
-        toast.error(
-          "Something went wrong!"
-        );
+        toast.error(storeModalMessage.somethingWentWrong);
       }
     } finally {
       setLoading(false);
@@ -60,8 +69,8 @@ export const ChoosestoreModal = () => {
 
   return (
     <Modal
-      title="Tạo cửa hàng"
-      description="Hãy tạo quản lý cửa hàng hoặc sản phẩm"
+      title={storeModalMessage.createStore}
+      description={storeModalMessage.createStoreOrProduct}
       isOpen={storeModal.isOpen}
       onClose={storeModal.onClose}
     >
@@ -73,16 +82,16 @@ export const ChoosestoreModal = () => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên cửa hàng</FormLabel>
+                  <FormLabel>{storeModalMessage.storeName}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Vui lòng tên cửa hàng"
+                      placeholder={storeModalMessage.pleaseEnterStoreName}
                       {...field}
                     />
                   </FormControl>
                   <FormDescription>
-                    Đây là tên hiển thị công khai.
+                    {storeModalMessage.publicDisplayName}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -94,11 +103,11 @@ export const ChoosestoreModal = () => {
                 variant="outline"
                 onClick={storeModal.onClose}
               >
-                Cancel
+                {storeModalMessage.cancel}
               </Button>
 
               <Button disabled={loading} type="submit">
-                Continute
+                {storeModalMessage.continue}
               </Button>
             </div>
           </form>

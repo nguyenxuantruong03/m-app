@@ -1,6 +1,5 @@
 "use client";
 import { Image as ImageData, Product, ProductDetail } from "@prisma/client";
-import axios from "axios";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { FormToggleCard } from "./form-toggle-card";
@@ -8,6 +7,22 @@ import { useRouter } from "next/navigation";
 import LoadingPageComponent from "@/components/ui/loading";
 import { Hint } from "@/components/ui/hint";
 import Currency from "@/components/ui/currency";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { getAllProductNotQuery } from "@/actions/client/products/get-products";
+import {
+  translateBathroom,
+  translateCommonUse,
+  translateCuttingStone,
+  translateElectricWire,
+  translateFan,
+  translateGlue,
+  translateLightBulb,
+  translateLock,
+  translatePaint,
+  translatePin,
+  translatePipe,
+  translateSocket,
+} from "@/translate/translate-client";
 
 interface ProductWithImages extends Product {
   images: ImageData[];
@@ -16,24 +31,48 @@ interface ProductWithImages extends Product {
 }
 
 const ListProductItem = () => {
+  const user = useCurrentUser();
   const router = useRouter();
   const [data, setData] = useState<ProductWithImages[]>([]);
   const [loading, setLoading] = useState(false);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //languages
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+  const pinMesage = translatePin(languageToUse);
+  const fanMessage = translateFan(languageToUse);
+  const pipeMessage = translatePipe(languageToUse);
+  const electricWireMessage = translateElectricWire(languageToUse);
+  const cuttingStoneMessage = translateCuttingStone(languageToUse);
+  const lockMessage = translateLock(languageToUse);
+  const glueMessage = translateGlue(languageToUse);
+  const socketMessage = translateSocket(languageToUse);
+  const paintMessage = translatePaint(languageToUse);
+  const bathroomMessage = translateBathroom(languageToUse);
+  const lightBlubMessage = translateLightBulb(languageToUse);
+  const commonUseMessage = translateCommonUse(languageToUse);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/getAllProduct`
-        );
+        const products = await getAllProductNotQuery(languageToUse);
 
-        const productsWithIndex = response.data.map(
-          (product: ProductWithImages) => ({
-            ...product,
-            originalIndex: undefined, // Khởi tạo originalIndex là undefined
-          })
-        );
+        const productsWithIndex = products.map((product: any) => ({
+          ...product,
+          originalIndex: undefined, // Khởi tạo originalIndex là undefined
+        }));
 
         setData(productsWithIndex); // Lưu vào state
       } catch (error) {
@@ -47,18 +86,18 @@ const ListProductItem = () => {
   }, []);
 
   const productTypeDisplayNames: Record<string, string> = {
-    PRODUCT: "Pin",
-    PRODUCT1: "Quạt",
-    PRODUCT2: "Ống nhựa, ống lưới xanh",
-    PRODUCT3: "Dây điện",
-    PRODUCT4: "Đá cắt",
-    PRODUCT5: "Ổ khóa",
-    PRODUCT6: "Keo",
-    PRODUCT7: "Ổ cắm, mặt ổ cắm",
-    PRODUCT8: "Sơn",
-    PRODUCT9: "Vật liệu nhà tắm",
-    PRODUCT10: "Bóng đèn",
-    PRODUCT11: "Đồ thường dùng",
+    PRODUCT: pinMesage,
+    PRODUCT1: fanMessage,
+    PRODUCT2: pipeMessage,
+    PRODUCT3: electricWireMessage,
+    PRODUCT4: cuttingStoneMessage,
+    PRODUCT5: lockMessage,
+    PRODUCT6: glueMessage,
+    PRODUCT7: socketMessage,
+    PRODUCT8: paintMessage,
+    PRODUCT9: bathroomMessage,
+    PRODUCT10: lightBlubMessage,
+    PRODUCT11: commonUseMessage,
   };
 
   // Mảng để giữ thứ tự productType

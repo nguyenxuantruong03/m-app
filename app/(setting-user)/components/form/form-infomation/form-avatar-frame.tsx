@@ -23,8 +23,21 @@ import Image from "next/image";
 import { useCurrentRole } from "@/hooks/use-current-role";
 import { UserRole } from "@prisma/client";
 import CircleAvatar from "@/components/ui/circle-avatar";
+import {
+  getToastError,
+  translateAvatar,
+  translateChooseAvatarFrame,
+  translateChooseFrameForAccount,
+  translateChooseVIPAvatarFrame,
+  translateFrameAlreadySelected,
+  translateSave,
+} from "@/translate/translate-client";
 
-const FormAvatarandFrame = () => {
+interface FormAvatarandFrameProps {
+  languageToUse: string;
+}
+
+const FormAvatarandFrame = ({ languageToUse }: FormAvatarandFrameProps) => {
   const user = useCurrentUser();
   const router = useRouter();
   const { update } = useSession();
@@ -35,6 +48,18 @@ const FormAvatarandFrame = () => {
     user?.frameAvatar || "/avatar-frame/frame-1.png"
   );
   const role = useCurrentRole() || UserRole.GUEST;
+
+  //language
+  const toastErrorMessage = getToastError(languageToUse);
+  const chooseFrameForAccountMessage =
+    translateChooseFrameForAccount(languageToUse);
+  const frameAlreadySelectedMessage =
+    translateFrameAlreadySelected(languageToUse);
+  const avatarMessage = translateAvatar(languageToUse);
+  const chooseAvatarFrameMessage = translateChooseAvatarFrame(languageToUse);
+  const chooseVIPAvatarFrameMessage =
+    translateChooseVIPAvatarFrame(languageToUse);
+  const saveMessage = translateSave(languageToUse);
 
   const form = useForm<z.infer<typeof SettingSchema>>({
     resolver: zodResolver(SettingSchema),
@@ -48,17 +73,17 @@ const FormAvatarandFrame = () => {
     setError("");
     values.frame = selectedFrame;
     if (!values.frame) {
-      setError("Hãy chọn 1 khung thay đổi cho tài khoản của bạn.");
+      setError(chooseFrameForAccountMessage);
       return;
     }
 
     if (values.frame === user?.frameAvatar) {
-      setError("Khung đã được chọn trước đó.");
+      setError(frameAlreadySelectedMessage);
       return;
     }
 
     startTransition(() => {
-      setting(values)
+      setting(values, languageToUse)
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -70,7 +95,7 @@ const FormAvatarandFrame = () => {
           }
         })
         .catch(() => {
-          setError("Something went wrong");
+          setError(toastErrorMessage);
         });
     });
   };
@@ -197,16 +222,22 @@ const FormAvatarandFrame = () => {
             name="frame"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Ảnh đại diện</FormLabel>
+                <FormLabel>{avatarMessage}</FormLabel>
                 <FormControl>
-                  <CircleAvatar selectedFrame={selectedFrame} classImage="mx-auto" classAvatar="z-[-1]" widthFrame={width} heightFrame={height}/>
+                  <CircleAvatar
+                    selectedFrame={selectedFrame}
+                    classImage="mx-auto"
+                    classAvatar="z-[-1]"
+                    widthFrame={width}
+                    heightFrame={height}
+                  />
                 </FormControl>
               </FormItem>
             )}
           />
         </div>
         <div className="space-y-4">
-          <FormLabel>Chọn khung avatar</FormLabel>
+          <FormLabel>{chooseAvatarFrameMessage}</FormLabel>
           <div className="grid grid-cols-6 gap-2 h-32 overflow-y-auto">
             {frames.map((frame, index) => (
               <Image
@@ -219,14 +250,16 @@ const FormAvatarandFrame = () => {
                 className={`cursor-pointer ${
                   selectedFrame === frame ? "border-2 border-blue-500" : ""
                 }`}
-                onClick={() => setSelectedFrame(selectedFrame === frame ? "" : frame)}
+                onClick={() =>
+                  setSelectedFrame(selectedFrame === frame ? "" : frame)
+                }
               />
             ))}
           </div>
         </div>
         {(role === UserRole.ADMIN || role === UserRole.STAFF) && (
           <div className="space-y-4">
-            <FormLabel>Chọn khung avatar VIP</FormLabel>
+            <FormLabel>{chooseVIPAvatarFrameMessage}</FormLabel>
             <div className="grid grid-cols-6 gap-2 h-32 overflow-y-auto">
               {framesVIP.map((frame, index) => (
                 <Image
@@ -239,7 +272,9 @@ const FormAvatarandFrame = () => {
                   className={`cursor-pointer ${
                     selectedFrame === frame ? "border-2 border-blue-500" : ""
                   }`}
-                  onClick={() => setSelectedFrame(selectedFrame === frame ? "" : frame)}
+                  onClick={() =>
+                    setSelectedFrame(selectedFrame === frame ? "" : frame)
+                  }
                 />
               ))}
             </div>
@@ -249,7 +284,7 @@ const FormAvatarandFrame = () => {
         <FormError message={error} />
         <FormSuccess message={success} />
         <Button type="submit" disabled={isPending} className="w-full">
-          Save
+          {saveMessage}
         </Button>
       </form>
     </Form>

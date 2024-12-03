@@ -22,9 +22,32 @@ import {
 import { Order, Provinces } from "@/types/type";
 import CryptoJS from "crypto-js";
 import { Check, X } from "lucide-react";
-import cuid from 'cuid';
+import cuid from "cuid";
 import InfoProductPaymentDb from "./components/db/info-product-payment-db";
 import { PaymentSuccessCheckoutCashModal } from "@/components/(client)/modal/payment-success-checkoutCash";
+import {
+  getBuyNowTranslation,
+  getCopiedToClipboardMessage,
+  getEmptyCartMessage,
+  getEnterAddressMessage,
+  getEnterNameMessage,
+  getEnterPhoneNumberMessage,
+  getEstimatedTotalMessage,
+  getIncompleteInfoMessage,
+  getInvalidEmailMessage,
+  getNoIndentationMessage,
+  getOrderMessage,
+  getPleaseWaitMessage,
+  getProcessingPaymentMessage,
+  getProductInfoMessage,
+  getProductNotFoundMessage,
+  getSelectDistrictMessage,
+  getSelectGenderMessage,
+  getSelectProvinceMessage,
+  getSelectWardMessage,
+  getSuccessMessage,
+  getToastError,
+} from "@/translate/translate-client";
 interface ErrorMessages {
   gender?: string;
   email?: string;
@@ -80,6 +103,42 @@ const CheckoutCash = () => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [data, setData] = useState<Order | null>(null);
+  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're running on the client side
+    if (typeof window !== "undefined") {
+      const language = localStorage.getItem("language");
+      setStoredLanguage(language);
+    }
+  }, []);
+
+  //language
+  const languageToUse =
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+  const productNotFoundMessage = getProductNotFoundMessage(languageToUse);
+  const toastErrorMessage = getToastError(languageToUse);
+  const copiedToClipboardMessage = getCopiedToClipboardMessage(languageToUse);
+  const incompleteInFoMessage = getIncompleteInfoMessage(languageToUse);
+  const selectGenderMessage = getSelectGenderMessage(languageToUse);
+  const enterEmailMessage = getSelectGenderMessage(languageToUse);
+  const noIndentationMessage = getNoIndentationMessage(languageToUse);
+  const invalidEmailMessage = getInvalidEmailMessage(languageToUse);
+  const enterNameMessage = getEnterNameMessage(languageToUse);
+  const enterPhoneNumberMessage = getEnterPhoneNumberMessage(languageToUse);
+  const selectProvinceMessage = getSelectProvinceMessage(languageToUse);
+  const selectDistrictMessage = getSelectDistrictMessage(languageToUse);
+  const selectwardMessage = getSelectWardMessage(languageToUse);
+  const enterAddressMessage = getEnterAddressMessage(languageToUse);
+  const emtyCartMessage = getEmptyCartMessage(languageToUse);
+  const buyNowTranslation = getBuyNowTranslation(languageToUse);
+  const productInfoMessage = getProductInfoMessage(languageToUse);
+  const pleaseWaitMessage = getPleaseWaitMessage(languageToUse);
+  const successMessage = getSuccessMessage(languageToUse);
+  const orderMessage = getOrderMessage(languageToUse);
+  const processingPaymentMessage = getProcessingPaymentMessage(languageToUse);
 
   //Total Coins
   useEffect(() => {
@@ -116,10 +175,10 @@ const CheckoutCash = () => {
       navigator.clipboard
         .writeText(data.id)
         .then(() => {
-          console.log("ID copied to clipboard:", data.id);
+          toast.success(`${copiedToClipboardMessage}:${data.id}`);
         })
         .catch((error) => {
-          console.error("Failed to copy ID to clipboard:", error);
+          toast.error(toastErrorMessage);
         });
       // Navigate to /warehouse/package-product
       router.push("/warehouse/package-product");
@@ -132,8 +191,10 @@ const CheckoutCash = () => {
     .filter((item) => cartdb.selectedItems.includes(item.id)) // Filter for selected items
     .sort((a, b) => {
       const getQuantityMatchColorandSize = (item: any) => {
-        const { price: priceSize, percentpromotion: percentpromotionSize } = getSizePrice(item.product, item.size);
-        const { price: priceColor, percentpromotion: percentpromotionColor } = getColorPrice(item.product, item.color);
+        const { price: priceSize, percentpromotion: percentpromotionSize } =
+          getSizePrice(item.product, item.size);
+        const { price: priceColor, percentpromotion: percentpromotionColor } =
+          getColorPrice(item.product, item.color);
         const highestPrice = Math.max(priceSize, priceColor);
 
         if (
@@ -180,8 +241,10 @@ const CheckoutCash = () => {
     .filter((item) => cart.selectedItems.includes(item.cartId)) // Filter for selected items
     .sort((a, b) => {
       const getQuantityMatchColorandSize = (item: any) => {
-        const { price: priceSize, percentpromotion: percentpromotionSize } = getSizePrice(item.product, item.size);
-        const { price: priceColor, percentpromotion: percentpromotionColor } = getColorPrice(item.product, item.color);
+        const { price: priceSize, percentpromotion: percentpromotionSize } =
+          getSizePrice(item.product, item.size);
+        const { price: priceColor, percentpromotion: percentpromotionColor } =
+          getColorPrice(item.product, item.color);
         const highestPrice = Math.max(priceSize, priceColor);
 
         if (
@@ -222,6 +285,16 @@ const CheckoutCash = () => {
       return quantityB - quantityA;
     });
 
+  //Languages
+  const estimatedTotalMessageLocal = getEstimatedTotalMessage(
+    languageToUse,
+    sortItemCartLocal.length
+  );
+  const estimatedTotalMessageData = getEstimatedTotalMessage(
+    languageToUse,
+    sortItemCartDb.length
+  );
+
   //-----------------------Local----------------------
   const totalAmounts = selectedItems.reduce(
     (total, item) => {
@@ -232,13 +305,15 @@ const CheckoutCash = () => {
 
       if (!itemInCart || !itemInCart) {
         // Nếu itemInCart hoặc itemInCart.product là undefined, bỏ qua item này
-        toast.error("Không tìm thấy sản phẩm!");
+        toast.error(productNotFoundMessage);
         return total;
       }
       //GetPrice dựa vào size
       const getPriceMatchColorandSize = () => {
-        const { price: priceSize, percentpromotion: percentpromotionSize } = getSizePrice(itemInCart || "", itemInCart?.size);
-        const { price: priceColor, percentpromotion: percentpromotionColor } = getColorPrice(itemInCart, itemInCart?.color);
+        const { price: priceSize, percentpromotion: percentpromotionSize } =
+          getSizePrice(itemInCart || "", itemInCart?.size);
+        const { price: priceColor, percentpromotion: percentpromotionColor } =
+          getColorPrice(itemInCart, itemInCart?.color);
         return Math.ceil(Math.max(priceSize, priceColor));
       };
 
@@ -314,16 +389,15 @@ const CheckoutCash = () => {
 
       if (!itemInCart || !itemInCart.product) {
         // Nếu itemInCart hoặc itemInCart.product là undefined, bỏ qua item này
-        toast.error("Không tìm thấy sản phẩm!");
+        toast.error(productNotFoundMessage);
         return total;
       }
       //GetPrice dựa vào size
       const getPriceMatchColorandSize = () => {
-        const { price: priceSize, percentpromotion: percentpromotionSize } = getSizePrice(
-          itemInCart?.product || "",
-          itemInCart?.size
-        );
-        const { price: priceColor, percentpromotion: percentpromotionColor } = getColorPrice(itemInCart.product, itemInCart?.color);
+        const { price: priceSize, percentpromotion: percentpromotionSize } =
+          getSizePrice(itemInCart?.product || "", itemInCart?.size);
+        const { price: priceColor, percentpromotion: percentpromotionColor } =
+          getColorPrice(itemInCart.product, itemInCart?.color);
         return Math.ceil(Math.max(priceSize, priceColor));
       };
 
@@ -392,13 +466,12 @@ const CheckoutCash = () => {
     return itemInCart?.product.id || 1;
   });
 
-  const fetchDataOrder = async (
-    responseIdOrderCurrent: string,
-  ) => {
+  const fetchDataOrder = async (responseIdOrderCurrent: string) => {
     try {
       // Fetch the order data patch đây không phải là cập nhật mà nó là get bởi vì get ko thể trả dữ liệu về bên server nên phải dùng patch
       const response = await axios.patch(
-        `${process.env.NEXT_PUBLIC_API_URL}/checkoutcash`,{responseIdOrderCurrent: responseIdOrderCurrent}
+        `${process.env.NEXT_PUBLIC_API_URL}/checkoutcash`,
+        { responseIdOrderCurrent: responseIdOrderCurrent }
       );
 
       // Extract the data from the response
@@ -408,22 +481,22 @@ const CheckoutCash = () => {
         // If a matching order is found, update the state
         setData(orders);
 
-        if(user?.role === "GUEST" && !user?.id){
+        if (user?.role === "GUEST" && !user?.id) {
           await cart.removeSelectedItems();
-        }else{
-          await cartdb.removeSelectedItems(user?.id || "");
+        } else {
+          await cartdb.removeSelectedItems(user?.id || "", languageToUse);
         }
 
         setOpen(true);
       } else {
         // If no matching order is found, show an error
-        toast.error("Error: Mismatched request response.");
+        toast.error(toastErrorMessage);
       }
     } catch (error) {
       // Handle error
-      toast.error("Error fetching order data.");
-    }finally{
-      setLoading(false)
+      toast.error(toastErrorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -448,49 +521,49 @@ const CheckoutCash = () => {
 
     // Common validations
     if (!gender) {
-      errors.gender = "Vui lòng chọn giới tính!";
+      errors.gender = selectGenderMessage;
     }
 
     if (!email) {
-      errors.email = "Vui lòng nhập email!";
+      errors.email = enterEmailMessage;
     } else if (email.startsWith(" ")) {
-      errors.email = "Không được cách đầu dòng";
+      errors.email = noIndentationMessage;
     } else if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
-      errors.email = "Email không hợp lệ";
+      errors.email = invalidEmailMessage;
     }
 
     if (!fullName) {
-      errors.fullName = "Vui lòng nhập tên!";
+      errors.fullName = enterNameMessage;
     } else if (fullName.startsWith(" ")) {
-      errors.fullName = "Không được có khoảng trắng ở đầu dòng!";
+      errors.fullName = noIndentationMessage;
     }
 
     if (!phoneNumber) {
-      errors.phoneNumber = "Vui lòng nhập SĐT!";
+      errors.phoneNumber = enterPhoneNumberMessage;
     }
 
     // Additional validations for non-pickup
     if (deliveryOption !== "pickup") {
       if (!selectedProvince?.value || !selectedProvince?.label) {
-        errors.selectedProvince = "Vui lòng chọn Tỉnh!";
+        errors.selectedProvince = selectProvinceMessage;
       }
 
       if (!selectedDistrict?.value || !selectedDistrict?.label) {
-        errors.selectedDistrict = "Vui lòng chọn Quận/Huyện!";
+        errors.selectedDistrict = selectDistrictMessage;
       }
 
       if (!selectedWard?.value || !selectedWard?.label) {
-        errors.selectedWard = "Vui lòng chọn Phường!";
+        errors.selectedWard = selectwardMessage;
       }
 
       if (!address) {
-        errors.address = "Vui lòng nhập địa chỉ!";
+        errors.address = enterAddressMessage;
       }
     }
 
     if (Object.keys(errors).length > 0) {
       // Hiển thị tất cả các lỗi
-      toast.error("Chưa nhập đầy đủ thông tin!");
+      toast.error(incompleteInFoMessage);
 
       // Cập nhật state cho từng lỗi tương ứng
       setGenderError(errors.gender || "");
@@ -573,7 +646,7 @@ const CheckoutCash = () => {
               );
               setBarProcess(percentCompleted);
             } else {
-              console.warn("Upload progress total is undefined.");
+              toast.error(toastErrorMessage);
             }
           },
         }
@@ -596,7 +669,7 @@ const CheckoutCash = () => {
         );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
-        toast.error("An error occurred during checkout.");
+        toast.error(toastErrorMessage);
       }
     }
   };
@@ -614,6 +687,7 @@ const CheckoutCash = () => {
         isOpen={open}
         data={data}
         loading={loading}
+        languageToUse={languageToUse}
       />
       <form onSubmit={handleSubmitCheckoutCash}>
         <div className="mx-auto md:max-w-3xl lg:max-w-3xl">
@@ -633,17 +707,24 @@ const CheckoutCash = () => {
                     </div>
                     <div className="flex justify-center my-2">
                       <p className="text-gray-500 dark:text-slate-200">
-                        Giỏ hàng của bạn còn trống
+                        {emtyCartMessage}
                       </p>
                     </div>
                     <div className="flex justify-center my-2">
-                      <Button onClick={handleBuyNow} className="bg-red-500 text-white dark:text-slate-900"> Mua ngay</Button>
+                      <Button
+                        onClick={handleBuyNow}
+                        className="bg-red-500 text-white dark:text-slate-900"
+                      >
+                        {buyNowTranslation}
+                      </Button>
                     </div>
                   </>
                 )}
 
                 <ul>
-                  <p className="text-blue-500 font-bold">Thông tin sản phẩm</p>
+                  <p className="text-blue-500 font-bold">
+                    {productInfoMessage}
+                  </p>
 
                   {sortItemCartLocal.map((item) => (
                     <InfoProductPayment
@@ -652,12 +733,13 @@ const CheckoutCash = () => {
                       userId={user?.id || ""}
                       loadingChange={loadingChangeLocal}
                       setLoadingChange={setLoadingChangeLocal}
+                      language={languageToUse}
                     />
                   ))}
                 </ul>
 
                 <div className=" flex justify-between border-t border-gray-400 py-4">
-                  <div>Tạm tính ({sortItemCartLocal.length} sản phẩm): </div>
+                  <div>{estimatedTotalMessageLocal} </div>
                   <Currency
                     value={totalAmount}
                     valueold={totalAmounts.totalPriceOld}
@@ -678,23 +760,32 @@ const CheckoutCash = () => {
                     </div>
                     <div className="flex justify-center my-2">
                       <p className="text-gray-500 dark:text-slate-200">
-                        Giỏ hàng của bạn còn trống
+                        {emtyCartMessage}
                       </p>
                     </div>
                     <div className="flex justify-center my-2">
-                      <Button onClick={handleBuyNow} className="bg-red-500 text-white dark:text-slate-900"> Mua ngay</Button>
+                      <Button
+                        onClick={handleBuyNow}
+                        className="bg-red-500 text-white dark:text-slate-900"
+                      >
+                        {buyNowTranslation}
+                      </Button>
                     </div>
                   </>
                 )}
 
                 <ul>
-                  <p className="text-blue-500 font-bold">Thông tin sản phẩm</p>
+                  <p className="text-blue-500 font-bold">
+                    {productInfoMessage}
+                  </p>
 
                   {sortItemCartDb.map((item) => (
                     <InfoProductPaymentDb
                       key={item.id}
                       data={item}
                       userId={user?.id || ""}
+                      language={languageToUse}
+                      role={user?.role || ""}
                       loadingChange={loadingChangeLocal}
                       setLoadingChange={setLoadingChangeLocal}
                       loading={loading}
@@ -703,7 +794,7 @@ const CheckoutCash = () => {
                 </ul>
 
                 <div className=" flex justify-between border-t border-gray-400 py-4">
-                  <div>Tạm tính ({sortItemCartDb.length} sản phẩm): </div>
+                  <div>{estimatedTotalMessageData}</div>
                   <Currency
                     value={TotalAmountCoins}
                     valueold={totalAmountOldCoin}
@@ -737,6 +828,7 @@ const CheckoutCash = () => {
               userRole={user?.role || ""}
               userId={user?.id || ""}
               loading={loading}
+              language={languageToUse}
             />
           </>
           {/* Delivery */}
@@ -773,6 +865,7 @@ const CheckoutCash = () => {
               userRole={user?.role || ""}
               userId={user?.id || ""}
               loading={loading}
+              language={languageToUse}
             />
           </>
           {/* Process Bar when submit */}
@@ -782,24 +875,34 @@ const CheckoutCash = () => {
                 {loading ? (
                   <>
                     <Button
-                      disabled={loading || user?.role === "GUEST" || !user?.id ? isNoneSelect : isNoneSelectDb}
+                      disabled={
+                        loading || user?.role === "GUEST" || !user?.id
+                          ? isNoneSelect
+                          : isNoneSelectDb
+                      }
                       onClick={handleTrackProduct}
                       className="w-full text-center bg-red-500 hover:bg-red-600 text-white rounded-md my-2 cursor-pointer"
                     >
                       <p className="h-12 flex justify-center items-center font-bold">
-                        <X className="size-12 mr-2" /> <span>Hãy đợi trong giây lát...</span>
+                        <X className="size-12 mr-2" />{" "}
+                        <span>{pleaseWaitMessage}</span>
                       </p>
                     </Button>
                   </>
                 ) : (
                   <>
                     <Button
-                      disabled={loading || user?.role === "GUEST" || !user?.id ? isNoneSelect : isNoneSelectDb}
+                      disabled={
+                        loading || user?.role === "GUEST" || !user?.id
+                          ? isNoneSelect
+                          : isNoneSelectDb
+                      }
                       onClick={handleTrackProduct}
                       className="w-full text-center bg-green-500 hover:bg-green-600 text-white rounded-md my-2 cursor-pointer"
                     >
                       <p className="h-12 flex justify-center items-center font-bold">
-                        <Check className="size-12 mr-2" /> <span>SUCCESS</span>
+                        <Check className="size-12 mr-2" />{" "}
+                        <span>{successMessage}</span>
                       </p>
                     </Button>
                   </>
@@ -812,9 +915,13 @@ const CheckoutCash = () => {
                     <Button
                       className="w-full bg-red-500 text-white dark:text-slate-900"
                       type="submit"
-                      disabled={loading || user?.role === "GUEST" || !user?.id ? isNoneSelect : isNoneSelectDb}
+                      disabled={
+                        loading || user?.role === "GUEST" || !user?.id
+                          ? isNoneSelect
+                          : isNoneSelectDb
+                      }
                     >
-                      Đặt Hàng
+                      {orderMessage}
                     </Button>
                   </div>
                 )}
@@ -822,7 +929,7 @@ const CheckoutCash = () => {
                 {barProcess > 0 && (
                   <>
                     <p className="font-semibold text-slate-400 text-sm text-center my-2">
-                      Processing payment...
+                      {processingPaymentMessage}
                     </p>
                     <div className="progress-container">
                       <div
