@@ -27,6 +27,7 @@ import {
   translateToday,
 } from "@/translate/translate-client";
 import toast from "react-hot-toast";
+import { offensiveWords } from "@/vn_offensive_words";
 
 type ModelResponse = {
   response: {
@@ -38,15 +39,20 @@ interface ChatGeminiProps {
   setChatHistory: Dispatch<SetStateAction<ChatMessage[]>>;
   chatHistory: ChatMessage[];
   languageToUse: string;
+  setUserInputAI: Dispatch<SetStateAction<string>>;
+  userInputAI: string;
+  setPoliciViolationModal: Dispatch<SetStateAction<boolean>>;
 }
 
 const ChatGemini = ({
   setChatHistory,
   chatHistory,
   languageToUse,
+  setUserInputAI,
+  userInputAI,
+  setPoliciViolationModal
 }: ChatGeminiProps) => {
   const user = useCurrentUser();
-  const [userInput, setUserInput] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [minHeight, setMinHeight] = useState(40);
 
@@ -81,8 +87,17 @@ const ChatGemini = ({
   }, [chatHistory]);
 
   const handleUserInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    //Check xúc phạm
+    const containsOffensiveWord = offensiveWords.some((word) =>
+      userInputAI.includes(word)
+    );
+    if (containsOffensiveWord) {
+      setPoliciViolationModal(true); 
+      return; 
+    }
+
     const input = event.target.value;
-    setUserInput(input);
+    setUserInputAI(input);
     if (input.trim() === "") {
       setMinHeight(40);
     } else {
@@ -106,15 +121,24 @@ const ChatGemini = ({
   const timestamp = getCurrentTimestamp();
 
   const sendMessage = async () => {
-    if (userInput.trim() === "") return;
+    //Check xúc phạm
+    const containsOffensiveWord = offensiveWords.some((word) =>
+      userInputAI.includes(word)
+    );
+    if (containsOffensiveWord) {
+      setPoliciViolationModal(true); 
+      return; 
+    }
+    
+    if (userInputAI.trim() === "") return;
 
     setIsLoading(true);
     try {
-      const result = (await model.generateContent(userInput)) as ModelResponse;
+      const result = (await model.generateContent(userInputAI)) as ModelResponse;
       const responseText = result.response.text();
       setChatHistory([
         ...chatHistory,
-        { type: "user", message: userInput, timestamp },
+        { type: "user", message: userInputAI, timestamp },
         {
           type: "bot",
           message: responseText,
@@ -125,7 +149,7 @@ const ChatGemini = ({
     } catch (error) {
       toast.error(toastErrorMessage);
     } finally {
-      setUserInput("");
+      setUserInputAI("");
       setMinHeight(40);
       setIsLoading(false);
     }
@@ -179,7 +203,7 @@ const ChatGemini = ({
               <div className="flex justify-end space-x-2">
                 <div className="space-y-2 flex-grow md:flex-grow-0">
                   <div className="bg-slaet-50 p-2.5 rounded-lg shadow-md">
-                    {userInput}
+                    {userInputAI}
                   </div>
                 </div>
                   <ImageCellOne
@@ -210,7 +234,7 @@ const ChatGemini = ({
                 placeholder={enterYourContentMessage}
                 rows={1}
                 style={{ minHeight: `${minHeight}px`, maxHeight: "150px" }}
-                value={userInput}
+                value={userInputAI}
                 onChange={handleUserInput}
                 onInput={handleUserInput}
                 onKeyDown={handleKeyDown}
@@ -219,7 +243,7 @@ const ChatGemini = ({
                 size="icon"
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 rounded-full bg-blue-500 text-white hover:bg-blue-600 focus:outline-none"
                 onClick={sendMessage}
-                disabled={isLoading || userInput.trim() === ""}
+                disabled={isLoading || userInputAI.trim() === ""}
               >
                 {isLoading ? <Square fill="#fff" /> : <ArrowUp />}
               </Button>

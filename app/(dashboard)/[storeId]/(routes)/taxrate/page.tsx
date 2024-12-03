@@ -27,6 +27,7 @@ const TaxRatePage = async ({ params }: { params: { storeId: string } }) => {
     inclusive: item.inclusive,
     active: item.active,
     taxtype: item.taxtype,
+    updatedAt: item.updatedAt,
     createdAt: item.createdAt,
     language: user?.language || "vi",
   }));

@@ -31,7 +31,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import toast from "react-hot-toast";
 import * as z from "zod";
-import { Avatar } from "@/components/ui/avatar";
 import SocialHint from "./social/socialHint";
 import FeedBack from "./feedback/feedBack";
 import ChatGemini from "./AI/gemini";
@@ -40,13 +39,13 @@ import CategoryFeedBack from "./feedback/category-feedback";
 import { ChatMessage } from "@/types/type";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import ImageCellOne from "@/components/image-cell-one";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Translation from "./translate/translation";
 import { AlertModal } from "@/components/modals/alert-modal";
 import {
-  getLanguageToastError,
   getLanguageToastSuccess,
   getMessageTranslate,
+  getReloadPageDropMenuHint,
   getTitleTranslate,
   getToastError,
   translateFeedback,
@@ -67,13 +66,15 @@ import {
   translateThankYouForFeedback,
   translateUpdatingFeedback,
 } from "@/translate/translate-client";
+import { PolicyViolationModal } from "../modal/policy-violation-modal";
+import { offensiveWords } from "@/vn_offensive_words";
 
 export default function DropMenuHint() {
   const user = useCurrentUser();
   const param = useParams();
-  const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenReloadm, setIsOpenReload] = useState(false);
   const [isAISheetOpen, setIsAISheetOpen] = useState(false); // State for AI Assistant Sheet
   const [isFeedbackSheetOpen, setIsFeedbackSheetOpen] = useState(false); // State for Feedback Sheet
   const [errorEmotion, setErrorEmotion] = useState(false);
@@ -87,6 +88,12 @@ export default function DropMenuHint() {
   const [language, setLanguage] = useState("vi");
   const [isOpenConfirmLanguage, setIsConfirmLanguage] = useState(false);
   const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  const [userInputAI, setUserInputAI] = useState<string>("");
+
+  const [content, setContent] = useState("");
+  const [policiViolationModal, setPoliciViolationModal] = useState(false);
+
 
   useEffect(() => {
     // Check if we're running on the client side
@@ -123,6 +130,8 @@ export default function DropMenuHint() {
   const loadingMessage = translateLoading(languageToUse);
   const minCharactersMessage = translateMinCharacters(languageToUse, 4);
   const maxCharacterMessage = translateMaxCharacters(languageToUse, 250);
+  const reloadPageDropMenuHintMessage =
+    getReloadPageDropMenuHint(languageToUse);
 
   const feedbackDate = user?.feedbackTimeNextResonse
     ? new Date(user.feedbackTimeNextResonse)
@@ -166,6 +175,16 @@ export default function DropMenuHint() {
   });
 
   const onSubmit = async (data: FeedBackFormValues) => {
+    //Check xúc phạm
+    setContent(data.content);
+    const containsOffensiveWord = offensiveWords.some((word) =>
+      data.content.includes(word)
+    );
+    if (containsOffensiveWord) {
+      setPoliciViolationModal(true); 
+      return; 
+    }
+
     try {
       if (indexEmotion === null) {
         setErrorEmotion(true);
@@ -233,29 +252,53 @@ export default function DropMenuHint() {
       // Lấy thông báo từ getLanguageToastSuccess
       const toastMessage = getLanguageToastSuccess(language);
 
+      let apiResponse;
+
       if (user?.role !== "GUEST" && user?.id) {
         // Nếu có user, gọi API
-        await axios.post("/api/translation", { language: language });
+        apiResponse = await axios.post("/api/translation", {
+          language: language,
+        });
 
-        // Gọi toast.success với thông báo
-        toast.success(toastMessage);
+        // Kiểm tra nếu API trả về dữ liệu thành công
+        if (apiResponse?.data?.success) {
+          toast.success(toastMessage);
+
+          // Thực hiện setIsConfirmLanguage và setLoadingLanguage trước
+          setIsConfirmLanguage(false);
+          setLoadingLanguage(false);
+
+          // Nếu thành công, gọi setTimeout để mở trạng thái reload sau 3s
+          setTimeout(() => {
+            setIsOpenReload(true);
+          }, 3000);
+        }
       } else {
         // Nếu không có user, lưu vào localStorage
         localStorage.setItem("language", language);
         toast.success(toastMessage);
+
+        // Thực hiện setIsConfirmLanguage và setLoadingLanguage trước
+        setIsConfirmLanguage(false);
+        setLoadingLanguage(false);
+
+        // Nếu thành công, gọi setTimeout để mở trạng thái reload sau 3s
+        setTimeout(() => {
+          setIsOpenReload(true);
+        }, 3000); // 3000ms = 3s
       }
     } catch (error) {
       // Lấy thông báo từ getLanguageToastError
-      const toastMessageError = getLanguageToastError(language);
-      toast.error(toastMessageError);
-    } finally {
+      toast.error(toastErrorMessage);
+
+      // Dù có lỗi hay không, vẫn đảm bảo set loading thành false
       setIsConfirmLanguage(false);
       setLoadingLanguage(false);
-
-      // Làm mới trang bằng cách thay đổi URL mà không reload
-      // thay vì reload cả trang chưa được sử dụng ý của người dùng thì toast lên hỏi
-      window.location.reload();
     }
+  };
+
+  const handleReloadPage = () => {
+    window.location.reload();
   };
 
   //Bỏ pointer-event:none khi không có isAISheetOpen
@@ -299,6 +342,22 @@ export default function DropMenuHint() {
         onClose={() => setIsConfirmLanguage(false)}
         onConfirm={onCreatlanguage}
         languageToUse={languageToUse}
+      />
+      <AlertModal
+        title={reloadPageDropMenuHintMessage.confirm}
+        message={reloadPageDropMenuHintMessage.info}
+        isOpen={isOpenReloadm}
+        onClose={() => setIsOpenReload(false)}
+        onConfirm={handleReloadPage}
+        loading={loading}
+        languageToUse={languageToUse}
+      />
+      <PolicyViolationModal
+        isOpen={policiViolationModal}
+        onClose={() => setPoliciViolationModal(false)}
+        languageToUse={languageToUse}
+        value={content || userInputAI}
+        setUserInputAI={setUserInputAI}
       />
       <div>
         <DropdownMenu onOpenChange={(open) => setIsOpen(open)}>
@@ -372,14 +431,14 @@ export default function DropMenuHint() {
               <SheetContent side="bottom" className="h-5/6 z-[999999]">
                 <div className="max-w-7xl mx-auto shadow-lg flex items-center justify-between p-2 rounded-md">
                   <div className="flex item-center space-x-2">
-                      <ImageCellOne
-                        imageUrl="/images/avatar-AI.png"
-                        createdAt={""}
-                        email={""}
-                        isClient={true}
-                        customClassFeedBack="z-[9999999]"
-                        languageToUse={languageToUse}
-                      />
+                    <ImageCellOne
+                      imageUrl="/images/avatar-AI.png"
+                      createdAt={""}
+                      email={""}
+                      isClient={true}
+                      customClassFeedBack="z-[9999999]"
+                      languageToUse={languageToUse}
+                    />
                     <div>
                       <SheetTitle>{helloVLXDXuanTruongAIMessage}</SheetTitle>
                       <SheetDescription>
@@ -398,6 +457,9 @@ export default function DropMenuHint() {
                   setChatHistory={setChatHistory}
                   chatHistory={chatHistory}
                   languageToUse={languageToUse}
+                  setUserInputAI={setUserInputAI}
+                  userInputAI={userInputAI}
+                  setPoliciViolationModal={setPoliciViolationModal}
                 />
               </SheetContent>
             </Sheet>

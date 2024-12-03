@@ -3,7 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
 import SpanColumn from "@/components/span-column";
-import { Clock12, Coins, Tag, User, Disc } from "lucide-react";
+import { Clock12, Coins, Tag, User, Disc, AlarmClockCheck } from "lucide-react";
 import FormatDate from "@/components/format-Date";
 
 export type WheelSpinColumn = {
@@ -12,6 +12,7 @@ export type WheelSpinColumn = {
   email: string | null;
   coin: number[];
   rotation: number[];
+  updatedAt: Date;
   createdAt: Date;
   language: string;
 };
@@ -24,7 +25,7 @@ export const columns: ColumnDef<WheelSpinColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Name
+          Tên
           <Tag className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -50,7 +51,7 @@ export const columns: ColumnDef<WheelSpinColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          vòng quay
+          Vòng quay
           <Disc className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -73,6 +74,22 @@ export const columns: ColumnDef<WheelSpinColumn>[] = [
     },
   },
   {
+    accessorKey: "updatedAt",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian cập nhật
+          <AlarmClockCheck className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
+    cell: ({ row }) => {
+      return <FormatDate data={row.original.updatedAt} language={row.original.language}/>;
+    },
+  },
+  {
     accessorKey: "createdAt",
     header: ({ column }) => {
       return (
@@ -86,7 +103,7 @@ export const columns: ColumnDef<WheelSpinColumn>[] = [
     },
     cell: ({ row }) => {
       return (
-      <FormatDate data={row.original.createdAt}/>
+      <FormatDate data={row.original.createdAt} language={row.original.language}/>
       )
     }
   },

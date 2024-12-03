@@ -21,6 +21,7 @@ import {
   ImageUp,
   SmartphoneNfc,
   Clock12,
+  AlarmClockCheck,
 } from "lucide-react";
 import Link from "next/link";
 import { Image as ImageIcon } from "lucide-react";
@@ -45,6 +46,7 @@ export type ManageAttendancesColumn = {
   updateImage: string | null;
   updateNFC: string | null;
   isCheckAttendanceImage: boolean | null;
+  updatedAt: Date;
   createdAt: Date;
   language: string;
 };
@@ -83,7 +85,7 @@ export const columns: ColumnDef<ManageAttendancesColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          ImageApp
+          Hình ảnh điểm danh
           <ImageIcon className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -156,7 +158,7 @@ export const columns: ColumnDef<ManageAttendancesColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          title
+          Tiêu đề
           <Captions className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -169,7 +171,7 @@ export const columns: ColumnDef<ManageAttendancesColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Start
+          Bất đầu làm
           <Timer className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -195,7 +197,7 @@ export const columns: ColumnDef<ManageAttendancesColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          End
+          Kết thúc làm
           <TimerOff className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -216,7 +218,7 @@ export const columns: ColumnDef<ManageAttendancesColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          allDay
+          Cả ngày
           <CalendarCheck className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -237,7 +239,7 @@ export const columns: ColumnDef<ManageAttendancesColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          isCheckImagelDay
+          Kiểm tra ảnh điểm danh 
           <ImagePlus className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -278,6 +280,22 @@ export const columns: ColumnDef<ManageAttendancesColumn>[] = [
     },
   },
   {
+    accessorKey: "updatedAt",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian cập nhật
+          <AlarmClockCheck className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
+    cell: ({ row }) => {
+      return <FormatDate data={row.original.updatedAt} language={row.original.language}/>;
+    },
+  },
+  {
     accessorKey: "createdAt",
     header: ({ column }) => {
       return (
@@ -291,7 +309,7 @@ export const columns: ColumnDef<ManageAttendancesColumn>[] = [
     },
     cell: ({ row }) => {
       return (
-      <FormatDate data={row.original.createdAt}/>
+      <FormatDate data={row.original.createdAt} language={row.original.language}/>
       )
     }
   },

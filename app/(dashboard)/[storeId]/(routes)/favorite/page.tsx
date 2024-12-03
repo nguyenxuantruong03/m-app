@@ -23,6 +23,7 @@ const FavoritePage = async ({ params }: { params: { storeId: string } }) => {
     id: item.id,
     name: item.name,
     value: item.value,
+    updatedAt: item.updatedAt,
     createdAt: item.createdAt,
     language: user?.language || "vi"
   }));

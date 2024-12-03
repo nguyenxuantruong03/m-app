@@ -1,4 +1,3 @@
-"use client";
 import prismadb from "@/lib/prismadb";
 import { utcToZonedTime } from "date-fns-tz";
 import { format } from "date-fns";
@@ -6,10 +5,8 @@ import viLocale from "date-fns/locale/vi";
 import { getAccountByUserId } from "@/data/account";
 import InfoDecive from "@/app/(setting-user)/components/info-device";
 import InfoPassword from "@/app/(setting-user)/components/info-password";
-import { useEffect, useState } from "react";
-import { useCurrentUser } from "@/hooks/use-current-user";
-import { notFound } from "next/navigation";
 import {
+  getPasswordChangeStatus,
   translateDeviceCheck,
   translateDeviceManagementAndLimitations,
   translateLoginAndRecovery,
@@ -17,32 +14,39 @@ import {
   translatePasswordManagementAndSecuritySettings,
   translatePasswordManagementAndTwoFactorVerification,
 } from "@/translate/translate-client";
+import { currentUser } from "@/lib/auth";
+import { notFound } from "next/navigation";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 
 interface PasswordSecurityProps {
   isCustomWarehouse?: boolean;
 }
 
-const PasswordSecurityPage = ({ isCustomWarehouse }: PasswordSecurityProps) => {
-  const userId = useCurrentUser();
-  const [user, setUser] = useState<any>();
-  const [account, setAccount] = useState<any>();
-  const [device, setDevice] = useState<any>();
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+const PasswordSecurityPage = async ({ isCustomWarehouse }: PasswordSecurityProps) => {
+  const userId = await currentUser()
 
-  useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
+  if(userId?.role === "GUEST"){
+    notFound()
+  }
+
+  const account = await getAccountByUserId(userId?.id || "");
+  const user = await prismadb.user.findUnique({
+    where: {
+      id: userId?.id,
+    },
+    include: {
+      password: true,
+    },
+  });
+
+  const findDevice = await prismadb.deviceInfo.findMany({
+    where: {
+      userId: userId?.id
     }
-  }, []);
+  })
 
   //language
-  const languageToUse =
-    user?.id && user?.role !== "GUEST"
-      ? user?.language
-      : storedLanguage || "vi";
+  const languageToUse = user?.language || "vi";
   const passwordAndSecurityMessage =
     translatePasswordAndSecurity(languageToUse);
   const passwordManagementAndSecuritySettingMessage =
@@ -53,33 +57,7 @@ const PasswordSecurityPage = ({ isCustomWarehouse }: PasswordSecurityProps) => {
   const deviceCheckMessage = translateDeviceCheck(languageToUse);
   const deviceManagementAndLimittationMessage =
     translateDeviceManagementAndLimitations(languageToUse);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const account = await getAccountByUserId(userId?.id || "");
-      const user = await prismadb.user.findUnique({
-        where: {
-          id: userId?.id,
-        },
-        include: {
-          password: true,
-        },
-      });
-
-      const findDevice = await prismadb.deviceInfo.findMany({
-        where: {
-          userId: userId?.id,
-        },
-      });
-      if (!user || !account) {
-        notFound();
-      }
-      setUser(user);
-      setAccount(account);
-      setDevice(findDevice);
-    };
-    fetchData;
-  }, []);
+  const passWordChangeStatusMessage = getPasswordChangeStatus(languageToUse);
 
   const formatPassword = user?.password?.length
     ? user?.password[0].createdAt
@@ -92,7 +70,7 @@ const PasswordSecurityPage = ({ isCustomWarehouse }: PasswordSecurityProps) => {
           { locale: viLocale }
         )
       : null
-    : "Chưa đổi mật khẩu";
+    : passWordChangeStatusMessage;
 
   // Kiểm tra điều kiện để quyết định có render InfoDevice hay không
   const shouldRenderDeviceInfo = !(
@@ -140,7 +118,7 @@ const PasswordSecurityPage = ({ isCustomWarehouse }: PasswordSecurityProps) => {
           </div>
           <InfoDecive
             user={user! ?? undefined}
-            findDevice={device}
+            findDevice={findDevice}
             languageToUse={languageToUse}
           />
         </>

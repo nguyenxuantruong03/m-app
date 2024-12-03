@@ -69,6 +69,8 @@ import {
   translateVerySatisfied,
   translateWhatAreYouThinking,
 } from "@/translate/translate-client";
+import { PolicyViolationModal } from "@/components/(client)/modal/policy-violation-modal";
+import { offensiveWords } from "@/vn_offensive_words";
 
 interface FormPostProps {
   setOpen?: Dispatch<SetStateAction<boolean>>;
@@ -100,6 +102,8 @@ const FormPost = ({ setOpen, self, id, userId }: FormPostProps) => {
   const [loadingProduct, setLoadingProduct] = useState(false);
   const [loadingCategory, setLoadingCategory] = useState(false);
   const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+  const [content,setContent] = useState("")
+  const [policiViolationModal, setPoliciViolationModal] = useState(false)
 
   useEffect(() => {
     // Check if we're running on the client side
@@ -279,6 +283,19 @@ const FormPost = ({ setOpen, self, id, userId }: FormPostProps) => {
   };
 
   const onSubmit = (values: z.infer<typeof PostSchema>) => {
+    if (!values.content) {
+      return toast.error(enterProductContentMessage);
+    }
+    //Check xúc phạm
+    setContent(values.content)
+    const containsOffensiveWord = offensiveWords.some((word) =>
+      values.content?.includes(word) ?? false
+    );
+    if (containsOffensiveWord) {
+      setPoliciViolationModal(true); 
+      return; 
+    }
+
     const createdAt = self.review.filter(
       (review: { userId: string }) => review.userId === userId
     )[0]?.createdAt;
@@ -309,10 +326,6 @@ const FormPost = ({ setOpen, self, id, userId }: FormPostProps) => {
           }
         }
       }
-    }
-
-    if (!values.content) {
-      return toast.error(enterProductContentMessage);
     }
 
     if (values.content.length < 2) {
@@ -358,6 +371,15 @@ const FormPost = ({ setOpen, self, id, userId }: FormPostProps) => {
   };
 
   return (
+    <>
+
+<PolicyViolationModal 
+      isOpen={policiViolationModal}
+      onClose={() => setPoliciViolationModal(false)}
+      languageToUse={languageToUse}
+      value={content}
+      />
+
     <Form {...form}>
       <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
         <div className="space-y-4">
@@ -627,6 +649,7 @@ const FormPost = ({ setOpen, self, id, userId }: FormPostProps) => {
         </div>
       </form>
     </Form>
+    </>
   );
 };
 

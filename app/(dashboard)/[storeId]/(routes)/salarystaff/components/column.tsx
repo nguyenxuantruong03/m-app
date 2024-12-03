@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
-import { Banknote, Circle, Clock12, GraduationCap, HandCoins, NavigationOff, Receipt, SendHorizontal, Tag, User } from "lucide-react";
+import { AlarmClockCheck, Banknote, Circle, Clock12, GraduationCap, HandCoins, NavigationOff, Receipt, SendHorizontal, Tag, User } from "lucide-react";
 import SpanColumn from "@/components/span-column";
 import FormatDate from "@/components/format-Date";
 
@@ -16,6 +16,7 @@ export type SalaryStaffsColumn = {
   isSent: boolean | null;
   isPaid: boolean | null;
   degree: string | null;
+  updatedAt: Date
   createdAt: Date;
   language: string;
 };
@@ -29,7 +30,7 @@ export const columns: ColumnDef<SalaryStaffsColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Name
+          Tên
           <Tag className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -55,7 +56,7 @@ export const columns: ColumnDef<SalaryStaffsColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          degree
+          Bằng cấp
           <GraduationCap className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -138,7 +139,7 @@ export const columns: ColumnDef<SalaryStaffsColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Bonus
+          Thưởng thêm
           <HandCoins className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -159,7 +160,7 @@ export const columns: ColumnDef<SalaryStaffsColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Salaryday
+          Lương
           <Receipt className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -181,7 +182,7 @@ export const columns: ColumnDef<SalaryStaffsColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          salarytotal
+          Tổng lương
           <Banknote className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -202,7 +203,7 @@ export const columns: ColumnDef<SalaryStaffsColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          IsSent
+          Gửi mail
           <SendHorizontal className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -223,7 +224,7 @@ export const columns: ColumnDef<SalaryStaffsColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          IsPaid
+          Trả lương
           <Receipt className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -235,6 +236,22 @@ export const columns: ColumnDef<SalaryStaffsColumn>[] = [
       ) : (
         <Receipt className="w-5 h-5 text-red-500" />
       );
+    },
+  },
+  {
+    accessorKey: "updatedAt",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian cập nhật
+          <AlarmClockCheck className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
+    cell: ({ row }) => {
+      return <FormatDate data={row.original.updatedAt} language={row.original.language}/>;
     },
   },
   {
@@ -251,7 +268,7 @@ export const columns: ColumnDef<SalaryStaffsColumn>[] = [
     },
     cell: ({ row }) => {
       return (
-      <FormatDate data={row.original.createdAt}/>
+      <FormatDate data={row.original.createdAt} language={row.original.language}/>
       )
     }
   },

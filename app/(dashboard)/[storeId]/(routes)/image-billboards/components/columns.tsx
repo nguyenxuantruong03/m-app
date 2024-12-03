@@ -3,7 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Clock12, MessageCircleMore, Tag, ArrowUpRight  } from "lucide-react";
+import { Clock12, MessageCircleMore, Tag, ArrowUpRight, AlarmClockCheck  } from "lucide-react";
 import { Images as ImageIcon } from "lucide-react";
 import SpanColumn from "@/components/span-column";
 import FormatDate from "@/components/format-Date";
@@ -17,6 +17,7 @@ export type BillboardColumn = {
   description: string | null;
   url: string;
   link: string | null;
+  updatedAt: Date
   createdAt: Date;
   language: string
 };
@@ -51,7 +52,7 @@ export const columns: ColumnDef<BillboardColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Lable
+          Nhãn
           <Tag className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -64,7 +65,7 @@ export const columns: ColumnDef<BillboardColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Description
+          Mô tả
           <MessageCircleMore className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -77,7 +78,7 @@ export const columns: ColumnDef<BillboardColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Image
+          Hình ảnh
           <ImageIcon className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -104,10 +105,26 @@ export const columns: ColumnDef<BillboardColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Link
+          Đường dẫn
           <ArrowUpRight className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
+    },
+  },
+  {
+    accessorKey: "updatedAt",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian cập nhật
+          <AlarmClockCheck className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
+    cell: ({ row }) => {
+      return <FormatDate data={row.original.updatedAt} language={row.original.language}/>;
     },
   },
   {
@@ -117,14 +134,14 @@ export const columns: ColumnDef<BillboardColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Thời gian thay đổi
+          Thời gian tạo
           <Clock12 className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
     },
     cell: ({ row }) => {
       return (
-      <FormatDate data={row.original.createdAt}/>
+      <FormatDate data={row.original.createdAt} language={row.original.language}/>
       )
     }
   },

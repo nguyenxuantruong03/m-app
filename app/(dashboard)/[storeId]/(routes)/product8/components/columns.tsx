@@ -10,6 +10,7 @@ import {
   ImageUp,
   Clock12,
   View,
+  AlarmClockCheck,
 } from "lucide-react";
 import { Images as ImageIcon } from "lucide-react";
 import SpanColumn from "@/components/span-column";
@@ -31,6 +32,7 @@ export type ProductColumn = {
   isArchived: boolean;
   imagesalientfeaturesUrl: { url: string }[];
   imagesUrl: { url: string }[];
+  updatedAt: Date;
   createdAt: Date;
   language: string;
 };
@@ -180,6 +182,22 @@ export const columns: ColumnDef<ProductColumn>[] = [
     },
   },
   {
+    accessorKey: "updatedAt",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian cập nhật
+          <AlarmClockCheck className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
+    cell: ({ row }) => {
+      return <FormatDate data={row.original.updatedAt} language={row.original.language}/>;
+    },
+  },
+  {
     accessorKey: "createdAt",
     header: ({ column }) => {
       return (
@@ -193,7 +211,7 @@ export const columns: ColumnDef<ProductColumn>[] = [
     },
     cell: ({ row }) => {
       return (
-      <FormatDate data={row.original.createdAt}/>
+      <FormatDate data={row.original.createdAt} language={row.original.language}/>
       )
     }
   },

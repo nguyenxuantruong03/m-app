@@ -11,7 +11,8 @@ import {
   MessageSquareMore,
   Sticker,
   User,
-  Smile, Meh, Frown, Annoyed, Angry
+  Smile, Meh, Frown, Annoyed, Angry,
+  AlarmClockCheck
 } from "lucide-react";
 import FormatDate from "@/components/format-Date";
 import { translateFeedbackMessages } from "@/translate/translate-dashboard";
@@ -25,6 +26,7 @@ export type FeedBackColumn = {
   content: string;
   email: string | null;
   name: string | null;
+  updatedAt: Date
   createdAt: Date;
   language: string;
 };
@@ -85,7 +87,7 @@ export const columns: ColumnDef<FeedBackColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Emotion
+          Cảm xúc
           <Sticker className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -129,7 +131,7 @@ export const columns: ColumnDef<FeedBackColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Category
+          Loại
           <AlignStartVertical className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -154,11 +156,29 @@ export const columns: ColumnDef<FeedBackColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Content
+          Nội dung
           <MessageSquareMore className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
     },
+  },
+  {
+    accessorKey: "updatedAt",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian cập nhật
+          <AlarmClockCheck  className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+      <FormatDate data={row.original.updatedAt} language={row.original.language}/>
+      )
+    }
   },
   {
     accessorKey: "createdAt",
@@ -167,14 +187,16 @@ export const columns: ColumnDef<FeedBackColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          CreatedAt
+          Thời gian tạo
           <Clock12 className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
     },
     cell: ({ row }) => {
-      return <FormatDate data={row.original.createdAt} />;
-    },
+      return (
+      <FormatDate data={row.original.createdAt} language={row.original.language}/>
+      )
+    }
   },
   {
     id: "actions",

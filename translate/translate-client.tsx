@@ -20070,3 +20070,109 @@ export const getChatStatus = (language: string) => {
       };
   }
 };
+
+
+export const getReloadPageDropMenuHint = (language: string) => {
+  switch (language) {
+    case "vi": // Tiếng Việt
+      return {
+        confirm: "Bạn có muốn làm mới trang để thay đổi tất cả ngôn ngữ?",
+        info: "Thời gian làm mới trang sẽ mất vài giây để hệ thống làm mới dữ liệu.",
+      };
+    case "en": // Tiếng Anh
+      return {
+        confirm: "Do you want to refresh the page to change all languages?",
+        info: "The page refresh may take a few seconds to reload the data.",
+      };
+    case "zh": // Tiếng Trung
+      return {
+        confirm: "您是否要刷新页面以更改所有语言？",
+        info: "页面刷新可能需要几秒钟，以便系统重新加载数据。",
+      };
+    case "fr": // Tiếng Pháp
+      return {
+        confirm: "Voulez-vous actualiser la page pour changer toutes les langues ?",
+        info: "Le rafraîchissement de la page peut prendre quelques secondes pour recharger les données.",
+      };
+    case "ja": // Tiếng Nhật
+      return {
+        confirm: "すべての言語を変更するためにページを更新しますか？",
+        info: "ページの更新には、データを再読み込みするために数秒かかることがあります。",
+      };
+    default:
+      return {
+        confirm: "Do you want to refresh the page to change all languages?",
+        info: "The page refresh may take a few seconds to reload the data.",
+      };
+  }
+};
+
+export const getPasswordChangeStatus = (language: string): string => {
+  switch (language) {
+    case "vi":
+      return "Chưa đổi mật khẩu";
+    case "en":
+      return "Password not changed";
+    case "zh":
+      return "未更改密码";
+    case "fr":
+      return "Mot de passe non modifié";
+    case "ja":
+      return "パスワードが変更されていません";
+    default:
+      return "Password not changed"; // Default to English if language is not recognized
+  }
+};
+
+export const getViolationComment = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        violationMessage: "Vi phạm chính sách!",
+        offensiveMessage: "Nội dung của bạn chứa ngôn ngữ phản cảm!",
+        violationPart1: "Bạn đã vi phạm",
+        violationPart2: "điều khoản chính sách",  // Chỉnh sửa: Viết thường chữ cái đầu
+        violationPart3: "của chúng tôi"
+      };
+    case "en":
+      return {
+        violationMessage: "Policy violation!",
+        offensiveMessage: "Your content contains offensive language!",
+        violationPart1: "You have violated",
+        violationPart2: "our policy terms",
+        violationPart3: "of ours"
+      };
+    case "zh":
+      return {
+        violationMessage: "违反政策！", 
+        offensiveMessage: "您的内容包含攻击性语言！",
+        violationPart1: "您已违反", 
+        violationPart2: "我们的政策条款", 
+        violationPart3: "我们的"
+      };
+    case "fr":
+      return {
+        violationMessage: "Violation de la politique !",
+        offensiveMessage: "Votre contenu contient un langage offensant !",
+        violationPart1: "Vous avez violé",
+        violationPart2: "nos conditions de politique",
+        violationPart3: "les nôtres"
+      };
+    case "ja":
+      return {
+        violationMessage: "ポリシー違反！", 
+        offensiveMessage: "あなたのコンテンツには攻撃的な言葉が含まれています！", 
+        violationPart1: "あなたは違反しました", 
+        violationPart2: "私たちのポリシー規約", 
+        violationPart3: "私たちの"
+      };
+    default:
+      return {
+        violationMessage: "Policy violation!",
+        offensiveMessage: "Your content contains offensive language!",
+        violationPart1: "You have violated",
+        violationPart2: "our policy terms",
+        violationPart3: "of ours"
+      };
+  }
+};

@@ -34,6 +34,7 @@ const SalaryStaff = async () => {
       isSent: item.isSent,
       isPaid: item.isPaid,
       degree: item.user.degree,
+      updatedAt: item.updatedAt,
       createdAt: item.createdAt,
       language: user?.language || "vi",
     };

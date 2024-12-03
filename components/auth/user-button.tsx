@@ -173,11 +173,13 @@ export const UserButton = () => {
           </div>
         </div>
 
-        <Link href={`/me/${userId?.nameuser}`}>
-          <DropdownMenuItem className="mt-4 mb-2 flex items-center">
-            <User className="h-5 w-5 mr-2" /> {menuItemMessage.name1}
-          </DropdownMenuItem>
-        </Link>
+        {userId?.role !== "GUEST" && (
+          <Link href={`/me/${userId?.nameuser}`}>
+            <DropdownMenuItem className="mt-4 mb-2 flex items-center">
+              <User className="h-5 w-5 mr-2" /> {menuItemMessage.name1}
+            </DropdownMenuItem>
+          </Link>
+        )}
 
         <Link href={`/listlive`}>
           <DropdownMenuItem className="mt-4 my-2 flex items-center">
@@ -187,12 +189,13 @@ export const UserButton = () => {
         <Separator />
 
         <DropdownMenuItem className="flex items-center cursor-pointer">
-          <ThemeToggleDrakorLight dropdown={false} languageToUse={languageToUse}/>
+          <ThemeToggleDrakorLight
+            dropdown={false}
+            languageToUse={languageToUse}
+          />
         </DropdownMenuItem>
 
         <Separator />
-
-        
 
         <Link href="/warehouse/package-product/delivered-product">
           <DropdownMenuItem className="my-2 flex items-center">
@@ -213,12 +216,16 @@ export const UserButton = () => {
           <Separator />
         </Link>
 
-        <Separator />
-        <Link href="/setting-profile">
-          <DropdownMenuItem className="flex items-center cursor-pointer">
-            <Settings className="h-5 w-5 mr-2" /> {menuItemMessage.name5}
-          </DropdownMenuItem>
-        </Link>
+        {userId?.role !== "GUEST" && (
+          <>
+            <Separator />
+            <Link href="/setting-profile">
+              <DropdownMenuItem className="flex items-center cursor-pointer">
+                <Settings className="h-5 w-5 mr-2" /> {menuItemMessage.name5}
+              </DropdownMenuItem>
+            </Link>
+          </>
+        )}
 
         <Separator />
         <LogoutButton>

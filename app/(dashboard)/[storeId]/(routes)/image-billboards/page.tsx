@@ -32,6 +32,7 @@ const ImageBillboardsPage = async ({
       description: item.description,
       url: item.url,
       link: item.link,
+      updatedAt: item.updatedAt,
       createdAt: item.createdAt,
       language: user?.language || "vi"
     })),

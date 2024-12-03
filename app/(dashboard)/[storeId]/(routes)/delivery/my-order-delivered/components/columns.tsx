@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import FormatDate from "@/components/format-Date";
 import ImageCellMutiple from "@/components/image-cell-multiple";
+import { getStatusDisplay } from "@/translate/translate-dashboard";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -86,7 +87,7 @@ export const columns: ColumnDef<OrderColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Sản phẩm
+          Product
           <Package className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -99,7 +100,7 @@ export const columns: ColumnDef<OrderColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Hình ảnh đã giao
+          Image Customer
           <ImageIcon className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -117,7 +118,7 @@ export const columns: ColumnDef<OrderColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Email nhân viên giao hàng
+          Email Shipper
           <UserPlus  className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -130,7 +131,7 @@ export const columns: ColumnDef<OrderColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Tên nhân viên giao hàng
+          Name Shipper
           <UserPlus  className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -143,7 +144,7 @@ export const columns: ColumnDef<OrderColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Trả hàng
+          Return Product
           <Undo2 className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -174,46 +175,9 @@ export const columns: ColumnDef<OrderColumn>[] = [
     },
     cell: ({ row }) => {
       const status = row.original.status;
-      const getStatusDisplay = (status:string) => {
-        switch (status) {
-          case "Cho_xac_nhan":
-            return <span className="text-red-500 font-semibold">Chờ xác nhận</span>;
-          case "Soan_hang":
-            return <span className="text-yellow-500 font-semibold">Soạn hàng</span>;
-          case "Cho_lay_hang":
-            return <span className="text-yellow-500 font-semibold">Chờ lấy hàng</span>;
-          case "Dang_giao":
-            return <span className="text-blue-500 font-semibold">Đang giao</span>;
-          case "Giao_lai_hang":
-            return <span className="text-yellow-500 font-semibold">Giao hàng lại</span>;
-          case "Danh_gia":
-            return <span className="text-yellow-500 font-semibold">Đánh giá</span>;
-          case "Da_giao":
-            return <span className="text-green-500 font-semibold">Đã giao</span>;
-          case "Da_huy":
-            return <span className="text-red-500 font-semibold">Đã hủy</span>;
-          case "Tra_hang":
-            return <span className="text-yellow-500 font-semibold">Trả hàng</span>;
-          case "Nhan_tai_cua_hang":
-            return <span className="text-red-500 font-semibold">Nhận tại cửa hàng</span>;
-          case "Soan_hang_nhan_tai_cua_hang":
-            return <span className="text-yellow-500 font-semibold">Soạn hàng nhận tại cửa hàng</span>;
-          case "Da_soan_hang_xong":
-            return <span className="text-blue-500 font-semibold">Đã soạn hàng xong</span>;
-          case "Da_nhan_tai_cua_hang":
-            return <span className="text-green-500 font-semibold">Đã nhận tại cửa hàng</span>;
-          case "Shipper_chuan_bi":
-            return <span className="text-yellow-500 font-semibold">Shipper chuẩn bị</span>;
-          case "Shipper_dang_den":
-            return <span className="text-yellow-500 font-semibold">Shipper đang đến</span>;
-          case "Da_nhan_tra_hang":
-            return <span className="text-green-500 font-semibold">Đã nhận trả hàng</span>;
-          default:
-            return <span className="font-semibold">{status}</span>;
-        }
-      };
+      const language = row.original.language; // Ngôn ngữ hiện tại
 
-      return <div>{getStatusDisplay(status)}</div>;
+      return <div>{getStatusDisplay(status, language)}</div>;
     },
   },
   {
@@ -392,7 +356,7 @@ export const columns: ColumnDef<OrderColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      return <FormatDate data={row.original.updatedAt} />;
+      return <FormatDate data={row.original.updatedAt} language={row.original.language}/>;
     },
   },
   {
@@ -408,7 +372,7 @@ export const columns: ColumnDef<OrderColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      return <FormatDate data={row.original.createdAt} />;
+      return <FormatDate data={row.original.createdAt} language={row.original.language}/>;
     },
   },
 ];

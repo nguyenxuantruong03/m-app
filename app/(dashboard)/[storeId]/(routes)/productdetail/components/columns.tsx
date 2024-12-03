@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
 import { Checkbox } from "@/components/ui/checkbox";
 import SpanColumn from "@/components/span-column";
-import {Hash ,Tag ,CircleDollarSign,Tornado,CirclePercent,HandCoins,Heading,Book,Ruler,Palette,Scale3D, Clock12    } from "lucide-react"
+import {Hash ,Tag ,CircleDollarSign,Tornado,CirclePercent,HandCoins,Heading,Book,Ruler,Palette,Scale3D, Clock12, AlarmClockCheck    } from "lucide-react"
 import { Decimal } from "@prisma/client/runtime/library";
 import EditRow from "../_components/edit-row";
 import FormatDate from "@/components/format-Date";
@@ -49,8 +49,7 @@ export type ProductDetailColumn = {
   size5: string | null;
   color5: string | null;
   category: string | null;
-  createdAt: Date;
-
+  
   //notformat
   pricenotformat1: Decimal | null;
   pricenotformat2: Decimal | null;
@@ -112,6 +111,8 @@ export type ProductDetailColumn = {
   size5Id: string | null
   color5Id: string | null
   categoryId: string;
+  updatedAt: Date;
+  createdAt: Date;
   language: string
 };
 
@@ -1249,6 +1250,22 @@ export const columns: ColumnDef<ProductDetailColumn>[] = [
     cell: ({ row }) => <LongCell field="contentsalientfeatures" data={row.original.contentsalientfeatures} datas={row.original}/>,
   },
   {
+    accessorKey: "updatedAt",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian cập nhật
+          <AlarmClockCheck className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
+    cell: ({ row }) => {
+      return <FormatDate data={row.original.updatedAt} language={row.original.language}/>;
+    },
+  },
+  {
     accessorKey: "createdAt",
     header: ({ column }) => {
       return (
@@ -1262,7 +1279,7 @@ export const columns: ColumnDef<ProductDetailColumn>[] = [
     },
     cell: ({ row }) => {
       return (
-      <FormatDate data={row.original.createdAt}/>
+      <FormatDate data={row.original.createdAt} language={row.original.language}/>
       )
     }
   },

@@ -71,13 +71,36 @@ export const register = async (
   const role = userCount === 0 ? "ADMIN" : "USER";
 
   // Tạo người dùng mới
+  const favoriteValue = "phobien";
+  const favoriteName = "Phổ biến";
+
+  // Kiểm tra nếu giá trị "phobien" đã tồn tại trong bảng favorite
+  const existingFavorite = await prismadb.favorite.findFirst({
+    where: {
+      value: favoriteValue,
+      storeId: "", // Thay bằng storeId của bạn
+    },
+  });
+
+  // Nếu chưa tồn tại, tạo mới giá trị trong bảng favorite
+  if (!existingFavorite) {
+    await prismadb.favorite.create({
+      data: {
+        storeId: "",
+        name: favoriteName,
+        value: favoriteValue,
+      },
+    });
+  }
+
+  // Thêm giá trị "phobien" vào mảng favorite của người dùng mới
   await prismadb.user.create({
     data: {
       name,
       email,
       language: languageToUse,
       nameuser: nameuser,
-      favorite: ["phobien"],
+      favorite: [favoriteValue], // Khởi tạo mảng với "phobien"
       password: {
         create: [{ password: hashPassword }],
       },

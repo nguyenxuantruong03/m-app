@@ -28,6 +28,7 @@ const BillboardsPage = async ({ params }: { params: { storeId: string } }) => {
     description: item.description,
     imagebillboard: item.imagebillboard.map((item) => item.url),
     imagebillboardpatch: item.imagebillboard,
+    updatedAt: item.updatedAt,
     createdAt: item.createdAt,
     language: user?.language || "vi"
   }));

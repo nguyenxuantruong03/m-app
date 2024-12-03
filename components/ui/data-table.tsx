@@ -27,6 +27,7 @@ import { Trash } from "lucide-react";
 import { AlertModal } from "../modals/alert-modal";
 import { DatePickerWithRange } from "./pick-calendar";
 import { DateRange } from "react-day-picker";
+import { getDataTable } from "@/translate/translate-dashboard";
 
 const formatter = new Intl.NumberFormat("de-DE", {
   style: "currency",
@@ -72,6 +73,9 @@ export function DataTable<TData, TValue>({
   const [rowSelection, setRowSelection] = useState({});
   const [filteredData, setFilteredData] = useState<TData[]>(data);
   const prevRowSelection = useRef(rowSelection);
+
+  //language
+  const dataTableMessage = getDataTable(languageToUse)
 
   // Add the index column to the columns
   const indexedColumns = [
@@ -156,7 +160,7 @@ export function DataTable<TData, TValue>({
       />
       <div className="lg:flex items-center py-4 space-y-2 lg:space-y-0 lg:space-x-3 grid grid-rows-2">
         <Input
-          placeholder="Search"
+          placeholder={dataTableMessage.search}
           value={
             (table.getColumn(searchKey || "")?.getFilterValue() as string) ?? ""
           }
@@ -174,19 +178,19 @@ export function DataTable<TData, TValue>({
             onClick={() => setOpen?.(true)}
           >
             <Trash className="size-4 mr-2" />
-            Delete ({Object.keys(rowSelection).length})
+            {dataTableMessage.delete} ({Object.keys(rowSelection).length})
           </Button>
         )}
-        <DatePickerWithRange onDateChange={handleDateChange} data={data} />
+        <DatePickerWithRange onDateChange={handleDateChange} data={data} languageToUse={languageToUse}/>
       </div>
       {/* Conditionally display total calculations if showTotal is true */}
       {showTotal && (
         <div className="my-4">
           <p className="text-lg font-semibold">
-            <span className="text-red-500">Tổng nợ shipper:</span> <span className="text-yellow-500">{formatter.format(calculateTotalDebt())}</span>
+            <span className="text-red-500">{dataTableMessage.totalShipperDebt}:</span> <span className="text-yellow-500">{formatter.format(calculateTotalDebt())}</span>
           </p>
           <p className="text-lg font-semibold">
-            <span className="text-green-500">Tổng tiền thu được từ shipper:</span> {formatter.format(calculateTotal())}
+            <span className="text-green-500">{dataTableMessage.totalCollectedFromShipper}:</span> {formatter.format(calculateTotal())}
           </p>
         </div>
       )}
@@ -233,7 +237,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  {dataTableMessage.noResults}
                 </TableCell>
               </TableRow>
             )}
@@ -243,8 +247,8 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center justify-end space-x-2 py-4">
         {showSelected && (
           <div className="flex-1 text-sm text-muted-foreground">
-            {Object.keys(rowSelection).length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
+            {Object.keys(rowSelection).length} {dataTableMessage.of}
+            {table.getFilteredRowModel().rows.length} {dataTableMessage.rowsSelected}.
           </div>
         )}
         <Button
@@ -253,7 +257,7 @@ export function DataTable<TData, TValue>({
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
-          Previous
+          {dataTableMessage.previous}
         </Button>
         <Button
           variant="outline"
@@ -261,7 +265,7 @@ export function DataTable<TData, TValue>({
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
-          Next
+          {dataTableMessage.previous}
         </Button>
       </div>
     </div>

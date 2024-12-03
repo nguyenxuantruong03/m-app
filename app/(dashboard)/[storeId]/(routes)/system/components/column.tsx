@@ -3,6 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
 import {
+  AlarmClockCheck,
   Clock12,
   Minus,
   Plus,
@@ -22,6 +23,7 @@ export type SystemsColumn = {
   delete: string[];
   type: string | null;
   user: string | null;
+  updatedAt: Date
   createdAt: Date;
   language: string
 };
@@ -133,6 +135,22 @@ export const columns: ColumnDef<SystemsColumn>[] = [
     },
   },
   {
+    accessorKey: "updatedAt",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian cập nhật
+          <AlarmClockCheck className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
+    cell: ({ row }) => {
+      return <FormatDate data={row.original.updatedAt} language={row.original.language}/>;
+    },
+  },
+  {
     accessorKey: "createdAt",
     header: ({ column }) => {
       return (
@@ -146,11 +164,9 @@ export const columns: ColumnDef<SystemsColumn>[] = [
     },
     cell: ({ row }) => {
       return (
-        <div>
-          <FormatDate data={row.original.createdAt} subtractiontime={true} />
-        </div>
-      );
-    },
+      <FormatDate data={row.original.createdAt} language={row.original.language}/>
+      )
+    }
   },
   {
     id: "actions",

@@ -25,6 +25,7 @@ const System = async () => {
     delete: item.delete.map((item) => item),
     type: item.type,
     user: item.user,
+    updatedAt: item.updatedAt,
     createdAt: item.createdAt,
     language: user?.language || "vi"
   }));

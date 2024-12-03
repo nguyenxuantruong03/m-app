@@ -25,7 +25,6 @@ import FormImageCredential from "./form/form-infomation/form-imageCredential";
 import Image from "next/image";
 import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
 import { getFavorite } from "@/actions/client/favorite/get-favorite";
-import toast from "react-hot-toast";
 import {
   getGenderFemaleMessage,
   getGenderMaleMessage,
@@ -51,6 +50,7 @@ import {
 
 interface InfoUserProps {
   user: Userdata;
+  favorite: Favorite[];
   imageCredential: string;
   isCustomWarehouse?: boolean;
   languageToUse: string;
@@ -80,6 +80,7 @@ interface AccountItem {
 
 const InfoUser: React.FC<InfoUserProps> = ({
   user,
+  favorite,
   imageCredential,
   isCustomWarehouse,
   languageToUse,
@@ -87,11 +88,9 @@ const InfoUser: React.FC<InfoUserProps> = ({
   const [open, setOpen] = useState(false);
   const [alertGuestModal, setAlertGuestModal] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
-  const [favorite, setFavorite] = useState<Favorite[]>([]);
   const [loadingFavorite, setLoadingFavorite] = useState(false);
 
   //language
-  const toastErrorMessage = getToastError(languageToUse);
   const notUpdatedMessage = translateNotUpdated(languageToUse);
   const avatarMessage = translateAvatar(languageToUse);
   const imageFrameMessage = translateImageFrame(languageToUse);
@@ -111,22 +110,6 @@ const InfoUser: React.FC<InfoUserProps> = ({
   const notChangeMessage = translateNotChange(languageToUse);
   const editAvatarMessage = translateEditAvatar(languageToUse);
   const avatarDescriptionMessage = translateAvatarDescription(languageToUse);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoadingFavorite(true);
-        const favorite = await getFavorite(languageToUse);
-        setFavorite(favorite);
-      } catch (error) {
-        console.error(error);
-        toast.error(toastErrorMessage);
-      } finally {
-        setLoadingFavorite(false);
-      }
-    };
-    fetchData();
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -211,7 +194,7 @@ const InfoUser: React.FC<InfoUserProps> = ({
           alt="404"
           width="60"
           height="60"
-          src={user.frameAvatar || "/avatar-frame/frame-1.png"}
+          src={user?.frameAvatar || "/avatar-frame/frame-1.png"}
           loading="lazy"
         />
       ),
@@ -262,7 +245,7 @@ const InfoUser: React.FC<InfoUserProps> = ({
           {profileIntroMessage}
         </span>
       ),
-      state: user.bio || notUpdatedMessage,
+      state: user?.bio || notUpdatedMessage,
       icons: (
         <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
       ),
@@ -330,7 +313,7 @@ const InfoUser: React.FC<InfoUserProps> = ({
           {phoneNumberMessage}
         </span>
       ),
-      state: user.phonenumber || notUpdatedMessage,
+      state: user?.phonenumber || notUpdatedMessage,
       icons: (
         <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
       ),
@@ -377,7 +360,7 @@ const InfoUser: React.FC<InfoUserProps> = ({
           {addressMessage}
         </span>
       ),
-      state: user.address || notUpdatedMessage,
+      state: user?.address || notUpdatedMessage,
       icons: (
         <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
       ),
@@ -390,7 +373,7 @@ const InfoUser: React.FC<InfoUserProps> = ({
           {otheraddressMessage}
         </span>
       ),
-      state: user.addressother || notUpdatedMessage,
+      state: user?.addressother || notUpdatedMessage,
       icons: (
         <ChevronRight className="h-5 w-5 dark:text-slate-900 text-white" />
       ),

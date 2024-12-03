@@ -5,6 +5,7 @@ import { CellAction } from "./cell-action";
 import {
   AlarmClockCheck,
   AlarmClockMinus,
+  AlarmClockPlus,
   CircleDollarSign,
   Flag,
   FlagOff,
@@ -38,6 +39,7 @@ export type ShippingRatesColumn = {
   valuemax: number;
   active: boolean | null;
   amountnotformat: number;
+  updatedAt: Date
   createdAt: Date;
   language: string;
 };
@@ -102,7 +104,7 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          số tiền
+          Số tiền
           <CircleDollarSign className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -173,7 +175,7 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Thời gian tối đa
-          <AlarmClockCheck className="ml-2 h-4 w-4" />
+          <AlarmClockPlus  className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
     },
@@ -241,6 +243,22 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
     },
   },
   {
+    accessorKey: "updatedAt",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian cập nhật
+          <AlarmClockCheck className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
+    cell: ({ row }) => {
+      return <FormatDate data={row.original.updatedAt} language={row.original.language}/>;
+    },
+  },
+  {
     accessorKey: "createdAt",
     header: ({ column }) => {
       return (
@@ -253,8 +271,10 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      return <FormatDate data={row.original.createdAt} />;
-    },
+      return (
+      <FormatDate data={row.original.createdAt} language={row.original.language}/>
+      )
+    }
   },
   {
     id: "actions",

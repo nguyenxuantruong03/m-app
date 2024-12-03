@@ -2,10 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
+import { UserRoundX , Clock12 } from "lucide-react";
 import { UnblockButton } from "./unblock-button";
 import FormatDate from "@/components/format-Date";
 import CircleAvatar from "@/components/ui/circle-avatar";
+import SpanColumn from "@/components/span-column";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -30,8 +31,8 @@ export const columns: ColumnDef<BlockUser>[] = [
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        UserName
-        <ArrowUpDown className="ml-2 w-4 h-4" />
+        Tên người dùng
+        <UserRoundX  className="ml-2 w-4 h-4" />
       </Button>
     ),
     cell: ({ row }) => (
@@ -51,18 +52,19 @@ export const columns: ColumnDef<BlockUser>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Date Block
-        <ArrowUpDown className="ml-2 w-4 h-4" />
-      </Button>
-    ),
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Ngày cấm
+          <Clock12 className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
     cell: ({ row }) => {
       return (
-      <FormatDate data={row.original.createdAt}/>
+      <FormatDate data={row.original.createdAt} language={row.original.languageToUse}/>
       )
     }
   },

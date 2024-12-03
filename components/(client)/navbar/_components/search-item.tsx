@@ -12,6 +12,7 @@ import {
   translateResultForTerm,
 } from "@/translate/translate-client";
 import toast from "react-hot-toast";
+import getSearchProduct from "@/actions/client/serchProduct";
 
 interface SearchItemProps {
   value: string;
@@ -37,11 +38,8 @@ const SearchItem = ({ value, languageToUse }: SearchItemProps) => {
       if (!value) return; // Ngăn gọi API nếu value rỗng
       try {
         setLoading(true);
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/searchProduct`,
-          { value: value }
-        );
-        setData(response.data);
+        const searchData = await getSearchProduct({ value, language: languageToUse });
+        setData(searchData);
       } catch (error) {
       } finally {
         setLoading(false);

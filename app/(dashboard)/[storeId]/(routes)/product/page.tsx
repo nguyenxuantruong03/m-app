@@ -39,6 +39,7 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
     isArchived: item.isArchived,
     productdetail: item.productdetail.title,
     productdetailId: item.productdetail.id,
+    updatedAt: item.updatedAt,
     createdAt: item.createdAt,
     language: user?.language || "vi",
   }));

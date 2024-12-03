@@ -12817,3 +12817,426 @@ export const getWheelSpinClient = (language: string) => {
   }
 };
 
+
+export const getDataTable = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        search: "Tìm kiếm",
+        delete: "Xóa",
+        totalShipperDebt: "Tổng nợ shipper",
+        totalCollectedFromShipper: "Tổng tiền thu được từ shipper",
+        noResults: "Không có kết quả.",
+        of: "của",
+        rowsSelected: "hàng được chọn",
+        previous: "Trước",
+        next: "Tiếp",
+      };
+    case "en":
+      return {
+        search: "Search",
+        delete: "Delete",
+        totalShipperDebt: "Total shipper debt",
+        totalCollectedFromShipper: "Total collected from shipper",
+        noResults: "No results.",
+        of: "of",
+        rowsSelected: "row(s) selected",
+        previous: "Previous",
+        next: "Next",
+      };
+    case "zh":
+      return {
+        search: "搜索",
+        delete: "删除",
+        totalShipperDebt: "送货员总债务",
+        totalCollectedFromShipper: "从送货员收集的总金额",
+        noResults: "没有结果。",
+        of: "的",
+        rowsSelected: "行已选择",
+        previous: "上一页",
+        next: "下一页",
+      };
+    case "fr":
+      return {
+        search: "Rechercher",
+        delete: "Supprimer",
+        totalShipperDebt: "Dette totale du livreur",
+        totalCollectedFromShipper: "Total collecté auprès du livreur",
+        noResults: "Aucun résultat.",
+        of: "de",
+        rowsSelected: "ligne(s) sélectionnée(s)",
+        previous: "Précédent",
+        next: "Suivant",
+      };
+    case "ja":
+      return {
+        search: "検索",
+        delete: "削除",
+        totalShipperDebt: "配達員の総負債",
+        totalCollectedFromShipper: "配達員から集めた合計金額",
+        noResults: "結果がありません。",
+        of: "の",
+        rowsSelected: "行が選択されました",
+        previous: "前へ",
+        next: "次へ",
+      };
+    default:
+      return {
+        search: "Search",
+        delete: "Delete",
+        totalShipperDebt: "Total shipper debt",
+        totalCollectedFromShipper: "Total collected from shipper",
+        noResults: "No results.",
+        of: "of",
+        rowsSelected: "row(s) selected",
+        previous: "Previous",
+        next: "Next",
+      };
+  }
+};
+
+export const getPickCalendar = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        pickDateTime: "Chọn ngày và giờ",
+        fromTime: "Từ giờ",
+        toTime: "Đến giờ",
+      };
+    case "en":
+      return {
+        pickDateTime: "Pick a date and time",
+        fromTime: "From Time",
+        toTime: "To Time",
+      };
+    case "zh":
+      return {
+        pickDateTime: "选择日期和时间",
+        fromTime: "从时间",
+        toTime: "到时间",
+      };
+    case "fr":
+      return {
+        pickDateTime: "Choisissez une date et une heure",
+        fromTime: "De l'heure",
+        toTime: "À l'heure",
+      };
+    case "ja":
+      return {
+        pickDateTime: "日付と時間を選択",
+        fromTime: "開始時刻",
+        toTime: "終了時刻",
+      };
+    default:
+      return {
+        pickDateTime: "Pick a date and time",
+        fromTime: "From Time",
+        toTime: "To Time",
+      };
+  }
+};
+
+export const getUsersLabel = (language: string, maxRedemptionsValue: number): string => {
+  // Kiểm tra số lượng và thay đổi từ "user" hoặc "users"
+  const isPlural = maxRedemptionsValue > 1;
+
+  switch (language) {
+    case "vi": // Tiếng Việt
+      return isPlural ? "người dùng" : "người dùng";
+    case "en": // Tiếng Anh
+      return isPlural ? "users" : "user";
+    case "zh": // Tiếng Trung
+      return isPlural ? "用户" : "用户"; // Chữ Trung không thay đổi dạng số nhiều
+    case "fr": // Tiếng Pháp
+      return isPlural ? "utilisateurs" : "utilisateur";
+    case "ja": // Tiếng Nhật
+      return isPlural ? "ユーザー" : "ユーザー"; // Chữ Nhật không thay đổi dạng số nhiều
+    default:
+      return "users"; // Mặc định Tiếng Anh
+  }
+};
+
+export const getMonthLabel = (language: string): string => {
+  switch (language) {
+    case "vi": // Tiếng Việt
+      return "tháng";
+    case "en": // Tiếng Anh
+      return "month";
+    case "zh": // Tiếng Trung
+      return "个月"; // Gè yuè
+    case "fr": // Tiếng Pháp
+      return "mois";
+    case "ja": // Tiếng Nhật
+      return "ヶ月"; // Kagetsu
+    default:
+      return "month"; // Mặc định Tiếng Anh
+  }
+};
+
+
+export const getStatusDisplay = (status: string, language: string) => {
+  switch (language) {
+    case "vi": // Tiếng Việt
+      switch (status) {
+        case "Cho_xac_nhan":
+          return <span className="text-red-500 font-semibold">Chờ xác nhận</span>;
+        case "Soan_hang":
+          return <span className="text-yellow-500 font-semibold">Soạn hàng</span>;
+        case "Cho_lay_hang":
+          return <span className="text-yellow-500 font-semibold">Chờ lấy hàng</span>;
+        case "Dang_giao":
+          return <span className="text-blue-500 font-semibold">Đang giao</span>;
+        case "Giao_lai_hang":
+          return <span className="text-yellow-500 font-semibold">Giao hàng lại</span>;
+        case "Danh_gia":
+          return <span className="text-yellow-500 font-semibold">Đánh giá</span>;
+        case "Da_giao":
+          return <span className="text-green-500 font-semibold">Đã giao</span>;
+        case "Da_huy":
+          return <span className="text-red-500 font-semibold">Đã hủy</span>;
+        case "Tra_hang":
+          return <span className="text-yellow-500 font-semibold">Trả hàng</span>;
+        case "Nhan_tai_cua_hang":
+          return <span className="text-red-500 font-semibold">Nhận tại cửa hàng</span>;
+        case "Soan_hang_nhan_tai_cua_hang":
+          return <span className="text-yellow-500 font-semibold">Soạn hàng nhận tại cửa hàng</span>;
+        case "Da_soan_hang_xong":
+          return <span className="text-blue-500 font-semibold">Đã soạn hàng xong</span>;
+        case "Da_nhan_tai_cua_hang":
+          return <span className="text-green-500 font-semibold">Đã nhận tại cửa hàng</span>;
+        case "Shipper_chuan_bi":
+          return <span className="text-yellow-500 font-semibold">Shipper chuẩn bị</span>;
+        case "Shipper_dang_den":
+          return <span className="text-yellow-500 font-semibold">Shipper đang đến</span>;
+        case "Da_nhan_tra_hang":
+          return <span className="text-green-500 font-semibold">Đã nhận trả hàng</span>;
+        default:
+          return <span className="font-semibold">{status}</span>;
+      }
+
+    case "en": // Tiếng Anh
+      switch (status) {
+        case "Cho_xac_nhan":
+          return <span className="text-red-500 font-semibold">Waiting for confirmation</span>;
+        case "Soan_hang":
+          return <span className="text-yellow-500 font-semibold">Preparing items</span>;
+        case "Cho_lay_hang":
+          return <span className="text-yellow-500 font-semibold">Waiting for pickup</span>;
+        case "Dang_giao":
+          return <span className="text-blue-500 font-semibold">In transit</span>;
+        case "Giao_lai_hang":
+          return <span className="text-yellow-500 font-semibold">Rescheduling delivery</span>;
+        case "Danh_gia":
+          return <span className="text-yellow-500 font-semibold">Rating</span>;
+        case "Da_giao":
+          return <span className="text-green-500 font-semibold">Delivered</span>;
+        case "Da_huy":
+          return <span className="text-red-500 font-semibold">Canceled</span>;
+        case "Tra_hang":
+          return <span className="text-yellow-500 font-semibold">Returned</span>;
+        case "Nhan_tai_cua_hang":
+          return <span className="text-red-500 font-semibold">Pickup at store</span>;
+        case "Soan_hang_nhan_tai_cua_hang":
+          return <span className="text-yellow-500 font-semibold">Preparing for store pickup</span>;
+        case "Da_soan_hang_xong":
+          return <span className="text-blue-500 font-semibold">Items prepared</span>;
+        case "Da_nhan_tai_cua_hang":
+          return <span className="text-green-500 font-semibold">Picked up at store</span>;
+        case "Shipper_chuan_bi":
+          return <span className="text-yellow-500 font-semibold">Shipper preparing</span>;
+        case "Shipper_dang_den":
+          return <span className="text-yellow-500 font-semibold">Shipper on the way</span>;
+        case "Da_nhan_tra_hang":
+          return <span className="text-green-500 font-semibold">Returned items received</span>;
+        default:
+          return <span className="font-semibold">{status}</span>;
+      }
+
+    case "zh": // Tiếng Trung
+      switch (status) {
+        case "Cho_xac_nhan":
+          return <span className="text-red-500 font-semibold">等待确认</span>;
+        case "Soan_hang":
+          return <span className="text-yellow-500 font-semibold">准备货物</span>;
+        case "Cho_lay_hang":
+          return <span className="text-yellow-500 font-semibold">等待取货</span>;
+        case "Dang_giao":
+          return <span className="text-blue-500 font-semibold">运输中</span>;
+        case "Giao_lai_hang":
+          return <span className="text-yellow-500 font-semibold">重新配送</span>;
+        case "Danh_gia":
+          return <span className="text-yellow-500 font-semibold">评价</span>;
+        case "Da_giao":
+          return <span className="text-green-500 font-semibold">已配送</span>;
+        case "Da_huy":
+          return <span className="text-red-500 font-semibold">已取消</span>;
+        case "Tra_hang":
+          return <span className="text-yellow-500 font-semibold">退货</span>;
+        case "Nhan_tai_cua_hang":
+          return <span className="text-red-500 font-semibold">商店取货</span>;
+        case "Soan_hang_nhan_tai_cua_hang":
+          return <span className="text-yellow-500 font-semibold">准备商店取货</span>;
+        case "Da_soan_hang_xong":
+          return <span className="text-blue-500 font-semibold">已准备好商品</span>;
+        case "Da_nhan_tai_cua_hang":
+          return <span className="text-green-500 font-semibold">已在商店取货</span>;
+        case "Shipper_chuan_bi":
+          return <span className="text-yellow-500 font-semibold">发货员准备中</span>;
+        case "Shipper_dang_den":
+          return <span className="text-yellow-500 font-semibold">发货员在路上</span>;
+        case "Da_nhan_tra_hang":
+          return <span className="text-green-500 font-semibold">已收到退货</span>;
+        default:
+          return <span className="font-semibold">{status}</span>;
+      }
+
+    case "fr": // Tiếng Pháp
+      switch (status) {
+        case "Cho_xac_nhan":
+          return <span className="text-red-500 font-semibold">En attente de confirmation</span>;
+        case "Soan_hang":
+          return <span className="text-yellow-500 font-semibold">Préparation des articles</span>;
+        case "Cho_lay_hang":
+          return <span className="text-yellow-500 font-semibold">En attente de ramassage</span>;
+        case "Dang_giao":
+          return <span className="text-blue-500 font-semibold">En transit</span>;
+        case "Giao_lai_hang":
+          return <span className="text-yellow-500 font-semibold">Livraison reprogrammée</span>;
+        case "Danh_gia":
+          return <span className="text-yellow-500 font-semibold">Évaluation</span>;
+        case "Da_giao":
+          return <span className="text-green-500 font-semibold">Livré</span>;
+        case "Da_huy":
+          return <span className="text-red-500 font-semibold">Annulé</span>;
+        case "Tra_hang":
+          return <span className="text-yellow-500 font-semibold">Retour</span>;
+        case "Nhan_tai_cua_hang":
+          return <span className="text-red-500 font-semibold">Récupération en magasin</span>;
+        case "Soan_hang_nhan_tai_cua_hang":
+          return <span className="text-yellow-500 font-semibold">Préparation pour récupération en magasin</span>;
+        case "Da_soan_hang_xong":
+          return <span className="text-blue-500 font-semibold">Articles préparés</span>;
+        case "Da_nhan_tai_cua_hang":
+          return <span className="text-green-500 font-semibold">Récupéré en magasin</span>;
+        case "Shipper_chuan_bi":
+          return <span className="text-yellow-500 font-semibold">Préparation du livreur</span>;
+        case "Shipper_dang_den":
+          return <span className="text-yellow-500 font-semibold">Livreur en chemin</span>;
+        case "Da_nhan_tra_hang":
+          return <span className="text-green-500 font-semibold">Retour reçu</span>;
+        default:
+          return <span className="font-semibold">{status}</span>;
+      }
+
+    case "ja": // Tiếng Nhật
+      switch (status) {
+        case "Cho_xac_nhan":
+          return <span className="text-red-500 font-semibold">確認待ち</span>;
+        case "Soan_hang":
+          return <span className="text-yellow-500 font-semibold">商品準備中</span>;
+        case "Cho_lay_hang":
+          return <span className="text-yellow-500 font-semibold">ピックアップ待機</span>;
+        case "Dang_giao":
+          return <span className="text-blue-500 font-semibold">配送中</span>;
+        case "Giao_lai_hang":
+          return <span className="text-yellow-500 font-semibold">再配送</span>;
+        case "Danh_gia":
+          return <span className="text-yellow-500 font-semibold">評価</span>;
+        case "Da_giao":
+          return <span className="text-green-500 font-semibold">配送完了</span>;
+        case "Da_huy":
+          return <span className="text-red-500 font-semibold">キャンセル済み</span>;
+        case "Tra_hang":
+          return <span className="text-yellow-500 font-semibold">返品</span>;
+        case "Nhan_tai_cua_hang":
+          return <span className="text-red-500 font-semibold">店舗で受け取り</span>;
+        case "Soan_hang_nhan_tai_cua_hang":
+          return <span className="text-yellow-500 font-semibold">店舗受け取り準備中</span>;
+        case "Da_soan_hang_xong":
+          return <span className="text-blue-500 font-semibold">商品準備完了</span>;
+        case "Da_nhan_tai_cua_hang":
+          return <span className="text-green-500 font-semibold">店舗で受け取った</span>;
+        case "Shipper_chuan_bi":
+          return <span className="text-yellow-500 font-semibold">配達員準備中</span>;
+        case "Shipper_dang_den":
+          return <span className="text-yellow-500 font-semibold">配達員到着中</span>;
+        case "Da_nhan_tra_hang":
+          return <span className="text-green-500 font-semibold">返品受け取り完了</span>;
+        default:
+          return <span className="font-semibold">{status}</span>;
+      }
+
+    default:
+      return <span className="font-semibold">{status}</span>;
+  }
+};
+
+export const taxTypeMapping: Record<string, Record<string, string>> = {
+  vi: {
+    vat: "VAT",
+    sales_tax: "Thuế doanh thu",
+  },
+  en: {
+    vat: "VAT",
+    sales_tax: "Sales Tax",
+  },
+  zh: {
+    vat: "增值税",
+    sales_tax: "销售税",
+  },
+  fr: {
+    vat: "TVA",
+    sales_tax: "Taxe de vente",
+  },
+  ja: {
+    vat: "消費税",
+    sales_tax: "売上税",
+  },
+};
+
+export const getSettingUserColumn = (language: string) => {
+  switch (language) {
+    case "vi": // Tiếng Việt
+      return {
+        success: "Thay đổi thành công!",
+        error: "Something went wrong!",
+        save: "Lưu",
+        cancel: "Hủy",
+      };
+    case "en": // Tiếng Anh
+      return {
+        success: "Change successful!",
+        error: "Something went wrong!",
+        save: "Save",
+        cancel: "Cancel",
+      };
+    case "zh": // Tiếng Trung
+      return {
+        success: "更改成功！",
+        error: "出错了！",
+        save: "保存",
+        cancel: "取消",
+      };
+    case "fr": // Tiếng Pháp
+      return {
+        success: "Changement réussi!",
+        error: "Quelque chose a mal tourné!",
+        save: "Enregistrer",
+        cancel: "Annuler",
+      };
+    case "ja": // Tiếng Nhật
+      return {
+        success: "変更が成功しました！",
+        error: "何かがうまくいきませんでした！",
+        save: "保存",
+        cancel: "キャンセル",
+      };
+    default:
+      return {
+        success: "Change successful!",
+        error: "Something went wrong!",
+        save: "Save",
+        cancel: "Cancel",
+      };
+  }
+};

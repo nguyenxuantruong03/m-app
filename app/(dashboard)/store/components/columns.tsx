@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { CellAction } from "./cell-action"
 import { Checkbox } from "@/components/ui/checkbox";
 import SpanColumn from "@/components/span-column";
-import { Clock12, Package } from "lucide-react";
+import { AlarmClockCheck, Clock12, Package } from "lucide-react";
 import FormatDate from "@/components/format-Date";
 
 // This type is used to define the shape of our data.
@@ -12,6 +12,7 @@ import FormatDate from "@/components/format-Date";
 export type StoreColumn = {
   id: string
   name: string
+  updatedAt: Date
   createdAt: Date
   language: string;
 }
@@ -46,10 +47,26 @@ export const columns: ColumnDef<StoreColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Name
+          Tên
           <Package className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
+    },
+  },
+  {
+    accessorKey: "updatedAt",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian cập nhật
+          <AlarmClockCheck className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
+    cell: ({ row }) => {
+      return <FormatDate data={row.original.updatedAt} language={row.original.language}/>;
     },
   },
   {
@@ -59,14 +76,14 @@ export const columns: ColumnDef<StoreColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          CreatedAt
+          Thời gian tạo
           <Clock12 className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
     },
     cell: ({ row }) => {
       return (
-      <FormatDate data={row.original.createdAt}/>
+      <FormatDate data={row.original.createdAt} language={row.original.language}/>
       )
     }
   },

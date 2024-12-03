@@ -31,6 +31,7 @@ import {
   AlarmClockOff,
   SendHorizontal,
   Cake,
+  AlarmClockCheck,
 } from "lucide-react";
 import { Lock, Unlock } from "lucide-react";
 import SpanColumn from "@/components/span-column";
@@ -41,6 +42,8 @@ import viLocale from "date-fns/locale/vi";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 import { format, subHours } from "date-fns";
 import FireworksComponent from "@/components/canvas-confetti";
+import FormatDate from "@/components/format-Date";
+import { getSettingUserColumn } from "@/translate/translate-dashboard";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -73,6 +76,7 @@ export type SettingUsersColumn = {
   timebanforever: Date | null | undefined;
   dateofbirth: Date | null;
   isBirthdayToday?: boolean | null;
+  updatedAt: Date
   createdAt: Date | null;
   language: string
 };
@@ -94,6 +98,10 @@ const RoleCell = <T extends SettingUsersColumn>({ row }: RoleCellProps<T>) => {
   const [loading, setLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState(user.role as UserRole); // Default to ADMIN role
   const [originalRole, setOriginalRole] = useState(user.role as UserRole); // Store the original role for cancellation
+
+  //language
+  const settingUserColumnMessage = getSettingUserColumn(user.language);
+
   const handleRoleChange = async (newRole: UserRole) => {
     setSelectedRole(newRole);
   };
@@ -105,7 +113,7 @@ const RoleCell = <T extends SettingUsersColumn>({ row }: RoleCellProps<T>) => {
         newRole: selectedRole,
       });
       // Update the original role to match the newly saved role
-      toast.success("Thay đổi thành công!");
+      toast.success(settingUserColumnMessage.success);
       setOriginalRole(selectedRole);
       setEditable(false);
       setLoading(false);
@@ -124,7 +132,7 @@ const RoleCell = <T extends SettingUsersColumn>({ row }: RoleCellProps<T>) => {
             .error
         );
       } else {
-        toast.error("Something went wrong.");
+        toast.error(settingUserColumnMessage.error);
       }
     }
   };
@@ -153,10 +161,10 @@ const RoleCell = <T extends SettingUsersColumn>({ row }: RoleCellProps<T>) => {
       </select>
       <div className="flex space-x-2 mt-3">
         <Button onClick={handleSave} disabled={loading}>
-          Save
+          {settingUserColumnMessage.save}
         </Button>
         <Button variant="outline" onClick={handleCancel} disabled={loading}>
-          Cancel
+        {settingUserColumnMessage.cancel}
         </Button>
       </div>
     </div>
@@ -190,7 +198,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Name
+          Tên
           <Tag className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -333,7 +341,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          EmailVerified
+          Xác nhận Email
           <Mail className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -367,7 +375,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Password
+          Mật khẩu
           <KeyRound className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -398,7 +406,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          lastlogin
+          Đăng nhập cuối
           <ScanFace className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -440,7 +448,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Image
+          Hình ảnh mạng xã hội
           <ImageUp className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -479,7 +487,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          ImageApp
+          Hình ảnh trên web
           <ImageIcon className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -518,7 +526,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Role
+          Vai trò
           <SquareUserRound className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -533,7 +541,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Provider
+          Tài khoản mạng xã hội
           <Globe className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -564,7 +572,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Token Type
+          Loại mã thông báo
           <Coins className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -628,7 +636,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          IsTwoFactorEnabled
+          Xác minh 2 bước
           <LockKeyhole className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -663,7 +671,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Ban
+          Cấm người dùng
           <CircleSlash className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -690,7 +698,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Ban Expires
+          Thời gian mở cấm
           <Hourglass className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -707,48 +715,6 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
           )
         : null;
       return <div>{banExpires}</div>;
-    },
-  },
-
-  {
-    accessorKey: "createdAt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian tạo
-          <Clock12 className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
-    cell: ({ row }) => {
-      const isBanned = row.original.ban === true;
-      const isBanforever = row.original.isbanforever;
-
-      const createdAt = row.original.createdAt
-        ? format(
-            utcToZonedTime(
-              new Date(new Date(row.original.createdAt)),
-              vietnamTimeZone
-            ),
-            "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-            { locale: viLocale }
-          )
-        : null;
-      return (
-        <div
-          className={
-            isBanforever
-              ? "line-through text-red-500"
-              : isBanned
-              ? "line-through text-gray-400"
-              : ""
-          }
-        >
-          {createdAt}
-        </div>
-      );
     },
   },
 
@@ -886,7 +852,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Gửi Email ResetPassword
+          Gửi Email làm mới mật khẩu
           <SendHorizontal className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -936,7 +902,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Gửi Token Resetpassword
+          Gửi mã thông báo Đặt lại mật khẩu
           <SendHorizontal className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -986,7 +952,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Gửi 2FA
+          Gửi xác minh 2 bước
           <SendHorizontal className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -1036,7 +1002,7 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Gửi thông báo thời gian unban
+          Gửi thông báo thời gian mở cấm
           <SendHorizontal className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -1089,6 +1055,41 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
         </div>
       );
     },
+  },
+
+  {
+    accessorKey: "updatedAt",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian cập nhật
+          <AlarmClockCheck className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
+    cell: ({ row }) => {
+      return <FormatDate data={row.original.updatedAt} language={row.original.language}/>;
+    },
+  },
+  {
+    accessorKey: "createdAt",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian tạo
+          <Clock12 className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+      <FormatDate data={row.original.createdAt} language={row.original.language}/>
+      )
+    }
   },
 
   {

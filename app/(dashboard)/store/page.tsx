@@ -20,6 +20,7 @@ const StorePage = async () => {
     id: item.id,
     name: item.name,
     language: user?.language || "vi",
+    updatedAt: item.updatedAt,
     createdAt: item.createdAt,
   }));
   return (

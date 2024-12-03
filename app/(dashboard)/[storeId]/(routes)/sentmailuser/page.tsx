@@ -52,6 +52,7 @@ const SentEmailUserPage = async ({
         sentemailuser: sentEmailUsers,
         user: item.user.email,
         isSent: item.isSent,
+        updatedAt: item.updatedAt,
         createdAt: item.createdAt,
         language: user?.language || "vi",
       };

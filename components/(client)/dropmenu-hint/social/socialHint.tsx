@@ -38,7 +38,7 @@ export default function SocialHint({
     <div>
       <DropdownMenu onOpenChange={(open) => setIsOpen(open)}>
         <DropdownMenuTrigger asChild>
-          <Button variant="destructive" disabled={loading || loadingLanguage} className="z-[99999999]">
+          <Button variant="destructive" disabled={loading || loadingLanguage}>
             <Hint label={socialMessage}>
               {isOpen ? <ArrowDown /> : <MessageSquareWarning />}
             </Hint>

@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { CellAction } from "./cell-action"
 import { Checkbox } from "@/components/ui/checkbox";
 import SpanColumn from "@/components/span-column";
-import { Clock12, Package } from "lucide-react";
+import { AlarmClockCheck, Clock12, Package } from "lucide-react";
 import EditRow from "../_components/edit-row";
 import FormatDate from "@/components/format-Date";
 
@@ -14,6 +14,7 @@ import FormatDate from "@/components/format-Date";
 export type CategoriesColumn = {
   id: string
   name: string
+  updatedAt: Date
   createdAt: Date
   language: string;
 }
@@ -48,12 +49,30 @@ export const columns: ColumnDef<CategoriesColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Name
+          Tên
           <Package className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
     },
     cell: ({row}) => <EditRow data={row.original.name} id= {row.original.id} language={row.original.language}/>
+  },
+  {
+    accessorKey: "updatedAt",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian cập nhật
+          <AlarmClockCheck  className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+      <FormatDate data={row.original.updatedAt} language={row.original.language}/>
+      )
+    }
   },
   {
     accessorKey: "createdAt",
@@ -69,7 +88,7 @@ export const columns: ColumnDef<CategoriesColumn>[] = [
     },
     cell: ({ row }) => {
       return (
-      <FormatDate data={row.original.createdAt}/>
+      <FormatDate data={row.original.createdAt} language={row.original.language}/>
       )
     }
   },

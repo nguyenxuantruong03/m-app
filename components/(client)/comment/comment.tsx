@@ -67,6 +67,8 @@ import {
   translateUpdateError,
   translateYearAgo,
 } from "@/translate/translate-client";
+import { PolicyViolationModal } from "../modal/policy-violation-modal";
+import { offensiveWords } from "@/vn_offensive_words";
 
 interface CommentProps {
   data: string;
@@ -120,6 +122,7 @@ const Comment: React.FC<CommentProps> = ({
     string | undefined
   >("");
   const [alertGuestModal, setAlertGuestModal] = useState(false);
+  const [policiViolationModal, setPoliciViolationModal] = useState(false)
   const optionRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLDivElement>(null);
   const scrollPositionRef = useRef<number | null>(null);
@@ -218,9 +221,20 @@ const Comment: React.FC<CommentProps> = ({
     };
   }, []);
 
+
+
   const handleResponseSubmit = async (commentId: any) => {
     if (user?.role !== "GUEST" && user?.id) {
       try {
+        //Check xúc phạm
+        const containsOffensiveWord = offensiveWords.some((word) =>
+          responseDescriptions.includes(word)
+        );
+        if (containsOffensiveWord) {
+          setPoliciViolationModal(true); 
+          return; 
+        }
+
         //Logic này đùng để giới hạn thời gian responsecomment
         const now = new Date();
         const firstCreatedAt = savedComments
@@ -429,6 +443,15 @@ const Comment: React.FC<CommentProps> = ({
 
   const handleResponseUpdate = async (commentId: string | undefined) => {
     if (user?.role !== "GUEST" && user?.id) {
+      //Check xúc phạm
+      const containsOffensiveWord = offensiveWords.some((word) =>
+        responseDescriptions.includes(word)
+      );
+      if (containsOffensiveWord) {
+        setPoliciViolationModal(true); 
+        return; 
+      }
+
       if (
         responseDescriptions === null ||
         responseDescriptions === undefined ||
@@ -605,6 +628,15 @@ const Comment: React.FC<CommentProps> = ({
 
   const handleUpdate = async () => {
     if (user?.role !== "GUEST" && user?.id) {
+      //Check xúc phạm
+      const containsOffensiveWord = offensiveWords.some((word) =>
+        comment.includes(word)
+      );
+      if (containsOffensiveWord) {
+        setPoliciViolationModal(true); 
+        return; 
+      }
+
       // Validation logic
       const updatedComment = {
         id: editingCommentId,
@@ -755,6 +787,15 @@ const Comment: React.FC<CommentProps> = ({
 
   const handleSubmit = async () => {
     if (user?.role !== "GUEST" && user?.id) {
+      //Check xúc phạm
+      const containsOffensiveWord = offensiveWords.some((word) =>
+        comment.includes(word)
+      );
+      if (containsOffensiveWord) {
+        setPoliciViolationModal(true); 
+        return; 
+      }
+
       //Logic này đùng để giới hạn thời gian comment
       const now = new Date();
       const firstCreatedAt = savedComments
@@ -1010,6 +1051,15 @@ const Comment: React.FC<CommentProps> = ({
         isOpen={alertGuestModal}
         onClose={() => setAlertGuestModal(false)}
         languageToUse={languageToUse}
+      />
+
+      <PolicyViolationModal 
+      isOpen={policiViolationModal}
+      onClose={() => setPoliciViolationModal(false)}
+      languageToUse={languageToUse}
+      value={comment || responseDescriptions}
+      setResponseDescriptions={setResponseDescriptions}
+      setComment={setComment}
       />
 
       <AlertModal

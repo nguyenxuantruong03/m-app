@@ -33,6 +33,7 @@ const CouponPage = async ({ params }: { params: { storeId: string } }) => {
     maxredemptions: item.maxredemptions,
     redeembypatch: item.redeemby,
     redeemby: item.redeemby,
+    updatedAt: item.updatedAt,
     createdAt: item.createdAt,
     language: user?.language || "vi"
   }));

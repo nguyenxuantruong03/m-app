@@ -4,6 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
 import {
   AlarmClock,
+  AlarmClockCheck,
   BriefcaseBusiness,
   Cake,
   CalendarClock,
@@ -68,6 +69,7 @@ export type ManageStaffsColumn = {
   imageCredentialUrl: ImageCredential[]
   dateRangepatch: Date | null;
   dateofbirthpatach: Date | null;
+  updatedAt: Date
   createdAt: Date;
   createdAtString: string | null
   language: string
@@ -81,7 +83,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          id
+          Id
           <Hash className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -103,7 +105,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Name
+          Tên
           <Tag className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -156,7 +158,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          ImageApp
+          Hình ảnh mạng xã hội
           <ImageIcon className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -186,7 +188,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Image
+          Hình ảnh web
           <ImageUp className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -216,7 +218,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Role
+          Vai trò
           <SquareUserRound className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -256,7 +258,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          numberCCCD
+          Sô Chứng minh nhân dân
           <SquareAsterisk className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -287,7 +289,7 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          phonenumber
+          Số điện thoại
           <Phone className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -716,6 +718,22 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
     },
   },
   {
+    accessorKey: "updatedAt",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian cập nhật
+          <AlarmClockCheck className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
+    cell: ({ row }) => {
+      return <FormatDate data={row.original.updatedAt} language={row.original.language}/>;
+    },
+  },
+  {
     accessorKey: "createdAt",
     header: ({ column }) => {
       return (
@@ -728,13 +746,10 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      const isBanned = row.original.ban === true;
       return (
-        <div className={isBanned ? "line-through text-gray-400" : ""}>
-          <FormatDate data={row.original.createdAt} />
-        </div>
-      );
-    },
+      <FormatDate data={row.original.createdAt} language={row.original.language}/>
+      )
+    }
   },
   {
     id: "actions",

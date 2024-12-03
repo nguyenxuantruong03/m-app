@@ -24,6 +24,7 @@ const FeedBackPage = async ({ params }: { params: { storeId: string } }) => {
     emotion: item.emotion,
     category: item.category,
     content: item.content,
+    updatedAt: item.updatedAt,
     createdAt: item.createdAt,
     email: item.user.email,
     name: item.user.name,

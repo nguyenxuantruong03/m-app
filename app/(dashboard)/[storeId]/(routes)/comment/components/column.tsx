@@ -3,9 +3,10 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
 import {
+  AlarmClockCheck,
   Clock12,
   MessageCircleMore,
-  SquareGanttChart,
+  MessageCircleReply,
   SquareUserRound,
   Star,
   Tag,
@@ -26,6 +27,7 @@ export type CommentColumn = {
   banExpiresTime: Date | null;
   isbanforever: boolean | undefined | null;
   ban: boolean | null;
+  updatedAt: Date
   createdAt: Date;
   language: string;
 };
@@ -46,7 +48,7 @@ export const columns: ColumnDef<CommentColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Name
+          Tên
           <Tag className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -159,7 +161,7 @@ export const columns: ColumnDef<CommentColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Nội dung
+          Bình luận
           <MessageCircleMore className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -189,8 +191,8 @@ export const columns: ColumnDef<CommentColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Response Comment
-          <SquareGanttChart className="ml-2 h-4 w-4" />
+          Phản hồi
+          <MessageCircleReply className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
     },
@@ -211,6 +213,24 @@ export const columns: ColumnDef<CommentColumn>[] = [
     },
   },
   {
+    accessorKey: "updatedAt",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian cập nhật
+          <AlarmClockCheck  className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+      <FormatDate data={row.original.updatedAt} language={row.original.language}/>
+      )
+    }
+  },
+  {
     accessorKey: "createdAt",
     header: ({ column }) => {
       return (
@@ -223,8 +243,10 @@ export const columns: ColumnDef<CommentColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      return <FormatDate data={row.original.createdAt} />;
-    },
+      return (
+      <FormatDate data={row.original.createdAt} language={row.original.language}/>
+      )
+    }
   },
   {
     id: "actions",

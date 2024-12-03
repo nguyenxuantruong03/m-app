@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
-import { NotebookPen, SendHorizontal, Tag, User } from "lucide-react";
+import { AlarmClockCheck, NotebookPen, SendHorizontal, Tag, User } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import SpanColumn from "@/components/span-column";
 import { Clock12 } from "lucide-react";
@@ -16,6 +16,7 @@ export type SentEmailUserColumn = {
   user: string | null;
   isSent: boolean | null;
   sentemailuser: string[];
+  updatedAt: Date;
   createdAt: Date;
   language: string;
 };
@@ -50,7 +51,7 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          User
+          Người dùng
           <User className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -63,7 +64,7 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Subject
+          Chủ đề
           <Tag className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -86,7 +87,7 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Sent Email User
+          Gửi email đến người dùng
           <SendHorizontal className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -107,7 +108,7 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Description
+          Mô tả
           <NotebookPen className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -130,7 +131,7 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          IsSent
+          Gửi Mail
           <SendHorizontal className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -145,20 +146,36 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
     },
   },
   {
+    accessorKey: "updatedAt",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian cập nhật
+          <AlarmClockCheck className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
+    cell: ({ row }) => {
+      return <FormatDate data={row.original.updatedAt} language={row.original.language}/>;
+    },
+  },
+  {
     accessorKey: "createdAt",
     header: ({ column }) => {
       return (
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          CreatedAt
+          Thời gian tạo
           <Clock12 className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
     },
     cell: ({ row }) => {
       return (
-      <FormatDate data={row.original.createdAt}/>
+      <FormatDate data={row.original.createdAt} language={row.original.language}/>
       )
     }
   },

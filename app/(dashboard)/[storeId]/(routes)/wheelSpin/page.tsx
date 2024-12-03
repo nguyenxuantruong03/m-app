@@ -22,6 +22,7 @@ const SalaryStaff = async () => {
     coin: item.WheelSpin.map((item) => item.coin),
     rotation: item.WheelSpin.map((item) => item.rotation),
     email: item.email,
+    updatedAt: item.updatedAt,
     createdAt: item.createdAt,
     language: currentuser?.language || "vi"
   }));

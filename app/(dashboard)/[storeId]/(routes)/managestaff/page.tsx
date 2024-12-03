@@ -63,6 +63,7 @@ const ManageStaff = async ({ params }: { params: { storeId: string } }) => {
     dateofbirth: item.dateofbirth
       ? format(item.dateofbirth, "dd/MM/yyyy")
       : null,
+    updatedAt: item.updatedAt,
     createdAt: item.createdAt,
     createdAtString: item.createdAt
       ? format(

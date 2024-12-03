@@ -83,6 +83,7 @@ const ManageAttendance = async ({
             { locale: viLocale }
           )
         : null,
+      updatedAt: item.updatedAt,
       createdAt: item.createdAt,
     })
   );

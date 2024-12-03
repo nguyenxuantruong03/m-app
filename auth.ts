@@ -29,6 +29,18 @@ export const {
   },
   callbacks: {
     async signIn({ user, account }) {
+      //---------Bước đặc biệt----------
+      const userCount = await prismadb.user.count(); // Đếm số lượng người dùng hiện tại
+      // Nếu chưa có người dùng nào, gán vai trò ADMIN cho người đầu tiên
+      if (userCount === 0) {
+        await prismadb.user.update({
+          where: { id: user.id },
+          data: {
+            role: "ADMIN",
+          },
+        });
+      }
+
       const now = new Date();
       now.setHours(now.getHours() + 7);
 
@@ -116,19 +128,46 @@ export const {
         return "/auth/errorbanforever";
       }
 
+      //--Bước2--Tọa favorite nếu là người đầu và người người dùng không có phobien thì update luôn luôn có phobien
       if (existingUser) {
-        // --Bước3-- Kiểm tra xem "phobien" có trong favorite của người dùng không
+        // Bước 1: Kiểm tra xem "phobien" đã có trong favorite của người dùng chưa
         const hasPhobien = existingUser.favorite.includes("phobien");
-        //Xem người dùng đã có favorite mặc định là phobien chưa nếu chưa có thì create
+      
         if (!hasPhobien) {
-          await prismadb.user.update({
-            where: { id: existingUser.id },
-            data: {
-              favorite: [...existingUser.favorite, "phobien"],
-            },
+          //  Kiểm tra xem "phobien" đã tồn tại trong bảng favorites hay chưa
+          let favoriteRecord = await prismadb.favorite.findFirst({
+            where: { value: "phobien", storeId: "" },
           });
+      
+          // Nếu chưa có "phobien" trong bảng favorites, tạo mới record với "phobien"
+          if (!favoriteRecord) {
+            favoriteRecord = await prismadb.favorite.create({
+              data: {
+                storeId: "", // Có thể cần điều chỉnh storeId nếu có thông tin
+                name: "Phổ biến",
+                value: "phobien",
+              },
+            });
+          }
+      
+          //  Đảm bảo người dùng luôn có "phobien" trong danh sách favorite
+          if (favoriteRecord?.value) {
+            // Kết hợp các giá trị cũ và "phobien" vào danh sách favorite của người dùng
+            const updatedFavorites = Array.from(
+              new Set([...existingUser.favorite, favoriteRecord.value]) // Loại bỏ phần tử trùng lặp
+            );
+      
+            // Cập nhật lại danh sách favorite của người dùng
+            await prismadb.user.update({
+              where: { id: existingUser.id },
+              data: {
+                favorite: updatedFavorites, // Cập nhật với danh sách mới
+              },
+            });
+          }
         }
       }
+      
 
       //--Bước4--Ngăn chặn đăng nhập mà không cần xác minh email
       if (account?.provider !== "credentials") return true;
@@ -206,7 +245,8 @@ export const {
         session.user.createdAt = token.createdAt as Date;
         session.user.language = token.language as string;
         session.user.isLive = token.isLive as boolean;
-        session.user.feedbackTimeNextResonse = token.feedbackTimeNextResonse as Date;
+        session.user.feedbackTimeNextResonse =
+          token.feedbackTimeNextResonse as Date;
         const existingUser = await getUserById(token.sub);
         //--Bước1--Check người dùng có bị ban
         const now = new Date();
@@ -366,7 +406,8 @@ export const {
       token.isCitizen = existingUser.isCitizen;
       token.createdAt = existingUser.createdAt;
       token.language = existingUser.language;
-      token.feedbackTimeNextResonse = existingUser?.feedback?.[0]?.timeNextResponse;
+      token.feedbackTimeNextResonse =
+        existingUser?.feedback?.[0]?.timeNextResponse;
       if (existingUser.stream) {
         token.isLive = existingUser.stream.isLive;
       } else {

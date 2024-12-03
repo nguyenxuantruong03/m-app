@@ -42,6 +42,7 @@ const Comment = async () => {
           </div>
         );
       }),
+      updatedAt: item.updatedAt,
       createdAt: item.createdAt,
       language: user?.language || "vi",
     };

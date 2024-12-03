@@ -12,12 +12,14 @@ import {
   CirclePercent,
   ReceiptText,
   NotebookPen,
+  AlarmClockCheck,
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import SpanColumn from "@/components/span-column";
 import { Clock12, Tag } from "lucide-react";
 import EditRow from "../_components/edit-row";
 import FormatDate from "@/components/format-Date";
+import { taxTypeMapping } from "@/translate/translate-dashboard";
 
 export type TaxRateColumn = {
   id: string;
@@ -27,13 +29,9 @@ export type TaxRateColumn = {
   inclusive: boolean;
   active: boolean;
   taxtype: string | null;
+  updatedAt: Date;
   createdAt: Date;
-  language: string
-};
-
-const taxTypeMapping: Record<string, string> = {
-  vat: "VAT",
-  sales_tax: "Thuế doanh thu",
+  language: string;
 };
 
 export const columns: ColumnDef<TaxRateColumn>[] = [
@@ -66,7 +64,7 @@ export const columns: ColumnDef<TaxRateColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Name
+          Tên
           <Tag className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -120,10 +118,14 @@ export const columns: ColumnDef<TaxRateColumn>[] = [
     },
     cell: ({ row }) => {
       const taxtypeValue = row.original.taxtype;
-      if (taxtypeValue && taxTypeMapping[taxtypeValue]) {
-        return taxTypeMapping[taxtypeValue];
+      const language = row.original.language; // Ngôn ngữ hiện tại (vi, en, zh, fr, ja)
+
+      if (taxtypeValue === null) {
+        return ""; // Trả về chuỗi trống nếu taxtypeValue là null
       }
-      return "";
+
+      // Trả về loại thuế dựa vào ngôn ngữ
+      return taxTypeMapping[language]?.[taxtypeValue] || "";
     },
   },
   {
@@ -196,6 +198,27 @@ export const columns: ColumnDef<TaxRateColumn>[] = [
     },
   },
   {
+    accessorKey: "updatedAt",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian cập nhật
+          <AlarmClockCheck className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+        <FormatDate
+          data={row.original.updatedAt}
+          language={row.original.language}
+        />
+      );
+    },
+  },
+  {
     accessorKey: "createdAt",
     header: ({ column }) => {
       return (
@@ -209,9 +232,12 @@ export const columns: ColumnDef<TaxRateColumn>[] = [
     },
     cell: ({ row }) => {
       return (
-      <FormatDate data={row.original.createdAt}/>
-      )
-    }
+        <FormatDate
+          data={row.original.createdAt}
+          language={row.original.language}
+        />
+      );
+    },
   },
   {
     id: "actions",

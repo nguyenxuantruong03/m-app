@@ -81,6 +81,7 @@ const SettingUser = async ({ params }: { params: { storeId: string } }) => {
       banExpiresTime: item.banExpires,
       isbanforever: item?.isbanforever,
       timebanforever: item?.timebanforever,
+      updatedAt: item.updatedAt,
       createdAt: item.createdAt,
       isBirthdayToday: isBirthdayToday, // Thêm trường này để xử lý sau này
     };

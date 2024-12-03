@@ -36,6 +36,7 @@ const ShippingRatesPage = async ({
       valuemin: item.valuemin,
       unitmax: item.unitmax,
       valuemax: item.valuemax,
+      updatedAt: item.updatedAt,
       createdAt: item.createdAt,
       language: user?.language || "vi"
     })

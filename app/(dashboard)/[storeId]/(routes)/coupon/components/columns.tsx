@@ -3,6 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
 import {
+  AlarmClockCheck,
   AlarmClockOff,
   Circle,
   Hourglass,
@@ -18,6 +19,7 @@ import { Clock12 } from "lucide-react";
 import ImageCellMutiple from "@/components/image-cell-multiple";
 import EditRow from "../_components/edit-row";
 import FormatDate from "@/components/format-Date";
+import { getUsersLabel, getMonthLabel } from '@/translate/translate-dashboard';
 
 export type CouponColumn = {
   id: string;
@@ -30,14 +32,9 @@ export type CouponColumn = {
   imagecoupon: string[] | null;
   redeembypatch: Date | null;
   imagecouponpatch: { url: string }[];
+  updatedAt: Date;
   createdAt: Date;
   language: string
-};
-
-const durationMapping: Record<string, string> = {
-  forever: "mãi mãi",
-  once: "một lần mỗi tháng",
-  repeating: "lặp đi lặp lại mỗi tháng",
 };
 
 export const columns: ColumnDef<CouponColumn>[] = [
@@ -98,7 +95,7 @@ export const columns: ColumnDef<CouponColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Hình ảnh
+          Hình ảnh giảm giá
           <ImageIcon className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -117,7 +114,7 @@ export const columns: ColumnDef<CouponColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Phần trăm giảm
+          % giảm
           <TicketPercent className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
@@ -143,11 +140,48 @@ export const columns: ColumnDef<CouponColumn>[] = [
       );
     },
     cell: ({ row }) => {
-      const durationValue = row.original.duration;
-      if (durationValue && durationMapping[durationValue]) {
-        return durationMapping[durationValue];
-      }
-      return "";
+      const getDurationLabel = (durationValue: string | null, language: string): string => {
+        if (!durationValue) return ""; // Xử lý khi durationValue là null hoặc undefined
+  
+        switch (language) {
+          case "vi": // Tiếng Việt
+            return {
+              forever: "mãi mãi",
+              once: "một lần mỗi tháng",
+              repeating: "lặp đi lặp lại mỗi tháng",
+            }[durationValue] || "";
+          case "en": // Tiếng Anh
+            return {
+              forever: "forever",
+              once: "once a month",
+              repeating: "repeating every month",
+            }[durationValue] || "";
+          case "zh": // Tiếng Trung
+            return {
+              forever: "永远",
+              once: "每月一次",
+              repeating: "每月重复",
+            }[durationValue] || "";
+          case "fr": // Tiếng Pháp
+            return {
+              forever: "pour toujours",
+              once: "une fois par mois",
+              repeating: "répétitif chaque mois",
+            }[durationValue] || "";
+          case "ja": // Tiếng Nhật
+            return {
+              forever: "永遠",
+              once: "毎月一回",
+              repeating: "毎月繰り返し",
+            }[durationValue] || "";
+          default:
+            return ""; // Ngôn ngữ không hỗ trợ
+        }
+      };
+  
+      const language = row.original.language; // Ngôn ngữ hiện tại
+      const durationValue = row.original.duration; // Giá trị thời gian
+      return getDurationLabel(durationValue, language);
     },
   },
   {
@@ -157,18 +191,19 @@ export const columns: ColumnDef<CouponColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Số lượng tối đa được giảm giá
+          Số lượng người dùng
           <TrendingDown className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
     },
     cell: ({ row }) => {
       const maxRedemptionsValue = row.original.maxredemptions;
+      const language = row.original.language; // Ngôn ngữ hiện tại
       if (maxRedemptionsValue != null) {
-        return `${maxRedemptionsValue} người dùng`;
+        return `${maxRedemptionsValue} ${getUsersLabel(language, maxRedemptionsValue)}`;
       }
       return "";
-    },
+    }
   },
   {
     accessorKey: "durationinmoth",
@@ -177,16 +212,18 @@ export const columns: ColumnDef<CouponColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Tháng lặp lại
+          Thời lượng trong tháng
           <Repeat2 className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
     },
     cell: ({ row }) => {
       const durationValue = row.original.durationinmoth;
+      const language = row.original.language; // Ngôn ngữ hiện tại
+  
       if (durationValue != null) {
         if (durationValue !== 0) {
-          return `${durationValue} tháng`;
+          return `${durationValue} ${getMonthLabel(language)}`;
         } else {
           return <Circle className="text-red-600" />;
         }
@@ -201,14 +238,32 @@ export const columns: ColumnDef<CouponColumn>[] = [
         <SpanColumn
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Thời gian hết hạn
+          Đổi thưởng
           <AlarmClockOff className="ml-2 h-4 w-4" />
         </SpanColumn>
       );
     },
     cell: ({ row }) => {
       return (
-      <FormatDate data={row.original.redeemby}/>
+      <FormatDate data={row.original.redeemby} language={row.original.language}/>
+      )
+    }
+  },
+  {
+    accessorKey: "updatedAt",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Thời gian cập nhật
+          <AlarmClockCheck  className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+      <FormatDate data={row.original.updatedAt} language={row.original.language}/>
       )
     }
   },
@@ -226,7 +281,7 @@ export const columns: ColumnDef<CouponColumn>[] = [
     },
     cell: ({ row }) => {
       return (
-      <FormatDate data={row.original.createdAt}/>
+      <FormatDate data={row.original.createdAt} language={row.original.language}/>
       )
     }
   },

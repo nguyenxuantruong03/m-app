@@ -146,6 +146,7 @@ const ProductDetailPage = async ({
       description3salientfeatures: item.description3salientfeatures,
       description4salientfeatures: item.description4salientfeatures,
       contentsalientfeatures: item.contentsalientfeatures,
+      updatedAt: item.updatedAt,
       createdAt: item.createdAt,
       language: user?.language || "vi"
     })
