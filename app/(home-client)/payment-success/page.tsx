@@ -414,6 +414,7 @@ const PaymentSuccess = () => {
                         <FormatDate
                           subtractiontime={true}
                           data={TimeOfFirstOrderItem}
+                          language={languageToUse}
                         />
                       }
                     </p>

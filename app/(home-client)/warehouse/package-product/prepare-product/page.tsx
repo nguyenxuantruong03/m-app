@@ -484,6 +484,7 @@ const PrepareProduct = () => {
                             <FormatDate
                               subtractiontime={true}
                               data={threeDaysLater}
+                              language={languageToUse}
                             />
                           }
                           .

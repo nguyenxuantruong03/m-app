@@ -46,7 +46,7 @@ const StatusProduct: React.FC<StatusProductProps> = ({
               <HoverCardContent>
                 <p>{latestUpdateDataMessage}</p>
                 <p>
-                  <FormatDate subtractiontime={true} data={updatedAt} />
+                  <FormatDate subtractiontime={true} data={updatedAt} language={languageToUse}/>
                 </p>
               </HoverCardContent>
             </HoverCard>

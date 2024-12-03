@@ -149,7 +149,7 @@ const Voucher = () => {
                   <span className="text-sm">
                     {expriryDateMessage}
                     <span className="text-xs text-gray-500 ml-1">
-                      <FormatDate data={item.redeemby} />
+                      <FormatDate data={item.redeemby} language={languageToUse}/>
                     </span>
                   </span>
                 </div>

@@ -139,7 +139,7 @@ const IntroductionUser = ({
           <span>
             {self.createdAt ? (
               <span className="truncate w-80 md:w-96 overflow-hidden whitespace-nowrap">
-                <FormatDate data={self.createdAt} />
+                <FormatDate data={self.createdAt} language={languageToUse}/>
               </span>
             ) : (
               <>{noDataMessage}</>

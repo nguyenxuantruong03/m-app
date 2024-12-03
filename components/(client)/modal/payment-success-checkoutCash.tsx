@@ -152,7 +152,7 @@ export const PaymentSuccessCheckoutCashModal: React.FC<
               {orderCreateDateMessage}:
             </div>
             <div className="text-sm">
-              <FormatDate subtractiontime={true} data={data.createdAt} />
+              <FormatDate subtractiontime={true} data={data.createdAt} language={languageToUse}/>
             </div>
           </div>
         </div>

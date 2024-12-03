@@ -505,6 +505,7 @@ const ReturnProdcut = () => {
                             <FormatDate
                               subtractiontime={true}
                               data={threeDaysLater}
+                              language={languageToUse}
                             />
                           }
                           .

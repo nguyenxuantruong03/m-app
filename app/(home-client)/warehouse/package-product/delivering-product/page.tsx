@@ -483,6 +483,7 @@ const Deliverting = () => {
                             <FormatDate
                               subtractiontime={true}
                               data={threeDaysLater}
+                              language={languageToUse}
                             />
                           }
                           .

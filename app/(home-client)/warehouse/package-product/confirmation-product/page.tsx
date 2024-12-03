@@ -486,6 +486,7 @@ const ComfirmationProduct = () => {
                             <FormatDate
                               subtractiontime={true}
                               data={threeDaysLater}
+                              language={languageToUse}
                             />
                           }
                           .
