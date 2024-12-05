@@ -224,3 +224,7 @@ html {
   }
 }
 
+
+.leaflet-routing-alt {
+  color: #0f172a;
+}

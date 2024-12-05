@@ -13240,3 +13240,194 @@ export const getSettingUserColumn = (language: string) => {
       };
   }
 };
+
+
+export const getLocationClientDelivery= (language:string) => {
+  switch (language) {
+    case 'vi':  // Tiếng Việt
+      return {
+        error: "Lỗi khi lấy vị trí",
+        geolocation: "Trình duyệt này không hỗ trợ định vị địa lý.",
+        stopShare: "Dừng chia sẻ vị trí",
+        share: "Chia sẻ vị trí",
+      };
+      
+    case 'en':  // English
+      return {
+        error: "Error getting location",
+        geolocation: "Geolocation is not supported by this browser.",
+        stopShare: "Stop Share Location",
+        share: "Share location",
+      };
+
+    case 'zh':  // Chinese
+      return {
+        error: "获取位置时出错",
+        geolocation: "此浏览器不支持地理定位。",
+        stopShare: "停止共享位置",
+        share: "共享位置",
+      };
+
+    case 'fr':  // French
+      return {
+        error: "Erreur lors de l'obtention de la position",
+        geolocation: "La géolocalisation n'est pas supportée par ce navigateur.",
+        stopShare: "Arrêter le partage de position",
+        share: "Partager la position",
+      };
+
+    case 'ja':  // Japanese
+      return {
+        error: "位置の取得エラー",
+        geolocation: "このブラウザーは位置情報をサポートしていません。",
+        stopShare: "位置情報の共有を停止",
+        share: "位置情報を共有",
+      };
+
+    default:
+      return {
+        error: "Error getting location",
+        geolocation: "Geolocation is not supported by this browser.",
+        stopShare: "Stop Share Location",
+        share: "Share location",
+      };
+  }
+}
+
+export const localizationData: Record<string, any> = {
+  vi: {
+    directions: {
+      north: "Bắc",
+      northeast: "Đông Bắc",
+      east: "Đông",
+      southeast: "Đông Nam",
+      south: "Nam",
+      southwest: "Tây Nam",
+      west: "Tây",
+      northwest: "Tây Bắc",
+    },
+    instructions: {
+      straight: "Đi thẳng",
+      slightLeft: "Rẽ nhẹ trái",
+      left: "Rẽ trái",
+      sharpLeft: "Rẽ mạnh trái",
+      slightRight: "Rẽ nhẹ phải",
+      right: "Rẽ phải",
+      sharpRight: "Rẽ mạnh phải",
+      uturn: "Quay đầu",
+    },
+    maneuvers: {
+      merge: "Gộp",
+      depart: "Rời đi",
+      arrive: "Đến nơi",
+      fork: "Giao lộ",
+      endOfRoad: "Cuối đường",
+      passRoundabout: "Vượt qua vòng xuyến",
+      accessRoundabout: "Vào vòng xuyến",
+      stayOnRoundabout: "Tiếp tục ở vòng xuyến",
+      startAtEndOfStreet: "Bắt đầu ở cuối đường",
+      start: "Bắt đầu",
+      turn: "Rẽ",
+      turnLeft: "Rẽ trái",
+      turnRight: "Rẽ phải",
+      multiple: "Nhiều hướng",
+    },
+    errors: {
+      locationNotFound: "Không tìm thấy địa điểm",
+      cantProjectRouteOnSatellite: "Không thể đề xuất đường đi trên hình vệ tinh",
+      routeNotFound: "Không tìm thấy đường đi",
+      cantFindRoute: "Không thể tìm đường đi",
+      requestFailed: "Yêu cầu thất bại",
+      tooManyStops: "Quá nhiều điểm dừng",
+      unableToSync: "Không thể đồng bộ",
+    },
+    other: {
+      useRouteAnyway: "Sử dụng đường đi này?",
+      isCurrently: "Hiện tại",
+      poweredBy: "Cung cấp bởi",
+    },
+  },
+};
+
+
+export const getDeliveryConfirmationLocation = (language: string) => {
+    switch (language) {
+        case 'vi': // Tiếng Việt
+            return {
+                geolocationUnsupported: "Trình duyệt của bạn không hỗ trợ định vị.",
+                unableToRetrieveLocation: "Không thể lấy vị trí của bạn.",
+                enableLocation: "Mở định vị trước khi xác nhận giao hàng thành công!",
+                unableToRetrieveLocationForDelivery: "Không thể lấy vị trí để xác nhận giao hàng."
+            };
+        case 'en': // English
+            return {
+                geolocationUnsupported: "Geolocation is not supported by your browser.",
+                unableToRetrieveLocation: "Unable to retrieve your location.",
+                enableLocation: "Enable location services before confirming delivery!",
+                unableToRetrieveLocationForDelivery: "Unable to retrieve location for delivery confirmation."
+            };
+        case 'zh': // Chinese
+            return {
+                geolocationUnsupported: "您的浏览器不支持地理定位。",
+                unableToRetrieveLocation: "无法获取您的位置。",
+                enableLocation: "在确认交付成功之前启用定位服务！",
+                unableToRetrieveLocationForDelivery: "无法获取位置以确认交付。"
+            };
+        case 'fr': // French
+            return {
+                geolocationUnsupported: "La géolocalisation n'est pas prise en charge par votre navigateur.",
+                unableToRetrieveLocation: "Impossible de récupérer votre position.",
+                enableLocation: "Activez la localisation avant de confirmer la livraison !",
+                unableToRetrieveLocationForDelivery: "Impossible de récupérer la position pour confirmer la livraison."
+            };
+        case 'ja': // Japanese
+            return {
+                geolocationUnsupported: "お使いのブラウザは位置情報をサポートしていません。",
+                unableToRetrieveLocation: "位置情報を取得できませんでした。",
+                enableLocation: "配達を確定する前に位置情報サービスを有効にしてください！",
+                unableToRetrieveLocationForDelivery: "配達確認のために位置情報を取得できませんでした。"
+            };
+        default: // Ngôn ngữ không hỗ trợ
+             return {
+                geolocationUnsupported: "Geolocation is not supported by your browser.",
+                unableToRetrieveLocation: "Unable to retrieve your location.",
+                enableLocation: "Enable location services before confirming delivery!",
+                unableToRetrieveLocationForDelivery: "Unable to retrieve location for delivery confirmation."
+            };
+    }
+}
+
+export const getDeliverySharingLocation = (language:string) => {
+  switch (language) {
+      case 'vi': // Tiếng Việt
+          return {
+              enableLocationForOrder: "Mở định vị trước khi nhận đơn!",
+              enableLocationForReturn: "Mở định vị trước khi nhận sản phẩm trả lại!"
+          };
+      case 'en': // English
+          return {
+              enableLocationForOrder: "Enable location services before accepting the order!",
+              enableLocationForReturn: "Enable location services before accepting the return product!"
+          };
+      case 'zh': // Chinese
+          return {
+              enableLocationForOrder: "在接单之前启用定位服务！",
+              enableLocationForReturn: "在接受退货之前启用定位服务！"
+          };
+      case 'fr': // French
+          return {
+              enableLocationForOrder: "Activez la localisation avant d'accepter la commande !",
+              enableLocationForReturn: "Activez la localisation avant d'accepter le produit retourné !"
+          };
+      case 'ja': // Japanese
+          return {
+              enableLocationForOrder: "注文を受け取る前に位置情報サービスを有効にしてください！",
+              enableLocationForReturn: "返品商品を受け取る前に位置情報サービスを有効にしてください！"
+          };
+      default: // Ngôn ngữ không hỗ trợ
+            return {
+              enableLocationForOrder: "Enable location services before accepting the order!",
+              enableLocationForReturn: "Enable location services before accepting the return product!"
+          };
+  }
+}

@@ -17,6 +17,7 @@ import {
   translateStore,
 } from "@/translate/translate-client";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { localizationData } from "@/translate/translate-dashboard";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -49,61 +50,6 @@ const LeafletMap = () => {
   const clickHereMessage = translateClickHere(languageToUse);
   const storeMessage = translateStore(languageToUse);
 
-  //Customer language
-  L.Routing.Localization[languageToUse] = {
-    directions: {
-      north: "Bắc",
-      northeast: "Đông Bắc",
-      east: "Đông",
-      southeast: "Đông Nam",
-      south: "Nam",
-      southwest: "Tây Nam",
-      west: "Tây",
-      northwest: "Tây Bắc",
-    },
-    instructions: {
-      straight: "Đi thẳng",
-      slightLeft: "Rẽ nhẹ trái",
-      left: "Rẽ trái",
-      sharpLeft: "Rẽ mạnh trái",
-      slightRight: "Rẽ nhẹ phải",
-      right: "Rẽ phải",
-      sharpRight: "Rẽ mạnh phải",
-      uturn: "Quay đầu",
-    },
-    maneuvers: {
-      merge: "Gộp",
-      depart: "Rời đi",
-      arrive: "Đến nơi",
-      fork: "Giao lộ",
-      endOfRoad: "Cuối đường",
-      passRoundabout: "Vượt qua vòng xuyến",
-      accessRoundabout: "Vào vòng xuyến",
-      stayOnRoundabout: "Tiếp tục ở vòng xuyến",
-      startAtEndOfStreet: "Bắt đầu ở cuối đường",
-      start: "Bắt đầu",
-      turn: "Rẽ",
-      turnLeft: "Rẽ trái",
-      turnRight: "Rẽ phải",
-      multiple: "Nhiều hướng",
-    },
-    errors: {
-      locationNotFound: "Không tìm thấy địa điểm",
-      cantProjectRouteOnSatellite:
-        "Không thể đề xuất đường đi trên hình vệ tinh",
-      routeNotFound: "Không tìm thấy đường đi",
-      cantFindRoute: "Không thể tìm đường đi",
-      requestFailed: "Yêu cầu thất bại",
-      tooManyStops: "Quá nhiều điểm dừng",
-      unableToSync: "Không thể đồng bộ",
-    },
-    other: {
-      useRouteAnyway: "Sử dụng đường đi này?",
-      isCurrently: "Hiện tại",
-      poweredBy: "Cung cấp bởi",
-    },
-  };
-
   const handleMouseEnter = () => {
     setIsVisible(false);
   };
@@ -117,6 +63,12 @@ const LeafletMap = () => {
   useEffect(() => {
     if (typeof window === "undefined") {
       return;
+    }
+
+    if (languageToUse === "vi") {
+      L.Routing.Localization["vi"] = localizationData["vi"];
+    } else {
+      delete L.Routing.Localization["vi"]; // Remove any custom localization for non-Vietnamese languages
     }
 
     if (!mapRef.current) {

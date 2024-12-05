@@ -17008,7 +17008,6 @@ export const translateMenuItems = (language: string) => {
         name7: "Live List", // Added "listlive"
       };
   }
-  
 };
 
 export const translateNameuser = (language: string) => {
@@ -17419,66 +17418,66 @@ export const translateSalesData = (language: string) => {
 
 export const translateRole = (language: string) => {
   switch (language) {
-    case 'vi': 
+    case "vi":
       return "Vai trò";
-    case 'en': 
+    case "en":
       return "Role";
-    case 'zh': 
+    case "zh":
       return "角色";
-    case 'fr': 
+    case "fr":
       return "Rôle";
-    case 'ja': 
+    case "ja":
       return "役割";
-    default: 
+    default:
       return "Role"; // Default to English
   }
 };
 
 export const translateCreatedAt = (language: string) => {
   switch (language) {
-    case 'vi': 
+    case "vi":
       return "Ngày tạo";
-    case 'en': 
+    case "en":
       return "Created At";
-    case 'zh': 
+    case "zh":
       return "创建于";
-    case 'fr': 
+    case "fr":
       return "Créé le";
-    case 'ja': 
+    case "ja":
       return "作成日";
-    default: 
+    default:
       return "Created At"; // Default to English
   }
 };
 
 export const translateFavoritesNameChart = (language: string) => {
   switch (language) {
-    case 'vi': 
+    case "vi":
       return {
         name1: "Tổng số yêu thích",
         name2: "Tổng sản phẩm yêu thích",
       };
-    case 'en': 
+    case "en":
       return {
         name1: "Total Favorite",
         name2: "Total Favorite Product",
       };
-    case 'zh': 
+    case "zh":
       return {
         name1: "总收藏",
         name2: "总收藏产品",
       };
-    case 'fr': 
+    case "fr":
       return {
         name1: "Total Favoris",
         name2: "Total des Produits Favoris",
       };
-    case 'ja': 
+    case "ja":
       return {
         name1: "総お気に入り",
         name2: "総お気に入り製品",
       };
-    default: 
+    default:
       return {
         name1: "Total Favorite",
         name2: "Total Favorite Product",
@@ -17488,42 +17487,42 @@ export const translateFavoritesNameChart = (language: string) => {
 
 export const translateSettings = (language: string) => {
   switch (language) {
-    case 'vi': 
+    case "vi":
       return {
         name1: "Ảnh",
         name2: "Chế độ",
         name3: "Cài đặt",
         name4: "Thoát",
       };
-    case 'en': 
+    case "en":
       return {
         name1: "Image",
         name2: "Mode",
         name3: "Settings",
         name4: "Logout",
       };
-    case 'zh': 
+    case "zh":
       return {
         name1: "图片",
         name2: "模式",
         name3: "设置",
         name4: "退出",
       };
-    case 'fr': 
+    case "fr":
       return {
         name1: "Image",
         name2: "Mode",
         name3: "Paramètres",
         name4: "Déconnexion",
       };
-    case 'ja': 
+    case "ja":
       return {
         name1: "画像",
         name2: "モード",
         name3: "設定",
         name4: "ログアウト",
       };
-    default: 
+    default:
       return {
         name1: "Image",
         name2: "Mode",
@@ -17535,19 +17534,21 @@ export const translateSettings = (language: string) => {
 
 export const translateRolesCustomNav = (language: string) => {
   switch (language) {
-    case 'vi': 
+    case "vi":
       return {
         name1: "ADMIN",
         name2: "quản lý tất cả các vai trò",
         name3: "STAFF",
         name4: "và",
         name5: "USER",
-        name6: "đây được coi là vai trò cao nhất. Sử dụng tất cả các chức năng.",
-        name7: "quản lý đơn hàng, thêm, chỉnh sửa sản phẩm và quản lý đơn hàng và giao hàng của khách hàng.",
+        name6:
+          "đây được coi là vai trò cao nhất. Sử dụng tất cả các chức năng.",
+        name7:
+          "quản lý đơn hàng, thêm, chỉnh sửa sản phẩm và quản lý đơn hàng và giao hàng của khách hàng.",
         name8: "không thể xem được nội dung trong",
         name9: "chỉ có thể tương tác được trên trang sản phẩm.",
       };
-    case 'en': 
+    case "en":
       return {
         name1: "ADMIN",
         name2: "manage all roles",
@@ -17555,11 +17556,12 @@ export const translateRolesCustomNav = (language: string) => {
         name4: "and",
         name5: "USER",
         name6: "this is considered the highest role. Use all functionalities.",
-        name7: "manage orders, add, edit products, and manage customer orders and delivery.",
+        name7:
+          "manage orders, add, edit products, and manage customer orders and delivery.",
         name8: "cannot view content in",
         name9: "can only interact on the product page.",
       };
-    case 'zh': 
+    case "zh":
       return {
         name1: "管理员",
         name2: "管理所有角色",
@@ -17571,19 +17573,21 @@ export const translateRolesCustomNav = (language: string) => {
         name8: "无法查看",
         name9: "只能在产品页面上进行交互。",
       };
-    case 'fr': 
+    case "fr":
       return {
         name1: "ADMIN",
         name2: "gérer tous les rôles",
         name3: "STAFF",
         name4: "et",
         name5: "USER",
-        name6: "il s'agit du rôle le plus élevé. Utilisez toutes les fonctionnalités.",
-        name7: "gérer les commandes, ajouter, modifier des produits et gérer les commandes et la livraison des clients.",
+        name6:
+          "il s'agit du rôle le plus élevé. Utilisez toutes les fonctionnalités.",
+        name7:
+          "gérer les commandes, ajouter, modifier des produits et gérer les commandes et la livraison des clients.",
         name8: "ne peut pas voir le contenu dans",
         name9: "peut uniquement interagir sur la page produit.",
       };
-    case 'ja': 
+    case "ja":
       return {
         name1: "管理者",
         name2: "すべての役割を管理",
@@ -17591,96 +17595,98 @@ export const translateRolesCustomNav = (language: string) => {
         name4: "と",
         name5: "ユーザー",
         name6: "これは最も高い役割と見なされます。すべての機能を使用できます。",
-        name7: "注文を管理し、製品を追加、編集し、顧客の注文と配送を管理します。",
+        name7:
+          "注文を管理し、製品を追加、編集し、顧客の注文と配送を管理します。",
         name8: "コンテンツは表示できません",
         name9: "製品ページでのみインタラクションできます。",
       };
-    default: 
-    return {
-      name1: "ADMIN",
-      name2: "manage all roles",
-      name3: "STAFF",
-      name4: "and",
-      name5: "USER",
-      name6: "this is considered the highest role. Use all functionalities.",
-      name7: "manage orders, add, edit products, and manage customer orders and delivery.",
-      name8: "cannot view content in",
-      name9: "can only interact on the product page.",
-    };
+    default:
+      return {
+        name1: "ADMIN",
+        name2: "manage all roles",
+        name3: "STAFF",
+        name4: "and",
+        name5: "USER",
+        name6: "this is considered the highest role. Use all functionalities.",
+        name7:
+          "manage orders, add, edit products, and manage customer orders and delivery.",
+        name8: "cannot view content in",
+        name9: "can only interact on the product page.",
+      };
   }
 };
 
 export const translateSelectStore = (language: string) => {
   switch (language) {
-    case 'vi': 
+    case "vi":
       return "Vui lòng chọn một cửa hàng";
-    case 'en': 
+    case "en":
       return "Please select a store";
-    case 'zh': 
+    case "zh":
       return "请选择一个商店";
-    case 'fr': 
+    case "fr":
       return "Veuillez sélectionner un magasin";
-    case 'ja': 
+    case "ja":
       return "店舗を選択してください";
-    default: 
+    default:
       return "Please select a store";
   }
 };
 
 export const translateSearchStore = (language: string) => {
   switch (language) {
-    case 'vi': 
+    case "vi":
       return "Tìm kiếm cửa hàng";
-    case 'en': 
+    case "en":
       return "Search store";
-    case 'zh': 
+    case "zh":
       return "搜索商店";
-    case 'fr': 
+    case "fr":
       return "Chercher un magasin";
-    case 'ja': 
+    case "ja":
       return "店舗を検索";
-    default: 
+    default:
       return "Search store";
   }
 };
 
 export const translateStoreNotFound = (language: string) => {
   switch (language) {
-    case 'vi': 
+    case "vi":
       return "Không tìm thấy cửa hàng";
-    case 'en': 
+    case "en":
       return "Store not found";
-    case 'zh': 
+    case "zh":
       return "未找到商店";
-    case 'fr': 
+    case "fr":
       return "Magasin introuvable";
-    case 'ja': 
+    case "ja":
       return "店舗が見つかりません";
-    default: 
+    default:
       return "Store not found";
   }
 };
 
 export const translateCreateStore = (language: string) => {
   switch (language) {
-    case 'vi': 
+    case "vi":
       return "Tạo cửa hàng";
-    case 'en': 
+    case "en":
       return "Create store";
-    case 'zh': 
+    case "zh":
       return "创建商店";
-    case 'fr': 
+    case "fr":
       return "Créer un magasin";
-    case 'ja': 
+    case "ja":
       return "店舗を作成";
-    default: 
+    default:
       return "Create store";
   }
 };
 
 export const translateMainNav = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return {
         name1: "Tổng quan",
         name2: "Nhân viên",
@@ -17693,7 +17699,7 @@ export const translateMainNav = (language: string) => {
         name9: "Thanh toán",
         name10: "Cài đặt",
       };
-    case 'en':
+    case "en":
       return {
         name1: "Overview",
         name2: "Employees",
@@ -17706,7 +17712,7 @@ export const translateMainNav = (language: string) => {
         name9: "Payments",
         name10: "Settings",
       };
-    case 'zh':
+    case "zh":
       return {
         name1: "概览",
         name2: "员工",
@@ -17719,7 +17725,7 @@ export const translateMainNav = (language: string) => {
         name9: "付款",
         name10: "设置",
       };
-    case 'fr':
+    case "fr":
       return {
         name1: "Aperçu",
         name2: "Employés",
@@ -17732,7 +17738,7 @@ export const translateMainNav = (language: string) => {
         name9: "Paiements",
         name10: "Paramètres",
       };
-    case 'ja':
+    case "ja":
       return {
         name1: "概要",
         name2: "従業員",
@@ -17763,7 +17769,7 @@ export const translateMainNav = (language: string) => {
 
 export const translateMenuHintNavbarMultiple = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return {
         name1: "Doanh nghiệp",
         name2: "Blog",
@@ -17772,7 +17778,7 @@ export const translateMenuHintNavbarMultiple = (language: string) => {
         name5: "Bảo mật",
         name6: "Sự kiện",
       };
-    case 'en':
+    case "en":
       return {
         name1: "Enterprise",
         name2: "Blog",
@@ -17781,7 +17787,7 @@ export const translateMenuHintNavbarMultiple = (language: string) => {
         name5: "Security",
         name6: "Events",
       };
-    case 'zh':
+    case "zh":
       return {
         name1: "企业",
         name2: "博客",
@@ -17790,7 +17796,7 @@ export const translateMenuHintNavbarMultiple = (language: string) => {
         name5: "安全",
         name6: "事件",
       };
-    case 'fr':
+    case "fr":
       return {
         name1: "Entreprise",
         name2: "Blog",
@@ -17799,7 +17805,7 @@ export const translateMenuHintNavbarMultiple = (language: string) => {
         name5: "Sécurité",
         name6: "Événements",
       };
-    case 'ja':
+    case "ja":
       return {
         name1: "企業",
         name2: "ブログ",
@@ -17822,50 +17828,50 @@ export const translateMenuHintNavbarMultiple = (language: string) => {
 
 export const translateNavbarRoute = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return {
         overview: "Tổng quan",
         salesDataOverview: "Tổng quan dữ liệu bán hàng.",
         stores: "Cửa hàng",
         storeList: "Danh sách các cửa hàng các địa điểm.",
-        feedback: "Phản hồi",  
-        storeReviews: "Danh sách các đánh giá về cửa hàng."
+        feedback: "Phản hồi",
+        storeReviews: "Danh sách các đánh giá về cửa hàng.",
       };
-    case 'en':
+    case "en":
       return {
         overview: "Overview",
         salesDataOverview: "Overview of sales data.",
         stores: "Stores",
         storeList: "List of stores and locations.",
-        feedback: "Feedback",  
-        storeReviews: "List of reviews for the store."
+        feedback: "Feedback",
+        storeReviews: "List of reviews for the store.",
       };
-    case 'zh':
+    case "zh":
       return {
         overview: "概览",
         salesDataOverview: "销售数据概览。",
         stores: "商店",
         storeList: "商店和位置列表。",
-        feedback: "反馈", 
-        storeReviews: "店铺评论列表。"
+        feedback: "反馈",
+        storeReviews: "店铺评论列表。",
       };
-    case 'fr':
+    case "fr":
       return {
         overview: "Aperçu",
         salesDataOverview: "Aperçu des données de vente.",
         stores: "Magasins",
         storeList: "Liste des magasins et des emplacements.",
-        feedback: "Feedback",  
-        storeReviews: "Liste des avis sur le magasin."
+        feedback: "Feedback",
+        storeReviews: "Liste des avis sur le magasin.",
       };
-    case 'ja':
+    case "ja":
       return {
         overview: "概要",
         salesDataOverview: "売上データの概要。",
         stores: "店舗",
         storeList: "店舗と場所のリスト。",
-        feedback: "フィードバック",  
-        storeReviews: "店舗のレビュー一覧。"
+        feedback: "フィードバック",
+        storeReviews: "店舗のレビュー一覧。",
       };
     default:
       return {
@@ -17873,15 +17879,15 @@ export const translateNavbarRoute = (language: string) => {
         salesDataOverview: "Overview of sales data.",
         stores: "Stores",
         storeList: "List of stores and locations.",
-        feedback: "Feedback",  
-        storeReviews: "List of reviews for the store."
+        feedback: "Feedback",
+        storeReviews: "List of reviews for the store.",
       };
   }
 };
 
 export const translateAttendanceManagement = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return {
         employeeattendance: "Nhân viên điểm danh",
         automaticpayroll: "Nhân viên điểm danh tự động nhận lương",
@@ -17896,7 +17902,7 @@ export const translateAttendanceManagement = (language: string) => {
         reviewmanagement: "Quản lý đánh giá",
         userreviews: "Quản lý đánh giá của người dùng.",
       };
-    case 'en':
+    case "en":
       return {
         employeeattendance: "Employee attendance",
         automaticpayroll: "Employee attendance automatically receives salary",
@@ -17911,7 +17917,7 @@ export const translateAttendanceManagement = (language: string) => {
         reviewmanagement: "Review management",
         userreviews: "Manage user reviews.",
       };
-    case 'zh':
+    case "zh":
       return {
         employeeattendance: "员工打卡",
         automaticpayroll: "员工打卡自动领取工资",
@@ -17926,22 +17932,24 @@ export const translateAttendanceManagement = (language: string) => {
         reviewmanagement: "评论管理",
         userreviews: "管理用户评论。",
       };
-    case 'fr':
+    case "fr":
       return {
         employeeattendance: "Pointage des employés",
-        automaticpayroll: "Les employés reçoivent automatiquement leur salaire à l'heure du pointage",
+        automaticpayroll:
+          "Les employés reçoivent automatiquement leur salaire à l'heure du pointage",
         sendmail: "Envoyer un mail",
         maildescription: "Envoyé aux utilisateurs ou à la communauté.",
         attendancecontrol: "Gestion des pointages",
         userattendance: "Gestion des données de pointage des utilisateurs",
         salarymanagement: "Gestion des salaires des employés",
-        attendancepayroll: "Gestion des salaires des employés lors du pointage.",
+        attendancepayroll:
+          "Gestion des salaires des employés lors du pointage.",
         coinmanagement: "Gestion des coins et des spins",
         coinmanagementdesc: "Gérer les coins et spins pour les utilisateurs.",
         reviewmanagement: "Gestion des avis",
         userreviews: "Gérer les avis des utilisateurs.",
       };
-    case 'ja':
+    case "ja":
       return {
         employeeattendance: "従業員の出席",
         automaticpayroll: "従業員は出席時に自動的に給与を受け取ります",
@@ -17976,54 +17984,55 @@ export const translateAttendanceManagement = (language: string) => {
 
 export const translateBillboard = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return {
         adImage: "Ảnh quảng cáo",
         adImageManagement: "Quản lý ảnh quảng cáo trên trang bán hàng.",
         imageDescription: "Mô tả ảnh",
-        adImageDetails: "Mô tả chi tiết ảnh quảng cáo."
+        adImageDetails: "Mô tả chi tiết ảnh quảng cáo.",
       };
-    case 'en':
+    case "en":
       return {
         adImage: "Advertisement Image",
         adImageManagement: "Manage advertisement images on the sales page.",
         imageDescription: "Image Description",
-        adImageDetails: "Detailed description of the advertisement image."
+        adImageDetails: "Detailed description of the advertisement image.",
       };
-    case 'zh':
+    case "zh":
       return {
         adImage: "广告图片",
         adImageManagement: "在销售页面管理广告图片。",
         imageDescription: "图片描述",
-        adImageDetails: "广告图片的详细描述"
+        adImageDetails: "广告图片的详细描述",
       };
-    case 'fr':
+    case "fr":
       return {
         adImage: "Image publicitaire",
-        adImageManagement: "Gérer les images publicitaires sur la page de vente.",
+        adImageManagement:
+          "Gérer les images publicitaires sur la page de vente.",
         imageDescription: "Description de l'image",
-        adImageDetails: "Description détaillée de l'image publicitaire."
+        adImageDetails: "Description détaillée de l'image publicitaire.",
       };
-    case 'ja':
+    case "ja":
       return {
         adImage: "広告画像",
         adImageManagement: "販売ページの広告画像を管理する。",
         imageDescription: "画像の説明",
-        adImageDetails: "広告画像の詳細説明"
+        adImageDetails: "広告画像の詳細説明",
       };
     default:
       return {
         adImage: "Advertisement Image",
         adImageManagement: "Manage advertisement images on the sales page.",
         imageDescription: "Image Description",
-        adImageDetails: "Detailed description of the advertisement image."
+        adImageDetails: "Detailed description of the advertisement image.",
       };
   }
 };
 
 export const translateCategoriNavbar = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return {
         pin: "Pin",
         pinDescription: "Pin cho các thiết bị điện tử.",
@@ -18048,9 +18057,9 @@ export const translateCategoriNavbar = (language: string) => {
         lightBulb: "Bóng đèn",
         lightBulbDescription: "Loại Bóng đèn đa dụng.",
         dailyUseItems: "Đồ thường dùng",
-        dailyUseItemsDescription: "Loại Đồ thường dùng đa dụng."
+        dailyUseItemsDescription: "Loại Đồ thường dùng đa dụng.",
       };
-    case 'en':
+    case "en":
       return {
         pin: "Pin",
         pinDescription: "Battery for electronic devices.",
@@ -18075,9 +18084,9 @@ export const translateCategoriNavbar = (language: string) => {
         lightBulb: "Light Bulb",
         lightBulbDescription: "Multipurpose Light Bulb.",
         dailyUseItems: "Daily Use Items",
-        dailyUseItemsDescription: "Multipurpose Daily Use Items."
+        dailyUseItemsDescription: "Multipurpose Daily Use Items.",
       };
-    case 'zh':
+    case "zh":
       return {
         pin: "电池",
         pinDescription: "用于电子设备的电池。",
@@ -18102,16 +18111,17 @@ export const translateCategoriNavbar = (language: string) => {
         lightBulb: "灯泡",
         lightBulbDescription: "多用途灯泡。",
         dailyUseItems: "日常用品",
-        dailyUseItemsDescription: "多用途日常用品。"
+        dailyUseItemsDescription: "多用途日常用品。",
       };
-    case 'fr':
+    case "fr":
       return {
         pin: "Piles",
         pinDescription: "Piles pour appareils électroniques.",
         fan: "Ventilateur",
         fanDescription: "Ventilateur polyvalent.",
         plasticPipe: "Tube en plastique, Tube en filet vert",
-        plasticPipeDescription: "Tube en plastique, Tube en filet vert polyvalent.",
+        plasticPipeDescription:
+          "Tube en plastique, Tube en filet vert polyvalent.",
         electricWire: "Fil électrique",
         electricWireDescription: "Fil électrique polyvalent.",
         cuttingStone: "Pierre de coupe",
@@ -18125,13 +18135,14 @@ export const translateCategoriNavbar = (language: string) => {
         paint: "Peinture",
         paintDescription: "Peinture polyvalente.",
         bathroomMaterials: "Matériaux pour salle de bain",
-        bathroomMaterialsDescription: "Matériaux pour salle de bain polyvalents.",
+        bathroomMaterialsDescription:
+          "Matériaux pour salle de bain polyvalents.",
         lightBulb: "Ampoule",
         lightBulbDescription: "Ampoule polyvalente.",
         dailyUseItems: "Articles quotidiens",
-        dailyUseItemsDescription: "Articles quotidiens polyvalents."
+        dailyUseItemsDescription: "Articles quotidiens polyvalents.",
       };
-    case 'ja':
+    case "ja":
       return {
         pin: "バッテリー",
         pinDescription: "電子機器用のバッテリー。",
@@ -18156,7 +18167,7 @@ export const translateCategoriNavbar = (language: string) => {
         lightBulb: "電球",
         lightBulbDescription: "多用途電球。",
         dailyUseItems: "日常用品",
-        dailyUseItemsDescription: "多用途日常用品。"
+        dailyUseItemsDescription: "多用途日常用品。",
       };
     default:
       return {
@@ -18183,14 +18194,14 @@ export const translateCategoriNavbar = (language: string) => {
         lightBulb: "Light Bulb",
         lightBulbDescription: "Multipurpose Light Bulb.",
         dailyUseItems: "Daily Use Items",
-        dailyUseItemsDescription: "Multipurpose Daily Use Items."
+        dailyUseItemsDescription: "Multipurpose Daily Use Items.",
       };
   }
 };
 
 export const translateParamaterNavbar = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return {
         size: "Kích thước",
         sizeDescription: "Kích thước sản phẩm.",
@@ -18199,9 +18210,9 @@ export const translateParamaterNavbar = (language: string) => {
         productDetails: "Chi tiết sản phẩm",
         productDetailsDescription: "Mô tả chi tiết sản phẩm.",
         preferences: "Sở thích",
-        preferencesDescription: "Sở thích của người dùng."
+        preferencesDescription: "Sở thích của người dùng.",
       };
-    case 'en':
+    case "en":
       return {
         size: "Size",
         sizeDescription: "Product size.",
@@ -18210,9 +18221,9 @@ export const translateParamaterNavbar = (language: string) => {
         productDetails: "Product Details",
         productDetailsDescription: "Detailed product description.",
         preferences: "Preferences",
-        preferencesDescription: "User preferences."
+        preferencesDescription: "User preferences.",
       };
-    case 'zh':
+    case "zh":
       return {
         size: "尺寸",
         sizeDescription: "产品尺寸。",
@@ -18221,9 +18232,9 @@ export const translateParamaterNavbar = (language: string) => {
         productDetails: "产品详情",
         productDetailsDescription: "详细产品描述。",
         preferences: "偏好",
-        preferencesDescription: "用户的偏好。"
+        preferencesDescription: "用户的偏好。",
       };
-    case 'fr':
+    case "fr":
       return {
         size: "Taille",
         sizeDescription: "Taille du produit.",
@@ -18232,9 +18243,9 @@ export const translateParamaterNavbar = (language: string) => {
         productDetails: "Détails du produit",
         productDetailsDescription: "Description détaillée du produit.",
         preferences: "Préférences",
-        preferencesDescription: "Préférences des utilisateurs."
+        preferencesDescription: "Préférences des utilisateurs.",
       };
-    case 'ja':
+    case "ja":
       return {
         size: "サイズ",
         sizeDescription: "製品のサイズ。",
@@ -18243,7 +18254,7 @@ export const translateParamaterNavbar = (language: string) => {
         productDetails: "製品詳細",
         productDetailsDescription: "製品の詳細説明。",
         preferences: "好み",
-        preferencesDescription: "ユーザーの好み。"
+        preferencesDescription: "ユーザーの好み。",
       };
     default:
       return {
@@ -18254,14 +18265,14 @@ export const translateParamaterNavbar = (language: string) => {
         productDetails: "Product Details",
         productDetailsDescription: "Detailed product description.",
         preferences: "Preferences",
-        preferencesDescription: "User preferences."
+        preferencesDescription: "User preferences.",
       };
   }
 };
 
 export const translateProductNavbar = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return {
         pin: "Pin",
         pinDescription: "Sản phẩm Pin.",
@@ -18288,9 +18299,9 @@ export const translateProductNavbar = (language: string) => {
         commonItems: "Đồ thường dùng",
         commonItemsDescription: "Sản phẩm Đồ thường dùng.",
         discount: "Giảm giá",
-        discountDescription: "Giảm giá sản phẩm."
+        discountDescription: "Giảm giá sản phẩm.",
       };
-    case 'en':
+    case "en":
       return {
         pin: "Pin",
         pinDescription: "Pin product.",
@@ -18317,9 +18328,9 @@ export const translateProductNavbar = (language: string) => {
         commonItems: "Common Items",
         commonItemsDescription: "Common Items product.",
         discount: "Discount",
-        discountDescription: "Product discount."
+        discountDescription: "Product discount.",
       };
-    case 'zh':
+    case "zh":
       return {
         pin: "电池",
         pinDescription: "电池产品。",
@@ -18346,9 +18357,9 @@ export const translateProductNavbar = (language: string) => {
         commonItems: "常用物品",
         commonItemsDescription: "常用物品产品。",
         discount: "折扣",
-        discountDescription: "产品折扣。"
+        discountDescription: "产品折扣。",
       };
-    case 'fr':
+    case "fr":
       return {
         pin: "Pile",
         pinDescription: "Produit de pile.",
@@ -18375,9 +18386,9 @@ export const translateProductNavbar = (language: string) => {
         commonItems: "Articles courants",
         commonItemsDescription: "Produit d'articles courants.",
         discount: "Réduction",
-        discountDescription: "Réduction sur les produits."
+        discountDescription: "Réduction sur les produits.",
       };
-    case 'ja':
+    case "ja":
       return {
         pin: "ピン",
         pinDescription: "ピン製品。",
@@ -18404,7 +18415,7 @@ export const translateProductNavbar = (language: string) => {
         commonItems: "日用品",
         commonItemsDescription: "日用品製品。",
         discount: "割引",
-        discountDescription: "製品割引。"
+        discountDescription: "製品割引。",
       };
     default:
       return {
@@ -18433,151 +18444,151 @@ export const translateProductNavbar = (language: string) => {
         commonItems: "Common Items",
         commonItemsDescription: "Common Items product.",
         discount: "Discount",
-        discountDescription: "Product discount."
+        discountDescription: "Product discount.",
       };
   }
 };
 
 export const translateOrderManagement = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return {
         order: "Đơn hàng",
         orderDescription: "Quản lý đơn hàng của người dùng đặt hàng.",
         delivery: "Giao hàng",
-        deliveryDescription: "Quản lý đơn hàng giành cho shipper."
+        deliveryDescription: "Quản lý đơn hàng giành cho shipper.",
       };
-    case 'en':
+    case "en":
       return {
         order: "Order",
         orderDescription: "Manage the orders placed by users.",
         delivery: "Delivery",
-        deliveryDescription: "Manage the orders for the shipper."
+        deliveryDescription: "Manage the orders for the shipper.",
       };
-    case 'zh':
+    case "zh":
       return {
         order: "订单",
         orderDescription: "管理用户下单的订单。",
         delivery: "送货",
-        deliveryDescription: "管理发货人的订单。"
+        deliveryDescription: "管理发货人的订单。",
       };
-    case 'fr':
+    case "fr":
       return {
         order: "Commande",
         orderDescription: "Gérer les commandes passées par les utilisateurs.",
         delivery: "Livraison",
-        deliveryDescription: "Gérer les commandes pour le livreur."
+        deliveryDescription: "Gérer les commandes pour le livreur.",
       };
-    case 'ja':
+    case "ja":
       return {
         order: "注文",
         orderDescription: "ユーザーが注文した注文を管理します。",
         delivery: "配送",
-        deliveryDescription: "配達員向けの注文を管理します。"
+        deliveryDescription: "配達員向けの注文を管理します。",
       };
     default:
       return {
         order: "Order",
         orderDescription: "Manage the orders placed by users.",
         delivery: "Delivery",
-        deliveryDescription: "Manage the orders for the shipper."
+        deliveryDescription: "Manage the orders for the shipper.",
       };
   }
 };
 
 export const translateUserManagement = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return {
         user: "Người dùng",
         userDescription: "Người dùng đăng nhập.",
         staff: "Nhân viên",
-        staffDescription: "Tài khoản nhân viên quản lý cửa hàng."
+        staffDescription: "Tài khoản nhân viên quản lý cửa hàng.",
       };
-    case 'en':
+    case "en":
       return {
         user: "User",
         userDescription: "Logged-in user.",
         staff: "Staff",
-        staffDescription: "Staff account for managing the store."
+        staffDescription: "Staff account for managing the store.",
       };
-    case 'zh':
+    case "zh":
       return {
         user: "用户",
         userDescription: "登录的用户。",
         staff: "员工",
-        staffDescription: "员工账户用于管理商店。"
+        staffDescription: "员工账户用于管理商店。",
       };
-    case 'fr':
+    case "fr":
       return {
         user: "Utilisateur",
         userDescription: "Utilisateur connecté.",
         staff: "Personnel",
-        staffDescription: "Compte du personnel pour gérer le magasin."
+        staffDescription: "Compte du personnel pour gérer le magasin.",
       };
-    case 'ja':
+    case "ja":
       return {
         user: "ユーザー",
         userDescription: "ログインしたユーザー。",
         staff: "スタッフ",
-        staffDescription: "店舗管理のスタッフアカウント。"
+        staffDescription: "店舗管理のスタッフアカウント。",
       };
     default:
       return {
         user: "User",
         userDescription: "Logged-in user.",
         staff: "Staff",
-        staffDescription: "Staff account for managing the store."
+        staffDescription: "Staff account for managing the store.",
       };
   }
 };
 
 export const translatecheckoutNavbar = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return {
         discountCode: "Mã giảm giá",
         discountCodeDescription: "Mã giảm giá cho người dùng.",
         tax: "Thuế",
         taxDescription: "Thuế cho người dùng.",
         shippingFee: "Phí giao hàng",
-        shippingFeeDescription: "Phí giao hàng cho người dùng."
+        shippingFeeDescription: "Phí giao hàng cho người dùng.",
       };
-    case 'en':
+    case "en":
       return {
         discountCode: "Discount Code",
         discountCodeDescription: "Discount code for users.",
         tax: "Tax",
         taxDescription: "Tax for users.",
         shippingFee: "Shipping Fee",
-        shippingFeeDescription: "Shipping fee for users."
+        shippingFeeDescription: "Shipping fee for users.",
       };
-    case 'zh':
+    case "zh":
       return {
         discountCode: "折扣码",
         discountCodeDescription: "用户的折扣码。",
         tax: "税费",
         taxDescription: "用户的税费。",
         shippingFee: "运费",
-        shippingFeeDescription: "用户的运费。"
+        shippingFeeDescription: "用户的运费。",
       };
-    case 'fr':
+    case "fr":
       return {
         discountCode: "Code de réduction",
         discountCodeDescription: "Code de réduction pour les utilisateurs.",
         tax: "Taxe",
         taxDescription: "Taxe pour les utilisateurs.",
         shippingFee: "Frais de livraison",
-        shippingFeeDescription: "Frais de livraison pour les utilisateurs."
+        shippingFeeDescription: "Frais de livraison pour les utilisateurs.",
       };
-    case 'ja':
+    case "ja":
       return {
         discountCode: "割引コード",
         discountCodeDescription: "ユーザーのための割引コード。",
         tax: "税金",
         taxDescription: "ユーザーの税金。",
         shippingFee: "配送料",
-        shippingFeeDescription: "ユーザーの配送料。"
+        shippingFeeDescription: "ユーザーの配送料。",
       };
     default:
       return {
@@ -18586,61 +18597,61 @@ export const translatecheckoutNavbar = (language: string) => {
         tax: "Tax",
         taxDescription: "Tax for users.",
         shippingFee: "Shipping Fee",
-        shippingFeeDescription: "Shipping fee for users."
+        shippingFeeDescription: "Shipping fee for users.",
       };
   }
 };
 
 export const translateSettingsNavbar = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return {
         settings: "Cài đặt",
         settingsDescription: "Cài đặt cửa hàng.",
         system: "Hệ thống",
-        systemDescription: "Hệ thống người dùng."
+        systemDescription: "Hệ thống người dùng.",
       };
-    case 'en':
+    case "en":
       return {
         settings: "Settings",
         settingsDescription: "Store settings.",
         system: "System",
-        systemDescription: "User system."
+        systemDescription: "User system.",
       };
-    case 'zh':
+    case "zh":
       return {
         settings: "设置",
         settingsDescription: "商店设置。",
         system: "系统",
-        systemDescription: "用户系统。"
+        systemDescription: "用户系统。",
       };
-    case 'fr':
+    case "fr":
       return {
         settings: "Paramètres",
         settingsDescription: "Paramètres du magasin.",
         system: "Système",
-        systemDescription: "Système utilisateur."
+        systemDescription: "Système utilisateur.",
       };
-    case 'ja':
+    case "ja":
       return {
         settings: "設定",
         settingsDescription: "店舗設定。",
         system: "システム",
-        systemDescription: "ユーザーシステム。"
+        systemDescription: "ユーザーシステム。",
       };
     default:
       return {
         settings: "Settings",
         settingsDescription: "Store settings.",
         system: "System",
-        systemDescription: "User system."
+        systemDescription: "User system.",
       };
   }
 };
 
 export const translateTitleNavbar = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return {
         overview: "Tổng quan",
         employees: "Nhân viên",
@@ -18653,7 +18664,7 @@ export const translateTitleNavbar = (language: string) => {
         payments: "Thanh toán",
         settings: "Cài đặt",
       };
-    case 'en':
+    case "en":
       return {
         overview: "Overview",
         employees: "Employees",
@@ -18666,7 +18677,7 @@ export const translateTitleNavbar = (language: string) => {
         payments: "Payments",
         settings: "Settings",
       };
-    case 'zh':
+    case "zh":
       return {
         overview: "概览",
         employees: "员工",
@@ -18679,7 +18690,7 @@ export const translateTitleNavbar = (language: string) => {
         payments: "支付",
         settings: "设置",
       };
-    case 'fr':
+    case "fr":
       return {
         overview: "Aperçu",
         employees: "Employés",
@@ -18692,7 +18703,7 @@ export const translateTitleNavbar = (language: string) => {
         payments: "Paiements",
         settings: "Paramètres",
       };
-    case 'ja':
+    case "ja":
       return {
         overview: "概要",
         employees: "従業員",
@@ -18723,27 +18734,27 @@ export const translateTitleNavbar = (language: string) => {
 
 export const translateImageUpload = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return {
         uploadSuccess: "Tải ảnh thành công",
         uploadFail: "Tải ảnh lên không thành công",
       };
-    case 'en':
+    case "en":
       return {
         uploadSuccess: "Image uploaded successfully",
         uploadFail: "Failed to upload image",
       };
-    case 'zh':
+    case "zh":
       return {
         uploadSuccess: "图片上传成功",
         uploadFail: "图片上传失败",
       };
-    case 'fr':
+    case "fr":
       return {
         uploadSuccess: "Image téléchargée avec succès",
         uploadFail: "Échec du téléchargement de l'image",
       };
-    case 'ja':
+    case "ja":
       return {
         uploadSuccess: "画像のアップロードに成功しました",
         uploadFail: "画像のアップロードに失敗しました",
@@ -18758,7 +18769,7 @@ export const translateImageUpload = (language: string) => {
 
 export const translateProfileSettings = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return {
         backgroundImage: "Ảnh nền",
         changeImage: "Thay đổi Ảnh",
@@ -18766,7 +18777,7 @@ export const translateProfileSettings = (language: string) => {
         avatarDescription:
           "Ảnh đại diện giúp mọi người nhận biết bạn dễ dàng hơn qua các bài viết, bình luận, tin nhắn...",
       };
-    case 'en':
+    case "en":
       return {
         backgroundImage: "Background Image",
         changeImage: "Change Image",
@@ -18774,14 +18785,14 @@ export const translateProfileSettings = (language: string) => {
         avatarDescription:
           "Your profile picture helps people easily recognize you through posts, comments, and messages...",
       };
-    case 'zh':
+    case "zh":
       return {
         backgroundImage: "背景图片",
         changeImage: "更换图片",
         note: "注意:",
         avatarDescription: "头像可以帮助人们通过帖子、评论和消息轻松识别您...",
       };
-    case 'fr':
+    case "fr":
       return {
         backgroundImage: "Image de fond",
         changeImage: "Changer l'image",
@@ -18789,7 +18800,7 @@ export const translateProfileSettings = (language: string) => {
         avatarDescription:
           "Votre photo de profil aide les gens à vous reconnaître facilement à travers les publications, commentaires et messages...",
       };
-    case 'ja':
+    case "ja":
       return {
         backgroundImage: "背景画像",
         changeImage: "画像を変更",
@@ -18810,15 +18821,15 @@ export const translateProfileSettings = (language: string) => {
 
 export const translateStreamChat = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return "Trò chuyện trực tuyến";
-    case 'en':
+    case "en":
       return "Stream Chat";
-    case 'zh':
+    case "zh":
       return "流聊天";
-    case 'fr':
+    case "fr":
       return "Chat en direct";
-    case 'ja':
+    case "ja":
       return "ストリームチャット";
     default:
       return "Stream Chat";
@@ -18827,15 +18838,15 @@ export const translateStreamChat = (language: string) => {
 
 export const translateCommunity = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return "Cộng đồng";
-    case 'en':
+    case "en":
       return "Community";
-    case 'zh':
+    case "zh":
       return "社区";
-    case 'fr':
+    case "fr":
       return "Communauté";
-    case 'ja':
+    case "ja":
       return "コミュニティ";
     default:
       return "Community";
@@ -18844,15 +18855,15 @@ export const translateCommunity = (language: string) => {
 
 export const translateGoBackToChat = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return "Quay lại trò chuyện";
-    case 'en':
+    case "en":
       return "Go back to chat";
-    case 'zh':
+    case "zh":
       return "返回聊天";
-    case 'fr':
+    case "fr":
       return "Revenir au chat";
-    case 'ja':
+    case "ja":
       return "チャットに戻る";
     default:
       return "Go back to chat";
@@ -18861,15 +18872,15 @@ export const translateGoBackToChat = (language: string) => {
 
 export const translateChatDisabled = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return "Trò chuyện đã bị vô hiệu hóa";
-    case 'en':
+    case "en":
       return "Chat is disabled";
-    case 'zh':
+    case "zh":
       return "聊天已禁用";
-    case 'fr':
+    case "fr":
       return "Le chat est désactivé";
-    case 'ja':
+    case "ja":
       return "チャットが無効になっています";
     default:
       return "Chat is disabled";
@@ -18878,15 +18889,15 @@ export const translateChatDisabled = (language: string) => {
 
 export const translateWelcomeToChat = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return "Chào mừng đến với trò chuyện";
-    case 'en':
+    case "en":
       return "Welcome to the chat";
-    case 'zh':
+    case "zh":
       return "欢迎来到聊天";
-    case 'fr':
+    case "fr":
       return "Bienvenue dans le chat";
-    case 'ja':
+    case "ja":
       return "チャットへようこそ";
     default:
       return "Welcome to the chat";
@@ -18895,15 +18906,15 @@ export const translateWelcomeToChat = (language: string) => {
 
 export const translateSendMessage = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return "Gửi tin nhắn";
-    case 'en':
+    case "en":
       return "Send a message";
-    case 'zh':
+    case "zh":
       return "发送消息";
-    case 'fr':
+    case "fr":
       return "Envoyer un message";
-    case 'ja':
+    case "ja":
       return "メッセージを送る";
     default:
       return "Send a message";
@@ -18912,15 +18923,15 @@ export const translateSendMessage = (language: string) => {
 
 export const translateShoppingList = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return "Danh sách mua sắm";
-    case 'en':
+    case "en":
       return "Shopping List";
-    case 'zh':
+    case "zh":
       return "购物清单";
-    case 'fr':
+    case "fr":
       return "Liste de courses";
-    case 'ja':
+    case "ja":
       return "買い物リスト";
     default:
       return "Shopping List";
@@ -18929,15 +18940,15 @@ export const translateShoppingList = (language: string) => {
 
 export const translateBuy = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return "Mua";
-    case 'en':
+    case "en":
       return "Buy";
-    case 'zh':
+    case "zh":
       return "购买";
-    case 'fr':
+    case "fr":
       return "Acheter";
-    case 'ja':
+    case "ja":
       return "購入";
     default:
       return "Buy";
@@ -18946,15 +18957,15 @@ export const translateBuy = (language: string) => {
 
 export const translateShoppingCart = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return "Mua sắm";
-    case 'en':
+    case "en":
       return "Shopping";
-    case 'zh':
+    case "zh":
       return "购物";
-    case 'fr':
+    case "fr":
       return "Shopping";
-    case 'ja':
+    case "ja":
       return "買い物";
     default:
       return "Shopping";
@@ -18963,32 +18974,35 @@ export const translateShoppingCart = (language: string) => {
 
 export const translateFollowersOnlyChat = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return "Chỉ người theo dõi mới có thể trò chuyện";
-    case 'en':
+    case "en":
       return "Only followers can chat";
-    case 'zh':
+    case "zh":
       return "只有关注者可以聊天";
-    case 'fr':
+    case "fr":
       return "Seuls les abonnés peuvent discuter";
-    case 'ja':
+    case "ja":
       return "フォロワーのみチャットできます";
     default:
       return "Only followers can chat";
   }
 };
 
-export const translateMessageDelay = (language: string, delayInSeconds: number) => {
+export const translateMessageDelay = (
+  language: string,
+  delayInSeconds: number
+) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return `Tin nhắn bị trễ ${delayInSeconds} giây`;
-    case 'en':
+    case "en":
       return `Messages are delayed by ${delayInSeconds} seconds`;
-    case 'zh':
+    case "zh":
       return `消息延迟了 ${delayInSeconds} 秒`;
-    case 'fr':
+    case "fr":
       return `Les messages sont retardés de ${delayInSeconds} secondes`;
-    case 'ja':
+    case "ja":
       return `メッセージは ${delayInSeconds} 秒遅れています`;
     default:
       return `Messages are delayed by ${delayInSeconds} seconds`;
@@ -18997,15 +19011,15 @@ export const translateMessageDelay = (language: string, delayInSeconds: number) 
 
 export const translateFollowersOnly = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return "Chỉ dành cho người theo dõi";
-    case 'en':
+    case "en":
       return "Followers only";
-    case 'zh':
+    case "zh":
       return "仅限关注者";
-    case 'fr':
+    case "fr":
       return "Réservé aux abonnés";
-    case 'ja':
+    case "ja":
       return "フォロワーのみ";
     default:
       return "Followers only";
@@ -19014,15 +19028,15 @@ export const translateFollowersOnly = (language: string) => {
 
 export const translateSlowMode = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return "Chế độ chậm";
-    case 'en':
+    case "en":
       return "Slow mode";
-    case 'zh':
+    case "zh":
       return "慢速模式";
-    case 'fr':
+    case "fr":
       return "Mode lent";
-    case 'ja':
+    case "ja":
       return "スローモード";
     default:
       return "Slow mode";
@@ -19031,15 +19045,15 @@ export const translateSlowMode = (language: string) => {
 
 export const translateFollowersAndSlowMode = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return "Chỉ dành cho người theo dõi và chế độ chậm";
-    case 'en':
+    case "en":
       return "Followers only and slow mode";
-    case 'zh':
+    case "zh":
       return "仅限关注者且为慢速模式";
-    case 'fr':
+    case "fr":
       return "Réservé aux abonnés et en mode lent";
-    case 'ja':
+    case "ja":
       return "フォロワーのみ＆スローモード";
     default:
       return "Followers only and slow mode";
@@ -19048,15 +19062,15 @@ export const translateFollowersAndSlowMode = (language: string) => {
 
 export const translateCommunityDisabled = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return "Cộng đồng đã bị vô hiệu hóa";
-    case 'en':
+    case "en":
       return "Community is disabled";
-    case 'zh':
+    case "zh":
       return "社区已禁用";
-    case 'fr':
+    case "fr":
       return "La communauté est désactivée";
-    case 'ja':
+    case "ja":
       return "コミュニティは無効です";
     default:
       return "Community is disabled";
@@ -19065,15 +19079,15 @@ export const translateCommunityDisabled = (language: string) => {
 
 export const translateNoResults = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return "Không có kết quả";
-    case 'en':
+    case "en":
       return "No results";
-    case 'zh':
+    case "zh":
       return "没有结果";
-    case 'fr':
+    case "fr":
       return "Aucun résultat";
-    case 'ja':
+    case "ja":
       return "結果がありません";
     default:
       return "No results";
@@ -19082,15 +19096,15 @@ export const translateNoResults = (language: string) => {
 
 export const translateBlockedBy = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return "Đã bị chặn bởi";
-    case 'en':
+    case "en":
       return "Blocked by";
-    case 'zh':
+    case "zh":
       return "已被封锁";
-    case 'fr':
+    case "fr":
       return "Bloqué par";
-    case 'ja':
+    case "ja":
       return "によってブロックされました";
     default:
       return "Blocked by";
@@ -19099,15 +19113,15 @@ export const translateBlockedBy = (language: string) => {
 
 export const translateClickToSeeLive = (language: string) => {
   switch (language) {
-    case 'vi':
+    case "vi":
       return "Nhấp để xem Live";
-    case 'en':
+    case "en":
       return "Click to see Live";
-    case 'zh':
+    case "zh":
       return "点击观看直播";
-    case 'fr':
+    case "fr":
       return "Voir en direct";
-    case 'ja':
+    case "ja":
       return "ライブを見る";
     default:
       return "Click to see Live";
@@ -19147,7 +19161,6 @@ export const translateOfflines = (language: string) => {
       return "Offline";
   }
 };
-
 
 export const translatePause = (language: string) => {
   switch (language) {
@@ -19540,7 +19553,10 @@ export const translateUserBlocked = (language: string) => {
   }
 };
 
-export const translateChatLimitSuccess = (language: string, delayInSeconds: number) => {
+export const translateChatLimitSuccess = (
+  language: string,
+  delayInSeconds: number
+) => {
   switch (language) {
     case "vi":
       return `Thành công. Giới hạn thời gian chat trong ${delayInSeconds}s.`;
@@ -19693,7 +19709,6 @@ export const translateProductRemovedFromWishlist = (language: string) => {
   }
 };
 
-
 // Hàm dịch văn bản, trả về chuỗi đã dịch hoặc chuỗi gốc nếu lỗi
 export async function translateText(
   text: string,
@@ -19845,12 +19860,12 @@ export const getNoResultStore = (language: string) => {
   }
 };
 
-
 export const getError = (language: string) => {
   switch (language) {
     case "vi":
       return {
-        sorryUnable: "Xin lỗi, chúng tôi không thể thực hiện đúng theo yêu cầu của bạn!",
+        sorryUnable:
+          "Xin lỗi, chúng tôi không thể thực hiện đúng theo yêu cầu của bạn!",
         tryAgain: "Thử lại",
         backToHomepage: "Quay lại trang chủ",
         pageNotFound: "Không tìm thấy trang",
@@ -19892,7 +19907,6 @@ export const getError = (language: string) => {
       };
   }
 };
-
 
 export const getThemeToogle = (language: string) => {
   switch (language) {
@@ -20029,7 +20043,6 @@ export const getToggleCard = (language: string) => {
   }
 };
 
-
 export const getChatStatus = (language: string) => {
   switch (language) {
     case "vi":
@@ -20071,7 +20084,6 @@ export const getChatStatus = (language: string) => {
   }
 };
 
-
 export const getReloadPageDropMenuHint = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
@@ -20091,7 +20103,8 @@ export const getReloadPageDropMenuHint = (language: string) => {
       };
     case "fr": // Tiếng Pháp
       return {
-        confirm: "Voulez-vous actualiser la page pour changer toutes les langues ?",
+        confirm:
+          "Voulez-vous actualiser la page pour changer toutes les langues ?",
         info: "Le rafraîchissement de la page peut prendre quelques secondes pour recharger les données.",
       };
     case "ja": // Tiếng Nhật
@@ -20131,8 +20144,8 @@ export const getViolationComment = (language: string) => {
         violationMessage: "Vi phạm chính sách!",
         offensiveMessage: "Nội dung của bạn chứa ngôn ngữ phản cảm!",
         violationPart1: "Bạn đã vi phạm",
-        violationPart2: "điều khoản chính sách",  // Chỉnh sửa: Viết thường chữ cái đầu
-        violationPart3: "của chúng tôi"
+        violationPart2: "điều khoản chính sách", // Chỉnh sửa: Viết thường chữ cái đầu
+        violationPart3: "của chúng tôi",
       };
     case "en":
       return {
@@ -20140,15 +20153,15 @@ export const getViolationComment = (language: string) => {
         offensiveMessage: "Your content contains offensive language!",
         violationPart1: "You have violated",
         violationPart2: "our policy terms",
-        violationPart3: "of ours"
+        violationPart3: "of ours",
       };
     case "zh":
       return {
-        violationMessage: "违反政策！", 
+        violationMessage: "违反政策！",
         offensiveMessage: "您的内容包含攻击性语言！",
-        violationPart1: "您已违反", 
-        violationPart2: "我们的政策条款", 
-        violationPart3: "我们的"
+        violationPart1: "您已违反",
+        violationPart2: "我们的政策条款",
+        violationPart3: "我们的",
       };
     case "fr":
       return {
@@ -20156,15 +20169,16 @@ export const getViolationComment = (language: string) => {
         offensiveMessage: "Votre contenu contient un langage offensant !",
         violationPart1: "Vous avez violé",
         violationPart2: "nos conditions de politique",
-        violationPart3: "les nôtres"
+        violationPart3: "les nôtres",
       };
     case "ja":
       return {
-        violationMessage: "ポリシー違反！", 
-        offensiveMessage: "あなたのコンテンツには攻撃的な言葉が含まれています！", 
-        violationPart1: "あなたは違反しました", 
-        violationPart2: "私たちのポリシー規約", 
-        violationPart3: "私たちの"
+        violationMessage: "ポリシー違反！",
+        offensiveMessage:
+          "あなたのコンテンツには攻撃的な言葉が含まれています！",
+        violationPart1: "あなたは違反しました",
+        violationPart2: "私たちのポリシー規約",
+        violationPart3: "私たちの",
       };
     default:
       return {
@@ -20172,7 +20186,161 @@ export const getViolationComment = (language: string) => {
         offensiveMessage: "Your content contains offensive language!",
         violationPart1: "You have violated",
         violationPart2: "our policy terms",
-        violationPart3: "of ours"
+        violationPart3: "of ours",
+      };
+  }
+};
+
+export const getLocationShipperToUser = (language: string) => {
+  switch (language) {
+    case "vi": // Tiếng Việt
+      return {
+        message: "Lỗi khi lấy vị trí",
+        you: "Bạn",
+        shipper: "Người giao hàng",
+        shipperComing: "Người giao hàng đang đến",
+      };
+    case "en": // English
+      return {
+        message: "Error getting location",
+        you: "You",
+        shipper: "Shipper",
+        shipperComing: "Shipper is coming",
+      };
+    case "zh": // 中文
+      return {
+        message: "获取位置时出错",
+        you: "你",
+        shipper: "配送员",
+        shipperComing: "配送员正在赶来",
+      };
+    case "fr": // Français
+      return {
+        message: "Erreur lors de l'obtention de la position",
+        you: "Vous",
+        shipper: "Livreur",
+        shipperComing: "Le livreur arrive",
+      };
+    case "ja": // 日本語
+      return {
+        message: "位置情報の取得中にエラーが発生しました",
+        you: "あなた",
+        shipper: "配達員",
+        shipperComing: "配達員が到着中です",
+      };
+    default: // Mặc định nếu không khớp ngôn ngữ nào
+      return {
+        message: "Language not supported",
+        you: "You",
+        shipper: "Shipper",
+        shipperComing: "Shipper is coming",
+      };
+  }
+};
+
+
+export const getWareHouseLocationProduct = (languag: string) => {
+  switch (languag) {
+      case 'vi': // Tiếng Việt
+          return {
+              deliveryInfo: "Thông tin nhân viên giao hàng",
+              deliveryName: "Tên người giao hàng",
+              phoneNumber: "Số điện thoại",
+              deliveryStatus: "Trạng thái giao hàng",
+              delivering: "Đang giao",
+              inTransit: "Đang vận chuyển",
+              orderLocation: "Vị trí đơn hàng",
+              awaitingPickup: "Đang chờ người giao hàng đến lấy"
+          };
+      case 'en': // English
+          return {
+              deliveryInfo: "Delivery Employee Information",
+              deliveryName: "Delivery Person Name",
+              phoneNumber: "Phone Number",
+              deliveryStatus: "Delivery Status",
+              delivering: "Delivering",
+              inTransit: "In Transit",
+              orderLocation: "Order Location",
+              awaitingPickup: "Awaiting Pickup"
+          };
+      case 'zh': // Chinese (Simplified)
+          return {
+              deliveryInfo: "送货员工信息",
+              deliveryName: "送货员姓名",
+              phoneNumber: "电话号码",
+              deliveryStatus: "送货状态",
+              delivering: "正在送货",
+              inTransit: "运输中",
+              orderLocation: "订单位置",
+              awaitingPickup: "等待送货员取货"
+          };
+      case 'fr': // French
+          return {
+              deliveryInfo: "Informations sur le livreur",
+              deliveryName: "Nom du livreur",
+              phoneNumber: "Numéro de téléphone",
+              deliveryStatus: "Statut de livraison",
+              delivering: "En cours de livraison",
+              inTransit: "En transit",
+              orderLocation: "Emplacement de la commande",
+              awaitingPickup: "En attente de ramassage"
+          };
+      case 'ja': // Japanese
+          return {
+              deliveryInfo: "配達員情報",
+              deliveryName: "配達員の名前",
+              phoneNumber: "電話番号",
+              deliveryStatus: "配達状況",
+              delivering: "配達中",
+              inTransit: "輸送中",
+              orderLocation: "注文の場所",
+              awaitingPickup: "配達員が受け取りを待機中"
+          };
+      default:
+      return {
+        deliveryInfo: "Delivery Employee Information",
+        deliveryName: "Delivery Person Name",
+        phoneNumber: "Phone Number",
+        deliveryStatus: "Delivery Status",
+        delivering: "Delivering",
+        inTransit: "In Transit",
+        orderLocation: "Order Location",
+        awaitingPickup: "Awaiting Pickup"
+    };
+  }
+}
+
+export const getDeliveredLocation = (language:string) => {
+  switch (language) {
+    case 'vi':  // Vietnamese
+      return {
+        delivered: 'Đã giao hàng',
+        addressNotFound: 'Không tìm thấy địa chỉ bạn đã nhận hàng!',
+      };
+    case 'en':  // English
+      return {
+        delivered: 'Delivered',
+        addressNotFound: 'Address not found!',
+      };
+    case 'zh':  // Chinese
+      return {
+        delivered: '已交货',
+        addressNotFound: '找不到您收到货的地址！',
+      };
+    case 'fr':  // French
+      return {
+        delivered: 'Livré',
+        addressNotFound: 'Adresse non trouvée !',
+      };
+    case 'ja':  // Japanese
+      return {
+        delivered: '配達済み',
+        addressNotFound: '配達先の住所が見つかりません！',
+      };
+    default:
+      return {
+        delivered: 'Delivered',
+        addressNotFound: 'Address not found!',
       };
   }
 };

@@ -463,7 +463,7 @@ const MainNav: React.FC<mainNavProps> = ({
               <div className="basis-1/2 md:flex gap-2">
                 <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center ">
                   <Heart className="w-6 h-6 text-white" />
-                  <span className="w-5 h-5 absolute bg-[#e53350] rounded-full left-[20px] -top-[5px] md:top-0 bg-opacity-90 -mt[1px] shadow-lg">
+                  <span className="w-5 h-5 absolute bg-[#e53350] rounded-full left-[12px] md:left-[20px] -top-[5px] md:top-0 bg-opacity-90 -mt[1px] shadow-lg">
                     <p className="text-[0.75rem] m-auto text-white font-semibold">
                       {favorite.items.length}
                     </p>
@@ -490,7 +490,7 @@ const MainNav: React.FC<mainNavProps> = ({
               <div className="basis-1/2 md:flex gap-2">
                 <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center ">
                   <ShoppingBag className="w-6 h-6 text-white" />
-                  <span className="w-5 h-5 absolute bg-[#e53350] rounded-full left-[20px] -top-[5px] md:top-0 bg-opacity-90 -mt[1px] shadow-lg">
+                  <span className="w-5 h-5 absolute bg-[#e53350] rounded-full left-[12px] md:left-[20px] -top-[5px] md:top-0 bg-opacity-90 -mt[1px] shadow-lg">
                     <p className="text-[0.75rem] m-auto text-white font-semibold">
                       {role !== "GUEST" && userId ? (
                         <>{cartdb.items.length || "0"}</>

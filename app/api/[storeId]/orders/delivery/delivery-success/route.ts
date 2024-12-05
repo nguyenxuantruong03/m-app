@@ -1,4 +1,5 @@
 import { currentUser } from "@/lib/auth";
+import { sendDeliverySuccess } from "@/lib/mail";
 import prismadb from "@/lib/prismadb";
 import { translateDeliveryOrderUpdate } from "@/translate/translate-api";
 import { StatusOrder } from "@prisma/client";
@@ -13,7 +14,7 @@ export async function PATCH(req: Request) {
   try {
     const body = await req.json();
 
-    const { orderId, imageCustomer } = body;
+    const { orderId, imageCustomer,locationLatEnd,locationLngEnd } = body;
 
     if (!user) {
       return new NextResponse(
@@ -53,13 +54,21 @@ export async function PATCH(req: Request) {
         status: StatusOrder.Da_giao,
         userIdShipper: user?.id || "",
         updatedAt: new Date(),
+        locationLatEnd:locationLatEnd,
+        locationLngEnd:locationLngEnd,
         imageCustomer: {
           createMany: {
             data: [...imageCustomer.map((image: { url: string }) => image)],
           },
         },
       },
+      include:{
+        user: true,
+        orderItem: true
+      }
     });
+
+    await sendDeliverySuccess(order?.user?.email || "",order,LanguageToUse)
 
     return NextResponse.json(order);
   } catch (error) {

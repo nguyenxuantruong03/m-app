@@ -11,7 +11,8 @@ export async function GET(req: Request) {
   const wareHouseGetMessage = translateWareHouseGet(LanguageToUse)
   try {
     const { searchParams } = new URL(req.url);
-    const language = searchParams.get("language") || "vi"; // Mặc định là "vi" nếu không có language
+    // const language = searchParams.get("language") || "vi"; // Mặc định là "vi" nếu không có language
+    const language = "vi"; // Mặc định là "vi" nếu không có language
 
     if (!user) {
       return new NextResponse(
@@ -55,6 +56,11 @@ export async function GET(req: Request) {
     // Dịch tất cả các trường trong sản phẩm
     const translations = await Promise.all(
       orders.map(async (order) => {
+        const shipper = order.userIdShipper
+          ? await prismadb.user.findUnique({
+              where: { id: order.userIdShipper },
+            })
+          : null;
         // Dịch các trường chung
         const translatedOrder = {
           ...order,
@@ -226,6 +232,7 @@ export async function GET(req: Request) {
               return translatedItem;
             })
           ),
+          shipper
         };
 
         return translatedOrder;

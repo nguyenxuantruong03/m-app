@@ -385,6 +385,8 @@ model Order {
   imageCustomer            CustomerImage[]
   destiontionReturnProduct String?
   returnProduct            Boolean?
+  locationLatEnd Float?   // Vị trí khi giao hàng người dùng lần cuối
+  locationLngEnd Float?   // Vị trí khi giao hàng người dùng lần cuối
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -669,6 +671,10 @@ model User {
   language                 String        @default("vi")
   //--------------Các thứ làm việc của  nhân viên------------------
   daywork                  String[]
+  //Location
+  locationLat Float?   // Vị trí khi người dùng tắt chia sẻ
+  locationLng Float?   // Vị trí khi người dùng tắt chia sẻ
+  isSharingLocation Boolean @default(false)
 
   //Stream
   following  Follow[] @relation("Following")

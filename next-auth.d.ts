@@ -35,6 +35,9 @@ export type ExtendedUser = DefaultSession["user"] & {
   linkother: string;
   isLive: boolean;
   feedbackTimeNextResonse: Date;
+  locationLat: number;
+  locationLng: number;
+  isSharingLocation: boolean;
 };
 
 declare module "next-auth" {

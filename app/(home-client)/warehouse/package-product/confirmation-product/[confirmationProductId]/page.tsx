@@ -20,6 +20,7 @@ import {
   Truck,
   Repeat,
   ChevronLeft,
+  MapPinned,
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -92,7 +93,9 @@ import {
   translateReturnItemNormal,
   translateShipperOnTheWay,
   translateReturnedItem,
+  getWareHouseLocationProduct,
 } from "@/translate/translate-client";
+import LocationProduct from "@/components/(client)/location-product/location-product";
 
 const WareHouseDetail = ({
   params,
@@ -110,6 +113,9 @@ const WareHouseDetail = ({
   const [currentStep, setCurrentStep] = useState(1);
   const [matchingItemData, setmatchingItemData] = useState<Order>();
   const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   useEffect(() => {
     // Check if we're running on the client side
@@ -190,6 +196,8 @@ const WareHouseDetail = ({
   const paymentMethodMessage = translatePaymentMethod(languageToUse);
   const cashPayementMessage = translateCashPayment(languageToUse);
   const onlinePaymentMessage = translateOnlinePayment(languageToUse);
+  const warehouseLocaltionProductMessage =
+    getWareHouseLocationProduct(languageToUse);
 
   const handleBuyNow = () => {
     router.push("/home-product");
@@ -567,6 +575,31 @@ const WareHouseDetail = ({
           key={order.id}
           className="bg-zinc-400 bg-opacity-10 rounded-b-md mb-0.5 p-3"
         >
+          {/* Modal Map Location Shipper đến người dùng */}
+          {isModalOpen && (
+            <div
+              className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[99999999]"
+              onClick={closeModal}
+            >
+              <div
+                className="relative bg-white dark:bg-slate-900 p-4 rounded-lg w-full max-w-7xl"
+                onClick={(e) => e.stopPropagation()} // Prevents closing when clicking inside the image
+              >
+                <LocationProduct
+                  userShipperId={order.shipper.id}
+                  locationLat={order.shipper.locationLat}
+                  locationLng={order.shipper.locationLng}
+                />
+                <button
+                  onClick={closeModal}
+                  className="z-[999999999] absolute top-2 right-2 text-xl rounded-full w-10 h-10 hover:bg-gray-300 hover:bg-opacity-20"
+                >
+                  &times;
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="flex items-center justify-between">
             <Link
               href="/warehouse/package-product/confirmation-product"
@@ -828,7 +861,7 @@ const WareHouseDetail = ({
                           {orderIssueContactMessage}
                           <Link href="tel:0352261103" className="underline">
                             0352261103
-                          </Link>{" "}
+                          </Link>
                         </p>
                       </div>
                       <div className="w-[40%] md:w-1/4">
@@ -893,22 +926,89 @@ const WareHouseDetail = ({
 
                   <div className="separatorCustom" />
                   <div className="bg-zinc-400 bg-opacity-10 px-5 py-3">
-                    <div className="flex">
-                      <div className="w-1/2 space-y-2">
-                        <p className="font-semibold text-slate-900 dark:text-slate-200">
+                    <div className="flex flex-wrap">
+                      <div className="w-full md:w-1/2 p-2">
+                        <p className="font-semibold text-sky-500">
                           {deliveryAddressMessage}
                         </p>
                         <p className="text-sm text-slate-900 dark:text-slate-200">
                           {order.name}
                         </p>
-                        <p className="text-gray-400 text-xs">{order.phone}</p>
-                        <p className="text-gray-400 text-xs">{order.address}</p>
+                        <p className="text-gray-400 text-sm">{order.phone}</p>
+                        <p className="text-gray-400 text-xs break-words">
+                          {order.address}
+                        </p>
                         <p className="text-gray-400 text-xs">
                           {order.adressOther}
                         </p>
                       </div>
-                      <div className="w-1/2">
-                        {/* TODO: Làm google map hiển thị vị trí hiện tại của shipper hoặc ẩn  */}
+                      <div className="w-full md:w-1/2 p-2">
+                        {order.shipper ? (
+                          <div className="space-y-2">
+                            <p className="font-semibold text-sky-500">
+                              {warehouseLocaltionProductMessage.deliveryInfo}
+                            </p>
+                            <div className="flex items-center space-x-1">
+                              <span className="font-semibold text-slate-900 dark:text-slate-200">
+                                {warehouseLocaltionProductMessage.deliveryName}
+                              </span>
+                              <span className="text-slate-900 dark:text-slate-200">
+                                {order.shipper.name}
+                              </span>
+                            </div>
+                            <div className="flex items-center space-x-1">
+                              <span className="font-semibold text-slate-900 dark:text-slate-200">
+                                Email:
+                              </span>
+                              <span className="text-slate-900 dark:text-slate-200">
+                                {order.shipper.email}
+                              </span>
+                            </div>
+                            <div className="flex items-center space-x-1">
+                              <span className="font-semibold text-slate-900 dark:text-slate-200">
+                                {warehouseLocaltionProductMessage.phoneNumber}:
+                              </span>
+                              <span className="text-slate-900 dark:text-slate-200">
+                                {order.shipper.phonenumber}
+                              </span>
+                            </div>
+                            <div className="flex items-center space-x-1">
+                              <span className="font-semibold text-slate-900 dark:text-slate-200">
+                                {
+                                  warehouseLocaltionProductMessage.deliveryStatus
+                                }
+                                :
+                              </span>
+                              <span className=" text-slate-900 dark:text-slate-200">
+                                {order.shipper.isSharingLocation ? (
+                                  <span className="text-green-500">
+                                    {
+                                      warehouseLocaltionProductMessage.delivering
+                                    }
+                                  </span>
+                                ) : (
+                                  <span className="text-yellow-500">
+                                    {warehouseLocaltionProductMessage.inTransit}
+                                  </span>
+                                )}
+                              </span>
+                            </div>
+                            <Button
+                              variant="destructive"
+                              onClick={openModal}
+                              className="mt-3"
+                            >
+                              {warehouseLocaltionProductMessage.orderLocation}{" "}
+                              <MapPinned className="w-5 h-5" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex justify-center items-center h-full">
+                            <span className="text-md font-semibold text-yellow-500">
+                              {warehouseLocaltionProductMessage.awaitingPickup}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

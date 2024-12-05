@@ -245,6 +245,9 @@ export const {
         session.user.createdAt = token.createdAt as Date;
         session.user.language = token.language as string;
         session.user.isLive = token.isLive as boolean;
+        session.user.locationLat = token.locationLat as number
+        session.user.locationLng = token.locationLng as number
+        session.user.isSharingLocation = token.isSharingLocation as boolean
         session.user.feedbackTimeNextResonse =
           token.feedbackTimeNextResonse as Date;
         const existingUser = await getUserById(token.sub);
@@ -406,6 +409,9 @@ export const {
       token.isCitizen = existingUser.isCitizen;
       token.createdAt = existingUser.createdAt;
       token.language = existingUser.language;
+      token.locationLat = existingUser.locationLat;
+      token.locationLng = existingUser.locationLng
+      token.isSharingLocation = existingUser.isSharingLocation
       token.feedbackTimeNextResonse =
         existingUser?.feedback?.[0]?.timeNextResponse;
       if (existingUser.stream) {

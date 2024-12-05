@@ -11,7 +11,6 @@ import { OrderColumn } from "@/app/(dashboard)/[storeId]/(routes)/orders/compone
 import {
   getAddressMessage,
   getPhoneNumberMessage,
-  getToastError,
   translateProduct,
 } from "@/translate/translate-client";
 

@@ -259,6 +259,7 @@ export interface FavoriteProduct {
 export interface Order {
   id: string;
   orderItem: OrderItem[];
+  shipper: User;
   phone: string;
   address: string;
   adressOther: string;
@@ -271,6 +272,8 @@ export interface Order {
   email: string;
   isPaid: boolean;
   returnProduct: boolean;
+  locationLatEnd?: number;
+  locationLngEnd?: number;
   updatedAt: Date;
   createdAt: Date;
 }
@@ -317,7 +320,12 @@ export interface User {
   imageCredential: ImageCredential[];
   image: string;
   name: string;
+  email: string;
+  phonenumber: string;
   nameuser: string;
+  isSharingLocation?: boolean;
+  locationLat?: number;
+  locationLng?: number;
 }
 export interface Emoji {
   id: string;

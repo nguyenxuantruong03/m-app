@@ -37,7 +37,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Recommend from "@/components/ui/recommend";
 import ImageUpload from "@/components/ui/image-upload";
-import { getDeliveryComfirmationAction } from "@/translate/translate-dashboard";
+import {
+  getDeliveryComfirmationAction,
+  getDeliveryConfirmationLocation,
+} from "@/translate/translate-dashboard";
 
 interface CellActionProps {
   data: OrderColumn;
@@ -59,7 +62,12 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [value, setValue] = useState<string>("");
 
   //language
-  const deliveryConfirmActionMessage = getDeliveryComfirmationAction(data.language)
+  const deliveryConfirmActionMessage = getDeliveryComfirmationAction(
+    data.language
+  );
+  const deliveryConfirmationLocationMessage = getDeliveryConfirmationLocation(
+    data.language
+  );
 
   // Function to prevent closing modal when clicking inside modal content
   const handleModalClick = (
@@ -75,35 +83,66 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     },
   });
 
-  const comfirmOderDelivery = async (values: ComfirmOderDelivery) => {
-    if (data.updatedAt) {
-      const createdAtDate = new Date(data.updatedAt); // Convert updatedAt to Date object
-      const currentDate = new Date(); // Get the current date
+  const getCurrentLocation = async () => {
+    return new Promise<GeolocationPosition | null>((resolve, reject) => {
+      if (!navigator.geolocation) {
+        toast.error(deliveryConfirmationLocationMessage.geolocationUnsupported);
+        resolve(null);
+      } else {
+        navigator.geolocation.getCurrentPosition(
+          (position) => resolve(position),
+          (error) => {
+            toast.error(
+              deliveryConfirmationLocationMessage.unableToRetrieveLocation
+            );
+            reject(error);
+          }
+        );
+      }
+    });
+  };
 
-      // Calculate the difference in milliseconds
+  const comfirmOderDelivery = async (values: ComfirmOderDelivery) => {
+    if (!user?.isSharingLocation) {
+      toast.error(deliveryConfirmationLocationMessage.enableLocation);
+    }
+    if (data.updatedAt) {
+      const createdAtDate = new Date(data.updatedAt);
+      const currentDate = new Date();
       const diffInMilliseconds =
         currentDate.getTime() - createdAtDate.getTime();
-
-      // Convert milliseconds to days
       const diffInDays = diffInMilliseconds / (1000 * 60 * 60 * 24);
 
-      // If more than 2 days have passed, show an error
       if (diffInDays > 2) {
-        toast.error(
-          deliveryConfirmActionMessage.overdueOrder
-        );
+        toast.error(deliveryConfirmActionMessage.overdueOrder);
         return;
       }
     }
+
     try {
       setLoading(true);
+      const position = await getCurrentLocation();
+      const locationLatEnd = position?.coords.latitude;
+      const locationLngEnd = position?.coords.longitude;
+
+      if (!locationLatEnd || !locationLngEnd) {
+        toast.error(
+          deliveryConfirmationLocationMessage.unableToRetrieveLocationForDelivery
+        );
+        setLoading(false);
+        return;
+      }
+
       const promise = axios.patch(
         `/api/${params.storeId}/orders/delivery/delivery-success`,
         {
           orderId: data.id,
           imageCustomer: values.imageCustomer,
+          locationLatEnd,
+          locationLngEnd,
         }
       );
+
       await toast.promise(
         promise.then(() => {
           return (
@@ -293,14 +332,18 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">{deliveryConfirmActionMessage.openMenu}</span>
+            <span className="sr-only">
+              {deliveryConfirmActionMessage.openMenu}
+            </span>
             <MoreHorizontal className="w-4 h-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           {user?.role === "ADMIN" || user?.role === "SHIPPER" ? (
             <>
-              <DropdownMenuLabel>{deliveryConfirmActionMessage.actions}</DropdownMenuLabel>
+              <DropdownMenuLabel>
+                {deliveryConfirmActionMessage.actions}
+              </DropdownMenuLabel>
               {data.returnProduct ? (
                 <DropdownMenuItem
                   disabled={loading}
@@ -347,15 +390,22 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             </>
           ) : (
             <>
-              <DropdownMenuLabel>{deliveryConfirmActionMessage.empty}</DropdownMenuLabel>{" "}
+              <DropdownMenuLabel>
+                {deliveryConfirmActionMessage.empty}
+              </DropdownMenuLabel>{" "}
             </>
           )}
         </DropdownMenuContent>
 
         {openCustomImage && (
-          <>
-            <div className="fixed inset-0 bg-black/80 h-full w-full z-40" />
-            <div className="absolute inset-0 m-auto h-max w-3/4 max-w-md border rounded-md gap-4 bg-slate-900 p-6 shadow-lg transition ease-in-out z-50">
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+            onClick={() => setOpenCustomImage(false)}
+          >
+            <div
+              className="relative bg-white dark:bg-slate-900 p-4 rounded-lg"
+              onClick={(e) => e.stopPropagation()} // Prevents closing when clicking inside the image
+            >
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(comfirmOderDelivery)}
@@ -367,9 +417,15 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex space-x-3 items-center w-full">
-                          <span className="text-white">{deliveryConfirmActionMessage.deliveredImage}</span>
+                          <span className="text-slate-900 dark:text-white">
+                            {deliveryConfirmActionMessage.deliveredImage}
+                          </span>
                           <span className="text-red-600 pl-1">(*)</span>
-                          <Recommend message={deliveryConfirmActionMessage.takeTwoDeliveredImages}/>
+                          <Recommend
+                            message={
+                              deliveryConfirmActionMessage.takeTwoDeliveredImages
+                            }
+                          />
                         </FormLabel>
                         <FormControl>
                           <ImageUpload
@@ -379,7 +435,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                               if (field.value.length < 2) {
                                 field.onChange([...field.value, { url }]);
                               } else {
-                                toast.error(deliveryConfirmActionMessage.selectClearImages);
+                                toast.error(
+                                  deliveryConfirmActionMessage.selectClearImages
+                                );
                               }
                             }}
                             onRemove={(url) =>
@@ -411,14 +469,15 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                       variant="destructive"
                     >
                       <span className="flex items-center">
-                      {deliveryConfirmActionMessage.send} <SendHorizontal className="w-5 h-5 ml-1" />
+                        {deliveryConfirmActionMessage.send}{" "}
+                        <SendHorizontal className="w-5 h-5 ml-1" />
                       </span>
                     </Button>
                   </div>
                 </form>
               </Form>
             </div>
-          </>
+          </div>
         )}
 
         {open && (

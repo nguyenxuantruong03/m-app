@@ -5926,9 +5926,7 @@ export const translateSalaryStaffView = (language: string) => {
   }
 };
 
-export const translateSalaryStaffIdGet = (
-  language: string
-) => {
+export const translateSalaryStaffIdGet = (language: string) => {
   switch (language) {
     case "vi":
       return {
@@ -5971,9 +5969,7 @@ export const translateSalaryStaffIdGet = (
   }
 };
 
-export const translateSalaryStaffIdPatch = (
-  language: string
-) => {
+export const translateSalaryStaffIdPatch = (language: string) => {
   switch (language) {
     case "vi":
       return {
@@ -6015,9 +6011,7 @@ export const translateSalaryStaffIdPatch = (
   }
 };
 
-export const translateSalaryStaffIdPost = (
-  language: string
-) => {
+export const translateSalaryStaffIdPost = (language: string) => {
   switch (language) {
     case "vi":
       return {
@@ -6061,9 +6055,7 @@ export const translateSalaryStaffIdPost = (
   }
 };
 
-export const translateProductSalePatch = (
-  language: string
-) => {
+export const translateProductSalePatch = (language: string) => {
   switch (language) {
     case "vi":
       return {
@@ -6106,9 +6098,7 @@ export const translateProductSalePatch = (
   }
 };
 
-export const translateProductSearchGet = (
-  language: string
-) => {
+export const translateProductSearchGet = (language: string) => {
   switch (language) {
     case "vi":
       return {
@@ -6137,9 +6127,7 @@ export const translateProductSearchGet = (
   }
 };
 
-export const translateSentEmailPost = (
-  language: string
-) => {
+export const translateSentEmailPost = (language: string) => {
   switch (language) {
     case "vi":
       return {
@@ -6213,9 +6201,7 @@ export const translateSentEmailPost = (
   }
 };
 
-export const translateSentEmailGet = (
-  language: string
-) => {
+export const translateSentEmailGet = (language: string) => {
   switch (language) {
     case "vi":
       return {
@@ -6263,9 +6249,7 @@ export const translateSentEmailGet = (
   }
 };
 
-export const translateSentEmailDelete = (
-  language: string
-) => {
+export const translateSentEmailDelete = (language: string) => {
   switch (language) {
     case "vi":
       return {
@@ -6327,9 +6311,7 @@ export const translateSentEmailDelete = (
   }
 };
 
-export const translateSentEmailIdGet = (
-  language: string
-) => {
+export const translateSentEmailIdGet = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -6378,9 +6360,7 @@ export const translateSentEmailIdGet = (
   }
 };
 
-export const translateSentEmailIdDelete = (
-  language: string
-) => {
+export const translateSentEmailIdDelete = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -6444,9 +6424,7 @@ export const translateSentEmailIdDelete = (
   }
 };
 
-export const translateSentEmailIdPatch = (
-  language: string
-) => {
+export const translateSentEmailIdPatch = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -6519,9 +6497,7 @@ export const translateSentEmailIdPatch = (
   }
 };
 
-export const translateSentEmailIdPost = (
-  language: string
-) => {
+export const translateSentEmailIdPost = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -6588,9 +6564,7 @@ export const translateSentEmailIdPost = (
   }
 };
 
-export const translateSettingUserGet = (
-  language: string
-) => {
+export const translateSettingUserGet = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -6631,9 +6605,7 @@ export const translateSettingUserGet = (
   }
 };
 
-export const translateSettingUserPatch = (
-  language: string
-) => {
+export const translateSettingUserPatch = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -6688,9 +6660,7 @@ export const translateSettingUserPatch = (
   }
 };
 
-export const translateSettingUserDelete = (
-  language: string
-) => {
+export const translateSettingUserDelete = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -6751,9 +6721,7 @@ export const translateSettingUserDelete = (
   }
 };
 
-export const translateSettingUserBan = (
-  language: string
-) => {
+export const translateSettingUserBan = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -6826,9 +6794,7 @@ export const translateSettingUserBan = (
   }
 };
 
-export const translateSettingUserIsCitizen = (
-  language: string
-) => {
+export const translateSettingUserIsCitizen = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -6870,9 +6836,7 @@ export const translateSettingUserIsCitizen = (
   }
 };
 
-export const translateSettingUserUnban = (
-  language: string
-) => {
+export const translateSettingUserUnban = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -6926,9 +6890,7 @@ export const translateSettingUserUnban = (
   }
 };
 
-export const translateShippingRatePost = (
-  language: string
-) => {
+export const translateShippingRatePost = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -6991,9 +6953,7 @@ export const translateShippingRatePost = (
   }
 };
 
-export const translateShippingRateGet = (
-  language: string
-) => {
+export const translateShippingRateGet = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -7029,9 +6989,7 @@ export const translateShippingRateGet = (
   }
 };
 
-export const translateShippingRateDelete = (
-  language: string
-) => {
+export const translateShippingRateDelete = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -7091,9 +7049,7 @@ export const translateShippingRateDelete = (
   }
 };
 
-export const translateShippingRateIdGet = (
-  language: string
-) => {
+export const translateShippingRateIdGet = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -7142,9 +7098,7 @@ export const translateShippingRateIdGet = (
   }
 };
 
-export const translateShippingRateIdDelete = (
-  language: string
-) => {
+export const translateShippingRateIdDelete = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -7199,9 +7153,7 @@ export const translateShippingRateIdDelete = (
   }
 };
 
-export const translateShippingRateIdPatch = (
-  language: string
-) => {
+export const translateShippingRateIdPatch = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -7399,9 +7351,7 @@ export const translateSizeGet = (language: string) => {
   }
 };
 
-export const translateSizeDelete = (
-  language: string
-) => {
+export const translateSizeDelete = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -7461,9 +7411,7 @@ export const translateSizeDelete = (
   }
 };
 
-export const translateSizeIdGet = (
-  language: string
-) => {
+export const translateSizeIdGet = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -7510,9 +7458,7 @@ export const translateSizeIdGet = (
   }
 };
 
-export const translateSizeIdDelete = (
-  language: string
-) => {
+export const translateSizeIdDelete = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -7566,9 +7512,7 @@ export const translateSizeIdDelete = (
   }
 };
 
-export const translateSizeIdPatch = (
-  language: string
-) => {
+export const translateSizeIdPatch = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -7634,9 +7578,7 @@ export const translateSizeIdPatch = (
   }
 };
 
-export const translateSystemGet = (
-  language: string
-) => {
+export const translateSystemGet = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -7678,9 +7620,7 @@ export const translateSystemGet = (
   }
 };
 
-export const translateTaxRatePost = (
-  language: string
-) => {
+export const translateTaxRatePost = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -7746,9 +7686,7 @@ export const translateTaxRatePost = (
   }
 };
 
-export const translateTaxRateGet = (
-  language: string
-) => {
+export const translateTaxRateGet = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -7783,9 +7721,7 @@ export const translateTaxRateGet = (
   }
 };
 
-export const translateTaxRateDelete = (
-  language: string
-) => {
+export const translateTaxRateDelete = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -7845,9 +7781,7 @@ export const translateTaxRateDelete = (
   }
 };
 
-export const translateTaxRateIdGet = (
-  language: string
-) => {
+export const translateTaxRateIdGet = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -7896,9 +7830,7 @@ export const translateTaxRateIdGet = (
   }
 };
 
-export const translateTaxRateIdDelete = (
-  language: string
-) => {
+export const translateTaxRateIdDelete = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -7952,9 +7884,7 @@ export const translateTaxRateIdDelete = (
   }
 };
 
-export const translateTaxRateIdPatch = (
-  language: string
-) => {
+export const translateTaxRateIdPatch = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -8038,9 +7968,7 @@ export const translateTaxRateIdPatch = (
   }
 };
 
-export const translateWareHouseGet = (
-  language: string
-) => {
+export const translateWareHouseGet = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -8075,9 +8003,7 @@ export const translateWareHouseGet = (
   }
 };
 
-export const translateWheelSpinPost = (
-  language: string
-) => {
+export const translateWheelSpinPost = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -8112,9 +8038,7 @@ export const translateWheelSpinPost = (
   }
 };
 
-export const translateWheelSpinGet = (
-  language: string
-) => {
+export const translateWheelSpinGet = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -8149,9 +8073,7 @@ export const translateWheelSpinGet = (
   }
 };
 
-export const translateBonusWheelSpinGet = (
-  language: string
-) => {
+export const translateBonusWheelSpinGet = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -8188,9 +8110,7 @@ export const translateBonusWheelSpinGet = (
   }
 };
 
-export const translateBonusWheelSpinPatch = (
-  language: string
-) => {
+export const translateBonusWheelSpinPatch = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -8246,9 +8166,7 @@ export const translateBonusWheelSpinPatch = (
   }
 };
 
-export const translateUnbonusWheelSpinPost = (
-  language: string
-) => {
+export const translateUnbonusWheelSpinPost = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -8304,7 +8222,6 @@ export const translateUnbonusWheelSpinPost = (
   }
 };
 
-
 export const translateCartAddItem = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
@@ -8312,42 +8229,42 @@ export const translateCartAddItem = (language: string) => {
         userIdNotFound: "Không tìm thấy user id!",
         quantityNotFound: "Không tìm thấy quantity!",
         productIdNotFound: "Không tìm thấy product id!",
-        internalError: "Lỗi hệ thống khi tạo cartItem."
+        internalError: "Lỗi hệ thống khi tạo cartItem.",
       };
     case "en": // English
       return {
         userIdNotFound: "User id not found!",
         quantityNotFound: "Quantity not found!",
         productIdNotFound: "Product id not found!",
-        internalError: "Internal error while creating cartItem."
+        internalError: "Internal error while creating cartItem.",
       };
     case "zh": // Tiếng Trung
       return {
         userIdNotFound: "未找到用户ID！",
         quantityNotFound: "未找到数量！",
         productIdNotFound: "未找到产品ID！",
-        internalError: "创建cartItem时发生系统错误。"
+        internalError: "创建cartItem时发生系统错误。",
       };
     case "fr": // Tiếng Pháp
       return {
         userIdNotFound: "ID utilisateur introuvable !",
         quantityNotFound: "Quantité introuvable !",
         productIdNotFound: "ID produit introuvable !",
-        internalError: "Erreur système lors de la création du cartItem."
+        internalError: "Erreur système lors de la création du cartItem.",
       };
     case "ja": // Tiếng Nhật
       return {
         userIdNotFound: "ユーザーIDが見つかりません！",
         quantityNotFound: "数量が見つかりません！",
         productIdNotFound: "製品IDが見つかりません！",
-        internalError: "cartItem作成時にシステムエラーが発生しました。"
+        internalError: "cartItem作成時にシステムエラーが発生しました。",
       };
     default: // If language is not recognized, default to English
       return {
         userIdNotFound: "User id not found!",
         quantityNotFound: "Quantity not found!",
         productIdNotFound: "Product id not found!",
-        internalError: "Internal error while creating cartItem."
+        internalError: "Internal error while creating cartItem.",
       };
   }
 };
@@ -8360,7 +8277,7 @@ export const translateCartItemGet = (language: string) => {
         quantityNotFound: "Không tìm thấy quantity!",
         productIdNotFound: "Không tìm thấy product id!",
         internalError: "Lỗi hệ thống khi tạo cartItem.",
-        internalErrorGet: "Lỗi hệ thống khi lấy cartItem."
+        internalErrorGet: "Lỗi hệ thống khi lấy cartItem.",
       };
     case "en": // English
       return {
@@ -8368,7 +8285,7 @@ export const translateCartItemGet = (language: string) => {
         quantityNotFound: "Quantity not found!",
         productIdNotFound: "Product id not found!",
         internalError: "Internal error while creating cartItem.",
-        internalErrorGet: "Internal error while getting cartItem."
+        internalErrorGet: "Internal error while getting cartItem.",
       };
     case "zh": // Tiếng Trung
       return {
@@ -8376,7 +8293,7 @@ export const translateCartItemGet = (language: string) => {
         quantityNotFound: "未找到数量！",
         productIdNotFound: "未找到产品ID！",
         internalError: "创建cartItem时发生系统错误。",
-        internalErrorGet: "获取cartItem时发生系统错误。"
+        internalErrorGet: "获取cartItem时发生系统错误。",
       };
     case "fr": // Tiếng Pháp
       return {
@@ -8384,7 +8301,7 @@ export const translateCartItemGet = (language: string) => {
         quantityNotFound: "Quantité introuvable !",
         productIdNotFound: "ID produit introuvable !",
         internalError: "Erreur système lors de la création du cartItem.",
-        internalErrorGet: "Erreur système lors de la récupération du cartItem."
+        internalErrorGet: "Erreur système lors de la récupération du cartItem.",
       };
     case "ja": // Tiếng Nhật
       return {
@@ -8392,7 +8309,7 @@ export const translateCartItemGet = (language: string) => {
         quantityNotFound: "数量が見つかりません！",
         productIdNotFound: "製品IDが見つかりません！",
         internalError: "cartItem作成時にシステムエラーが発生しました。",
-        internalErrorGet: "cartItem取得時にシステムエラーが発生しました。"
+        internalErrorGet: "cartItem取得時にシステムエラーが発生しました。",
       };
     default: // If language is not recognized, default to English
       return {
@@ -8400,7 +8317,7 @@ export const translateCartItemGet = (language: string) => {
         quantityNotFound: "Quantity not found!",
         productIdNotFound: "Product id not found!",
         internalError: "Internal error while creating cartItem.",
-        internalErrorGet: "Internal error while getting cartItem."
+        internalErrorGet: "Internal error while getting cartItem.",
       };
   }
 };
@@ -8410,32 +8327,36 @@ export const translateCartItemDeleteMany = (language: string) => {
     case "vi": // Tiếng Việt
       return {
         userIdNotFound: "Không tìm thấy user id!",
-        internalErrorDeleteMany: "Lỗi hệ thống khi xóa nhiều cartItem."
+        internalErrorDeleteMany: "Lỗi hệ thống khi xóa nhiều cartItem.",
       };
     case "en": // English
       return {
         userIdNotFound: "User id not found!",
-        internalErrorDeleteMany: "Internal error while deleting many cartItems."
+        internalErrorDeleteMany:
+          "Internal error while deleting many cartItems.",
       };
     case "zh": // Tiếng Trung
       return {
         userIdNotFound: "未找到用户ID！",
-        internalErrorDeleteMany: "删除多个cartItem时发生系统错误。"
+        internalErrorDeleteMany: "删除多个cartItem时发生系统错误。",
       };
     case "fr": // Tiếng Pháp
       return {
         userIdNotFound: "ID utilisateur introuvable !",
-        internalErrorDeleteMany: "Erreur système lors de la suppression de plusieurs cartItems."
+        internalErrorDeleteMany:
+          "Erreur système lors de la suppression de plusieurs cartItems.",
       };
     case "ja": // Tiếng Nhật
       return {
         userIdNotFound: "ユーザーIDが見つかりません！",
-        internalErrorDeleteMany: "複数のcartItem削除時にシステムエラーが発生しました。"
+        internalErrorDeleteMany:
+          "複数のcartItem削除時にシステムエラーが発生しました。",
       };
     default: // If language is not recognized, default to English
       return {
         userIdNotFound: "User id not found!",
-        internalErrorDeleteMany: "Internal error while deleting many cartItems."
+        internalErrorDeleteMany:
+          "Internal error while deleting many cartItems.",
       };
   }
 };
@@ -8445,32 +8366,33 @@ export const translateCartItemDelete = (language: string) => {
     case "vi": // Tiếng Việt
       return {
         idNotFound: "Không tìm thấy Id!",
-        internalErrorDelete: "Lỗi hệ thống khi xóa cartItem."
+        internalErrorDelete: "Lỗi hệ thống khi xóa cartItem.",
       };
     case "en": // English
       return {
         idNotFound: "Id not found!",
-        internalErrorDelete: "Internal error while deleting cartItem."
+        internalErrorDelete: "Internal error while deleting cartItem.",
       };
     case "zh": // Tiếng Trung
       return {
         idNotFound: "未找到ID！",
-        internalErrorDelete: "删除cartItem时发生系统错误。"
+        internalErrorDelete: "删除cartItem时发生系统错误。",
       };
     case "fr": // Tiếng Pháp
       return {
         idNotFound: "ID introuvable !",
-        internalErrorDelete: "Erreur système lors de la suppression du cartItem."
+        internalErrorDelete:
+          "Erreur système lors de la suppression du cartItem.",
       };
     case "ja": // Tiếng Nhật
       return {
         idNotFound: "IDが見つかりません！",
-        internalErrorDelete: "cartItem削除時にシステムエラーが発生しました。"
+        internalErrorDelete: "cartItem削除時にシステムエラーが発生しました。",
       };
     default: // If language is not recognized, default to English
       return {
         idNotFound: "Id not found!",
-        internalErrorDelete: "Internal error while deleting cartItem."
+        internalErrorDelete: "Internal error while deleting cartItem.",
       };
   }
 };
@@ -8481,37 +8403,41 @@ export const translateDeleteManySelectItem = (language: string) => {
       return {
         idsNotFound: "Không tìm thấy Ids !",
         userIdNotFound: "Không tìm thấy userId !",
-        internalErrorDelete: "Lỗi hệ thống khi xóa nhiều item đã chọn."
+        internalErrorDelete: "Lỗi hệ thống khi xóa nhiều item đã chọn.",
       };
     case "en": // English
       return {
         idsNotFound: "Ids not found!",
         userIdNotFound: "UserId not found!",
-        internalErrorDelete: "Internal error while deleting many selected items."
+        internalErrorDelete:
+          "Internal error while deleting many selected items.",
       };
     case "zh": // Tiếng Trung
       return {
         idsNotFound: "未找到Ids！",
         userIdNotFound: "未找到userId！",
-        internalErrorDelete: "删除多个选定项时发生系统错误。"
+        internalErrorDelete: "删除多个选定项时发生系统错误。",
       };
     case "fr": // Tiếng Pháp
       return {
         idsNotFound: "IDs introuvables !",
         userIdNotFound: "userId introuvable !",
-        internalErrorDelete: "Erreur système lors de la suppression de plusieurs éléments sélectionnés."
+        internalErrorDelete:
+          "Erreur système lors de la suppression de plusieurs éléments sélectionnés.",
       };
     case "ja": // Tiếng Nhật
       return {
         idsNotFound: "Idsが見つかりません！",
         userIdNotFound: "userIdが見つかりません！",
-        internalErrorDelete: "選択された複数のアイテムを削除中にシステムエラーが発生しました。"
+        internalErrorDelete:
+          "選択された複数のアイテムを削除中にシステムエラーが発生しました。",
       };
     default: // Default case if language is not recognized
       return {
         idsNotFound: "Ids not found!",
         userIdNotFound: "UserId not found!",
-        internalErrorDelete: "Internal error while deleting many selected items."
+        internalErrorDelete:
+          "Internal error while deleting many selected items.",
       };
   }
 };
@@ -8520,27 +8446,28 @@ export const translateQuantityItemUpdate = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
-        internalErrorUpdate: "Lỗi hệ thống khi cập nhật số lượng item."
+        internalErrorUpdate: "Lỗi hệ thống khi cập nhật số lượng item.",
       };
     case "en": // English
       return {
-        internalErrorUpdate: "Internal error while updating quantity item."
+        internalErrorUpdate: "Internal error while updating quantity item.",
       };
     case "zh": // Tiếng Trung
       return {
-        internalErrorUpdate: "更新数量时发生系统错误。"
+        internalErrorUpdate: "更新数量时发生系统错误。",
       };
     case "fr": // Tiếng Pháp
       return {
-        internalErrorUpdate: "Erreur système lors de la mise à jour de la quantité de l'article."
+        internalErrorUpdate:
+          "Erreur système lors de la mise à jour de la quantité de l'article.",
       };
     case "ja": // Tiếng Nhật
       return {
-        internalErrorUpdate: "数量更新時にシステムエラーが発生しました。"
+        internalErrorUpdate: "数量更新時にシステムエラーが発生しました。",
       };
     default: // Default case if language is not recognized
       return {
-        internalErrorUpdate: "Internal error while updating quantity item."
+        internalErrorUpdate: "Internal error while updating quantity item.",
       };
   }
 };
@@ -8554,7 +8481,7 @@ export const translateEmojiPost = (language: string) => {
         emojiRequired: "Emoji là bắt buộc!",
         productIdRequired: "productId là bắt buộc!",
         invalidEmojiType: "Loại emoji không hợp lệ!",
-        internalError: "Lỗi hệ thống khi post emoji."
+        internalError: "Lỗi hệ thống khi post emoji.",
       };
     case "en": // English
       return {
@@ -8563,7 +8490,7 @@ export const translateEmojiPost = (language: string) => {
         emojiRequired: "Emoji is required!",
         productIdRequired: "ProductId is required!",
         invalidEmojiType: "Invalid emoji type!",
-        internalError: "Internal error while posting emoji."
+        internalError: "Internal error while posting emoji.",
       };
     case "zh": // Tiếng Trung
       return {
@@ -8572,7 +8499,7 @@ export const translateEmojiPost = (language: string) => {
         emojiRequired: "Emoji是必需的！",
         productIdRequired: "产品ID是必需的！",
         invalidEmojiType: "无效的emoji类型！",
-        internalError: "发布emoji时发生内部错误。"
+        internalError: "发布emoji时发生内部错误。",
       };
     case "fr": // Tiếng Pháp
       return {
@@ -8581,7 +8508,7 @@ export const translateEmojiPost = (language: string) => {
         emojiRequired: "L'emoji est requis !",
         productIdRequired: "L'ID du produit est requis !",
         invalidEmojiType: "Type d'emoji invalide !",
-        internalError: "Erreur interne lors de la publication de l'emoji."
+        internalError: "Erreur interne lors de la publication de l'emoji.",
       };
     case "ja": // Tiếng Nhật
       return {
@@ -8590,7 +8517,7 @@ export const translateEmojiPost = (language: string) => {
         emojiRequired: "絵文字は必須です！",
         productIdRequired: "製品IDは必須です！",
         invalidEmojiType: "無効な絵文字タイプです！",
-        internalError: "絵文字の投稿時に内部エラーが発生しました。"
+        internalError: "絵文字の投稿時に内部エラーが発生しました。",
       };
     default: // Default case if language is not recognized
       return {
@@ -8599,7 +8526,7 @@ export const translateEmojiPost = (language: string) => {
         emojiRequired: "Emoji is required!",
         productIdRequired: "ProductId is required!",
         invalidEmojiType: "Invalid emoji type!",
-        internalError: "Internal error while posting emoji."
+        internalError: "Internal error while posting emoji.",
       };
   }
 };
@@ -8609,32 +8536,32 @@ export const translateEmojiDelete = (language: string) => {
     case "vi": // Tiếng Việt
       return {
         emojiNotFound: "Không tìm thấy emoji.",
-        internalError: "Lỗi hệ thống khi xóa emoji."
+        internalError: "Lỗi hệ thống khi xóa emoji.",
       };
     case "en": // English
       return {
         emojiNotFound: "Emoji not found.",
-        internalError: "Internal error while deleting emoji."
+        internalError: "Internal error while deleting emoji.",
       };
     case "zh": // Tiếng Trung
       return {
         emojiNotFound: "未找到emoji。",
-        internalError: "删除emoji时发生内部错误。"
+        internalError: "删除emoji时发生内部错误。",
       };
     case "fr": // Tiếng Pháp
       return {
         emojiNotFound: "Emoji introuvable.",
-        internalError: "Erreur interne lors de la suppression de l'emoji."
+        internalError: "Erreur interne lors de la suppression de l'emoji.",
       };
     case "ja": // Tiếng Nhật
       return {
         emojiNotFound: "絵文字が見つかりません。",
-        internalError: "絵文字削除時に内部エラーが発生しました。"
+        internalError: "絵文字削除時に内部エラーが発生しました。",
       };
     default: // Default case if language is not recognized
       return {
         emojiNotFound: "Emoji not found.",
-        internalError: "Internal error while deleting emoji."
+        internalError: "Internal error while deleting emoji.",
       };
   }
 };
@@ -8643,27 +8570,27 @@ export const translateEmojiGet = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
-        internalError: "Lỗi hệ thống khi lấy emoji."
+        internalError: "Lỗi hệ thống khi lấy emoji.",
       };
     case "en": // English
       return {
-        internalError: "Internal error while getting emoji."
+        internalError: "Internal error while getting emoji.",
       };
     case "zh": // Tiếng Trung
       return {
-        internalError: "获取emoji时发生内部错误。"
+        internalError: "获取emoji时发生内部错误。",
       };
     case "fr": // Tiếng Pháp
       return {
-        internalError: "Erreur interne lors de la récupération de l'emoji."
+        internalError: "Erreur interne lors de la récupération de l'emoji.",
       };
     case "ja": // Tiếng Nhật
       return {
-        internalError: "絵文字を取得する際に内部エラーが発生しました。"
+        internalError: "絵文字を取得する際に内部エラーが発生しました。",
       };
     default: // Default case if language is not recognized
       return {
-        internalError: "Internal error while getting emoji."
+        internalError: "Internal error while getting emoji.",
       };
   }
 };
@@ -8678,7 +8605,7 @@ export const translateFavoriteProductPost = (language: string) => {
         productNameRequired: "productName là bắt buộc!",
         sizeRequired: "Size là bắt buộc!",
         colorRequired: "Color là bắt buộc!",
-        internalError: "Lỗi hệ thống khi thêm sản phẩm yêu thích."
+        internalError: "Lỗi hệ thống khi thêm sản phẩm yêu thích.",
       };
     case "en": // English
       return {
@@ -8688,7 +8615,7 @@ export const translateFavoriteProductPost = (language: string) => {
         productNameRequired: "ProductName is required!",
         sizeRequired: "Size is required!",
         colorRequired: "Color is required!",
-        internalError: "Internal error while posting favorite product."
+        internalError: "Internal error while posting favorite product.",
       };
     case "zh": // Tiếng Trung
       return {
@@ -8698,7 +8625,7 @@ export const translateFavoriteProductPost = (language: string) => {
         productNameRequired: "ProductName是必需的！",
         sizeRequired: "Size是必需的！",
         colorRequired: "Color是必需的！",
-        internalError: "添加收藏产品时发生内部错误。"
+        internalError: "添加收藏产品时发生内部错误。",
       };
     case "fr": // Tiếng Pháp
       return {
@@ -8708,7 +8635,7 @@ export const translateFavoriteProductPost = (language: string) => {
         productNameRequired: "ProductName est requis !",
         sizeRequired: "Size est requis !",
         colorRequired: "Color est requis !",
-        internalError: "Erreur interne lors de l'ajout du produit préféré."
+        internalError: "Erreur interne lors de l'ajout du produit préféré.",
       };
     case "ja": // Tiếng Nhật
       return {
@@ -8718,7 +8645,7 @@ export const translateFavoriteProductPost = (language: string) => {
         productNameRequired: "ProductNameは必須です！",
         sizeRequired: "Sizeは必須です！",
         colorRequired: "Colorは必須です！",
-        internalError: "お気に入り製品の投稿中に内部エラーが発生しました。"
+        internalError: "お気に入り製品の投稿中に内部エラーが発生しました。",
       };
     default: // Default case if language is not recognized
       return {
@@ -8728,7 +8655,7 @@ export const translateFavoriteProductPost = (language: string) => {
         productNameRequired: "ProductName is required!",
         sizeRequired: "Size is required!",
         colorRequired: "Color is required!",
-        internalError: "Internal error while posting favorite product."
+        internalError: "Internal error while posting favorite product.",
       };
   }
 };
@@ -8739,37 +8666,39 @@ export const translateFavoriteProductDeleteMany = (language: string) => {
       return {
         userIdNotFound: "Không tìm thấy user id!",
         idNotFound: "Không tìm thấy id!",
-        internalError: "Lỗi hệ thống khi xóa nhiều sản phẩm yêu thích."
+        internalError: "Lỗi hệ thống khi xóa nhiều sản phẩm yêu thích.",
       };
     case "en": // English
       return {
         userIdNotFound: "User id not found!",
         idNotFound: "Id not found!",
-        internalError: "Internal error while deleting many favorite products."
+        internalError: "Internal error while deleting many favorite products.",
       };
     case "zh": // Tiếng Trung
       return {
         userIdNotFound: "未找到用户ID！",
         idNotFound: "未找到ID！",
-        internalError: "删除多个收藏产品时发生内部错误。"
+        internalError: "删除多个收藏产品时发生内部错误。",
       };
     case "fr": // Tiếng Pháp
       return {
         userIdNotFound: "ID utilisateur introuvable !",
         idNotFound: "ID introuvable !",
-        internalError: "Erreur interne lors de la suppression de plusieurs produits favoris."
+        internalError:
+          "Erreur interne lors de la suppression de plusieurs produits favoris.",
       };
     case "ja": // Tiếng Nhật
       return {
         userIdNotFound: "ユーザーIDが見つかりません！",
         idNotFound: "IDが見つかりません！",
-        internalError: "複数のお気に入り製品を削除中に内部エラーが発生しました。"
+        internalError:
+          "複数のお気に入り製品を削除中に内部エラーが発生しました。",
       };
     default: // Default case if language is not recognized
       return {
         userIdNotFound: "User id not found!",
         idNotFound: "Id not found!",
-        internalError: "Internal error while deleting many favorite products."
+        internalError: "Internal error while deleting many favorite products.",
       };
   }
 };
@@ -8778,27 +8707,28 @@ export const translateFavoriteProductGet = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
-        internalError: "Lỗi hệ thống khi lấy sản phẩm yêu thích."
+        internalError: "Lỗi hệ thống khi lấy sản phẩm yêu thích.",
       };
     case "en": // English
       return {
-        internalError: "Internal error while getting favorite product."
+        internalError: "Internal error while getting favorite product.",
       };
     case "zh": // Tiếng Trung
       return {
-        internalError: "获取收藏产品时发生内部错误。"
+        internalError: "获取收藏产品时发生内部错误。",
       };
     case "fr": // Tiếng Pháp
       return {
-        internalError: "Erreur interne lors de la récupération du produit favori."
+        internalError:
+          "Erreur interne lors de la récupération du produit favori.",
       };
     case "ja": // Tiếng Nhật
       return {
-        internalError: "お気に入り製品を取得中に内部エラーが発生しました。"
+        internalError: "お気に入り製品を取得中に内部エラーが発生しました。",
       };
     default: // Default case if language is not recognized
       return {
-        internalError: "Internal error while getting favorite product."
+        internalError: "Internal error while getting favorite product.",
       };
   }
 };
@@ -8807,27 +8737,27 @@ export const translateLeaderboardPost = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
-        internalError: "Lỗi hệ thống khi tạo bảng xếp hạng."
+        internalError: "Lỗi hệ thống khi tạo bảng xếp hạng.",
       };
     case "en": // English
       return {
-        internalError: "Internal error while posting leaderboard."
+        internalError: "Internal error while posting leaderboard.",
       };
     case "zh": // Tiếng Trung
       return {
-        internalError: "发布排行榜时发生内部错误。"
+        internalError: "发布排行榜时发生内部错误。",
       };
     case "fr": // Tiếng Pháp
       return {
-        internalError: "Erreur interne lors de la publication du classement."
+        internalError: "Erreur interne lors de la publication du classement.",
       };
     case "ja": // Tiếng Nhật
       return {
-        internalError: "リーダーボードを投稿中に内部エラーが発生しました。"
+        internalError: "リーダーボードを投稿中に内部エラーが発生しました。",
       };
     default: // Default case if language is not recognized
       return {
-        internalError: "Internal error while posting leaderboard."
+        internalError: "Internal error while posting leaderboard.",
       };
   }
 };
@@ -8836,27 +8766,27 @@ export const translateLeaderboardGet = (language: string) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
-        internalError: "Lỗi hệ thống khi lấy bảng xếp hạng."
+        internalError: "Lỗi hệ thống khi lấy bảng xếp hạng.",
       };
     case "en": // English
       return {
-        internalError: "Internal error while getting leaderboard."
+        internalError: "Internal error while getting leaderboard.",
       };
     case "zh": // Tiếng Trung
       return {
-        internalError: "获取排行榜时发生内部错误。"
+        internalError: "获取排行榜时发生内部错误。",
       };
     case "fr": // Tiếng Pháp
       return {
-        internalError: "Erreur interne lors de la récupération du classement."
+        internalError: "Erreur interne lors de la récupération du classement.",
       };
     case "ja": // Tiếng Nhật
       return {
-        internalError: "リーダーボードの取得中に内部エラーが発生しました。"
+        internalError: "リーダーボードの取得中に内部エラーが発生しました。",
       };
     default: // Default case if language is not recognized
       return {
-        internalError: "Internal error while getting leaderboard."
+        internalError: "Internal error while getting leaderboard.",
       };
   }
 };
@@ -8866,32 +8796,33 @@ export const translateUserDeleteAccount = (language: string) => {
     case "vi": // Tiếng Việt
       return {
         userIdNotFound: "Không tìm thấy userId!",
-        internalError: "Lỗi nội bộ khi xóa người dùng."
+        internalError: "Lỗi nội bộ khi xóa người dùng.",
       };
     case "en": // English
       return {
         userIdNotFound: "UserId not found!",
-        internalError: "Internal error while deleting user."
+        internalError: "Internal error while deleting user.",
       };
     case "zh": // Tiếng Trung
       return {
         userIdNotFound: "未找到userId！",
-        internalError: "删除用户时发生内部错误。"
+        internalError: "删除用户时发生内部错误。",
       };
     case "fr": // Tiếng Pháp
       return {
         userIdNotFound: "UserId introuvable !",
-        internalError: "Erreur interne lors de la suppression de l'utilisateur."
+        internalError:
+          "Erreur interne lors de la suppression de l'utilisateur.",
       };
     case "ja": // Tiếng Nhật
       return {
         userIdNotFound: "ユーザーIDが見つかりません！",
-        internalError: "ユーザー削除中に内部エラーが発生しました。"
+        internalError: "ユーザー削除中に内部エラーが発生しました。",
       };
     default: // Default case if language is not recognized
       return {
         userIdNotFound: "UserId not found!",
-        internalError: "Internal error while deleting user."
+        internalError: "Internal error while deleting user.",
       };
   }
 };
@@ -8902,213 +8833,233 @@ export const translateDeviceLimitPost1 = (language: string) => {
       return {
         userIdNotFound: "Không tìm thấy user id!",
         limitDeviceRequired: "Limit Device is required!",
-        internalError: "Lỗi nội bộ khi post deviceInfo."
+        internalError: "Lỗi nội bộ khi post deviceInfo.",
       };
     case "en": // English
       return {
         userIdNotFound: "User id not found!",
         limitDeviceRequired: "Limit Device is required!",
-        internalError: "Internal error while posting deviceInfo."
+        internalError: "Internal error while posting deviceInfo.",
       };
     case "zh": // Tiếng Trung
       return {
         userIdNotFound: "未找到用户ID！",
         limitDeviceRequired: "设备限制是必需的！",
-        internalError: "发布deviceInfo时发生内部错误。"
+        internalError: "发布deviceInfo时发生内部错误。",
       };
     case "fr": // Tiếng Pháp
       return {
         userIdNotFound: "ID utilisateur introuvable !",
         limitDeviceRequired: "La limite de périphériques est requise !",
-        internalError: "Erreur interne lors de la publication de deviceInfo."
+        internalError: "Erreur interne lors de la publication de deviceInfo.",
       };
     case "ja": // Tiếng Nhật
       return {
         userIdNotFound: "ユーザーIDが見つかりません！",
         limitDeviceRequired: "デバイス制限が必要です！",
-        internalError: "deviceInfoを投稿中に内部エラーが発生しました。"
+        internalError: "deviceInfoを投稿中に内部エラーが発生しました。",
       };
     default: // Default case if language is not recognized
       return {
         userIdNotFound: "User id not found!",
         limitDeviceRequired: "Limit Device is required!",
-        internalError: "Internal error while posting deviceInfo."
+        internalError: "Internal error while posting deviceInfo.",
       };
   }
 };
 
-export const translateDeviceLimitPost2 = (language: string, newLimitDevice: number | null) => {
+export const translateDeviceLimitPost2 = (
+  language: string,
+  newLimitDevice: number | null
+) => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
         changeLimitMessage: `Cần thay đổi giới hạn mới hơn. Hiện tại bạn đã để ${newLimitDevice} thiết bị.`,
-        addDeviceMessage: `Thêm thiết bị mới có giới hạn ${newLimitDevice}.`
+        addDeviceMessage: `Thêm thiết bị mới có giới hạn ${newLimitDevice}.`,
       };
     case "en": // English
       return {
         changeLimitMessage: `You need to change to a higher limit. Currently, you have ${newLimitDevice} devices.`,
-        addDeviceMessage: `Add a new device with the limit of ${newLimitDevice}.`
+        addDeviceMessage: `Add a new device with the limit of ${newLimitDevice}.`,
       };
     case "zh": // Tiếng Trung
       return {
         changeLimitMessage: `需要更改为更高的限制。目前您已经有 ${newLimitDevice} 台设备。`,
-        addDeviceMessage: `添加新设备，限制为 ${newLimitDevice}。`
+        addDeviceMessage: `添加新设备，限制为 ${newLimitDevice}。`,
       };
     case "fr": // Tiếng Pháp
       return {
         changeLimitMessage: `Vous devez changer pour une limite plus élevée. Actuellement, vous avez ${newLimitDevice} appareils.`,
-        addDeviceMessage: `Ajoutez un nouvel appareil avec une limite de ${newLimitDevice}.`
+        addDeviceMessage: `Ajoutez un nouvel appareil avec une limite de ${newLimitDevice}.`,
       };
     case "ja": // Tiếng Nhật
       return {
         changeLimitMessage: `新しい制限に変更する必要があります。現在、${newLimitDevice} 台のデバイスがあります。`,
-        addDeviceMessage: `${newLimitDevice} の制限で新しいデバイスを追加してください。`
+        addDeviceMessage: `${newLimitDevice} の制限で新しいデバイスを追加してください。`,
       };
     default: // Default case if language is not recognized
       return {
         changeLimitMessage: `You need to change to a higher limit. Currently, you have ${newLimitDevice} devices.`,
-        addDeviceMessage: `Add a new device with the limit of ${newLimitDevice}.`
+        addDeviceMessage: `Add a new device with the limit of ${newLimitDevice}.`,
       };
   }
 };
 
-export const translateDeviceDelete = (language: string): Record<string, string> => {
+export const translateDeviceDelete = (
+  language: string
+): Record<string, string> => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
         userIdNotFound: "Không tìm thấy userId!",
         idNotFound: "Không tìm thấy id!",
         cannotDeleteOnlyDevice: "Không thể xóa thiết bị duy nhất!",
-        internalErrorDeleteDevice: "Lỗi nội bộ khi xóa thiết bị."
+        internalErrorDeleteDevice: "Lỗi nội bộ khi xóa thiết bị.",
       };
     case "en": // English
       return {
         userIdNotFound: "UserId not found!",
         idNotFound: "Id not found!",
         cannotDeleteOnlyDevice: "Cannot delete the only device!",
-        internalErrorDeleteDevice: "Internal error while deleting device."
+        internalErrorDeleteDevice: "Internal error while deleting device.",
       };
     case "zh": // Tiếng Trung
       return {
         userIdNotFound: "未找到userId！",
         idNotFound: "未找到id！",
         cannotDeleteOnlyDevice: "无法删除唯一设备！",
-        internalErrorDeleteDevice: "删除设备时发生内部错误。"
+        internalErrorDeleteDevice: "删除设备时发生内部错误。",
       };
     case "fr": // Tiếng Pháp
       return {
         userIdNotFound: "UserId introuvable !",
         idNotFound: "ID introuvable !",
         cannotDeleteOnlyDevice: "Impossible de supprimer le seul appareil !",
-        internalErrorDeleteDevice: "Erreur interne lors de la suppression de l'appareil."
+        internalErrorDeleteDevice:
+          "Erreur interne lors de la suppression de l'appareil.",
       };
     case "ja": // Tiếng Nhật
       return {
         userIdNotFound: "userIdが見つかりません！",
         idNotFound: "idが見つかりません！",
         cannotDeleteOnlyDevice: "唯一のデバイスを削除することはできません！",
-        internalErrorDeleteDevice: "デバイスの削除中に内部エラーが発生しました。"
+        internalErrorDeleteDevice:
+          "デバイスの削除中に内部エラーが発生しました。",
       };
     default: // Default case if language is not recognized
       return {
         userIdNotFound: "UserId not found!",
         idNotFound: "Id not found!",
         cannotDeleteOnlyDevice: "Cannot delete the only device!",
-        internalErrorDeleteDevice: "Internal error while deleting device."
+        internalErrorDeleteDevice: "Internal error while deleting device.",
       };
   }
 };
 
-export const translateResendCountPost = (language: string): Record<string, string> => {
+export const translateResendCountPost = (
+  language: string
+): Record<string, string> => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
         userIdNotFound: "Không tìm thấy user id!",
         storeIdRequired: "Store id là bắt buộc!",
         storeIdNotFound: "Không tìm thấy store id!",
-        internalErrorPostResendCount: "Lỗi nội bộ khi gửi lại số lần."
+        internalErrorPostResendCount: "Lỗi nội bộ khi gửi lại số lần.",
       };
     case "en": // English
       return {
         userIdNotFound: "User id not found!",
         storeIdRequired: "Store id is required!",
         storeIdNotFound: "Store id not found!",
-        internalErrorPostResendCount: "Internal error while posting resend count."
+        internalErrorPostResendCount:
+          "Internal error while posting resend count.",
       };
     case "zh": // Tiếng Trung
       return {
         userIdNotFound: "未找到用户id！",
         storeIdRequired: "商店id是必需的！",
         storeIdNotFound: "未找到商店id！",
-        internalErrorPostResendCount: "重新发送次数时发生内部错误。"
+        internalErrorPostResendCount: "重新发送次数时发生内部错误。",
       };
     case "fr": // Tiếng Pháp
       return {
         userIdNotFound: "ID utilisateur introuvable !",
         storeIdRequired: "L'ID du magasin est requis !",
         storeIdNotFound: "ID du magasin introuvable !",
-        internalErrorPostResendCount: "Erreur interne lors de la mise à jour du nombre de renvois."
+        internalErrorPostResendCount:
+          "Erreur interne lors de la mise à jour du nombre de renvois.",
       };
     case "ja": // Tiếng Nhật
       return {
         userIdNotFound: "ユーザーIDが見つかりません！",
         storeIdRequired: "店舗IDは必須です！",
         storeIdNotFound: "店舗IDが見つかりません！",
-        internalErrorPostResendCount: "再送信回数の送信中に内部エラーが発生しました。"
+        internalErrorPostResendCount:
+          "再送信回数の送信中に内部エラーが発生しました。",
       };
     default: // Default case if language is not recognized
       return {
         userIdNotFound: "User id not found!",
         storeIdRequired: "Store id is required!",
         storeIdNotFound: "Store id not found!",
-        internalErrorPostResendCount: "Internal error while posting resend count."
+        internalErrorPostResendCount:
+          "Internal error while posting resend count.",
       };
   }
 };
 
-export const translateSentEmailFeedbackPost = (language: string): Record<string, string> => {
+export const translateSentEmailFeedbackPost = (
+  language: string
+): Record<string, string> => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
         emailNotFound: "Không tìm thấy email!",
         subjectNotFound: "Không tìm thấy subject!",
         valueNotFound: "Không tìm thấy value!",
-        internalErrorPostSentEmailFeedback: "Lỗi nội bộ khi gửi feedback Email."
+        internalErrorPostSentEmailFeedback:
+          "Lỗi nội bộ khi gửi feedback Email.",
       };
     case "en": // English
       return {
         emailNotFound: "Email not found!",
         subjectNotFound: "Subject not found!",
         valueNotFound: "Value not found!",
-        internalErrorPostSentEmailFeedback: "Internal error while posting sent Email feedback."
+        internalErrorPostSentEmailFeedback:
+          "Internal error while posting sent Email feedback.",
       };
     case "zh": // Tiếng Trung
       return {
         emailNotFound: "未找到电子邮件！",
         subjectNotFound: "未找到主题！",
         valueNotFound: "未找到值！",
-        internalErrorPostSentEmailFeedback: "发送电子邮件反馈时发生内部错误。"
+        internalErrorPostSentEmailFeedback: "发送电子邮件反馈时发生内部错误。",
       };
     case "fr": // Tiếng Pháp
       return {
         emailNotFound: "Email introuvable !",
         subjectNotFound: "Sujet introuvable !",
         valueNotFound: "Valeur introuvable !",
-        internalErrorPostSentEmailFeedback: "Erreur interne lors de l'envoi des retours par e-mail."
+        internalErrorPostSentEmailFeedback:
+          "Erreur interne lors de l'envoi des retours par e-mail.",
       };
     case "ja": // Tiếng Nhật
       return {
         emailNotFound: "メールが見つかりません！",
         subjectNotFound: "件名が見つかりません！",
         valueNotFound: "値が見つかりません！",
-        internalErrorPostSentEmailFeedback: "送信されたメールのフィードバックの投稿中に内部エラーが発生しました。"
+        internalErrorPostSentEmailFeedback:
+          "送信されたメールのフィードバックの投稿中に内部エラーが発生しました。",
       };
     default: // Default case if language is not recognized
       return {
         emailNotFound: "Email not found!",
         subjectNotFound: "Subject not found!",
         valueNotFound: "Value not found!",
-        internalErrorPostSentEmailFeedback: "Internal error while posting sent Email feedback."
+        internalErrorPostSentEmailFeedback:
+          "Internal error while posting sent Email feedback.",
       };
   }
 };
@@ -9119,89 +9070,99 @@ export const translateStoreGet = (language: string): Record<string, string> => {
       return {
         userIdNotFound: "Không tìm thấy user id!",
         permissionDenied: "Bạn không có quyền để xem cửa hàng!",
-        internalErrorGetStore: "Lỗi nội bộ khi lấy thông tin cửa hàng."
+        internalErrorGetStore: "Lỗi nội bộ khi lấy thông tin cửa hàng.",
       };
     case "en": // English
       return {
         userIdNotFound: "User id not found!",
         permissionDenied: "You do not have permission to view the store!",
-        internalErrorGetStore: "Internal error while getting store information."
+        internalErrorGetStore:
+          "Internal error while getting store information.",
       };
     case "zh": // Tiếng Trung
       return {
         userIdNotFound: "未找到用户ID！",
         permissionDenied: "您没有权限查看商店！",
-        internalErrorGetStore: "获取商店信息时发生内部错误。"
+        internalErrorGetStore: "获取商店信息时发生内部错误。",
       };
     case "fr": // Tiếng Pháp
       return {
         userIdNotFound: "ID utilisateur introuvable !",
         permissionDenied: "Vous n'avez pas la permission de voir la boutique !",
-        internalErrorGetStore: "Erreur interne lors de la récupération des informations de la boutique."
+        internalErrorGetStore:
+          "Erreur interne lors de la récupération des informations de la boutique.",
       };
     case "ja": // Tiếng Nhật
       return {
         userIdNotFound: "ユーザーIDが見つかりません！",
         permissionDenied: "店舗を表示する権限がありません！",
-        internalErrorGetStore: "店舗情報の取得中に内部エラーが発生しました。"
+        internalErrorGetStore: "店舗情報の取得中に内部エラーが発生しました。",
       };
     default: // Default case if language is not recognized
       return {
         userIdNotFound: "User id not found!",
         permissionDenied: "You do not have permission to view the store!",
-        internalErrorGetStore: "Internal error while getting store information."
+        internalErrorGetStore:
+          "Internal error while getting store information.",
       };
   }
 };
 
-export const translateStorePost = (language: string): Record<string, string> => {
+export const translateStorePost = (
+  language: string
+): Record<string, string> => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
         userIdNotFound: "Không tìm thấy user id!",
         permissionDenied: "Bạn không có quyền để tạo cửa hàng mới!",
         nameRequired: "Tên là bắt buộc",
-        internalErrorPostStore: "Lỗi nội bộ khi tạo cửa hàng mới."
+        internalErrorPostStore: "Lỗi nội bộ khi tạo cửa hàng mới.",
       };
     case "en": // English
       return {
         userIdNotFound: "User id not found!",
         permissionDenied: "You do not have permission to create a new store!",
         nameRequired: "Name is required",
-        internalErrorPostStore: "Internal error while creating the new store."
+        internalErrorPostStore: "Internal error while creating the new store.",
       };
     case "zh": // Tiếng Trung
       return {
         userIdNotFound: "未找到用户ID！",
         permissionDenied: "您没有权限创建新商店！",
         nameRequired: "名称是必需的",
-        internalErrorPostStore: "创建新商店时发生内部错误。"
+        internalErrorPostStore: "创建新商店时发生内部错误。",
       };
     case "fr": // Tiếng Pháp
       return {
         userIdNotFound: "ID utilisateur introuvable !",
-        permissionDenied: "Vous n'avez pas la permission de créer un nouveau magasin !",
+        permissionDenied:
+          "Vous n'avez pas la permission de créer un nouveau magasin !",
         nameRequired: "Le nom est requis",
-        internalErrorPostStore: "Erreur interne lors de la création du nouveau magasin."
+        internalErrorPostStore:
+          "Erreur interne lors de la création du nouveau magasin.",
       };
     case "ja": // Tiếng Nhật
       return {
         userIdNotFound: "ユーザーIDが見つかりません！",
         permissionDenied: "新しい店舗を作成する権限がありません！",
         nameRequired: "名前は必須です",
-        internalErrorPostStore: "新しい店舗の作成中に内部エラーが発生しました。"
+        internalErrorPostStore:
+          "新しい店舗の作成中に内部エラーが発生しました。",
       };
     default: // Default case if language is not recognized
       return {
         userIdNotFound: "User id not found!",
         permissionDenied: "You do not have permission to create a new store!",
         nameRequired: "Name is required",
-        internalErrorPostStore: "Internal error while creating the new store."
+        internalErrorPostStore: "Internal error while creating the new store.",
       };
   }
 };
 
-export const translateStoreDelete = (language: string): Record<string, string> => {
+export const translateStoreDelete = (
+  language: string
+): Record<string, string> => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -9209,7 +9170,7 @@ export const translateStoreDelete = (language: string): Record<string, string> =
         permissionDenied: "Bạn không có quyền xóa store!",
         idsArrayNotEmpty: "Mảng IDs không được trống!",
         deletionSuccess: "Xóa thành công!",
-        internalErrorDeleteStore: "Lỗi nội bộ khi xóa store."
+        internalErrorDeleteStore: "Lỗi nội bộ khi xóa store.",
       };
     case "en": // English
       return {
@@ -9217,7 +9178,7 @@ export const translateStoreDelete = (language: string): Record<string, string> =
         permissionDenied: "You do not have permission to delete the store!",
         idsArrayNotEmpty: "IDs array cannot be empty!",
         deletionSuccess: "Deletion successful!",
-        internalErrorDeleteStore: "Internal error while deleting the store."
+        internalErrorDeleteStore: "Internal error while deleting the store.",
       };
     case "zh": // Tiếng Trung
       return {
@@ -9225,15 +9186,17 @@ export const translateStoreDelete = (language: string): Record<string, string> =
         permissionDenied: "您无权删除商店！",
         idsArrayNotEmpty: "IDs数组不能为空！",
         deletionSuccess: "删除成功！",
-        internalErrorDeleteStore: "删除商店时发生内部错误。"
+        internalErrorDeleteStore: "删除商店时发生内部错误。",
       };
     case "fr": // Tiếng Pháp
       return {
         userIdNotFound: "ID utilisateur introuvable !",
-        permissionDenied: "Vous n'avez pas la permission de supprimer le magasin !",
+        permissionDenied:
+          "Vous n'avez pas la permission de supprimer le magasin !",
         idsArrayNotEmpty: "Le tableau des IDs ne peut pas être vide !",
         deletionSuccess: "Suppression réussie !",
-        internalErrorDeleteStore: "Erreur interne lors de la suppression du magasin."
+        internalErrorDeleteStore:
+          "Erreur interne lors de la suppression du magasin.",
       };
     case "ja": // Tiếng Nhật
       return {
@@ -9241,7 +9204,7 @@ export const translateStoreDelete = (language: string): Record<string, string> =
         permissionDenied: "ストアを削除する権限がありません！",
         idsArrayNotEmpty: "IDs配列は空にできません！",
         deletionSuccess: "削除成功！",
-        internalErrorDeleteStore: "ストア削除中に内部エラーが発生しました。"
+        internalErrorDeleteStore: "ストア削除中に内部エラーが発生しました。",
       };
     default: // Default case if language is not recognized
       return {
@@ -9249,12 +9212,14 @@ export const translateStoreDelete = (language: string): Record<string, string> =
         permissionDenied: "You do not have permission to delete the store!",
         idsArrayNotEmpty: "IDs array cannot be empty!",
         deletionSuccess: "Deletion successful!",
-        internalErrorDeleteStore: "Internal error while deleting the store."
+        internalErrorDeleteStore: "Internal error while deleting the store.",
       };
   }
 };
 
-export const translateStoreIdPatch = (language: string): Record<string, string> => {
+export const translateStoreIdPatch = (
+  language: string
+): Record<string, string> => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
@@ -9262,7 +9227,7 @@ export const translateStoreIdPatch = (language: string): Record<string, string> 
         permissionDenied: "Bạn không có quyền để sửa đổi cửa hàng!",
         nameRequired: "Name là bắt buộc",
         storeIdRequired: "Store id là bắt buộc",
-        internalErrorPatchStore: "Lỗi nội bộ khi sửa đổi cửa hàng"
+        internalErrorPatchStore: "Lỗi nội bộ khi sửa đổi cửa hàng",
       };
     case "en": // English
       return {
@@ -9270,7 +9235,7 @@ export const translateStoreIdPatch = (language: string): Record<string, string> 
         permissionDenied: "You do not have permission to update the store!",
         nameRequired: "Name is required",
         storeIdRequired: "Store id is required",
-        internalErrorPatchStore: "Internal error while updating the store"
+        internalErrorPatchStore: "Internal error while updating the store",
       };
     case "zh": // Tiếng Trung
       return {
@@ -9278,15 +9243,17 @@ export const translateStoreIdPatch = (language: string): Record<string, string> 
         permissionDenied: "您无权修改商店！",
         nameRequired: "名称是必需的",
         storeIdRequired: "商店ID是必需的",
-        internalErrorPatchStore: "更新商店时发生内部错误"
+        internalErrorPatchStore: "更新商店时发生内部错误",
       };
     case "fr": // Tiếng Pháp
       return {
         userIdNotFound: "ID utilisateur introuvable !",
-        permissionDenied: "Vous n'avez pas la permission de modifier le magasin !",
+        permissionDenied:
+          "Vous n'avez pas la permission de modifier le magasin !",
         nameRequired: "Le nom est obligatoire",
         storeIdRequired: "L'ID du magasin est obligatoire",
-        internalErrorPatchStore: "Erreur interne lors de la mise à jour du magasin"
+        internalErrorPatchStore:
+          "Erreur interne lors de la mise à jour du magasin",
       };
     case "ja": // Tiếng Nhật
       return {
@@ -9294,7 +9261,7 @@ export const translateStoreIdPatch = (language: string): Record<string, string> 
         permissionDenied: "ストアを更新する権限がありません！",
         nameRequired: "名前は必須です",
         storeIdRequired: "ストアIDは必須です",
-        internalErrorPatchStore: "店舗更新時に内部エラーが発生しました"
+        internalErrorPatchStore: "店舗更新時に内部エラーが発生しました",
       };
     default: // Default case if language is not recognized
       return {
@@ -9302,28 +9269,32 @@ export const translateStoreIdPatch = (language: string): Record<string, string> 
         permissionDenied: "You do not have permission to update the store!",
         nameRequired: "Name is required",
         storeIdRequired: "Store id is required",
-        internalErrorPatchStore: "Internal error while updating the store"
+        internalErrorPatchStore: "Internal error while updating the store",
       };
   }
 };
 
-export const translateStoreIdDelete = (language: string): Record<string, string> => {
+export const translateStoreIdDelete = (
+  language: string
+): Record<string, string> => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
         userIdNotFound: "Không tìm thấy user id!",
         permissionDenied: "Bạn không có quyền để xóa cửa hàng!",
         storeIdRequired: "Store id là bắt buộc",
-        cannotDeleteStore: "Không thể xóa cửa hàng. Hệ thống cần ít nhất 1 cửa hàng.",
-        internalErrorDeleteStore: "Lỗi nội bộ khi xóa cửa hàng"
+        cannotDeleteStore:
+          "Không thể xóa cửa hàng. Hệ thống cần ít nhất 1 cửa hàng.",
+        internalErrorDeleteStore: "Lỗi nội bộ khi xóa cửa hàng",
       };
     case "en": // English
       return {
         userIdNotFound: "User id not found!",
         permissionDenied: "You do not have permission to delete the store!",
         storeIdRequired: "Store id is required",
-        cannotDeleteStore: "Cannot delete the store. The system requires at least 1 store.",
-        internalErrorDeleteStore: "Internal error while deleting the store"
+        cannotDeleteStore:
+          "Cannot delete the store. The system requires at least 1 store.",
+        internalErrorDeleteStore: "Internal error while deleting the store",
       };
     case "zh": // Tiếng Trung
       return {
@@ -9331,73 +9302,1070 @@ export const translateStoreIdDelete = (language: string): Record<string, string>
         permissionDenied: "您无权删除商店！",
         storeIdRequired: "商店ID是必需的",
         cannotDeleteStore: "无法删除商店。系统至少需要一个商店。",
-        internalErrorDeleteStore: "删除商店时发生内部错误"
+        internalErrorDeleteStore: "删除商店时发生内部错误",
       };
     case "fr": // Tiếng Pháp
       return {
         userIdNotFound: "ID utilisateur introuvable !",
-        permissionDenied: "Vous n'avez pas la permission de supprimer le magasin !",
+        permissionDenied:
+          "Vous n'avez pas la permission de supprimer le magasin !",
         storeIdRequired: "L'ID du magasin est obligatoire",
-        cannotDeleteStore: "Impossible de supprimer le magasin. Le système nécessite au moins 1 magasin.",
-        internalErrorDeleteStore: "Erreur interne lors de la suppression du magasin"
+        cannotDeleteStore:
+          "Impossible de supprimer le magasin. Le système nécessite au moins 1 magasin.",
+        internalErrorDeleteStore:
+          "Erreur interne lors de la suppression du magasin",
       };
     case "ja": // Tiếng Nhật
       return {
         userIdNotFound: "ユーザーIDが見つかりません！",
         permissionDenied: "ストアを削除する権限がありません！",
         storeIdRequired: "ストアIDは必須です",
-        cannotDeleteStore: "店舗を削除できません。システムには少なくとも1つの店舗が必要です。",
-        internalErrorDeleteStore: "店舗削除時に内部エラーが発生しました"
+        cannotDeleteStore:
+          "店舗を削除できません。システムには少なくとも1つの店舗が必要です。",
+        internalErrorDeleteStore: "店舗削除時に内部エラーが発生しました",
       };
     default: // Default case if language is not recognized
       return {
         userIdNotFound: "User id not found!",
         permissionDenied: "You do not have permission to delete the store!",
         storeIdRequired: "Store id is required",
-        cannotDeleteStore: "Cannot delete the store. The system requires at least 1 store.",
-        internalErrorDeleteStore: "Internal error while deleting the store"
+        cannotDeleteStore:
+          "Cannot delete the store. The system requires at least 1 store.",
+        internalErrorDeleteStore: "Internal error while deleting the store",
       };
   }
 };
 
-export const translateLanguageUpdate = (language: string): Record<string, string> => {
+export const translateLanguageUpdate = (
+  language: string
+): Record<string, string> => {
   switch (language) {
     case "vi": // Tiếng Việt
       return {
         userIdNotFound: "Không tìm thấy user id!",
         languageRequired: "Ngôn ngữ là bắt buộc",
-        internalErrorUpdateLanguage: "Lỗi nội bộ khi cập nhật ngôn ngữ"
+        internalErrorUpdateLanguage: "Lỗi nội bộ khi cập nhật ngôn ngữ",
       };
     case "en": // English
       return {
         userIdNotFound: "User id not found!",
         languageRequired: "Language is required",
-        internalErrorUpdateLanguage: "Internal error while updating language"
+        internalErrorUpdateLanguage: "Internal error while updating language",
       };
     case "zh": // Tiếng Trung
       return {
         userIdNotFound: "未找到用户ID！",
         languageRequired: "语言是必需的",
-        internalErrorUpdateLanguage: "更新语言时发生内部错误"
+        internalErrorUpdateLanguage: "更新语言时发生内部错误",
       };
     case "fr": // Tiếng Pháp
       return {
         userIdNotFound: "ID utilisateur introuvable !",
         languageRequired: "La langue est requise",
-        internalErrorUpdateLanguage: "Erreur interne lors de la mise à jour de la langue"
+        internalErrorUpdateLanguage:
+          "Erreur interne lors de la mise à jour de la langue",
       };
     case "ja": // Tiếng Nhật
       return {
         userIdNotFound: "ユーザーIDが見つかりません！",
         languageRequired: "言語は必須です",
-        internalErrorUpdateLanguage: "言語の更新時に内部エラーが発生しました"
+        internalErrorUpdateLanguage: "言語の更新時に内部エラーが発生しました",
       };
     default: // Default case if language is not recognized
       return {
         userIdNotFound: "User id not found!",
         languageRequired: "Language is required",
-        internalErrorUpdateLanguage: "Internal error while updating language"
+        internalErrorUpdateLanguage: "Internal error while updating language",
       };
   }
 };
 
+export const get2FAMessage = (
+  language: string,
+  email: string,
+  token: string,
+  domain: string | undefined
+): { subject: string; html: string } => {
+  switch (language) {
+    case "vi": // Tiếng Việt
+      return {
+        subject: `Mã xác thực 2 yếu tố: ${token}`,
+        html: `
+                  <p>Xin chào <strong>${email}!</strong> Mã xác thực 2FA của bạn: <strong style="color: #3b82f6; text-decoration: underline;">${token}</strong> là mã xác thực đăng nhập trên <a href="${domain}">vlxd Xuân Trường</a>. Mã có hiệu lực trong vòng 5 phút. Nếu có thắc mắc, vui lòng liên hệ <strong>0352261103</strong>.</p>
+              `,
+      };
+    case "en": // English
+      return {
+        subject: `Two-Factor Authentication Code: ${token}`,
+        html: `
+                  <p>Hello <strong>${email}!</strong> Your 2FA code: <strong style="color: #3b82f6; text-decoration: underline;">${token}</strong> is the login authentication code on <a href="${domain}">vlxd Xuân Trường</a>. The code is valid for 5 minutes. If you have any questions, contact <strong>0352261103</strong>.</p>
+              `,
+      };
+    case "zh": // Chinese
+      return {
+        subject: `二次验证验证码: ${token}`,
+        html: `
+                  <p>你好 <strong>${email}!</strong> 您的2FA验证码：<strong style="color: #3b82f6; text-decoration: underline;">${token}</strong> 是在 <a href="${domain}">vlxd Xuân Trường</a> 登录的认证码。该验证码在5分钟内有效。如有任何疑问，请联系 <strong>0352261103</strong>.</p>
+              `,
+      };
+    case "fr": // French
+      return {
+        subject: `Code d'authentification à deux facteurs: ${token}`,
+        html: `
+                  <p>Bonjour <strong>${email}!</strong> Votre code 2FA : <strong style="color: #3b82f6; text-decoration: underline;">${token}</strong> est le code d'authentification pour vous connecter sur <a href="${domain}">vlxd Xuân Trường</a>. Le code est valable pendant 5 minutes. Si vous avez des questions, contactez <strong>0352261103</strong>.</p>
+              `,
+      };
+    case "ja": // Japanese
+      return {
+        subject: `二段階認証コード: ${token}`,
+        html: `
+                  <p>こんにちは <strong>${email}!</strong> あなたの2FAコード：<strong style="color: #3b82f6; text-decoration: underline;">${token}</strong> は <a href="${domain}">vlxd Xuân Trường</a> のログイン認証コードです。このコードは5分間有効です。質問がある場合は、<strong>0352261103</strong> にお問い合わせください。</p>
+              `,
+      };
+    default: // Ngôn ngữ không hợp lệ, mặc định dùng tiếng Anh
+      return {
+        subject: `Two-Factor Authentication Code: ${token}`,
+        html: `
+                  <p>Hello <strong>${email}!</strong> Your 2FA code: <strong style="color: #3b82f6; text-decoration: underline;">${token}</strong> is the login authentication code on <a href="${domain}">vlxd Xuân Trường</a>. The code is valid for 5 minutes. If you have any questions, contact <strong>0352261103</strong>.</p>
+              `,
+      };
+  }
+};
+
+export const translateResetPasswordMessage = (
+  language: string,
+  email: string,
+  restLink: string,
+  resendTokenNewpassword: number | undefined
+): { subject: string; html: string } => {
+  switch (language) {
+    case "vi": // Vietnamese
+      return {
+        subject: "Đặt lại mật khẩu của bạn",
+        html: `<p>Xin chào <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>! Nhấp <a href="${restLink}"> vào đây</a> để làm mới mật khẩu. Xác thực làm mới mật khẩu có hiệu lực trong vòng 5 phút. Nếu có thắc mắc liên hệ <strong>0352261103</strong>. Bạn đã gửi lại <span style="color:#FF3131; font-weight: 800;">${resendTokenNewpassword}</span> lần. Nếu vượt quá 5 lần bạn sẽ bị ban.<p style="color:#FF3131; font-weight: 800;"> Lý do: Spam.</p></p>`,
+      };
+    case "en": // English
+      return {
+        subject: "Reset your password",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>! Click <a href="${restLink}">here</a> to reset your password. The password reset link will expire in 5 minutes. If you have any questions, contact <strong>0352261103</strong>. You have requested a reset <span style="color:#FF3131; font-weight: 800;">${resendTokenNewpassword}</span> times. If this exceeds 5 attempts, your account will be banned.<p style="color:#FF3131; font-weight: 800;"> Reason: Spam.</p></p>`,
+      };
+    case "zh": // Chinese
+      return {
+        subject: "重置您的密码",
+        html: `<p>你好 <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>！点击 <a href="${restLink}">此处</a> 重置您的密码。密码重置链接将在5分钟内过期。如果您有任何问题，请联系 <strong>0352261103</strong>。您已请求重置 <span style="color:#FF3131; font-weight: 800;">${resendTokenNewpassword}</span> 次。如果超过5次，您的账户将被禁止。<p style="color:#FF3131; font-weight: 800;">原因：垃圾邮件。</p></p>`,
+      };
+    case "fr": // French
+      return {
+        subject: "Réinitialisez votre mot de passe",
+        html: `<p>Bonjour <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong> ! Cliquez <a href="${restLink}">ici</a> pour réinitialiser votre mot de passe. Le lien de réinitialisation du mot de passe expirera dans 5 minutes. Si vous avez des questions, contactez <strong>0352261103</strong>. Vous avez demandé une réinitialisation <span style="color:#FF3131; font-weight: 800;">${resendTokenNewpassword}</span> fois. Si cela dépasse 5 tentatives, votre compte sera banni.<p style="color:#FF3131; font-weight: 800;"> Raison : Spam.</p></p>`,
+      };
+    case "ja": // Japanese
+      return {
+        subject: "パスワードのリセット",
+        html: `<p>こんにちは <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>！<a href="${restLink}">ここをクリック</a>してパスワードをリセットしてください。パスワードリセットリンクは5分以内に期限切れになります。質問がある場合は、<strong>0352261103</strong>までご連絡ください。パスワードリセットを <span style="color:#FF3131; font-weight: 800;">${resendTokenNewpassword}</span> 回要求しました。5回を超えると、アカウントが禁止されます。<p style="color:#FF3131; font-weight: 800;"> 理由：スパム。</p></p>`,
+      };
+    default:
+      return {
+        subject: "Reset your password",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>! Click <a href="${restLink}">here</a> to reset your password. The password reset link will expire in 5 minutes. If you have any questions, contact <strong>0352261103</strong>.</p>`,
+      };
+  }
+};
+
+
+export const translateConfirmEmailMessage = (
+  language: string, 
+  email: string, 
+  confirmLink: string, 
+  resendTokenVerifyCount: number | undefined
+): { subject: string, html: string } => {
+  switch(language) {
+    case 'vi': // Vietnamese
+      return {
+        subject: "Xác nhận email của bạn",
+        html: `<p>Xin chào <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>! Nhấp <a href="${confirmLink}">vào đây</a> để xác nhận email. Xác thực có hiệu lực trong vòng 5 phút. Nếu có thắc mắc, liên hệ <strong>0352261103</strong>. Bạn đã gửi lại <span style="color:#FF3131; font-weight: 800;">${resendTokenVerifyCount}</span> lần. Nếu vượt quá 5 lần bạn sẽ bị ban.<p style="color:#FF3131; font-weight: 800;"> Lý do: Spam.</p></p>`
+      };
+    case 'en': // English
+      return {
+        subject: "Confirm your email",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>! Click <a href="${confirmLink}">here</a> to confirm your email. The confirmation link will expire in 5 minutes. If you have any questions, contact <strong>0352261103</strong>. You have requested this confirmation <span style="color:#FF3131; font-weight: 800;">${resendTokenVerifyCount}</span> times. If this exceeds 5 attempts, your account will be banned.<p style="color:#FF3131; font-weight: 800;"> Reason: Spam.</p></p>`
+      };
+    case 'zh': // Chinese
+      return {
+        subject: "确认您的电子邮件",
+        html: `<p>你好 <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>！点击 <a href="${confirmLink}">此处</a> 确认您的电子邮件。确认链接将在5分钟内过期。如果您有任何问题，请联系 <strong>0352261103</strong>。您已请求确认 <span style="color:#FF3131; font-weight: 800;">${resendTokenVerifyCount}</span> 次。如果超过5次，您的账户将被禁止。<p style="color:#FF3131; font-weight: 800;">原因：垃圾邮件。</p></p>`
+      };
+    case 'fr': // French
+      return {
+        subject: "Confirmez votre email",
+        html: `<p>Bonjour <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong> ! Cliquez <a href="${confirmLink}">ici</a> pour confirmer votre email. Le lien de confirmation expirera dans 5 minutes. Si vous avez des questions, contactez <strong>0352261103</strong>. Vous avez demandé cette confirmation <span style="color:#FF3131; font-weight: 800;">${resendTokenVerifyCount}</span> fois. Si cela dépasse 5 tentatives, votre compte sera banni.<p style="color:#FF3131; font-weight: 800;"> Raisons : Spam.</p></p>`
+      };
+    case 'ja': // Japanese
+      return {
+        subject: "メールアドレスの確認",
+        html: `<p>こんにちは <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>！<a href="${confirmLink}">ここをクリック</a>してメールアドレスを確認してください。確認リンクは5分以内に期限切れになります。質問がある場合は、<strong>0352261103</strong>までご連絡ください。確認を <span style="color:#FF3131; font-weight: 800;">${resendTokenVerifyCount}</span> 回要求しました。5回を超えると、アカウントが禁止されます。<p style="color:#FF3131; font-weight: 800;"> 理由：スパム。</p></p>`
+      };
+    default:
+      return {
+        subject: "Confirm your email",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>! Click <a href="${confirmLink}">here</a> to confirm your email. The confirmation link will expire in 5 minutes. If you have any questions, contact <strong>0352261103</strong>.</p>`
+      };
+  }
+};
+
+
+export const translateVerifyEmailCitizenMessage = (
+  language: string, 
+  email: string | null, 
+  domain: string | undefined
+): { subject: string, html: string } => {
+  switch(language) {
+    case 'vi': // Vietnamese
+      return {
+        subject: "Xác thực email của bạn",
+        html: `<p>Xin chào <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>! Tài khoản của bạn đã được xác thực. Bạn đã là nhân viên của <a href="${domain}">vlxd Xuân Trường</a>. Hãy vào xem role hiện tại của bạn đã được thay đổi thành <strong style="color: #3b82f6;">STAFF</strong> chưa? Nếu chưa thay đổi hãy liên hệ <strong>0352261103</strong>.</p>`
+      };
+    case 'en': // English
+      return {
+        subject: "Verify your email",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>! Your account has been verified. You are now an employee of <a href="${domain}">vlxd Xuân Trường</a>. Please check if your role has been updated to <strong style="color: #3b82f6;">STAFF</strong>. If not, contact <strong>0352261103</strong>.</p>`
+      };
+    case 'zh': // Chinese
+      return {
+        subject: "验证您的电子邮件",
+        html: `<p>你好 <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>！您的账户已经验证。您现在是 <a href="${domain}">vlxd Xuân Trường</a> 的员工。请检查您的角色是否已更改为 <strong style="color: #3b82f6;">STAFF</strong>。如果没有，请联系 <strong>0352261103</strong>。</p>`
+      };
+    case 'fr': // French
+      return {
+        subject: "Vérifiez votre email",
+        html: `<p>Bonjour <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong> ! Votre compte a été vérifié. Vous êtes désormais un employé de <a href="${domain}">vlxd Xuân Trường</a>. Veuillez vérifier si votre rôle a été mis à jour en <strong style="color: #3b82f6;">STAFF</strong>. Si ce n'est pas le cas, contactez <strong>0352261103</strong>.</p>`
+      };
+    case 'ja': // Japanese
+      return {
+        subject: "メールアドレスの確認",
+        html: `<p>こんにちは <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>！あなたのアカウントは確認されました。現在、あなたは <a href="${domain}">vlxd Xuân Trường</a> の社員です。ロールが <strong style="color: #3b82f6;">STAFF</strong> に変更されているか確認してください。変更されていない場合は、<strong>0352261103</strong> に連絡してください。</p>`
+      };
+    default:
+      return {
+        subject: "Verify your email",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>! Your account has been verified. You are now an employee of <a href="${domain}">vlxd Xuân Trường</a>. Please check if your role has been updated to <strong style="color: #3b82f6;">STAFF</strong>. If not, contact <strong>0352261103</strong>.</p>`
+      };
+  }
+};
+
+
+export const translateVerifyEmailCitizenShipperMessage = (
+  language: string, 
+  email: string | null, 
+  domain: string | undefined
+): { subject: string, html: string } => {
+  switch(language) {
+    case 'vi': // Vietnamese
+      return {
+        subject: "Xác thực email của bạn",
+        html: `<p>Xin chào <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>! Tài khoản của bạn đã được xác thực. Bạn đã là nhân viên của <a href="${domain}">vlxd Xuân Trường</a>. Hãy vào xem role hiện tại của bạn đã được thay đổi thành <strong style="color: #3b82f6;">SHIPPER</strong> chưa? Nếu chưa thay đổi hãy liên hệ <strong>0352261103</strong>.</p>`
+      };
+    case 'en': // English
+      return {
+        subject: "Verify your email",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>! Your account has been verified. You are now an employee of <a href="${domain}">vlxd Xuân Trường</a>. Please check if your role has been updated to <strong style="color: #3b82f6;">SHIPPER</strong>. If not, contact <strong>0352261103</strong>.</p>`
+      };
+    case 'zh': // Chinese
+      return {
+        subject: "验证您的电子邮件",
+        html: `<p>你好 <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>！您的账户已验证。您现在是 <a href="${domain}">vlxd Xuân Trường</a> 的员工。请检查您的角色是否已更新为 <strong style="color: #3b82f6;">SHIPPER</strong>。如果没有，请联系 <strong>0352261103</strong>。</p>`
+      };
+    case 'fr': // French
+      return {
+        subject: "Vérifiez votre email",
+        html: `<p>Bonjour <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong> ! Votre compte a été vérifié. Vous êtes désormais un employé de <a href="${domain}">vlxd Xuân Trường</a>. Veuillez vérifier si votre rôle a été mis à jour en <strong style="color: #3b82f6;">SHIPPER</strong>. Si ce n'est pas le cas, contactez <strong>0352261103</strong>.</p>`
+      };
+    case 'ja': // Japanese
+      return {
+        subject: "メールアドレスの確認",
+        html: `<p>こんにちは <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>！あなたのアカウントは確認されました。現在、あなたは <a href="${domain}">vlxd Xuân Trường</a> の社員です。ロールが <strong style="color: #3b82f6;">SHIPPER</strong> に変更されているか確認してください。変更されていない場合は、<strong>0352261103</strong> に連絡してください。</p>`
+      };
+    default:
+      return {
+        subject: "Verify your email",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>! Your account has been verified. You are now an employee of <a href="${domain}">vlxd Xuân Trường</a>. Please check if your role has been updated to <strong style="color: #3b82f6;">SHIPPER</strong>. If not, contact <strong>0352261103</strong>.</p>`
+      };
+  }
+};
+
+export const translateVerifyEmailCitizenMarketingMessage = (
+  language: string, 
+  email: string | null, 
+  domain: string | undefined
+): { subject: string, html: string } => {
+  switch(language) {
+    case 'vi': // Vietnamese
+      return {
+        subject: "Xác thực email của bạn",
+        html: `<p>Xin chào <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>! Tài khoản của bạn đã được xác thực. Bạn đã là nhân viên của <a href="${domain}">vlxd Xuân Trường</a>. Hãy vào xem role hiện tại của bạn đã được thay đổi thành <strong style="color: #3b82f6;">MAKETING</strong> chưa? Nếu chưa thay đổi hãy liên hệ <strong>0352261103</strong>.</p>`
+      };
+    case 'en': // English
+      return {
+        subject: "Verify your email",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>! Your account has been verified. You are now an employee of <a href="${domain}">vlxd Xuân Trường</a>. Please check if your role has been updated to <strong style="color: #3b82f6;">MAKETING</strong>. If not, contact <strong>0352261103</strong>.</p>`
+      };
+    case 'zh': // Chinese
+      return {
+        subject: "验证您的电子邮件",
+        html: `<p>你好 <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>！您的账户已验证。您现在是 <a href="${domain}">vlxd Xuân Trường</a> 的员工。请检查您的角色是否已更新为 <strong style="color: #3b82f6;">MAKETING</strong>。如果没有，请联系 <strong>0352261103</strong>。</p>`
+      };
+    case 'fr': // French
+      return {
+        subject: "Vérifiez votre email",
+        html: `<p>Bonjour <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong> ! Votre compte a été vérifié. Vous êtes désormais un employé de <a href="${domain}">vlxd Xuân Trường</a>. Veuillez vérifier si votre rôle a été mis à jour en <strong style="color: #3b82f6;">MAKETING</strong>. Si ce n'est pas le cas, contactez <strong>0352261103</strong>.</p>`
+      };
+    case 'ja': // Japanese
+      return {
+        subject: "メールアドレスの確認",
+        html: `<p>こんにちは <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>！あなたのアカウントは確認されました。現在、あなたは <a href="${domain}">vlxd Xuân Trường</a> の社員です。ロールが <strong style="color: #3b82f6;">MAKETING</strong> に変更されているか確認してください。変更されていない場合は、<strong>0352261103</strong> に連絡してください。</p>`
+      };
+    default:
+      return {
+        subject: "Verify your email",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${email}</strong>! Your account has been verified. You are now an employee of <a href="${domain}">vlxd Xuân Trường</a>. Please check if your role has been updated to <strong style="color: #3b82f6;">MAKETING</strong>. If not, contact <strong>0352261103</strong>.</p>`
+      };
+  }
+};
+
+
+export const translateBanMessage = (
+  language: string, 
+  nameuser: string | null | undefined, 
+  start: string | null, 
+  end: string | null, 
+  descriptionBan: string
+): { subject: string, html: string } => {
+  switch(language) {
+    case 'vi': // Vietnamese
+      return {
+        subject: "Sai quy định!",
+        html: `<p>Xin chào <strong style="color: #3b82f6; text-decoration: underline;">${nameuser}</strong>! Tài khoản của bạn đã bị khóa vào lúc <strong>${start}</strong>. Thời gian mở khóa vào ngày ${end}. Bạn đã vi phạm quy định của công ty. Vì lý do: <strong>${descriptionBan}</strong>. Vui lòng liên hệ <strong>0352261103</strong> để biết thêm chi tiết.</p>`
+      };
+    case 'en': // English
+      return {
+        subject: "Violation of regulations!",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${nameuser}</strong>! Your account has been locked at <strong>${start}</strong>. The unlock time is on ${end}. You have violated company regulations. Reason: <strong>${descriptionBan}</strong>. Please contact <strong>0352261103</strong> for more details.</p>`
+      };
+    case 'zh': // Chinese
+      return {
+        subject: "违反规定！",
+        html: `<p>你好 <strong style="color: #3b82f6; text-decoration: underline;">${nameuser}</strong>！您的账户在 <strong>${start}</strong> 被锁定。解锁时间为 ${end}。您已违反公司规定。原因: <strong>${descriptionBan}</strong>。请联系 <strong>0352261103</strong> 以了解更多详情。</p>`
+      };
+    case 'fr': // French
+      return {
+        subject: "Violation des règles!",
+        html: `<p>Bonjour <strong style="color: #3b82f6; text-decoration: underline;">${nameuser}</strong> ! Votre compte a été verrouillé à <strong>${start}</strong>. Le déverrouillage aura lieu le ${end}. Vous avez enfreint les règles de l'entreprise. Raisons : <strong>${descriptionBan}</strong>. Veuillez contacter <strong>0352261103</strong> pour plus de détails.</p>`
+      };
+    case 'ja': // Japanese
+      return {
+        subject: "規則違反！",
+        html: `<p>こんにちは <strong style="color: #3b82f6; text-decoration: underline;">${nameuser}</strong>！あなたのアカウントは <strong>${start}</strong> にロックされました。ロック解除の日時は ${end} です。会社の規定に違反しました。理由: <strong>${descriptionBan}</strong>。詳細については <strong>0352261103</strong> にお問い合わせください。</p>`
+      };
+    default:
+      return {
+        subject: "Violation of regulations!",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${nameuser}</strong>! Your account has been locked at <strong>${start}</strong>. The unlock time is on ${end}. You have violated company regulations. Reason: <strong>${descriptionBan}</strong>. Please contact <strong>0352261103</strong> for more details.</p>`
+      };
+  }
+};
+
+
+export const translateBanNotStartMessage = (
+  language: string, 
+  nameuser: string | null | undefined, 
+  end: string | null
+): { subject: string, html: string } => {
+  switch(language) {
+    case 'vi': // Vietnamese
+      return {
+        subject: "Sai quy định!",
+        html: `<p>Xin chào <strong style="color: #3b82f6; text-decoration: underline;">${nameuser}</strong>! Tài khoản của bạn đã bị khóa. Thời gian mở khóa vào ngày ${end}. Bạn đã vi phạm quy định của công ty. Vui lòng liên hệ <strong>0352261103</strong> để biết thêm chi tiết.</p>`
+      };
+    case 'en': // English
+      return {
+        subject: "Violation of regulations!",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${nameuser}</strong>! Your account has been locked. The unlock time is on ${end}. You have violated company regulations. Please contact <strong>0352261103</strong> for more details.</p>`
+      };
+    case 'zh': // Chinese
+      return {
+        subject: "违反规定！",
+        html: `<p>你好 <strong style="color: #3b82f6; text-decoration: underline;">${nameuser}</strong>！您的账户已被锁定。解锁时间为 ${end}。您已违反公司规定。请联系 <strong>0352261103</strong> 以了解更多详情。</p>`
+      };
+    case 'fr': // French
+      return {
+        subject: "Violation des règles!",
+        html: `<p>Bonjour <strong style="color: #3b82f6; text-decoration: underline;">${nameuser}</strong> ! Votre compte a été verrouillé. Le déverrouillage aura lieu le ${end}. Vous avez enfreint les règles de l'entreprise. Veuillez contacter <strong>0352261103</strong> pour plus de détails.</p>`
+      };
+    case 'ja': // Japanese
+      return {
+        subject: "規則違反！",
+        html: `<p>こんにちは <strong style="color: #3b82f6; text-decoration: underline;">${nameuser}</strong>！あなたのアカウントはロックされています。ロック解除の日時は ${end} です。会社の規定に違反しました。詳細については <strong>0352261103</strong> にお問い合わせください。</p>`
+      };
+    default:
+      return {
+        subject: "Violation of regulations!",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${nameuser}</strong>! Your account has been locked. The unlock time is on ${end}. You have violated company regulations. Please contact <strong>0352261103</strong> for more details.</p>`
+      };
+  }
+};
+
+
+export const translateUnbanMessage = (
+  language: string, 
+  nameuser: string | null | undefined
+): { subject: string, html: string } => {
+  switch(language) {
+    case 'vi': // Vietnamese
+      return {
+        subject: "Sai quy định!",
+        html: `<p>Xin chào <strong style="color: #3b82f6; text-decoration: underline;">${nameuser}</strong>! Tài khoản của bạn đã được mở khóa. Xin lỗi vì đã khóa tài khoản của bạn. Chúng tôi chỉ làm theo những lưu ý và các điều khoản đã đưa ra. Mong bạn thông cảm! Cám ơn bạn đã đồng hành cùng chúng tôi. Vui lòng liên hệ <strong>0352261103</strong> để biết thêm chi tiết.</p>`
+      };
+    case 'en': // English
+      return {
+        subject: "Violation of regulations!",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${nameuser}</strong>! Your account has been unlocked. We apologize for locking your account. We were just following the guidelines and terms that were set. We appreciate your understanding! Thank you for being with us. Please contact <strong>0352261103</strong> for more details.</p>`
+      };
+    case 'zh': // Chinese
+      return {
+        subject: "违反规定！",
+        html: `<p>你好 <strong style="color: #3b82f6; text-decoration: underline;">${nameuser}</strong>！您的账户已被解锁。我们为锁定您的账户而道歉。我们只是遵循已设置的注意事项和条款。感谢您的理解！感谢您与我们同行。如需更多信息，请联系 <strong>0352261103</strong>。</p>`
+      };
+    case 'fr': // French
+      return {
+        subject: "Violation des règles!",
+        html: `<p>Bonjour <strong style="color: #3b82f6; text-decoration: underline;">${nameuser}</strong> ! Votre compte a été déverrouillé. Nous nous excusons d'avoir verrouillé votre compte. Nous avons simplement suivi les directives et les termes définis. Nous vous remercions de votre compréhension ! Merci de rester avec nous. Veuillez contacter <strong>0352261103</strong> pour plus de détails.</p>`
+      };
+    case 'ja': // Japanese
+      return {
+        subject: "規則違反！",
+        html: `<p>こんにちは <strong style="color: #3b82f6; text-decoration: underline;">${nameuser}</strong>！あなたのアカウントはロック解除されました。アカウントをロックしたことをお詫び申し上げます。私たちは設定されたガイドラインと条件に従っただけです。ご理解いただきありがとうございます！私たちと一緒にいてくれてありがとうございます。詳細については <strong>0352261103</strong> にお問い合わせください。</p>`
+      };
+    default:
+      return {
+        subject: "Violation of regulations!",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${nameuser}</strong>! Your account has been unlocked. We apologize for locking your account. We were just following the guidelines and terms that were set. We appreciate your understanding! Thank you for being with us. Please contact <strong>0352261103</strong> for more details.</p>`
+      };
+  }
+};
+
+
+export const translateAttendanceStartMessage = (
+  language: string, 
+  nameuser: string | null | undefined, 
+  start: string | null, 
+  end: string | null, 
+  delayHours: number | undefined
+): { subject: string, html: string } => {
+  let penaltyMessage = "";
+  
+  if (delayHours) {
+    penaltyMessage = `<p style="color:#FF3131;">Bạn đã bị -50.000đ. Lý do: điểm danh trễ (${
+      Math.floor(delayHours) +
+      " giờ " +
+      Math.floor((delayHours % 1) * 60) +
+      " phút"
+    })</p>`;
+  }
+
+  switch(language) {
+    case 'vi': // Vietnamese
+      return {
+        subject: "Điểm danh ngày mới!",
+        html: `<p>Xin chào <strong style="color: #3b82f6; text-decoration: underline;">${nameuser || "Bạn"}</strong>! Thời gian điểm danh của bạn bắt đầu lúc <strong>${start || "không xác định"}</strong> và kết thúc lúc <strong>${end || "không xác định"}</strong>. Chúc bạn 1 ngày làm việc tràn đầy năng lượng. ${penaltyMessage}</p>`
+      };
+    case 'en': // English
+      return {
+        subject: "New Day Attendance!",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${nameuser || "You"}</strong>! Your attendance starts at <strong>${start || "undefined"}</strong> and ends at <strong>${end || "undefined"}</strong>. Have a productive day! ${penaltyMessage}</p>`
+      };
+    case 'zh': // Chinese
+      return {
+        subject: "今日考勤！",
+        html: `<p>你好 <strong style="color: #3b82f6; text-decoration: underline;">${nameuser || "您"}</strong>！您的考勤开始时间为 <strong>${start || "未定义"}</strong>，结束时间为 <strong>${end || "未定义"}</strong>。祝你今天工作愉快！ ${penaltyMessage}</p>`
+      };
+    case 'fr': // French
+      return {
+        subject: "Présence du jour!",
+        html: `<p>Bonjour <strong style="color: #3b82f6; text-decoration: underline;">${nameuser || "Vous"}</strong> ! Votre heure d'entrée est à <strong>${start || "indéfini"}</strong> et votre heure de sortie à <strong>${end || "indéfini"}</strong>. Passez une excellente journée! ${penaltyMessage}</p>`
+      };
+    case 'ja': // Japanese
+      return {
+        subject: "今日の出席！",
+        html: `<p>こんにちは <strong style="color: #3b82f6; text-decoration: underline;">${nameuser || "あなた"}</strong>！あなたの出席時間は <strong>${start || "未定"}</strong> に始まり、<strong>${end || "未定"}</strong> に終了します。充実した一日をお過ごしください！ ${penaltyMessage}</p>`
+      };
+    default:
+      return {
+        subject: "New Day Attendance!",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${nameuser || "You"}</strong>! Your attendance starts at <strong>${start || "undefined"}</strong> and ends at <strong>${end || "undefined"}</strong>. Have a productive day! ${penaltyMessage}</p>`
+      };
+  }
+};
+
+
+export const translateAttendanceEndMessage = (
+  language: string, 
+  nameuser: string | null | undefined, 
+  end: string | null
+): { subject: string, html: string } => {
+  switch(language) {
+    case 'vi': // Vietnamese
+      return {
+        subject: "Kết thúc điểm danh!",
+        html: `<p>Xin chào <strong style="color: #3b82f6; text-decoration: underline;">${nameuser}</strong>! Thời gian điểm danh của bạn đã kết thúc vào lúc <strong>${end}</strong>. Chúc bạn 1 ngày tốt lành.</p>`
+      };
+    case 'en': // English
+      return {
+        subject: "Attendance finished!",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${nameuser}</strong>! Your attendance ended at <strong>${end}</strong>. Have a great day.</p>`
+      };
+    case 'zh': // Chinese
+      return {
+        subject: "考勤结束！",
+        html: `<p>你好 <strong style="color: #3b82f6; text-decoration: underline;">${nameuser}</strong>！您的考勤已于 <strong>${end}</strong> 结束。祝您有个愉快的一天。</p>`
+      };
+    case 'fr': // French
+      return {
+        subject: "Présence terminée!",
+        html: `<p>Bonjour <strong style="color: #3b82f6; text-decoration: underline;">${nameuser}</strong> ! Votre pointage s'est terminé à <strong>${end}</strong>. Passez une excellente journée.</p>`
+      };
+    case 'ja': // Japanese
+      return {
+        subject: "出席終了！",
+        html: `<p>こんにちは <strong style="color: #3b82f6; text-decoration: underline;">${nameuser}</strong>！あなたの出席は <strong>${end}</strong> に終了しました。良い一日をお過ごしください。</p>`
+      };
+    default:
+      return {
+        subject: "Attendance finished!",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${nameuser}</strong>! Your attendance ended at <strong>${end}</strong>. Have a great day.</p>`
+      };
+  }
+};
+
+
+export const translateSalaryTotalMessage = (
+  language: string, 
+  name: string | null | undefined, 
+  totalsalary: string | "0", 
+  today: string | null | undefined
+): { subject: string, html: string } => {
+  switch(language) {
+    case 'vi': // Vietnamese
+      return {
+        subject: "Nhận lương!",
+        html: `<p>Xin chào <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>! Tổng lương của bạn đã nhận <strong>${totalsalary}</strong> vào lúc <strong>${today}</strong></p>`
+      };
+    case 'en': // English
+      return {
+        subject: "Salary received!",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>! Your total salary of <strong>${totalsalary}</strong> has been received on <strong>${today}</strong></p>`
+      };
+    case 'zh': // Chinese
+      return {
+        subject: "工资已发放！",
+        html: `<p>你好 <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>！您的总工资 <strong>${totalsalary}</strong> 已于 <strong>${today}</strong> 发放。</p>`
+      };
+    case 'fr': // French
+      return {
+        subject: "Salaire reçu!",
+        html: `<p>Bonjour <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong> ! Votre salaire total de <strong>${totalsalary}</strong> a été reçu le <strong>${today}</strong></p>`
+      };
+    case 'ja': // Japanese
+      return {
+        subject: "給与受け取り！",
+        html: `<p>こんにちは <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>！あなたの総給与 <strong>${totalsalary}</strong> は <strong>${today}</strong> に受け取られました。</p>`
+      };
+    default:
+      return {
+        subject: "Salary received!",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>! Your total salary of <strong>${totalsalary}</strong> has been received on <strong>${today}</strong></p>`
+      };
+  }
+};
+
+
+export const translateBonusMessage = (
+  language: string, 
+  name: string | null | undefined, 
+  bonus: string | "0", 
+  currenmoney: string | "0",
+  title: string | null | undefined, 
+  today: string | null | undefined, 
+): { subject: string, html: string } => {
+  switch(language) {
+    case 'vi': // Vietnamese
+      return {
+        subject: "Nhận tiền thường!",
+        html: `<p>Xin chào <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>! Bạn đã nhận thêm <strong>+${bonus}</strong> vào ngày <strong>${today}</strong> vì lý do: <strong>${title}</strong>. Tổng số tiền bonus: <strong>${currenmoney}</strong>.</p>`
+      };
+    case 'en': // English
+      return {
+        subject: "Bonus received!",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>! You have received an additional <strong>+${bonus}</strong> on <strong>${today}</strong> for the reason: <strong>${title}</strong>. Total bonus amount: <strong>${currenmoney}</strong>.</p>`
+      };
+    case 'zh': // Chinese
+      return {
+        subject: "奖金已领取！",
+        html: `<p>你好 <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>！您已于 <strong>${today}</strong> 领取了 <strong>+${bonus}</strong> 的奖金，原因是：<strong>${title}</strong>。奖金总额：<strong>${currenmoney}</strong>。</p>`
+      };
+    case 'fr': // French
+      return {
+        subject: "Prime reçue!",
+        html: `<p>Bonjour <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong> ! Vous avez reçu un supplément de <strong>+${bonus}</strong> le <strong>${today}</strong> pour la raison suivante : <strong>${title}</strong>. Montant total de la prime : <strong>${currenmoney}</strong>.</p>`
+      };
+    case 'ja': // Japanese
+      return {
+        subject: "ボーナス受け取り！",
+        html: `<p>こんにちは <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>！あなたは <strong>${today}</strong> に <strong>+${bonus}</strong> のボーナスを受け取りました。理由は：<strong>${title}</strong>。ボーナスの合計金額：<strong>${currenmoney}</strong>。</p>`
+      };
+    default:
+      return {
+        subject: "Bonus received!",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>! You have received an additional <strong>+${bonus}</strong> on <strong>${today}</strong> for the reason: <strong>${title}</strong>. Total bonus amount: <strong>${currenmoney}</strong>.</p>`
+      };
+  }
+};
+
+export const translateUnBonusMessage = (
+  language: string, 
+  name: string | null | undefined, 
+  unbonus: string | "0", 
+  currenmoney: string | "0",
+  title: string | null | undefined, 
+  today: string | null | undefined, 
+): { subject: string, html: string } => {
+  switch(language) {
+    case 'vi': // Vietnamese
+      return {
+        subject: "Mất tiền thưởng!",
+        html: `<p>Xin chào <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>! Bạn đã bị trừ <strong>${unbonus}</strong> vào ngày <strong>${today}</strong> vì lý do: ${title}. Tổng số tiền bonus còn lại: <strong>${currenmoney}</strong>.</p>`
+      };
+    case 'en': // English
+      return {
+        subject: "Bonus deducted!",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>! You have been deducted <strong>${unbonus}</strong> on <strong>${today}</strong> for the reason: ${title}. Total remaining bonus: <strong>${currenmoney}</strong>.</p>`
+      };
+    case 'zh': // Chinese
+      return {
+        subject: "奖金扣除！",
+        html: `<p>你好 <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>！您已于 <strong>${today}</strong> 扣除了 <strong>${unbonus}</strong> 的奖金，原因是：${title}。剩余奖金总额：<strong>${currenmoney}</strong>。</p>`
+      };
+    case 'fr': // French
+      return {
+        subject: "Prime déduite!",
+        html: `<p>Bonjour <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong> ! Vous avez eu une déduction de <strong>${unbonus}</strong> le <strong>${today}</strong> pour la raison suivante : ${title}. Montant total de la prime restante : <strong>${currenmoney}</strong>.</p>`
+      };
+    case 'ja': // Japanese
+      return {
+        subject: "ボーナスが差し引かれました！",
+        html: `<p>こんにちは <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>！あなたは <strong>${today}</strong> に <strong>${unbonus}</strong> のボーナスが差し引かれました。理由は：${title}。残りのボーナス総額：<strong>${currenmoney}</strong>。</p>`
+      };
+    default:
+      return {
+        subject: "Bonus deducted!",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>! You have been deducted <strong>${unbonus}</strong> on <strong>${today}</strong> for the reason: ${title}. Total remaining bonus: <strong>${currenmoney}</strong>.</p>`
+      };
+  }
+};
+
+
+export const translateSpinRewardMessage = (
+  language: string, 
+  name: string | null | undefined, 
+  bonus: string | "0", 
+  currenmoney: string | "0", 
+  bonuscoin: string | "0", 
+  totalcoin: string | "0",
+  title: string | null | undefined, 
+  today: string | null | undefined, 
+): { subject: string, html: string } => {
+  switch(language) {
+    case 'vi': // Vietnamese
+      return {
+        subject: "Nhận thưởng!",
+        html: `<p>Xin chào <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>! Bạn đã nhận thêm <strong>+${bonus} vòng quay</strong> và <strong>+${bonuscoin} xu</strong> vào ngày <strong>${today}</strong> vì lý do <strong>${title}</strong>. Tổng số spin và coin: <strong>${currenmoney} vòng quay</strong> và <strong>${totalcoin} xu</strong>.</p>`
+      };
+    case 'en': // English
+      return {
+        subject: "Reward received!",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>! You have received an additional <strong>+${bonus} spins</strong> and <strong>+${bonuscoin} coins</strong> on <strong>${today}</strong> for the reason: <strong>${title}</strong>. Total spins and coins: <strong>${currenmoney} spins</strong> and <strong>${totalcoin} coins</strong>.</p>`
+      };
+    case 'zh': // Chinese
+      return {
+        subject: "奖励已领取！",
+        html: `<p>你好 <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>！您已于 <strong>${today}</strong> 获得了额外的 <strong>+${bonus} 次旋转</strong> 和 <strong>+${bonuscoin} 币</strong>，原因是：<strong>${title}</strong>。总旋转次数和币数：<strong>${currenmoney} 次旋转</strong> 和 <strong>${totalcoin} 币</strong>。</p>`
+      };
+    case 'fr': // French
+      return {
+        subject: "Récompense reçue!",
+        html: `<p>Bonjour <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong> ! Vous avez reçu un supplément de <strong>+${bonus} tours</strong> et <strong>+${bonuscoin} pièces</strong> le <strong>${today}</strong> pour la raison suivante : <strong>${title}</strong>. Nombre total de tours et pièces : <strong>${currenmoney} tours</strong> et <strong>${totalcoin} pièces</strong>.</p>`
+      };
+    case 'ja': // Japanese
+      return {
+        subject: "報酬を受け取りました！",
+        html: `<p>こんにちは <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>！あなたは <strong>${today}</strong> に <strong>+${bonus} 回転</strong> と <strong>+${bonuscoin} コイン</strong> を受け取りました。理由は：<strong>${title}</strong>。合計の回転数とコイン数：<strong>${currenmoney} 回転</strong> と <strong>${totalcoin} コイン</strong>。</p>`
+      };
+    default:
+      return {
+        subject: "Reward received!",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>! You have received an additional <strong>+${bonus} spins</strong> and <strong>+${bonuscoin} coins</strong> on <strong>${today}</strong> for the reason: <strong>${title}</strong>. Total spins and coins: <strong>${currenmoney} spins</strong> and <strong>${totalcoin} coins</strong>.</p>`
+      };
+  }
+};
+
+
+export const translateSpinUnRewardMessage = (
+  language: string, 
+  name: string | null | undefined, 
+  unbonus: string | "0", 
+  currenmoney: string | "0", 
+  unbonuscoin: string | "0", 
+  totalcoin: string | "0",
+  title: string | null | undefined, 
+  today: string | null | undefined, 
+): { subject: string, html: string } => {
+  switch(language) {
+    case 'vi': // Vietnamese
+      return {
+        subject: "Mất thưởng!",
+        html: `<p>Xin chào <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>! Bạn đã bị trừ <strong>${unbonus} vòng quay</strong> và <strong>${unbonuscoin} xu</strong> vào ngày <strong>${today}</strong> vì lý do <strong>${title}</strong>. Tổng số spin và coin còn lại: <strong>${currenmoney} vòng quay</strong> và <strong>${totalcoin} xu</strong>.</p>`
+      };
+    case 'en': // English
+      return {
+        subject: "Reward deducted!",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>! You have been deducted <strong>${unbonus} spins</strong> and <strong>${unbonuscoin} coins</strong> on <strong>${today}</strong> for the reason: <strong>${title}</strong>. Total remaining spins and coins: <strong>${currenmoney} spins</strong> and <strong>${totalcoin} coins</strong>.</p>`
+      };
+    case 'zh': // Chinese
+      return {
+        subject: "奖励扣除！",
+        html: `<p>你好 <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>！您已于 <strong>${today}</strong> 扣除了 <strong>${unbonus} 次旋转</strong> 和 <strong>${unbonuscoin} 币</strong>，原因是：<strong>${title}</strong>。剩余的旋转次数和币数：<strong>${currenmoney} 次旋转</strong> 和 <strong>${totalcoin} 币</strong>。</p>`
+      };
+    case 'fr': // French
+      return {
+        subject: "Prime déduite!",
+        html: `<p>Bonjour <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong> ! Vous avez eu une déduction de <strong>${unbonus} tours</strong> et <strong>${unbonuscoin} pièces</strong> le <strong>${today}</strong> pour la raison suivante : <strong>${title}</strong>. Nombre total de tours et pièces restantes : <strong>${currenmoney} tours</strong> et <strong>${totalcoin} pièces</strong>.</p>`
+      };
+    case 'ja': // Japanese
+      return {
+        subject: "ボーナスが差し引かれました！",
+        html: `<p>こんにちは <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>！あなたは <strong>${today}</strong> に <strong>${unbonus} 回転</strong> と <strong>${unbonuscoin} コイン</strong> が差し引かれました。理由は：<strong>${title}</strong>。残りの回転数とコイン数：<strong>${currenmoney} 回転</strong> と <strong>${totalcoin} コイン</strong>。</p>`
+      };
+    default:
+      return {
+        subject: "Reward deducted!",
+        html: `<p>Hello <strong style="color: #3b82f6; text-decoration: underline;">${name}</strong>! You have been deducted <strong>${unbonus} spins</strong> and <strong>${unbonuscoin} coins</strong> on <strong>${today}</strong> for the reason: <strong>${title}</strong>. Total remaining spins and coins: <strong>${currenmoney} spins</strong> and <strong>${totalcoin} coins</strong>.</p>`
+      };
+  }
+};
+
+
+export const translateDismissalMessage = (
+  language: string, 
+  name: string | null | undefined, 
+  today: string
+): { subject: string, html: string } => {
+  switch(language) {
+    case 'vi': // Vietnamese
+      return {
+        subject: "Đình chỉ công việc!",
+        html: `<p>Kính gửi <strong>${name},</strong></p>
+
+<p style="margin-top:5px;">Chúng tôi muốn thông báo với bạn rằng sau một thời gian xem xét kỹ lưỡng, chúng tôi đã quyết định rẽ nhánh trong con đường sự nghiệp và chấm dứt hợp đồng lao động của bạn với công ty chúng tôi. Quyết định này không đến từ một lựa chọn dễ dàng, nhưng đây là quyết định mà chúng tôi cảm thấy là tốt nhất cho cả hai bên.</p>
+
+<p style="margin-top:5px;">Chúng tôi cảm ơn sự đóng góp của bạn trong thời gian làm việc tại công ty. Các nỗ lực và thành tựu của bạn không bao giờ được coi nhẹ, và chúng tôi hy vọng bạn sẽ giữ được những kỷ niệm tốt đẹp về thời gian ở đây.</p>
+
+<p style="margin-top:5px;">Chúng tôi cam kết hỗ trợ bạn trong quá trình chuyển tiếp và tìm kiếm cơ hội mới trong sự nghiệp của mình. Vui lòng liên hệ với phòng nhân sự nếu bạn cần bất kỳ hỗ trợ nào.</p>
+
+<p style="margin-top:5px;">Chúng tôi chân thành cảm ơn bạn một lần nữa và chúc bạn may mắn trong những bước tiếp theo trong cuộc đời và sự nghiệp của bạn.</p>
+
+<p style="margin-top:5px;"><strong>Trân trọng,</strong></p>
+
+<p><strong>VLXD XuanTruong</strong> - ${today}.</p>`
+      };
+    case 'en': // English
+      return {
+        subject: "Job Suspension!",
+        html: `<p>Dear <strong>${name},</strong></p>
+
+<p style="margin-top:5px;">We regret to inform you that after a careful review, we have decided to take a different direction in our career path and terminate your employment contract with our company. This decision was not an easy one, but we believe it is the best decision for both parties.</p>
+
+<p style="margin-top:5px;">We sincerely appreciate your contributions during your time with the company. Your efforts and achievements will never be overlooked, and we hope you will keep fond memories of your time here.</p>
+
+<p style="margin-top:5px;">We are committed to supporting you through this transition and in finding new opportunities in your career. Please contact the HR department if you need any assistance.</p>
+
+<p style="margin-top:5px;">Once again, we sincerely thank you and wish you the best of luck in the next steps of your life and career.</p>
+
+<p style="margin-top:5px;"><strong>Kind regards,</strong></p>
+
+<p><strong>VLXD XuanTruong</strong> - ${today}.</p>`
+      };
+    case 'zh': // Chinese
+      return {
+        subject: "工作暂停！",
+        html: `<p>亲爱的 <strong>${name},</strong></p>
+
+<p style="margin-top:5px;">我们很遗憾地通知您，在经过仔细审查后，我们决定采取不同的职业发展方向，终止与贵公司的劳动合同。这个决定并不容易，但我们认为这是对双方最好的决定。</p>
+
+<p style="margin-top:5px;">我们衷心感谢您在公司工作的贡献。您的努力和成就永远不会被忽视，我们希望您能留下在这里的美好回忆。</p>
+
+<p style="margin-top:5px;">我们承诺在您的过渡期内为您提供支持，并帮助您寻找新的职业机会。如果您需要任何帮助，请联系HR部门。</p>
+
+<p style="margin-top:5px;">再次感谢您，并祝愿您在未来的生活和职业中一切顺利。</p>
+
+<p style="margin-top:5px;"><strong>此致，</strong></p>
+
+<p><strong>VLXD XuanTruong</strong> - ${today}.</p>`
+      };
+    case 'fr': // French
+      return {
+        subject: "Suspension de travail!",
+        html: `<p>Cher/Chère <strong>${name},</strong></p>
+
+<p style="margin-top:5px;">Nous avons le regret de vous informer qu'après un examen approfondi, nous avons décidé de prendre une autre direction dans notre parcours professionnel et de mettre fin à votre contrat de travail avec notre société. Cette décision n’a pas été facile, mais nous pensons qu’elle est la meilleure pour les deux parties.</p>
+
+<p style="margin-top:5px;">Nous vous remercions sincèrement pour vos contributions pendant votre temps passé dans l’entreprise. Vos efforts et réalisations ne seront jamais négligés et nous espérons que vous garderez de bons souvenirs de votre temps ici.</p>
+
+<p style="margin-top:5px;">Nous nous engageons à vous soutenir pendant cette transition et dans la recherche de nouvelles opportunités dans votre carrière. Veuillez contacter le département RH si vous avez besoin de quelconque assistance.</p>
+
+<p style="margin-top:5px;">Encore une fois, nous vous remercions sincèrement et vous souhaitons bonne chance pour les prochaines étapes de votre vie et carrière.</p>
+
+<p style="margin-top:5px;"><strong>Cordialement,</strong></p>
+
+<p><strong>VLXD XuanTruong</strong> - ${today}.</p>`
+      };
+    case 'ja': // Japanese
+      return {
+        subject: "仕事の停止！",
+        html: `<p>親愛なる <strong>${name},</strong></p>
+
+<p style="margin-top:5px;">慎重な審査の結果、私たちはキャリアの方向性を変更することを決定し、貴社との雇用契約を終了することとなりました。この決定は容易なものではありませんでしたが、双方にとって最良の決定だと考えています。</p>
+
+<p style="margin-top:5px;">貴社での貢献に心から感謝しています。あなたの努力と成果は決して軽視されることはありません。そして、ここで過ごした時間の素晴らしい思い出を大切にしていただければと思います。</p>
+
+<p style="margin-top:5px;">この移行期間中、そして新たなキャリアの機会を見つける過程で私たちはあなたをサポートすることをお約束します。ご質問があれば、HR部門にご連絡ください。</p>
+
+<p style="margin-top:5px;">改めて心より感謝し、あなたの今後の人生とキャリアのステップで幸運をお祈りします。</p>
+
+<p style="margin-top:5px;"><strong>敬具,</strong></p>
+
+<p><strong>VLXD XuanTruong</strong> - ${today}.</p>`
+      };
+    default:
+      return {
+        subject: "Job Suspension!",
+        html: `<p>Dear <strong>${name},</strong></p>
+
+<p style="margin-top:5px;">We regret to inform you that after a careful review, we have decided to take a different direction in our career path and terminate your employment contract with our company. This decision was not an easy one, but we believe it is the best decision for both parties.</p>
+
+<p style="margin-top:5px;">We sincerely appreciate your contributions during your time with the company. Your efforts and achievements will never be overlooked, and we hope you will keep fond memories of your time here.</p>
+
+<p style="margin-top:5px;">We are committed to supporting you through this transition and in finding new opportunities in your career. Please contact the HR department if you need any assistance.</p>
+
+<p style="margin-top:5px;">Once again, we sincerely thank you and wish you the best of luck in the next steps of your life and career.</p>
+
+<p style="margin-top:5px;"><strong>Kind regards,</strong></p>
+
+<p><strong>VLXD XuanTruong</strong> - ${today}.</p>`
+      };
+  }
+};
+
+
+export const translateDeleteUserMessage = (
+  language: string, 
+  name: string | null | undefined, 
+  today: string
+): { subject: string, html: string } => {
+  switch(language) {
+    case 'vi': // Vietnamese
+      return {
+        subject: "Khóa tài khoản vĩnh viễn!",
+        html: `<p>Kính gửi <strong>${name},</strong></p>
+
+<p style="margin-top:5px;">Tôi viết thư này để tỏ lòng xin lỗi về việc khóa tài khoản của bạn vĩnh viễn. Tôi hiểu rằng việc này đã gây ra sự bất tiện và phiền toái cho bạn, và tôi rất tiếc về điều đó.</p>
+
+<p style="margin-top:5px;">Chúng tôi đã xem xét lại quyết định của mình và nhận ra rằng tài khoản của bạn có vấn đề. Và đã phạm vào luật nghiêm.</p>
+
+<p style="margin-top:5px;">Tôi xin chân thành xin lỗi và mong rằng bạn có thể tha thứ cho sự cố này. Nếu bạn có bất kỳ câu hỏi hoặc yêu cầu gì, xin vui lòng liên hệ trực tiếp với tôi theo địa chỉ email này.</p>
+
+<p style="margin-top:5px;">Một lần nữa, tôi xin lỗi về sự bất tiện này và mong rằng chúng ta có thể tiếp tục hợp tác một cách tích cực trong tương lai.</p>
+
+<p style="margin-top:5px;"><strong>Trân trọng,</strong></p>
+
+<p><strong>VLXD XuanTruong</strong> - ${today}.</p>`
+      };
+    case 'en': // English
+      return {
+        subject: "Account Permanently Locked!",
+        html: `<p>Dear <strong>${name},</strong></p>
+
+<p style="margin-top:5px;">I am writing this letter to sincerely apologize for the permanent lock of your account. I understand that this has caused inconvenience and frustration for you, and I deeply regret that.</p>
+
+<p style="margin-top:5px;">We have reviewed our decision and realized that there was an issue with your account. It was found to have violated significant policies.</p>
+
+<p style="margin-top:5px;">I sincerely apologize and hope you can forgive this incident. Should you have any questions or requests, please feel free to contact me directly via this email address.</p>
+
+<p style="margin-top:5px;">Once again, I apologize for the inconvenience, and I hope that we can continue to work together positively in the future.</p>
+
+<p style="margin-top:5px;"><strong>Kind regards,</strong></p>
+
+<p><strong>VLXD XuanTruong</strong> - ${today}.</p>`
+      };
+    case 'zh': // Chinese
+      return {
+        subject: "账户永久封锁！",
+        html: `<p>亲爱的 <strong>${name},</strong></p>
+
+<p style="margin-top:5px;">我写这封信是为了诚挚地为您账户的永久封锁道歉。我理解这给您带来了不便和困扰，为此我深感遗憾。</p>
+
+<p style="margin-top:5px;">我们已重新审查了我们的决定，并意识到您的账户存在问题，并且违反了公司的重大规定。</p>
+
+<p style="margin-top:5px;">我诚恳地道歉，并希望您能原谅此次事件。如有任何问题或要求，请随时通过此电子邮件与我联系。</p>
+
+<p style="margin-top:5px;">再次为此次不便表示歉意，并希望未来我们能够继续积极合作。</p>
+
+<p style="margin-top:5px;"><strong>此致，</strong></p>
+
+<p><strong>VLXD XuanTruong</strong> - ${today}.</p>`
+      };
+    case 'fr': // French
+      return {
+        subject: "Compte définitivement verrouillé !",
+        html: `<p>Cher/Chère <strong>${name},</strong></p>
+
+<p style="margin-top:5px;">Je vous écris cette lettre pour m'excuser sincèrement pour le verrouillage permanent de votre compte. Je comprends que cela vous a causé des désagréments et des frustrations, et j'en suis profondément désolé.</p>
+
+<p style="margin-top:5px;">Nous avons réexaminé notre décision et avons réalisé qu'il y avait un problème avec votre compte, qui a violé des politiques importantes.</p>
+
+<p style="margin-top:5px;">Je m'excuse sincèrement et j'espère que vous pourrez pardonner cet incident. Si vous avez des questions ou des demandes, n'hésitez pas à me contacter directement via cet e-mail.</p>
+
+<p style="margin-top:5px;">Encore une fois, je vous présente mes excuses pour les désagréments causés, et j'espère que nous pourrons continuer à travailler ensemble de manière positive à l'avenir.</p>
+
+<p style="margin-top:5px;"><strong>Cordialement,</strong></p>
+
+<p><strong>VLXD XuanTruong</strong> - ${today}.</p>`
+      };
+    case 'ja': // Japanese
+      return {
+        subject: "アカウントが永久にロックされました！",
+        html: `<p>親愛なる <strong>${name},</strong></p>
+
+<p style="margin-top:5px;">あなたのアカウントが永久にロックされたことについて、心からお詫び申し上げます。このことでご不便をおかけしたことを理解しており、深く反省しています。</p>
+
+<p style="margin-top:5px;">私たちはその決定を再考し、あなたのアカウントに問題があることを認識しました。また、重大な規則に違反していたことが判明しました。</p>
+
+<p style="margin-top:5px;">心からお詫び申し上げ、この問題についてご容赦いただければと思います。ご質問やご要望がある場合は、どうぞこのメールアドレスから直接ご連絡ください。</p>
+
+<p style="margin-top:5px;">再度、今回の不便についてお詫び申し上げ、今後ポジティブに協力していけることを願っています。</p>
+
+<p style="margin-top:5px;"><strong>敬具,</strong></p>
+
+<p><strong>VLXD XuanTruong</strong> - ${today}.</p>`
+      };
+    default:
+      return {
+        subject: "Account Permanently Locked!",
+        html: `<p>Dear <strong>${name},</strong></p>
+
+<p style="margin-top:5px;">I am writing this letter to sincerely apologize for the permanent lock of your account. I understand that this has caused inconvenience and frustration for you, and I deeply regret that.</p>
+
+<p style="margin-top:5px;">We have reviewed our decision and realized that there was an issue with your account. It was found to have violated significant policies.</p>
+
+<p style="margin-top:5px;">I sincerely apologize and hope you can forgive this incident. Should you have any questions or requests, please feel free to contact me directly via this email address.</p>
+
+<p style="margin-top:5px;">Once again, I apologize for the inconvenience, and I hope that we can continue to work together positively in the future.</p>
+
+<p style="margin-top:5px;"><strong>Kind regards,</strong></p>
+
+<p><strong>VLXD XuanTruong</strong> - ${today}.</p>`
+      };
+  }
+};
+
+
+export const translateDeliverySuccessMessage = (language: string, order: any, formattedDate: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        subject: "Giao hàng thành công!",
+        html: `
+          <div>
+            <div>
+              <p>Xin chào khách hàng,</p>
+              <p>Đơn hàng <span style="color:#FF3131; font-weight: 700;">${order.id}</span> của bạn đã được giao thành công ngày ${formattedDate}.</p>
+              <p>Cảm ơn bạn đã tin tưởng và ủng hộ. Vui lòng vào <a style="text-decoration: underline;" href="${process.env.NEXT_PUBLIC_DOMAIN_URL}/warehouse">warehouse</a> để đánh giá chất lượng. Bạn có 3 ngày kể từ ngày nhận hàng để trả hoặc đổi hàng.</p>
+            </div>
+          </div>
+        `
+      };
+    case "en":
+      return {
+        subject: "Delivery Successful!",
+        html: `
+          <div>
+            <div>
+              <p>Hello Customer,</p>
+              <p>Your order <span style="color:#FF3131; font-weight: 700;">${order.id}</span> has been successfully delivered on ${formattedDate}.</p>
+              <p>Thank you for your trust and support. Please visit <a style="text-decoration: underline;" href="${process.env.NEXT_PUBLIC_DOMAIN_URL}/warehouse">warehouse</a> to review the quality. You have 3 days from the date of delivery to return or exchange the items.</p>
+            </div>
+          </div>
+        `
+      };
+    case "zh":
+      return {
+        subject: "成功交付!",
+        html: `
+          <div>
+            <div>
+              <p>亲爱的客户，</p>
+              <p>您的订单 <span style="color:#FF3131; font-weight: 700;">${order.id}</span> 已于 ${formattedDate} 成功交付。</p>
+              <p>感谢您的信任与支持。请访问 <a style="text-decoration: underline;" href="${process.env.NEXT_PUBLIC_DOMAIN_URL}/warehouse">warehouse</a> 进行质量评价。您有 3 天的时间从交货日期起退货或换货。</p>
+            </div>
+          </div>
+        `
+      };
+    case "fr":
+      return {
+        subject: "Livraison réussie!",
+        html: `
+          <div>
+            <div>
+              <p>Bonjour Client,</p>
+              <p>Votre commande <span style="color:#FF3131; font-weight: 700;">${order.id}</span> a été livrée avec succès le ${formattedDate}.</p>
+              <p>Merci pour votre confiance et votre soutien. Veuillez visiter <a style="text-decoration: underline;" href="${process.env.NEXT_PUBLIC_DOMAIN_URL}/warehouse">warehouse</a> pour évaluer la qualité. Vous disposez de 3 jours à compter de la date de livraison pour retourner ou échanger les articles.</p>
+            </div>
+          </div>
+        `
+      };
+    case "ja":
+      return {
+        subject: "配達成功！",
+        html: `
+          <div>
+            <div>
+              <p>お客様へ、</p>
+              <p>ご注文 <span style="color:#FF3131; font-weight: 700;">${order.id}</span> は ${formattedDate} に無事に配達されました。</p>
+              <p>ご信頼とご支援ありがとうございます。品質評価のため、<a style="text-decoration: underline;" href="${process.env.NEXT_PUBLIC_DOMAIN_URL}/warehouse">warehouse</a> にアクセスしてください。商品を受け取った日から 3 日以内であれば、返品または交換が可能です。</p>
+            </div>
+          </div>
+        `
+      };
+    default:
+      return {
+        subject: "Delivery Successful!",
+        html: `
+          <div>
+            <div>
+              <p>Hello Customer,</p>
+              <p>Your order <span style="color:#FF3131; font-weight: 700;">${order.id}</span> has been successfully delivered on ${formattedDate}.</p>
+              <p>Thank you for your trust and support. Please visit <a style="text-decoration: underline;" href="${process.env.NEXT_PUBLIC_DOMAIN_URL}/warehouse">warehouse</a> to review the quality. You have 3 days from the date of delivery to return or exchange the items.</p>
+            </div>
+          </div>
+        `
+      };
+  }
+};

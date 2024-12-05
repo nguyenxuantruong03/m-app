@@ -17,7 +17,7 @@ import axios from "axios";
 
 import { OrderColumn } from "./columns";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getDelivery } from "@/translate/translate-dashboard";
+import { getDelivery, getDeliverySharingLocation } from "@/translate/translate-dashboard";
 
 interface CellActionProps {
   data: OrderColumn;
@@ -31,8 +31,12 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   //language
   const deliveryMessage = getDelivery(data.language)
+  const deliverySharingLocationMessage = getDeliverySharingLocation(data.language)
 
   const comfirmOrderDelivery = async () => {
+    if(!user?.isSharingLocation){
+      toast.error(deliverySharingLocationMessage.enableLocationForOrder)
+    }
     try {
       setLoading(true);
       const promise = axios.patch(`/api/${params.storeId}/orders/delivery`, {
@@ -84,6 +88,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   };
 
   const receiveReturn = async () => {
+    if(!user?.isSharingLocation){
+      toast.error(deliverySharingLocationMessage.enableLocationForReturn)
+    }
     try {
       setLoading(true);
       const promise = axios.patch(

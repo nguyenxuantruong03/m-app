@@ -14,7 +14,7 @@ import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { OrderColumn } from "../../components/columns";
 import { toast } from "react-hot-toast";
 import { EyeOff, Search } from "lucide-react";
-import { getOrderFormLeaflet } from "@/translate/translate-dashboard";
+import { getOrderFormLeaflet, localizationData } from "@/translate/translate-dashboard";
 interface OrderProps {
   data: OrderColumn[];
   language: string;
@@ -40,60 +40,6 @@ const OrderForm: React.FC<OrderProps> = ({ data,language }) => {
 
   //language
   const orderFormLeafletMessage = getOrderFormLeaflet(language)
-
-  //Customer Tiếng Việt
-L.Routing.Localization[language] = {
-  directions: {
-    north: "Bắc",
-    northeast: "Đông Bắc",
-    east: "Đông",
-    southeast: "Đông Nam",
-    south: "Nam",
-    southwest: "Tây Nam",
-    west: "Tây",
-    northwest: "Tây Bắc",
-  },
-  instructions: {
-    straight: "Đi thẳng",
-    slightLeft: "Rẽ nhẹ trái",
-    left: "Rẽ trái",
-    sharpLeft: "Rẽ mạnh trái",
-    slightRight: "Rẽ nhẹ phải",
-    right: "Rẽ phải",
-    sharpRight: "Rẽ mạnh phải",
-    uturn: "Quay đầu",
-  },
-  maneuvers: {
-    merge: "Gộp",
-    depart: "Rời đi",
-    arrive: "Đến nơi",
-    fork: "Giao lộ",
-    endOfRoad: "Cuối đường",
-    passRoundabout: "Vượt qua vòng xuyến",
-    accessRoundabout: "Vào vòng xuyến",
-    stayOnRoundabout: "Tiếp tục ở vòng xuyến",
-    startAtEndOfStreet: "Bắt đầu ở cuối đường",
-    start: "Bắt đầu",
-    turn: "Rẽ",
-    turnLeft: "Rẽ trái",
-    turnRight: "Rẽ phải",
-    multiple: "Nhiều hướng",
-  },
-  errors: {
-    locationNotFound: "Không tìm thấy địa điểm",
-    cantProjectRouteOnSatellite: "Không thể đề xuất đường đi trên hình vệ tinh",
-    routeNotFound: "Không tìm thấy đường đi",
-    cantFindRoute: "Không thể tìm đường đi",
-    requestFailed: "Yêu cầu thất bại",
-    tooManyStops: "Quá nhiều điểm dừng",
-    unableToSync: "Không thể đồng bộ",
-  },
-  other: {
-    useRouteAnyway: "Sử dụng đường đi này?",
-    isCurrently: "Hiện tại",
-    poweredBy: "Cung cấp bởi",
-  },
-};
 
   // Function to toggle search visibility ẩn hoặc mở
   const toggleSearchVisibility = () => {
@@ -133,6 +79,12 @@ L.Routing.Localization[language] = {
       [10.77621, 106.60444], // Điểm xuất phát
       ...addressOrder.map((address) => `${address}`), // Điểm đến
     ];
+
+    if (language === "vi") {
+      L.Routing.Localization["vi"] = localizationData["vi"];
+    } else {
+      delete L.Routing.Localization["vi"]; // Remove any custom localization for non-Vietnamese languages
+    }
 
     const geocodeAndSetWaypoints = async () => {
       try {

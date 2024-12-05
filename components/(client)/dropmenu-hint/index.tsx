@@ -366,7 +366,7 @@ export default function DropMenuHint() {
               disabled={loading || loadingLanguage}
               variant="outline"
               className={`fixed right-4 ${
-                isScrolled ? "bottom-32" : "bottom-8"
+                isScrolled ? "bottom-32" : "bottom-28 md:bottom-8"
               } transition-all duration-300`}
             >
               <Hint label={infomationMessage}>
