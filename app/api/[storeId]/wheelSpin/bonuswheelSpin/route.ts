@@ -97,6 +97,7 @@ export async function PATCH(
     const today = new Date();
     const formattedDate = format(today, "E '-' dd/MM/yyyy '-' HH:mm:ss a");
     await sendSpin(
+      findUserEmail?.language,
       findUserEmail?.email,
       findUserEmail?.name,
       bonus,
@@ -261,6 +262,7 @@ export async function POST(
     const today = new Date();
     const formattedDate = format(today, "E '-' dd/MM/yyyy '-' HH:mm:ss a");
     await sendUnSpin(
+      findUserEmail?.language,
       findUserEmail?.email,
       findUserEmail?.name,
       unbonus,

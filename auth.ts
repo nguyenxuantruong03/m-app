@@ -26,28 +26,27 @@ export const {
         data: { emailVerified: new Date() },
       });
     },
+    async createUser({ user }) {
+      //Khi tạo người dùng nếu là người dùng đầu tiên của ứng dụng sẽ tự động trao quyền ADMIN
+      const userCount = await prismadb.user.count();
+      if (userCount === 1) {
+        // Nếu đây là người dùng đầu tiên
+        await prismadb.user.update({
+          where: { id: user.id },
+          data: { role: "ADMIN" }, // Đặt vai trò ADMIN
+        });
+      }
+    },
   },
   callbacks: {
     async signIn({ user, account }) {
-      //---------Bước đặc biệt----------
-      const userCount = await prismadb.user.count(); // Đếm số lượng người dùng hiện tại
-      // Nếu chưa có người dùng nào, gán vai trò ADMIN cho người đầu tiên
-      if (userCount === 0) {
-        await prismadb.user.update({
-          where: { id: user.id },
-          data: {
-            role: "ADMIN",
-          },
-        });
-      }
-
       const now = new Date();
       now.setHours(now.getHours() + 7);
 
       //Các bước check trước khi đăng nhập bầng  account google,github...
       const existingUser = await getUserById(user.id);
 
-      // --Bước bắt buộc-- Nếu không có nameuser se tự động update
+      // --Bước bắt buộc-- Nếu không có nameuser sẽ tự động update
       const atIndex = existingUser?.email?.indexOf("@");
       const nameuser = existingUser?.email?.slice(0, atIndex).toLowerCase();
 
@@ -74,6 +73,7 @@ export const {
           if (resendCount < 2) {
             // Nếu giá trị nhỏ hơn 2, tăng lên 1
             await sendBanUserNotStart(
+              existingUser.language,
               existingUser.email,
               existingUser.name,
               timeBan
@@ -111,7 +111,7 @@ export const {
 
           if (resendCount < 2) {
             // Nếu giá trị nhỏ hơn 2, tăng lên 1
-            await sendUnBanUser(unbanUser.email, unbanUser.name);
+            await sendUnBanUser(existingUser.language,unbanUser.email, unbanUser.name);
             resendCount++; // Tăng giá trị lên 1
             // Cập nhật giá trị mới cho resendUnBanUser
             await prismadb.user.update({
@@ -123,13 +123,13 @@ export const {
           }
         }
       }
-      //--Bước2--Handle check xem có bị ban vĩnh viển ko
+      //--Bước3--Handle check xem có bị ban vĩnh viển ko
       if (existingUser?.isbanforever) {
         return "/auth/errorbanforever";
       }
 
-      //--Bước2--Tọa favorite nếu là người đầu và người người dùng không có phobien thì update luôn luôn có phobien
-      if (existingUser) {
+       //--Bước4--Tọa favorite nếu là người đầu và người người dùng không có phobien thì update luôn luôn có phobien
+       if (existingUser) {
         // Bước 1: Kiểm tra xem "phobien" đã có trong favorite của người dùng chưa
         const hasPhobien = existingUser.favorite.includes("phobien");
       
@@ -167,15 +167,15 @@ export const {
           }
         }
       }
-      
 
-      //--Bước4--Ngăn chặn đăng nhập mà không cần xác minh email
+
+      //--Bước5--Ngăn chặn đăng nhập mà không cần xác minh email
       if (account?.provider !== "credentials") return true;
 
-      //--Bước5--Ngăn chặn đăng nhập mà không cần xác minh email và 2FA
+      //--Bước6--Ngăn chặn đăng nhập mà không cần xác minh email và 2FA
       if (!existingUser?.emailVerified) return false;
 
-      //--Bước6--ADD 2FA check --- 2FA: Có nghĩa là xác thực 2 lớp
+      //--Bước7--ADD 2FA check --- 2FA: Có nghĩa là xác thực 2 lớp
       if (existingUser.isTwoFactorEnabled) {
         const twoFactorConfirmation = await getTwoFactorConfirmationbyUserId(
           existingUser.id
@@ -183,20 +183,12 @@ export const {
 
         if (!twoFactorConfirmation) return false;
 
-        //--Bước7--Xóa xác nhận hai yếu tố cho lần đăng nhập tiếp theo
+        //--Bước8--Xóa xác nhận hai yếu tố cho lần đăng nhập tiếp theo
         //Delete two factor confirmation for next sign in
         await prismadb.twoFactorConfirmation.delete({
           where: { id: twoFactorConfirmation.id },
         });
       }
-
-      //--Bước8--Cập nhật lại thời gian mỗi khi đăng nhập
-      await prismadb.user.update({
-        where: { id: existingUser.id },
-        data: {
-          lastlogin: now,
-        },
-      });
 
       return true;
     },
@@ -245,12 +237,18 @@ export const {
         session.user.createdAt = token.createdAt as Date;
         session.user.language = token.language as string;
         session.user.isLive = token.isLive as boolean;
-        session.user.locationLat = token.locationLat as number
-        session.user.locationLng = token.locationLng as number
-        session.user.isSharingLocation = token.isSharingLocation as boolean
+        session.user.locationLat = token.locationLat as number;
+        session.user.locationLng = token.locationLng as number;
+        session.user.isSharingLocation = token.isSharingLocation as boolean;
         session.user.feedbackTimeNextResonse =
           token.feedbackTimeNextResonse as Date;
         const existingUser = await getUserById(token.sub);
+
+        //--Bước đặc biệt--Handle check xem có bị ban vĩnh viển ko
+        if (existingUser?.isbanforever) {
+          throw new Error("You have been ban forever!");
+        }
+
         //--Bước1--Check người dùng có bị ban
         const now = new Date();
         now.setHours(now.getHours() + 7);
@@ -268,6 +266,7 @@ export const {
             if (resendCount < 2) {
               // Nếu giá trị nhỏ hơn 2, tăng lên 1
               await sendBanUserNotStart(
+                existingUser.language,
                 existingUser.email,
                 existingUser.name,
                 timeBan
@@ -305,7 +304,7 @@ export const {
 
             if (resendCount < 2) {
               // Nếu giá trị nhỏ hơn 2, tăng lên 1
-              await sendUnBanUser(unbanUser.email, unbanUser.name);
+              await sendUnBanUser(existingUser.language, unbanUser.email, unbanUser.name);
               resendCount++; // Tăng giá trị lên 1
               // Cập nhật giá trị mới cho resendUnBanUser
               await prismadb.user.update({
@@ -328,6 +327,46 @@ export const {
           });
         }
 
+        /// -- Bước kiểm tra favorite -- Nếu ko có tự update
+        if (existingUser) {
+          // Bước 1: Kiểm tra xem "phobien" đã có trong favorite của người dùng chưa
+          const hasPhobien = existingUser.favorite.includes("phobien");
+
+          if (!hasPhobien) {
+            //  Kiểm tra xem "phobien" đã tồn tại trong bảng favorites hay chưa
+            let favoriteRecord = await prismadb.favorite.findFirst({
+              where: { value: "phobien", storeId: "" },
+            });
+
+            // Nếu chưa có "phobien" trong bảng favorites, tạo mới record với "phobien"
+            if (!favoriteRecord) {
+              favoriteRecord = await prismadb.favorite.create({
+                data: {
+                  storeId: "", // Có thể cần điều chỉnh storeId nếu có thông tin
+                  name: "Phổ biến",
+                  value: "phobien",
+                },
+              });
+            }
+
+            //  Đảm bảo người dùng luôn có "phobien" trong danh sách favorite
+            if (favoriteRecord?.value) {
+              // Kết hợp các giá trị cũ và "phobien" vào danh sách favorite của người dùng
+              const updatedFavorites = Array.from(
+                new Set([...existingUser.favorite, favoriteRecord.value]) // Loại bỏ phần tử trùng lặp
+              );
+
+              // Cập nhật lại danh sách favorite của người dùng
+              await prismadb.user.update({
+                where: { id: existingUser.id },
+                data: {
+                  favorite: updatedFavorites, // Cập nhật với danh sách mới
+                },
+              });
+            }
+          }
+        }
+
         // --Bước bắt buộc-- Nếu không có nameuser se tự động update
         const atIndex = existingUser?.email?.indexOf("@");
         const nameuser = existingUser?.email?.slice(0, atIndex).toLowerCase();
@@ -339,21 +378,6 @@ export const {
               nameuser: nameuser,
             },
           });
-        }
-        // -- Bước kiểm tra favorite -- Nếu ko có tự update
-        if (existingUser && existingUser.favorite.length <= 0) {
-          // Cast favorite to string[] if necessary
-          const favorites: string[] = existingUser.favorite as string[];
-          const hasPhobien = favorites.includes("phobien");
-
-          if (!hasPhobien) {
-            await prismadb.user.update({
-              where: { id: existingUser.id },
-              data: {
-                favorite: [...favorites, "phobien"],
-              },
-            });
-          }
         }
       }
       return {
@@ -410,8 +434,8 @@ export const {
       token.createdAt = existingUser.createdAt;
       token.language = existingUser.language;
       token.locationLat = existingUser.locationLat;
-      token.locationLng = existingUser.locationLng
-      token.isSharingLocation = existingUser.isSharingLocation
+      token.locationLng = existingUser.locationLng;
+      token.isSharingLocation = existingUser.isSharingLocation;
       token.feedbackTimeNextResonse =
         existingUser?.feedback?.[0]?.timeNextResponse;
       if (existingUser.stream) {

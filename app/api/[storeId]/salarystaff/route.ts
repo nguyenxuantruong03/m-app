@@ -110,6 +110,7 @@ export async function PATCH(
     const today = new Date();
     const formattedDate = format(today, "E '-' dd/MM/yyyy '-' HH:mm:ss a");
     await sendBonus(
+      user?.language,
       user?.email,
       user?.name,
       formatterbonus,
@@ -253,6 +254,7 @@ export async function POST(
     const today = new Date();
     const formattedDate = format(today, "E '-' dd/MM/yyyy '-' HH:mm:ss a");
     await sendunBonus(
+      user?.language,
       user?.email,
       user?.name,
       formatteunbonus,

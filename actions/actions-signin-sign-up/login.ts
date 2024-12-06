@@ -178,7 +178,7 @@ export const login = async (
         let resendCount = existingUser.resendUnBanUser || 0;
         if (resendCount < 2) {
           // Nếu giá trị nhỏ hơn 2, tăng lên 1
-          await sendUnBanUser(unbanUser.email, unbanUser.name);
+          await sendUnBanUser(languageToUse, unbanUser.email, unbanUser.name);
           resendCount++; // Tăng giá trị lên 1
           // Cập nhật giá trị mới cho resendUnBanUser
           await prismadb.user.update({
@@ -196,6 +196,7 @@ export const login = async (
         existingUser.email
       );
       await sendVerificationEmail(
+        languageToUse,
         verificationtoken.email,
         verificationtoken.token
       );
@@ -299,8 +300,9 @@ export const login = async (
             existingUser.email
           );
           await sendTwoFactorTokenEmail(
+            languageToUse,
             twoFactorToken.email,
-            twoFactorToken.token
+            twoFactorToken.token,
           );
           return { twoFactor: true };
         }

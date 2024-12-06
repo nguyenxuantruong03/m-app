@@ -282,6 +282,7 @@ export async function POST(
 
     if ((delayHours ?? 0) >= 1) {
       await sendAttendanceStart(
+        userId?.language,
         userId?.email,
         userId?.name,
         emailtimestart,
@@ -290,6 +291,7 @@ export async function POST(
       );
     } else {
       await sendAttendanceStart(
+        userId?.language,
         userId?.email,
         userId?.name,
         emailtimestart,

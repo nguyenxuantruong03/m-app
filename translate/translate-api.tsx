@@ -9436,7 +9436,7 @@ export const translateResetPasswordMessage = (
   language: string,
   email: string,
   restLink: string,
-  resendTokenNewpassword: number | undefined
+  resendTokenNewpassword: number | 0
 ): { subject: string; html: string } => {
   switch (language) {
     case "vi": // Vietnamese
@@ -9477,7 +9477,7 @@ export const translateConfirmEmailMessage = (
   language: string, 
   email: string, 
   confirmLink: string, 
-  resendTokenVerifyCount: number | undefined
+  resendTokenVerifyCount: number | 0
 ): { subject: string, html: string } => {
   switch(language) {
     case 'vi': // Vietnamese
@@ -9759,7 +9759,7 @@ export const translateAttendanceStartMessage = (
   nameuser: string | null | undefined, 
   start: string | null, 
   end: string | null, 
-  delayHours: number | undefined
+  delayHours: number | 0
 ): { subject: string, html: string } => {
   let penaltyMessage = "";
   

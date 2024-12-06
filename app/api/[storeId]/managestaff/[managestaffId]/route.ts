@@ -155,7 +155,7 @@ export async function DELETE(
       ? format(response.createdAt, "dd/MM/yyyy '-' HH:mm:ss a")
       : "";
 
-    await sendDismissal(managestaff.email, managestaff.name, dateonow);
+    await sendDismissal(managestaff.language, managestaff.email, managestaff.name, dateonow);
 
     return NextResponse.json(managestaff);
   } catch (error) {

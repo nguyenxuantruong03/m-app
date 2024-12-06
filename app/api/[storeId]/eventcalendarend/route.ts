@@ -235,7 +235,7 @@ export async function POST(
           { locale: viLocale }
         )
       : null;
-    await sendAttendanceEnd(user?.email, user?.name, emailTimeStart);
+    await sendAttendanceEnd(user?.language, user?.email, user?.name, emailTimeStart);
 
     //Đây là khi check với totle ✅ là đc cộng lương nhưng tôi đã làm ở bên camera và nfc
     // const eventcalendar = await prismadb.eventCalendar.findUnique({

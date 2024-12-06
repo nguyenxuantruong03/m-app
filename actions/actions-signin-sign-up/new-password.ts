@@ -142,12 +142,13 @@ export const newPassword = async (
     const newToken = await generatePasswordResetToken(existingToken.email);
     if (resendTokenResetPasswordCount >= 3) {
       await sendPasswordResetEmail(
+        languageToUse,
         existingToken.email,
         newToken.token,
         resendTokenResetPasswordCount
       );
     } else {
-      await sendPasswordResetEmail(existingToken.email, newToken.token);
+      await sendPasswordResetEmail(languageToUse,existingToken.email, newToken.token);
     }
     return {
       error: tokenExpiredMessage,

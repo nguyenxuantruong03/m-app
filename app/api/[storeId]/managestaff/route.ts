@@ -108,7 +108,7 @@ export async function PATCH(
     if (sentVeirifi) {
       // Check if the user has a valid email before sending the email
       if (user && user.email) {
-        await sendVerifyAccountisCitizen(user.email);
+        await sendVerifyAccountisCitizen(user?.language, user.email);
         userEmail = user.email; // Save the user's email
       }
     }
@@ -167,7 +167,7 @@ export async function POST(
       // Check if sentVeirifi is false
       if (!user.sentVeirifi) {
         // Send verification email
-        await sendVerifyAccountisCitizen(user.email);
+        await sendVerifyAccountisCitizen(user?.language || "vi", user.email);
         // Update sentVeirifi to true
         await prismadb.user.update({
           where: { id: user.id },

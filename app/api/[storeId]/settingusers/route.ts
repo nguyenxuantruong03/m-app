@@ -133,11 +133,11 @@ export async function PATCH(
     });
 
     if (roleupdate.role === UserRole.SHIPPER) {
-      await sendVerifyAccountisCitizenShipper(roleupdate.email);
+      await sendVerifyAccountisCitizenShipper(roleupdate.language ,roleupdate.email);
     }
 
     if (roleupdate.role === UserRole.MARKETING) {
-      await sendVerifyAccountisCitizenMaketing(roleupdate.email);
+      await sendVerifyAccountisCitizenMaketing(roleupdate.language, roleupdate.email);
     }
 
     // Danh sách các trường cần loại bỏ
@@ -295,7 +295,7 @@ export async function DELETE(
       ? format(banforeverUser.createdAt, "dd/MM/yyyy '-' HH:mm:ss a")
       : "";
 
-    await sendDeleteUser(existingUser?.email, existingUser?.name, createdAt);
+    await sendDeleteUser(existingUser?.language, existingUser?.email, existingUser?.name, createdAt);
 
     return NextResponse.json(banforeverUser);
   } catch (error) {
@@ -420,6 +420,7 @@ export async function POST(
       : "";
 
     await sendBanUser(
+      banuser.language,
       banuser.email,
       banuser.name,
       dateonow,

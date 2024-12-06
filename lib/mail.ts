@@ -5,7 +5,6 @@ import enLocale from "date-fns/locale/en-US";
 import zhLocale from "date-fns/locale/zh-CN";
 import frLocale from "date-fns/locale/fr";
 import jaLocale from "date-fns/locale/ja";
-import { currentUser } from "@/lib/auth";
 import {
   get2FAMessage,
   translateAttendanceEndMessage,
@@ -31,10 +30,9 @@ import {
 const resend = new Resend(process.env.RESEND_EMAIL_API_KEY);
 const domain = process.env.NEXT_PUBLIC_URL;
 
-export const sendTwoFactorTokenEmail = async (email: string, token: string) => {
-  const user = await currentUser();
+export const sendTwoFactorTokenEmail = async (languageToUse: string | undefined, email: string, token: string) => {
   // Lấy thông điệp xác thực 2 yếu tố theo ngôn ngữ
-  const message = get2FAMessage(user?.language || "vi", email, token, domain);
+  const message = get2FAMessage(languageToUse || "vi", email, token, domain);
   await resend.emails.send({
     from: "mail@vlxdxuantruong.email",
     to: email,
@@ -44,17 +42,17 @@ export const sendTwoFactorTokenEmail = async (email: string, token: string) => {
 };
 
 export const sendPasswordResetEmail = async (
+  languageToUse: string | undefined,
   email: string,
   token: string,
   resendTokenNewpassword?: number
 ) => {
-  const user = await currentUser();
   const restLink = `${domain}/auth/new-password?token=${token}`;
   const message = translateResetPasswordMessage(
-    user?.language || "vi",
+    languageToUse || "vi",
     email,
     restLink,
-    resendTokenNewpassword
+    resendTokenNewpassword || 0
   );
 
   await resend.emails.send({
@@ -66,17 +64,17 @@ export const sendPasswordResetEmail = async (
 };
 
 export const sendVerificationEmail = async (
+  languageToUse: string | undefined,
   email: string,
   token: string,
   resendTokenVerifyCount?: number
 ) => {
-  const user = await currentUser();
   const confirmLink = `${domain}/auth/new-verification?token=${token}`;
   const message = translateConfirmEmailMessage(
-    user?.language || "vi",
+    languageToUse || "vi",
     email,
     confirmLink,
-    resendTokenVerifyCount
+    resendTokenVerifyCount || 0
   );
 
   await resend.emails.send({
@@ -87,11 +85,10 @@ export const sendVerificationEmail = async (
   });
 };
 
-export const sendVerifyAccountisCitizen = async (email: string | null = "") => {
-  const user = await currentUser();
+export const sendVerifyAccountisCitizen = async (languageToUse: string | undefined, email: string | null = "") => {
   const toEmail = email ? [email] : [];
   const message = translateVerifyEmailCitizenMessage(
-    user?.language || "vi",
+    languageToUse || "vi",
     email,
     domain
   );
@@ -105,12 +102,11 @@ export const sendVerifyAccountisCitizen = async (email: string | null = "") => {
 };
 
 export const sendVerifyAccountisCitizenShipper = async (
-  email: string | null = ""
+  languageToUse:string, email: string | null = ""
 ) => {
-  const user = await currentUser();
   const toEmail = email ? [email] : [];
   const message = translateVerifyEmailCitizenShipperMessage(
-    user?.language || "vi",
+    languageToUse,
     email,
     domain
   );
@@ -124,12 +120,11 @@ export const sendVerifyAccountisCitizenShipper = async (
 };
 
 export const sendVerifyAccountisCitizenMaketing = async (
-  email: string | null = ""
+  languageToUse:string, email: string | null = ""
 ) => {
-  const user = await currentUser();
   const toEmail = email ? [email] : [];
   const message = translateVerifyEmailCitizenMarketingMessage(
-    user?.language || "vi",
+    languageToUse,
     email,
     domain
   );
@@ -143,15 +138,15 @@ export const sendVerifyAccountisCitizenMaketing = async (
 };
 
 export const sendBanUser = async (
+  languageToUse:string,
   email: string | null | undefined,
   nameuser: string | null | undefined,
   start: string | null,
   end: string | null,
   descriptionBan: string
 ) => {
-  const user = await currentUser();
   const message = translateBanMessage(
-    user?.language || "vi",
+    languageToUse,
     nameuser,
     start,
     end,
@@ -169,13 +164,13 @@ export const sendBanUser = async (
 };
 
 export const sendBanUserNotStart = async (
+  languageToUse:string,
   email: string | null | undefined,
   nameuser: string | null | undefined,
   end: string | null
 ) => {
-  const user = await currentUser();
   const message = translateBanNotStartMessage(
-    user?.language || "vi",
+    languageToUse,
     nameuser,
     end
   );
@@ -191,11 +186,11 @@ export const sendBanUserNotStart = async (
 };
 
 export const sendUnBanUser = async (
+  languageToUse:string | undefined,
   email: string | null | undefined,
   nameuser: string | null | undefined
 ) => {
-  const user = await currentUser();
-  const message = translateUnbanMessage(user?.language || "vi", nameuser);
+  const message = translateUnbanMessage(languageToUse || "vi", nameuser);
 
   if (email) {
     await resend.emails.send({
@@ -228,19 +223,19 @@ export const sendSpamEmail = async (
 };
 
 export const sendAttendanceStart = async (
+  languageToUse:string,
   email: string | null | undefined,
   nameuser: string | null | undefined,
   start: string | null,
   end: string | null,
   delayHours?: number | undefined
 ) => {
-  const user = await currentUser();
   const message = translateAttendanceStartMessage(
-    user?.language || "vi",
+    languageToUse,
     nameuser,
     start,
     end,
-    delayHours
+    delayHours || 0
   );
 
   if (email) {
@@ -254,13 +249,13 @@ export const sendAttendanceStart = async (
 };
 
 export const sendAttendanceEnd = async (
+  languageToUse:string,
   email: string | null | undefined,
   nameuser: string | null | undefined,
   end: string | null
 ) => {
-  const user = await currentUser();
   const message = translateAttendanceEndMessage(
-    user?.language || "vi",
+    languageToUse,
     nameuser,
     end
   );
@@ -276,14 +271,14 @@ export const sendAttendanceEnd = async (
 };
 
 export const sendSalarytotal = async (
+  languageToUse:string,
   email: string | null | undefined,
   name: string | null | undefined,
   totalsalary: string | "0",
   today: string | null | undefined
 ) => {
-  const user = await currentUser();
   const message = translateSalaryTotalMessage(
-    user?.language || "vi",
+    languageToUse,
     name,
     totalsalary,
     today
@@ -300,6 +295,7 @@ export const sendSalarytotal = async (
 };
 
 export const sendBonus = async (
+  languageToUse:string,
   email: string | null | undefined,
   name: string | null | undefined,
   bonus: string | "0",
@@ -307,9 +303,8 @@ export const sendBonus = async (
   title: string | null | undefined,
   today: string | null | undefined
 ) => {
-  const user = await currentUser();
   const message = translateBonusMessage(
-    user?.language || "vi",
+    languageToUse,
     name,
     bonus,
     currenmoney,
@@ -327,6 +322,7 @@ export const sendBonus = async (
 };
 
 export const sendunBonus = async (
+  languageToUse:string,
   email: string | null | undefined,
   name: string | null | undefined,
   unbonus: string | "0",
@@ -334,9 +330,8 @@ export const sendunBonus = async (
   title: string | null | undefined,
   today: string | null | undefined
 ) => {
-  const user = await currentUser();
   const message = translateUnBonusMessage(
-    user?.language || "vi",
+    languageToUse,
     name,
     unbonus,
     currenmoney,
@@ -355,6 +350,7 @@ export const sendunBonus = async (
 };
 
 export const sendSpin = async (
+  languageToUse:string | undefined,
   email: string | null | undefined,
   name: string | null | undefined,
   bonus: string | "0",
@@ -364,9 +360,8 @@ export const sendSpin = async (
   title: string | null | undefined,
   today: string | null | undefined
 ) => {
-  const user = await currentUser();
   const message = translateSpinRewardMessage(
-    user?.language || "vi",
+    languageToUse || "vi",
     name,
     bonus,
     currenmoney,
@@ -387,6 +382,7 @@ export const sendSpin = async (
 };
 
 export const sendUnSpin = async (
+  languageToUse:string | undefined,
   email: string | null | undefined,
   name: string | null | undefined,
   unbonus: string | "0",
@@ -396,9 +392,8 @@ export const sendUnSpin = async (
   title: string | null | undefined,
   today: string | null | undefined
 ) => {
-  const user = await currentUser();
   const message = translateSpinUnRewardMessage(
-    user?.language || "vi",
+    languageToUse || "vi",
     name,
     unbonus,
     currenmoney,
@@ -418,13 +413,13 @@ export const sendUnSpin = async (
 };
 
 export const sendDismissal = async (
+  languageToUse:string | undefined,
   email: string | null | undefined,
   name: string | null | undefined,
   today: string
 ) => {
-  const user = await currentUser();
   const message = translateDismissalMessage(
-    user?.language || "vi",
+    languageToUse || "vi",
     name,
     today
   );
@@ -440,13 +435,13 @@ export const sendDismissal = async (
 };
 
 export const sendDeleteUser = async (
+  languageToUse:string | undefined,
   email: string | null | undefined,
   name: string | null | undefined,
   today: string
 ) => {
-  const user = await currentUser();
   const message = translateDeleteUserMessage(
-    user?.language || "vi",
+    languageToUse || "vi",
     name,
     today
   );
@@ -461,9 +456,9 @@ export const sendDeleteUser = async (
 };
 
 export const sendDeliverySuccess = async (
+  languageToUse: string | undefined,
   email: string,
   order: any,
-  languageToUse: string
 ) => {
   const localeMap: Record<string, Locale> = {
     vi: viLocale,
@@ -473,7 +468,7 @@ export const sendDeliverySuccess = async (
     ja: jaLocale,
   };
 
-  const locale = localeMap[languageToUse] || enLocale;
+  const locale = localeMap[languageToUse || "vi"] || enLocale;
   if (email) {
     // Định dạng ngày giao hàng
     const formattedDate = format(new Date(order.updatedAt), "dd/MM/yyyy", {
@@ -481,9 +476,9 @@ export const sendDeliverySuccess = async (
     });
 
     const message = translateDeliverySuccessMessage(
-      languageToUse,
+      languageToUse || "vi",
       order,
-      languageToUse
+      formattedDate
     );
 
     await resend.emails.send({

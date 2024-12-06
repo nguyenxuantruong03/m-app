@@ -68,7 +68,7 @@ export async function PATCH(req: Request) {
       }
     });
 
-    await sendDeliverySuccess(order?.user?.email || "",order,LanguageToUse)
+    await sendDeliverySuccess(order?.user?.language, order?.user?.email || "",order)
 
     return NextResponse.json(order);
   } catch (error) {

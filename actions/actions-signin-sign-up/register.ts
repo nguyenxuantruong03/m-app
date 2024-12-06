@@ -110,7 +110,7 @@ export const register = async (
 
   //Send verification token email
   const verificationToken = await generateVerificationToken(email);
-  await sendVerificationEmail(verificationToken.email, verificationToken.token);
+  await sendVerificationEmail(languageToUse, verificationToken.email, verificationToken.token);
 
   // Clearing values for privacy before returning success message
   const sanitizedValues = { name: "", email: "", password: "" };

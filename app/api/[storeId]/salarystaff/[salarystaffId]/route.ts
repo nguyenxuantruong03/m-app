@@ -102,6 +102,7 @@ export async function PATCH(
     const today = new Date();
     const formattedDate = format(today, "E '-' dd/MM/yyyy '-' HH:mm:ss a");
     await sendSalarytotal(
+      user?.language,
       user?.email,
       user?.name,
       formattersalary,

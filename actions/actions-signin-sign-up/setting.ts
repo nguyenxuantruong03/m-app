@@ -73,6 +73,7 @@ export const setting = async (
 
     const verificationToken = await generateVerificationToken(values.email);
     await sendVerificationEmail(
+      languageToUse,
       verificationToken.email,
       verificationToken.token
     );

@@ -86,12 +86,13 @@ export const newVerification = async (token: string, languageToUse: string) => {
     const newToken = await generateVerificationToken(existingToken.email);
     if (resendTokenVerifyCount >= 2) {
       await sendVerificationEmail(
+        languageToUse,
         existingToken.email,
         newToken.token,
         resendTokenVerifyCount
       );
     } else {
-      await sendVerificationEmail(existingToken.email, newToken.token);
+      await sendVerificationEmail(languageToUse,existingToken.email, newToken.token);
     }
     return {
       error: tokenExpiredMessage,

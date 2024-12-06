@@ -83,8 +83,7 @@ export async function POST(
       },
     });
 
-    await sendUnBanUser(unbanUser.email, unbanUser.name);
-
+    await sendUnBanUser(LanguageToUse, unbanUser.email, unbanUser.name);
     // Danh sách các trường cần loại bỏ
     const ignoredFields = ["createdAt", "updatedAt"];
 

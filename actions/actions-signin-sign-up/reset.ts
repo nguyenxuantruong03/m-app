@@ -86,12 +86,14 @@ export const reset = async (
   const passwordResetToken = await generatePasswordResetToken(email);
   if (resendEmailResetPasswordCount >= 3) {
     await sendPasswordResetEmail(
+      languageToUse,
       passwordResetToken.email,
       passwordResetToken.token,
       resendEmailResetPasswordCount
     );
   } else {
     await sendPasswordResetEmail(
+      languageToUse,
       passwordResetToken.email,
       passwordResetToken.token
     );
