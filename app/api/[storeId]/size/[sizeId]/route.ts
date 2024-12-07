@@ -3,7 +3,11 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
-import { translateSizeIdDelete, translateSizeIdGet, translateSizeIdPatch } from "@/translate/translate-api";
+import {
+  translateSizeIdDelete,
+  translateSizeIdGet,
+  translateSizeIdPatch,
+} from "@/translate/translate-api";
 
 type SizeValue = string | Date | undefined;
 
@@ -19,7 +23,7 @@ export async function GET(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const sizeIdGetMessgae = translateSizeIdGet(LanguageToUse)
+  const sizeIdGetMessgae = translateSizeIdGet(LanguageToUse);
   try {
     if (!params.sizeId) {
       return new NextResponse(
@@ -64,7 +68,7 @@ export async function DELETE(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const sizeIdDeleteMessage = translateSizeIdDelete(LanguageToUse)
+  const sizeIdDeleteMessage = translateSizeIdDelete(LanguageToUse);
   try {
     if (!user) {
       return new NextResponse(
@@ -140,14 +144,14 @@ export async function PATCH(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const sizeIdPatchMessage = translateSizeIdPatch(LanguageToUse)
+  const sizeIdPatchMessage = translateSizeIdPatch(LanguageToUse);
   try {
     const body = await req.json();
     const { name, value } = body;
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error:  sizeIdPatchMessage.userIdNotFound }),
+        JSON.stringify({ error: sizeIdPatchMessage.userIdNotFound }),
         { status: 403 }
       );
     }
@@ -160,15 +164,21 @@ export async function PATCH(
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: sizeIdPatchMessage.nameRequired }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: sizeIdPatchMessage.nameRequired }),
+        {
+          status: 400,
+        }
+      );
     }
 
     if (!value) {
-      return new NextResponse(JSON.stringify({ error: sizeIdPatchMessage.valueRequired }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: sizeIdPatchMessage.valueRequired }),
+        {
+          status: 400,
+        }
+      );
     }
 
     if (!params.sizeId) {
@@ -196,6 +206,33 @@ export async function PATCH(
         id: params.sizeId,
       },
     });
+
+    if (!existingSize) {
+      return new NextResponse(
+        JSON.stringify({ error: sizeIdPatchMessage.sizeNotFound }),
+        { status: 404 }
+      );
+    }
+
+    // Kiểm tra tên mới có trùng với bất kỳ size nào khác trong cùng storeId không (ngoại trừ size hiện tại)
+    const duplicateSize = await prismadb.size.findFirst({
+      where: {
+        name: name,
+        storeId: params.storeId,
+        NOT: {
+          id: params.sizeId, // Loại bỏ size hiện tại khỏi kiểm tra
+        },
+      },
+    });
+
+    if (duplicateSize) {
+      return new NextResponse(
+        JSON.stringify({
+          error: sizeIdPatchMessage.sizeAlreadyExists,
+        }),
+        { status: 400 }
+      );
+    }
 
     const size = await prismadb.size.update({
       where: {

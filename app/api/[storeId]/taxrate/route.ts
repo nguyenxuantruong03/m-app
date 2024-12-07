@@ -5,7 +5,11 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { TaxType, UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
-import { translateTaxRateDelete, translateTaxRateGet, translateTaxRatePost } from "@/translate/translate-api";
+import {
+  translateTaxRateDelete,
+  translateTaxRateGet,
+  translateTaxRatePost,
+} from "@/translate/translate-api";
 
 export async function POST(
   req: Request,
@@ -40,7 +44,7 @@ export async function POST(
       );
     }
 
-    if ( !percentage) {
+    if (!percentage) {
       return new NextResponse(
         JSON.stringify({ error: taxRatePostMessage.percentageRequired }),
         { status: 400 }
@@ -66,7 +70,24 @@ export async function POST(
         { status: 405 }
       );
     }
-    
+
+    // Kiểm tra xem tên taxRate có trùng với bất kỳ bản ghi nào trong store này không
+    const duplicateTaxRate = await prismadb.taxRate.findFirst({
+      where: {
+        name: name,
+        storeId: params.storeId,
+      },
+    });
+
+    if (duplicateTaxRate) {
+      return new NextResponse(
+        JSON.stringify({
+          error: taxRatePostMessage.taxrateAlreadyExists,
+        }),
+        { status: 400 }
+      );
+    }
+
     // Tạo coupon bằng Stripe
     const taxRate = await stripe.taxRates.create({
       display_name: name,
@@ -208,7 +229,7 @@ export async function DELETE(
     });
 
     // Create an array of changes for logging
-    const changesArray = TaxRateToDelete.map(item => ({
+    const changesArray = TaxRateToDelete.map((item) => ({
       name: item.name,
       description: item.description,
       percentage: item.percentage,
@@ -230,7 +251,10 @@ export async function DELETE(
     await prismadb.system.create({
       data: {
         storeId: params.storeId,
-        delete: changesArray.map(change => `DeleteName: ${change.name}, DeleteDescription: ${change.description}, DeletePercentage: ${change.percentage}, DeleteInclusive: ${change.inclusive}, DeleteActive: ${change.active}, DeleteTaxtype: ${change.taxtype}, `),
+        delete: changesArray.map(
+          (change) =>
+            `DeleteName: ${change.name}, DeleteDescription: ${change.description}, DeletePercentage: ${change.percentage}, DeleteInclusive: ${change.inclusive}, DeleteActive: ${change.active}, DeleteTaxtype: ${change.taxtype}, `
+        ),
         type: "DELETEMANY-TAXRATE",
         user: user?.email || "",
       },

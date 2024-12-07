@@ -69,6 +69,21 @@ export async function POST(
       );
     }
 
+     // Kiểm tra xem có size nào với name giống name mới không
+     const existingSize = await prismadb.size.findFirst({
+      where: {
+        name: name,
+        storeId: params.storeId,
+      },
+    });
+
+    if (existingSize) {
+      return new NextResponse(
+        JSON.stringify({ error: sizePostMessage.sizeAlreadyExists }),
+        { status: 400 }
+      );
+    }
+
     const size = await prismadb.size.create({
       data: {
         name,

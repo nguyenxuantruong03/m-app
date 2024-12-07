@@ -253,6 +253,33 @@ export async function PATCH(
       },
     });
 
+    if (!existingShippingRates) {
+      return new NextResponse(
+        JSON.stringify({ error: shippingRateIdPatchMessage.shippingRateNotFound }),
+        { status: 404 }
+      );
+    }
+
+        // Kiểm tra xem có shipping rate nào khác với name trùng
+        const shippingRateWithSameName = await prismadb.shippingRates.findFirst({
+          where: {
+            name: name,
+            storeId: params.storeId,  // Chỉ tìm trong store hiện tại
+            NOT: {
+              id: params.shippingratesId,  // Loại bỏ bản ghi với id hiện tại
+            },
+          },
+        });
+    
+        if (shippingRateWithSameName) {
+          return new NextResponse(
+            JSON.stringify({
+              error: shippingRateIdPatchMessage.shippingRateAlreadyExists
+            }),
+            { status: 400 }
+          );
+        }
+
     // Cập nhật thông tin tương ứng trên Stripe
     await stripe.shippingRates.update(params.shippingratesId, {
       active: active,

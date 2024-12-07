@@ -507,6 +507,7 @@ export async function PATCH(
       );
     }
 
+     // Kiểm tra xem sản phẩm có tồn tại không
     const existingProduct = await prismadb.product.findUnique({
       where: {
         id: params.product11Id,
@@ -518,6 +519,33 @@ export async function PATCH(
         productdetail: true,
       },
     });
+
+    // Nếu sản phẩm không tồn tại, trả về lỗi 404
+    if (!existingProduct) {
+      return new NextResponse(JSON.stringify({ error: productIdPatchMessage.productNotFound }), {
+        status: 404,
+      });
+    }
+
+    // Kiểm tra nếu heading mới trùng với heading của sản phẩm khác trong cùng cửa hàng (ngoại trừ sản phẩm hiện tại)
+    const existingProductWithSameHeading = await prismadb.product.findFirst({
+      where: {
+        heading,
+        storeId: params.storeId,
+        NOT: {
+          id: params.product11Id, // Loại trừ sản phẩm hiện tại
+        },
+      },
+    });
+
+    if (existingProductWithSameHeading) {
+      return new NextResponse(
+        JSON.stringify({
+          error: productIdPatchMessage.headingExists,
+        }),
+        { status: 400 }
+      );
+    }
 
     await prismadb.product.update({
       where: {

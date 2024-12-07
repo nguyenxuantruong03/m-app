@@ -4,7 +4,11 @@ import prismadb from "@/lib/prismadb";
 import { CategoryType, UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
 import { translateText } from "@/translate/translate-client";
-import { translateCategoriesDelete, translateCategoriesGet, translateCategoriesPost } from "@/translate/translate-api";
+import {
+  translateCategoriesDelete,
+  translateCategoriesGet,
+  translateCategoriesPost,
+} from "@/translate/translate-api";
 
 export async function POST(
   req: Request,
@@ -14,7 +18,7 @@ export async function POST(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const categoriesPostMessage = translateCategoriesPost(LanguageToUse)
+  const categoriesPostMessage = translateCategoriesPost(LanguageToUse);
   try {
     const body = await req.json();
     const { name } = body;
@@ -34,9 +38,12 @@ export async function POST(
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: categoriesPostMessage.name3 }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: categoriesPostMessage.name3 }),
+        {
+          status: 400,
+        }
+      );
     }
 
     if (!params.storeId) {
@@ -56,6 +63,22 @@ export async function POST(
       return new NextResponse(
         JSON.stringify({ error: categoriesPostMessage.name5 }),
         { status: 405 }
+      );
+    }
+
+    // Kiểm tra xem có danh mục nào đã tồn tại với tên và categoryType giống nhau trong store không
+    const existingCategory = await prismadb.category.findFirst({
+      where: {
+        name,
+        categoryType,
+        storeId: params.storeId,
+      },
+    });
+
+    if (existingCategory) {
+      return new NextResponse(
+        JSON.stringify({ error: categoriesPostMessage.name7 }),
+        { status: 400 }
       );
     }
 
@@ -103,7 +126,7 @@ export async function GET(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const categoriesGetMessage = translateCategoriesGet(LanguageToUse)
+  const categoriesGetMessage = translateCategoriesGet(LanguageToUse);
 
   const categoryType = CategoryType.CATEGORY10;
 
@@ -157,7 +180,7 @@ export async function DELETE(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const categoriesDeleteMessage = translateCategoriesDelete(LanguageToUse)
+  const categoriesDeleteMessage = translateCategoriesDelete(LanguageToUse);
   try {
     const body = await req.json();
     const categoryType = CategoryType.CATEGORY10;

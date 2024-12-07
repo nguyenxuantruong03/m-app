@@ -241,6 +241,25 @@ export async function PATCH(
       );
     }
 
+    // Kiểm tra nếu có bản ghi khác với subject giống và id khác
+    const duplicateSubject = await prismadb.sentEmailUser.findFirst({
+      where: {
+        subject: subject,
+        id: {
+          not: params.sentmailuserId, // Loại trừ id hiện tại
+        },
+      },
+    });
+
+    if (duplicateSubject) {
+      return new NextResponse(
+        JSON.stringify({
+          error: sentEmailUserIdPatchMessage.subjectAlreadyExists,
+        }),
+        { status: 400 }
+      );
+    }
+
     const existingSentEmailUser = await prismadb.sentEmailUser.findUnique({
       where: {
         id: params.sentmailuserId,
@@ -249,6 +268,15 @@ export async function PATCH(
         user: true,
       },
     });
+
+    if (!existingSentEmailUser) {
+      return new NextResponse(
+        JSON.stringify({
+          error: sentEmailUserIdPatchMessage.sentEmailUserNotFound,
+        }),
+        { status: 404 }
+      );
+    }
 
     const sentEmailUser = await prismadb.sentEmailUser.update({
       where: {

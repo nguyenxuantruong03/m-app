@@ -420,7 +420,7 @@ export async function PATCH(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const productIdPatchMessage = translateProductIdPatch(LanguageToUse)
+  const productIdPatchMessage = translateProductIdPatch(LanguageToUse);
   try {
     const productType = ProductType.PRODUCT;
     const body = await req.json();
@@ -438,7 +438,7 @@ export async function PATCH(
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error:productIdPatchMessage.userIdNotFound}),
+        JSON.stringify({ error: productIdPatchMessage.userIdNotFound }),
         { status: 403 }
       );
     }
@@ -451,9 +451,12 @@ export async function PATCH(
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: productIdPatchMessage.nameRequired }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: productIdPatchMessage.nameRequired }),
+        {
+          status: 400,
+        }
+      );
     }
     if (!heading) {
       return new NextResponse(
@@ -481,7 +484,9 @@ export async function PATCH(
     }
     if (!imagesalientfeatures || !imagesalientfeatures.length) {
       return new NextResponse(
-        JSON.stringify({ error: productIdPatchMessage.imagesAlientFeaturesRequired }),
+        JSON.stringify({
+          error: productIdPatchMessage.imagesAlientFeaturesRequired,
+        }),
         { status: 400 }
       );
     }
@@ -505,6 +510,7 @@ export async function PATCH(
       );
     }
 
+    // Kiểm tra xem sản phẩm có tồn tại không
     const existingProduct = await prismadb.product.findUnique({
       where: {
         id: params.productId,
@@ -517,6 +523,33 @@ export async function PATCH(
       },
     });
 
+    // Nếu sản phẩm không tồn tại, trả về lỗi 404
+    if (!existingProduct) {
+      return new NextResponse(JSON.stringify({ error: productIdPatchMessage.productNotFound }), {
+        status: 404,
+      });
+    }
+
+    // Kiểm tra nếu heading mới trùng với heading của sản phẩm khác trong cùng cửa hàng (ngoại trừ sản phẩm hiện tại)
+    const existingProductWithSameHeading = await prismadb.product.findFirst({
+      where: {
+        heading,
+        storeId: params.storeId,
+        NOT: {
+          id: params.productId, // Loại trừ sản phẩm hiện tại
+        },
+      },
+    });
+
+    if (existingProductWithSameHeading) {
+      return new NextResponse(
+        JSON.stringify({
+          error: productIdPatchMessage.headingExists,
+        }),
+        { status: 400 }
+      );
+    }
+    
     await prismadb.product.update({
       where: {
         id: params.productId,

@@ -59,6 +59,22 @@ export async function POST(
       );
     }
 
+    // Kiểm tra xem có danh mục nào đã tồn tại với tên và categoryType giống nhau trong store không
+    const existingCategory = await prismadb.category.findFirst({
+      where: {
+        name,
+        categoryType,
+        storeId: params.storeId,
+      },
+    });
+
+    if (existingCategory) {
+      return new NextResponse(
+        JSON.stringify({ error: categoriesPostMessage.name7 }),
+        { status: 400 }
+      );
+    }
+
     const category = await prismadb.category.create({
       data: {
         name,

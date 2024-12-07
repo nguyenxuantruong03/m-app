@@ -3,7 +3,11 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
-import { translateColorIdDelete, translateColorIdGet, translateColorPatch } from "@/translate/translate-api";
+import {
+  translateColorIdDelete,
+  translateColorIdGet,
+  translateColorPatch,
+} from "@/translate/translate-api";
 
 type ColorValue = string | Date | undefined;
 
@@ -19,7 +23,7 @@ export async function GET(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const colorIdGetMessage = translateColorIdGet(LanguageToUse)
+  const colorIdGetMessage = translateColorIdGet(LanguageToUse);
 
   try {
     if (!params.colorId) {
@@ -164,15 +168,21 @@ export async function PATCH(
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: colorPatchMessage.nameRequired }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: colorPatchMessage.nameRequired }),
+        {
+          status: 400,
+        }
+      );
     }
 
     if (!value) {
-      return new NextResponse(JSON.stringify({ error: colorPatchMessage.colorRequired }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: colorPatchMessage.colorRequired }),
+        {
+          status: 400,
+        }
+      );
     }
 
     if (!params.colorId) {
@@ -195,11 +205,34 @@ export async function PATCH(
       );
     }
 
+    // Kiểm tra nếu có màu khác với tên trùng tên mới nhưng id khác
+    const existingColorWithSameName = await prismadb.color.findFirst({
+      where: {
+        name,
+        storeId: params.storeId,
+        NOT: { id: params.colorId }, // Loại trừ màu với id hiện tại
+      },
+    });
+
+    if (existingColorWithSameName) {
+      return new NextResponse(
+        JSON.stringify({ error: colorPatchMessage.colorExists }),
+        { status: 400 }
+      );
+    }
+
     const existingColor = await prismadb.color.findUnique({
       where: {
         id: params.colorId,
       },
     });
+
+    // Kiểm tra nếu không tìm thấy color
+    if (!existingColor) {
+      return new NextResponse(JSON.stringify({ error: colorPatchMessage.colorNotFound }), {
+        status: 404,
+      });
+    }
 
     const color = await prismadb.color.update({
       where: {
@@ -217,10 +250,7 @@ export async function PATCH(
     // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
     const changes: Record<string, ChangeRecord> = {};
     for (const key in existingColor) {
-      if (
-        existingColor.hasOwnProperty(key) &&
-        color.hasOwnProperty(key)
-      ) {
+      if (existingColor.hasOwnProperty(key) && color.hasOwnProperty(key)) {
         if (
           existingColor[key as keyof typeof existingColor] !==
           color[key as keyof typeof color]

@@ -4,7 +4,11 @@ import prismadb from "@/lib/prismadb";
 import { currentUser } from "@/lib/auth";
 import { ImageBillboard, UserRole } from "@prisma/client";
 import { translateText } from "@/translate/translate-client";
-import { translateBillboardIdDelete, translateBillboardIdGet, translateBillboardIdPatch } from "@/translate/translate-api";
+import {
+  translateBillboardIdDelete,
+  translateBillboardIdGet,
+  translateBillboardIdPatch,
+} from "@/translate/translate-api";
 
 // Update the BillboardValue type to include the new types
 type BillboardValue =
@@ -29,7 +33,7 @@ export async function GET(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const billboardIdGetMessage = translateBillboardIdGet(LanguageToUse)
+  const billboardIdGetMessage = translateBillboardIdGet(LanguageToUse);
 
   try {
     const { searchParams } = new URL(req.url);
@@ -111,7 +115,7 @@ export async function DELETE(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const billboardIdDeleteMessage = translateBillboardIdDelete(LanguageToUse)
+  const billboardIdDeleteMessage = translateBillboardIdDelete(LanguageToUse);
 
   try {
     if (!user) {
@@ -201,7 +205,7 @@ export async function PATCH(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const billboardIdPatchMessage = translateBillboardIdPatch(LanguageToUse)
+  const billboardIdPatchMessage = translateBillboardIdPatch(LanguageToUse);
 
   try {
     const body = await req.json();
@@ -222,9 +226,12 @@ export async function PATCH(
     }
 
     if (!label) {
-      return new NextResponse(JSON.stringify({ error: billboardIdPatchMessage.name3 }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: billboardIdPatchMessage.name3 }),
+        {
+          status: 400,
+        }
+      );
     }
 
     if (!description) {
@@ -271,6 +278,32 @@ export async function PATCH(
         imagebillboard: true,
       },
     });
+
+    // Kiểm tra nếu không tìm thấy billboard
+    if (!existingBillboard) {
+      return new NextResponse(
+        JSON.stringify({ error: billboardIdPatchMessage.name9 }),
+        { status: 404 }
+      );
+    }
+
+    // Kiểm tra trùng lặp label
+    const labelExists = await prismadb.billboard.findFirst({
+      where: {
+        storeId: params.storeId,
+        label: label,
+        NOT: {
+          id: params.billboardId, // Loại trừ billboard hiện tại
+        },
+      },
+    });
+
+    if (labelExists) {
+      return new NextResponse(
+        JSON.stringify({ error: billboardIdPatchMessage.name10 }),
+        { status: 400 }
+      );
+    }
 
     const existingImages = existingBillboard?.imagebillboard || [];
 

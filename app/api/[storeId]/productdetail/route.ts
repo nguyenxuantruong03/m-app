@@ -278,6 +278,21 @@ export async function POST(
       );
     }
 
+    const existingProductDetail = await prismadb.productDetail.findFirst({
+      where: {
+        title: title,
+        storeId: params.storeId, // Kiểm tra trong cùng store nếu cần
+      },
+    });
+    
+    // Nếu title đã tồn tại, trả về lỗi
+    if (existingProductDetail) {
+      return new NextResponse(
+        JSON.stringify({ error: productDetailPostMessage.titleExists }),
+        { status: 400 }
+      );
+    }
+
     const productDetail = await prismadb.productDetail.create({
       data: {
         title,

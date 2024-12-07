@@ -10,6 +10,7 @@ export const translateBillboardPost = (language: string) => {
         name6: "Store id là bắt buộc!",
         name7: "Không tìm thấy store id!",
         name8: "Lỗi hệ thống khi đăng billboard.",
+        name9: "Label đã tồn tại!",
       };
     case "en":
       return {
@@ -21,6 +22,7 @@ export const translateBillboardPost = (language: string) => {
         name6: "Store ID is required!",
         name7: "Store ID not found!",
         name8: "Internal error while posting the billboard.",
+        name9: "Label already exists!",
       };
     case "zh":
       return {
@@ -32,18 +34,19 @@ export const translateBillboardPost = (language: string) => {
         name6: "商店ID是必填项！",
         name7: "未找到商店ID！",
         name8: "发布广告牌时发生内部错误。",
+        name9: "标签已存在！",
       };
     case "fr":
       return {
         name1: "ID utilisateur introuvable !",
-        name2:
-          "Vous n'avez pas l'autorisation de créer un panneau d'affichage !",
+        name2: "Vous n'avez pas l'autorisation de créer un panneau d'affichage !",
         name3: "L'étiquette est requise !",
         name4: "La description est requise !",
         name5: "Les images du panneau d'affichage sont requises !",
         name6: "L'ID du magasin est requis !",
         name7: "ID du magasin introuvable !",
         name8: "Erreur interne lors de la publication du panneau d'affichage.",
+        name9: "L'étiquette existe déjà !",
       };
     case "ja":
       return {
@@ -55,6 +58,7 @@ export const translateBillboardPost = (language: string) => {
         name6: "店舗IDは必須です！",
         name7: "店舗IDが見つかりません！",
         name8: "広告板の投稿中に内部エラーが発生しました。",
+        name9: "ラベルはすでに存在します！",
       };
     default:
       return {
@@ -66,9 +70,11 @@ export const translateBillboardPost = (language: string) => {
         name6: "Store ID is required!",
         name7: "Store ID not found!",
         name8: "Internal error while posting the billboard.",
+        name9: "Label already exists!",
       };
   }
 };
+
 
 export const translatebillboardGet = (language: string) => {
   switch (language) {
@@ -273,6 +279,8 @@ export const translateBillboardIdPatch = (language: string) => {
         name6: "Billboard id là bắt buộc!",
         name7: "Không tìm thấy store id!",
         name8: "Lỗi hệ thống khi cập nhật billboard.",
+        name9: "Không tìm thấy billboard!",
+        name10: "Label đã tồn tại trong billboard này!",
       };
     case "en":
       return {
@@ -284,6 +292,8 @@ export const translateBillboardIdPatch = (language: string) => {
         name6: "Billboard id is required!",
         name7: "Store id not found!",
         name8: "Internal error patch billboard.",
+        name9: "Billboard not found!",
+        name10: "Label already exists in this billboard.",
       };
     case "zh":
       return {
@@ -295,18 +305,21 @@ export const translateBillboardIdPatch = (language: string) => {
         name6: "广告牌ID是必填项！",
         name7: "未找到商店ID！",
         name8: "更新广告牌时发生内部错误。",
+        name9: "未找到广告牌！",
+        name10: "标签已存在于此广告牌中！",
       };
     case "fr":
       return {
         name1: "ID utilisateur introuvable !",
-        name2:
-          "Vous n'avez pas l'autorisation de mettre à jour le panneau d'affichage !",
+        name2: "Vous n'avez pas l'autorisation de mettre à jour le panneau d'affichage !",
         name3: "L'étiquette est requise !",
         name4: "La description est requise !",
         name5: "Les images du panneau d'affichage sont requises !",
         name6: "L'ID du panneau d'affichage est requis !",
         name7: "ID du magasin introuvable !",
         name8: "Erreur interne lors de la mise à jour du panneau d'affichage.",
+        name9: "Panneau d'affichage introuvable !",
+        name10: "L'étiquette existe déjà dans ce panneau d'affichage !",
       };
     case "ja":
       return {
@@ -318,6 +331,8 @@ export const translateBillboardIdPatch = (language: string) => {
         name6: "ビルボードIDは必須です！",
         name7: "店舗IDが見つかりません！",
         name8: "ビルボードの更新中に内部エラーが発生しました。",
+        name9: "ビルボードが見つかりません！",
+        name10: "このビルボードにはラベルがすでに存在します！",
       };
     default:
       return {
@@ -329,6 +344,8 @@ export const translateBillboardIdPatch = (language: string) => {
         name6: "Billboard id is required!",
         name7: "Store id not found!",
         name8: "Internal error patch billboard.",
+        name9: "Billboard not found!",
+        name10: "Label already exists in this billboard.",
       };
   }
 };
@@ -343,6 +360,7 @@ export const translateCategoriesPost = (language: string) => {
         name4: "Store id là bắt buộc!",
         name5: "Không tìm thấy store id!",
         name6: "Lỗi hệ thống khi tạo mới categories",
+        name7: "Tên category đã tồn tại!",
       };
     case "en":
       return {
@@ -352,6 +370,7 @@ export const translateCategoriesPost = (language: string) => {
         name4: "Store id is required!",
         name5: "Store id not found!",
         name6: "Internal error post categories",
+        name7: "Category name already exists!",
       };
     case "zh":
       return {
@@ -361,6 +380,7 @@ export const translateCategoriesPost = (language: string) => {
         name4: "商店ID是必填项！",
         name5: "未找到商店ID！",
         name6: "创建类别时发生内部错误",
+        name7: "类别名称已存在！",
       };
     case "fr":
       return {
@@ -370,6 +390,7 @@ export const translateCategoriesPost = (language: string) => {
         name4: "L'ID du magasin est requis !",
         name5: "ID du magasin introuvable !",
         name6: "Erreur interne lors de la création des catégories",
+        name7: "Le nom de la catégorie existe déjà !",
       };
     case "ja":
       return {
@@ -379,6 +400,7 @@ export const translateCategoriesPost = (language: string) => {
         name4: "店舗IDは必須です！",
         name5: "店舗IDが見つかりません！",
         name6: "カテゴリ作成中に内部エラーが発生しました",
+        name7: "カテゴリ名はすでに存在します！",
       };
     default:
       return {
@@ -388,9 +410,11 @@ export const translateCategoriesPost = (language: string) => {
         name4: "Store id is required!",
         name5: "Store id not found!",
         name6: "Internal error post categories",
+        name7: "Category name already exists!",
       };
   }
 };
+
 
 export const translateCategoriesGet = (language: string) => {
   switch (language) {
@@ -596,6 +620,8 @@ export const translateCategoriesIdPatch = (language: string) => {
         name4: "Category id là bắt buộc!",
         name5: "Không tìm thấy store id!",
         name6: "Lỗi hệ thống khi cập nhật categories",
+        name7: "Không tìm thấy category!",
+        name8: "Tên category đã tồn tại!",
       };
     case "en":
       return {
@@ -605,6 +631,8 @@ export const translateCategoriesIdPatch = (language: string) => {
         name4: "Category id is required!",
         name5: "Store id not found!",
         name6: "Internal error patch categories",
+        name7: "Category not found!",
+        name8: "Category name already exists!",
       };
     case "zh":
       return {
@@ -614,6 +642,8 @@ export const translateCategoriesIdPatch = (language: string) => {
         name4: "类别ID是必填项！",
         name5: "未找到商店ID！",
         name6: "更新类别时发生内部错误",
+        name7: "未找到类别！",
+        name8: "类别名称已存在！",
       };
     case "fr":
       return {
@@ -624,6 +654,8 @@ export const translateCategoriesIdPatch = (language: string) => {
         name4: "L'ID de la catégorie est requis !",
         name5: "ID du magasin introuvable !",
         name6: "Erreur interne lors de la mise à jour des catégories",
+        name7: "Catégorie introuvable !",
+        name8: "Le nom de la catégorie existe déjà !",
       };
     case "ja":
       return {
@@ -633,6 +665,8 @@ export const translateCategoriesIdPatch = (language: string) => {
         name4: "カテゴリIDは必須です！",
         name5: "店舗IDが見つかりません！",
         name6: "カテゴリの更新中に内部エラーが発生しました",
+        name7: "カテゴリが見つかりません！",
+        name8: "カテゴリ名はすでに存在します！",
       };
     default:
       return {
@@ -642,9 +676,12 @@ export const translateCategoriesIdPatch = (language: string) => {
         name4: "Category id is required!",
         name5: "Store id not found!",
         name6: "Internal error patch categories",
+        name7: "Category not found!",
+        name8: "Category name already exists!",
       };
   }
 };
+
 
 export const translateBarChart = (language: string) => {
   switch (language) {
@@ -1457,6 +1494,7 @@ export const translateColorPost = (language: string) => {
         storeIdRequired: "Store id is required!",
         storeIdNotFound: "Không tìm thấy store id!",
         internalError: "Internal error post color.",
+        colorExists: "Tên màu đã tồn tại!",
       };
     case "en":
       return {
@@ -1467,6 +1505,7 @@ export const translateColorPost = (language: string) => {
         storeIdRequired: "Store ID is required!",
         storeIdNotFound: "Store ID not found!",
         internalError: "Internal error while posting color.",
+        colorExists: "Color already exists!",
       };
     case "zh":
       return {
@@ -1477,6 +1516,7 @@ export const translateColorPost = (language: string) => {
         storeIdRequired: "商店ID是必填项！",
         storeIdNotFound: "未找到商店ID！",
         internalError: "发布颜色时发生内部错误。",
+        colorExists: "颜色已存在！",
       };
     case "fr":
       return {
@@ -1488,6 +1528,7 @@ export const translateColorPost = (language: string) => {
         storeIdRequired: "L'ID du magasin est requis !",
         storeIdNotFound: "ID du magasin introuvable !",
         internalError: "Erreur interne lors de la publication de la couleur.",
+        colorExists: "Le nom de la couleur existe déjà !",
       };
     case "ja":
       return {
@@ -1498,6 +1539,7 @@ export const translateColorPost = (language: string) => {
         storeIdRequired: "店舗IDは必須です！",
         storeIdNotFound: "店舗IDが見つかりません！",
         internalError: "色の投稿中に内部エラーが発生しました。",
+        colorExists: "色名は既に存在します！",
       };
     default:
       return {
@@ -1508,6 +1550,7 @@ export const translateColorPost = (language: string) => {
         storeIdRequired: "Store ID is required!",
         storeIdNotFound: "Store ID not found!",
         internalError: "Internal error while posting color.",
+        colorExists: "Color already exists!",
       };
   }
 };
@@ -1719,6 +1762,8 @@ export const translateColorPatch = (language: string) => {
         colorIdRequired: "Color id là bắt buộc!",
         storeIdNotFound: "Không tìm thấy store id!",
         internalError: "Lỗi hệ thống khi cập nhật color.",
+        colorExists: "Tên màu đã tồn tại!",
+        colorNotFound: "Không tìm thấy màu!",
       };
     case "en":
       return {
@@ -1729,6 +1774,8 @@ export const translateColorPatch = (language: string) => {
         colorIdRequired: "Color ID is required!",
         storeIdNotFound: "Store ID not found!",
         internalError: "Internal error while updating color.",
+        colorExists: "Color already exists!",
+        colorNotFound: "Color not found!",
       };
     case "zh":
       return {
@@ -1739,6 +1786,8 @@ export const translateColorPatch = (language: string) => {
         colorIdRequired: "颜色ID是必填项！",
         storeIdNotFound: "未找到商店ID！",
         internalError: "更新颜色时发生内部错误。",
+        colorExists: "颜色已存在！",
+        colorNotFound: "未找到颜色！",
       };
     case "fr":
       return {
@@ -1750,6 +1799,8 @@ export const translateColorPatch = (language: string) => {
         colorIdRequired: "L'ID de la couleur est requis !",
         storeIdNotFound: "ID du magasin introuvable !",
         internalError: "Erreur interne lors de la mise à jour de la couleur.",
+        colorExists: "Le nom de la couleur existe déjà !",
+        colorNotFound: "Couleur introuvable !",
       };
     case "ja":
       return {
@@ -1760,6 +1811,8 @@ export const translateColorPatch = (language: string) => {
         colorIdRequired: "色のIDは必須です！",
         storeIdNotFound: "店舗IDが見つかりません！",
         internalError: "色の更新中に内部エラーが発生しました。",
+        colorExists: "色名は既に存在します！",
+        colorNotFound: "色が見つかりません！",
       };
     default:
       return {
@@ -1770,9 +1823,12 @@ export const translateColorPatch = (language: string) => {
         colorIdRequired: "Color ID is required!",
         storeIdNotFound: "Store ID not found!",
         internalError: "Internal error while updating color.",
+        colorExists: "Color already exists!",
+        colorNotFound: "Color not found!",
       };
   }
 };
+
 
 export const translateCommentPost = (language: string) => {
   switch (language) {
@@ -2848,6 +2904,7 @@ export const translateFavoritePost = (language: string) => {
         storeIdRequired: "Store id is required!",
         storeIdNotFound: "Không tìm thấy store id!",
         internalError: "Lỗi nội bộ khi tạo yêu thích.",
+        favoriteExists: "Yêu thích đã tồn tại!",
       };
     case "en":
       return {
@@ -2857,6 +2914,7 @@ export const translateFavoritePost = (language: string) => {
         storeIdRequired: "Store ID is required!",
         storeIdNotFound: "Store ID not found!",
         internalError: "Internal error while posting favorite.",
+        favoriteExists: "Favorite already exists.",
       };
     case "zh":
       return {
@@ -2866,6 +2924,7 @@ export const translateFavoritePost = (language: string) => {
         storeIdRequired: "商店ID是必需的！",
         storeIdNotFound: "未找到商店ID！",
         internalError: "发布收藏时发生内部错误。",
+        favoriteExists: "收藏已存在。",
       };
     case "fr":
       return {
@@ -2875,6 +2934,7 @@ export const translateFavoritePost = (language: string) => {
         storeIdRequired: "L'ID du magasin est requis !",
         storeIdNotFound: "ID du magasin introuvable !",
         internalError: "Erreur interne lors de la publication du favori.",
+        favoriteExists: "Le favori existe déjà.",
       };
     case "ja":
       return {
@@ -2884,6 +2944,7 @@ export const translateFavoritePost = (language: string) => {
         storeIdRequired: "店舗IDは必須です！",
         storeIdNotFound: "店舗IDが見つかりません！",
         internalError: "お気に入りの投稿中に内部エラーが発生しました。",
+        favoriteExists: "お気に入りはすでに存在します。",
       };
     default:
       return {
@@ -2893,9 +2954,11 @@ export const translateFavoritePost = (language: string) => {
         storeIdRequired: "Store ID is required!",
         storeIdNotFound: "Store ID not found!",
         internalError: "Internal error while posting favorite.",
+        favoriteExists: "Favorite already exists.",
       };
   }
 };
+
 
 export const translateFavoriteGet = (language: string) => {
   switch (language) {
@@ -3117,6 +3180,8 @@ export const translateFavoritePatch = (language: string) => {
         favoriteIdRequired: "Favorite id là bắt buộc!",
         storeIdNotFound: "Không tìm thấy store id!",
         internalError: "Lỗi nội bộ khi cập nhật danh sách yêu thích.",
+        favoriteExists: "Yêu thích đã tồn tại!",
+        favoriteNotFound: "Không tìm thấy yêu thích!",
       };
     case "en":
       return {
@@ -3126,6 +3191,8 @@ export const translateFavoritePatch = (language: string) => {
         favoriteIdRequired: "Favorite id is required!",
         storeIdNotFound: "Store id not found!",
         internalError: "Internal error while updating favorite.",
+        favoriteExists: "Favorite already exists.",
+        favoriteNotFound: "Favorite not found!",
       };
     case "zh":
       return {
@@ -3135,6 +3202,8 @@ export const translateFavoritePatch = (language: string) => {
         favoriteIdRequired: "收藏夹ID是必填项！",
         storeIdNotFound: "未找到商店ID！",
         internalError: "更新收藏时发生内部错误。",
+        favoriteExists: "收藏已存在。",
+        favoriteNotFound: "未找到收藏！",
       };
     case "fr":
       return {
@@ -3145,6 +3214,8 @@ export const translateFavoritePatch = (language: string) => {
         favoriteIdRequired: "L'ID du favori est requis !",
         storeIdNotFound: "ID du magasin introuvable !",
         internalError: "Erreur interne lors de la mise à jour du favori.",
+        favoriteExists: "Le favori existe déjà.",
+        favoriteNotFound: "Favori introuvable !",
       };
     case "ja":
       return {
@@ -3154,6 +3225,8 @@ export const translateFavoritePatch = (language: string) => {
         favoriteIdRequired: "お気に入りIDは必須です！",
         storeIdNotFound: "店舗IDが見つかりません！",
         internalError: "お気に入りの更新中に内部エラーが発生しました。",
+        favoriteExists: "お気に入りはすでに存在します。",
+        favoriteNotFound: "お気に入りが見つかりません！",
       };
     default:
       return {
@@ -3163,6 +3236,8 @@ export const translateFavoritePatch = (language: string) => {
         favoriteIdRequired: "Favorite id is required!",
         storeIdNotFound: "Store id not found!",
         internalError: "Internal error while updating favorite.",
+        favoriteExists: "Favorite already exists.",
+        favoriteNotFound: "Favorite not found!",
       };
   }
 };
@@ -3759,6 +3834,7 @@ export const translateImageBillboardIdPatch = (language: string) => {
         linkRequired: "Link là bắt buộc!",
         billboardIdRequired: "Billboard id là bắt buộc!",
         billboardNotFound: "Không tìm thấy billboard!",
+        labelExists: "Label đã tồn tại!",
         internalError: "Lỗi hệ thống khi cập nhật imagebillboard.",
       };
     case "en":
@@ -3772,6 +3848,7 @@ export const translateImageBillboardIdPatch = (language: string) => {
         linkRequired: "Link is required!",
         billboardIdRequired: "Billboard id is required!",
         billboardNotFound: "Billboard not found!",
+        labelExists: "Label already exists.",
         internalError: "Internal error while updating imagebillboard.",
       };
     case "zh":
@@ -3784,6 +3861,7 @@ export const translateImageBillboardIdPatch = (language: string) => {
         linkRequired: "Link 是必需的！",
         billboardIdRequired: "Billboard id 是必需的！",
         billboardNotFound: "未找到广告牌！",
+        labelExists: "Label 已经存在。",
         internalError: "更新广告牌图片时发生内部错误。",
       };
     case "fr":
@@ -3797,6 +3875,7 @@ export const translateImageBillboardIdPatch = (language: string) => {
         linkRequired: "Le lien est requis !",
         billboardIdRequired: "L'ID du panneau d'affichage est requis !",
         billboardNotFound: "Panneau d'affichage introuvable !",
+        labelExists: "Le label existe déjà.",
         internalError:
           "Erreur interne lors de la mise à jour de l'image du panneau d'affichage.",
       };
@@ -3810,6 +3889,7 @@ export const translateImageBillboardIdPatch = (language: string) => {
         linkRequired: "リンクは必須です！",
         billboardIdRequired: "広告掲示板 ID は必須です！",
         billboardNotFound: "広告掲示板が見つかりません！",
+        labelExists: "ラベルは既に存在します。",
         internalError: "広告掲示板画像を更新中に内部エラーが発生しました。",
       };
     default:
@@ -3823,10 +3903,12 @@ export const translateImageBillboardIdPatch = (language: string) => {
         linkRequired: "Link is required!",
         billboardIdRequired: "Billboard id is required!",
         billboardNotFound: "Billboard not found!",
+        labelExists: "Label already exists.",
         internalError: "Internal error while updating imagebillboard.",
       };
   }
 };
+
 
 export const translateManageStaffGet = (language: string) => {
   switch (language) {
@@ -4738,6 +4820,7 @@ export const translateProductPost = (language: string) => {
         permissionDenied: "Bạn không có quyền tạo mới product!",
         nameRequired: "Name is required!",
         headingRequired: "Heading is required!",
+        headingExists: "Heading đã tồn tại!",
         descriptionRequired: "Description is required!",
         imagesRequired: "Images is required!",
         productDetailRequired: "ProductDetail is required!",
@@ -4753,6 +4836,7 @@ export const translateProductPost = (language: string) => {
         permissionDenied: "You don't have permission to create a new product!",
         nameRequired: "Name is required!",
         headingRequired: "Heading is required!",
+        headingExists: "Heading already exists!",
         descriptionRequired: "Description is required!",
         imagesRequired: "Images is required!",
         productDetailRequired: "ProductDetail is required!",
@@ -4768,6 +4852,7 @@ export const translateProductPost = (language: string) => {
         permissionDenied: "您没有权限创建新产品！",
         nameRequired: "名称是必填项！",
         headingRequired: "标题是必填项！",
+        headingExists: "标题已存在。",
         descriptionRequired: "描述是必填项！",
         imagesRequired: "图片是必填项！",
         productDetailRequired: "产品详细信息是必填项！",
@@ -4784,6 +4869,7 @@ export const translateProductPost = (language: string) => {
           "Vous n'avez pas la permission de créer un nouveau produit !",
         nameRequired: "Le nom est requis !",
         headingRequired: "Le titre est requis !",
+        headingExists: "Le titre existe déjà.",
         descriptionRequired: "La description est requise !",
         imagesRequired: "Les images sont requises !",
         productDetailRequired: "Les détails du produit sont requis !",
@@ -4801,6 +4887,7 @@ export const translateProductPost = (language: string) => {
         permissionDenied: "新しい商品を作成する権限がありません！",
         nameRequired: "名前は必須です！",
         headingRequired: "見出しは必須です！",
+        headingExists: "見出しはすでに存在します。",
         descriptionRequired: "説明は必須です！",
         imagesRequired: "画像は必須です！",
         productDetailRequired: "製品の詳細は必須です！",
@@ -4816,6 +4903,7 @@ export const translateProductPost = (language: string) => {
         permissionDenied: "You don't have permission to create a new product!",
         nameRequired: "Name is required!",
         headingRequired: "Heading is required!",
+        headingExists: "Heading already exists!",
         descriptionRequired: "Description is required!",
         imagesRequired: "Images is required!",
         productDetailRequired: "ProductDetail is required!",
@@ -4827,6 +4915,7 @@ export const translateProductPost = (language: string) => {
       };
   }
 };
+
 
 export const translateProductGet = (language: string) => {
   switch (language) {
@@ -5026,11 +5115,13 @@ export const translateProductIdPatch = (language: string) => {
         permissionDenied: "Bạn không có quyền cập nhật product!",
         nameRequired: "Name là bắt buộc!",
         headingRequired: "Heading là bắt buộc!",
+        headingExists: "Heading đã tồn tại!",
         descriptionRequired: "Description là bắt buộc!",
         imagesRequired: "Images là bắt buộc!",
         productDetailRequired: "ProductDetail là bắt buộc!",
         imagesAlientFeaturesRequired: "Imagesalientfeatures là bắt buộc!",
         productIdRequired: "Product id là bắt buộc!",
+        productNotFound: "Không tìm thấy sản phẩm!",
         storeIdNotFound: "Không tìm thấy store id!",
         internalError: "Lỗi hệ thống khi cập nhật sản phẩm ",
       };
@@ -5040,12 +5131,14 @@ export const translateProductIdPatch = (language: string) => {
         permissionDenied: "You do not have permission to update the product!",
         nameRequired: "Name is required!",
         headingRequired: "Heading is required!",
+        headingExists: "Heading already exists!",
         descriptionRequired: "Description is required!",
         imagesRequired: "Images are required!",
         productDetailRequired: "Product detail is required!",
         imagesAlientFeaturesRequired:
           "Images with salient features are required!",
         productIdRequired: "Product id is required!",
+        productNotFound: "Product not found!",
         storeIdNotFound: "Store id not found!",
         internalError: "Internal error when updating product ",
       };
@@ -5055,11 +5148,13 @@ export const translateProductIdPatch = (language: string) => {
         permissionDenied: "您没有更新产品的权限！",
         nameRequired: "名称是必需的！",
         headingRequired: "标题是必需的！",
+        headingExists: "标题已存在！",
         descriptionRequired: "描述是必需的！",
         imagesRequired: "图片是必需的！",
         productDetailRequired: "产品详细信息是必需的！",
         imagesAlientFeaturesRequired: "带有显著特点的图片是必需的！",
         productIdRequired: "产品ID是必需的！",
+        productNotFound: "未找到产品！",
         storeIdNotFound: "未找到店铺ID！",
         internalError: "更新产品时发生系统错误 ",
       };
@@ -5070,12 +5165,14 @@ export const translateProductIdPatch = (language: string) => {
           "Vous n'avez pas la permission de mettre à jour le produit !",
         nameRequired: "Le nom est requis !",
         headingRequired: "Le titre est requis !",
+        headingExists: "Le titre existe déjà !",
         descriptionRequired: "La description est requise !",
         imagesRequired: "Les images sont requises !",
         productDetailRequired: "Les détails du produit sont requis !",
         imagesAlientFeaturesRequired:
           "Les images avec caractéristiques saillantes sont requises !",
         productIdRequired: "L'ID du produit est requis !",
+        productNotFound: "Produit introuvable !",
         storeIdNotFound: "ID du magasin introuvable !",
         internalError: "Erreur interne lors de la mise à jour du produit ",
       };
@@ -5085,11 +5182,13 @@ export const translateProductIdPatch = (language: string) => {
         permissionDenied: "製品を更新する権限がありません！",
         nameRequired: "名前は必須です！",
         headingRequired: "見出しは必須です！",
+        headingExists: "見出しはすでに存在します！",
         descriptionRequired: "説明は必須です！",
         imagesRequired: "画像は必須です！",
         productDetailRequired: "製品詳細は必須です！",
         imagesAlientFeaturesRequired: "特徴的な画像は必須です！",
         productIdRequired: "製品IDは必須です！",
+        productNotFound: "製品が見つかりません！",
         storeIdNotFound: "店舗IDが見つかりません！",
         internalError: "製品更新中にシステムエラーが発生しました ",
       };
@@ -5099,12 +5198,14 @@ export const translateProductIdPatch = (language: string) => {
         permissionDenied: "You do not have permission to update the product!",
         nameRequired: "Name is required!",
         headingRequired: "Heading is required!",
+        headingExists: "Heading already exists!",
         descriptionRequired: "Description is required!",
         imagesRequired: "Images are required!",
         productDetailRequired: "Product detail is required!",
         imagesAlientFeaturesRequired:
           "Images with salient features are required!",
         productIdRequired: "Product id is required!",
+        productNotFound: "Product not found!",
         storeIdNotFound: "Store id not found!",
         internalError: "Internal error when updating product ",
       };
@@ -5146,6 +5247,7 @@ export const translateProductDetailPost = (language: string) => {
         chooseCategory: "Hãy chọn lại Category!",
         storeIdNotFound: "Không tìm thấy store id!",
         internalError: "Lỗi hệ thống khi tạo mới product detail!",
+        titleExists:"Tiêu đề đã tồn tại"
       };
     case "en":
       return {
@@ -5181,6 +5283,7 @@ export const translateProductDetailPost = (language: string) => {
         chooseCategory: "Please reselect a Category!",
         storeIdNotFound: "Store id not found!",
         internalError: "System error when creating a new product detail!",
+        titleExists:"Title already exists"
       };
     case "zh":
       return {
@@ -5209,6 +5312,7 @@ export const translateProductDetailPost = (language: string) => {
         chooseCategory: "请重新选择类别！",
         storeIdNotFound: "未找到商店 ID！",
         internalError: "创建新产品详情时系统错误！",
+        titleExists:"标题已存在"
       };
     case "fr":
       return {
@@ -5248,6 +5352,7 @@ export const translateProductDetailPost = (language: string) => {
         storeIdNotFound: "ID du magasin introuvable !",
         internalError:
           "Erreur système lors de la création d'un nouveau détail de produit !",
+        titleExists:"Le titre existe déjà"
       };
     case "ja":
       return {
@@ -5276,6 +5381,7 @@ export const translateProductDetailPost = (language: string) => {
         chooseCategory: "カテゴリーを再選択してください！",
         storeIdNotFound: "店舗IDが見つかりません！",
         internalError: "新しい製品詳細を作成中にシステムエラーが発生しました！",
+        titleExists:"タイトルはすでに存在します"
       };
     default: // English
       return {
@@ -5311,6 +5417,7 @@ export const translateProductDetailPost = (language: string) => {
         chooseCategory: "Please reselect a Category!",
         storeIdNotFound: "Store id not found!",
         internalError: "System error when creating a new product detail!",
+        titleExists:"Title already exists"
       };
   }
 };
@@ -5559,6 +5666,8 @@ export const translateProductDetailIdPatch = (language: string) => {
         productDetailIdRequired: "ProductDetail id là bắt buộc!",
         storeIdNotFound: "Không tìm thấy store id!",
         internalError: "Lỗi hệ thống khi cập nhật product detail!",
+        titleExists: "Tiêu đề đã tồn tại",
+        productNotFound: "Chi tiết sản phẩm không tìm thấy"
       };
     case "en":
       return {
@@ -5594,6 +5703,8 @@ export const translateProductDetailIdPatch = (language: string) => {
         productDetailIdRequired: "ProductDetail id is required!",
         storeIdNotFound: "Store id not found!",
         internalError: "System error when updating product detail!",
+        titleExists: "Title already exists",
+        productNotFound: "Product detail not found"
       };
     case "zh":
       return {
@@ -5622,6 +5733,8 @@ export const translateProductDetailIdPatch = (language: string) => {
         productDetailIdRequired: "ProductDetail id 是必需的！",
         storeIdNotFound: "未找到商店 ID！",
         internalError: "更新产品详情时系统错误！",
+        titleExists: "标题已存在",
+        productNotFound: "产品详情未找到"
       };
     case "fr":
       return {
@@ -5661,6 +5774,8 @@ export const translateProductDetailIdPatch = (language: string) => {
         storeIdNotFound: "ID du magasin introuvable !",
         internalError:
           "Erreur système lors de la mise à jour du détail de produit !",
+        titleExists: "Le titre existe déjà",
+        productNotFound: "Détails du produit non trouvés"
       };
     case "ja":
       return {
@@ -5689,6 +5804,8 @@ export const translateProductDetailIdPatch = (language: string) => {
         productDetailIdRequired: "ProductDetail id は必須です！",
         storeIdNotFound: "店舗IDが見つかりません！",
         internalError: "製品詳細の更新時にシステムエラーが発生しました！",
+        titleExists: "タイトルはすでに存在します",
+        productNotFound: "製品の詳細が見つかりません"
       };
     default: // English
       return {
@@ -5724,6 +5841,8 @@ export const translateProductDetailIdPatch = (language: string) => {
         productDetailIdRequired: "ProductDetail id is required!",
         storeIdNotFound: "Store id not found!",
         internalError: "System error when updating product detail!",
+        titleExists: "Title already exists",
+        productNotFound: "Product detail not found"
       };
   }
 };
@@ -6139,18 +6258,19 @@ export const translateSentEmailPost = (language: string) => {
         storeIdRequired: "Store id là bắt buộc!",
         storeIdNotFound: "Không tìm thấy store id!",
         internalError: "Lỗi hệ thống khi tạo mới sent Email!",
+        subjectAlreadyExists: "Tiêu đề đã tồn tại!" // Thêm thông báo mới
       };
     case "en":
       return {
         userIdNotFound: "User id not found!",
-        permissionDenied:
-          "You do not have permission to create a new sent Email!",
+        permissionDenied: "You do not have permission to create a new sent Email!",
         subjectRequired: "Subject is required!",
         descriptionRequired: "Description is required!",
         userRequired: "You need to select a user!",
         storeIdRequired: "Store id is required!",
         storeIdNotFound: "Store id not found!",
         internalError: "Internal error when creating new sent Email!",
+        subjectAlreadyExists: "Subject already exists!" // Thêm thông báo mới
       };
     case "zh":
       return {
@@ -6162,18 +6282,19 @@ export const translateSentEmailPost = (language: string) => {
         storeIdRequired: "商店 ID 是必需的！",
         storeIdNotFound: "未找到商店 ID！",
         internalError: "创建新邮件时系统错误！",
+        subjectAlreadyExists: "标题已存在！" // Thêm thông báo mới
       };
     case "fr":
       return {
         userIdNotFound: "ID utilisateur introuvable !",
-        permissionDenied:
-          "Vous n'avez pas la permission de créer un nouvel e-mail !",
+        permissionDenied: "Vous n'avez pas la permission de créer un nouvel e-mail !",
         subjectRequired: "Le sujet est obligatoire !",
         descriptionRequired: "La description est obligatoire !",
         userRequired: "L'utilisateur doit être sélectionné !",
         storeIdRequired: "L'ID du magasin est obligatoire !",
         storeIdNotFound: "ID du magasin introuvable !",
         internalError: "Erreur système lors de la création du nouvel e-mail !",
+        subjectAlreadyExists: "Le sujet existe déjà !" // Thêm thông báo mới
       };
     case "ja":
       return {
@@ -6185,21 +6306,23 @@ export const translateSentEmailPost = (language: string) => {
         storeIdRequired: "店舗IDは必須です！",
         storeIdNotFound: "店舗IDが見つかりません！",
         internalError: "新しいメールを作成中にシステムエラーが発生しました！",
+        subjectAlreadyExists: "件名はすでに存在します！" // Thêm thông báo mới
       };
     default: // English
       return {
         userIdNotFound: "User id not found!",
-        permissionDenied:
-          "You do not have permission to create a new sent Email!",
+        permissionDenied: "You do not have permission to create a new sent Email!",
         subjectRequired: "Subject is required!",
         descriptionRequired: "Description is required!",
         userRequired: "You need to select a user!",
         storeIdRequired: "Store id is required!",
         storeIdNotFound: "Store id not found!",
         internalError: "Internal error when creating new sent Email!",
+        subjectAlreadyExists: "Subject already exists!" // Thêm thông báo mới
       };
   }
 };
+
 
 export const translateSentEmailGet = (language: string) => {
   switch (language) {
@@ -6436,6 +6559,8 @@ export const translateSentEmailIdPatch = (language: string) => {
         sentMailUserIdRequired: "Sentmailuser id là bắt buộc!",
         storeIdNotFound: "Không tìm thấy store id!",
         internalError: "Lỗi hệ thống khi cập nhật sentmailUser.",
+        subjectAlreadyExists: "Tiêu đề đã tồn tại!", // Thêm thông báo mới
+        sentEmailUserNotFound: "Không tìm thấy sent Email user!" // Thêm thông báo mới
       };
     case "en": // English
       return {
@@ -6447,6 +6572,8 @@ export const translateSentEmailIdPatch = (language: string) => {
         sentMailUserIdRequired: "Sentmailuser id is required!",
         storeIdNotFound: "Store id not found!",
         internalError: "Internal error when updating sentmailUser.",
+        subjectAlreadyExists: "Subject already exists!", // Thêm thông báo mới
+        sentEmailUserNotFound: "Sent Email user not found!" // Thêm thông báo mới
       };
     case "zh": // Tiếng Trung
       return {
@@ -6458,19 +6585,21 @@ export const translateSentEmailIdPatch = (language: string) => {
         sentMailUserIdRequired: "Sentmailuser ID 是必需的！",
         storeIdNotFound: "未找到商店 ID！",
         internalError: "更新 sentmailUser 时系统错误！",
+        subjectAlreadyExists: "标题已存在！", // Thêm thông báo mới
+        sentEmailUserNotFound: "未找到发送邮件用户！" // Thêm thông báo mới
       };
     case "fr": // Tiếng Pháp
       return {
         userIdNotFound: "ID utilisateur introuvable !",
-        permissionDenied:
-          "Vous n'avez pas la permission de mettre à jour l'email envoyé !",
+        permissionDenied: "Vous n'avez pas la permission de mettre à jour l'email envoyé !",
         subjectRequired: "Le sujet est obligatoire !",
         descriptionRequired: "La description est obligatoire !",
         userRequired: "L'utilisateur doit être sélectionné !",
         sentMailUserIdRequired: "Sentmailuser ID est requis !",
         storeIdNotFound: "ID du magasin introuvable !",
-        internalError:
-          "Erreur système lors de la mise à jour du sentmailUser !",
+        internalError: "Erreur système lors de la mise à jour du sentmailUser !",
+        subjectAlreadyExists: "Le sujet existe déjà !", // Thêm thông báo mới
+        sentEmailUserNotFound: "Utilisateur du sent Email introuvable !" // Thêm thông báo mới
       };
     case "ja": // Tiếng Nhật
       return {
@@ -6482,6 +6611,8 @@ export const translateSentEmailIdPatch = (language: string) => {
         sentMailUserIdRequired: "Sentmailuser ID は必須です！",
         storeIdNotFound: "店舗IDが見つかりません！",
         internalError: "sentmailUser の更新中にシステムエラーが発生しました！",
+        subjectAlreadyExists: "件名はすでに存在します！", // Thêm thông báo mới
+        sentEmailUserNotFound: "送信されたメールのユーザーが見つかりません！" // Thêm thông báo mới
       };
     default: // English
       return {
@@ -6493,9 +6624,12 @@ export const translateSentEmailIdPatch = (language: string) => {
         sentMailUserIdRequired: "Sentmailuser id is required!",
         storeIdNotFound: "Store id not found!",
         internalError: "Internal error when updating sentmailUser.",
+        subjectAlreadyExists: "Subject already exists!", // Thêm thông báo mới
+        sentEmailUserNotFound: "Sent Email user not found!" // Thêm thông báo mới
       };
   }
 };
+
 
 export const translateSentEmailIdPost = (language: string) => {
   switch (language) {
@@ -6900,16 +7034,17 @@ export const translateShippingRatePost = (language: string) => {
         storeIdRequired: "Store id là bắt buộc!",
         storeIdNotFound: "Không tìm thấy store id!",
         internalError: "Lỗi hệ thống khi tạo mới shipping rate!",
+        shippingRateAlreadyExists: "Shipping rate đã tồn tại!" // Thêm thông báo mới
       };
     case "en": // English
       return {
         userIdNotFound: "User id not found!",
-        permissionDenied:
-          "You do not have permission to create a new shipping rate!",
+        permissionDenied: "You do not have permission to create a new shipping rate!",
         nameRequired: "Name is required!",
         storeIdRequired: "Store id is required!",
         storeIdNotFound: "Store id not found!",
         internalError: "Internal error when creating new shipping rate!",
+        shippingRateAlreadyExists: "Shipping rate already exists!" // Thêm thông báo mới
       };
     case "zh": // Tiếng Trung
       return {
@@ -6919,17 +7054,17 @@ export const translateShippingRatePost = (language: string) => {
         storeIdRequired: "商店 ID 是必需的！",
         storeIdNotFound: "未找到商店 ID！",
         internalError: "创建运输费率时系统错误！",
+        shippingRateAlreadyExists: "运输费率已存在！" // Thêm thông báo mới
       };
     case "fr": // Tiếng Pháp
       return {
         userIdNotFound: "ID utilisateur introuvable !",
-        permissionDenied:
-          "Vous n'avez pas la permission de créer un nouveau tarif d'expédition !",
+        permissionDenied: "Vous n'avez pas la permission de créer un nouveau tarif d'expédition !",
         nameRequired: "Le nom est obligatoire !",
         storeIdRequired: "L'ID du magasin est obligatoire !",
         storeIdNotFound: "ID du magasin introuvable !",
-        internalError:
-          "Erreur système lors de la création du tarif d'expédition !",
+        internalError: "Erreur système lors de la création du tarif d'expédition !",
+        shippingRateAlreadyExists: "Le tarif d'expédition existe déjà !" // Thêm thông báo mới
       };
     case "ja": // Tiếng Nhật
       return {
@@ -6939,19 +7074,21 @@ export const translateShippingRatePost = (language: string) => {
         storeIdRequired: "店舗IDは必須です！",
         storeIdNotFound: "店舗IDが見つかりません！",
         internalError: "配送料金作成中にシステムエラーが発生しました！",
+        shippingRateAlreadyExists: "配送料金はすでに存在します！" // Thêm thông báo mới
       };
     default: // English
       return {
         userIdNotFound: "User id not found!",
-        permissionDenied:
-          "You do not have permission to create a new shipping rate!",
+        permissionDenied: "You do not have permission to create a new shipping rate!",
         nameRequired: "Name is required!",
         storeIdRequired: "Store id is required!",
         storeIdNotFound: "Store id not found!",
         internalError: "Internal error when creating new shipping rate!",
+        shippingRateAlreadyExists: "Shipping rate already exists!" // Thêm thông báo mới
       };
   }
 };
+
 
 export const translateShippingRateGet = (language: string) => {
   switch (language) {
@@ -7169,6 +7306,8 @@ export const translateShippingRateIdPatch = (language: string) => {
         shippingRateIdRequired: "Shipping Rates id là bắt buộc!",
         storeIdNotFound: "Không tìm thấy store id!",
         internalError: "Lỗi hệ thống khi cập nhật shippingrates.",
+        shippingRateNotFound: "Không tìm thấy shipping rate!", // Thêm thông báo mới
+        shippingRateAlreadyExists: "Shipping rate đã tồn tại!" // Thêm thông báo mới
       };
     case "en": // English
       return {
@@ -7184,6 +7323,8 @@ export const translateShippingRateIdPatch = (language: string) => {
         shippingRateIdRequired: "Shipping Rates id is required!",
         storeIdNotFound: "Store id not found!",
         internalError: "Internal error patch shippingrates.",
+        shippingRateNotFound: "Shipping rate not found.", // Thêm thông báo mới
+        shippingRateAlreadyExists: "Shipping rate already exists!" // Thêm thông báo mới
       };
     case "zh": // Tiếng Trung
       return {
@@ -7199,12 +7340,13 @@ export const translateShippingRateIdPatch = (language: string) => {
         shippingRateIdRequired: "运输费率ID是必需的！",
         storeIdNotFound: "未找到商店ID！",
         internalError: "更新运输费率时系统错误！",
+        shippingRateNotFound: "未找到运输费率！", // Thêm thông báo mới
+        shippingRateAlreadyExists: "运输费率已存在！" // Thêm thông báo mới
       };
     case "fr": // Tiếng Pháp
       return {
         userIdNotFound: "ID utilisateur introuvable !",
-        permissionDenied:
-          "Vous n'avez pas la permission de mettre à jour le tarif d'expédition !",
+        permissionDenied: "Vous n'avez pas la permission de mettre à jour le tarif d'expédition !",
         nameRequired: "Le nom est requis !",
         taxBehaviorRequired: "Le comportement fiscal est requis !",
         amountRequired: "Le montant est requis !",
@@ -7214,8 +7356,9 @@ export const translateShippingRateIdPatch = (language: string) => {
         valueMaxRequired: "La valeur maximale est requise !",
         shippingRateIdRequired: "L'ID des tarifs d'expédition est requis !",
         storeIdNotFound: "ID du magasin introuvable !",
-        internalError:
-          "Erreur système lors de la mise à jour des tarifs d'expédition !",
+        internalError: "Erreur système lors de la mise à jour des tarifs d'expédition !",
+        shippingRateNotFound: "Le tarif d'expédition est introuvable !", // Thêm thông báo mới
+        shippingRateAlreadyExists: "Le tarif d'expédition existe déjà !" // Thêm thông báo mới
       };
     case "ja": // Tiếng Nhật
       return {
@@ -7231,6 +7374,8 @@ export const translateShippingRateIdPatch = (language: string) => {
         shippingRateIdRequired: "配送料金IDは必須です！",
         storeIdNotFound: "店舗IDが見つかりません！",
         internalError: "配送料金更新中にシステムエラーが発生しました！",
+        shippingRateNotFound: "配送料金が見つかりません！", // Thêm thông báo mới
+        shippingRateAlreadyExists: "配送料金はすでに存在します！" // Thêm thông báo mới
       };
     default: // English
       return {
@@ -7246,6 +7391,8 @@ export const translateShippingRateIdPatch = (language: string) => {
         shippingRateIdRequired: "Shipping Rates id is required!",
         storeIdNotFound: "Store id not found!",
         internalError: "Internal error patch shippingrates.",
+        shippingRateNotFound: "Shipping rate not found.", // Thêm thông báo mới
+        shippingRateAlreadyExists: "Shipping rate already exists!" // Thêm thông báo mới
       };
   }
 };
@@ -7261,6 +7408,7 @@ export const translateSizePost = (language: string) => {
         storeIdRequired: "Store id là bắt buộc!",
         storeIdNotFound: "Không tìm thấy store id!",
         internalError: "Lỗi hệ thống khi tạo mới size.",
+        sizeAlreadyExists: "Size đã tồn tại!" // Thêm thông báo mới
       };
     case "en": // English
       return {
@@ -7271,6 +7419,7 @@ export const translateSizePost = (language: string) => {
         storeIdRequired: "Store id is required!",
         storeIdNotFound: "Store id not found!",
         internalError: "Internal error post size.",
+        sizeAlreadyExists: "Size already exists!" // Thêm thông báo mới
       };
     case "zh": // Tiếng Trung
       return {
@@ -7281,17 +7430,18 @@ export const translateSizePost = (language: string) => {
         storeIdRequired: "商店ID是必需的！",
         storeIdNotFound: "未找到商店ID！",
         internalError: "创建新尺寸时系统错误！",
+        sizeAlreadyExists: "尺寸已存在！" // Thêm thông báo mới
       };
     case "fr": // Tiếng Pháp
       return {
         userIdNotFound: "ID utilisateur introuvable !",
-        permissionDenied:
-          "Vous n'avez pas la permission de créer une nouvelle taille !",
+        permissionDenied: "Vous n'avez pas la permission de créer une nouvelle taille !",
         nameRequired: "Le nom est requis !",
         valueRequired: "La valeur est requise !",
         storeIdRequired: "L'ID du magasin est requis !",
         storeIdNotFound: "ID du magasin introuvable !",
         internalError: "Erreur système lors de la création de la taille !",
+        sizeAlreadyExists: "La taille existe déjà !" // Thêm thông báo mới
       };
     case "ja": // Tiếng Nhật
       return {
@@ -7302,6 +7452,7 @@ export const translateSizePost = (language: string) => {
         storeIdRequired: "店舗IDは必須です！",
         storeIdNotFound: "店舗IDが見つかりません！",
         internalError: "新しいサイズ作成中にシステムエラーが発生しました！",
+        sizeAlreadyExists: "サイズはすでに存在します！" // Thêm thông báo mới
       };
     default: // English
       return {
@@ -7312,9 +7463,11 @@ export const translateSizePost = (language: string) => {
         storeIdRequired: "Store id is required!",
         storeIdNotFound: "Store id not found!",
         internalError: "Internal error post size.",
+        sizeAlreadyExists: "Size already exists!" // Thêm thông báo mới
       };
   }
 };
+
 
 export const translateSizeGet = (language: string) => {
   switch (language) {
@@ -7523,6 +7676,8 @@ export const translateSizeIdPatch = (language: string) => {
         sizeIdRequired: "Size id là bắt buộc!",
         storeIdNotFound: "Không tìm thấy store id!",
         internalError: "Lỗi hệ thống khi cập nhật size.",
+        sizeNotFound: "Không tìm thấy size!",
+        sizeAlreadyExists: "Size đã tồn tại!",
       };
     case "en": // English
       return {
@@ -7533,6 +7688,8 @@ export const translateSizeIdPatch = (language: string) => {
         sizeIdRequired: "Size id is required!",
         storeIdNotFound: "Store id not found!",
         internalError: "Internal error when updating size.",
+        sizeNotFound: "Size not found!",
+        sizeAlreadyExists: "Size already exists!",
       };
     case "zh": // Tiếng Trung
       return {
@@ -7543,6 +7700,8 @@ export const translateSizeIdPatch = (language: string) => {
         sizeIdRequired: "尺寸ID是必需的！",
         storeIdNotFound: "未找到商店ID！",
         internalError: "更新尺寸时系统错误！",
+        sizeNotFound: "未找到尺寸！",
+        sizeAlreadyExists: "尺寸已存在！",
       };
     case "fr": // Tiếng Pháp
       return {
@@ -7554,6 +7713,8 @@ export const translateSizeIdPatch = (language: string) => {
         sizeIdRequired: "L'ID de taille est requis !",
         storeIdNotFound: "ID du magasin introuvable !",
         internalError: "Erreur système lors de la mise à jour de la taille !",
+        sizeNotFound: "Taille introuvable !",
+        sizeAlreadyExists: "La taille existe déjà !",
       };
     case "ja": // Tiếng Nhật
       return {
@@ -7564,8 +7725,10 @@ export const translateSizeIdPatch = (language: string) => {
         sizeIdRequired: "サイズIDは必須です！",
         storeIdNotFound: "店舗IDが見つかりません！",
         internalError: "サイズ更新中にシステムエラーが発生しました！",
+        sizeNotFound: "サイズが見つかりません！",
+        sizeAlreadyExists: "サイズはすでに存在します！",
       };
-    default:
+    default: // English
       return {
         userIdNotFound: "User id not found!",
         permissionDenied: "You do not have permission to update size!",
@@ -7574,9 +7737,12 @@ export const translateSizeIdPatch = (language: string) => {
         sizeIdRequired: "Size id is required!",
         storeIdNotFound: "Store id not found!",
         internalError: "Internal error when updating size.",
+        sizeNotFound: "Size not found!",
+        sizeAlreadyExists: "Size already exists!",
       };
   }
 };
+
 
 export const translateSystemGet = (language: string) => {
   switch (language) {
@@ -7631,6 +7797,7 @@ export const translateTaxRatePost = (language: string) => {
         storeIdRequired: "Store id là bắt buộc!",
         storeIdNotFound: "Không tìm thấy store id!",
         internalError: "Lỗi hệ thống khi tạo mới taxrate.",
+        taxrateAlreadyExists: "Taxrate đã tồn tại!",
       };
     case "en": // English
       return {
@@ -7641,6 +7808,7 @@ export const translateTaxRatePost = (language: string) => {
         storeIdRequired: "Store id is required!",
         storeIdNotFound: "Store id not found!",
         internalError: "Internal error when creating new taxrate.",
+        taxrateAlreadyExists: "Taxrate already exists!",
       };
     case "zh": // Tiếng Trung
       return {
@@ -7651,6 +7819,7 @@ export const translateTaxRatePost = (language: string) => {
         storeIdRequired: "商店 ID 是必需的！",
         storeIdNotFound: "未找到商店 ID！",
         internalError: "创建 taxrate 时系统错误！",
+        taxrateAlreadyExists: "Taxrate 已存在！",
       };
     case "fr": // Tiếng Pháp
       return {
@@ -7662,6 +7831,7 @@ export const translateTaxRatePost = (language: string) => {
         storeIdRequired: "L'ID du magasin est obligatoire !",
         storeIdNotFound: "ID du magasin introuvable !",
         internalError: "Erreur système lors de la création du taxrate !",
+        taxrateAlreadyExists: "Le taxrate existe déjà !",
       };
     case "ja": // Tiếng Nhật
       return {
@@ -7672,8 +7842,9 @@ export const translateTaxRatePost = (language: string) => {
         storeIdRequired: "店舗IDは必須です！",
         storeIdNotFound: "店舗IDが見つかりません！",
         internalError: "税率作成中にシステムエラーが発生しました！",
+        taxrateAlreadyExists: "税率はすでに存在します！",
       };
-    default:
+    default: // English
       return {
         userIdNotFound: "User id not found!",
         permissionDenied: "You do not have permission to create a new taxrate!",
@@ -7682,9 +7853,11 @@ export const translateTaxRatePost = (language: string) => {
         storeIdRequired: "Store id is required!",
         storeIdNotFound: "Store id not found!",
         internalError: "Internal error when creating new taxrate.",
+        taxrateAlreadyExists: "Taxrate already exists!",
       };
   }
 };
+
 
 export const translateTaxRateGet = (language: string) => {
   switch (language) {
@@ -7898,6 +8071,8 @@ export const translateTaxRateIdPatch = (language: string) => {
         taxRateIdRequired: "Taxrate id là bắt buộc!",
         storeIdNotFound: "Không tìm thấy store id!",
         internalError: "Lỗi hệ thống khi cập nhật taxrate.",
+        taxrateAlreadyExists: "Taxrate đã tồn tại!",
+        taxRateNotFound: "Không tìm thấy taxrate!",
       };
     case "en": // English
       return {
@@ -7911,6 +8086,8 @@ export const translateTaxRateIdPatch = (language: string) => {
         taxRateIdRequired: "Taxrate id is required!",
         storeIdNotFound: "Store id not found!",
         internalError: "Internal error when updating tax rate.",
+        taxrateAlreadyExists: "Taxrate already exists!",
+        taxRateNotFound: "Tax rate not found!",
       };
     case "zh": // Tiếng Trung
       return {
@@ -7924,6 +8101,8 @@ export const translateTaxRateIdPatch = (language: string) => {
         taxRateIdRequired: "税率ID是必需的！",
         storeIdNotFound: "未找到商店ID！",
         internalError: "更新税率时系统错误。",
+        taxrateAlreadyExists: "Taxrate 已存在！",
+        taxRateNotFound: "未找到税率！",
       };
     case "fr": // Tiếng Pháp
       return {
@@ -7938,6 +8117,8 @@ export const translateTaxRateIdPatch = (language: string) => {
         taxRateIdRequired: "L'ID du taux de taxe est obligatoire !",
         storeIdNotFound: "ID du magasin introuvable !",
         internalError: "Erreur système lors de la mise à jour du taux de taxe.",
+        taxrateAlreadyExists: "Le taxrate existe déjà !",
+        taxRateNotFound: "Tax rate introuvable !",
       };
     case "ja": // Tiếng Nhật
       return {
@@ -7951,6 +8132,8 @@ export const translateTaxRateIdPatch = (language: string) => {
         taxRateIdRequired: "税率IDは必須です！",
         storeIdNotFound: "店舗IDが見つかりません！",
         internalError: "税率更新時にシステムエラーが発生しました。",
+        taxrateAlreadyExists: "税率はすでに存在します！",
+        taxRateNotFound: "税率が見つかりません！",
       };
     default: // English
       return {
@@ -7964,9 +8147,12 @@ export const translateTaxRateIdPatch = (language: string) => {
         taxRateIdRequired: "Taxrate id is required!",
         storeIdNotFound: "Store id not found!",
         internalError: "Internal error when updating tax rate.",
+        taxrateAlreadyExists: "Taxrate already exists!",
+        taxRateNotFound: "Tax rate not found!",
       };
   }
 };
+
 
 export const translateWareHouseGet = (language: string) => {
   switch (language) {

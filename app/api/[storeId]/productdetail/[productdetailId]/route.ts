@@ -4,9 +4,22 @@ import prismadb from "@/lib/prismadb";
 import { Category, Color, Size, UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
 import { Decimal } from "@prisma/client/runtime/library";
-import { translateProductDetailIdDelete, translateProductDetailIdGet, translateProductDetailIdPatch } from "@/translate/translate-api";
+import {
+  translateProductDetailIdDelete,
+  translateProductDetailIdGet,
+  translateProductDetailIdPatch,
+} from "@/translate/translate-api";
 
-type ProductDetailValue = string | number | Date | Decimal | undefined | Category | Size | Color |null;
+type ProductDetailValue =
+  | string
+  | number
+  | Date
+  | Decimal
+  | undefined
+  | Category
+  | Size
+  | Color
+  | null;
 
 interface ChangeRecord {
   oldValue: ProductDetailValue;
@@ -20,11 +33,13 @@ export async function GET(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const productDetailIdGetMessage = translateProductDetailIdGet(LanguageToUse)
+  const productDetailIdGetMessage = translateProductDetailIdGet(LanguageToUse);
   try {
     if (!params.productdetailId) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdGetMessage.productDetailIdRequired }),
+        JSON.stringify({
+          error: productDetailIdGetMessage.productDetailIdRequired,
+        }),
         { status: 400 }
       );
     }
@@ -51,7 +66,9 @@ export async function GET(
     return NextResponse.json(productDetail);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: productDetailIdGetMessage.internalErrorGetProductDetail }),
+      JSON.stringify({
+        error: productDetailIdGetMessage.internalErrorGetProductDetail,
+      }),
       { status: 500 }
     );
   }
@@ -64,9 +81,9 @@ export async function DELETE(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const productDetailIdDeleteMessage = translateProductDetailIdDelete(LanguageToUse)
+  const productDetailIdDeleteMessage =
+    translateProductDetailIdDelete(LanguageToUse);
   try {
-
     if (!user) {
       return new NextResponse(
         JSON.stringify({ error: productDetailIdDeleteMessage.userIdNotFound }),
@@ -76,14 +93,18 @@ export async function DELETE(
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdDeleteMessage.permissionDenied }),
+        JSON.stringify({
+          error: productDetailIdDeleteMessage.permissionDenied,
+        }),
         { status: 403 }
       );
     }
 
     if (!params.productdetailId) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdDeleteMessage.productDetailIdRequired }),
+        JSON.stringify({
+          error: productDetailIdDeleteMessage.productDetailIdRequired,
+        }),
         { status: 400 }
       );
     }
@@ -108,28 +129,28 @@ export async function DELETE(
     });
 
     const sentProductDetail = {
-      title:productDetail.title,
-  };
+      title: productDetail.title,
+    };
 
-  // Log sự thay đổi của billboard
-  const changes = [
-    `Title: ${sentProductDetail.title}`,
-  ];
+    // Log sự thay đổi của billboard
+    const changes = [`Title: ${sentProductDetail.title}`];
 
-  // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
-  await prismadb.system.create({
-    data: {
-      storeId: params.storeId,
-      type: "DELETEPRODUCTDETAIL",
-      delete: changes,
-      user: user?.email || "",
-    },
-  });
+    // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
+    await prismadb.system.create({
+      data: {
+        storeId: params.storeId,
+        type: "DELETEPRODUCTDETAIL",
+        delete: changes,
+        user: user?.email || "",
+      },
+    });
 
     return NextResponse.json(productDetail);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: productDetailIdDeleteMessage.internalErrorDeleteProductDetail }),
+      JSON.stringify({
+        error: productDetailIdDeleteMessage.internalErrorDeleteProductDetail,
+      }),
       { status: 500 }
     );
   }
@@ -142,7 +163,8 @@ export async function PATCH(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const productDetailIdPatchMessage = translateProductDetailIdPatch(LanguageToUse)
+  const productDetailIdPatchMessage =
+    translateProductDetailIdPatch(LanguageToUse);
   try {
     const body = await req.json();
 
@@ -235,27 +257,36 @@ export async function PATCH(
     }
 
     if (!title) {
-      return new NextResponse(JSON.stringify({ error: productDetailIdPatchMessage.titleRequired }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: productDetailIdPatchMessage.titleRequired }),
+        {
+          status: 400,
+        }
+      );
     }
 
     if (!categoryId) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.categoryIdRequired }),
+        JSON.stringify({
+          error: productDetailIdPatchMessage.categoryIdRequired,
+        }),
         { status: 400 }
       );
     }
 
     if (!promotionheading) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.promotionHeadingRequired }),
+        JSON.stringify({
+          error: productDetailIdPatchMessage.promotionHeadingRequired,
+        }),
         { status: 400 }
       );
     }
     if (!promotiondescription) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.promotionDescriptionRequired }),
+        JSON.stringify({
+          error: productDetailIdPatchMessage.promotionDescriptionRequired,
+        }),
         { status: 400 }
       );
     }
@@ -275,22 +306,30 @@ export async function PATCH(
     }
 
     if (!name1) {
-      return new NextResponse(JSON.stringify({ error: productDetailIdPatchMessage.nameRequired }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: productDetailIdPatchMessage.nameRequired }),
+        {
+          status: 400,
+        }
+      );
     }
 
     if (!percentpromotion1) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.percentPromotionRequired }),
+        JSON.stringify({
+          error: productDetailIdPatchMessage.percentPromotionRequired,
+        }),
         { status: 400 }
       );
     }
 
     if (!price1) {
-      return new NextResponse(JSON.stringify({ error: productDetailIdPatchMessage.priceRequired }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: productDetailIdPatchMessage.priceRequired }),
+        {
+          status: 400,
+        }
+      );
     }
 
     if (!quantity1) {
@@ -304,43 +343,60 @@ export async function PATCH(
 
     if (!descriptionspecifications) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.descriptionSpecificationsRequired }),
+        JSON.stringify({
+          error: productDetailIdPatchMessage.descriptionSpecificationsRequired,
+        }),
         { status: 400 }
       );
     }
     if (!valuespecifications) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.valueSpecificationsRequired }),
+        JSON.stringify({
+          error: productDetailIdPatchMessage.valueSpecificationsRequired,
+        }),
         { status: 400 }
       );
     }
     if (!descriptionsalientfeatures) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.descriptionSalientFeaturesRequired }),
+        JSON.stringify({
+          error: productDetailIdPatchMessage.descriptionSalientFeaturesRequired,
+        }),
         { status: 400 }
       );
     }
     if (!description2salientfeatures) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.description2SalientFeaturesRequired }),
+        JSON.stringify({
+          error:
+            productDetailIdPatchMessage.description2SalientFeaturesRequired,
+        }),
         { status: 400 }
       );
     }
     if (!description3salientfeatures) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.description3SalientFeaturesRequired }),
+        JSON.stringify({
+          error:
+            productDetailIdPatchMessage.description3SalientFeaturesRequired,
+        }),
         { status: 400 }
       );
     }
     if (!description4salientfeatures) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.description4SalientFeaturesRequired }),
+        JSON.stringify({
+          error:
+            productDetailIdPatchMessage.description4SalientFeaturesRequired,
+        }),
         { status: 400 }
       );
     }
     if (!contentsalientfeatures) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.contentSalientFeaturesRequired }),
+        JSON.stringify({
+          error: productDetailIdPatchMessage.contentSalientFeaturesRequired,
+        }),
         { status: 400 }
       );
     }
@@ -354,9 +410,12 @@ export async function PATCH(
 
     // Nếu sizeId không tồn tại, trả về thông báo lỗi
     if (!size) {
-      return new NextResponse(JSON.stringify({ error: productDetailIdPatchMessage.chooseSize }), {
-        status: 404,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: productDetailIdPatchMessage.chooseSize }),
+        {
+          status: 404,
+        }
+      );
     }
 
     const color = await prismadb.color.findFirst({
@@ -389,7 +448,9 @@ export async function PATCH(
 
     if (!params.productdetailId) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.productDetailIdRequired }),
+        JSON.stringify({
+          error: productDetailIdPatchMessage.productDetailIdRequired,
+        }),
         { status: 404 }
       );
     }
@@ -405,6 +466,21 @@ export async function PATCH(
         JSON.stringify({ error: productDetailIdPatchMessage.storeIdNotFound }),
         { status: 405 }
       );
+    }
+
+    const existingTitle = await prismadb.productDetail.findFirst({
+      where: {
+        title: title, // Kiểm tra trùng title
+        NOT: {
+          id: params.productdetailId, // Ngoại trừ sản phẩm hiện tại
+        },
+      },
+    });
+
+    if (existingTitle) {
+      return new NextResponse(JSON.stringify(productDetailIdPatchMessage.titleExists), {
+        status: 400,
+      });
     }
 
     const existingProductDetail = await prismadb.productDetail.findUnique({
@@ -425,6 +501,13 @@ export async function PATCH(
         size5: true,
       },
     });
+
+    // Kiểm tra nếu không tìm thấy bản ghi
+    if (!existingProductDetail) {
+      return new NextResponse(JSON.stringify(productDetailIdPatchMessage.productNotFound), {
+        status: 404,
+      });
+    }
 
     const productDetail = await prismadb.productDetail.update({
       where: {
@@ -522,7 +605,10 @@ export async function PATCH(
           // Kiểm tra xem trường hiện tại có trong danh sách loại bỏ không
           if (!ignoredFields.includes(key)) {
             changes[key] = {
-              oldValue: existingProductDetail[key as keyof typeof existingProductDetail],
+              oldValue:
+                existingProductDetail[
+                  key as keyof typeof existingProductDetail
+                ],
               newValue: productDetail[key as keyof typeof productDetail],
             };
           }

@@ -3,7 +3,11 @@ import { currentUser } from "@/lib/auth";
 
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
-import { translateSentEmailDelete, translateSentEmailGet, translateSentEmailPost } from "@/translate/translate-api";
+import {
+  translateSentEmailDelete,
+  translateSentEmailGet,
+  translateSentEmailPost,
+} from "@/translate/translate-api";
 
 export async function POST(
   req: Request,
@@ -12,7 +16,7 @@ export async function POST(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const sentEmailPostMessage = translateSentEmailPost(LanguageToUse)
+  const sentEmailPostMessage = translateSentEmailPost(LanguageToUse);
 
   try {
     const body = await req.json();
@@ -70,6 +74,21 @@ export async function POST(
       return new NextResponse(
         JSON.stringify({ error: sentEmailPostMessage.storeIdNotFound }),
         { status: 405 }
+      );
+    }
+
+    // Check if the subject already exists for the same store
+    const existingSubject = await prismadb.sentEmailUser.findFirst({
+      where: {
+        subject,
+        storeId: params.storeId,
+      },
+    });
+
+    if (existingSubject) {
+      return new NextResponse(
+        JSON.stringify({ error: sentEmailPostMessage.subjectAlreadyExists }),
+        { status: 400 }
       );
     }
 
@@ -139,7 +158,7 @@ export async function GET(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const sentEmailGetMessage = translateSentEmailGet(LanguageToUse)
+  const sentEmailGetMessage = translateSentEmailGet(LanguageToUse);
 
   try {
     if (!params.storeId) {
@@ -191,7 +210,7 @@ export async function DELETE(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const sentEmailDeleteMessage = translateSentEmailDelete(LanguageToUse)
+  const sentEmailDeleteMessage = translateSentEmailDelete(LanguageToUse);
   try {
     const body = await req.json();
     const { ids } = body;

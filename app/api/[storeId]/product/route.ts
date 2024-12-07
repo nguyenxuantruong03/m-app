@@ -111,8 +111,25 @@ export async function POST(
         { status: 405 }
       );
     }
-
+    
     const productType = ProductType.PRODUCT;
+
+    // Kiểm tra xem heading mới có trùng với heading của sản phẩm nào đã có trong cùng cửa hàng không
+    const existingProduct = await prismadb.product.findFirst({
+      where: {
+        heading,
+        storeId: params.storeId,
+        productType: productType,
+      },
+    });
+
+    if (existingProduct) {
+      return new NextResponse(
+        JSON.stringify({ error: productPostMessage.headingExists }),
+        { status: 400 }
+      );
+    }
+
     const product = await prismadb.product.create({
       data: {
         name,

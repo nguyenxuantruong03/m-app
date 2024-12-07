@@ -225,6 +225,23 @@ export async function PATCH(
       );
     }
 
+    // Kiểm tra xem label mới có trùng với label đã tồn tại ngoài trừ billboard hiện tại không
+    const labelExists = await prismadb.imageBillboard.findFirst({
+      where: {
+        label: label,
+        NOT: {
+          id: params.imagebillboardId,
+        },
+      },
+    });
+
+    if (labelExists) {
+      return new NextResponse(
+        JSON.stringify({ error: imageBillboardIdPatchMessage.labelExists }),
+        { status: 400 }
+      );
+    }
+
     // Update existing billboard
     const updatedBillboard = await prismadb.imageBillboard.update({
       where: {

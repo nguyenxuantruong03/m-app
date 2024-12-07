@@ -217,11 +217,36 @@ export async function PATCH(
       );
     }
 
+    // Kiểm tra xem tên taxRate mới có trùng với bản ghi nào trong store này không, ngoại trừ taxrateId hiện tại
+    const duplicateTaxRate = await prismadb.taxRate.findFirst({
+      where: {
+        name: name,
+        storeId: params.storeId,
+        NOT: {
+          id: params.taxrateId,  // Loại trừ taxrateId hiện tại
+        },
+      },
+    });
+
+    if (duplicateTaxRate) {
+      return new NextResponse(
+        JSON.stringify({ error: taxRateIdPatchMessage.taxrateAlreadyExists }),
+        { status: 400 }
+      );
+    }
+
     const existingTaxRate = await prismadb.taxRate.findUnique({
       where: {
         id: params.taxrateId,
       },
     });
+
+    if (!existingTaxRate) {
+      return new NextResponse(
+        JSON.stringify({ error: taxRateIdPatchMessage.taxRateNotFound }),
+        { status: 404 }
+      );
+    }
 
     // Cập nhật thông tin tương ứng trên Stripe
     await stripe.taxRates.update(params.taxrateId, {

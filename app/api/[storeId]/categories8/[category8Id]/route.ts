@@ -3,7 +3,11 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { CategoryType, UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
-import { translateCategoriesIdDelete, translateCategoriesIdGet, translateCategoriesIdPatch } from "@/translate/translate-api";
+import {
+  translateCategoriesIdDelete,
+  translateCategoriesIdGet,
+  translateCategoriesIdPatch,
+} from "@/translate/translate-api";
 
 type CategoryValue = string | CategoryType | Date | undefined;
 
@@ -67,7 +71,7 @@ export async function DELETE(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const categoriesIdDeleteMessage = translateCategoriesIdDelete(LanguageToUse)
+  const categoriesIdDeleteMessage = translateCategoriesIdDelete(LanguageToUse);
   try {
     const user = await currentUser();
 
@@ -149,7 +153,7 @@ export async function PATCH(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const categoriesIdPatchMessage = translateCategoriesIdPatch(LanguageToUse)
+  const categoriesIdPatchMessage = translateCategoriesIdPatch(LanguageToUse);
   try {
     const body = await req.json();
     const { name } = body;
@@ -169,9 +173,12 @@ export async function PATCH(
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: categoriesIdPatchMessage.name3 }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: categoriesIdPatchMessage.name3 }),
+        {
+          status: 400,
+        }
+      );
     }
 
     if (!params.category8Id) {
@@ -200,6 +207,36 @@ export async function PATCH(
         categoryType: categoryType,
       },
     });
+
+    // Kiểm tra nếu không tìm thấy category
+    if (!existingCategory) {
+      return new NextResponse(
+        JSON.stringify({ error: categoriesIdPatchMessage.name7 }),
+        {
+          status: 404,
+        }
+      );
+    }
+
+    // Kiểm tra xem tên mới có trùng với tên của bất kỳ category nào ngoại trừ category hiện tại không
+    const existingCategoryWithName = await prismadb.category.findFirst({
+      where: {
+        name,
+        categoryType: categoryType,
+        NOT: {
+          id: params.category8Id,
+        },
+      },
+    });
+
+    if (existingCategoryWithName) {
+      return new NextResponse(
+        JSON.stringify({
+          error: categoriesIdPatchMessage.name8,
+        }),
+        { status: 400 }
+      );
+    }
 
     const category = await prismadb.category.update({
       where: {

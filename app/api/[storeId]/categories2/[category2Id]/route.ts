@@ -3,7 +3,11 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { CategoryType, UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
-import { translateCategoriesIdDelete, translateCategoriesIdGet, translateCategoriesIdPatch } from "@/translate/translate-api";
+import {
+  translateCategoriesIdDelete,
+  translateCategoriesIdGet,
+  translateCategoriesIdPatch,
+} from "@/translate/translate-api";
 
 type CategoryValue = string | CategoryType | Date | undefined;
 
@@ -46,10 +50,10 @@ export async function GET(
     const category = await prismadb.category.findUnique({
       where: {
         id: params.category2Id,
-        categoryType:categoryType
-      }
+        categoryType: categoryType,
+      },
     });
-  
+
     return NextResponse.json(category);
   } catch (error) {
     return new NextResponse(
@@ -57,17 +61,17 @@ export async function GET(
       { status: 500 }
     );
   }
-};
+}
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { category2Id: string, storeId: string } }
+  { params }: { params: { category2Id: string; storeId: string } }
 ) {
   const categoryType = CategoryType.CATEGORY2;
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const categoriesIdDeleteMessage = translateCategoriesIdDelete(LanguageToUse)
+  const categoriesIdDeleteMessage = translateCategoriesIdDelete(LanguageToUse);
   try {
     const user = await currentUser();
 
@@ -95,7 +99,7 @@ export async function DELETE(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-      }
+      },
     });
 
     if (!storeByUserId) {
@@ -108,8 +112,8 @@ export async function DELETE(
     const category = await prismadb.category.delete({
       where: {
         id: params.category2Id,
-        categoryType:categoryType
-      }
+        categoryType: categoryType,
+      },
     });
 
     const sentCategory = {
@@ -131,7 +135,7 @@ export async function DELETE(
         user: user?.email || "",
       },
     });
-  
+
     return NextResponse.json(category);
   } catch (error) {
     return new NextResponse(
@@ -139,22 +143,21 @@ export async function DELETE(
       { status: 500 }
     );
   }
-};
-
+}
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { category2Id: string, storeId: string } }
+  { params }: { params: { category2Id: string; storeId: string } }
 ) {
   const categoryType = CategoryType.CATEGORY2;
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const categoriesIdPatchMessage = translateCategoriesIdPatch(LanguageToUse)
-  try {   
+  const categoriesIdPatchMessage = translateCategoriesIdPatch(LanguageToUse);
+  try {
     const body = await req.json();
-    const { name,  } = body;
-    
+    const { name } = body;
+
     if (!user) {
       return new NextResponse(
         JSON.stringify({ error: categoriesIdPatchMessage.name1 }),
@@ -186,7 +189,7 @@ export async function PATCH(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-      }
+      },
     });
 
     if (!storeByUserId) {
@@ -203,14 +206,44 @@ export async function PATCH(
       },
     });
 
+    // Kiểm tra nếu không tìm thấy category
+    if (!existingCategory) {
+      return new NextResponse(
+        JSON.stringify({ error: categoriesIdPatchMessage.name7 }),
+        {
+          status: 404,
+        }
+      );
+    }
+
+    // Kiểm tra xem tên mới có trùng với tên của bất kỳ category nào ngoại trừ category hiện tại không
+    const existingCategoryWithName = await prismadb.category.findFirst({
+      where: {
+        name,
+        categoryType: categoryType,
+        NOT: {
+          id: params.category2Id,
+        },
+      },
+    });
+
+    if (existingCategoryWithName) {
+      return new NextResponse(
+        JSON.stringify({
+          error: categoriesIdPatchMessage.name8,
+        }),
+        { status: 400 }
+      );
+    }
+
     const category = await prismadb.category.update({
       where: {
         id: params.category2Id,
-        categoryType:categoryType
+        categoryType: categoryType,
       },
       data: {
         name,
-      }
+      },
     });
 
     // Danh sách các trường cần loại bỏ
@@ -230,8 +263,7 @@ export async function PATCH(
           // Kiểm tra xem trường hiện tại có trong danh sách loại bỏ không
           if (!ignoredFields.includes(key)) {
             changes[key] = {
-              oldValue:
-                existingCategory[key as keyof typeof existingCategory],
+              oldValue: existingCategory[key as keyof typeof existingCategory],
               newValue: category[key as keyof typeof category],
             };
           }
@@ -257,7 +289,7 @@ export async function PATCH(
         user: user?.email || "",
       },
     });
-  
+
     return NextResponse.json(category);
   } catch (error) {
     return new NextResponse(
@@ -265,4 +297,4 @@ export async function PATCH(
       { status: 500 }
     );
   }
-};
+}

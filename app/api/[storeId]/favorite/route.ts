@@ -59,6 +59,21 @@ export async function POST(
       );
     }
 
+    // Kiểm tra xem tên đã tồn tại chưa
+    const existingFavorite = await prismadb.favorite.findFirst({
+      where: {
+        name,
+        storeId: params.storeId,
+      },
+    });
+
+    if (existingFavorite) {
+      return new NextResponse(
+        JSON.stringify({ error: favoritePostMessage.favoriteExists }),
+        { status: 400 }
+      );
+    }
+
     const favorite = await prismadb.favorite.create({
       data: {
         name,

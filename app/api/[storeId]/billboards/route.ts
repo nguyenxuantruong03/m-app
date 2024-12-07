@@ -74,6 +74,21 @@ export async function POST(
       );
     }
 
+    // Kiểm tra xem label mới có bị trùng với label cũ không
+    const existingBillboard = await prismadb.billboard.findFirst({
+      where: {
+        storeId: params.storeId,
+        label: label,
+      },
+    });
+
+    if (existingBillboard) {
+      return new NextResponse(
+        JSON.stringify({ error: billboardPostMessage.name9 }),
+        { status: 400 }
+      );
+    }
+
     const billboard = await prismadb.billboard.create({
       data: {
         label,

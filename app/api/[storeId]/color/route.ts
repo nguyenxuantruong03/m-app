@@ -74,6 +74,22 @@ export async function POST(
       );
     }
 
+    // Kiểm tra nếu đã có màu với tên và giá trị giống nhau
+    const existingColor = await prismadb.color.findFirst({
+      where: {
+        name,
+        value,
+        storeId: params.storeId,
+      },
+    });
+
+    if (existingColor) {
+      return new NextResponse(
+        JSON.stringify({ error: colorPostMessage.colorExists }),
+        { status: 400 }
+      );
+    }
+
     const color = await prismadb.color.create({
       data: {
         name,

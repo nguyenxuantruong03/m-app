@@ -4,7 +4,11 @@ import prismadb from "@/lib/prismadb";
 import { ProductType, UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
 import { translateText } from "@/translate/translate-client";
-import { translateProductDelete, translateProductGet, translateProductPost } from "@/translate/translate-api";
+import {
+  translateProductDelete,
+  translateProductGet,
+  translateProductPost,
+} from "@/translate/translate-api";
 
 export async function POST(
   req: Request,
@@ -13,7 +17,7 @@ export async function POST(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const productPostMessage = translateProductPost(LanguageToUse)
+  const productPostMessage = translateProductPost(LanguageToUse);
   try {
     const body = await req.json();
 
@@ -43,9 +47,12 @@ export async function POST(
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: productPostMessage.nameRequired }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: productPostMessage.nameRequired }),
+        {
+          status: 400,
+        }
+      );
     }
     if (!heading) {
       return new NextResponse(
@@ -73,7 +80,9 @@ export async function POST(
     }
     if (!imagesalientfeatures || !imagesalientfeatures.length) {
       return new NextResponse(
-        JSON.stringify({ error: productPostMessage.imagesAlientFeaturesRequired }),
+        JSON.stringify({
+          error: productPostMessage.imagesAlientFeaturesRequired,
+        }),
         { status: 400 }
       );
     }
@@ -113,6 +122,23 @@ export async function POST(
     }
 
     const productType = ProductType.PRODUCT11;
+
+    // Kiểm tra xem heading mới có trùng với heading của sản phẩm nào đã có trong cùng cửa hàng không
+    const existingProduct = await prismadb.product.findFirst({
+      where: {
+        heading,
+        storeId: params.storeId,
+        productType: productType,
+      },
+    });
+
+    if (existingProduct) {
+      return new NextResponse(
+        JSON.stringify({ error: productPostMessage.headingExists }),
+        { status: 400 }
+      );
+    }
+
     const product = await prismadb.product.create({
       data: {
         name,
@@ -182,7 +208,7 @@ export async function GET(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const productGetMessage = translateProductGet(LanguageToUse)
+  const productGetMessage = translateProductGet(LanguageToUse);
   try {
     const { searchParams } = new URL(req.url);
     const isFeaturedParam = searchParams.get("isFeatured");
@@ -409,7 +435,7 @@ export async function DELETE(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const productDeleteMessage = translateProductDelete(LanguageToUse)
+  const productDeleteMessage = translateProductDelete(LanguageToUse);
   try {
     const body = await req.json();
     const productType = ProductType.PRODUCT11;

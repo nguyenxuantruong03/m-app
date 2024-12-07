@@ -74,6 +74,23 @@ export async function POST(
       );
     }
 
+     // Kiểm tra nếu đã có shipping rate với name trùng
+     const existingShippingRate = await prismadb.shippingRates.findFirst({
+      where: {
+        name: name,
+        storeId: params.storeId,  // Giới hạn kiểm tra trong cùng store
+      },
+    });
+
+    if (existingShippingRate) {
+      return new NextResponse(
+        JSON.stringify({
+          error: shippingRatePostMessage.shippingRateAlreadyExists,
+        }),
+        { status: 400 }
+      );
+    }
+
     // Tạo coupon bằng Stripe
     const shippingRates = await stripe.shippingRates.create({
       display_name: name,

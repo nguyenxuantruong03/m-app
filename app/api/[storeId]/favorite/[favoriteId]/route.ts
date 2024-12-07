@@ -3,9 +3,13 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
-import { translateFavoriteIdDelete, translateFavoriteIdGet, translateFavoritePatch } from "@/translate/translate-api";
+import {
+  translateFavoriteIdDelete,
+  translateFavoriteIdGet,
+  translateFavoritePatch,
+} from "@/translate/translate-api";
 
-type FavoriteValue = string  | Date | undefined | null;
+type FavoriteValue = string | Date | undefined | null;
 
 interface ChangeRecord {
   oldValue: FavoriteValue;
@@ -19,7 +23,7 @@ export async function GET(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const favoriteIdGetMessage = translateFavoriteIdGet(LanguageToUse)
+  const favoriteIdGetMessage = translateFavoriteIdGet(LanguageToUse);
   try {
     if (!params.favoriteId) {
       return new NextResponse(
@@ -64,7 +68,7 @@ export async function DELETE(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const favoriteIdDeleteMessage = translateFavoriteIdDelete(LanguageToUse)
+  const favoriteIdDeleteMessage = translateFavoriteIdDelete(LanguageToUse);
   try {
     if (!user) {
       return new NextResponse(
@@ -111,9 +115,7 @@ export async function DELETE(
     };
 
     // Log sự thay đổi của sentVeirifi
-    const changes = [
-      `DeleteName: ${sentFavorite.name}`,
-    ];
+    const changes = [`DeleteName: ${sentFavorite.name}`];
 
     // Tạo một hàng duy nhất để thể hiện tất cả các thay đổi
     await prismadb.system.create({
@@ -141,10 +143,10 @@ export async function PATCH(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const favoritePatchMessage = translateFavoritePatch(LanguageToUse)
+  const favoritePatchMessage = translateFavoritePatch(LanguageToUse);
   try {
     const body = await req.json();
-    const { name,value } = body;
+    const { name, value } = body;
 
     if (!user) {
       return new NextResponse(
@@ -161,9 +163,12 @@ export async function PATCH(
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: favoritePatchMessage.nameRequired }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: favoritePatchMessage.nameRequired }),
+        {
+          status: 400,
+        }
+      );
     }
 
     if (!params.favoriteId) {
@@ -186,11 +191,34 @@ export async function PATCH(
       );
     }
 
-    const existingFavorite = await prismadb.favorite.findUnique({
+     // Kiểm tra xem tên mới đã tồn tại trong cơ sở dữ liệu chưa (ngoại trừ favoriteId hiện tại)
+     const existingFavorite = await prismadb.favorite.findFirst({
+      where: {
+        name,
+        storeId: params.storeId,
+        NOT: { id: params.favoriteId }, // Loại trừ mục yêu thích hiện tại
+      },
+    });
+
+    if (existingFavorite) {
+      return new NextResponse(
+        JSON.stringify({ error: favoritePatchMessage.favoriteExists }),
+        { status: 400 }
+      );
+    }
+
+    const currentFavorite = await prismadb.favorite.findUnique({
       where: {
         id: params.favoriteId,
       },
     });
+
+    if (!currentFavorite) {
+      return new NextResponse(
+        JSON.stringify({ error: favoritePatchMessage.favoriteNotFound }),
+        { status: 404 }
+      );
+    }
 
     const favorite = await prismadb.favorite.update({
       where: {
@@ -198,7 +226,7 @@ export async function PATCH(
       },
       data: {
         name,
-        value
+        value,
       },
     });
 
@@ -207,19 +235,19 @@ export async function PATCH(
 
     // Tạo consolidatedChanges và kiểm tra thay đổi dựa trên ignoredFields
     const changes: Record<string, ChangeRecord> = {};
-    for (const key in existingFavorite) {
+    for (const key in currentFavorite) {
       if (
-        existingFavorite.hasOwnProperty(key) &&
+        currentFavorite.hasOwnProperty(key) &&
         favorite.hasOwnProperty(key)
       ) {
         if (
-          existingFavorite[key as keyof typeof existingFavorite] !==
+          currentFavorite[key as keyof typeof currentFavorite] !==
           favorite[key as keyof typeof favorite]
         ) {
           // Kiểm tra xem trường hiện tại có trong danh sách loại bỏ không
           if (!ignoredFields.includes(key)) {
             changes[key] = {
-              oldValue: existingFavorite[key as keyof typeof existingFavorite],
+              oldValue: currentFavorite[key as keyof typeof currentFavorite],
               newValue: favorite[key as keyof typeof favorite],
             };
           }
