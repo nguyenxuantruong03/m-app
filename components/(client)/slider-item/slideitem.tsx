@@ -6,6 +6,8 @@ import BillboardImage from './billboard/billboard';
 import Menu from './menu';
 import BillboardMini from './billboard/billboard-mini';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { translateErrorBillboard } from '@/translate/translate-client';
+import toast from 'react-hot-toast';
 
 const SlideItem = () => {
   const user = useCurrentUser();
@@ -27,18 +29,31 @@ const SlideItem = () => {
   //language
   const languageToUse =
       user?.id && user?.role !== "GUEST" ? user?.language : storedLanguage || "vi";
-
-  useEffect(() => {
-    const fetchBillboards = async () => {
-      const billboardData = await getBillboard(`${process.env.NEXT_PUBLIC_BILLBOARD_API_KEY}`,languageToUse);
-      setBillboard(billboardData);
-      setBillboardMini({ ...billboardData, id: `${process.env.NEXT_PUBLIC_BILLBOARD_API_KEY}` });
-      setBillboardSale({ ...billboardData, id: `${ process.env.NEXT_PUBLIC_BILLBOARD_MINI_API_KEY}` });
-      setBillboardSaleIpad({ ...billboardData, id: `${process.env.NEXT_PUBLIC_BILLBOARD_MOBILE_API_KEY}` });
-      setBillboardSaleMobile({ ...billboardData, id: `${process.env.NEXT_PUBLIC_BILLBOARD_IPAD_API_KEY}` });
-    };
-    fetchBillboards();
-  }, []);
+  const errorBillboardMessage = translateErrorBillboard(languageToUse)
+      useEffect(() => {
+        const fetchBillboards = async () => {
+          try {
+            const [billboardData, billboardMiniData, billboardSaleData, billboardIpadData, billboardMobileData] = await Promise.all([
+              getBillboard(`${process.env.NEXT_PUBLIC_BILLBOARD_API_KEY}`, languageToUse),
+              getBillboard(`${process.env.NEXT_PUBLIC_BILLBOARD_MINI_API_KEY}`, languageToUse),
+              getBillboard(`${process.env.NEXT_PUBLIC_BILLBOARD_SALE_API_KEY}`, languageToUse),
+              getBillboard(`${process.env.NEXT_PUBLIC_BILLBOARD_IPAD_API_KEY}`, languageToUse),
+              getBillboard(`${process.env.NEXT_PUBLIC_BILLBOARD_MOBILE_API_KEY}`, languageToUse),
+            ]);
+      
+            setBillboard(billboardData);
+            setBillboardMini(billboardMiniData);
+            setBillboardSale(billboardSaleData);
+            setBillboardSaleIpad(billboardIpadData);
+            setBillboardSaleMobile(billboardMobileData);
+          } catch (error) {
+            toast.error(errorBillboardMessage);
+          }
+        };
+      
+        fetchBillboards();
+      }, []);
+      
 
   return (
     <>

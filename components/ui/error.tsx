@@ -50,9 +50,10 @@ export default function ErrorComponent({
           </button>
           <Link
             href="/"
-            className="p-4 ml-5 inline text-sm font-medium leading-5 shadow-2xl text-white transition-all duration-400 border border-transparent rounded-lg focus:outline-none bg-green-600 active:bg-red-600 hover:bg-red-700"
           >
+          <button  className="p-4 ml-5 inline text-sm font-medium leading-5 shadow-2xl text-white transition-all duration-400 border border-transparent rounded-lg focus:outline-none bg-green-600 active:bg-red-600 hover:bg-red-700">
             {errorMessage.backToHomepage}
+          </button>
           </Link>
         </div>
         <div className="w-full lg:flex lg:justify-end mx-5 my-12 h-[200px] md:h-[300px] xl:h-[500px]">

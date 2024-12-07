@@ -2472,10 +2472,10 @@ export const translateSentEmailForm = (language: string) => {
         enterSubjectToMakeItClear:
           "Nhập chủ đề, để người dùng dễ dàng nhận biết về chủ đề gì?",
         enterSubject: "Nhập chủ đề...",
-        user: "Người dùng",
+        user: 'Người dùng hoặc Yêu thích',
         mentionUserWithAt:
           "Khi @ sẽ gọi người dùng. Đối với $ sử dụng cho ưa thích của người dùng.",
-        enterUserNameWithAt: "Nhập tên người dùng và dùng @ để mention...",
+        enterUserNameWithAt: 'Nhập $ và @ để đề cập...',
         errorAvatar: "Lỗi avatar của",
         description: "Mô tả",
         enterAtLeastTwoChars: "Nhập ít nhất 2 ký tự.",
@@ -2513,10 +2513,10 @@ export const translateSentEmailForm = (language: string) => {
         enterSubjectToMakeItClear:
           "Enter a subject to make it clear for the user.",
         enterSubject: "Enter subject...",
-        user: "User",
+        user: 'User or Favorite',
         mentionUserWithAt:
           "When @ is used, it mentions a user. Use $ for the user's favorites.",
-        enterUserNameWithAt: "Enter username and use @ to mention...",
+        enterUserNameWithAt: 'Enter $ and @ to mention...',
         errorAvatar: "Error in avatar of",
         description: "Description",
         enterAtLeastTwoChars: "Enter at least 2 characters.",
@@ -2554,10 +2554,10 @@ export const translateSentEmailForm = (language: string) => {
         enterSubjectToMakeItClear:
           "输入主题，以便用户清楚知道主题是什么。",
         enterSubject: "输入主题...",
-        user: "用户",
+        user: '用户或收藏',
         mentionUserWithAt:
           "使用 @ 时会提到用户。对 $ 使用用户的收藏。",
-        enterUserNameWithAt: "输入用户名并使用 @ 来提到...",
+        enterUserNameWithAt: '输入 $ 和 @ 来提及...',
         errorAvatar: "头像错误",
         description: "描述",
         enterAtLeastTwoChars: "请输入至少 2 个字符。",
@@ -2595,10 +2595,10 @@ export const translateSentEmailForm = (language: string) => {
         enterSubjectToMakeItClear:
           "Entrez un sujet pour clarifier de quoi il s'agit.",
         enterSubject: "Entrez le sujet...",
-        user: "Utilisateur",
+        user: 'Utilisateur ou Favori',
         mentionUserWithAt:
           "Lorsque @ est utilisé, cela mentionne un utilisateur. Utilisez $ pour les favoris de l'utilisateur.",
-        enterUserNameWithAt: "Entrez le nom d'utilisateur et utilisez @ pour mentionner...",
+        enterUserNameWithAt: 'Entrez $ et @ pour mentionner...',
         errorAvatar: "Erreur d'avatar de",
         description: "Description",
         enterAtLeastTwoChars: "Entrez au moins 2 caractères.",
@@ -2636,10 +2636,10 @@ export const translateSentEmailForm = (language: string) => {
         enterSubjectToMakeItClear:
           "件名を入力して、ユーザーにわかりやすくします。",
         enterSubject: "件名を入力...",
-        user: "ユーザー",
+        user: 'ユーザーまたはお気に入り',
         mentionUserWithAt:
           "@を使用するとユーザーをメンションします。$はユーザーのお気に入りに使用します。",
-        enterUserNameWithAt: "ユーザー名を入力し、@を使ってメンション...",
+        enterUserNameWithAt: '$ と @ を入力してメンションする...',
         errorAvatar: "アバターのエラー",
         description: "説明",
         enterAtLeastTwoChars: "少なくとも2文字を入力してください。",
@@ -2677,10 +2677,10 @@ export const translateSentEmailForm = (language: string) => {
         enterSubjectToMakeItClear:
           "Enter a subject to make it clear for the user.",
         enterSubject: "Enter subject...",
-        user: "User",
+        user: 'User or Favorite',
         mentionUserWithAt:
           "When @ is used, it mentions a user. Use $ for the user's favorites.",
-        enterUserNameWithAt: "Enter username and use @ to mention...",
+        enterUserNameWithAt: 'Enter $ and @ to mention...',
         errorAvatar: "Error in avatar of",
         description: "Description",
         enterAtLeastTwoChars: "Enter at least 2 characters.",

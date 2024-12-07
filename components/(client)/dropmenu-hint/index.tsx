@@ -261,7 +261,7 @@ export default function DropMenuHint() {
         });
 
         // Kiểm tra nếu API trả về dữ liệu thành công
-        if (apiResponse?.data?.success) {
+        if (apiResponse.status === 200) {
           toast.success(toastMessage);
 
           // Thực hiện setIsConfirmLanguage và setLoadingLanguage trước
@@ -271,7 +271,7 @@ export default function DropMenuHint() {
           // Nếu thành công, gọi setTimeout để mở trạng thái reload sau 3s
           setTimeout(() => {
             setIsOpenReload(true);
-          }, 3000);
+          }, 2000);
         }
       } else {
         // Nếu không có user, lưu vào localStorage
@@ -285,12 +285,11 @@ export default function DropMenuHint() {
         // Nếu thành công, gọi setTimeout để mở trạng thái reload sau 3s
         setTimeout(() => {
           setIsOpenReload(true);
-        }, 3000); // 3000ms = 3s
+        }, 2000); // 3000ms = 3s
       }
     } catch (error) {
       // Lấy thông báo từ getLanguageToastError
       toast.error(toastErrorMessage);
-
       // Dù có lỗi hay không, vẫn đảm bảo set loading thành false
       setIsConfirmLanguage(false);
       setLoadingLanguage(false);
@@ -341,7 +340,7 @@ export default function DropMenuHint() {
         loading={loadingLanguage}
         onClose={() => setIsConfirmLanguage(false)}
         onConfirm={onCreatlanguage}
-        languageToUse={languageToUse}
+        languageToUse={language}
       />
       <AlertModal
         title={reloadPageDropMenuHintMessage.confirm}

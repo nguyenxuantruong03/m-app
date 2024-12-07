@@ -24,7 +24,7 @@ export async function POST(req: Request) {
           status: 400,
         });
       }
-  
+
       const user = await prismadb.user.update({
         where:{
             id: userId?.id

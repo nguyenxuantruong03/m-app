@@ -4,9 +4,22 @@ import prismadb from "@/lib/prismadb";
 import { currentRole, currentUser } from "@/lib/auth";
 import { User, UserRole } from "@prisma/client";
 import { sendSpamEmail } from "@/lib/mail";
-import { translateSentEmailIdGet, translateSentEmailIdDelete, translateSentEmailIdPatch, translateSentEmailIdPost } from "@/translate/translate-api";
+import {
+  translateSentEmailIdGet,
+  translateSentEmailIdDelete,
+  translateSentEmailIdPatch,
+  translateSentEmailIdPost,
+} from "@/translate/translate-api";
+import { translateText } from "@/translate/translate-client";
 
-type SentEmailUserValue = string | boolean | Date | User | string[] | undefined | null;
+type SentEmailUserValue =
+  | string
+  | boolean
+  | Date
+  | User
+  | string[]
+  | undefined
+  | null;
 
 interface ChangeRecord {
   oldValue: SentEmailUserValue;
@@ -20,11 +33,13 @@ export async function GET(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const sentEmailUserIdGetMessage = translateSentEmailIdGet(LanguageToUse)
+  const sentEmailUserIdGetMessage = translateSentEmailIdGet(LanguageToUse);
   try {
     if (!params.sentmailuserId) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailUserIdGetMessage.sentMailUserIdRequired }),
+        JSON.stringify({
+          error: sentEmailUserIdGetMessage.sentMailUserIdRequired,
+        }),
         { status: 400 }
       );
     }
@@ -68,7 +83,8 @@ export async function DELETE(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const sentEmailUserIdDeleteMessage = translateSentEmailIdDelete(LanguageToUse)
+  const sentEmailUserIdDeleteMessage =
+    translateSentEmailIdDelete(LanguageToUse);
   try {
     const role = await currentRole();
 
@@ -81,14 +97,18 @@ export async function DELETE(
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailUserIdDeleteMessage.permissionDenied }),
+        JSON.stringify({
+          error: sentEmailUserIdDeleteMessage.permissionDenied,
+        }),
         { status: 403 }
       );
     }
 
     if (!params.sentmailuserId) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailUserIdDeleteMessage.sentMailUserIdRequired }),
+        JSON.stringify({
+          error: sentEmailUserIdDeleteMessage.sentMailUserIdRequired,
+        }),
         { status: 400 }
       );
     }
@@ -108,7 +128,9 @@ export async function DELETE(
 
     if (role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailUserIdDeleteMessage.rolePermissionDenied }),
+        JSON.stringify({
+          error: sentEmailUserIdDeleteMessage.rolePermissionDenied,
+        }),
         { status: 403 }
       );
     }
@@ -155,7 +177,7 @@ export async function PATCH(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const sentEmailUserIdPatchMessage = translateSentEmailIdPatch(LanguageToUse)
+  const sentEmailUserIdPatchMessage = translateSentEmailIdPatch(LanguageToUse);
   try {
     const body = await req.json();
     const { subject, description, sentemailuser } = body;
@@ -183,7 +205,9 @@ export async function PATCH(
 
     if (!description) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailUserIdPatchMessage.descriptionRequired }),
+        JSON.stringify({
+          error: sentEmailUserIdPatchMessage.descriptionRequired,
+        }),
         { status: 400 }
       );
     }
@@ -197,7 +221,9 @@ export async function PATCH(
 
     if (!params.sentmailuserId) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailUserIdPatchMessage.sentMailUserIdRequired }),
+        JSON.stringify({
+          error: sentEmailUserIdPatchMessage.sentMailUserIdRequired,
+        }),
         { status: 400 }
       );
     }
@@ -298,7 +324,7 @@ export async function POST(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const sentEmailUserIdPostMessage = translateSentEmailIdPost(LanguageToUse)
+  const sentEmailUserIdPostMessage = translateSentEmailIdPost(LanguageToUse);
   try {
     const body = await req.json();
     const { sentuser } = body;
@@ -317,7 +343,9 @@ export async function POST(
       );
     }
 
-    const cleanedStrsentuser = sentuser.join(", ").replace(/@\[(.*?)\]\(.*?\)/g, '$1');
+    const cleanedStrsentuser = sentuser
+      .join(", ")
+      .replace(/@\[(.*?)\]\(.*?\)/g, "$1");
 
     if (!sentuser || !cleanedStrsentuser) {
       return new NextResponse(
@@ -328,7 +356,9 @@ export async function POST(
 
     if (!params.sentmailuserId) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailUserIdPostMessage.sentMailUserIdRequired }),
+        JSON.stringify({
+          error: sentEmailUserIdPostMessage.sentMailUserIdRequired,
+        }),
         { status: 404 }
       );
     }
@@ -340,9 +370,12 @@ export async function POST(
     });
 
     if (!storeByUserId) {
-      return new NextResponse(JSON.stringify({ error: sentEmailUserIdPostMessage.storeIdNotFound }), {
-        status: 405,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: sentEmailUserIdPostMessage.storeIdNotFound }),
+        {
+          status: 405,
+        }
+      );
     }
 
     const sentEmailUser = await prismadb.sentEmailUser.update({
@@ -364,41 +397,128 @@ export async function POST(
 
     const sentEmailUsers = await prismadb.user.findMany();
     const favoriteAll = await prismadb.favorite.findMany();
+    // Lấy danh sách email cụ thể từ cleanedStrsentuser (nếu có)
+    const specificEmails = cleanedStrsentuser
+      .split(", ")
+      .map((email: string) => email.trim());
 
-    // Lọc những người dùng có favorite chứa cleanedStr
-    const usersWithMatchingFavorite = sentEmailUsers.filter((user) =>
-      user.favorite.includes(cleanedStrsentuser)
-    );
-    // Lấy ra danh sách email của những người dùng thỏa mãn điều kiện
-    const emailsToSend = usersWithMatchingFavorite.map((user) => user.email);
+    // Tạo danh sách để tránh gửi trùng
+    let sentEmails: string[] = [];
 
-    if (emailsToSend.length > 0) {
-      await sendSpamEmail(
-        emailsToSend,
-        sentEmailUser.subject,
-        sentEmailUser.description
-      );
+    // Nếu cleanedStrsentuser không phải "all", gửi email cá nhân trước
+    if (cleanedStrsentuser !== "all") {
+      for (const email of specificEmails) {
+        // Tìm người dùng dựa trên email
+        const user = sentEmailUsers.find((u) => u.email === email);
+
+        if (user && user.email) {
+          // Kiểm tra nếu email tồn tại
+          // Nếu email đã được gửi, bỏ qua
+          if (sentEmails.includes(user.email)) {
+            continue;
+          }
+
+          const userLanguage = user.language ?? "en"; // Ngôn ngữ mặc định là "en" nếu là null hoặc undefined
+
+          // Dịch tiêu đề và nội dung email theo ngôn ngữ của người dùng
+          const translatedSubject = await translateText(
+            sentEmailUser.subject,
+            userLanguage
+          );
+          const translatedDescription = await translateText(
+            sentEmailUser.description,
+            userLanguage
+          );
+
+          // Gửi email với nội dung đã dịch (chỉ gửi một lần)
+          await sendSpamEmail(
+            [user.email],
+            translatedSubject,
+            translatedDescription
+          );
+
+          // Thêm email vào danh sách đã gửi
+          sentEmails.push(user.email);
+        }
+      }
     }
 
-    const allEmails = sentEmailUsers.map((user) => user.email);
-    // Wait for sendSpamEmail to complete before returning
+    // Xử lý trường hợp "all" hoặc gửi theo favorite
     if (cleanedStrsentuser === "all") {
-      // Send email to all users
-      await sendSpamEmail(
-        allEmails,
-        sentEmailUser.subject,
-        sentEmailUser.description
+      // Lấy tất cả người dùng có role là "USER", trừ những người đã được gửi riêng lẻ
+      const allUsers = sentEmailUsers.filter(
+        (user) =>
+          user.role === "USER" && user.email && !sentEmails.includes(user.email)
       );
+
+      for (const user of allUsers) {
+        // Kiểm tra nếu email tồn tại
+        if (user.email) {
+          // Nếu email đã được gửi, bỏ qua
+          if (sentEmails.includes(user.email)) {
+            continue;
+          }
+
+          const userLanguage = user.language ?? "en"; // Ngôn ngữ mặc định là "en" nếu là null hoặc undefined
+          const translatedSubject = await translateText(
+            sentEmailUser.subject,
+            userLanguage
+          );
+          const translatedDescription = await translateText(
+            sentEmailUser.description,
+            userLanguage
+          );
+
+          // Gửi email riêng lẻ cho từng user với nội dung đã dịch
+          await sendSpamEmail(
+            [user.email],
+            translatedSubject,
+            translatedDescription
+          );
+
+          // Thêm email vào danh sách đã gửi
+          sentEmails.push(user.email);
+        }
+      }
     } else {
-      // Send email to specific user
-      const emailArray = cleanedStrsentuser
-        .split(", ")
-        .map((email: string) => email.trim());
-      await sendSpamEmail(
-        emailArray,
-        sentEmailUser.subject,
-        sentEmailUser.description
+      // Lọc các người dùng có email hợp lệ, role là "USER", có favorite phù hợp, chưa gửi email
+      const usersWithMatchingFavorite = sentEmailUsers.filter(
+        (user) =>
+          user.role === "USER" &&
+          user.email && // Kiểm tra user.email không phải là null hoặc undefined
+          user.favorite.includes(cleanedStrsentuser) &&
+          !sentEmails.includes(user.email) // Loại bỏ người đã được gửi riêng lẻ
       );
+
+      for (const user of usersWithMatchingFavorite) {
+        // Kiểm tra nếu email tồn tại
+        if (user.email) {
+          // Nếu email đã được gửi, bỏ qua
+          if (sentEmails.includes(user.email)) {
+            continue;
+          }
+
+          const userLanguage = user.language ?? "en"; // Ngôn ngữ mặc định là "en" nếu là null hoặc undefined
+          const translatedSubject = await translateText(
+            sentEmailUser.subject,
+            userLanguage
+          );
+          const translatedDescription = await translateText(
+            sentEmailUser.description,
+            userLanguage
+          );
+
+          // Gửi email riêng lẻ cho từng user với nội dung đã dịch
+          await sendSpamEmail(
+            [user.email],
+            translatedSubject,
+            translatedDescription
+          );
+
+          // Thêm email vào danh sách đã gửi
+          sentEmails.push(user.email);
+        }
+      }
     }
 
     // Chuyển người dùng và favorite thành email và name
@@ -413,7 +533,6 @@ export async function POST(
       ChangeStringUser.includes(favorite.id)
     );
     const checkMatchingFavorite = matchingFavorite.map((item) => item.name);
-
 
     const sentMailUserSystem = {
       description: sentEmailUser.description,

@@ -64,7 +64,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
     const fetchData = async () => {
       try {
         const billboardData = await getBillboard(
-          `${process.env.NEXT_PUBLIC_BILLBOARD_API_KEY}`,
+          `${process.env.NEXT_PUBLIC_CATEGORIES7}`,
           languageToUse
         );
         const productData = await getProduct7({

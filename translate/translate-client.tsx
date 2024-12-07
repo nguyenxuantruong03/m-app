@@ -19709,28 +19709,6 @@ export const translateProductRemovedFromWishlist = (language: string) => {
   }
 };
 
-// Hàm dịch văn bản, trả về chuỗi đã dịch hoặc chuỗi gốc nếu lỗi
-export async function translateText(
-  text: string,
-  language: string
-): Promise<string> {
-  if (!text) return ""; // Trả về chuỗi rỗng nếu không có dữ liệu
-  const response = await axios({
-    baseURL: endpoint,
-    url: `/translate?api-version=3.0&to=${language}`, // Dynamic language
-    method: "POST",
-    headers: {
-      "Ocp-Apim-Subscription-Key": key,
-      "Ocp-Apim-Subscription-Region": location,
-      "Content-type": "application/json",
-      "X-ClientTraceId": cuid(),
-    },
-    data: [{ Text: text }],
-  });
-
-  return response.data[0]?.translations[0]?.text || text;
-}
-
 export const getUploadImageAction = (language: string) => {
   switch (language) {
     case "vi":
@@ -20344,3 +20322,237 @@ export const getDeliveredLocation = (language:string) => {
       };
   }
 };
+
+
+
+export const translateErrorBillboard = (language: string) => {
+  switch (language) {
+    case "vi":
+      return "Lỗi khi lấy dữ liệu bảng quảng cáo!";
+    case "en":
+      return "Error fetching billboards!";
+    case "zh":
+      return "获取广告牌时出错！";
+    case "fr":
+      return "Erreur lors de la récupération des panneaux d'affichage !";
+    case "ja":
+      return "ビルボードの取得中にエラーが発生しました！";
+    default:
+      return "Error fetching billboards!";
+  }
+};
+
+
+export const getInfomationFooter = (language: string) => {
+  switch (language) {
+    case 'vi':  // Vietnamese
+      return {
+        pinConO: 'Pin con ó',
+        bongDienQuang: 'Bóng Điện Quang',
+        bongRangDong: 'Bóng Rạng Đông',
+        keo2Mat: 'Keo 2 mặt',
+        luoiXanh: 'Lưới xanh',
+        xeRua: 'Xe rùa',
+        thuocKeo: 'Thước kéo',
+        ongBinhMinh: 'Ống Bình Minh',
+        quatTreoSenko: 'Quạt Treo Senko',
+        noi: 'Nối',
+        sifaThongCong: 'Sifa Thông Cống',
+        sonXitATM: 'Sơn xịt ATM',
+        coLeYeti: 'Cờ lê Yeti',
+        batXanh: 'Bạt xanh',
+        keoApolo: 'Keo Apolo',
+        dayDaphaco: 'Dây Daphaco',
+        dayDaphacoLon: 'Dây Daphaco lớn',
+        dayDienCadivi: 'Dây điện Cadivi',
+        quatSenko: 'Quạt Senko',
+        sonExpo: 'Sơn Expo',
+        oCamSino: 'Ổ cắm Sino',
+        oCamCayThong: 'Ổ cắm cây thông',
+        oCamDienQuang: 'Ổ cắm Điện Quang',
+        keoDanSat: 'Keo dán sắt',
+        sonBachTuyet: 'Sơn Bạch Tuyết',
+        keoConCho: 'Keo con chó',
+        vLo: 'V lỗ',
+        queHan: 'Que hàn'
+      };
+    case 'en':  // English
+      return {
+        pinConO: 'Owl battery',
+        bongDienQuang: 'Electric Light Bulb',
+        bongRangDong: 'Rang Dong Bulb',
+        keo2Mat: 'Double-sided tape',
+        luoiXanh: 'Green mesh',
+        xeRua: 'Wheelbarrow',
+        thuocKeo: 'Tape measure',
+        ongBinhMinh: 'Binh Minh tube',
+        quatTreoSenko: 'Senko hanging fan',
+        noi: 'Connector',
+        sifaThongCong: 'Sifa drain opener',
+        sonXitATM: 'ATM spray paint',
+        coLeYeti: 'Yeti wrench',
+        batXanh: 'Green tarpaulin',
+        keoApolo: 'Apolo glue',
+        dayDaphaco: 'Daphaco wire',
+        dayDaphacoLon: 'Large Daphaco wire',
+        dayDienCadivi: 'Cadivi electric wire',
+        quatSenko: 'Senko fan',
+        sonExpo: 'Expo paint',
+        oCamSino: 'Sino socket',
+        oCamCayThong: 'Christmas tree socket',
+        oCamDienQuang: 'Electric Quang socket',
+        keoDanSat: 'Iron glue',
+        sonBachTuyet: 'Snow White paint',
+        keoConCho: 'Dog glue',
+        vLo: 'V-shaped hole',
+        queHan: 'Welding rod'
+      };
+    case 'zh':  // Chinese
+      return {
+        pinConO: '猫头鹰电池',
+        bongDienQuang: '电灯泡',
+        bongRangDong: '光辉灯泡',
+        keo2Mat: '双面胶',
+        luoiXanh: '绿色网格',
+        xeRua: '手推车',
+        thuocKeo: '卷尺',
+        ongBinhMinh: '明亮管',
+        quatTreoSenko: 'Senko吊扇',
+        noi: '连接器',
+        sifaThongCong: 'Sifa通渠剂',
+        sonXitATM: 'ATM喷漆',
+        coLeYeti: 'Yeti扳手',
+        batXanh: '绿色防水布',
+        keoApolo: '阿波罗胶水',
+        dayDaphaco: '大发线',
+        dayDaphacoLon: '大大发线',
+        dayDienCadivi: '卡迪维电线',
+        quatSenko: 'Senko风扇',
+        sonExpo: 'Expo涂料',
+        oCamSino: 'Sino插座',
+        oCamCayThong: '圣诞树插座',
+        oCamDienQuang: '电光插座',
+        keoDanSat: '铁胶',
+        sonBachTuyet: '白雪油漆',
+        keoConCho: '狗胶',
+        vLo: 'V形孔',
+        queHan: '焊条'
+      };
+    case 'fr':  // French
+      return {
+        pinConO: 'Pile de hibou',
+        bongDienQuang: 'Ampoule électrique',
+        bongRangDong: 'Ampoule Rang Dong',
+        keo2Mat: 'Ruban adhésif double face',
+        luoiXanh: 'Maille verte',
+        xeRua: 'Charette',
+        thuocKeo: 'Mètre ruban',
+        ongBinhMinh: 'Tube Bình Minh',
+        quatTreoSenko: 'Ventilateur suspendu Senko',
+        noi: 'Connecteur',
+        sifaThongCong: 'Déboucheur Sifa',
+        sonXitATM: 'Peinture en spray ATM',
+        coLeYeti: 'Clé Yeti',
+        batXanh: 'Bâche verte',
+        keoApolo: 'Colle Apolo',
+        dayDaphaco: 'Fil Daphaco',
+        dayDaphacoLon: 'Fil Daphaco grand',
+        dayDienCadivi: 'Fil électrique Cadivi',
+        quatSenko: 'Ventilateur Senko',
+        sonExpo: 'Peinture Expo',
+        oCamSino: 'Prise Sino',
+        oCamCayThong: 'Prise sapin de Noël',
+        oCamDienQuang: 'Prise électrique Quang',
+        keoDanSat: 'Colle pour métal',
+        sonBachTuyet: 'Peinture Blanche Neige',
+        keoConCho: 'Colle pour chien',
+        vLo: 'Trou en V',
+        queHan: 'Bâton de soudure'
+      };
+    case 'ja':  // Japanese
+      return {
+        pinConO: 'フクロウ電池',
+        bongDienQuang: '電球',
+        bongRangDong: 'ランドン電球',
+        keo2Mat: '両面テープ',
+        luoiXanh: '緑のメッシュ',
+        xeRua: '手押し車',
+        thuocKeo: 'メジャー',
+        ongBinhMinh: 'ビンミン管',
+        quatTreoSenko: 'センコー吊り下げファン',
+        noi: 'コネクタ',
+        sifaThongCong: 'Sifa排水剤',
+        sonXitATM: 'ATMスプレーペイント',
+        coLeYeti: 'イエティレンチ',
+        batXanh: '緑のターポリン',
+        keoApolo: 'アポロ接着剤',
+        dayDaphaco: 'ダファコワイヤー',
+        dayDaphacoLon: '大ダファコワイヤー',
+        dayDienCadivi: 'カディビ電線',
+        quatSenko: 'センコーファン',
+        sonExpo: 'エクスポペイント',
+        oCamSino: 'シノソケット',
+        oCamCayThong: 'クリスマスツリーソケット',
+        oCamDienQuang: '電気クアンソケット',
+        keoDanSat: '鉄接着剤',
+        sonBachTuyet: 'スノーホワイトペイント',
+        keoConCho: '犬用接着剤',
+        vLo: 'V型穴',
+        queHan: '溶接棒'
+      };
+    default:
+      return {
+        pinConO: 'Owl battery',
+        bongDienQuang: 'Electric Light Bulb',
+        bongRangDong: 'Rang Dong Bulb',
+        keo2Mat: 'Double-sided tape',
+        luoiXanh: 'Green mesh',
+        xeRua: 'Wheelbarrow',
+        thuocKeo: 'Tape measure',
+        ongBinhMinh: 'Binh Minh tube',
+        quatTreoSenko: 'Senko hanging fan',
+        noi: 'Connector',
+        sifaThongCong: 'Sifa drain opener',
+        sonXitATM: 'ATM spray paint',
+        coLeYeti: 'Yeti wrench',
+        batXanh: 'Green tarpaulin',
+        keoApolo: 'Apolo glue',
+        dayDaphaco: 'Daphaco wire',
+        dayDaphacoLon: 'Large Daphaco wire',
+        dayDienCadivi: 'Cadivi electric wire',
+        quatSenko: 'Senko fan',
+        sonExpo: 'Expo paint',
+        oCamSino: 'Sino socket',
+        oCamCayThong: 'Christmas tree socket',
+        oCamDienQuang: 'Electric Quang socket',
+        keoDanSat: 'Iron glue',
+        sonBachTuyet: 'Snow White paint',
+        keoConCho: 'Dog glue',
+        vLo: 'V-shaped hole',
+        queHan: 'Welding rod'
+      };
+  }
+};
+
+
+// Hàm dịch văn bản, trả về chuỗi đã dịch hoặc chuỗi gốc nếu lỗi
+export async function translateText(
+  text: string,
+  language: string
+): Promise<string> {
+  if (!text) return ""; // Trả về chuỗi rỗng nếu không có dữ liệu
+  const response = await axios({
+    baseURL: endpoint,
+    url: `/translate?api-version=3.0&to=${language}`, // Dynamic language
+    method: "POST",
+    headers: {
+      "Ocp-Apim-Subscription-Key": key,
+      "Ocp-Apim-Subscription-Region": location,
+      "Content-type": "application/json",
+      "X-ClientTraceId": cuid(),
+    },
+    data: [{ Text: text }],
+  });
+
+  return response.data[0]?.translations[0]?.text || text;
+}

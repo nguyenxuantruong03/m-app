@@ -292,7 +292,7 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
             return (
               <p>
                 {sentEmailFormMessage.sentEmailUser}
-                <span className="font-bold">{data.subject}</span> {sentEmailFormMessage.created}.
+                <span className="font-bold"> {data.subject} </span>{sentEmailFormMessage.created}.
               </p>
             );
           }
