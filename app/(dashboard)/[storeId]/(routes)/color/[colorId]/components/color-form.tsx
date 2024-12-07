@@ -1,7 +1,7 @@
 "use client";
 import * as z from "zod";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -146,6 +146,14 @@ export const ColorForm: React.FC<ColorFormProps> = ({ initialData,language }) =>
     }
   };
 
+  useEffect(() => {
+    // Kiểm tra xem input đã được render chưa và focus vào nó
+    const inputElement = document.getElementById("name-input");
+    if (inputElement) {
+      inputElement.focus();
+    }
+  }, []);
+
   return (
     <>
       <AlertModal
@@ -189,6 +197,7 @@ export const ColorForm: React.FC<ColorFormProps> = ({ initialData,language }) =>
                   </FormLabel>
                   <FormControl>
                     <Input
+                      id="name-input"
                       disabled={loading}
                       placeholder={colorFormMessage.enterName}
                       {...field}

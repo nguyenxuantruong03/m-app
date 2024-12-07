@@ -2,7 +2,7 @@
 
 import { Store } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -82,6 +82,14 @@ export const SettingsForm: React.FC<SettingFormProps> = ({ initialData,language 
     }
   };
 
+  useEffect(() => {
+    // Kiểm tra xem input đã được render chưa và focus vào nó
+    const inputElement = document.getElementById("name-input");
+    if (inputElement) {
+      inputElement.focus();
+    }
+  }, []);
+
   return (
     <>
       <AlertModal
@@ -117,6 +125,7 @@ export const SettingsForm: React.FC<SettingFormProps> = ({ initialData,language 
                   <FormLabel>{settingFormMessage.name}</FormLabel>
                   <FormControl>
                     <Input
+                      id="name-input"
                       disabled={loading}
                       placeholder={settingFormMessage.storeNamePlaceholder}
                       {...field}

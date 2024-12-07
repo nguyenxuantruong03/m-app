@@ -238,6 +238,15 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
     setValueMinSelected(value > 0);
   };
 
+  useEffect(() => {
+    // Kiểm tra xem input đã được render chưa và focus vào nó
+    const inputElement = document.getElementById("name-input");
+    if (inputElement) {
+      inputElement.focus();
+    }
+  }, []);
+
+
   return (
     <>
       {/* update and create */}
@@ -266,6 +275,7 @@ export const ShippingRatesForm: React.FC<ShippingRatesFormProps> = ({
                   </FormLabel>
                   <FormControl>
                     <Input
+                      id="name-input"
                       disabled={loading}
                       placeholder={
                         shippingRateFormMessage.enterShippingNamePlaceholder

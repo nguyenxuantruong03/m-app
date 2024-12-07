@@ -334,6 +334,14 @@ export const CouponForm: React.FC<CouponFormProps> = ({
     }
   };
 
+  useEffect(() => {
+    // Kiểm tra xem input đã được render chưa và focus vào nó
+    const inputElement = document.getElementById("name-input");
+    if (inputElement) {
+      inputElement.focus();
+    }
+  }, []);
+
   return (
     <>
       <AlertModal
@@ -407,6 +415,7 @@ export const CouponForm: React.FC<CouponFormProps> = ({
                   </FormLabel>
                   <FormControl>
                     <Input
+                      id="name-input"
                       disabled={loading}
                       placeholder={couponFormMessage.enterCouponName}
                       {...field}

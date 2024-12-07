@@ -11,7 +11,7 @@ import {
 import { MoreHorizontal, Ban, Lock, ShieldCheck, ShieldOff,KeyRound } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { AlertModal } from "@/components/modals/alert-modal";
 import { SettingUsersColumn } from "./column";
@@ -194,6 +194,24 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       setLoading(false);
     }
   };
+
+   //Bỏ pointer-event:none khi không có isAISheetOpen
+  useEffect(() => {
+    if (!open) {
+      setTimeout(() => {
+        document.body.style.pointerEvents = "";
+      }, 500);
+    }
+  }, [open]);
+
+   //Bỏ pointer-event:none khi không có isAISheetOpen
+  useEffect(() => {
+    if (!openSheet) {
+      setTimeout(() => {
+        document.body.style.pointerEvents = "";
+      }, 500);
+    }
+  }, [openSheet]);
   
   return (
     <>

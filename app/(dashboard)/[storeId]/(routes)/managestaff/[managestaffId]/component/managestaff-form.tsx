@@ -292,6 +292,14 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
     }
   };
 
+  useEffect(() => {
+    // Kiểm tra xem input đã được render chưa và focus vào nó
+    const inputElement = document.getElementById("phonenumber-input");
+    if (inputElement) {
+      inputElement.focus();
+    }
+  }, []);
+
   return (
     <>
       <AlertModal
@@ -405,6 +413,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                   </FormLabel>
                   <FormControl>
                     <Input
+                      id="phonenumber-input"
                       type="tel"
                       pattern="0[0-9]{9,10}"
                       disabled={loading}

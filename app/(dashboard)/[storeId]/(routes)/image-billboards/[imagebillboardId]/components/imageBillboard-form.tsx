@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -203,6 +203,14 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
     }
   };
 
+  useEffect(() => {
+    // Kiểm tra xem input đã được render chưa và focus vào nó
+    const inputElement = document.getElementById("label-input");
+    if (inputElement) {
+      inputElement.focus();
+    }
+  }, []);
+
   return (
     <>
       <AlertModal
@@ -246,6 +254,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
                   </FormLabel>
                   <FormControl>
                     <Input
+                      id="label-input"
                       disabled={loading}
                       placeholder={
                         imageBillboardFormMessage.enterLabelPlaceholder

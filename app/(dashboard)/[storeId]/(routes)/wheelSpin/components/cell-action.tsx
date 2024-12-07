@@ -11,7 +11,7 @@ import {
 import { MoreHorizontal, BadgeDollarSign, WalletCards } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { WheelSpinColumn } from "./column";
 import { Input } from "@/components/ui/input";
@@ -310,6 +310,32 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     }
   };
 
+     //Bỏ pointer-event:none khi không có isAISheetOpen
+    useEffect(() => {
+      if (!openBonus) {
+        setTimeout(() => {
+          document.body.style.pointerEvents = "";
+        }, 500);
+      }
+    }, [openBonus]);
+
+       //Bỏ pointer-event:none khi không có isAISheetOpen
+    useEffect(() => {
+    if (!openUnbonus) {
+      setTimeout(() => {
+        document.body.style.pointerEvents = "";
+      }, 500);
+    }
+  }, [openUnbonus]);
+
+  useEffect(() => {
+    // Kiểm tra xem input đã được render chưa và focus vào nó
+    const inputElement = document.getElementById("textInput");
+    if (inputElement) {
+      inputElement.focus();
+    }
+  }, []);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -334,6 +360,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <div className="overlay" onClick={handleCloseModal}>
           <div className="modal z-[999] rounded-md" onClick={handleModalClick}>
             <Input
+              id="textInput"
               type="text"
               value={bonusTitle}
               onChange={(e) => setbonusTitle(e.target.value)}
@@ -380,6 +407,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <div className="overlay" onClick={handleCloseModal}>
           <div className="modal z-[999] rounded-md" onClick={handleModalClick}>
             <Input
+              id="textInput"
               type="text"
               value={unbonusTitle}
               onChange={(e) => setUnbonusTitle(e.target.value)}

@@ -421,6 +421,15 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
     }
   };
 
+  useEffect(() => {
+    // Kiểm tra xem input đã được render chưa và focus vào nó
+    const inputElement = document.getElementById("subject-input");
+    if (inputElement) {
+      inputElement.focus();
+    }
+  }, []);
+
+
   return (
     <>
       <AlertModal
@@ -463,6 +472,7 @@ export const SentEmailUserForm: React.FC<SentEmailUserFormProps> = ({
                   </FormLabel>
                   <FormControl>
                     <Input
+                      id="subject-input"
                       disabled={loading}
                       placeholder={sentEmailFormMessage.enterSubject} 
                       {...field}

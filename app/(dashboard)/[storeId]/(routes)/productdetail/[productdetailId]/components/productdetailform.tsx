@@ -1,7 +1,7 @@
 "use client";
 import * as z from "zod";
 import axios from "axios";
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -977,6 +977,15 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
     }
   };
 
+  useEffect(() => {
+    // Kiểm tra xem input đã được render chưa và focus vào nó
+    const inputElement = document.getElementById("title-input");
+    if (inputElement) {
+      inputElement.focus();
+    }
+  }, []);
+
+
   return (
     <>
       <AlertModal
@@ -1021,6 +1030,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                   </FormLabel>
                   <FormControl>
                     <Input
+                      id="title-input"
                       disabled={loading}
                       placeholder={
                         productDetailFormMessgae.enterTitlePlaceholder

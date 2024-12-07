@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -310,6 +310,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     }
   };
 
+  useEffect(() => {
+    // Kiểm tra xem input đã được render chưa và focus vào nó
+    const inputElement = document.getElementById("heading-input");
+    if (inputElement) {
+      inputElement.focus();
+    }
+  }, []);
+
   return (
     <>
       <AlertModal
@@ -427,6 +435,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   </FormLabel>
                   <FormControl>
                     <Input
+                      id="heading-input"
                       disabled={loading}
                       placeholder={productFormMessage.enterProductName}
                       {...field}

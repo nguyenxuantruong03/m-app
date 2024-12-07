@@ -185,6 +185,14 @@ export const FavoriteForm: React.FC<FavoriteProps> = ({
     }
   };
 
+  useEffect(() => {
+    // Kiểm tra xem input đã được render chưa và focus vào nó
+    const inputElement = document.getElementById("name-input");
+    if (inputElement) {
+      inputElement.focus();
+    }
+  }, []);
+
   return (
     <>
       <AlertModal
@@ -228,6 +236,7 @@ export const FavoriteForm: React.FC<FavoriteProps> = ({
                   </FormLabel>
                   <FormControl>
                     <Input
+                      id="name-input"
                       disabled={loading}
                       placeholder={favoriteFormMessage.enterLabel}
                       {...field}
