@@ -350,26 +350,10 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
     promotiondescription: z
       .string()
       .min(2, { message: productDetailSchemaMessage.minTwoCharacters }),
-    warranty1: z.optional(
-      z.coerce
-        .number()
-        .min(0, { message: productDetailSchemaMessage.noNegativeNumbers })
-    ),
-    warranty2: z.optional(
-      z.coerce
-        .number()
-        .min(0, { message: productDetailSchemaMessage.noNegativeNumbers })
-    ),
-    warranty3: z.optional(
-      z.coerce
-        .number()
-        .min(0, { message: productDetailSchemaMessage.noNegativeNumbers })
-    ),
-    warranty4: z.optional(
-      z.coerce
-        .number()
-        .min(0, { message: productDetailSchemaMessage.noNegativeNumbers })
-    ),
+    warranty1: z.optional(z.coerce.number().min(0)),
+    warranty2: z.optional(z.coerce.number().min(0)),
+    warranty3: z.optional(z.coerce.number().min(0)),
+    warranty4: z.optional(z.coerce.number().min(0)),
     // Specification
     descriptionspecifications: z
       .string()
@@ -377,136 +361,32 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
     valuespecifications: z
       .string()
       .min(2, { message: productDetailSchemaMessage.minTwoCharacters }),
-    description2specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    value2specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    description3specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    value3specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    description4specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    value4specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    description5specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    value5specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    description6specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    value6specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    description7specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    value7specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    description8specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    value8specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    description9specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    value9specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    description10specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    value10specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    description11specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    value11specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    description12specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    value12specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    description13specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    value13specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    description14specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    value14specifications: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
+    description2specifications: z.optional(z.string().min(0)),
+    value2specifications: z.optional(z.string().min(0)),
+    description3specifications: z.optional(z.string().min(0)),
+    value3specifications: z.optional(z.string().min(0)),
+    description4specifications: z.optional(z.string().min(0)),
+    value4specifications: z.optional(z.string().min(0)),
+    description5specifications: z.optional(z.string().min(0)),
+    value5specifications: z.optional(z.string().min(0)),
+    description6specifications: z.optional(z.string().min(0)),
+    value6specifications: z.optional(z.string().min(0)),
+    description7specifications: z.optional(z.string().min(0)),
+    value7specifications: z.optional(z.string().min(0)),
+    description8specifications: z.optional(z.string().min(0)),
+    value8specifications: z.optional(z.string().min(0)),
+    description9specifications: z.optional(z.string().min(0)),
+    value9specifications: z.optional(z.string().min(0)),
+    description10specifications: z.optional(z.string().min(0)),
+    value10specifications: z.optional(z.string().min(0)),
+    description11specifications: z.optional(z.string().min(0)),
+    value11specifications: z.optional(z.string().min(0)),
+    description12specifications: z.optional(z.string().min(0)),
+    value12specifications: z.optional(z.string().min(0)),
+    description13specifications: z.optional(z.string().min(0)),
+    value13specifications: z.optional(z.string().min(0)),
+    description14specifications: z.optional(z.string().min(0)),
+    value14specifications: z.optional(z.string().min(0)),
     // salientfeatures:
     descriptionsalientfeatures: z
       .string()
@@ -528,124 +408,62 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
       .min(1, { message: productDetailSchemaMessage.chooseValidSize }),
     color1Id: z
       .string()
-      .min(1, { message: productDetailSchemaMessage.chooseValidColor }),
-    size2Id: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    color2Id: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    size3Id: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    color3Id: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    size4Id: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    color4Id: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    size5Id: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    color5Id: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
+      .min(0, { message: productDetailSchemaMessage.chooseValidColor }),
+    size2Id: z.optional(z.string().min(0)),
+    color2Id: z.optional(z.string().min(0)),
+    size3Id: z.optional(z.string().min(0)),
+    color3Id: z.optional(z.string().min(0)),
+    size4Id: z.optional(z.string().min(0)),
+    color4Id: z.optional(z.string().min(0)),
+    size5Id: z.optional(z.string().min(0)),
+    color5Id: z.optional(z.string().min(0)),
     price1: z.coerce
       .number()
       .min(500, { message: productDetailSchemaMessage.minAmount }),
-    price2: z.optional(
-      z.coerce
-        .number()
-        .min(500, { message: productDetailSchemaMessage.minAmount })
-    ),
-    price3: z.optional(
-      z.coerce
-        .number()
-        .min(500, { message: productDetailSchemaMessage.minAmount })
-    ),
-    price4: z.optional(
-      z.coerce
-        .number()
-        .min(500, { message: productDetailSchemaMessage.minAmount })
-    ),
-    price5: z.optional(
-      z.coerce
-        .number()
-        .min(500, { message: productDetailSchemaMessage.minAmount })
-    ),
+    price2: z.optional(z.coerce.number().min(0)),
+    price3: z.optional(z.coerce.number().min(0)),
+    price4: z.optional(z.coerce.number().min(0)),
+    price5: z.optional(z.coerce.number().min(0)),
     name1: z
       .string()
       .min(2, { message: productDetailSchemaMessage.minTwoCharacters }),
-    name2: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
+    name2: z.optional(z.string().min(0)),
+    name3: z.optional(z.string().min(0)),
+    name4: z.optional(z.string().min(0)),
+    name5: z.optional(z.string().min(0)),
+    percentpromotion1: z.optional(
+      z.coerce
+        .number()
+        .int()
+        .min(0)
+        .max(100, { message: productDetailSchemaMessage.percentageRange })
     ),
-    name3: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    name4: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    name5: z.optional(
-      z
-        .string()
-        .min(2, { message: productDetailSchemaMessage.minTwoCharacters })
-    ),
-    percentpromotion1: z.coerce
-      .number()
-      .int()
-      .min(1, { message: productDetailSchemaMessage.percentageRange })
-      .max(100, { message: productDetailSchemaMessage.percentageRange }),
     percentpromotion2: z.optional(
       z.coerce
         .number()
         .int()
-        .min(1, { message: productDetailSchemaMessage.percentageRange })
+        .min(0)
         .max(100, { message: productDetailSchemaMessage.percentageRange })
     ),
     percentpromotion3: z.optional(
       z.coerce
         .number()
         .int()
-        .min(1, { message: productDetailSchemaMessage.percentageRange })
+        .min(0)
         .max(100, { message: productDetailSchemaMessage.percentageRange })
     ),
     percentpromotion4: z.optional(
       z.coerce
         .number()
         .int()
-        .min(1, { message: productDetailSchemaMessage.percentageRange })
+        .min(0)
         .max(100, { message: productDetailSchemaMessage.percentageRange })
     ),
     percentpromotion5: z.optional(
       z.coerce
         .number()
         .int()
-        .min(1, { message: productDetailSchemaMessage.percentageRange })
+        .min(0)
         .max(100, { message: productDetailSchemaMessage.percentageRange })
     ),
     quantity1: z.coerce
@@ -657,28 +475,28 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
       z.coerce
         .number()
         .int()
-        .min(1, { message: productDetailSchemaMessage.quantityRange })
+        .min(0)
         .max(9999, { message: productDetailSchemaMessage.quantityRange })
     ),
     quantity3: z.optional(
       z.coerce
         .number()
         .int()
-        .min(1, { message: productDetailSchemaMessage.quantityRange })
+        .min(0)
         .max(9999, { message: productDetailSchemaMessage.quantityRange })
     ),
     quantity4: z.optional(
       z.coerce
         .number()
         .int()
-        .min(1, { message: productDetailSchemaMessage.quantityRange })
+        .min(0)
         .max(9999, { message: productDetailSchemaMessage.quantityRange })
     ),
     quantity5: z.optional(
       z.coerce
         .number()
         .int()
-        .min(1, { message: productDetailSchemaMessage.quantityRange })
+        .min(0)
         .max(9999, { message: productDetailSchemaMessage.quantityRange })
     ),
     categoryId: z
@@ -984,7 +802,6 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
       inputElement.focus();
     }
   }, []);
-
 
   return (
     <>
@@ -1696,9 +1513,7 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                     {productDetailFormMessgae.specifications}{" "}
                     <span className="text-red-600 pl-1">(*)</span>
                     <Recommend
-                      message={
-                        productDetailFormMessgae.enterSpecifications
-                      }
+                      message={productDetailFormMessgae.enterSpecifications}
                     />
                   </FormLabel>
                   <FormControl>

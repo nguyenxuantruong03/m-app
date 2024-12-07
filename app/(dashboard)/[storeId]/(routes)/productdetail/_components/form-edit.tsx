@@ -186,104 +186,52 @@ const LabelForm: React.FC<LabelFormProps> = ({
   const productDetailFormEditSheetMessage = getProductDetailFormEditSheet(language)
 
   const formSchema = z.object({
-    title: z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters }),
-    promotionheading: z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters }),
-    promotiondescription: z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters }),
-    warranty1: z.optional(
-      z.coerce.number().min(0, { message: productDetailFormEditSheetMessage.noNegativeNumber })
-    ),
-    warranty2: z.optional(
-      z.coerce.number().min(0, { message: productDetailFormEditSheetMessage.noNegativeNumber })
-    ),
-    warranty3: z.optional(
-      z.coerce.number().min(0, { message: productDetailFormEditSheetMessage.noNegativeNumber })
-    ),
-    warranty4: z.optional(
-      z.coerce.number().min(0, { message: productDetailFormEditSheetMessage.noNegativeNumber })
-    ),
+    title: z
+      .string()
+      .min(2, { message: productDetailFormEditSheetMessage.min2Characters }),
+    promotionheading: z
+      .string()
+      .min(2, { message: productDetailFormEditSheetMessage.min2Characters }),
+    promotiondescription: z
+      .string()
+      .min(2, { message: productDetailFormEditSheetMessage.min2Characters }),
+    warranty1: z.optional(z.coerce.number().min(0)),
+    warranty2: z.optional(z.coerce.number().min(0)),
+    warranty3: z.optional(z.coerce.number().min(0)),
+    warranty4: z.optional(z.coerce.number().min(0)),
     // Specification
     descriptionspecifications: z
       .string()
       .min(2, { message: productDetailFormEditSheetMessage.min2Characters }),
-    valuespecifications: z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters }),
-    description2specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    value2specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    description3specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    value3specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    description4specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    value4specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    description5specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    value5specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    description6specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    value6specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    description7specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    value7specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    description8specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    value8specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    description9specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    value9specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    description10specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    value10specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    description11specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    value11specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    description12specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    value12specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    description13specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    value13specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    description14specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
-    value14specifications: z.optional(
-      z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })
-    ),
+    valuespecifications: z
+      .string()
+      .min(2, { message: productDetailFormEditSheetMessage.min2Characters }),
+    description2specifications: z.optional(z.string().min(0)),
+    value2specifications: z.optional(z.string().min(0)),
+    description3specifications: z.optional(z.string().min(0)),
+    value3specifications: z.optional(z.string().min(0)),
+    description4specifications: z.optional(z.string().min(0)),
+    value4specifications: z.optional(z.string().min(0)),
+    description5specifications: z.optional(z.string().min(0)),
+    value5specifications: z.optional(z.string().min(0)),
+    description6specifications: z.optional(z.string().min(0)),
+    value6specifications: z.optional(z.string().min(0)),
+    description7specifications: z.optional(z.string().min(0)),
+    value7specifications: z.optional(z.string().min(0)),
+    description8specifications: z.optional(z.string().min(0)),
+    value8specifications: z.optional(z.string().min(0)),
+    description9specifications: z.optional(z.string().min(0)),
+    value9specifications: z.optional(z.string().min(0)),
+    description10specifications: z.optional(z.string().min(0)),
+    value10specifications: z.optional(z.string().min(0)),
+    description11specifications: z.optional(z.string().min(0)),
+    value11specifications: z.optional(z.string().min(0)),
+    description12specifications: z.optional(z.string().min(0)),
+    value12specifications: z.optional(z.string().min(0)),
+    description13specifications: z.optional(z.string().min(0)),
+    value13specifications: z.optional(z.string().min(0)),
+    description14specifications: z.optional(z.string().min(0)),
+    value14specifications: z.optional(z.string().min(0)),
     // salientfeatures:
     descriptionsalientfeatures: z
       .string()
@@ -300,46 +248,107 @@ const LabelForm: React.FC<LabelFormProps> = ({
     contentsalientfeatures: z
       .string()
       .min(2, { message: productDetailFormEditSheetMessage.min2Characters }),
-    size1Id: z.string().min(1, { message: productDetailFormEditSheetMessage.selectSize }),
-    color1Id: z.string().min(1, { message: productDetailFormEditSheetMessage.selectColor }),
-    size2Id: z.optional(z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })),
-    color2Id: z.optional(z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })),
-    size3Id: z.optional(z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })),
-    color3Id: z.optional(z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })),
-    size4Id: z.optional(z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })),
-    color4Id: z.optional(z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })),
-    size5Id: z.optional(z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })),
-    color5Id: z.optional(z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })),
-    price1: z.coerce.number().min(500, { message: productDetailFormEditSheetMessage.minPrice }),
-    price2: z.optional(
-      z.coerce.number().min(500, { message: productDetailFormEditSheetMessage.minPrice })
+    size1Id: z
+      .string()
+      .min(1, { message: productDetailFormEditSheetMessage.selectSize }),
+    color1Id: z
+      .string()
+      .min(0, { message: productDetailFormEditSheetMessage.selectColor }),
+    size2Id: z.optional(z.string().min(0)),
+    color2Id: z.optional(z.string().min(0)),
+    size3Id: z.optional(z.string().min(0)),
+    color3Id: z.optional(z.string().min(0)),
+    size4Id: z.optional(z.string().min(0)),
+    color4Id: z.optional(z.string().min(0)),
+    size5Id: z.optional(z.string().min(0)),
+    color5Id: z.optional(z.string().min(0)),
+    price1: z.coerce
+      .number()
+      .min(500, { message: productDetailFormEditSheetMessage.minPrice }),
+    price2: z.optional(z.coerce.number().min(0)),
+    price3: z.optional(z.coerce.number().min(0)),
+    price4: z.optional(z.coerce.number().min(0)),
+    price5: z.optional(z.coerce.number().min(0)),
+    name1: z
+      .string()
+      .min(2, { message: productDetailFormEditSheetMessage.min2Characters }),
+    name2: z.optional(z.string().min(0)),
+    name3: z.optional(z.string().min(0)),
+    name4: z.optional(z.string().min(0)),
+    name5: z.optional(z.string().min(0)),
+    percentpromotion1: z.optional(
+      z.coerce
+        .number()
+        .int()
+        .min(0)
+        .max(100, { message: productDetailFormEditSheetMessage.percentageRange })
     ),
-    price3: z.optional(
-      z.coerce.number().min(500, { message: productDetailFormEditSheetMessage.minPrice })
+    percentpromotion2: z.optional(
+      z.coerce
+        .number()
+        .int()
+        .min(0)
+        .max(100, { message: productDetailFormEditSheetMessage.percentageRange })
     ),
-    price4: z.optional(
-      z.coerce.number().min(500, { message: productDetailFormEditSheetMessage.minPrice })
+    percentpromotion3: z.optional(
+      z.coerce
+        .number()
+        .int()
+        .min(0)
+        .max(100, { message: productDetailFormEditSheetMessage.percentageRange })
     ),
-    price5: z.optional(
-      z.coerce.number().min(500, { message: productDetailFormEditSheetMessage.minPrice })
+    percentpromotion4: z.optional(
+      z.coerce
+        .number()
+        .int()
+        .min(0)
+        .max(100, { message: productDetailFormEditSheetMessage.percentageRange })
     ),
-    name1: z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters }),
-    name2: z.optional(z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })),
-    name3: z.optional(z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })),
-    name4: z.optional(z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })),
-    name5: z.optional(z.string().min(2, { message: productDetailFormEditSheetMessage.min2Characters })),
-    percentpromotion1: z.coerce.number().int().min(1, { message: productDetailFormEditSheetMessage.percentageRange }).max(100, { message: productDetailFormEditSheetMessage.percentageRange }),
-    percentpromotion2: z.optional(z.coerce.number().int().min(1, { message: productDetailFormEditSheetMessage.percentageRange }).max(100, { message: productDetailFormEditSheetMessage.percentageRange })),
-    percentpromotion3: z.optional(z.coerce.number().int().min(1, { message: productDetailFormEditSheetMessage.percentageRange }).max(100, { message: productDetailFormEditSheetMessage.percentageRange })),
-    percentpromotion4: z.optional(z.coerce.number().int().min(1, { message: productDetailFormEditSheetMessage.percentageRange }).max(100, { message: productDetailFormEditSheetMessage.percentageRange })),
-    percentpromotion5: z.optional(z.coerce.number().int().min(1, { message: productDetailFormEditSheetMessage.percentageRange }).max(100, { message: productDetailFormEditSheetMessage.percentageRange })),
-    quantity1: z.coerce.number().int().min(1, { message: productDetailFormEditSheetMessage.quantityRange }).max(9999, { message: productDetailFormEditSheetMessage.quantityRange }),
-    quantity2: z.optional(z.coerce.number().int().min(1, { message: productDetailFormEditSheetMessage.quantityRange }).max(9999, { message: productDetailFormEditSheetMessage.quantityRange })),
-    quantity3: z.optional(z.coerce.number().int().min(1, { message: productDetailFormEditSheetMessage.quantityRange }).max(9999, { message: productDetailFormEditSheetMessage.quantityRange })),
-    quantity4: z.optional(z.coerce.number().int().min(1, { message: productDetailFormEditSheetMessage.quantityRange }).max(9999, { message: productDetailFormEditSheetMessage.quantityRange })),
-    quantity5:  z.optional(z.coerce.number().int().min(1, { message: productDetailFormEditSheetMessage.quantityRange }).max(9999, { message: productDetailFormEditSheetMessage.quantityRange })),
-    categoryId: z.string().min(1, { message: productDetailFormEditSheetMessage.selectCategory }),
+    percentpromotion5: z.optional(
+      z.coerce
+        .number()
+        .int()
+        .min(0)
+        .max(100, { message: productDetailFormEditSheetMessage.percentageRange })
+    ),
+    quantity1: z.coerce
+      .number()
+      .int()
+      .min(1, { message: productDetailFormEditSheetMessage.quantityRange })
+      .max(9999, { message: productDetailFormEditSheetMessage.quantityRange }),
+    quantity2: z.optional(
+      z.coerce
+        .number()
+        .int()
+        .min(0)
+        .max(9999, { message: productDetailFormEditSheetMessage.quantityRange })
+    ),
+    quantity3: z.optional(
+      z.coerce
+        .number()
+        .int()
+        .min(0)
+        .max(9999, { message: productDetailFormEditSheetMessage.quantityRange })
+    ),
+    quantity4: z.optional(
+      z.coerce
+        .number()
+        .int()
+        .min(0)
+        .max(9999, { message: productDetailFormEditSheetMessage.quantityRange })
+    ),
+    quantity5: z.optional(
+      z.coerce
+        .number()
+        .int()
+        .min(0)
+        .max(9999, { message: productDetailFormEditSheetMessage.quantityRange })
+    ),
+    categoryId: z
+      .string()
+      .min(1, { message: productDetailFormEditSheetMessage.selectCategory }),
   });
+
   type FormValues = z.input<typeof formSchema>;
 
   const form = useForm<FormValues>({

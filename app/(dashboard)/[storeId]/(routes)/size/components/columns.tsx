@@ -79,7 +79,7 @@ export const columns: ColumnDef<SizeColumn>[] = [
     },
     cell: ({ row }) => (
       <EditRow
-        data={row.original.name}
+        data={row.original.value}
         name={row.original.name}
         value={row.original.value}
         id={row.original.id}
