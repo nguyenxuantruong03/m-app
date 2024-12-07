@@ -76,6 +76,7 @@ import {
   translateTotalProductQuantity,
   translateWarrantyInfoShort,
 } from "@/translate/translate-client";
+import getCart from "@/actions/client/cart";
 
 interface InfoProductProps {
   data: Product;
@@ -321,7 +322,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
   //-------------------Add Cart-----------------------
   const onAddtoCart: MouseEventHandler<HTMLButtonElement> = async (event) => {
     if (user?.role !== "GUEST" && user?.id) {
-      //CheckError
+      // Check errors
       if (!selectedSize && !selectedColor) {
         setErrorSize(selectSizeMessage);
         setErrorColor(selectColorMessage);
@@ -336,90 +337,92 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
         setErrorsetQuantityInventory(outOfStockInventoryMessage);
         return;
       }
-      // Ngặn chặn sự kiện Click liên tục
+      // Stop event propagation to prevent multiple clicks
       event.stopPropagation();
-
+  
       // Use toast.promise to handle the async operation
       await toast.promise(
-        axios.post("/api/client/cart/get-items", {
-          userId: user?.id || "",
-        }),
+        (async () => {
+          const cartItemData = await getCart({
+            userId: user?.id || "",
+            language: languageToUse,
+          });
+  
+          const matchingItem = cartItemData.find(
+            (item: CartItemType) =>
+              item.product.name === data.name &&
+              item.product.id === data.id &&
+              item.size === selectedSize &&
+              item.color === selectedColor
+          );
+  
+          const matchingQuantity = matchingItem ? matchingItem.quantity : 0;
+  
+          const compareQuantityExistingAndAvailable =
+            matchingQuantity >= maxQuantity && maxQuantity > 0;
+  
+          if (compareQuantityExistingAndAvailable) {
+            throw new Error(insufficientStockMessage);
+          }
+  
+          // Get selected warranty
+          const warranty = cartdb.getSelectedItemWarranty(data.id);
+  
+          const productWithQuantity = {
+            ...data,
+            quantity,
+          };
+  
+          // Find the item in the cartdb
+          const existingCartItem = cartdb.items.find(
+            (item) =>
+              item.product.name === data.name &&
+              item.product.id === data.id &&
+              item.size === selectedSize &&
+              item.color === selectedColor
+          );
+  
+          try {
+            setLoading(true);
+            if (existingCartItem) {
+              // If the product already exists in the cart, update the quantity
+              cartdb.updateQuantity(
+                existingCartItem.id,
+                existingCartItem.quantity + quantity,
+                warranty,
+                user?.id || "",
+                languageToUse
+              );
+            } else {
+              // Add the product to the cart
+              cartdb.addItem(
+                productWithQuantity,
+                quantity,
+                warranty,
+                user?.id || "",
+                selectedSize,
+                selectedColor
+              );
+            }
+          } catch (error) {
+            toast.error(addtoCartErrorMessage);
+          } finally {
+            setLoading(false);
+          }
+  
+          return existingCartItem
+            ? productQuantityUpdatedMessage
+            : productAddedToCartMessage;
+        })(),
         {
           loading: loadingMessage,
-          success: (response) => {
-            const cartItemData = response.data;
-
-            const matchingItem = cartItemData.find(
-              (item: CartItemType) =>
-                item.product.name === data.name &&
-                item.product.id === data.id &&
-                item.size === selectedSize &&
-                item.color === selectedColor
-            );
-
-            const matchingQuantity = matchingItem ? matchingItem.quantity : 0;
-
-            const compareQuantityExistingAndAvailable =
-              matchingQuantity >= maxQuantity && maxQuantity > 0;
-
-            if (compareQuantityExistingAndAvailable) {
-              throw new Error(insufficientStockMessage);
-            }
-
-            //GetraWarantity đã chọn
-            const warranty = cartdb.getSelectedItemWarranty(data.id);
-
-            const productWithQuantity = {
-              ...data,
-              quantity,
-            };
-
-            //Tìm Kiếm trong cardb lấy ra data.id === item.id bởi vì data.id tôi truyền vào là product.id.  Và phải cần giống color và size nữa thì mới tìm ra
-            const existingCartItem = cartdb.items.find(
-              (item) =>
-                item.product.name === data.name &&
-                item.product.id === data.id &&
-                item.size === selectedSize &&
-                item.color === selectedColor
-            );
-            try {
-              setLoading(true);
-              if (existingCartItem) {
-                //Nếu sản phẩm hiện tại đã có thì chỉ việc update
-                cartdb.updateQuantity(
-                  existingCartItem.id,
-                  existingCartItem.quantity + quantity,
-                  warranty,
-                  user?.id || "",
-                  languageToUse
-                );
-              } else {
-                //Thêm sản phẩm
-                cartdb.addItem(
-                  productWithQuantity,
-                  quantity,
-                  warranty,
-                  user?.id || "",
-                  selectedSize,
-                  selectedColor
-                ); // Pass the user here
-              }
-            } catch (error) {
-              toast.error(addtoCartErrorMessage);
-            } finally {
-              setLoading(false);
-            }
-            return existingCartItem
-              ? productQuantityUpdatedMessage
-              : productAddedToCartMessage;
-          },
-          error: (error) => {
-            return error.message || toastErrorMessage;
-          },
+          success: (response) => response,
+          error: (error) => error.message || toastErrorMessage,
         }
       );
     } else {
-      //CheckError
+      // Handle the case for "GUEST" user
+      // Check errors
       if (!selectedSize && !selectedColor) {
         setErrorSize(selectSizeMessage);
         setErrorColor(selectColorMessage);
@@ -434,15 +437,18 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
         setErrorsetQuantityInventory(outOfStockInventoryMessage);
         return;
       }
-      //Tạo ra CUID để có thể những sản phẩm khác nhau sẽ ko bị checked chung
+  
+      // Generate a unique cartId for "GUEST" users
       const cartId = cuid();
-      //GetraWarantity đã chọn
+      // Get selected warranty
       const warrantySelect = cart.getSelectedItemWarranty(data.id);
       const warranty = warrantySelect ?? "";
       const size = selectedSize;
       const color = selectedColor;
-      // Ngặn chặn sự kiện Click liên tục
+  
+      // Stop event propagation to prevent multiple clicks
       event.stopPropagation();
+  
       const productWithQuantity = {
         ...data,
         quantity,
@@ -451,18 +457,19 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
         warranty,
         cartId,
       };
-
-      //Tìm Kiếm trong cardb lấy ra data.id === item.id bởi vì data.id tôi truyền vào là product.id. Và phải cần giống color và size nữa thì mới tìm ra
+  
+      // Find the item in the cartdb
       const existingCartItem = cart.items.find(
         (item) =>
           item.id === data.id &&
           item.size === selectedSize &&
           item.color === selectedColor
       );
+  
       try {
         setLoading(true);
         if (existingCartItem) {
-          //Nếu sản phẩm hiện tại đã có thì chỉ việc update
+          // If the product already exists in the cart, update the quantity
           const existingQuantity = existingCartItem.quantity ?? 0;
           await cart.updateQuantity(
             existingCartItem.cartId,
@@ -472,7 +479,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
           );
           toast.success(productQuantityUpdatedMessage);
         } else {
-          //Thêm sản phẩm
+          // Add the product to the cart
           await cart.addItem(
             productWithQuantity || "",
             quantity,
@@ -489,14 +496,13 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
         setLoading(false);
       }
     }
-  };
+  };  
 
-  const onAddtoPushCart: MouseEventHandler<HTMLButtonElement> = async (
-    event
-  ) => {
+  const onAddtoPushCart: MouseEventHandler<HTMLButtonElement> = async (event) => {
     setLoading(true);
+    
     if (user?.role !== "GUEST" && user?.id) {
-      //CheckError
+      // Check errors
       if (!selectedSize && !selectedColor) {
         setErrorSize(selectSizeMessage);
         setErrorColor(selectColorMessage);
@@ -511,90 +517,94 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
         setErrorsetQuantityInventory(outOfStockInventoryMessage);
         return;
       }
+      
       // Ngặn chặn sự kiện Click liên tục
       event.stopPropagation();
+  
       // Use toast.promise to handle the async operation
       await toast.promise(
-        axios.post("/api/client/cart/get-items", {
-          userId: user?.id || "",
-        }),
+        (async () => {
+          // Fetch cart data using getCart
+          const cartItemData = await getCart({
+            userId: user?.id || "",
+            language: languageToUse,
+          });
+  
+          const matchingItem = cartItemData.find(
+            (item: CartItemType) =>
+              item.product.name === data.name &&
+              item.product.id === data.id &&
+              item.size === selectedSize &&
+              item.color === selectedColor
+          );
+  
+          const matchingQuantity = matchingItem ? matchingItem.quantity : 0;
+          const compareQuantityExistingAndAvailable =
+            matchingQuantity >= maxQuantity && maxQuantity > 0;
+  
+          if (compareQuantityExistingAndAvailable) {
+            throw new Error(insufficientStockMessage);
+          }
+  
+          // Get selected warranty
+          const warranty = cartdb.getSelectedItemWarranty(data.id);
+  
+          const productWithQuantity = {
+            ...data,
+            quantity,
+          };
+  
+          // Find existing item in the cartdb
+          const existingCartItem = cartdb.items.find(
+            (item) =>
+              item.product.name === data.name &&
+              item.product.id === data.id &&
+              item.size === selectedSize &&
+              item.color === selectedColor
+          );
+  
+          try {
+            setLoading(true);
+            if (existingCartItem) {
+              // If the item exists, update the quantity
+              cartdb.updateQuantity(
+                existingCartItem.id,
+                existingCartItem.quantity + quantity,
+                warranty,
+                user?.id || "",
+                languageToUse
+              );
+            } else {
+              // If the item doesn't exist, add to the cart
+              cartdb.addItem(
+                productWithQuantity,
+                quantity,
+                warranty,
+                user?.id || "",
+                selectedSize,
+                selectedColor
+              );
+            }
+          } catch (error) {
+            toast.error(addtoCartErrorMessage);
+          } finally {
+            setLoading(false);
+            router.push("/cart");
+          }
+  
+          return existingCartItem
+            ? productQuantityUpdatedMessage
+            : productAddedToCartMessage;
+        })(),
         {
           loading: loadingMessage,
-          success: (response) => {
-            const cartItemData = response.data;
-
-            const matchingItem = cartItemData.find(
-              (item: CartItemType) =>
-                item.product.name === data.name &&
-                item.product.id === data.id &&
-                item.size === selectedSize &&
-                item.color === selectedColor
-            );
-
-            const matchingQuantity = matchingItem ? matchingItem.quantity : 0;
-
-            const compareQuantityExistingAndAvailable =
-              matchingQuantity >= maxQuantity && maxQuantity > 0;
-
-            if (compareQuantityExistingAndAvailable) {
-              throw new Error(insufficientStockMessage);
-            }
-
-            //GetraWarantity đã chọn
-            const warranty = cartdb.getSelectedItemWarranty(data.id);
-
-            const productWithQuantity = {
-              ...data,
-              quantity,
-            };
-
-            //Tìm Kiếm trong cardb lấy ra data.id === item.id bởi vì data.id tôi truyền vào là product.id.  Và phải cần giống color và size nữa thì mới tìm ra
-            const existingCartItem = cartdb.items.find(
-              (item) =>
-                item.product.name === data.name &&
-                item.product.id === data.id &&
-                item.size === selectedSize &&
-                item.color === selectedColor
-            );
-            try {
-              setLoading(true);
-              if (existingCartItem) {
-                //Nếu sản phẩm hiện tại đã có thì chỉ việc update
-                cartdb.updateQuantity(
-                  existingCartItem.id,
-                  existingCartItem.quantity + quantity,
-                  warranty,
-                  user?.id || "",
-                  languageToUse
-                );
-              } else {
-                //Thêm sản phẩm
-                cartdb.addItem(
-                  productWithQuantity,
-                  quantity,
-                  warranty,
-                  user?.id || "",
-                  selectedSize,
-                  selectedColor
-                ); // Pass the user here
-              }
-            } catch (error) {
-              toast.error(addtoCartErrorMessage);
-            } finally {
-              setLoading(false);
-              router.push("/cart");
-            }
-            return existingCartItem
-              ? productQuantityUpdatedMessage
-              : productAddedToCartMessage;
-          },
-          error: (error) => {
-            return error.message || toastErrorMessage;
-          },
+          success: (response) => response,
+          error: (error) => error.message || toastErrorMessage,
         }
       );
     } else {
-      //CheckError
+      // Handle the case for "GUEST" user
+      // Check errors
       if (!selectedSize && !selectedColor) {
         setErrorSize(selectSizeMessage);
         setErrorColor(selectColorMessage);
@@ -609,15 +619,17 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
         setErrorsetQuantityInventory(outOfStockInventoryMessage);
         return;
       }
-      //Tạo ra CUID để có thể những sản phẩm khác nhau sẽ ko bị checked chung
+  
+      // Generate a unique cartId for "GUEST" users
       const cartId = cuid();
-      //GetraWarantity đã chọn
       const warrantySelect = cart.getSelectedItemWarranty(data.id);
       const warranty = warrantySelect ?? "";
       const size = selectedSize;
       const color = selectedColor;
-      // Ngặn chặn sự kiện Click liên tục
+  
+      // Stop event propagation to prevent multiple clicks
       event.stopPropagation();
+  
       const productWithQuantity = {
         ...data,
         quantity,
@@ -626,16 +638,17 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
         warranty,
         cartId,
       };
-      //Tìm Kiếm trong cart lấy ra data.id === item.id bởi vì data.id tôi truyền vào là product.id. Và phải cần giống color và size nữa thì mới tìm ra
+  
+      // Find the item in the cartdb
       const existingCartItem = cart.items.find(
         (item) =>
           item.id === data.id &&
           item.size === selectedSize &&
           item.color === selectedColor
       );
-
+  
       if (existingCartItem) {
-        //Nếu sản phẩm hiện tại đã có thì chỉ việc update
+        // If the item exists, update the quantity
         const existingQuantity = existingCartItem.quantity ?? 0;
         cart.updateQuantity(
           existingCartItem.cartId,
@@ -645,7 +658,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
         );
         toast.success(productQuantityUpdatedMessage);
       } else {
-        //Thêm sản phẩm
+        // If the item doesn't exist, add it to the cart
         cart.addItem(
           productWithQuantity,
           quantity,
@@ -654,11 +667,12 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
           selectedSize,
           selectedColor,
           languageToUse
-        ); // Pass the userId here
+        );
       }
       router.push("/cart");
     }
   };
+  
 
   //Tìm kiếm quantity của sản phẩm
   const maxQuantity = getQuantityMatchColorandSize();

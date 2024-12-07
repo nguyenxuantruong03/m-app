@@ -44,6 +44,7 @@ import {
   translateOrderCancelled,
   translateCancelOrder,
 } from "@/translate/translate-client";
+import getCart from "@/actions/client/cart";
 
 const ReturnProdcut = () => {
   const router = useRouter();
@@ -201,11 +202,14 @@ const ReturnProdcut = () => {
 
         try {
           setLoading(true);
-          const response = await axios.post("/api/client/cart/get-items", {
-            userId: user.id,
+        
+          // Sử dụng getCart thay cho axios.post
+          const cartItemData = await getCart({
+            userId: user.id, // Lấy userId từ user object
+            language: languageToUse, // Ngôn ngữ sử dụng
           });
-          const cartItemData = response.data;
-
+        
+          // Tìm sản phẩm trong giỏ hàng
           const matchingItem = cartItemData.filter(
             (item: CartItemType) =>
               item.product.name === orderItem.product?.name &&
@@ -213,21 +217,22 @@ const ReturnProdcut = () => {
               item.size === orderItem.size &&
               item.color === orderItem.color
           );
-
+        
           const maxQuantity = getQuantityMatchColorandSize(orderItem);
-
+        
+          // Kiểm tra nếu số lượng đã vượt quá
           if (matchingItem.length > 0) {
             const isQuantityExceeded = matchingItem.every(
               (item: CartItemType) =>
                 item.quantity >= maxQuantity && maxQuantity !== undefined
             );
-
+        
             if (isQuantityExceeded) {
               return;
             }
           }
-
-          // Check in cartdb for existing items
+        
+          // Kiểm tra giỏ hàng trong cartdb cho các sản phẩm đã có
           const existingCartItem = cartdb.items.find(
             (item) =>
               item.product.name === orderItem.product?.name &&
@@ -235,6 +240,7 @@ const ReturnProdcut = () => {
               item.size === orderItem.size &&
               item.color === orderItem.color
           );
+        
           if (
             orderItem.product &&
             orderItem.quantity &&
@@ -243,7 +249,7 @@ const ReturnProdcut = () => {
             user.id
           ) {
             if (existingCartItem) {
-              // Update quantity if the product already exists in the cart
+              // Cập nhật số lượng nếu sản phẩm đã có trong giỏ hàng
               cartdb.updateQuantity(
                 existingCartItem.id,
                 existingCartItem.quantity + 1,
@@ -252,7 +258,7 @@ const ReturnProdcut = () => {
                 languageToUse
               );
             } else {
-              // Add the product to the cart
+              // Thêm sản phẩm vào giỏ hàng nếu chưa có
               cartdb.addItem(
                 orderItem.product,
                 Number(orderItem.quantity),

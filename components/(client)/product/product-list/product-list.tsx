@@ -54,6 +54,7 @@ import {
   translateSaved,
   translateSold,
 } from "@/translate/translate-client";
+import getCart from "@/actions/client/cart";
 
 interface ProductListProps {
   data: Product[];
@@ -160,54 +161,6 @@ const ProductList: React.FC<ProductListProps> = ({
         className="mySwiper"
       >
         {data.map((product) => {
-          // Hàm tìm giá thấp nhất và khuyến mãi dựa trên số lượng có sẵn
-          const findLowestPriceAndPromotion = (productDetail: any) => {
-            // Khởi tạo giá thấp nhất là vô cực và khuyến mãi tốt nhất là 0
-            let lowestPrice = Infinity;
-            let bestPromotion = 0;
-
-            // Duyệt qua các giá trị từ 1 đến 5
-            for (let i = 1; i <= 5; i++) {
-              // Lấy số lượng, giá và khuyến mãi tương ứng của từng biến thể
-              const quantity = productDetail[`quantity${i}`];
-
-              // Nếu số lượng lớn hơn 0 (còn hàng)
-              if (quantity !== 0) {
-                const price = productDetail[`price${i}`];
-                const percentPromotion = productDetail[`percentpromotion${i}`];
-
-                // Cập nhật giá thấp nhất và khuyến mãi tốt nhất nếu giá hiện tại thấp hơn giá thấp nhất đã lưu
-                if (price < lowestPrice) {
-                  lowestPrice = price;
-                  bestPromotion = percentPromotion;
-                }
-              }
-            }
-
-            // Nếu tất cả số lượng đều bằng 0 (hết hàng), quay lại lấy giá trị đầu tiên
-            if (lowestPrice === Infinity) {
-              lowestPrice = productDetail.price1;
-              bestPromotion = productDetail.percentpromotion1;
-            }
-
-            // Trả về giá thấp nhất và khuyến mãi tốt nhất
-            return { price: lowestPrice, percentPromotion: bestPromotion };
-          };
-
-          // Tìm giá và khuyến mãi hợp lệ từ chi tiết sản phẩm
-          const validPriceAndPromotion = findLowestPriceAndPromotion(
-            product.productdetail
-          );
-
-          // Tính giá sau khuyến mãi
-          const discountedPrice = validPriceAndPromotion
-            ? validPriceAndPromotion.price *
-              ((100 - validPriceAndPromotion.percentPromotion) / 100)
-            : null;
-
-          // Giá gốc (trước khuyến mãi)
-          const discountedPriceOld = validPriceAndPromotion.price;
-
           // ----------Tìm size và color thấp đến cao của sản phẩm ----------------
           // Hàm tìm thông tin giá thấp nhất cùng với kích thước, màu sắc và khuyến mãi tốt nhất
           const findLowestPriceDetails = (productDetail: any) => {
@@ -268,9 +221,19 @@ const ProductList: React.FC<ProductListProps> = ({
           // Kích thước và màu sắc tốt nhất từ thông tin tìm được
           const availableSize = lowestPriceDetails.size;
           const availableColor = lowestPriceDetails.color;
+          const availablePrice = lowestPriceDetails.price;
+          const availablePercentPromotion = lowestPriceDetails.percentPromotion;
 
+          // Tính giá sau khuyến mãi
+          const discountedPrice = lowestPriceDetails
+            ? availablePrice * ((100 - availablePercentPromotion) / 100)
+            : null;
+
+          // Giá gốc (trước khuyến mãi)
+          const discountedPriceOld = availablePrice;
+
+          //Nếu không có size và color thì trả về trống
           if (!availableSize && !availableColor) {
-            toast.error(outOfStockInventoryMessage);
             return;
           }
 
@@ -356,91 +319,91 @@ const ProductList: React.FC<ProductListProps> = ({
           const debouncedOnAddtoCartDb = debounce(
             async (event: React.MouseEvent<HTMLButtonElement>) => {
               event.stopPropagation();
-
+          
               await toast.promise(
-                axios.post("/api/client/cart/get-items", {
-                  userId: userId?.id || "",
-                }),
+                (async () => {
+                  // Fetch cart data using getCart
+                  const cartItemData = await getCart({
+                    userId: userId?.id || "",
+                    language: languageToUse,
+                  });
+          
+                  const size = availableSize;
+                  const color = availableColor;
+                  const maxQuantity = getQuantityMatchColorandSize();
+          
+                  const matchingItem = cartItemData.find(
+                    (item: CartItemType) =>
+                      item.product.name === product.name &&
+                      item.product.id === product.id &&
+                      item.size === size &&
+                      item.color === color
+                  );
+          
+                  const matchingQuantity = matchingItem ? matchingItem.quantity : 0;
+          
+                  const compareQuantityExistingAndAvailable =
+                    matchingQuantity >= maxQuantity && maxQuantity > 0;
+          
+                  if (compareQuantityExistingAndAvailable) {
+                    throw new Error(insufficientStockMessage);
+                  }
+          
+                  const productWithQuantity = {
+                    ...product,
+                    quantity,
+                    selectedWarranty: cartdb.getSelectedItemWarranty(product.id),
+                  };
+          
+                  const existingCartItem = cartdb.items.find(
+                    (item) =>
+                      item.product.name === product.name &&
+                      item.product.id === product.id &&
+                      item.size === size &&
+                      item.color === color
+                  );
+          
+                  try {
+                    setLoading(true);
+                    if (existingCartItem) {
+                      // Update the quantity of the existing item
+                      cartdb.updateQuantity(
+                        existingCartItem.id,
+                        existingCartItem.quantity + quantity,
+                        null,
+                        userId?.id || "",
+                        languageToUse
+                      );
+                    } else {
+                      // Add the new item to the cart
+                      cartdb.addItem(
+                        productWithQuantity,
+                        quantity,
+                        null,
+                        userId?.id || "",
+                        availableSize,
+                        availableColor
+                      );
+                    }
+                  } catch (error) {
+                    toast.error(addtoCartErrorMessage);
+                  } finally {
+                    setLoading(false);
+                  }
+          
+                  return existingCartItem
+                    ? productQuantityUpdatedMessage
+                    : productAddedToCartMessage;
+                })(),
                 {
                   loading: loadingMessage,
-                  success: (response) => {
-                    const cartItemData = response.data;
-                    const size = availableSize;
-                    const color = availableColor;
-                    const maxQuantity = getQuantityMatchColorandSize();
-
-                    const matchingItem = cartItemData.find(
-                      (item: CartItemType) =>
-                        item.product.name === product.name &&
-                        item.product.id === product.id &&
-                        item.size === size &&
-                        item.color === color
-                    );
-
-                    const matchingQuantity = matchingItem
-                      ? matchingItem.quantity
-                      : 0;
-
-                    const compareQuantityExistingAndAvailable =
-                      matchingQuantity >= maxQuantity && maxQuantity > 0;
-
-                    if (compareQuantityExistingAndAvailable) {
-                      throw new Error(insufficientStockMessage);
-                    }
-
-                    const productWithQuantity = {
-                      ...product,
-                      quantity,
-                      selectedWarranty: cartdb.getSelectedItemWarranty(
-                        product.id
-                      ),
-                    };
-
-                    const existingCartItem = cartdb.items.find(
-                      (item) =>
-                        item.product.name === product.name &&
-                        item.product.id === product.id &&
-                        item.size === size &&
-                        item.color === color
-                    );
-                    try {
-                      setLoading(true);
-                      if (existingCartItem) {
-                        cartdb.updateQuantity(
-                          existingCartItem.id,
-                          existingCartItem.quantity + quantity,
-                          null,
-                          userId?.id || "",
-                          languageToUse
-                        );
-                      } else {
-                        cartdb.addItem(
-                          productWithQuantity,
-                          quantity,
-                          null,
-                          userId?.id || "",
-                          availableSize,
-                          availableColor
-                        );
-                      }
-                    } catch (error) {
-                      toast.error(addtoCartErrorMessage);
-                    } finally {
-                      setLoading(false);
-                    }
-
-                    return existingCartItem
-                      ? productQuantityUpdatedMessage
-                      : productAddedToCartMessage;
-                  },
-                  error: (error) => {
-                    return error.message || toastErrorMessage;
-                  },
+                  success: (response) => response,
+                  error: (error) => error.message || toastErrorMessage,
                 }
               );
             },
             1000 // Adjust the debounce time (in milliseconds) based on your preference
-          );
+          );          
 
           const onAddtoCart: React.MouseEventHandler<HTMLButtonElement> = (
             event
@@ -497,7 +460,7 @@ const ProductList: React.FC<ProductListProps> = ({
                       languageToUse
                     );
                   } else {
-                    await favorite.addItem(favoriteProduct,languageToUse);
+                    await favorite.addItem(favoriteProduct, languageToUse);
                   }
                 } catch (error) {
                   toast.error(

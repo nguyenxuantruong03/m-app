@@ -42,7 +42,9 @@ import {
   translateAdded,
   translateAddNew,
   translateDecrease,
+  getLoadingFavoriteItem,
 } from "@/translate/translate-client";
+import getCart from "@/actions/client/cart";
 
 interface LikeItemProps {
   data: FavoriteUnion;
@@ -78,6 +80,7 @@ const LikeItem: React.FC<LikeItemProps> = ({
   const addedMessage = translateAdded(languageToUse);
   const addNewMessage = translateAddNew(languageToUse);
   const decreaseMessage = translateDecrease(languageToUse);
+  const loadingFavoriteItemMessage = getLoadingFavoriteItem(languageToUse);
 
   const debouncedHandleIconClick = debounce(
     async (
@@ -212,71 +215,70 @@ const LikeItem: React.FC<LikeItemProps> = ({
         quantity: 1,
       };
 
-      // Use toast.promise to handle the async operation
+      // Sử dụng toast.promise để xử lý các thao tác bất đồng bộ
       await toast.promise(
-        axios.post("/api/client/cart/get-items", {
-          userId: user?.id || "",
-        }),
+        (async () => {
+          // Sử dụng getCart thay cho axios.post
+          const cartItemData = await getCart({
+            userId: user?.id || "", language: languageToUse,
+          });
+
+          const matchingItem = cartItemData.find(
+            (item: CartItemType) =>
+              item.product.name === data.product.name &&
+              item.product.id === data.product.id &&
+              item.size === data.selectedSize &&
+              item.color === data.selectedColor
+          );
+
+          const matchingQuantity = matchingItem ? matchingItem.quantity : 0;
+
+          const compareQuantityExistingAndAvailable =
+            matchingQuantity >= maxQuantity && maxQuantity > 0;
+
+          if (compareQuantityExistingAndAvailable) {
+            throw new Error(insufficientStockMessage);
+          }
+
+          const existingCartItem = cartdb.items.find(
+            (item) =>
+              item.product.name === data.product.name &&
+              item.product.id === data.product.id &&
+              item.size === data.selectedSize &&
+              item.color === data.selectedColor
+          );
+
+          if (existingCartItem) {
+            cartdb.updateQuantity(
+              existingCartItem.id,
+              existingCartItem.quantity + 1,
+              null,
+              user?.id || "",
+              languageToUse
+            );
+          } else {
+            cartdb.addItem(
+              productWithQuantity,
+              1,
+              null,
+              user?.id || "",
+              data.selectedSize,
+              data.selectedColor
+            );
+          }
+
+          return existingCartItem
+            ? productQuantityUpdatedMessage
+            : productAddedToCart;
+        })(),
         {
-          loading: "Loading data...",
-          success: (response) => {
-            const cartItemData = response.data;
-
-            const matchingItem = cartItemData.find(
-              (item: CartItemType) =>
-                item.product.name === data.product.name &&
-                item.product.id === data.product.id &&
-                item.size === data.selectedSize &&
-                item.color === data.selectedColor
-            );
-
-            const matchingQuantity = matchingItem ? matchingItem.quantity : 0;
-
-            const compareQuantityExistingAndAvailable =
-              matchingQuantity >= maxQuantity && maxQuantity > 0;
-
-            if (compareQuantityExistingAndAvailable) {
-              toast.error(insufficientStockMessage);
-            }
-
-            const existingCartItem = cartdb.items.find(
-              (item) =>
-                item.product.name === data.product.name &&
-                item.product.id === data.product.id &&
-                item.size === data.selectedSize &&
-                item.color === data.selectedColor
-            );
-
-            if (existingCartItem) {
-              cartdb.updateQuantity(
-                existingCartItem.id,
-                existingCartItem.quantity + 1,
-                null,
-                user?.id || "",
-                languageToUse
-              );
-            } else {
-              cartdb.addItem(
-                productWithQuantity,
-                1,
-                null,
-                user?.id || "",
-                data.selectedSize,
-                data.selectedColor
-              );
-            }
-
-            return existingCartItem
-              ? productQuantityUpdatedMessage
-              : productAddedToCart;
-          },
-          error: (error) => {
-            return error.message || toastErrorMessage;
-          },
+          loading: loadingFavoriteItemMessage,
+          success: (message) => message,
+          error: (error) => error.message || toastErrorMessage,
         }
       );
     }
-  };
+};
 
   const getRouteBasedOnProductType = (productType: any) => {
     switch (productType) {

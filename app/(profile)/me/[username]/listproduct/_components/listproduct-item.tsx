@@ -53,7 +53,7 @@ const ListProductItem = () => {
     user?.id && user?.role !== "GUEST"
       ? user?.language
       : storedLanguage || "vi";
-  const toastErroMessage = getToastError(languageToUse)
+  const toastErroMessage = getToastError(languageToUse);
   const pinMesage = translatePin(languageToUse);
   const fanMessage = translateFan(languageToUse);
   const pipeMessage = translatePipe(languageToUse);
@@ -66,7 +66,7 @@ const ListProductItem = () => {
   const bathroomMessage = translateBathroom(languageToUse);
   const lightBlubMessage = translateLightBulb(languageToUse);
   const commonUseMessage = translateCommonUse(languageToUse);
-  const listProductItemMessage = getListProductItem(languageToUse)
+  const listProductItemMessage = getListProductItem(languageToUse);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -245,15 +245,18 @@ const ListProductItem = () => {
           <div className="flex flex-wrap gap-3">
             {groupedProducts[productType].map(
               (product: ProductWithImages, index) => {
-                // Hàm tìm giá thấp nhất và khuyến mãi dựa trên số lượng có sẵn
-                const findLowestPriceAndPromotion = (productDetail: any) => {
-                  // Khởi tạo giá thấp nhất là vô cực và khuyến mãi tốt nhất là 0
+                // ----------Tìm size và color thấp đến cao của sản phẩm ----------------
+                // Hàm tìm thông tin giá thấp nhất cùng với kích thước, màu sắc và khuyến mãi tốt nhất
+                const findLowestPriceDetails = (productDetail: any) => {
+                  // Khởi tạo giá thấp nhất là vô cực, khuyến mãi tốt nhất là 0 và kích thước, màu sắc tốt nhất là null
                   let lowestPrice = Infinity;
+                  let bestSize = null;
+                  let bestColor = null;
                   let bestPromotion = 0;
 
                   // Duyệt qua các giá trị từ 1 đến 5
                   for (let i = 1; i <= 5; i++) {
-                    // Lấy số lượng, giá và khuyến mãi tương ứng của từng biến thể
+                    // Lấy số lượng, giá, khuyến mãi, kích thước và màu sắc tương ứng của từng biến thể
                     const quantity = productDetail[`quantity${i}`];
 
                     // Nếu số lượng lớn hơn 0 (còn hàng)
@@ -261,41 +264,59 @@ const ListProductItem = () => {
                       const price = productDetail[`price${i}`];
                       const percentPromotion =
                         productDetail[`percentpromotion${i}`];
+                      const size = productDetail[`size${i}`]?.value;
+                      const color = productDetail[`color${i}`]?.value;
 
-                      // Cập nhật giá thấp nhất và khuyến mãi tốt nhất nếu giá hiện tại thấp hơn giá thấp nhất đã lưu
-                      if (price < lowestPrice) {
-                        lowestPrice = price;
+                      // Tính giá sau khuyến mãi
+                      const discountedPrice =
+                        price * ((100 - percentPromotion) / 100);
+
+                      // Cập nhật giá thấp nhất, kích thước, màu sắc và khuyến mãi tốt nhất nếu giá hiện tại thấp hơn giá thấp nhất đã lưu
+                      if (discountedPrice < lowestPrice) {
+                        lowestPrice = discountedPrice;
+                        bestSize = size;
+                        bestColor = color;
                         bestPromotion = percentPromotion;
                       }
                     }
                   }
 
-                  // Nếu tất cả số lượng đều bằng 0 (hết hàng), quay lại lấy giá trị đầu tiên
+                  // Nếu tất cả số lượng đều bằng 0 (hết hàng), quay lại lấy giá trị của biến thể đầu tiên
                   if (lowestPrice === Infinity) {
                     lowestPrice = productDetail.price1;
+                    bestSize = productDetail[`size1`]?.value;
+                    bestColor = productDetail[`color1`]?.value;
                     bestPromotion = productDetail.percentpromotion1;
                   }
 
-                  // Trả về giá thấp nhất và khuyến mãi tốt nhất
+                  // Trả về thông tin giá thấp nhất, khuyến mãi, kích thước và màu sắc tốt nhất
                   return {
                     price: lowestPrice,
                     percentPromotion: bestPromotion,
+                    size: bestSize,
+                    color: bestColor,
                   };
                 };
 
-                // Tìm giá và khuyến mãi hợp lệ từ chi tiết sản phẩm
-                const validPriceAndPromotion = findLowestPriceAndPromotion(
+                // Sử dụng hàm để tìm thông tin giá thấp nhất cùng với kích thước và màu sắc
+                const lowestPriceDetails = findLowestPriceDetails(
                   product.productdetail
                 );
 
+                // Kích thước và màu sắc tốt nhất từ thông tin tìm được
+                const availableSize = lowestPriceDetails.size;
+                const availableColor = lowestPriceDetails.color;
+                const availablePrice = lowestPriceDetails.price;
+                const availablePercentPromotion =
+                  lowestPriceDetails.percentPromotion;
+
                 // Tính giá sau khuyến mãi
-                const discountedPrice = validPriceAndPromotion
-                  ? validPriceAndPromotion.price *
-                    ((100 - validPriceAndPromotion.percentPromotion) / 100)
+                const discountedPrice = lowestPriceDetails
+                  ? availablePrice * ((100 - availablePercentPromotion) / 100)
                   : null;
 
                 // Giá gốc (trước khuyến mãi)
-                const discountedPriceOld = validPriceAndPromotion.price;
+                const discountedPriceOld = availablePrice;
 
                 const quantities = [
                   product.productdetail.quantity1 ?? 0,
@@ -317,7 +338,10 @@ const ListProductItem = () => {
                   >
                     <div className="grid grid-cols-2 gap-2">
                       <div className="relative">
-                        <Hint label={listProductItemMessage.viewProduct} side="bottom">
+                        <Hint
+                          label={listProductItemMessage.viewProduct}
+                          side="bottom"
+                        >
                           <Image
                             width={200}
                             height={200}
@@ -347,10 +371,12 @@ const ListProductItem = () => {
                           />
                         </div>
                         <p className="text-lg text-gray-300 font-semibold truncate w-44">
-                        {listProductItemMessage.sold} : <span>{product.sold}</span>
+                          {listProductItemMessage.sold} :{" "}
+                          <span>{product.sold}</span>
                         </p>
                         <p className="text-lg text-gray-300 font-semibold truncate w-44">
-                        {listProductItemMessage.stock} : <span>{totalQuantity}</span>
+                          {listProductItemMessage.stock} :{" "}
+                          <span>{totalQuantity}</span>
                         </p>
 
                         <FormToggleCard

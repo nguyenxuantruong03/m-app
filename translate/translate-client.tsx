@@ -20534,6 +20534,23 @@ export const getInfomationFooter = (language: string) => {
   }
 };
 
+export const getLoadingFavoriteItem = (language: string): string => {
+  switch (language) {
+    case 'vi':
+      return 'Đang tải...';
+    case 'en':
+      return 'Loading...';
+    case 'zh':
+      return '加载中...';
+    case 'fr':
+      return 'Chargement...';
+    case 'ja':
+      return '読み込み中...';
+    default:
+      return 'Loading...'; // Default to English if language is unknown
+  }
+};
+
 
 // Hàm dịch văn bản, trả về chuỗi đã dịch hoặc chuỗi gốc nếu lỗi
 export async function translateText(

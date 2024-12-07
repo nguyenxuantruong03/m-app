@@ -46,6 +46,7 @@ import {
   translateSaved,
   translateSold,
 } from "@/translate/translate-client";
+import getCart from "@/actions/client/cart";
 
 interface ProductCardProps {
   data: Product;
@@ -140,9 +141,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
         try {
           setLoadingFetchDataFavorite(true);
           if (favoriteData && favoriteData.id) {
-            await removeItem(favoriteData.id, userId?.id || "",languageToUse);
+            await removeItem(favoriteData.id, userId?.id || "", languageToUse);
           } else {
-            await addItem(favoriteProduct,languageToUse);
+            await addItem(favoriteProduct, languageToUse);
           }
         } catch (error) {
           toast.error(
@@ -177,28 +178,29 @@ const ProductCard: React.FC<ProductCardProps> = ({
   // ----------Tìm size và color thấp đến cao của sản phẩm ----------------
   // Hàm tìm thông tin giá thấp nhất cùng với kích thước, màu sắc và khuyến mãi tốt nhất
   const findLowestPriceDetails = (productDetail: any) => {
-    // Khởi tạo giá thấp nhất là vô cực, khuyến mãi tốt nhất là 0 và kích thước, màu sắc tốt nhất là null
     let lowestPrice = Infinity;
     let bestSize = null;
     let bestColor = null;
     let bestPromotion = 0;
 
-    // Duyệt qua các giá trị từ 1 đến 5
+    // Duyệt qua các biến thể từ 1 đến 5
     for (let i = 1; i <= 5; i++) {
-      // Lấy số lượng, giá, khuyến mãi, kích thước và màu sắc tương ứng của từng biến thể
       const quantity = productDetail[`quantity${i}`];
 
-      // Nếu số lượng lớn hơn 0 (còn hàng)
-      if (quantity !== 0) {
-        const price = productDetail[`price${i}`];
-        const percentPromotion = productDetail[`percentpromotion${i}`];
-        const size = productDetail[`size${i}`]?.value;
-        const color = productDetail[`color${i}`]?.value;
+      // Bỏ qua nếu không có quantity hoặc quantity là 0
+      if (!quantity || quantity === 0) continue;
 
-        // Tính giá sau khuyến mãi
+      // Lấy các giá trị tương ứng
+      const price = productDetail[`price${i}`];
+      const percentPromotion = productDetail[`percentpromotion${i}`];
+      const size = productDetail[`size${i}`]?.value || null;
+      const color = productDetail[`color${i}`]?.value || null;
+
+      // Kiểm tra tính hợp lệ của giá và khuyến mãi
+      if (price != null && percentPromotion != null) {
         const discountedPrice = price * ((100 - percentPromotion) / 100);
 
-        // Cập nhật giá thấp nhất, kích thước, màu sắc và khuyến mãi tốt nhất nếu giá hiện tại thấp hơn giá thấp nhất đã lưu
+        // Cập nhật nếu giá sau khuyến mãi thấp hơn giá thấp nhất hiện tại
         if (discountedPrice < lowestPrice) {
           lowestPrice = discountedPrice;
           bestSize = size;
@@ -208,15 +210,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
       }
     }
 
-    // Nếu tất cả số lượng đều bằng 0 (hết hàng), quay lại lấy giá trị của biến thể đầu tiên
+    // Xử lý trường hợp tất cả quantity đều bằng 0 hoặc không có giá trị hợp lệ
     if (lowestPrice === Infinity) {
-      lowestPrice = productDetail.price1;
-      bestSize = productDetail[`size1`]?.value;
-      bestColor = productDetail[`color1`]?.value;
-      bestPromotion = productDetail.percentpromotion1;
+      lowestPrice = productDetail.price1 || 0;
+      bestSize = productDetail[`size1`]?.value || null;
+      bestColor = productDetail[`color1`]?.value || null;
+      bestPromotion = productDetail.percentpromotion1 || 0;
     }
 
-    // Trả về thông tin giá thấp nhất, khuyến mãi, kích thước và màu sắc tốt nhất
+    // Trả về kết quả
     return {
       price: lowestPrice,
       percentPromotion: bestPromotion,
@@ -231,9 +233,19 @@ const ProductCard: React.FC<ProductCardProps> = ({
   // Kích thước và màu sắc tốt nhất từ thông tin tìm được
   const availableSize = lowestPriceDetails.size;
   const availableColor = lowestPriceDetails.color;
+  const availablePrice = lowestPriceDetails.price;
+  const availablePercentPromotion = lowestPriceDetails.percentPromotion;
 
+  // Tính giá sau khuyến mãi
+  const discountedPrice = lowestPriceDetails
+    ? availablePrice * ((100 - availablePercentPromotion) / 100)
+    : null;
+
+  // Giá gốc (trước khuyến mãi)
+  const discountedPriceOld = availablePrice;
+
+  //Nếu không có size và color thì trả về trống
   if (!availableSize && !availableColor) {
-    toast.error(outOfStockInventoryMessage);
     return;
   }
 
@@ -264,86 +276,82 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const onAddtoCart: MouseEventHandler<HTMLButtonElement> = async (event) => {
     if (userId?.role !== "GUEST" && userId?.id) {
       event.stopPropagation();
+
       await toast.promise(
-        axios.post("/api/client/cart/get-items", {
-          userId: userId?.id || "",
-        }),
+        (async () => {
+          const cartItemData = await getCart({
+            userId: userId?.id || "",
+            language: languageToUse,
+          });
+
+          const size = availableSize;
+          const color = availableColor;
+          const maxQuantity = getQuantityMatchColorandSize();
+
+          const matchingItem = cartItemData.find(
+            (item: CartItemType) =>
+              item.product.name === data.name &&
+              item.product.id === data.id &&
+              item.size === size &&
+              item.color === color
+          );
+
+          const matchingQuantity = matchingItem ? matchingItem.quantity : 0;
+
+          const compareQuantityExistingAndAvailable =
+            matchingQuantity >= maxQuantity && maxQuantity > 0;
+
+          if (compareQuantityExistingAndAvailable) {
+            throw new Error(insufficientStockMessage);
+          }
+
+          const productWithQuantity = {
+            ...data,
+            quantity,
+            selectedWarranty: cartdb.getSelectedItemWarranty(data.id),
+          };
+
+          const existingCartItem = cartdb.items.find(
+            (item) =>
+              item.product.name === data.name &&
+              item.product.id === data.id &&
+              item.size === size &&
+              item.color === color
+          );
+          setLoading(true);
+
+          if (existingCartItem) {
+            cartdb.updateQuantity(
+              existingCartItem.id,
+              existingCartItem.quantity + quantity,
+              null,
+              userId?.id || "",
+              languageToUse
+            );
+          } else {
+            cartdb.addItem(
+              productWithQuantity,
+              quantity,
+              null,
+              userId?.id || "",
+              availableSize,
+              availableColor
+            );
+          }
+
+          return existingCartItem
+            ? productQuantityUpdatedMessage
+            : productAddedToCartMessage;
+        })(),
         {
           loading: loadingMessage,
-          success: (response) => {
-            const cartItemData = response.data;
-            const size = availableSize;
-            const color = availableColor;
-            const maxQuantity = getQuantityMatchColorandSize();
-
-            const matchingItem = cartItemData.find(
-              (item: CartItemType) =>
-                item.product.name === data.name &&
-                item.product.id === data.id &&
-                item.size === size &&
-                item.color === color
-            );
-
-            const matchingQuantity = matchingItem ? matchingItem.quantity : 0;
-
-            const compareQuantityExistingAndAvailable =
-              matchingQuantity >= maxQuantity && maxQuantity > 0;
-
-            if (compareQuantityExistingAndAvailable) {
-              throw new Error(insufficientStockMessage);
-            }
-
-            const productWithQuantity = {
-              ...data,
-              quantity,
-              selectedWarranty: cartdb.getSelectedItemWarranty(data.id),
-            };
-
-            const existingCartItem = cartdb.items.find(
-              (item) =>
-                item.product.name === data.name &&
-                item.product.id === data.id &&
-                item.size === size &&
-                item.color === color
-            );
-            try {
-              setLoading(true);
-              if (existingCartItem) {
-                cartdb.updateQuantity(
-                  existingCartItem.id,
-                  existingCartItem.quantity + quantity,
-                  null,
-                  userId?.id || "",
-                  languageToUse
-                );
-              } else {
-                cartdb.addItem(
-                  productWithQuantity,
-                  quantity,
-                  null,
-                  userId?.id || "",
-                  availableSize,
-                  availableColor
-                ); // Pass the userId here
-              }
-            } catch (error) {
-              toast.error(addtoCartErrorMessage);
-            } finally {
-              setLoading(false);
-            }
-
-            return existingCartItem
-              ? productQuantityUpdatedMessage
-              : productAddedToCartMessage;
-          },
-          error: (error) => {
-            return error.message || toastErrorMessage;
-          },
+          success: (message) => message,
+          error: (error) => error.message || toastErrorMessage,
         }
       );
     } else {
       event.stopPropagation();
-
+      
       //CUID: tạo ra một 1 id theo CUID tránh checked trùng với nhau
       const cartId = cuid();
       const size = availableSize;
@@ -362,6 +370,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         (item) =>
           item.id === data.id && item.size === size && item.color === color
       );
+
       try {
         setLoading(true);
         if (existingCartItem) {
@@ -382,7 +391,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             size,
             color,
             languageToUse
-          ); // Pass the userId here
+          );
         }
       } catch (error) {
         toast.error(addtoCartErrorMessage);
@@ -395,54 +404,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const handleClick = () => {
     router.push(`/${route}/${data?.name}`);
   };
-
-  // Hàm tìm giá thấp nhất và khuyến mãi dựa trên số lượng có sẵn
-  const findLowestPriceAndPromotion = (productDetail: any) => {
-    // Khởi tạo giá thấp nhất là vô cực và khuyến mãi tốt nhất là 0
-    let lowestPrice = Infinity;
-    let bestPromotion = 0;
-
-    // Duyệt qua các giá trị từ 1 đến 5
-    for (let i = 1; i <= 5; i++) {
-      // Lấy số lượng, giá và khuyến mãi tương ứng của từng biến thể
-      const quantity = productDetail[`quantity${i}`];
-
-      // Nếu số lượng lớn hơn 0 (còn hàng)
-      if (quantity !== 0) {
-        const price = productDetail[`price${i}`];
-        const percentPromotion = productDetail[`percentpromotion${i}`];
-
-        // Cập nhật giá thấp nhất và khuyến mãi tốt nhất nếu giá hiện tại thấp hơn giá thấp nhất đã lưu
-        if (price < lowestPrice) {
-          lowestPrice = price;
-          bestPromotion = percentPromotion;
-        }
-      }
-    }
-
-    // Nếu tất cả số lượng đều bằng 0 (hết hàng), quay lại lấy giá trị đầu tiên
-    if (lowestPrice === Infinity) {
-      lowestPrice = productDetail.price1;
-      bestPromotion = productDetail.percentpromotion1;
-    }
-
-    // Trả về giá thấp nhất và khuyến mãi tốt nhất
-    return { price: lowestPrice, percentPromotion: bestPromotion };
-  };
-
-  // Tìm giá và khuyến mãi hợp lệ từ chi tiết sản phẩm
-  const validPriceAndPromotion = findLowestPriceAndPromotion(
-    data.productdetail
-  );
-
-  // Tính giá sau khuyến mãi
-  const discountedPrice = validPriceAndPromotion
-    ? validPriceAndPromotion.price *
-      ((100 - validPriceAndPromotion.percentPromotion) / 100)
-    : null;
-
-  // Giá gốc (trước khuyến mãi)
-  const discountedPriceOld = validPriceAndPromotion.price;
 
   //Kiểm tra tất cả sản phẩm có === 0 không
   const productQuantityAll = [1, 2, 3, 4, 5].every(

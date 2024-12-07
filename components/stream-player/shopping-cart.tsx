@@ -50,6 +50,7 @@ import {
   translateShoppingCart,
   getCartTranslation,
 } from "@/translate/translate-client";
+import getCart from "@/actions/client/cart";
 
 interface ProductWithImages extends Product {
   images: ImageData[];
@@ -58,9 +59,12 @@ interface ProductWithImages extends Product {
 
 interface ShippingCartInLiveProps {
   isPin?: boolean;
-  languageToUse: string
+  languageToUse: string;
 }
-const ShoppingCardInLive = ({ isPin = true, languageToUse }: ShippingCartInLiveProps) => {
+const ShoppingCardInLive = ({
+  isPin = true,
+  languageToUse,
+}: ShippingCartInLiveProps) => {
   const router = useRouter();
   const userId = useCurrentUser();
   const cartdb = useCartdb();
@@ -73,40 +77,39 @@ const ShoppingCardInLive = ({ isPin = true, languageToUse }: ShippingCartInLiveP
   const [isShowPin, setIsShowPin] = useState(true);
 
   //language
-    //languages
-    const pinMesage = translatePin(languageToUse);
-    const fanMessage = translateFan(languageToUse);
-    const pipeMessage = translatePipe(languageToUse);
-    const electricWireMessage = translateElectricWire(languageToUse);
-    const cuttingStoneMessage = translateCuttingStone(languageToUse);
-    const lockMessage = translateLock(languageToUse);
-    const glueMessage = translateGlue(languageToUse);
-    const socketMessage = translateSocket(languageToUse);
-    const paintMessage = translatePaint(languageToUse);
-    const bathroomMessage = translateBathroom(languageToUse);
-    const lightBlubMessage = translateLightBulb(languageToUse);
-    const commonUseMessage = translateCommonUse(languageToUse);
-    const toastErrorMessage = getToastError(languageToUse);
-    const loadingMessage = translateLoading(languageToUse);
-    const insufficientStockMessage = translateInsufficientStock(languageToUse)
-    const outOfStockInventoryMessage = translateOutOfStock(languageToUse);
-    const productQuantityUpdatedMessage =
-      translateProductQuantityUpdated(languageToUse);
-    const addtoCartErrorMessage = translateAddToCartError(languageToUse);
-    const productAddedToCartMessage = translateProductAddedToCart(languageToUse);
-    const shoppingListMessage = translateShoppingList(languageToUse)
-    const soldMessage = translateSold(languageToUse);
-    const buyMessage = translateBuy(languageToUse)
-    const shoppingCartMessage = translateShoppingCart(languageToUse)
-    const cartMessage = getCartTranslation(languageToUse)
-
+  //languages
+  const pinMesage = translatePin(languageToUse);
+  const fanMessage = translateFan(languageToUse);
+  const pipeMessage = translatePipe(languageToUse);
+  const electricWireMessage = translateElectricWire(languageToUse);
+  const cuttingStoneMessage = translateCuttingStone(languageToUse);
+  const lockMessage = translateLock(languageToUse);
+  const glueMessage = translateGlue(languageToUse);
+  const socketMessage = translateSocket(languageToUse);
+  const paintMessage = translatePaint(languageToUse);
+  const bathroomMessage = translateBathroom(languageToUse);
+  const lightBlubMessage = translateLightBulb(languageToUse);
+  const commonUseMessage = translateCommonUse(languageToUse);
+  const toastErrorMessage = getToastError(languageToUse);
+  const loadingMessage = translateLoading(languageToUse);
+  const insufficientStockMessage = translateInsufficientStock(languageToUse);
+  const outOfStockInventoryMessage = translateOutOfStock(languageToUse);
+  const productQuantityUpdatedMessage =
+    translateProductQuantityUpdated(languageToUse);
+  const addtoCartErrorMessage = translateAddToCartError(languageToUse);
+  const productAddedToCartMessage = translateProductAddedToCart(languageToUse);
+  const shoppingListMessage = translateShoppingList(languageToUse);
+  const soldMessage = translateSold(languageToUse);
+  const buyMessage = translateBuy(languageToUse);
+  const shoppingCartMessage = translateShoppingCart(languageToUse);
+  const cartMessage = getCartTranslation(languageToUse);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         const product = await getAllProductNotQuery(languageToUse);
-  
+
         setData(product);
       } catch (error) {
         toast.error(toastErrorMessage);
@@ -210,35 +213,6 @@ const ShoppingCardInLive = ({ isPin = true, languageToUse }: ShippingCartInLiveP
     }
   };
 
-  const findLowestPriceAndPromotion = (productDetail: any) => {
-    let lowestPrice = Infinity;
-    let bestPromotion = 0;
-
-    for (let i = 1; i <= 5; i++) {
-      const quantity = productDetail[`quantity${i}`];
-
-      if (quantity > 0) {
-        const price = productDetail[`price${i}`];
-        const percentPromotion = productDetail[`percentpromotion${i}`];
-
-        if (price < lowestPrice) {
-          lowestPrice = price;
-          bestPromotion = percentPromotion;
-        }
-      }
-    }
-
-    if (lowestPrice === Infinity) {
-      lowestPrice = productDetail.price1;
-      bestPromotion = productDetail.percentpromotion1;
-    }
-
-    return {
-      price: lowestPrice,
-      percentPromotion: bestPromotion,
-    };
-  };
-
   // Utility function to find the lowest price details
   const findLowestPriceDetails = (productDetail: any) => {
     let lowestPrice = Infinity;
@@ -320,83 +294,87 @@ const ShoppingCardInLive = ({ isPin = true, languageToUse }: ShippingCartInLiveP
       event.stopPropagation();
 
       await toast.promise(
-        axios.post("/api/client/cart/get-items", {
-          userId: userId?.id || "",
-        }),
+        (async () => {
+          // Sử dụng getCart thay vì axios.post
+          const cartItemData = await getCart({
+            userId: userId?.id || "",
+            language: languageToUse,
+          });
+
+          const size = availableSize;
+          const color = availableColor;
+          const maxQuantity = getQuantityMatchColorandSize(
+            product,
+            availableSize,
+            availableColor
+          );
+
+          const matchingItem = cartItemData.find(
+            (item: CartItemType) =>
+              item.product.name === product.name &&
+              item.product.id === product.id &&
+              item.size === size &&
+              item.color === color
+          );
+
+          const matchingQuantity = matchingItem ? matchingItem.quantity : 0;
+
+          const compareQuantityExistingAndAvailable =
+            matchingQuantity >= maxQuantity && maxQuantity > 0;
+
+          if (compareQuantityExistingAndAvailable) {
+            throw new Error(insufficientStockMessage);
+          }
+
+          const productWithQuantity = {
+            ...product,
+            quantity,
+            selectedWarranty: cartdb.getSelectedItemWarranty(product.id),
+          };
+
+          const existingCartItem = cartdb.items.find(
+            (item) =>
+              item.product.name === product.name &&
+              item.product.id === product.id &&
+              item.size === size &&
+              item.color === color
+          );
+
+          try {
+            setLoading(true);
+            if (existingCartItem) {
+              cartdb.updateQuantity(
+                existingCartItem.id,
+                existingCartItem.quantity + quantity,
+                null,
+                userId?.id || "",
+                languageToUse
+              );
+            } else {
+              cartdb.addItem(
+                productWithQuantity as any,
+                quantity,
+                null,
+                userId?.id || "",
+                availableSize,
+                availableColor
+              );
+            }
+          } catch (error) {
+            toast.error(addtoCartErrorMessage);
+          } finally {
+            setLoading(false);
+          }
+
+          return existingCartItem
+            ? productQuantityUpdatedMessage
+            : productAddedToCartMessage;
+        })(),
         {
           loading: loadingMessage,
-          success: (response) => {
-            const cartItemData = response.data;
-            const size = availableSize;
-            const color = availableColor;
-            const maxQuantity = getQuantityMatchColorandSize(
-              product,
-              availableSize,
-              availableColor
-            );
-
-            const matchingItem = cartItemData.find(
-              (item: CartItemType) =>
-                item.product.name === product.name &&
-                item.product.id === product.id &&
-                item.size === size &&
-                item.color === color
-            );
-
-            const matchingQuantity = matchingItem ? matchingItem.quantity : 0;
-
-            const compareQuantityExistingAndAvailable =
-              matchingQuantity >= maxQuantity && maxQuantity > 0;
-
-            if (compareQuantityExistingAndAvailable) {
-              throw new Error(insufficientStockMessage);
-            }
-
-            const productWithQuantity = {
-              ...product,
-              quantity,
-              selectedWarranty: cartdb.getSelectedItemWarranty(product.id),
-            };
-
-            const existingCartItem = cartdb.items.find(
-              (item) =>
-                item.product.name === product.name &&
-                item.product.id === product.id &&
-                item.size === size &&
-                item.color === color
-            );
-            try {
-              setLoading(true);
-              if (existingCartItem) {
-                cartdb.updateQuantity(
-                  existingCartItem.id,
-                  existingCartItem.quantity + quantity,
-                  null,
-                  userId?.id || "",
-                  languageToUse
-                );
-              } else {
-                cartdb.addItem(
-                  productWithQuantity as any,
-                  quantity,
-                  null,
-                  userId?.id || "",
-                  availableSize,
-                  availableColor
-                );
-              }
-            } catch (error) {
-              toast.error(addtoCartErrorMessage);
-            } finally {
-              setLoading(false);
-            }
-
-            return existingCartItem
-              ? productQuantityUpdatedMessage
-              : productAddedToCartMessage;
-          },
+          success: (response) => response,
           error: (error) => {
-            return error.message || toastErrorMessage
+            return error.message || toastErrorMessage;
           },
         }
       );
@@ -440,7 +418,9 @@ const ShoppingCardInLive = ({ isPin = true, languageToUse }: ShippingCartInLiveP
         </SheetTrigger>
         <SheetContent side="right">
           <SheetHeader>
-            <SheetTitle className="flex items-center">{shoppingListMessage}</SheetTitle>
+            <SheetTitle className="flex items-center">
+              {shoppingListMessage}
+            </SheetTitle>
           </SheetHeader>
           <div className="space-y-6">
             {/* Hiển thị từng nhóm sản phẩm */}
@@ -460,27 +440,28 @@ const ShoppingCardInLive = ({ isPin = true, languageToUse }: ShippingCartInLiveP
                       // Map productId to its continuousIndex
                       productIndexMap[product.id] = continuousIndex;
                       // Hàm tìm giá thấp nhất và khuyến mãi dựa trên số lượng có sẵn
-                      const validPriceAndPromotion =
-                        findLowestPriceAndPromotion(product.productdetail);
                       const lowestPriceDetails = findLowestPriceDetails(
                         product.productdetail
                       );
 
+                      // Kích thước và màu sắc tốt nhất từ thông tin tìm được
                       const availableSize = lowestPriceDetails.size;
                       const availableColor = lowestPriceDetails.color;
+                      const availablePrice = lowestPriceDetails.price;
+                      const availablePercentPromotion =
+                        lowestPriceDetails.percentPromotion;
 
                       // Tính giá sau khuyến mãi
-                      const discountedPrice = validPriceAndPromotion
-                        ? validPriceAndPromotion.price *
-                          ((100 - validPriceAndPromotion.percentPromotion) /
-                            100)
+                      const discountedPrice = lowestPriceDetails
+                        ? availablePrice *
+                          ((100 - availablePercentPromotion) / 100)
                         : null;
 
                       // Giá gốc (trước khuyến mãi)
-                      const discountedPriceOld = validPriceAndPromotion.price;
+                      const discountedPriceOld = availablePrice;
 
+                      //Nếu không có size và color thì trả về trống
                       if (!availableSize && !availableColor) {
-                        toast.error(outOfStockInventoryMessage);
                         return;
                       }
 
@@ -607,27 +588,27 @@ const ShoppingCardInLive = ({ isPin = true, languageToUse }: ShippingCartInLiveP
               // Map productId to its continuousIndex
               const indexProductMatchInSheet = productIndexMap[product.id];
               // Hàm tìm giá thấp nhất và khuyến mãi dựa trên số lượng có sẵn
-              const validPriceAndPromotion = findLowestPriceAndPromotion(
-                product.productdetail
-              );
               const lowestPriceDetails = findLowestPriceDetails(
                 product.productdetail
               );
 
+              // Kích thước và màu sắc tốt nhất từ thông tin tìm được
               const availableSize = lowestPriceDetails.size;
               const availableColor = lowestPriceDetails.color;
+              const availablePrice = lowestPriceDetails.price;
+              const availablePercentPromotion =
+                lowestPriceDetails.percentPromotion;
 
               // Tính giá sau khuyến mãi
-              const discountedPrice = validPriceAndPromotion
-                ? validPriceAndPromotion.price *
-                  ((100 - validPriceAndPromotion.percentPromotion) / 100)
+              const discountedPrice = lowestPriceDetails
+                ? availablePrice * ((100 - availablePercentPromotion) / 100)
                 : null;
 
               // Giá gốc (trước khuyến mãi)
-              const discountedPriceOld = validPriceAndPromotion.price;
+              const discountedPriceOld = availablePrice;
 
+              //Nếu không có size và color thì trả về trống
               if (!availableSize && !availableColor) {
-                toast.error(outOfStockInventoryMessage);
                 return;
               }
 
@@ -701,7 +682,7 @@ const ShoppingCardInLive = ({ isPin = true, languageToUse }: ShippingCartInLiveP
                         <p className="text-md font-semibold max-w-[6rem] overflow-hidden whitespace-nowrap text-ellipsis">
                           {product.heading}
                         </p>
-                        {/* Kiểm tra xemn nếu như ko có đã bán thì hiển thị value old nếu có thì ẩn valueold */}
+                        {/* Kiểm tra xem nếu như ko có đã bán thì hiển thị value old nếu có thì ẩn valueold */}
                         <div className="flex items-center justify-between">
                           <Currency value={discountedPrice || 0} />
                         </div>
