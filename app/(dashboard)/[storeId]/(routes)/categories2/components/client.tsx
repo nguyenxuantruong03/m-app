@@ -19,7 +19,7 @@ import DownloadFile from "@/components/file/downloadfilepage";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { getCategoriesClient } from "@/translate/translate-dashboard";
+import { getCategoriesClient, translateCategoriesClientPlastic } from "@/translate/translate-dashboard";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
 interface CategoriesClientProps {
@@ -39,6 +39,7 @@ const CategoriesClient: React.FC<CategoriesClientProps> = ({ data }) => {
    const user = useCurrentUser();
    const languageToUse = user?.language || "vi"
    const categoriesClientMessage = getCategoriesClient(languageToUse)
+   const categoriesClientPlasticMessage = translateCategoriesClientPlastic(languageToUse)
 
   const handleDelete = async () => {
     setLoading(true);
@@ -76,8 +77,8 @@ const CategoriesClient: React.FC<CategoriesClientProps> = ({ data }) => {
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`${categoriesClientMessage.category} (${data.length})`}
-          description={categoriesClientMessage.manageCategory}
+          title={`${categoriesClientPlasticMessage.categoryPlastic} (${data.length})`}
+          description={categoriesClientPlasticMessage.manageCategoryPlastic}
         />
         <div className=" flex space-x-3">
           <DownloadFile data={data} filename="categories2" languageToUse={languageToUse}/>

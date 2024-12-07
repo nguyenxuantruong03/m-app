@@ -20,7 +20,7 @@ import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getProductClient } from "@/translate/translate-dashboard";
+import { getProductClient, translateProductsClientLock } from "@/translate/translate-dashboard";
 interface ProductClientProps {
   data: ProductColumn[];
 }
@@ -38,6 +38,7 @@ const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
   const user = useCurrentUser();
   const languageToUse = user?.language || "vi";
   const productClientMessage = getProductClient(languageToUse);
+  const productClientLockMessage = translateProductsClientLock(languageToUse);
 
   const handleDelete = async () => {
     setLoading(true);
@@ -73,8 +74,8 @@ const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`${productClientMessage.product} (${data.length})`}
-          description={productClientMessage.manageProduct}
+          title={`${productClientLockMessage.productLock} (${data.length})`}
+          description={productClientLockMessage.manageProductLock}
         />
         <div className="flex space-x-3">
           <Downloadfile

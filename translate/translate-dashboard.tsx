@@ -3521,8 +3521,6 @@ export const getCategoriesClient = (language: string) => {
       return {
         categoryDeleted: "Xóa loại sản phẩm thành công",
         error: "Có lỗi xảy ra!",
-        category: "Loại sản phẩm",
-        manageCategory: "Quản lý loại sản phẩm cửa hàng",
         addNew: "Thêm mới",
         api: "API",
         apiCalls: "Gọi API cho loại sản phẩm",
@@ -3531,8 +3529,6 @@ export const getCategoriesClient = (language: string) => {
       return {
         categoryDeleted: "Category deleted successfully",
         error: "Something went wrong!",
-        category: "Category",
-        manageCategory: "Manage store categories",
         addNew: "Add New",
         api: "API",
         apiCalls: "API calls for Category",
@@ -3541,8 +3537,6 @@ export const getCategoriesClient = (language: string) => {
       return {
         categoryDeleted: "类别已成功删除",
         error: "出现问题！",
-        category: "类别",
-        manageCategory: "管理商店类别",
         addNew: "新增",
         api: "API",
         apiCalls: "类别的 API 调用",
@@ -3551,8 +3545,6 @@ export const getCategoriesClient = (language: string) => {
       return {
         categoryDeleted: "Catégorie supprimée avec succès",
         error: "Quelque chose a mal tourné !",
-        category: "Catégorie",
-        manageCategory: "Gérer les catégories du magasin",
         addNew: "Ajouter nouveau",
         api: "API",
         apiCalls: "Appels API pour la catégorie",
@@ -3561,8 +3553,6 @@ export const getCategoriesClient = (language: string) => {
       return {
         categoryDeleted: "カテゴリが正常に削除されました",
         error: "問題が発生しました！",
-        category: "カテゴリ",
-        manageCategory: "店舗カテゴリの管理",
         addNew: "新規追加",
         api: "API",
         apiCalls: "カテゴリの API 呼び出し",
@@ -3571,14 +3561,433 @@ export const getCategoriesClient = (language: string) => {
       return {
         categoryDeleted: "Category deleted successfully",
         error: "Something went wrong!",
-        category: "Category",
-        manageCategory: "Manage store categories",
         addNew: "Add New",
         api: "API",
         apiCalls: "API calls for Category",
       };
   }
 };
+
+export const translateCategoriesClientPin = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        categoryPin: "Danh mục pin",
+        manageCategoryPin: "Quản lý danh mục pin của cửa hàng",
+      };
+    case "en":
+      return {
+        categoryPin: "Battery Category",
+        manageCategoryPin: "Manage Store's Battery Products",
+      };
+    case "zh":
+      return {
+        categoryPin: "电池类别",
+        manageCategoryPin: "管理店铺的电池产品",
+      };
+    case "fr":
+      return {
+        categoryPin: "Catégorie de Batterie",
+        manageCategoryPin: "Gérer les produits de batterie du magasin",
+      };
+    case "ja":
+      return {
+        categoryPin: "バッテリーカテゴリー",
+        manageCategoryPin: "店舗のバッテリー製品を管理する",
+      };
+    default:
+      return {
+        categoryPin: "Battery Category",
+        manageCategoryPin: "Manage Store's Battery Products",
+      };
+  }
+};
+
+export const translateCategoriesClientFan = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        categoryFan: "Danh mục quạt",
+        manageCategoryFan: "Quản lý danh mục quạt của cửa hàng",
+      };
+    case "en":
+      return {
+        categoryFan: "Fan Category",
+        manageCategoryFan: "Manage Store's Fan Products",
+      };
+    case "zh":
+      return {
+        categoryFan: "风扇类别",
+        manageCategoryFan: "管理店铺的风扇产品",
+      };
+    case "fr":
+      return {
+        categoryFan: "Catégorie de Ventilateur",
+        manageCategoryFan: "Gérer les produits de ventilateur du magasin",
+      };
+    case "ja":
+      return {
+        categoryFan: "ファンカテゴリー",
+        manageCategoryFan: "店舗のファン製品を管理する",
+      };
+    default:
+      return {
+        categoryFan: "Fan Category",
+        manageCategoryFan: "Manage Store's Fan Products",
+      };
+  }
+};
+
+export const translateCategoriesClientPlastic = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        categoryPlastic: "Danh mục ống nhựa, ống lưới xanh",
+        manageCategoryPlastic: "Quản lý danh mục ống nhựa, ống lưới xanh của cửa hàng",
+      };
+    case "en":
+      return {
+        categoryPlastic: "Plastic Pipe, Green Net Category",
+        manageCategoryPlastic: "Manage Store's Plastic Pipe, Green Net Products",
+      };
+    case "zh":
+      return {
+        categoryPlastic: "塑料管，绿色网类别",
+        manageCategoryPlastic: "管理店铺的塑料管，绿色网产品",
+      };
+    case "fr":
+      return {
+        categoryPlastic: "Catégorie Tuyaux en Plastique, Maille Verte",
+        manageCategoryPlastic: "Gérer les produits Tuyaux en Plastique, Maille Verte du magasin",
+      };
+    case "ja":
+      return {
+        categoryPlastic: "プラスチックパイプ、緑のネットカテゴリー",
+        manageCategoryPlastic: "店舗のプラスチックパイプ、緑のネット製品を管理する",
+      };
+    default:
+      return {
+        categoryPlastic: "Plastic Pipe, Green Net Category",
+        manageCategoryPlastic: "Manage Store's Plastic Pipe, Green Net Products",
+      };
+  }
+};
+
+export const translateCategoriesClientElectricalWire = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        categoryElectricalWire: "Danh mục dây điện",
+        manageCategoryElectricalWire: "Quản lý danh mục dây điện của cửa hàng",
+      };
+    case "en":
+      return {
+        categoryElectricalWire: "Electrical Wire Category",
+        manageCategoryElectricalWire: "Manage Store's Electrical Wire Products",
+      };
+    case "zh":
+      return {
+        categoryElectricalWire: "电线类别",
+        manageCategoryElectricalWire: "管理店铺的电线产品",
+      };
+    case "fr":
+      return {
+        categoryElectricalWire: "Catégorie Câble Électrique",
+        manageCategoryElectricalWire: "Gérer les produits Câble Électrique du magasin",
+      };
+    case "ja":
+      return {
+        categoryElectricalWire: "電線カテゴリー",
+        manageCategoryElectricalWire: "店舗の電線製品を管理する",
+      };
+    default:
+      return {
+        categoryElectricalWire: "Electrical Wire Category",
+        manageCategoryElectricalWire: "Manage Store's Electrical Wire Products",
+      };
+  }
+};
+
+export const translateCategoriesClientCuttingStone = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        categoryCuttingStone: "Danh mục đá cắt",
+        manageCategoryCuttingStone: "Quản lý danh mục đá cắt của cửa hàng",
+      };
+    case "en":
+      return {
+        categoryCuttingStone: "Cutting Stone Category",
+        manageCategoryCuttingStone: "Manage Store's Cutting Stone Products",
+      };
+    case "zh":
+      return {
+        categoryCuttingStone: "切割石类别",
+        manageCategoryCuttingStone: "管理店铺的切割石产品",
+      };
+    case "fr":
+      return {
+        categoryCuttingStone: "Catégorie Pierre de Coupe",
+        manageCategoryCuttingStone: "Gérer les produits Pierre de Coupe du magasin",
+      };
+    case "ja":
+      return {
+        categoryCuttingStone: "切削石カテゴリー",
+        manageCategoryCuttingStone: "店舗の切削石製品を管理する",
+      };
+    default:
+      return {
+        categoryCuttingStone: "Cutting Stone Category",
+        manageCategoryCuttingStone: "Manage Store's Cutting Stone Products",
+      };
+  }
+};
+
+export const translateCategoriesClientLock = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        categoryLock: "Danh mục ổ khóa",
+        manageCategoryLock: "Quản lý danh mục ổ khóa của cửa hàng",
+      };
+    case "en":
+      return {
+        categoryLock: "Lock Category",
+        manageCategoryLock: "Manage Store's Lock Products",
+      };
+    case "zh":
+      return {
+        categoryLock: "锁类别",
+        manageCategoryLock: "管理店铺的锁产品",
+      };
+    case "fr":
+      return {
+        categoryLock: "Catégorie de Serrure",
+        manageCategoryLock: "Gérer les produits de serrure du magasin",
+      };
+    case "ja":
+      return {
+        categoryLock: "ロックカテゴリー",
+        manageCategoryLock: "店舗のロック製品を管理する",
+      };
+    default:
+      return {
+        categoryLock: "Lock Category",
+        manageCategoryLock: "Manage Store's Lock Products",
+      };
+  }
+};
+
+export const translateCategoriesClientGlue = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        categoryGlue: "Danh mục keo",
+        manageCategoryGlue: "Quản lý danh mục keo của cửa hàng",
+      };
+    case "en":
+      return {
+        categoryGlue: "Glue Category",
+        manageCategoryGlue: "Manage Store's Glue Products",
+      };
+    case "zh":
+      return {
+        categoryGlue: "胶水类别",
+        manageCategoryGlue: "管理店铺的胶水产品",
+      };
+    case "fr":
+      return {
+        categoryGlue: "Catégorie de Colle",
+        manageCategoryGlue: "Gérer les produits de colle du magasin",
+      };
+    case "ja":
+      return {
+        categoryGlue: "接着剤カテゴリー",
+        manageCategoryGlue: "店舗の接着剤製品を管理する",
+      };
+    default:
+      return {
+        categoryGlue: "Glue Category",
+        manageCategoryGlue: "Manage Store's Glue Products",
+      };
+  }
+};
+
+export const translateCategoriesClientSocket = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        categorySocket: "Danh mục ổ cắm, mặt ổ cắm",
+        manageCategorySocket: "Quản lý danh mục ổ cắm, mặt ổ cắm của cửa hàng",
+      };
+    case "en":
+      return {
+        categorySocket: "Socket and Faceplate Category",
+        manageCategorySocket: "Manage Store's Socket and Faceplate Products",
+      };
+    case "zh":
+      return {
+        categorySocket: "插座和面板类别",
+        manageCategorySocket: "管理店铺的插座和面板产品",
+      };
+    case "fr":
+      return {
+        categorySocket: "Catégorie Prise et Plaque de Prise",
+        manageCategorySocket: "Gérer les produits Prise et Plaque de Prise du magasin",
+      };
+    case "ja":
+      return {
+        categorySocket: "コンセントとプレートカテゴリー",
+        manageCategorySocket: "店舗のコンセントとプレート製品を管理する",
+      };
+    default:
+      return {
+        categorySocket: "Socket and Faceplate Category",
+        manageCategorySocket: "Manage Store's Socket and Faceplate Products",
+      };
+  }
+};
+
+export const translateCategoriesClientPaint = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        categoryPaint: "Danh mục sơn",
+        manageCategoryPaint: "Quản lý danh mục sơn của cửa hàng",
+      };
+    case "en":
+      return {
+        categoryPaint: "Paint Category",
+        manageCategoryPaint: "Manage Store's Paint Products",
+      };
+    case "zh":
+      return {
+        categoryPaint: "油漆类别",
+        manageCategoryPaint: "管理店铺的油漆产品",
+      };
+    case "fr":
+      return {
+        categoryPaint: "Catégorie de Peinture",
+        manageCategoryPaint: "Gérer les produits de peinture du magasin",
+      };
+    case "ja":
+      return {
+        categoryPaint: "塗料カテゴリー",
+        manageCategoryPaint: "店舗の塗料製品を管理する",
+      };
+    default:
+      return {
+        categoryPaint: "Paint Category",
+        manageCategoryPaint: "Manage Store's Paint Products",
+      };
+  }
+};
+
+export const translateCategoriesClientBathroomMaterial = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        categoryBathroomMaterial: "Danh mục vật liệu nhà tắm",
+        manageCategoryBathroomMaterial: "Quản lý danh mục vật liệu nhà tắm của cửa hàng",
+      };
+    case "en":
+      return {
+        categoryBathroomMaterial: "Bathroom Material Category",
+        manageCategoryBathroomMaterial: "Manage Store's Bathroom Material Products",
+      };
+    case "zh":
+      return {
+        categoryBathroomMaterial: "浴室材料类别",
+        manageCategoryBathroomMaterial: "管理店铺的浴室材料产品",
+      };
+    case "fr":
+      return {
+        categoryBathroomMaterial: "Catégorie Matériaux de Salle de Bain",
+        manageCategoryBathroomMaterial: "Gérer les produits Matériaux de Salle de Bain du magasin",
+      };
+    case "ja":
+      return {
+        categoryBathroomMaterial: "バスルーム素材カテゴリー",
+        manageCategoryBathroomMaterial: "店舗のバスルーム素材製品を管理する",
+      };
+    default:
+      return {
+        categoryBathroomMaterial: "Bathroom Material Category",
+        manageCategoryBathroomMaterial: "Manage Store's Bathroom Material Products",
+      };
+  }
+};
+
+export const translateCategoriesClientLightbulb = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        categoryLightbulb: "Danh mục bóng đèn",
+        manageCategoryLightbulb: "Quản lý danh mục bóng đèn của cửa hàng",
+      };
+    case "en":
+      return {
+        categoryLightbulb: "Lightbulb Category",
+        manageCategoryLightbulb: "Manage Store's Lightbulb Products",
+      };
+    case "zh":
+      return {
+        categoryLightbulb: "灯泡类别",
+        manageCategoryLightbulb: "管理店铺的灯泡产品",
+      };
+    case "fr":
+      return {
+        categoryLightbulb: "Catégorie Ampoule",
+        manageCategoryLightbulb: "Gérer les produits Ampoule du magasin",
+      };
+    case "ja":
+      return {
+        categoryLightbulb: "電球カテゴリー",
+        manageCategoryLightbulb: "店舗の電球製品を管理する",
+      };
+    default:
+      return {
+        categoryLightbulb: "Lightbulb Category",
+        manageCategoryLightbulb: "Manage Store's Lightbulb Products",
+      };
+  }
+};
+
+export const translateCategoriesClientCommonGoods = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        categoryCommonGoods: "Danh mục đồ thường dùng",
+        manageCategoryCommonGoods: "Quản lý danh mục đồ thường dùng của cửa hàng",
+      };
+    case "en":
+      return {
+        categoryCommonGoods: "Common Goods Category",
+        manageCategoryCommonGoods: "Manage Store's Common Goods Products",
+      };
+    case "zh":
+      return {
+        categoryCommonGoods: "常用商品类别",
+        manageCategoryCommonGoods: "管理店铺的常用商品产品",
+      };
+    case "fr":
+      return {
+        categoryCommonGoods: "Catégorie de Produits Courants",
+        manageCategoryCommonGoods: "Gérer les produits Courants du magasin",
+      };
+    case "ja":
+      return {
+        categoryCommonGoods: "日常用品カテゴリー",
+        manageCategoryCommonGoods: "店舗の日常用品製品を管理する",
+      };
+    default:
+      return {
+        categoryCommonGoods: "Common Goods Category",
+        manageCategoryCommonGoods: "Manage Store's Common Goods Products",
+      };
+  }
+};
+
 
 export const getCategoryForm = (language: string) => {
   switch (language) {
@@ -3880,8 +4289,6 @@ export const getProductClient = (language: string) => {
       return {
         productDeletedSuccessfully: "Sản phẩm đã bị xóa thành công",
         error: "Có lỗi xảy ra.",
-        product: "Sản phẩm",
-        manageProduct: "Quản lý sản phẩm cửa hàng",
         addNew: "Thêm mới",
         api: "API",
         apiCallsForProduct: "Gọi API cho sản phẩm",
@@ -3890,8 +4297,6 @@ export const getProductClient = (language: string) => {
       return {
         productDeletedSuccessfully: "Product deleted successfully",
         error: "Something went wrong.",
-        product: "Product",
-        manageProduct: "Manage store products",
         addNew: "Add New",
         api: "API",
         apiCallsForProduct: "API calls for Product",
@@ -3900,8 +4305,6 @@ export const getProductClient = (language: string) => {
       return {
         productDeletedSuccessfully: "产品已成功删除",
         error: "出现问题。",
-        product: "产品",
-        manageProduct: "管理商店产品",
         addNew: "新增",
         api: "API",
         apiCallsForProduct: "产品的 API 调用",
@@ -3910,8 +4313,6 @@ export const getProductClient = (language: string) => {
       return {
         productDeletedSuccessfully: "Produit supprimé avec succès",
         error: "Quelque chose a mal tourné.",
-        product: "Produit",
-        manageProduct: "Gérer les produits du magasin",
         addNew: "Ajouter nouveau",
         api: "API",
         apiCallsForProduct: "Appels API pour le produit",
@@ -3920,8 +4321,6 @@ export const getProductClient = (language: string) => {
       return {
         productDeletedSuccessfully: "製品が正常に削除されました",
         error: "問題が発生しました。",
-        product: "製品",
-        manageProduct: "店舗製品の管理",
         addNew: "新規追加",
         api: "API",
         apiCallsForProduct: "製品の API 呼び出し",
@@ -3930,14 +4329,433 @@ export const getProductClient = (language: string) => {
       return {
         productDeletedSuccessfully: "Product deleted successfully",
         error: "Something went wrong.",
-        product: "Product",
-        manageProduct: "Manage store products",
         addNew: "Add New",
         api: "API",
         apiCallsForProduct: "API calls for Product",
       };
   }
 };
+
+export const translateProductsClientBattery = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        productBattery: "Sản phẩm pin",
+        manageProductBattery: "Quản lý sản phẩm pin của cửa hàng",
+      };
+    case "en":
+      return {
+        productBattery: "Battery Product",
+        manageProductBattery: "Manage Store's Battery Products",
+      };
+    case "zh":
+      return {
+        productBattery: "电池产品",
+        manageProductBattery: "管理店铺的电池产品",
+      };
+    case "fr":
+      return {
+        productBattery: "Produit de Batterie",
+        manageProductBattery: "Gérer les produits de batterie du magasin",
+      };
+    case "ja":
+      return {
+        productBattery: "バッテリー製品",
+        manageProductBattery: "店舗のバッテリー製品を管理する",
+      };
+    default:
+      return {
+        productBattery: "Battery Product",
+        manageProductBattery: "Manage Store's Battery Products",
+      };
+  }
+};
+
+export const translateProductsClientFan = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        productFan: "Sản phẩm quạt",
+        manageProductFan: "Quản lý sản phẩm quạt của cửa hàng",
+      };
+    case "en":
+      return {
+        productFan: "Fan Product",
+        manageProductFan: "Manage Store's Fan Products",
+      };
+    case "zh":
+      return {
+        productFan: "风扇产品",
+        manageProductFan: "管理店铺的风扇产品",
+      };
+    case "fr":
+      return {
+        productFan: "Produit de Ventilateur",
+        manageProductFan: "Gérer les produits de ventilateur du magasin",
+      };
+    case "ja":
+      return {
+        productFan: "ファン製品",
+        manageProductFan: "店舗のファン製品を管理する",
+      };
+    default:
+      return {
+        productFan: "Fan Product",
+        manageProductFan: "Manage Store's Fan Products",
+      };
+  }
+};
+
+export const translateProductsClientPlasticPipe = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        productPlasticPipe: "Sản phẩm ống nhựa, ống lưới xanh",
+        manageProductPlasticPipe: "Quản lý sản phẩm ống nhựa, ống lưới xanh của cửa hàng",
+      };
+    case "en":
+      return {
+        productPlasticPipe: "Plastic Pipe, Green Net Product",
+        manageProductPlasticPipe: "Manage Store's Plastic Pipe, Green Net Products",
+      };
+    case "zh":
+      return {
+        productPlasticPipe: "塑料管，绿色网产品",
+        manageProductPlasticPipe: "管理店铺的塑料管，绿色网产品",
+      };
+    case "fr":
+      return {
+        productPlasticPipe: "Produit Tuyaux en Plastique, Maille Verte",
+        manageProductPlasticPipe: "Gérer les produits Tuyaux en Plastique, Maille Verte du magasin",
+      };
+    case "ja":
+      return {
+        productPlasticPipe: "プラスチックパイプ、緑のネット製品",
+        manageProductPlasticPipe: "店舗のプラスチックパイプ、緑のネット製品を管理する",
+      };
+    default:
+      return {
+        productPlasticPipe: "Plastic Pipe, Green Net Product",
+        manageProductPlasticPipe: "Manage Store's Plastic Pipe, Green Net Products",
+      };
+  }
+};
+
+export const translateProductsClientElectricalWire = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        productElectricalWire: "Sản phẩm dây điện",
+        manageProductElectricalWire: "Quản lý sản phẩm dây điện của cửa hàng",
+      };
+    case "en":
+      return {
+        productElectricalWire: "Electrical Wire Product",
+        manageProductElectricalWire: "Manage Store's Electrical Wire Products",
+      };
+    case "zh":
+      return {
+        productElectricalWire: "电线产品",
+        manageProductElectricalWire: "管理店铺的电线产品",
+      };
+    case "fr":
+      return {
+        productElectricalWire: "Produit de Câble Électrique",
+        manageProductElectricalWire: "Gérer les produits de câble électrique du magasin",
+      };
+    case "ja":
+      return {
+        productElectricalWire: "電線製品",
+        manageProductElectricalWire: "店舗の電線製品を管理する",
+      };
+    default:
+      return {
+        productElectricalWire: "Electrical Wire Product",
+        manageProductElectricalWire: "Manage Store's Electrical Wire Products",
+      };
+  }
+};
+
+export const translateProductsClientCuttingStone = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        productCuttingStone: "Sản phẩm đá cắt",
+        manageProductCuttingStone: "Quản lý sản phẩm đá cắt của cửa hàng",
+      };
+    case "en":
+      return {
+        productCuttingStone: "Cutting Stone Product",
+        manageProductCuttingStone: "Manage Store's Cutting Stone Products",
+      };
+    case "zh":
+      return {
+        productCuttingStone: "切割石材产品",
+        manageProductCuttingStone: "管理店铺的切割石材产品",
+      };
+    case "fr":
+      return {
+        productCuttingStone: "Produit de Pierre de Découpe",
+        manageProductCuttingStone: "Gérer les produits de pierre de découpe du magasin",
+      };
+    case "ja":
+      return {
+        productCuttingStone: "切断石材製品",
+        manageProductCuttingStone: "店舗の切断石材製品を管理する",
+      };
+    default:
+      return {
+        productCuttingStone: "Cutting Stone Product",
+        manageProductCuttingStone: "Manage Store's Cutting Stone Products",
+      };
+  }
+};
+
+export const translateProductsClientLock = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        productLock: "Sản phẩm ổ khóa",
+        manageProductLock: "Quản lý sản phẩm ổ khóa của cửa hàng",
+      };
+    case "en":
+      return {
+        productLock: "Lock Product",
+        manageProductLock: "Manage Store's Lock Products",
+      };
+    case "zh":
+      return {
+        productLock: "锁产品",
+        manageProductLock: "管理店铺的锁产品",
+      };
+    case "fr":
+      return {
+        productLock: "Produit de Serrure",
+        manageProductLock: "Gérer les produits de serrure du magasin",
+      };
+    case "ja":
+      return {
+        productLock: "ロック製品",
+        manageProductLock: "店舗のロック製品を管理する",
+      };
+    default:
+      return {
+        productLock: "Lock Product",
+        manageProductLock: "Manage Store's Lock Products",
+      };
+  }
+};
+
+export const translateProductsClientGlue = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        productGlue: "Sản phẩm keo",
+        manageProductGlue: "Quản lý sản phẩm keo của cửa hàng",
+      };
+    case "en":
+      return {
+        productGlue: "Glue Product",
+        manageProductGlue: "Manage Store's Glue Products",
+      };
+    case "zh":
+      return {
+        productGlue: "胶水产品",
+        manageProductGlue: "管理店铺的胶水产品",
+      };
+    case "fr":
+      return {
+        productGlue: "Produit de Colle",
+        manageProductGlue: "Gérer les produits de colle du magasin",
+      };
+    case "ja":
+      return {
+        productGlue: "接着剤製品",
+        manageProductGlue: "店舗の接着剤製品を管理する",
+      };
+    default:
+      return {
+        productGlue: "Glue Product",
+        manageProductGlue: "Manage Store's Glue Products",
+      };
+  }
+};
+
+export const translateProductsClientSocket = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        productSocket: "Sản phẩm ổ cắm, mặt ổ cắm",
+        manageProductSocket: "Quản lý sản phẩm ổ cắm, mặt ổ cắm của cửa hàng",
+      };
+    case "en":
+      return {
+        productSocket: "Socket and Faceplate Product",
+        manageProductSocket: "Manage Store's Socket and Faceplate Products",
+      };
+    case "zh":
+      return {
+        productSocket: "插座和面板产品",
+        manageProductSocket: "管理店铺的插座和面板产品",
+      };
+    case "fr":
+      return {
+        productSocket: "Produit Prise et Plaque de Prise",
+        manageProductSocket: "Gérer les produits Prise et Plaque de Prise du magasin",
+      };
+    case "ja":
+      return {
+        productSocket: "ソケットとフェイスプレート製品",
+        manageProductSocket: "店舗のソケットとフェイスプレート製品を管理する",
+      };
+    default:
+      return {
+        productSocket: "Socket and Faceplate Product",
+        manageProductSocket: "Manage Store's Socket and Faceplate Products",
+      };
+  }
+};
+
+export const translateProductsClientPaint = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        productPaint: "Sản phẩm sơn",
+        manageProductPaint: "Quản lý sản phẩm sơn của cửa hàng",
+      };
+    case "en":
+      return {
+        productPaint: "Paint Product",
+        manageProductPaint: "Manage Store's Paint Products",
+      };
+    case "zh":
+      return {
+        productPaint: "油漆产品",
+        manageProductPaint: "管理店铺的油漆产品",
+      };
+    case "fr":
+      return {
+        productPaint: "Produit de Peinture",
+        manageProductPaint: "Gérer les produits de peinture du magasin",
+      };
+    case "ja":
+      return {
+        productPaint: "塗料製品",
+        manageProductPaint: "店舗の塗料製品を管理する",
+      };
+    default:
+      return {
+        productPaint: "Paint Product",
+        manageProductPaint: "Manage Store's Paint Products",
+      };
+  }
+};
+
+export const translateProductsClientBathroomMaterial = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        productBathroomMaterial: "Sản phẩm vật liệu nhà tắm",
+        manageProductBathroomMaterial: "Quản lý sản phẩm vật liệu nhà tắm của cửa hàng",
+      };
+    case "en":
+      return {
+        productBathroomMaterial: "Bathroom Material Product",
+        manageProductBathroomMaterial: "Manage Store's Bathroom Material Products",
+      };
+    case "zh":
+      return {
+        productBathroomMaterial: "浴室材料产品",
+        manageProductBathroomMaterial: "管理店铺的浴室材料产品",
+      };
+    case "fr":
+      return {
+        productBathroomMaterial: "Produit Matériau de Salle de Bain",
+        manageProductBathroomMaterial: "Gérer les produits Matériau de Salle de Bain du magasin",
+      };
+    case "ja":
+      return {
+        productBathroomMaterial: "バスルーム材料製品",
+        manageProductBathroomMaterial: "店舗のバスルーム材料製品を管理する",
+      };
+    default:
+      return {
+        productBathroomMaterial: "Bathroom Material Product",
+        manageProductBathroomMaterial: "Manage Store's Bathroom Material Products",
+      };
+  }
+};
+
+export const translateProductsClientLightBulb = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        productLightBulb: "Sản phẩm bóng đèn",
+        manageProductLightBulb: "Quản lý sản phẩm bóng đèn của cửa hàng",
+      };
+    case "en":
+      return {
+        productLightBulb: "Light Bulb Product",
+        manageProductLightBulb: "Manage Store's Light Bulb Products",
+      };
+    case "zh":
+      return {
+        productLightBulb: "灯泡产品",
+        manageProductLightBulb: "管理店铺的灯泡产品",
+      };
+    case "fr":
+      return {
+        productLightBulb: "Produit Ampoule",
+        manageProductLightBulb: "Gérer les produits Ampoule du magasin",
+      };
+    case "ja":
+      return {
+        productLightBulb: "電球製品",
+        manageProductLightBulb: "店舗の電球製品を管理する",
+      };
+    default:
+      return {
+        productLightBulb: "Light Bulb Product",
+        manageProductLightBulb: "Manage Store's Light Bulb Products",
+      };
+  }
+};
+
+export const translateProductsClientCommonItems = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        productCommonItems: "Sản phẩm đồ thường dùng",
+        manageProductCommonItems: "Quản lý sản phẩm đồ thường dùng của cửa hàng",
+      };
+    case "en":
+      return {
+        productCommonItems: "Common Items Product",
+        manageProductCommonItems: "Manage Store's Common Items Products",
+      };
+    case "zh":
+      return {
+        productCommonItems: "常用物品产品",
+        manageProductCommonItems: "管理店铺的常用物品产品",
+      };
+    case "fr":
+      return {
+        productCommonItems: "Produit d'Articles Courants",
+        manageProductCommonItems: "Gérer les produits d'articles courants du magasin",
+      };
+    case "ja":
+      return {
+        productCommonItems: "日用品製品",
+        manageProductCommonItems: "店舗の日用品製品を管理する",
+      };
+    default:
+      return {
+        productCommonItems: "Common Items Product",
+        manageProductCommonItems: "Manage Store's Common Items Products",
+      };
+  }
+};
+
 
 export const getProductForm = (language: string) => {
   switch (language) {

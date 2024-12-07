@@ -19,7 +19,7 @@ import Downloadfile from "@/components/file/downloadfilepage";
 import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { getProductClient } from "@/translate/translate-dashboard";
+import { getProductClient, translateProductsClientCommonItems } from "@/translate/translate-dashboard";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
 interface ProductClientProps {
@@ -39,6 +39,7 @@ const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
   const user = useCurrentUser();
   const languageToUse = user?.language || "vi";
   const productClientMessage = getProductClient(languageToUse);
+  const productClientCommonItemsMessage = translateProductsClientCommonItems(languageToUse);
 
   const handleDelete = async () => {
     setLoading(true);
@@ -74,8 +75,8 @@ const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`${productClientMessage.product} (${data.length})`}
-          description={productClientMessage.manageProduct}
+          title={`${productClientCommonItemsMessage.productCommonItems} (${data.length})`}
+          description={productClientCommonItemsMessage.manageProductCommonItems}
         />
         <div className="flex space-x-3">
           <Downloadfile
