@@ -314,15 +314,6 @@ export async function PATCH(
       );
     }
 
-    if (!percentpromotion1) {
-      return new NextResponse(
-        JSON.stringify({
-          error: productDetailIdPatchMessage.percentPromotionRequired,
-        }),
-        { status: 400 }
-      );
-    }
-
     if (!price1) {
       return new NextResponse(
         JSON.stringify({ error: productDetailIdPatchMessage.priceRequired }),
@@ -341,22 +332,6 @@ export async function PATCH(
       );
     }
 
-    if (!descriptionspecifications) {
-      return new NextResponse(
-        JSON.stringify({
-          error: productDetailIdPatchMessage.descriptionSpecificationsRequired,
-        }),
-        { status: 400 }
-      );
-    }
-    if (!valuespecifications) {
-      return new NextResponse(
-        JSON.stringify({
-          error: productDetailIdPatchMessage.valueSpecificationsRequired,
-        }),
-        { status: 400 }
-      );
-    }
     if (!descriptionsalientfeatures) {
       return new NextResponse(
         JSON.stringify({
@@ -365,33 +340,7 @@ export async function PATCH(
         { status: 400 }
       );
     }
-    if (!description2salientfeatures) {
-      return new NextResponse(
-        JSON.stringify({
-          error:
-            productDetailIdPatchMessage.description2SalientFeaturesRequired,
-        }),
-        { status: 400 }
-      );
-    }
-    if (!description3salientfeatures) {
-      return new NextResponse(
-        JSON.stringify({
-          error:
-            productDetailIdPatchMessage.description3SalientFeaturesRequired,
-        }),
-        { status: 400 }
-      );
-    }
-    if (!description4salientfeatures) {
-      return new NextResponse(
-        JSON.stringify({
-          error:
-            productDetailIdPatchMessage.description4SalientFeaturesRequired,
-        }),
-        { status: 400 }
-      );
-    }
+    
     if (!contentsalientfeatures) {
       return new NextResponse(
         JSON.stringify({

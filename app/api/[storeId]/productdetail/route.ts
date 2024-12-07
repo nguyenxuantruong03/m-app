@@ -152,13 +152,6 @@ export async function POST(
       });
     }
 
-    if (!percentpromotion1) {
-      return new NextResponse(
-        JSON.stringify({ error: productDetailPostMessage.percentPromotionRequired }),
-        { status: 400 }
-      );
-    }
-
     if (!price1) {
       return new NextResponse(JSON.stringify({ error: productDetailPostMessage.priceRequired }), {
         status: 400,
@@ -189,24 +182,6 @@ export async function POST(
     if (!descriptionsalientfeatures) {
       return new NextResponse(
         JSON.stringify({ error: productDetailPostMessage.descriptionSalientFeaturesRequired }),
-        { status: 400 }
-      );
-    }
-    if (!description2salientfeatures) {
-      return new NextResponse(
-        JSON.stringify({ error: productDetailPostMessage.description2SalientFeaturesRequired }),
-        { status: 400 }
-      );
-    }
-    if (!description3salientfeatures) {
-      return new NextResponse(
-        JSON.stringify({ error: productDetailPostMessage.description3SalientFeaturesRequired }),
-        { status: 400 }
-      );
-    }
-    if (!description4salientfeatures) {
-      return new NextResponse(
-        JSON.stringify({ error: productDetailPostMessage.description4SalientFeaturesRequired }),
         { status: 400 }
       );
     }

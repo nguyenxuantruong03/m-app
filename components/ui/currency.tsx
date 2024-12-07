@@ -6,10 +6,10 @@ import { useEffect, useState } from "react";
 interface CurrencyProps {
   value?: string | number;
   valueold?: string | number;
-  textSize?: string
+  textSize?: string;
 }
 
-const Currency: React.FC<CurrencyProps> = ({ value, valueold,textSize }) => {
+const Currency: React.FC<CurrencyProps> = ({ value, valueold, textSize }) => {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -26,7 +26,9 @@ const Currency: React.FC<CurrencyProps> = ({ value, valueold,textSize }) => {
 
   // Check if `numericValueOld` is a valid number and not NaN
   const shouldDisplayOldValue =
-    !isNaN(numericValueOld) && numericValueOld !== 0;
+    !isNaN(numericValueOld) &&
+    numericValueOld !== 0 &&
+    numericValue !== numericValueOld;
 
   return (
     <div className="flex space-x-4">

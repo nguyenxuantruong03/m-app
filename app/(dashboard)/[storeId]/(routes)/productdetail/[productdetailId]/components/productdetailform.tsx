@@ -393,13 +393,13 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
       .min(2, { message: productDetailSchemaMessage.minTwoCharacters }),
     description2salientfeatures: z
       .string()
-      .min(2, { message: productDetailSchemaMessage.minTwoCharacters }),
+      .min(0),
     description3salientfeatures: z
       .string()
-      .min(2, { message: productDetailSchemaMessage.minTwoCharacters }),
+      .min(0),
     description4salientfeatures: z
       .string()
-      .min(2, { message: productDetailSchemaMessage.minTwoCharacters }),
+      .min(0),
     contentsalientfeatures: z
       .string()
       .min(2, { message: productDetailSchemaMessage.minTwoCharacters }),
