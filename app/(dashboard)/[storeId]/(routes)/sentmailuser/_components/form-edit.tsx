@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -37,6 +37,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({
   setOpen,
   language,
 }) => {
+  const router = useRouter()
   const params = useParams();
   const [loading, setLoading] = useState(false);
 
@@ -71,6 +72,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({
       await axios.patch(`/api/${params.storeId}/sentmailuser/${id}`, datas);
       setLoading(false);
       setOpen(false);
+      router.refresh()
       toast.success(sentEmailEditFormMessage.updateSuccess);
     } catch (error: unknown) {
       if (

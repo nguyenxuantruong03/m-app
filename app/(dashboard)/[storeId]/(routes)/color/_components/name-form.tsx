@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -29,6 +29,7 @@ interface LabelFormProps {
 }
 
 const LabelForm: React.FC<LabelFormProps> = ({ data, id, setOpen, value, field,name,language }) => {
+  const router = useRouter()
   const params = useParams();
   const [loading, setLoading] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
@@ -56,6 +57,7 @@ const LabelForm: React.FC<LabelFormProps> = ({ data, id, setOpen, value, field,n
       await axios.patch(`/api/${params.storeId}/color/${id}`, datas);
       setLoading(false);
       setOpen(false);
+      router.refresh()
       toast.success(colorNameFormSheetMessage.updateSuccess);
     } catch (error: unknown) {
       if (

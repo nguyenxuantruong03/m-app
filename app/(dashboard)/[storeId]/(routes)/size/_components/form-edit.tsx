@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -36,6 +36,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({
   value,
   language,
 }) => {
+  const router = useRouter()
   const params = useParams();
   const [loading, setLoading] = useState(false);
 
@@ -62,8 +63,9 @@ const LabelForm: React.FC<LabelFormPorps> = ({
     setLoading(true);
     try {
       await axios.patch(`/api/${params.storeId}/size/${id}`, datas);
-      setLoading(false);
+      setLoading(false);      
       setOpen(false);
+      router.refresh()
       toast.success(sizeFormEditMessage.updateSuccess);
     } catch (error: unknown) {
       if (

@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -27,6 +27,7 @@ interface LabelFormPorps {
 
 
 const LabelForm: React.FC<LabelFormPorps> = ({ data, id,setOpen,language }) => {
+  const router = useRouter()
   const params = useParams();
   const [loading, setLoading] = useState(false);
 
@@ -51,6 +52,7 @@ const LabelForm: React.FC<LabelFormPorps> = ({ data, id,setOpen,language }) => {
       await axios.patch(`/api/${params.storeId}/categories1/${id}`, datas);
       setLoading(false);
       setOpen(false)
+      router.refresh()
       toast.success(categoriesNameFormSheet.updateSuccess);
     } catch (error: unknown) {
       if (
