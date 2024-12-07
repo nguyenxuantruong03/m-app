@@ -86,7 +86,7 @@ const CategoriesClient: React.FC<CategoriesClientProps> = ({ data }) => {
             onClick={() => router.push(`/${params.storeId}/categories2/new`)}
           >
             <Plus className="mr-2 h-4 w-4" />
-            T{categoriesClientMessage.addNew}
+            {categoriesClientMessage.addNew}
           </Button>
         </div>
       </div>

@@ -46,7 +46,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData,language
  const action = initialData ? categoryFormMessage.saveChanges : categoryFormMessage.create;
 
  const formSchema = z.object({
-   name: z.string().min(4, { message: categoryFormMessage.minCharacters }),
+   name: z.string().min(2, { message: categoryFormMessage.minCharacters }),
  });
  
  type CategoryFormValues = z.infer<typeof formSchema>;
