@@ -23,7 +23,7 @@ interface EditRowProps {
   isArchived: boolean;
   imagesalientfeatures: { url: string }[];
   images: { url: string }[];
-  field: "heading"
+  field: "heading" | "description"
   language: string;
 }
 

@@ -129,7 +129,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
               {response.data?.createdAt
                 ? format(
                     utcToZonedTime(
-                      new Date(new Date(response.data?.createdAt)),
+                      new Date(new Date(response.data?.updated)),
                       vietnamTimeZone
                     ),
                     "E '-' dd/MM/yyyy '-' HH:mm:ss a",

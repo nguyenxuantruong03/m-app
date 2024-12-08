@@ -351,7 +351,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       );
     } else {
       event.stopPropagation();
-      
+
       //CUID: tạo ra một 1 id theo CUID tránh checked trùng với nhau
       const cartId = cuid();
       const size = availableSize;
@@ -573,11 +573,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
             />
           </div>
 
-          <div className="home-product-item__favorite">
-            <span className="ml-1">
-              {decreaseMessage} {data.productdetail.percentpromotion1}%
-            </span>
-          </div>
+          {availablePercentPromotion > 0 && (
+            <div className="home-product-item__favorite">
+              <span className="ml-1">
+                {decreaseMessage} {availablePercentPromotion}%
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </>

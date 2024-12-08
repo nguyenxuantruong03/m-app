@@ -118,7 +118,11 @@ const LikeItem: React.FC<LikeItemProps> = ({
         try {
           setLoading(true);
           if (favoriteData && favoriteData.id) {
-            await favorite.removeItem(favoriteData.id, user?.id || "", languageToUse);
+            await favorite.removeItem(
+              favoriteData.id,
+              user?.id || "",
+              languageToUse
+            );
           } else {
             await favorite.addItem(favoriteProduct, languageToUse);
           }
@@ -220,7 +224,8 @@ const LikeItem: React.FC<LikeItemProps> = ({
         (async () => {
           // Sử dụng getCart thay cho axios.post
           const cartItemData = await getCart({
-            userId: user?.id || "", language: languageToUse,
+            userId: user?.id || "",
+            language: languageToUse,
           });
 
           const matchingItem = cartItemData.find(
@@ -278,7 +283,7 @@ const LikeItem: React.FC<LikeItemProps> = ({
         }
       );
     }
-};
+  };
 
   const getRouteBasedOnProductType = (productType: any) => {
     switch (productType) {
@@ -485,13 +490,19 @@ const LikeItem: React.FC<LikeItemProps> = ({
               />
             </div>
           </div>
-          <CommentStar data={data.product.id} comment={data.product.comment} languageToUse={languageToUse}/>
+          <CommentStar
+            data={data.product.id}
+            comment={data.product.comment}
+            languageToUse={languageToUse}
+          />
         </div>
-        <div className="home-product-item__favorite">
-          <span className="ml-1">
-            {decreaseMessage} {getPriceMatchColorandSize().percentpromotion}%
-          </span>
-        </div>
+        {getPriceMatchColorandSize().percentpromotion > 0 && (
+          <div className="home-product-item__favorite">
+            <span className="ml-1">
+              {decreaseMessage} {getPriceMatchColorandSize().percentpromotion}%
+            </span>
+          </div>
+        )}
       </div>
     </>
   );

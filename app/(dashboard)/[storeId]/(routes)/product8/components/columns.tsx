@@ -11,6 +11,7 @@ import {
   Clock12,
   View,
   AlarmClockCheck,
+  NotebookText,
 } from "lucide-react";
 import { Images as ImageIcon } from "lucide-react";
 import SpanColumn from "@/components/span-column";
@@ -167,6 +168,36 @@ export const columns: ColumnDef<ProductColumn>[] = [
         <PackageX className="w-5 h-5 text-red-500" />
       );
     },
+  },
+  {
+    accessorKey: "description",
+    header: ({ column }) => {
+      return (
+        <SpanColumn
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Mô tả
+          <NotebookText className="ml-2 h-4 w-4" />
+        </SpanColumn>
+      );
+    },
+    cell: ({ row }) => (
+      <EditRow
+        id={row.original.id}
+        data={row.original.description}
+        name={row.original.name}
+        heading={row.original.heading}
+        description={row.original.description}
+        productdetail={row.original.productdetail}
+        imagesalientfeatures={row.original.imagesalientfeaturesUrl}
+        images={row.original.imagesUrl}
+        isFeatured={row.original.isFeatured}
+        isArchived={row.original.isArchived}
+        productdetailId={row.original.productdetailId}
+        field="description"
+        language={row.original.language}
+      />
+    ),
   },
   {
     accessorKey: "productdetail",

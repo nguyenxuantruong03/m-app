@@ -688,27 +688,37 @@ const EmojiPage: React.FC<EmojiProps> = ({
               className="absolute bottom-10 mt-1 w-52 bg-white border border-gray-300 shadow-lg rounded-lg p-1 space-y-2 z-50"
             >
               <Link
-                href={`https://www.facebook.com/`}
+                href="#"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center whitespace-nowrap gap-1 p-2 text-gray-800 hover:bg-gray-100 rounded-md"
                 onClick={(e) => {
                   e.preventDefault();
-                  handleCopy(window.location.href, product);
-                  window.open(`https://www.facebook.com/`, "_blank");
+
+                  const currentUrl = window.location.href; // URL hiện tại
+                  const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                    currentUrl
+                  )}`; // URL chia sẻ
+
+                  handleCopy(currentUrl, product); // Copy vào clipboard
+                  window.open(facebookShareUrl, "_blank"); // Mở trang chia sẻ Facebook
                 }}
               >
                 <FaceBookSVG />
                 {sendToFacebookMessage}
               </Link>
               <Link
-                href={`https://www.instagram.com/`}
+                href="#"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center whitespace-nowrap gap-1 p-2 text-gray-800 hover:bg-gray-100 rounded-md"
                 onClick={(e) => {
                   e.preventDefault();
-                  handleCopy(window.location.href, product);
+
+                  const currentUrl = window.location.href; // URL hiện tại
+                  handleCopy(currentUrl, product); // Copy URL và thông tin sản phẩm vào clipboard
+
+                  // Mở Instagram
                   window.open(`https://www.instagram.com/`, "_blank");
                 }}
               >
@@ -716,13 +726,17 @@ const EmojiPage: React.FC<EmojiProps> = ({
                 {sendToInstagramMessage}
               </Link>
               <Link
-                href={`https://www.tiktok.com/`}
+                href="#"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center whitespace-nowrap gap-1 p-2 text-gray-800 hover:bg-gray-100 rounded-md"
                 onClick={(e) => {
                   e.preventDefault();
-                  handleCopy(window.location.href, product);
+
+                  const currentUrl = window.location.href; // URL hiện tại
+                  handleCopy(currentUrl, product); // Copy thông tin chia sẻ vào clipboard
+
+                  // Mở trang TikTok
                   window.open(`https://www.tiktok.com/`, "_blank");
                 }}
               >
@@ -730,13 +744,17 @@ const EmojiPage: React.FC<EmojiProps> = ({
                 {sendToTiktokMessage}
               </Link>
               <Link
-                href={`https://zalo.me/`}
+                href="#"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center whitespace-nowrap gap-1 p-2 text-gray-800 hover:bg-gray-100 rounded-md"
                 onClick={(e) => {
                   e.preventDefault();
-                  handleCopy(window.location.href, product);
+
+                  const currentUrl = window.location.href; // URL hiện tại
+                  handleCopy(currentUrl, product); // Copy nội dung cần chia sẻ vào clipboard
+
+                  // Mở trang Zalo (có thể chỉnh sửa để phù hợp hơn với ứng dụng)
                   window.open(`https://zalo.me/`, "_blank");
                 }}
               >

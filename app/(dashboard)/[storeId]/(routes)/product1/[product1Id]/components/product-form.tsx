@@ -182,10 +182,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               {productFormMessage.productUpdated}
             </p>
             <span className="text-gray-500">
-              {response?.data.createdAt
+              {response?.data.updatedAt
                 ? format(
                     utcToZonedTime(
-                      new Date(new Date(response?.data.createdAt)),
+                      new Date(new Date(response?.data.updatedAt)),
                       vietnamTimeZone
                     ),
                     "E '-' dd/MM/yyyy '-' HH:mm:ss a",

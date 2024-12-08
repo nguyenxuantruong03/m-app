@@ -319,7 +319,7 @@ const ProductList: React.FC<ProductListProps> = ({
           const debouncedOnAddtoCartDb = debounce(
             async (event: React.MouseEvent<HTMLButtonElement>) => {
               event.stopPropagation();
-          
+
               await toast.promise(
                 (async () => {
                   // Fetch cart data using getCart
@@ -327,11 +327,11 @@ const ProductList: React.FC<ProductListProps> = ({
                     userId: userId?.id || "",
                     language: languageToUse,
                   });
-          
+
                   const size = availableSize;
                   const color = availableColor;
                   const maxQuantity = getQuantityMatchColorandSize();
-          
+
                   const matchingItem = cartItemData.find(
                     (item: CartItemType) =>
                       item.product.name === product.name &&
@@ -339,22 +339,26 @@ const ProductList: React.FC<ProductListProps> = ({
                       item.size === size &&
                       item.color === color
                   );
-          
-                  const matchingQuantity = matchingItem ? matchingItem.quantity : 0;
-          
+
+                  const matchingQuantity = matchingItem
+                    ? matchingItem.quantity
+                    : 0;
+
                   const compareQuantityExistingAndAvailable =
                     matchingQuantity >= maxQuantity && maxQuantity > 0;
-          
+
                   if (compareQuantityExistingAndAvailable) {
                     throw new Error(insufficientStockMessage);
                   }
-          
+
                   const productWithQuantity = {
                     ...product,
                     quantity,
-                    selectedWarranty: cartdb.getSelectedItemWarranty(product.id),
+                    selectedWarranty: cartdb.getSelectedItemWarranty(
+                      product.id
+                    ),
                   };
-          
+
                   const existingCartItem = cartdb.items.find(
                     (item) =>
                       item.product.name === product.name &&
@@ -362,7 +366,7 @@ const ProductList: React.FC<ProductListProps> = ({
                       item.size === size &&
                       item.color === color
                   );
-          
+
                   try {
                     setLoading(true);
                     if (existingCartItem) {
@@ -390,7 +394,7 @@ const ProductList: React.FC<ProductListProps> = ({
                   } finally {
                     setLoading(false);
                   }
-          
+
                   return existingCartItem
                     ? productQuantityUpdatedMessage
                     : productAddedToCartMessage;
@@ -403,7 +407,7 @@ const ProductList: React.FC<ProductListProps> = ({
               );
             },
             1000 // Adjust the debounce time (in milliseconds) based on your preference
-          );          
+          );
 
           const onAddtoCart: React.MouseEventHandler<HTMLButtonElement> = (
             event
@@ -558,12 +562,13 @@ const ProductList: React.FC<ProductListProps> = ({
                       languageToUse={languageToUse}
                     />
                   </div>
-                  <div className="home-product-item__favorite">
-                    <span className="ml-1">
-                      {decreaseMessage}{" "}
-                      {product.productdetail?.percentpromotion1}%
-                    </span>
-                  </div>
+                  {availablePercentPromotion > 0 && (
+                    <div className="home-product-item__favorite">
+                      <span className="ml-1">
+                        {decreaseMessage} {availablePercentPromotion}%
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className="transition w-full px-6 top-24 left-0 md:top-2 md:left-12 absolute opacity-0 group-hover:opacity-100 group-hover:visible z-[9998]">
                   <div className="flex gap-x-2 justify-center">

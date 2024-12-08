@@ -36,7 +36,7 @@ interface LabelFormProps {
   productdetailId: string;
   imagesalientfeatures: { url: string }[];
   images: { url: string }[];
-  field: "heading";
+  field: "heading" | "description"
   language: string;
 }
 
@@ -151,6 +151,31 @@ const LabelForm: React.FC<LabelFormProps> = ({
                   <Input
                     disabled={loading}
                     placeholder={productFormEditMessage.enterProductName}
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      updateNameFromHeading(e.target.value);
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+        {field === "description" && (
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  {productFormEditMessage.description} <span className="text-red-600 pl-1">(*)</span>
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    disabled={loading}
+                    placeholder={productFormEditMessage.enterDescription}
                     {...field}
                     onChange={(e) => {
                       field.onChange(e);

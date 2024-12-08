@@ -4158,6 +4158,8 @@ export const getProductFormEdit = (language: string) => {
         productName: "Tên sản phẩm",
         enterProductName: "Nhập tên sản phẩm ...",
         saveChanges: "Lưu thay đổi",
+        description: "Mô tả",
+        enterDescription: "Nhập mô tả ...",
       };
     case "en": // English
       return {
@@ -4167,7 +4169,9 @@ export const getProductFormEdit = (language: string) => {
         error: "Something went wrong.",
         productName: "Product Name",
         enterProductName: "Enter product name ...",
-        saveChanges: "Save Change",
+        saveChanges: "Save Changes",
+        description: "Description",
+        enterDescription: "Enter description ...",
       };
     case "zh": // Chinese
       return {
@@ -4178,6 +4182,8 @@ export const getProductFormEdit = (language: string) => {
         productName: "产品名称",
         enterProductName: "输入产品名称 ...",
         saveChanges: "保存更改",
+        description: "描述",
+        enterDescription: "输入描述 ...",
       };
     case "fr": // French
       return {
@@ -4188,6 +4194,8 @@ export const getProductFormEdit = (language: string) => {
         productName: "Nom du produit",
         enterProductName: "Entrez le nom du produit ...",
         saveChanges: "Sauvegarder les modifications",
+        description: "Description",
+        enterDescription: "Entrez la description ...",
       };
     case "ja": // Japanese
       return {
@@ -4198,6 +4206,8 @@ export const getProductFormEdit = (language: string) => {
         productName: "製品名",
         enterProductName: "製品名を入力してください ...",
         saveChanges: "変更を保存",
+        description: "説明",
+        enterDescription: "説明を入力してください ...",
       };
     default: // Default case
       return {
@@ -4207,9 +4217,12 @@ export const getProductFormEdit = (language: string) => {
         error: "Something went wrong.",
         productName: "Product Name",
         enterProductName: "Enter product name ...",
-        saveChanges: "Save Change",
+        saveChanges: "Save Changes",
+        description: "Description",
+        enterDescription: "Enter description ...",
       };
   }
+  
 };
 
 export const getProductAction = (language: string) => {
