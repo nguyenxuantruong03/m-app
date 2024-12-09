@@ -18061,7 +18061,7 @@ export const translateCategoriNavbar = (language: string) => {
       };
     case "en":
       return {
-        pin: "Pin",
+        pin: "Battery",
         pinDescription: "Battery for electronic devices.",
         fan: "Fan",
         fanDescription: "Multipurpose Fan.",
@@ -18171,7 +18171,7 @@ export const translateCategoriNavbar = (language: string) => {
       };
     default:
       return {
-        pin: "Pin",
+        pin: "Battery",
         pinDescription: "Battery for electronic devices.",
         fan: "Fan",
         fanDescription: "Multipurpose Fan.",
@@ -18303,7 +18303,7 @@ export const translateProductNavbar = (language: string) => {
       };
     case "en":
       return {
-        pin: "Pin",
+        pin: "Battery",
         pinDescription: "Pin product.",
         fan: "Fan",
         fanDescription: "Fan product.",
@@ -18419,7 +18419,7 @@ export const translateProductNavbar = (language: string) => {
       };
     default:
       return {
-        pin: "Pin",
+        pin: "Battery",
         pinDescription: "Pin product.",
         fan: "Fan",
         fanDescription: "Fan product.",
@@ -20573,3 +20573,4 @@ export async function translateText(
 
   return response.data[0]?.translations[0]?.text || text;
 }
+

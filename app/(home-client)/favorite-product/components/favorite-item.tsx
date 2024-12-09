@@ -381,7 +381,7 @@ const LikeItem: React.FC<LikeItemProps> = ({
                 {data.product.heading}
               </p>
               <p>
-                <span className="text-sm text-gray-600">{sizeMessage}</span>{" "}
+                <span className="text-sm text-gray-600">{sizeMessage}</span>
                 <span className="font-semibold ml-1">{data.selectedSize}</span>
               </p>
             </div>
@@ -391,7 +391,7 @@ const LikeItem: React.FC<LikeItemProps> = ({
               </p>
 
               <p className="flex items-center">
-                <span className="text-sm text-gray-600">{colorMessage}</span>{" "}
+                <span className="text-sm text-gray-600">{colorMessage}</span>
                 <div
                   className="h-6 w-6 rounded-full ml-1"
                   style={{ backgroundColor: data.selectedColor }}

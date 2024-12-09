@@ -17,6 +17,7 @@ import toast from "react-hot-toast";
 import { useState } from "react";
 import unorm from "unorm";
 import { getProductFormEdit } from "@/translate/translate-dashboard";
+import { Textarea } from "@/components/ui/textarea";
 
 //Loại bỏ dấu
 const removeDiacritics = (str: String) => {
@@ -54,28 +55,34 @@ const LabelForm: React.FC<LabelFormProps> = ({
   imagesalientfeatures,
   images,
   setOpen,
-  language
+  language,
 }) => {
-  const router = useRouter()
+  const router = useRouter();
   const params = useParams();
   const [loading, setLoading] = useState(false);
 
-    //language
-    const productFormEditMessage = getProductFormEdit(language)
+  //language
+  const productFormEditMessage = getProductFormEdit(language);
 
-    const formSchema = z.object({
-      name: z.optional(z.string().min(2, { message: productFormEditMessage.minCharacters })),
-      heading: z.optional(z.string().min(2, { message: productFormEditMessage.minCharacters })),
-      description: z.optional(
-        z.string().min(2, { message: productFormEditMessage.minCharacters })
-      ),
-      productdetailId: z.string().min(1, { message: productFormEditMessage.selectProductDetail }),
-      isFeatured: z.boolean().default(false).optional(),
-      isArchived: z.boolean().default(false).optional(),
-      imagesalientfeatures: z.object({ url: z.string() }).array(),
-      images: z.object({ url: z.string() }).array(),
-    });
-    type FormValues = z.input<typeof formSchema>;
+  const formSchema = z.object({
+    name: z.optional(
+      z.string().min(2, { message: productFormEditMessage.minCharacters })
+    ),
+    heading: z.optional(
+      z.string().min(2, { message: productFormEditMessage.minCharacters })
+    ),
+    description: z.optional(
+      z.string().min(2, { message: productFormEditMessage.minCharacters })
+    ),
+    productdetailId: z
+      .string()
+      .min(1, { message: productFormEditMessage.selectProductDetail }),
+    isFeatured: z.boolean().default(false).optional(),
+    isArchived: z.boolean().default(false).optional(),
+    imagesalientfeatures: z.object({ url: z.string() }).array(),
+    images: z.object({ url: z.string() }).array(),
+  });
+  type FormValues = z.input<typeof formSchema>;
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -107,7 +114,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
       await axios.patch(`/api/${params.storeId}/product/${id}`, datas);
       setLoading(false);
       setOpen(false);
-      router.refresh()
+      router.refresh();
       toast.success(productFormEditMessage.updateSuccess);
     } catch (error: unknown) {
       if (
@@ -138,7 +145,8 @@ const LabelForm: React.FC<LabelFormProps> = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  {productFormEditMessage.productName} <span className="text-red-600 pl-1">(*)</span>
+                  {productFormEditMessage.productName}{" "}
+                  <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <FormControl>
                   <Input
@@ -156,17 +164,18 @@ const LabelForm: React.FC<LabelFormProps> = ({
             )}
           />
         )}
-         {field === "description" && (
+        {field === "description" && (
           <FormField
             control={form.control}
             name="description"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  {productFormEditMessage.description} <span className="text-red-600 pl-1">(*)</span>
+                  {productFormEditMessage.description}{" "}
+                  <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <FormControl>
-                  <Input
+                  <Textarea
                     disabled={loading}
                     placeholder={productFormEditMessage.enterDescription}
                     {...field}
@@ -182,7 +191,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
           />
         )}
         <Button disabled={loading} className="ml-auto" type="submit">
-        {productFormEditMessage.saveChanges}
+          {productFormEditMessage.saveChanges}
         </Button>
       </form>
     </Form>

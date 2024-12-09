@@ -2296,7 +2296,6 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                 <FormItem>
                   <FormLabel>
                     {productDetailFormMessgae.featureDescription}{" "}
-                    <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <FormControl>
                     <Textarea
@@ -2318,7 +2317,6 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                 <FormItem>
                   <FormLabel>
                     {productDetailFormMessgae.featureDescription}{" "}
-                    <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <FormControl>
                     <Textarea
@@ -2340,7 +2338,6 @@ export const ProductDetailForm: React.FC<ProductDetailFormProps> = ({
                 <FormItem>
                   <FormLabel>
                     {productDetailFormMessgae.featureDescription}{" "}
-                    <span className="text-red-600 pl-1">(*)</span>
                   </FormLabel>
                   <FormControl>
                     <Textarea

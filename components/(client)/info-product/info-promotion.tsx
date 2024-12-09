@@ -67,7 +67,7 @@ const InfoPromotion: React.FC<InfoPromotionprops> = ({
         languageToUse={languageToUse}
       />
       <div className="mx-auto xl:max-w-2xl">
-        <div className="md:grid  md:grid-cols-2 md:ml-8 md:mb-5 xl:grid  xl:grid-cols-2 xl:item-start xl:gap-x-8  mb-5">
+        <div className="md:grid md:grid-cols-2 md:mb-5 xl:grid xl:grid-cols-2 xl:item-start xl:gap-x-8  mb-5">
           <div className="w-[300px] h-[200px] shadow-lg rounded-md p-4 m-auto md:m-0">
             <h1 className="font-bold text-base text-[#666666] dark:text-slate-300">
               {productInfoMessage}

@@ -64,19 +64,28 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const billboardData = await getBillboard(
-          `${process.env.NEXT_PUBLIC_CATEGORIES5}`,
-          languageToUse
+        // Sử dụng Promise.all để lấy tất cả dữ liệu cùng lúc
+        const [billboardData, productData, sizeData, colorData] =
+          await Promise.all([
+            getBillboard(
+              `${process.env.NEXT_PUBLIC_CATEGORIES5}`,
+              languageToUse
+            ),
+            getProduct5({
+              isFeatured: undefined,
+              language: languageToUse,
+            }),
+            getSizes(),
+            getColors(languageToUse),
+          ]);
+
+        // Tìm kiếm category.id === một trong các giá trị trong params.categoryId
+        const filteredProductData = productData.filter((product) =>
+          params.categoryId.includes(product.productdetail.categoryId)
         );
-        const productData = await getProduct5({
-          isFeatured: undefined,
-          language: languageToUse,
-        });
-        const sizeData = await getSizes();
-        const colorData = await getColors(languageToUse);
 
         // Tìm giá cao nhất trong danh sách sản phẩm
-        const highestPrice = productData.reduce(
+        const highestPrice = filteredProductData.reduce(
           (max, product) =>
             product.productdetail.price1 *
               ((100 - product.productdetail.percentpromotion1) / 100) +
@@ -91,7 +100,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
         setMaxPrice(Math.floor(highestPrice));
         setMaxPriceInDatas(Math.floor(highestPrice));
         setBillboard(billboardData);
-        setProduct(productData);
+        setProduct(filteredProductData);
         setSize(sizeData);
         setColor(colorData);
       } catch (error) {

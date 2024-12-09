@@ -220,17 +220,24 @@ const ShoppingCardInLive = ({
     let bestColor = null;
     let bestPromotion = 0;
 
+    // Duyệt qua các biến thể từ 1 đến 5
     for (let i = 1; i <= 5; i++) {
       const quantity = productDetail[`quantity${i}`];
 
-      if (quantity > 0) {
-        const price = productDetail[`price${i}`];
-        const percentPromotion = productDetail[`percentpromotion${i}`];
-        const size = productDetail[`size${i}`]?.value;
-        const color = productDetail[`color${i}`]?.value;
+      // Bỏ qua nếu không có quantity hoặc quantity là 0
+      if (!quantity || quantity === 0) continue;
 
+      // Lấy các giá trị tương ứng
+      const price = productDetail[`price${i}`];
+      const percentPromotion = productDetail[`percentpromotion${i}`];
+      const size = productDetail[`size${i}`]?.value || null;
+      const color = productDetail[`color${i}`]?.value || null;
+
+      // Kiểm tra tính hợp lệ của giá và khuyến mãi
+      if (price != null && percentPromotion != null) {
         const discountedPrice = price * ((100 - percentPromotion) / 100);
 
+        // Cập nhật nếu giá sau khuyến mãi thấp hơn giá thấp nhất hiện tại
         if (discountedPrice < lowestPrice) {
           lowestPrice = discountedPrice;
           bestSize = size;
@@ -240,13 +247,15 @@ const ShoppingCardInLive = ({
       }
     }
 
+    // Xử lý trường hợp tất cả quantity đều bằng 0 hoặc không có giá trị hợp lệ
     if (lowestPrice === Infinity) {
-      lowestPrice = productDetail.price1;
-      bestSize = productDetail.size1?.value;
-      bestColor = productDetail.color1?.value;
-      bestPromotion = productDetail.percentpromotion1;
+      lowestPrice = productDetail.price1 || 0;
+      bestSize = productDetail[`size1`]?.value || null;
+      bestColor = productDetail[`color1`]?.value || null;
+      bestPromotion = productDetail.percentpromotion1 || 0;
     }
 
+    // Trả về kết quả
     return {
       price: lowestPrice,
       percentPromotion: bestPromotion,

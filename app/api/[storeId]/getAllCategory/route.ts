@@ -19,18 +19,29 @@ export async function GET(req: Request) {
     const translations = await Promise.all(
       categories.map(async (category) => {
         try {
-          // Dịch `name` và `value` bằng hàm `translateText`
-          const translatedName = await translateText(category.name, language);
-
+          // Chỉ dịch name nếu ngôn ngữ không phải "vi"
+          let translatedName = category.name;
+    
+          if (language !== "vi") {
+            translatedName = await translateText(category.name, language);
+    
+            // Nếu không có dữ liệu dịch, giữ lại name gốc
+            if (!translatedName) {
+              translatedName = category.name;
+            }
+          }
+    
           return {
             ...category,
             name: translatedName,
           };
         } catch (error) {
-          return category; // Trả về dữ liệu gốc nếu lỗi
+          // Nếu có lỗi trong quá trình dịch, trả về dữ liệu gốc
+          return category;
         }
       })
     );
+    
 
     return NextResponse.json(translations);
   } catch (error) {

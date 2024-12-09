@@ -167,28 +167,31 @@ export async function GET(
     const translations = await Promise.all(
       billboards.map(async (billboard) => {
         try {
-          // Dịch label và description của billboard
-          const translatedLabelText = await translateText(
-            billboard.label || "",
-            language
-          );
-          const translatedDescriptionText = await translateText(
-            billboard.description || "",
-            language
-          );
-
-          // Dịch cho các imagebillboard
+          // Helper function to translate only if the language is not 'vi' (Vietnamese)
+          const safeTranslate = async (text: string, language: string) => {
+            // Proceed with translation only if language is different from 'vi'
+            if (text && language && language !== 'vi') {
+              try {
+                const translated = await translateText(text, language);
+                // If translation is successful and different, return the translated text
+                return translated !== text ? translated : text;
+              } catch (error) {
+                return text; // Return original text if translation fails
+              }
+            }
+            return text; // Return original text if language is 'vi' or no text
+          };
+    
+          // Translate label and description of billboard
+          const translatedLabelText = await safeTranslate(billboard.label || "", language);
+          const translatedDescriptionText = await safeTranslate(billboard.description || "", language);
+    
+          // Translate imagebillboards if available
           const translatedImageBillboards = await Promise.all(
             billboard.imagebillboard.map(async (imageBillboard) => {
-              const translatedImageLabelText = await translateText(
-                imageBillboard.label || "",
-                language
-              );
-              const translatedImageDescriptionText = await translateText(
-                imageBillboard.description || "",
-                language
-              );
-
+              const translatedImageLabelText = await safeTranslate(imageBillboard.label || "", language);
+              const translatedImageDescriptionText = await safeTranslate(imageBillboard.description || "", language);
+    
               return {
                 ...imageBillboard,
                 label: translatedImageLabelText,
@@ -196,7 +199,7 @@ export async function GET(
               };
             })
           );
-
+    
           return {
             ...billboard,
             label: translatedLabelText,
@@ -204,11 +207,11 @@ export async function GET(
             imagebillboard: translatedImageBillboards,
           };
         } catch (error) {
-          console.error("Error while translating billboard:", error);
-          return billboard; // Trả về dữ liệu gốc nếu có lỗi
+          return billboard; // Return original billboard if any error occurs
         }
       })
     );
+    
 
     return NextResponse.json(billboards);
   } catch (error) {

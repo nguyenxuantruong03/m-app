@@ -17,6 +17,7 @@ import toast from "react-hot-toast";
 import { useState } from "react";
 import unorm from "unorm";
 import { getProductFormEdit } from "@/translate/translate-dashboard";
+import { Textarea } from "@/components/ui/textarea";
 
 //Loại bỏ dấu
 const removeDiacritics = (str: String) => {
@@ -173,7 +174,7 @@ const LabelForm: React.FC<LabelFormProps> = ({
                   {productFormEditMessage.description} <span className="text-red-600 pl-1">(*)</span>
                 </FormLabel>
                 <FormControl>
-                  <Input
+                  <Textarea
                     disabled={loading}
                     placeholder={productFormEditMessage.enterDescription}
                     {...field}

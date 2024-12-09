@@ -30,9 +30,13 @@ const useCartdb = create<CartStore>((set, get) => ({
   selectedWarranties: {},
   loading: false,
 
-  fetchCartItems: async (userId: string,language: string) => {
-    const getcart = await getCart({userId: userId, language: language})
-    set({ items: getcart });
+  fetchCartItems: async (userId: string, language: string) => {
+    try {
+      const getcart = await getCart({ userId: userId, language: language });
+      set({ items: getcart || [] }); // Trả về [] nếu getCart không trả về dữ liệu
+    } catch (error) {
+      set({ items: [] }); // Đảm bảo items luôn là một mảng
+    }
   },
 
   selectWarranty: (id: string, warrantyOption: string | null) => {

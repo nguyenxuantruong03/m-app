@@ -242,6 +242,24 @@ export async function PATCH(
       contentsalientfeatures,
     } = body;
 
+    // Validation for unique size and color
+    const sizeIds = [size1Id, size2Id, size3Id, size4Id, size5Id];
+    const colorIds = [color1Id, color2Id, color3Id, color4Id, color5Id];
+
+    if (new Set(sizeIds).size !== sizeIds.length) {
+      return new NextResponse(
+        JSON.stringify({ error: productDetailIdPatchMessage.sizeNotAllowed }),
+        { status: 400 }
+      );
+    }
+
+    if (new Set(colorIds).size !== colorIds.length) {
+      return new NextResponse(
+        JSON.stringify({ error: productDetailIdPatchMessage.colorNotAllowed }),
+        { status: 400 }
+      );
+    }
+
     if (!user) {
       return new NextResponse(
         JSON.stringify({ error: productDetailIdPatchMessage.userIdNotFound }),
@@ -340,7 +358,7 @@ export async function PATCH(
         { status: 400 }
       );
     }
-    
+
     if (!contentsalientfeatures) {
       return new NextResponse(
         JSON.stringify({
@@ -427,9 +445,12 @@ export async function PATCH(
     });
 
     if (existingTitle) {
-      return new NextResponse(JSON.stringify(productDetailIdPatchMessage.titleExists), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify(productDetailIdPatchMessage.titleExists),
+        {
+          status: 400,
+        }
+      );
     }
 
     const existingProductDetail = await prismadb.productDetail.findUnique({
@@ -453,9 +474,12 @@ export async function PATCH(
 
     // Kiểm tra nếu không tìm thấy bản ghi
     if (!existingProductDetail) {
-      return new NextResponse(JSON.stringify(productDetailIdPatchMessage.productNotFound), {
-        status: 404,
-      });
+      return new NextResponse(
+        JSON.stringify(productDetailIdPatchMessage.productNotFound),
+        {
+          status: 404,
+        }
+      );
     }
 
     const productDetail = await prismadb.productDetail.update({

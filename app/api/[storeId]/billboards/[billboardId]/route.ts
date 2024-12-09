@@ -63,35 +63,28 @@ export async function GET(
       );
     }
 
-    // Dịch label và description của billboard
-    const translatedLabelText = await translateText(
-      billboard.label || "",
-      language
-    );
-    const translatedDescriptionText = await translateText(
-      billboard.description || "",
-      language
-    );
+    // Helper function to translate fields
+const translateField = async (field:any, language:string) => {
+  return language !== "vi" ? await translateText(field || "", language) : field;
+};
 
-    // Dịch các imagebillboard
-    const translatedImageBillboards = await Promise.all(
-      billboard.imagebillboard.map(async (imageBillboard) => {
-        const translatedImageLabelText = await translateText(
-          imageBillboard.label || "",
-          language
-        );
-        const translatedImageDescriptionText = await translateText(
-          imageBillboard.description || "",
-          language
-        );
+// Dịch label và description của billboard
+const translatedLabelText = await translateField(billboard.label, language);
+const translatedDescriptionText = await translateField(billboard.description, language);
 
-        return {
-          ...imageBillboard,
-          label: translatedImageLabelText,
-          description: translatedImageDescriptionText,
-        };
-      })
-    );
+// Dịch các imagebillboard
+const translatedImageBillboards = await Promise.all(
+  billboard.imagebillboard.map(async (imageBillboard) => {
+    const translatedImageLabelText = await translateField(imageBillboard.label, language);
+    const translatedImageDescriptionText = await translateField(imageBillboard.description, language);
+
+    return {
+      ...imageBillboard,
+      label: translatedImageLabelText,
+      description: translatedImageDescriptionText,
+    };
+  })
+);
 
     // Trả về kết quả đã dịch
     return NextResponse.json({

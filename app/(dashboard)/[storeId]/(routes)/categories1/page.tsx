@@ -33,7 +33,6 @@ const CategoriesPage = async ({ params }: { params: { storeId: string } }) => {
     <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>
       <div className="w-full">
         <div className={`flex-1 space-y-4 p-8 pt-6 ${showCategoryRole}`}>
-          <CategoriesClient data={formattedCategories} />
           {showCategoryRole && <CategoriesClient data={formattedCategories} />}
         </div>
       </div>

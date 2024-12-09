@@ -157,203 +157,198 @@ export async function GET(req: Request) {
     // Dịch tất cả các trường trong sản phẩm
     const translations = await Promise.all(
       favoriteProducts.map(async (favoriteProduct) => {
-        // Dịch các trường chung
+        const translateField = async (field: any, language: string) => {
+          if (language === "vi") return field; // Không dịch nếu ngôn ngữ là 'vi'
+          try {
+            return await translateText(field || "", language); // Dịch nếu có hàm translateText
+          } catch {
+            return field; // Trả về dữ liệu mặc định nếu lỗi
+          }
+        };
+    
         const translatedOrder = {
           ...favoriteProduct,
           product: {
             ...favoriteProduct.product,
-            heading: await translateText(
-              favoriteProduct.product?.heading || "",
+            heading: await translateField(favoriteProduct.product?.heading, language),
+            description: await translateField(
+              favoriteProduct.product?.description,
               language
-            ), // Dịch product.heading
-            description: await translateText(
-              favoriteProduct.product?.description || "",
-              language
-            ), // Dịch product.description
+            ),
             productdetail: {
               ...favoriteProduct.product.productdetail,
-              title: await translateText(
-                favoriteProduct.product.productdetail?.title || "",
+              title: await translateField(favoriteProduct.product.productdetail?.title, language),
+              name1: await translateField(favoriteProduct.product.productdetail?.name1, language),
+              name2: await translateField(favoriteProduct.product.productdetail?.name2, language),
+              name3: await translateField(favoriteProduct.product.productdetail?.name3, language),
+              name4: await translateField(favoriteProduct.product.productdetail?.name4, language),
+              name5: await translateField(favoriteProduct.product.productdetail?.name5, language),
+              promotionheading: await translateField(
+                favoriteProduct.product.productdetail?.promotionheading,
                 language
               ),
-              name1: await translateText(
-                favoriteProduct.product.productdetail?.name1 || "",
+              promotiondescription: await translateField(
+                favoriteProduct.product.productdetail?.promotiondescription,
                 language
               ),
-              name2: await translateText(
-                favoriteProduct.product.productdetail?.name2 || "",
+              descriptionsalientfeatures: await translateField(
+                favoriteProduct.product.productdetail?.descriptionsalientfeatures,
                 language
               ),
-              name3: await translateText(
-                favoriteProduct.product.productdetail?.name3 || "",
+              description2salientfeatures: await translateField(
+                favoriteProduct.product.productdetail?.description2salientfeatures,
                 language
               ),
-              name4: await translateText(
-                favoriteProduct.product.productdetail?.name4 || "",
+              contentsalientfeatures: await translateField(
+                favoriteProduct.product.productdetail?.contentsalientfeatures,
                 language
               ),
-              name5: await translateText(
-                favoriteProduct.product.productdetail?.name5 || "",
+              descriptionspecifications: await translateField(
+                favoriteProduct.product.productdetail?.descriptionspecifications,
                 language
               ),
-              promotionheading: await translateText(
-                favoriteProduct.product.productdetail?.promotionheading || "",
+              valuespecifications: await translateField(
+                favoriteProduct.product.productdetail?.valuespecifications,
                 language
               ),
-              promotiondescription: await translateText(
-                favoriteProduct.product.productdetail?.promotiondescription ||
-                  "",
+              description2specifications: await translateField(
+                favoriteProduct.product.productdetail?.description2specifications,
                 language
               ),
-              descriptionsalientfeatures: await translateText(
-                favoriteProduct.product.productdetail
-                  ?.descriptionsalientfeatures || "",
+              value2specifications: await translateField(
+                favoriteProduct.product.productdetail?.value2specifications,
                 language
               ),
-              description2salientfeatures: await translateText(
-                favoriteProduct.product.productdetail
-                  ?.description2salientfeatures || "",
-                language
-              ),
-              contentsalientfeatures: await translateText(
-                favoriteProduct.product.productdetail?.contentsalientfeatures ||
-                  "",
-                language
-              ),
-              descriptionspecifications: await translateText(
-                favoriteProduct.product.productdetail
-                  ?.descriptionspecifications || "",
-                language
-              ),
-              valuespecifications: await translateText(
-                favoriteProduct.product.productdetail?.valuespecifications ||
-                  "",
-                language
-              ),
-              description2specifications: await translateText(
-                favoriteProduct.product.productdetail
-                  ?.description2specifications || "",
-                language
-              ),
-              value2specifications: await translateText(
-                favoriteProduct.product.productdetail?.value2specifications ||
-                  "",
-                language
-              ),
+              description3specifications: await translateField(favoriteProduct.product.productdetail?.description3specifications, language),
+                value3specifications: await translateField(favoriteProduct.product.productdetail?.value3specifications, language),
+                description4specifications: await translateField(favoriteProduct.product.productdetail?.description4specifications, language),
+                value4specifications: await translateField(favoriteProduct.product.productdetail?.value4specifications, language),
+                description5specifications: await translateField(favoriteProduct.product.productdetail?.description5specifications, language),
+                value5specifications: await translateField(favoriteProduct.product.productdetail?.value5specifications, language),
+                description6specifications: await translateField(favoriteProduct.product.productdetail?.description6specifications, language),
+                value6specifications: await translateField(favoriteProduct.product.productdetail?.value6specifications, language),
+                description7specifications: await translateField(favoriteProduct.product.productdetail?.description7specifications, language),
+                value7specifications: await translateField(favoriteProduct.product.productdetail?.value7specifications, language),
+                description8specifications: await translateField(favoriteProduct.product.productdetail?.description8specifications, language),
+                value8specifications: await translateField(favoriteProduct.product.productdetail?.value8specifications, language),
+                description9specifications: await translateField(favoriteProduct.product.productdetail?.description9specifications, language),
+                value9specifications: await translateField(favoriteProduct.product.productdetail?.value9specifications, language),
+                description10specifications: await translateField(favoriteProduct.product.productdetail?.description10specifications, language),
+                value10specifications: await translateField(favoriteProduct.product.productdetail?.value10specifications, language),
+                description11specifications: await translateField(favoriteProduct.product.productdetail?.description11specifications, language),
+                value11specifications: await translateField(favoriteProduct.product.productdetail?.value11specifications, language),
+                description12specifications: await translateField(favoriteProduct.product.productdetail?.description12specifications, language),
+                value12specifications: await translateField(favoriteProduct.product.productdetail?.value12specifications, language),
+                description13specifications: await translateField(favoriteProduct.product.productdetail?.description13specifications, language),
+                value13specifications: await translateField(favoriteProduct.product.productdetail?.value13specifications, language),
+                description14specifications: await translateField(favoriteProduct.product.productdetail?.description14specifications, language),
+                value14specifications: await translateField(favoriteProduct.product.productdetail?.value14specifications, language),
               category: {
                 ...favoriteProduct.product.productdetail?.category,
-                name: await translateText(
-                  favoriteProduct.product.productdetail?.category?.name || "",
+                name: await translateField(
+                  favoriteProduct.product.productdetail?.category?.name,
                   language
                 ),
               },
               color1: {
                 ...favoriteProduct.product.productdetail?.color1,
-                name: await translateText(
-                  favoriteProduct.product.productdetail?.color1?.name || "",
+                name: await translateField(
+                  favoriteProduct.product.productdetail?.color1?.name,
                   language
                 ),
               },
               color2: {
                 ...favoriteProduct.product.productdetail?.color2,
-                name: await translateText(
-                  favoriteProduct.product.productdetail?.color2?.name || "",
+                name: await translateField(
+                  favoriteProduct.product.productdetail?.color2?.name,
                   language
                 ),
               },
               color3: {
                 ...favoriteProduct.product.productdetail?.color3,
-                name: await translateText(
-                  favoriteProduct.product.productdetail?.color3?.name || "",
+                name: await translateField(
+                  favoriteProduct.product.productdetail?.color3?.name,
                   language
                 ),
               },
               color4: {
                 ...favoriteProduct.product.productdetail?.color4,
-                name: await translateText(
-                  favoriteProduct.product.productdetail?.color4?.name || "",
+                name: await translateField(
+                  favoriteProduct.product.productdetail?.color4?.name,
                   language
                 ),
               },
               color5: {
                 ...favoriteProduct.product.productdetail?.color5,
-                name: await translateText(
-                  favoriteProduct.product.productdetail?.color5?.name || "",
+                name: await translateField(
+                  favoriteProduct.product.productdetail?.color5?.name,
                   language
                 ),
               },
               size1: {
                 ...favoriteProduct.product.productdetail?.size1,
-                name: await translateText(
-                  favoriteProduct.product.productdetail?.size1?.name || "",
+                name: await translateField(
+                  favoriteProduct.product.productdetail?.size1?.name,
                   language
                 ),
               },
               size2: {
                 ...favoriteProduct.product.productdetail?.size2,
-                name: await translateText(
-                  favoriteProduct.product.productdetail?.size2?.name || "",
+                name: await translateField(
+                  favoriteProduct.product.productdetail?.size2?.name,
                   language
                 ),
               },
               size3: {
                 ...favoriteProduct.product.productdetail?.size3,
-                name: await translateText(
-                  favoriteProduct.product.productdetail?.size3?.name || "",
+                name: await translateField(
+                  favoriteProduct.product.productdetail?.size3?.name,
                   language
                 ),
               },
               size4: {
                 ...favoriteProduct.product.productdetail?.size4,
-                name: await translateText(
-                  favoriteProduct.product.productdetail?.size4?.name || "",
+                name: await translateField(
+                  favoriteProduct.product.productdetail?.size4?.name,
                   language
                 ),
               },
               size5: {
                 ...favoriteProduct.product.productdetail?.size5,
-                name: await translateText(
-                  favoriteProduct.product.productdetail?.size5?.name || "",
+                name: await translateField(
+                  favoriteProduct.product.productdetail?.size5?.name,
                   language
                 ),
               },
             },
             comment: await Promise.all(
-              favoriteProduct.product.comment.map(async (item: any) => ({
+              favoriteProduct.product.comment.map(async (item) => ({
                 ...item,
-                comment: await translateText(item.comment || "", language),
+                comment: await translateField(item.comment, language),
               }))
             ),
           },
           user: {
             ...favoriteProduct.user,
-            bio: await translateText(favoriteProduct.user.bio || "", language),
-            issued: await translateText(
-              favoriteProduct.user.issued || "",
+            bio: await translateField(favoriteProduct.user?.bio, language),
+            issued: await translateField(favoriteProduct.user?.issued, language),
+            gender: await translateField(favoriteProduct.user?.gender, language),
+            degree: await translateField(favoriteProduct.user?.degree, language),
+            maritalStatus: await translateField(
+              favoriteProduct.user?.maritalStatus,
               language
             ),
-            gender: await translateText(
-              favoriteProduct.user.gender || "",
-              language
-            ),
-            degree: await translateText(
-              favoriteProduct.user.degree || "",
-              language
-            ),
-            maritalStatus: await translateText(
-              favoriteProduct.user.maritalStatus || "",
-              language
-            ),
-            workingTime: await translateText(
-              favoriteProduct.user.workingTime || "",
+            workingTime: await translateField(
+              favoriteProduct.user?.workingTime,
               language
             ),
           },
         };
-
+    
         return translatedOrder;
       })
     );
+    
 
     return NextResponse.json(translations);
   } catch (error) {

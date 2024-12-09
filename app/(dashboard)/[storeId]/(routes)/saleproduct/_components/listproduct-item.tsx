@@ -279,30 +279,29 @@ const ListProductItem = () => {
                   // ----------Tìm size và color thấp đến cao của sản phẩm ----------------
                   // Hàm tìm thông tin giá thấp nhất cùng với kích thước, màu sắc và khuyến mãi tốt nhất
                   const findLowestPriceDetails = (productDetail: any) => {
-                    // Khởi tạo giá thấp nhất là vô cực, khuyến mãi tốt nhất là 0 và kích thước, màu sắc tốt nhất là null
                     let lowestPrice = Infinity;
                     let bestSize = null;
                     let bestColor = null;
                     let bestPromotion = 0;
-
-                    // Duyệt qua các giá trị từ 1 đến 5
+                
+                    // Duyệt qua các biến thể từ 1 đến 5
                     for (let i = 1; i <= 5; i++) {
-                      // Lấy số lượng, giá, khuyến mãi, kích thước và màu sắc tương ứng của từng biến thể
                       const quantity = productDetail[`quantity${i}`];
-
-                      // Nếu số lượng lớn hơn 0 (còn hàng)
-                      if (quantity !== 0) {
-                        const price = productDetail[`price${i}`];
-                        const percentPromotion =
-                          productDetail[`percentpromotion${i}`];
-                        const size = productDetail[`size${i}`]?.value;
-                        const color = productDetail[`color${i}`]?.value;
-
-                        // Tính giá sau khuyến mãi
-                        const discountedPrice =
-                          price * ((100 - percentPromotion) / 100);
-
-                        // Cập nhật giá thấp nhất, kích thước, màu sắc và khuyến mãi tốt nhất nếu giá hiện tại thấp hơn giá thấp nhất đã lưu
+                
+                      // Bỏ qua nếu không có quantity hoặc quantity là 0
+                      if (!quantity || quantity === 0) continue;
+                
+                      // Lấy các giá trị tương ứng
+                      const price = productDetail[`price${i}`];
+                      const percentPromotion = productDetail[`percentpromotion${i}`];
+                      const size = productDetail[`size${i}`]?.value || null;
+                      const color = productDetail[`color${i}`]?.value || null;
+                
+                      // Kiểm tra tính hợp lệ của giá và khuyến mãi
+                      if (price != null && percentPromotion != null) {
+                        const discountedPrice = price * ((100 - percentPromotion) / 100);
+                
+                        // Cập nhật nếu giá sau khuyến mãi thấp hơn giá thấp nhất hiện tại
                         if (discountedPrice < lowestPrice) {
                           lowestPrice = discountedPrice;
                           bestSize = size;
@@ -311,16 +310,16 @@ const ListProductItem = () => {
                         }
                       }
                     }
-
-                    // Nếu tất cả số lượng đều bằng 0 (hết hàng), quay lại lấy giá trị của biến thể đầu tiên
+                
+                    // Xử lý trường hợp tất cả quantity đều bằng 0 hoặc không có giá trị hợp lệ
                     if (lowestPrice === Infinity) {
-                      lowestPrice = productDetail.price1;
-                      bestSize = productDetail[`size1`]?.value;
-                      bestColor = productDetail[`color1`]?.value;
-                      bestPromotion = productDetail.percentpromotion1;
+                      lowestPrice = productDetail.price1 || 0;
+                      bestSize = productDetail[`size1`]?.value || null;
+                      bestColor = productDetail[`color1`]?.value || null;
+                      bestPromotion = productDetail.percentpromotion1 || 0;
                     }
-
-                    // Trả về thông tin giá thấp nhất, khuyến mãi, kích thước và màu sắc tốt nhất
+                
+                    // Trả về kết quả
                     return {
                       price: lowestPrice,
                       percentPromotion: bestPromotion,

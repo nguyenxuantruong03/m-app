@@ -32,10 +32,15 @@ const useFavorite = create<LikeStore>((set, get) => ({
 
   setFilteredItems: (items: FavoriteUnion[]) => set({ filteredItems: items }),
 
-  fetchFavoriteItems: async (userId: string,language:string) => {
-    const favoriteProduct = await getFavoriteProduct({ userId: userId,language: language });
-    set({ items: favoriteProduct });
+  fetchFavoriteItems: async (userId: string, language: string) => {
+    try {
+      const favoriteProduct = await getFavoriteProduct({ userId: userId, language: language });
+      set({ items: favoriteProduct || [] }); // Trả về [] nếu không có dữ liệu
+    } catch (error) {
+      set({ items: [] }); // Trả về [] nếu có lỗi
+    }
   },
+  
 
   addItem: async (data: FavoriteUnion, languageToUse: string) => {
     //languages

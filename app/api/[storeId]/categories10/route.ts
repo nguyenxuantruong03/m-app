@@ -151,15 +151,28 @@ export async function GET(
     const translations = await Promise.all(
       categories.map(async (category) => {
         try {
-          // Chỉ dịch name
-          const translatedName = await translateText(category.name, language);
+          // Chỉ dịch tên nếu ngôn ngữ không phải "vi"
+          let translatedName = category.name;
+
+          if (language !== "vi") {
+            translatedName = await translateText(category.name, language);
+            
+            // Nếu không có dữ liệu dịch, giữ lại tên gốc
+            if (!translatedName) {
+              translatedName = category.name;
+            }
+          }
 
           return {
             ...category,
             name: translatedName,
           };
         } catch (error) {
-          return category; // Trả về dữ liệu gốc nếu có lỗi
+          // Nếu có lỗi trong khi dịch, trả về dữ liệu gốc
+          return {
+            ...category,
+            name: category.name,
+          };
         }
       })
     );

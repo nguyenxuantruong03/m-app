@@ -264,7 +264,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
             return;
           }
           //remove favoriteProduct
-          await removeItem(favoriteData.id, user?.id || "",languageToUse);
+          await removeItem(favoriteData.id, user?.id || "", languageToUse);
         } else {
           //Khi add đảm bảo phải có Selectedsize và Selectedcolor nếu không thì ko có select nào hết auto chọn cái đầu tiên
           if (!selectedSize && selectedColor) {
@@ -290,7 +290,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
           };
 
           //add favoriteProduct
-          await addItem(favoriteProduct,languageToUse);
+          await addItem(favoriteProduct, languageToUse);
         }
       } catch (error) {
         toast.error(
@@ -339,7 +339,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
       }
       // Stop event propagation to prevent multiple clicks
       event.stopPropagation();
-  
+
       // Use toast.promise to handle the async operation
       await toast.promise(
         (async () => {
@@ -347,7 +347,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
             userId: user?.id || "",
             language: languageToUse,
           });
-  
+
           const matchingItem = cartItemData.find(
             (item: CartItemType) =>
               item.product.name === data.name &&
@@ -355,24 +355,24 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
               item.size === selectedSize &&
               item.color === selectedColor
           );
-  
+
           const matchingQuantity = matchingItem ? matchingItem.quantity : 0;
-  
+
           const compareQuantityExistingAndAvailable =
             matchingQuantity >= maxQuantity && maxQuantity > 0;
-  
+
           if (compareQuantityExistingAndAvailable) {
             throw new Error(insufficientStockMessage);
           }
-  
+
           // Get selected warranty
           const warranty = cartdb.getSelectedItemWarranty(data.id);
-  
+
           const productWithQuantity = {
             ...data,
             quantity,
           };
-  
+
           // Find the item in the cartdb
           const existingCartItem = cartdb.items.find(
             (item) =>
@@ -381,7 +381,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
               item.size === selectedSize &&
               item.color === selectedColor
           );
-  
+
           try {
             setLoading(true);
             if (existingCartItem) {
@@ -409,7 +409,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
           } finally {
             setLoading(false);
           }
-  
+
           return existingCartItem
             ? productQuantityUpdatedMessage
             : productAddedToCartMessage;
@@ -437,7 +437,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
         setErrorsetQuantityInventory(outOfStockInventoryMessage);
         return;
       }
-  
+
       // Generate a unique cartId for "GUEST" users
       const cartId = cuid();
       // Get selected warranty
@@ -445,10 +445,10 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
       const warranty = warrantySelect ?? "";
       const size = selectedSize;
       const color = selectedColor;
-  
+
       // Stop event propagation to prevent multiple clicks
       event.stopPropagation();
-  
+
       const productWithQuantity = {
         ...data,
         quantity,
@@ -457,7 +457,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
         warranty,
         cartId,
       };
-  
+
       // Find the item in the cartdb
       const existingCartItem = cart.items.find(
         (item) =>
@@ -465,7 +465,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
           item.size === selectedSize &&
           item.color === selectedColor
       );
-  
+
       try {
         setLoading(true);
         if (existingCartItem) {
@@ -496,11 +496,13 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
         setLoading(false);
       }
     }
-  };  
+  };
 
-  const onAddtoPushCart: MouseEventHandler<HTMLButtonElement> = async (event) => {
+  const onAddtoPushCart: MouseEventHandler<HTMLButtonElement> = async (
+    event
+  ) => {
     setLoading(true);
-    
+
     if (user?.role !== "GUEST" && user?.id) {
       // Check errors
       if (!selectedSize && !selectedColor) {
@@ -517,10 +519,10 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
         setErrorsetQuantityInventory(outOfStockInventoryMessage);
         return;
       }
-      
+
       // Ngặn chặn sự kiện Click liên tục
       event.stopPropagation();
-  
+
       // Use toast.promise to handle the async operation
       await toast.promise(
         (async () => {
@@ -529,7 +531,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
             userId: user?.id || "",
             language: languageToUse,
           });
-  
+
           const matchingItem = cartItemData.find(
             (item: CartItemType) =>
               item.product.name === data.name &&
@@ -537,23 +539,23 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
               item.size === selectedSize &&
               item.color === selectedColor
           );
-  
+
           const matchingQuantity = matchingItem ? matchingItem.quantity : 0;
           const compareQuantityExistingAndAvailable =
             matchingQuantity >= maxQuantity && maxQuantity > 0;
-  
+
           if (compareQuantityExistingAndAvailable) {
             throw new Error(insufficientStockMessage);
           }
-  
+
           // Get selected warranty
           const warranty = cartdb.getSelectedItemWarranty(data.id);
-  
+
           const productWithQuantity = {
             ...data,
             quantity,
           };
-  
+
           // Find existing item in the cartdb
           const existingCartItem = cartdb.items.find(
             (item) =>
@@ -562,7 +564,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
               item.size === selectedSize &&
               item.color === selectedColor
           );
-  
+
           try {
             setLoading(true);
             if (existingCartItem) {
@@ -591,7 +593,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
             setLoading(false);
             router.push("/cart");
           }
-  
+
           return existingCartItem
             ? productQuantityUpdatedMessage
             : productAddedToCartMessage;
@@ -619,17 +621,17 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
         setErrorsetQuantityInventory(outOfStockInventoryMessage);
         return;
       }
-  
+
       // Generate a unique cartId for "GUEST" users
       const cartId = cuid();
       const warrantySelect = cart.getSelectedItemWarranty(data.id);
       const warranty = warrantySelect ?? "";
       const size = selectedSize;
       const color = selectedColor;
-  
+
       // Stop event propagation to prevent multiple clicks
       event.stopPropagation();
-  
+
       const productWithQuantity = {
         ...data,
         quantity,
@@ -638,7 +640,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
         warranty,
         cartId,
       };
-  
+
       // Find the item in the cartdb
       const existingCartItem = cart.items.find(
         (item) =>
@@ -646,7 +648,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
           item.size === selectedSize &&
           item.color === selectedColor
       );
-  
+
       if (existingCartItem) {
         // If the item exists, update the quantity
         const existingQuantity = existingCartItem.quantity ?? 0;
@@ -672,7 +674,6 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
       router.push("/cart");
     }
   };
-  
 
   //Tìm kiếm quantity của sản phẩm
   const maxQuantity = getQuantityMatchColorandSize();
@@ -858,37 +859,41 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
             {colorMessage}
           </h3>
           {availableColors.map((color, index) => (
-            <div
-              key={index}
-              onClick={() => {
-                setSelectedColor(
-                  selectedColor === color?.value ? "" : color?.value
-                );
-                setLoading(false);
-                setErrorColor("");
-                setErrorSize("");
-                setQuantity(1);
-                setLoadingLimitQuantity(false);
-              }}
-              className={`inline-flex items-center justify-center h-8 w-16 relative overflow-hidden ${
-                selectedColor === color?.value
-                  ? " border border-red-500 rounded-md"
-                  : ""
-              }`}
-            >
-              <div
-                className="h-6 w-6 rounded-full border border-gray-300"
-                style={{ backgroundColor: color?.value }}
-              />
-              {selectedColor === color?.value && (
-                <span
-                  className="absolute bottom-1.5 right-2.5 w-5 h-3 bg-red-500 flex items-center justify-center rounded-tl-md"
-                  style={{ transform: "translate(50%, 50%)" }}
+            <>
+              {color?.value && (
+                <div
+                  key={index}
+                  onClick={() => {
+                    setSelectedColor(
+                      selectedColor === color?.value ? "" : color?.value
+                    );
+                    setLoading(false);
+                    setErrorColor("");
+                    setErrorSize("");
+                    setQuantity(1);
+                    setLoadingLimitQuantity(false);
+                  }}
+                  className={`inline-flex items-center justify-center h-8 w-16 relative overflow-hidden ${
+                    selectedColor === color?.value
+                      ? " border border-red-500 rounded-md"
+                      : ""
+                  }`}
                 >
-                  <Check className="w-3 h-3 text-white" />
-                </span>
+                  <div
+                    className="h-6 w-6 rounded-full border border-gray-300"
+                    style={{ backgroundColor: color?.value }}
+                  />
+                  {selectedColor === color?.value && (
+                    <span
+                      className="absolute bottom-1.5 right-2.5 w-5 h-3 bg-red-500 flex items-center justify-center rounded-tl-md"
+                      style={{ transform: "translate(50%, 50%)" }}
+                    >
+                      <Check className="w-3 h-3 text-white" />
+                    </span>
+                  )}
+                </div>
               )}
-            </div>
+            </>
           ))}
         </div>
       </div>

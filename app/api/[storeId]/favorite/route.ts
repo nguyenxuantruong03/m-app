@@ -150,21 +150,29 @@ export async function GET(
     const translations = await Promise.all(
       favorites.map(async (favorite) => {
         try {
-          // Dùng hàm translateText để dịch tên yêu thích
-          const translatedName = await translateText(
-            favorite.name ?? "",
-            language
-          );
-
+          // Chỉ dịch name nếu ngôn ngữ không phải là "vi"
+          let translatedName = favorite.name ?? "";
+    
+          if (language !== "vi") {
+            translatedName = await translateText(favorite.name ?? "", language);
+    
+            // Nếu không có dữ liệu dịch, giữ lại name gốc
+            if (!translatedName) {
+              translatedName = favorite.name ?? "";
+            }
+          }
+    
           return {
             ...favorite,
             name: translatedName,
           };
         } catch (error) {
-          return favorite; // Trả về dữ liệu gốc nếu lỗi
+          // Nếu có lỗi trong quá trình dịch, trả về dữ liệu gốc
+          return favorite;
         }
       })
     );
+    
 
     return NextResponse.json(translations);
   } catch (error) {

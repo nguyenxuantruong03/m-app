@@ -220,20 +220,28 @@ export async function GET(
       coupons.map(async (coupon) => {
         try {
           // Chỉ dịch description
-          const translatedDescription = await translateText(
-            coupon.description ?? "",
-            language
-          );
-
+          let translatedDescription = coupon.description ?? "";
+    
+          if (language !== "vi") {
+            translatedDescription = await translateText(coupon.description ?? "", language);
+    
+            // Nếu không có dữ liệu dịch, giữ lại description gốc
+            if (!translatedDescription) {
+              translatedDescription = coupon.description ?? "";
+            }
+          }
+    
           return {
             ...coupon,
             description: translatedDescription,
           };
         } catch (error) {
-          return coupon; // Trả về dữ liệu gốc nếu lỗi
+          // Nếu có lỗi trong quá trình dịch, trả về dữ liệu gốc
+          return coupon; 
         }
       })
     );
+    
 
     return NextResponse.json(translations);
   } catch (error) {

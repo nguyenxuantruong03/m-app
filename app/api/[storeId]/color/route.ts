@@ -155,18 +155,28 @@ export async function GET(
       colors.map(async (color) => {
         try {
           // Chỉ dịch name
-          const translatedName = await translateText(color.name, language);
-
+          let translatedName = color.name;
+    
+          if (language !== "vi") {
+            translatedName = await translateText(color.name, language);
+    
+            // Nếu không có dữ liệu dịch, giữ lại tên gốc
+            if (!translatedName) {
+              translatedName = color.name;
+            }
+          }
+    
           return {
             ...color,
             name: translatedName,
           };
         } catch (error) {
-          return color; // Trả về dữ liệu gốc nếu có lỗi
+          // Nếu có lỗi trong quá trình dịch, trả về dữ liệu gốc
+          return color; 
         }
       })
     );
-
+    
     return NextResponse.json(translations);
   } catch (error) {
     return new NextResponse(

@@ -4,7 +4,11 @@ import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
 import { translateText } from "@/translate/translate-client";
-import { translateProductDetailDelete, translateProductDetailGet, translateProductDetailPost } from "@/translate/translate-api";
+import {
+  translateProductDetailDelete,
+  translateProductDetailGet,
+  translateProductDetailPost,
+} from "@/translate/translate-api";
 
 export async function POST(
   req: Request,
@@ -13,7 +17,7 @@ export async function POST(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const productDetailPostMessage = translateProductDetailPost(LanguageToUse)
+  const productDetailPostMessage = translateProductDetailPost(LanguageToUse);
 
   try {
     const body = await req.json();
@@ -91,6 +95,24 @@ export async function POST(
       contentsalientfeatures,
     } = body;
 
+    // Validation for unique size and color
+    const sizeIds = [size1Id, size2Id, size3Id, size4Id, size5Id];
+    const colorIds = [color1Id, color2Id, color3Id, color4Id, color5Id];
+
+    if (new Set(sizeIds).size !== sizeIds.length) {
+      return new NextResponse(
+        JSON.stringify({ error: productDetailPostMessage.sizeMismatch }),
+        { status: 400 }
+      );
+    }
+
+    if (new Set(colorIds).size !== colorIds.length) {
+      return new NextResponse(
+        JSON.stringify({ error: productDetailPostMessage.colorMismatch }),
+        { status: 400 }
+      );
+    }
+
     if (!user) {
       return new NextResponse(
         JSON.stringify({ error: productDetailPostMessage.userIdNotFound }),
@@ -106,9 +128,12 @@ export async function POST(
     }
 
     if (!title) {
-      return new NextResponse(JSON.stringify({ error: productDetailPostMessage.titleRequired }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: productDetailPostMessage.titleRequired }),
+        {
+          status: 400,
+        }
+      );
     }
 
     if (!categoryId) {
@@ -120,14 +145,18 @@ export async function POST(
 
     if (!promotionheading) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailPostMessage.promotionHeadingRequired }),
+        JSON.stringify({
+          error: productDetailPostMessage.promotionHeadingRequired,
+        }),
         { status: 400 }
       );
     }
 
     if (!promotiondescription) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailPostMessage.promotionDescriptionRequired }),
+        JSON.stringify({
+          error: productDetailPostMessage.promotionDescriptionRequired,
+        }),
         { status: 400 }
       );
     }
@@ -147,15 +176,21 @@ export async function POST(
     }
 
     if (!name1) {
-      return new NextResponse(JSON.stringify({ error: productDetailPostMessage.nameRequired }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: productDetailPostMessage.nameRequired }),
+        {
+          status: 400,
+        }
+      );
     }
 
     if (!price1) {
-      return new NextResponse(JSON.stringify({ error: productDetailPostMessage.priceRequired }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: productDetailPostMessage.priceRequired }),
+        {
+          status: 400,
+        }
+      );
     }
 
     if (!quantity1) {
@@ -169,25 +204,33 @@ export async function POST(
 
     if (!descriptionspecifications) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailPostMessage.descriptionSpecificationsRequired }),
+        JSON.stringify({
+          error: productDetailPostMessage.descriptionSpecificationsRequired,
+        }),
         { status: 400 }
       );
     }
     if (!valuespecifications) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailPostMessage.valueSpecificationsRequired }),
+        JSON.stringify({
+          error: productDetailPostMessage.valueSpecificationsRequired,
+        }),
         { status: 400 }
       );
     }
     if (!descriptionsalientfeatures) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailPostMessage.descriptionSalientFeaturesRequired }),
+        JSON.stringify({
+          error: productDetailPostMessage.descriptionSalientFeaturesRequired,
+        }),
         { status: 400 }
       );
     }
     if (!contentsalientfeatures) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailPostMessage.contentSalientFeaturesRequired }),
+        JSON.stringify({
+          error: productDetailPostMessage.contentSalientFeaturesRequired,
+        }),
         { status: 400 }
       );
     }
@@ -207,9 +250,12 @@ export async function POST(
 
     // Nếu sizeId không tồn tại, trả về thông báo lỗi
     if (!size) {
-      return new NextResponse(JSON.stringify({ error: productDetailPostMessage.chooseSize }), {
-        status: 404,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: productDetailPostMessage.chooseSize }),
+        {
+          status: 404,
+        }
+      );
     }
 
     const color = await prismadb.color.findFirst({
@@ -259,7 +305,7 @@ export async function POST(
         storeId: params.storeId, // Kiểm tra trong cùng store nếu cần
       },
     });
-    
+
     // Nếu title đã tồn tại, trả về lỗi
     if (existingProductDetail) {
       return new NextResponse(
@@ -378,7 +424,7 @@ export async function GET(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const productDetailGetMessage =translateProductDetailGet(LanguageToUse)
+  const productDetailGetMessage = translateProductDetailGet(LanguageToUse);
   try {
     const { searchParams } = new URL(req.url);
     const categoryId = searchParams.get("categoryId") || undefined;
@@ -434,140 +480,229 @@ export async function GET(
       },
     });
 
-    // Dịch tất cả các trường trong sản phẩm
     const translations = await Promise.all(
       productDetails.map(async (productDetail) => {
-        const translatedProduct = {
-          ...productDetail,
-          title: await translateText(productDetail?.title || "", language),
-          name1: await translateText(productDetail?.name1 || "", language),
-          name2: await translateText(productDetail?.name2 || "", language),
-          name3: await translateText(productDetail?.name3 || "", language),
-          name4: await translateText(productDetail?.name4 || "", language),
-          name5: await translateText(productDetail?.name5 || "", language),
-          promotionheading: await translateText(
-            productDetail?.promotionheading || "",
-            language
-          ),
-          promotiondescription: await translateText(
-            productDetail?.promotiondescription || "",
-            language
-          ),
-          descriptionsalientfeatures: await translateText(
-            productDetail?.descriptionsalientfeatures || "",
-            language
-          ),
-          description2salientfeatures: await translateText(
-            productDetail?.description2salientfeatures || "",
-            language
-          ),
-          contentsalientfeatures: await translateText(
-            productDetail?.contentsalientfeatures || "",
-            language
-          ),
-          descriptionspecifications: await translateText(
-            productDetail?.descriptionspecifications || "",
-            language
-          ),
-          valuespecifications: await translateText(
-            productDetail?.valuespecifications || "",
-            language
-          ),
-          description2specifications: await translateText(
-            productDetail?.description2specifications || "",
-            language
-          ),
-          value2specifications: await translateText(
-            productDetail?.value2specifications || "",
-            language
-          ),
-          category: {
-            ...productDetail?.category,
-            name: await translateText(
-              productDetail?.category?.name || "",
-              language
-            ),
-          },
-          color1: {
-            ...productDetail?.color1,
-            name: await translateText(
-              productDetail?.color1?.name || "",
-              language
-            ),
-          },
-          color2: {
-            ...productDetail?.color2,
-            name: await translateText(
-              productDetail?.color2?.name || "",
-              language
-            ),
-          },
-          color3: {
-            ...productDetail?.color3,
-            name: await translateText(
-              productDetail?.color3?.name || "",
-              language
-            ),
-          },
-          color4: {
-            ...productDetail?.color4,
-            name: await translateText(
-              productDetail?.color4?.name || "",
-              language
-            ),
-          },
-          color5: {
-            ...productDetail?.color5,
-            name: await translateText(
-              productDetail?.color5?.name || "",
-              language
-            ),
-          },
-          size1: {
-            ...productDetail?.size1,
-            name: await translateText(
-              productDetail?.size1?.name || "",
-              language
-            ),
-          },
-          size2: {
-            ...productDetail?.size2,
-            name: await translateText(
-              productDetail?.size2?.name || "",
-              language
-            ),
-          },
-          size3: {
-            ...productDetail?.size3,
-            name: await translateText(
-              productDetail?.size3?.name || "",
-              language
-            ),
-          },
-          size4: {
-            ...productDetail?.size4,
-            name: await translateText(
-              productDetail?.size4?.name || "",
-              language
-            ),
-          },
-          size5: {
-            ...productDetail?.size5,
-            name: await translateText(
-              productDetail?.size5?.name || "",
-              language
-            ),
-          },
-        };
+        try {
+          const translateField = async (
+            field: string | null | undefined,
+            language: string
+          ) => {
+            if (language === "vi") return field; // Không dịch nếu ngôn ngữ là "vi"
+            const translated = await translateText(field || "", language);
+            return translated || field; // Trả về bản dịch nếu có, ngược lại giữ lại giá trị gốc
+          };
 
-        return translatedProduct;
+          const translatedProduct = {
+            ...productDetail,
+            title: await translateField(productDetail?.title, language),
+            name1: await translateField(productDetail?.name1, language),
+            name2: await translateField(productDetail?.name2, language),
+            name3: await translateField(productDetail?.name3, language),
+            name4: await translateField(productDetail?.name4, language),
+            name5: await translateField(productDetail?.name5, language),
+            promotionheading: await translateField(
+              productDetail?.promotionheading,
+              language
+            ),
+            promotiondescription: await translateField(
+              productDetail?.promotiondescription,
+              language
+            ),
+            descriptionsalientfeatures: await translateField(
+              productDetail?.descriptionsalientfeatures,
+              language
+            ),
+            description2salientfeatures: await translateField(
+              productDetail?.description2salientfeatures,
+              language
+            ),
+            description3salientfeatures: await translateField(
+              productDetail?.description3salientfeatures,
+              language
+            ),
+            description4salientfeatures: await translateField(
+              productDetail?.description4salientfeatures,
+              language
+            ),
+            contentsalientfeatures: await translateField(
+              productDetail?.contentsalientfeatures,
+              language
+            ),
+            descriptionspecifications: await translateField(
+              productDetail?.descriptionspecifications,
+              language
+            ),
+            valuespecifications: await translateField(
+              productDetail?.valuespecifications,
+              language
+            ),
+            description2specifications: await translateField(
+              productDetail?.description2specifications,
+              language
+            ),
+            value2specifications: await translateField(
+              productDetail?.value2specifications,
+              language
+            ),
+            description3specifications: await translateField(
+              productDetail?.description3specifications,
+              language
+            ),
+            value3specifications: await translateField(
+              productDetail?.value3specifications,
+              language
+            ),
+            description4specifications: await translateField(
+              productDetail?.description4specifications,
+              language
+            ),
+            value4specifications: await translateField(
+              productDetail?.value4specifications,
+              language
+            ),
+            description5specifications: await translateField(
+              productDetail?.description5specifications,
+              language
+            ),
+            value5specifications: await translateField(
+              productDetail?.value5specifications,
+              language
+            ),
+            description6specifications: await translateField(
+              productDetail?.description6specifications,
+              language
+            ),
+            value6specifications: await translateField(
+              productDetail?.value6specifications,
+              language
+            ),
+            description7specifications: await translateField(
+              productDetail?.description7specifications,
+              language
+            ),
+            value7specifications: await translateField(
+              productDetail?.value7specifications,
+              language
+            ),
+            description8specifications: await translateField(
+              productDetail?.description8specifications,
+              language
+            ),
+            value8specifications: await translateField(
+              productDetail?.value8specifications,
+              language
+            ),
+            description9specifications: await translateField(
+              productDetail?.description9specifications,
+              language
+            ),
+            value9specifications: await translateField(
+              productDetail?.value9specifications,
+              language
+            ),
+            description10specifications: await translateField(
+              productDetail?.description10specifications,
+              language
+            ),
+            value10specifications: await translateField(
+              productDetail?.value10specifications,
+              language
+            ),
+            description11specifications: await translateField(
+              productDetail?.description11specifications,
+              language
+            ),
+            value11specifications: await translateField(
+              productDetail?.value11specifications,
+              language
+            ),
+            description12specifications: await translateField(
+              productDetail?.description12specifications,
+              language
+            ),
+            value12specifications: await translateField(
+              productDetail?.value12specifications,
+              language
+            ),
+            description13specifications: await translateField(
+              productDetail?.description13specifications,
+              language
+            ),
+            value13specifications: await translateField(
+              productDetail?.value13specifications,
+              language
+            ),
+            description14specifications: await translateField(
+              productDetail?.description14specifications,
+              language
+            ),
+            value14specifications: await translateField(
+              productDetail?.value14specifications,
+              language
+            ),
+            category: {
+              ...productDetail?.category,
+              name: await translateField(
+                productDetail?.category?.name,
+                language
+              ),
+            },
+            color1: {
+              ...productDetail?.color1,
+              name: await translateField(productDetail?.color1?.name, language),
+            },
+            color2: {
+              ...productDetail?.color2,
+              name: await translateField(productDetail?.color2?.name, language),
+            },
+            color3: {
+              ...productDetail?.color3,
+              name: await translateField(productDetail?.color3?.name, language),
+            },
+            color4: {
+              ...productDetail?.color4,
+              name: await translateField(productDetail?.color4?.name, language),
+            },
+            color5: {
+              ...productDetail?.color5,
+              name: await translateField(productDetail?.color5?.name, language),
+            },
+            size1: {
+              ...productDetail?.size1,
+              name: await translateField(productDetail?.size1?.name, language),
+            },
+            size2: {
+              ...productDetail?.size2,
+              name: await translateField(productDetail?.size2?.name, language),
+            },
+            size3: {
+              ...productDetail?.size3,
+              name: await translateField(productDetail?.size3?.name, language),
+            },
+            size4: {
+              ...productDetail?.size4,
+              name: await translateField(productDetail?.size4?.name, language),
+            },
+            size5: {
+              ...productDetail?.size5,
+              name: await translateField(productDetail?.size5?.name, language),
+            },
+          };
+
+          return translatedProduct;
+        } catch (error) {
+          // Nếu có lỗi trong quá trình dịch, trả về dữ liệu gốc
+          return productDetail;
+        }
       })
     );
 
     return NextResponse.json(translations);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: productDetailGetMessage.internalErrorGetProductDetail }),
+      JSON.stringify({
+        error: productDetailGetMessage.internalErrorGetProductDetail,
+      }),
       { status: 500 }
     );
   }
@@ -580,7 +715,8 @@ export async function DELETE(
   const user = await currentUser();
   //language
   const LanguageToUse = user?.language || "vi";
-  const productDetailDeleteMessage = translateProductDetailDelete(LanguageToUse)
+  const productDetailDeleteMessage =
+    translateProductDetailDelete(LanguageToUse);
   try {
     const body = await req.json();
     const { ids } = body;
@@ -705,10 +841,14 @@ export async function DELETE(
       },
     });
 
-    return NextResponse.json({ message: productDetailDeleteMessage.deleteSuccess });
+    return NextResponse.json({
+      message: productDetailDeleteMessage.deleteSuccess,
+    });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: productDetailDeleteMessage.internalErrorDeleteCategory }),
+      JSON.stringify({
+        error: productDetailDeleteMessage.internalErrorDeleteCategory,
+      }),
       { status: 500 }
     );
   }

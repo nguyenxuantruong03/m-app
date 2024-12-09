@@ -5247,7 +5247,9 @@ export const translateProductDetailPost = (language: string) => {
         chooseCategory: "Hãy chọn lại Category!",
         storeIdNotFound: "Không tìm thấy store id!",
         internalError: "Lỗi hệ thống khi tạo mới product detail!",
-        titleExists:"Tiêu đề đã tồn tại"
+        titleExists: "Tiêu đề đã tồn tại",
+        sizeMismatch: "Kích thước không được giống nhau",
+        colorMismatch: "Màu sắc không được giống nhau"
       };
     case "en":
       return {
@@ -5283,7 +5285,9 @@ export const translateProductDetailPost = (language: string) => {
         chooseCategory: "Please reselect a Category!",
         storeIdNotFound: "Store id not found!",
         internalError: "System error when creating a new product detail!",
-        titleExists:"Title already exists"
+        titleExists: "Title already exists",
+        sizeMismatch: "Size cannot be the same",
+        colorMismatch: "Colors cannot be the same"
       };
     case "zh":
       return {
@@ -5312,7 +5316,9 @@ export const translateProductDetailPost = (language: string) => {
         chooseCategory: "请重新选择类别！",
         storeIdNotFound: "未找到商店 ID！",
         internalError: "创建新产品详情时系统错误！",
-        titleExists:"标题已存在"
+        titleExists: "标题已存在",
+        sizeMismatch: "尺码不能相同",
+        colorMismatch: "颜色不能相同"
       };
     case "fr":
       return {
@@ -5352,7 +5358,9 @@ export const translateProductDetailPost = (language: string) => {
         storeIdNotFound: "ID du magasin introuvable !",
         internalError:
           "Erreur système lors de la création d'un nouveau détail de produit !",
-        titleExists:"Le titre existe déjà"
+        titleExists: "Le titre existe déjà",
+        sizeMismatch: "La taille ne doit pas être identique",
+        colorMismatch: "Les couleurs ne doivent pas être identiques"
       };
     case "ja":
       return {
@@ -5381,7 +5389,9 @@ export const translateProductDetailPost = (language: string) => {
         chooseCategory: "カテゴリーを再選択してください！",
         storeIdNotFound: "店舗IDが見つかりません！",
         internalError: "新しい製品詳細を作成中にシステムエラーが発生しました！",
-        titleExists:"タイトルはすでに存在します"
+        titleExists: "タイトルはすでに存在します",
+        sizeMismatch: "サイズは同じではいけません",
+        colorMismatch: "色は同じではいけません"
       };
     default: // English
       return {
@@ -5417,7 +5427,9 @@ export const translateProductDetailPost = (language: string) => {
         chooseCategory: "Please reselect a Category!",
         storeIdNotFound: "Store id not found!",
         internalError: "System error when creating a new product detail!",
-        titleExists:"Title already exists"
+        titleExists: "Title already exists",
+        sizeMismatch: "Size cannot be the same",
+        colorMismatch: "Colors cannot be the same"
       };
   }
 };
@@ -5647,19 +5659,13 @@ export const translateProductDetailIdPatch = (language: string) => {
         percentPromotionRequired: "Phần trăm khuyến mãi là bắt buộc!",
         priceRequired: "Giá là bắt buộc!",
         quantityRequired: "Số lượng là bắt buộc!",
-        descriptionSpecificationsRequired:
-          "Mô tả thông số kỹ thuật là bắt buộc!",
+        descriptionSpecificationsRequired: "Mô tả thông số kỹ thuật là bắt buộc!",
         valueSpecificationsRequired: "Giá trị thông số kỹ thuật là bắt buộc!",
-        descriptionSalientFeaturesRequired:
-          "Mô tả tính năng nổi bật là bắt buộc!",
-        description2SalientFeaturesRequired:
-          "Mô tả tính năng nổi bật 2 là bắt buộc!",
-        description3SalientFeaturesRequired:
-          "Mô tả tính năng nổi bật 3 là bắt buộc!",
-        description4SalientFeaturesRequired:
-          "Mô tả tính năng nổi bật 4 là bắt buộc!",
-        contentSalientFeaturesRequired:
-          "Nội dung tính năng nổi bật là bắt buộc!",
+        descriptionSalientFeaturesRequired: "Mô tả tính năng nổi bật là bắt buộc!",
+        description2SalientFeaturesRequired: "Mô tả tính năng nổi bật 2 là bắt buộc!",
+        description3SalientFeaturesRequired: "Mô tả tính năng nổi bật 3 là bắt buộc!",
+        description4SalientFeaturesRequired: "Mô tả tính năng nổi bật 4 là bắt buộc!",
+        contentSalientFeaturesRequired: "Nội dung tính năng nổi bật là bắt buộc!",
         chooseSize: "Hãy chọn lại Size!",
         chooseColor: "Hãy chọn lại Color!",
         chooseCategory: "Hãy chọn lại Category!",
@@ -5667,13 +5673,14 @@ export const translateProductDetailIdPatch = (language: string) => {
         storeIdNotFound: "Không tìm thấy store id!",
         internalError: "Lỗi hệ thống khi cập nhật product detail!",
         titleExists: "Tiêu đề đã tồn tại",
-        productNotFound: "Chi tiết sản phẩm không tìm thấy"
+        productNotFound: "Chi tiết sản phẩm không tìm thấy",
+        colorNotAllowed: "Màu sắc không được giống nhau!",
+        sizeNotAllowed: "Kích thước không được giống nhau!"
       };
     case "en":
       return {
         userIdNotFound: "User id not found!",
-        permissionDenied:
-          "You do not have permission to create a new product detail!",
+        permissionDenied: "You do not have permission to create a new product detail!",
         titleRequired: "Title is required!",
         categoryIdRequired: "CategoryId is required!",
         promotionHeadingRequired: "Promotion heading is required!",
@@ -5684,19 +5691,13 @@ export const translateProductDetailIdPatch = (language: string) => {
         percentPromotionRequired: "Percent promotion is required!",
         priceRequired: "Price is required!",
         quantityRequired: "Quantity is required!",
-        descriptionSpecificationsRequired:
-          "Description specifications are required!",
+        descriptionSpecificationsRequired: "Description specifications are required!",
         valueSpecificationsRequired: "Value specifications are required!",
-        descriptionSalientFeaturesRequired:
-          "Description of salient features is required!",
-        description2SalientFeaturesRequired:
-          "Description of salient features 2 is required!",
-        description3SalientFeaturesRequired:
-          "Description of salient features 3 is required!",
-        description4SalientFeaturesRequired:
-          "Description of salient features 4 is required!",
-        contentSalientFeaturesRequired:
-          "Content for salient features is required!",
+        descriptionSalientFeaturesRequired: "Description of salient features is required!",
+        description2SalientFeaturesRequired: "Description of salient features 2 is required!",
+        description3SalientFeaturesRequired: "Description of salient features 3 is required!",
+        description4SalientFeaturesRequired: "Description of salient features 4 is required!",
+        contentSalientFeaturesRequired: "Content for salient features is required!",
         chooseSize: "Please reselect a Size!",
         chooseColor: "Please reselect a Color!",
         chooseCategory: "Please reselect a Category!",
@@ -5704,7 +5705,9 @@ export const translateProductDetailIdPatch = (language: string) => {
         storeIdNotFound: "Store id not found!",
         internalError: "System error when updating product detail!",
         titleExists: "Title already exists",
-        productNotFound: "Product detail not found"
+        productNotFound: "Product detail not found",
+        colorNotAllowed: "Colors cannot be the same!",
+        sizeNotAllowed: "Sizes cannot be the same!"
       };
     case "zh":
       return {
@@ -5734,48 +5737,41 @@ export const translateProductDetailIdPatch = (language: string) => {
         storeIdNotFound: "未找到商店 ID！",
         internalError: "更新产品详情时系统错误！",
         titleExists: "标题已存在",
-        productNotFound: "产品详情未找到"
+        productNotFound: "产品详情未找到",
+        colorNotAllowed: "颜色不能相同！",
+        sizeNotAllowed: "尺码不能相同！"
       };
     case "fr":
       return {
         userIdNotFound: "ID utilisateur introuvable !",
-        permissionDenied:
-          "Vous n'avez pas la permission de créer un nouveau détail de produit !",
+        permissionDenied: "Vous n'avez pas la permission de créer un nouveau détail de produit !",
         titleRequired: "Le titre est obligatoire !",
         categoryIdRequired: "L'ID de catégorie est obligatoire !",
         promotionHeadingRequired: "Le titre de la promotion est obligatoire !",
-        promotionDescriptionRequired:
-          "La description de la promotion est obligatoire !",
+        promotionDescriptionRequired: "La description de la promotion est obligatoire !",
         sizeIdRequired: "L'ID de taille est obligatoire !",
         colorIdRequired: "L'ID de couleur est obligatoire !",
         nameRequired: "Le nom est obligatoire !",
-        percentPromotionRequired:
-          "Le pourcentage de promotion est obligatoire !",
+        percentPromotionRequired: "Le pourcentage de promotion est obligatoire !",
         priceRequired: "Le prix est obligatoire !",
         quantityRequired: "La quantité est obligatoire !",
-        descriptionSpecificationsRequired:
-          "La description des spécifications est obligatoire !",
-        valueSpecificationsRequired:
-          "La valeur des spécifications est obligatoire !",
-        descriptionSalientFeaturesRequired:
-          "La description des caractéristiques principales est obligatoire !",
-        description2SalientFeaturesRequired:
-          "La description des caractéristiques principales 2 est obligatoire !",
-        description3SalientFeaturesRequired:
-          "La description des caractéristiques principales 3 est obligatoire !",
-        description4SalientFeaturesRequired:
-          "La description des caractéristiques principales 4 est obligatoire !",
-        contentSalientFeaturesRequired:
-          "Le contenu des caractéristiques principales est obligatoire !",
+        descriptionSpecificationsRequired: "La description des spécifications est obligatoire !",
+        valueSpecificationsRequired: "La valeur des spécifications est obligatoire !",
+        descriptionSalientFeaturesRequired: "La description des caractéristiques principales est obligatoire !",
+        description2SalientFeaturesRequired: "La description des caractéristiques principales 2 est obligatoire !",
+        description3SalientFeaturesRequired: "La description des caractéristiques principales 3 est obligatoire !",
+        description4SalientFeaturesRequired: "La description des caractéristiques principales 4 est obligatoire !",
+        contentSalientFeaturesRequired: "Le contenu des caractéristiques principales est obligatoire !",
         chooseSize: "Veuillez choisir à nouveau une taille !",
         chooseColor: "Veuillez choisir à nouveau une couleur !",
         chooseCategory: "Veuillez choisir à nouveau une catégorie !",
         productDetailIdRequired: "ProductDetail id est obligatoire !",
         storeIdNotFound: "ID du magasin introuvable !",
-        internalError:
-          "Erreur système lors de la mise à jour du détail de produit !",
+        internalError: "Erreur système lors de la mise à jour du détail de produit !",
         titleExists: "Le titre existe déjà",
-        productNotFound: "Détails du produit non trouvés"
+        productNotFound: "Détails du produit non trouvés",
+        colorNotAllowed: "Les couleurs ne peuvent pas être identiques !",
+        sizeNotAllowed: "Les tailles ne peuvent pas être identiques !"
       };
     case "ja":
       return {
@@ -5805,13 +5801,14 @@ export const translateProductDetailIdPatch = (language: string) => {
         storeIdNotFound: "店舗IDが見つかりません！",
         internalError: "製品詳細の更新時にシステムエラーが発生しました！",
         titleExists: "タイトルはすでに存在します",
-        productNotFound: "製品の詳細が見つかりません"
+        productNotFound: "製品の詳細が見つかりません",
+        colorNotAllowed: "色は同じであってはいけません！",
+        sizeNotAllowed: "サイズは同じであってはいけません！"
       };
     default: // English
       return {
         userIdNotFound: "User id not found!",
-        permissionDenied:
-          "You do not have permission to create a new product detail!",
+        permissionDenied: "You do not have permission to create a new product detail!",
         titleRequired: "Title is required!",
         categoryIdRequired: "CategoryId is required!",
         promotionHeadingRequired: "Promotion heading is required!",
@@ -5822,19 +5819,13 @@ export const translateProductDetailIdPatch = (language: string) => {
         percentPromotionRequired: "Percent promotion is required!",
         priceRequired: "Price is required!",
         quantityRequired: "Quantity is required!",
-        descriptionSpecificationsRequired:
-          "Description specifications are required!",
+        descriptionSpecificationsRequired: "Description specifications are required!",
         valueSpecificationsRequired: "Value specifications are required!",
-        descriptionSalientFeaturesRequired:
-          "Description of salient features is required!",
-        description2SalientFeaturesRequired:
-          "Description of salient features 2 is required!",
-        description3SalientFeaturesRequired:
-          "Description of salient features 3 is required!",
-        description4SalientFeaturesRequired:
-          "Description of salient features 4 is required!",
-        contentSalientFeaturesRequired:
-          "Content for salient features is required!",
+        descriptionSalientFeaturesRequired: "Description of salient features is required!",
+        description2SalientFeaturesRequired: "Description of salient features 2 is required!",
+        description3SalientFeaturesRequired: "Description of salient features 3 is required!",
+        description4SalientFeaturesRequired: "Description of salient features 4 is required!",
+        contentSalientFeaturesRequired: "Content for salient features is required!",
         chooseSize: "Please reselect a Size!",
         chooseColor: "Please reselect a Color!",
         chooseCategory: "Please reselect a Category!",
@@ -5842,10 +5833,13 @@ export const translateProductDetailIdPatch = (language: string) => {
         storeIdNotFound: "Store id not found!",
         internalError: "System error when updating product detail!",
         titleExists: "Title already exists",
-        productNotFound: "Product detail not found"
+        productNotFound: "Product detail not found",
+        colorNotAllowed: "Colors cannot be the same!",
+        sizeNotAllowed: "Sizes cannot be the same!"
       };
   }
 };
+
 
 export const translateSalaryStaffGet = (language: string) => {
   switch (language) {
