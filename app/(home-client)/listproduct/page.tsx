@@ -2,7 +2,7 @@
 import { useCurrentUser } from "@/hooks/use-current-user";
 import Menu from "./menu-list";
 import { useEffect, useState } from "react";
-import { translateListProductMessage } from "@/translate/translate-client";
+import { getListProductMessage, translateListProductMessage } from "@/translate/translate-client";
 
 export const revalidate = 86400;
 
@@ -26,6 +26,11 @@ const ListProduct = () => {
       : storedLanguage || "vi";
 
   const listProductMessage = translateListProductMessage(languageToUse);
+  const listProductTitleMessage = getListProductMessage(languageToUse);
+
+  useEffect(() => {
+    document.title = listProductTitleMessage.listProduct;
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {

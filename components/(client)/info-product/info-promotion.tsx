@@ -135,45 +135,45 @@ const InfoPromotion: React.FC<InfoPromotionprops> = ({
           <div className="w-[340px] md:w-[345px] xl:w-[300px] p-2 rounded-md shadow-lg m-auto md:m-0">
             <div className="flex justify-between items-center bg-gray-500 bg-opacity-10 p-4 rounded-md text-slate-900 dark:text-slate-200">
               {data.productdetail.descriptionspecifications}
-              <p>{data.productdetail.valuespecifications}</p>
+              <p className="line-clamp-2 w-3/5 text-end">{data.productdetail.valuespecifications}</p>
             </div>
             <div className="flex justify-between items-center p-4 text-slate-900 dark:text-slate-200">
               {data.productdetail.description2specifications}
-              <p>{data.productdetail.value2specifications}</p>
+              <p className="line-clamp-2 w-3/5 text-end">{data.productdetail.value2specifications}</p>
             </div>
             <div className="flex justify-between items-center bg-gray-500 bg-opacity-10 p-4 rounded-md text-slate-900 dark:text-slate-200">
               {data.productdetail.description3specifications}
-              <p>{data.productdetail.value3specifications}</p>
+              <p className="line-clamp-2 w-3/5 text-end">{data.productdetail.value3specifications}</p>
             </div>
             <div className="flex justify-between items-center p-4 text-slate-900 dark:text-slate-200">
               {data.productdetail.description4specifications}
-              <p>{data.productdetail.value4specifications}</p>
+              <p className="line-clamp-2 w-3/5 text-end">{data.productdetail.value4specifications}</p>
             </div>
             <div className="flex justify-between items-center bg-gray-500 bg-opacity-10 p-4 rounded-md text-slate-900 dark:text-slate-200">
               {data.productdetail.description5specifications}
-              <p>{data.productdetail.value5specifications}</p>
+              <p className="line-clamp-2 w-3/5 text-end">{data.productdetail.value5specifications}</p>
             </div>
           </div>
           <div className=" w-[340px] md:w-[345px] xl:w-[300px] p-2 rounded-md shadow-lg m-auto md:m-0 mt-2 md:mt-0">
             <div className="flex justify-between items-center bg-gray-500 bg-opacity-10 p-4 rounded-md text-slate-900 dark:text-slate-200">
               {data.productdetail.description6specifications}
-              <p>{data.productdetail.value6specifications}</p>
+              <p className="line-clamp-2 w-3/5 text-end">{data.productdetail.value6specifications}</p>
             </div>
             <div className="flex justify-between items-center p-4 text-slate-900 dark:text-slate-200">
               {data.productdetail.description7specifications}
-              <p>{data.productdetail.value7specifications}</p>
+              <p className="line-clamp-2 w-3/5 text-end">{data.productdetail.value7specifications}</p>
             </div>
             <div className="flex justify-between items-center bg-gray-500 bg-opacity-10 p-4 rounded-md text-slate-900 dark:text-slate-200">
               {data.productdetail.description8specifications}
-              <p>{data.productdetail.value8specifications}</p>
+              <p className="line-clamp-2 w-3/5 text-end">{data.productdetail.value8specifications}</p>
             </div>
             <div className="flex justify-between items-center p-4 text-slate-900 dark:text-slate-200">
               {data.productdetail.description9specifications}
-              <p>{data.productdetail.value9specifications}</p>
+              <p className="line-clamp-2 w-3/5 text-end">{data.productdetail.value9specifications}</p>
             </div>
             <div className="flex justify-between items-center bg-gray-500 bg-opacity-10 p-4 rounded-md text-slate-900 dark:text-slate-200">
               {data.productdetail.description10specifications}
-              <p>{data.productdetail.value10specifications}</p>
+            <p className="line-clamp-2 w-3/5 text-end">{data.productdetail.value10specifications}</p>
             </div>
           </div>
         </div>

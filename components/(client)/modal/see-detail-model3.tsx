@@ -62,6 +62,7 @@ const SeeDetail3Modal: React.FC<SeeDetail3Props> = ({
       description={message || supportPolicyMessage}
       isOpen={isOpen}
       onClose={onClose}
+      classNameCustom="max-h-[36rem] md:max-h-[55rem] xl:max-h-[40rem] overflow-y-auto"
     >
       <div className=" rounded-md">
         <h1 className=" bg-[#e5002d] rounded-md text-white font-bold p-2">

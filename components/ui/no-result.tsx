@@ -35,7 +35,6 @@ const NoResults = () => {
                     'url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif)',
                 }}
               >
-                <h1 className="text-xl xl:text-5xl">{notFoundMessage.notFound}</h1>
               </div>
               <div className="mt-5">
                 <h3 className="text-3xl xl:text-8xl font-bold text-slate-900">{notFoundMessage.noProduct}</h3>

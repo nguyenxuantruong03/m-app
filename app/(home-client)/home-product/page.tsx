@@ -1,4 +1,6 @@
 import LogicProduct from "@/components/(client)/product/logic-product";
+import { currentUser } from "@/lib/auth";
+import { getHomeProductMessage } from "@/translate/translate-client";
 import dynamic from "next/dynamic";
 
 const SlideItem = dynamic(
@@ -22,7 +24,6 @@ const MapAPI = dynamic(
 
 export const revalidate = 86400;
 const HomePage = async () => {
-  
 
   return (
     <>
@@ -35,3 +36,11 @@ const HomePage = async () => {
   );
 };
 export default HomePage;
+
+export async function generateMetadata() {
+  const user =  await currentUser()
+  const homeProductMessage = getHomeProductMessage(user?.language || "en")
+  return {
+    title: homeProductMessage.homeProduct,
+  };
+}

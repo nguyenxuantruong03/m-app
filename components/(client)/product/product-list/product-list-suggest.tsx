@@ -501,7 +501,6 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
           return (
             <SwiperSlide
               key={product.id}
-              className={`${productQuantityAll && "overflow-hidden"}`}
             >
               <div className="group px-3 bg-white cursor-pointer rounded-xl border shadow-inner relative">
                 <div onClick={() => handleClick(product.name)}>
@@ -509,18 +508,20 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
                     {productQuantityAll && (
                       <>
                         {/* Overlay mờ và text "Hết hàng" */}
-                        <div
-                          onClick={() => handleClick(product.name)}
-                          className="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-[9997]"
-                        >
-                          <div className="fixed z-[9999] top-[3px] right-[-95px] bg-red-500 text-white py-[15px] w-[350px] text-center transform rotate-[45deg] font-bold text-lg tracking-[2px] overflow-hidden">
+                        <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center z-[9997]">
+                          {/* Cũ */}
+                          {/* <div className="absolute z-[9999] top-[3px] right-[-95px] bg-red-600 text-white py-[15px] w-[350px] text-center transform rotate-[45deg] font-bold text-lg tracking-[2px] overflow-hidden">
                             <span className="inline-block duration-500 ease-in-out transform transition-transform w-full absolute left-[13%] top-1/2 translate-y-[-50%]">
                               {outOfStockMessage}
                             </span>
+                          </div> */}
+                          {/* Mới */}
+                          <div className="tag-outstock">
+                            <span className="tag-outstock-text">{outOfStockMessage}</span>
                           </div>
                         </div>
                       </>
-                    )}
+                     )}
                     <div className="aspect-square rounded-xl bg-gray-100 relative">
                       <Image
                         src={product?.images?.[0].url}
@@ -657,8 +658,8 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
             </SwiperSlide>
           );
         })}
-      </Swiper>
       {data.length > 10 && <PrevNextSwiper />}
+      </Swiper>
     </div>
   );
 };

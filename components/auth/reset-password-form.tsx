@@ -20,8 +20,10 @@ import FormSuccess from "@/components/form-success";
 import EmailField from "./field/emailfield";
 import { reset } from "@/actions/actions-signin-sign-up/reset";
 import {
+  getLoadingMessage,
   translateBackToLogin,
   translateForgotPassword,
+  translateResetPassword,
   translateSentToEmail,
 } from "@/translate/translate-client";
 
@@ -49,6 +51,16 @@ const ResetPasswordForm = () => {
   const backToLoginMessage = translateBackToLogin(languageToUse);
   const forgotPasswordMessage = translateForgotPassword(languageToUse);
   const sentToEmailMessage = translateSentToEmail(languageToUse);
+  const resetPasswordMessage = translateResetPassword(languageToUse);
+  const loadingMessage = getLoadingMessage(languageToUse);
+
+  useEffect(() => {
+    if (isPending) {
+      document.title = loadingMessage.loading;
+    } else {
+      document.title = resetPasswordMessage;
+    }
+  }, [isPending]);
 
   // form bên dưới dùng để validate trường nhập theo loginForm bên dưới gọi form đẻ validate code đã xử lý ở  đây và bên dưới dùng destructuring để gọi hết vào
   const form = useForm<z.infer<typeof ResetSchema>>({

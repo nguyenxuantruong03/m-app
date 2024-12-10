@@ -213,8 +213,6 @@ const ArticleUser = ({
                 {liveVideoMessage}
               </Link>
 
-              <Separator orientation="vertical" className="mx-2 h-8" />
-
               <SortItem
                 setSortCriteria={setSortCriteria}
                 languageToUse={languageToUse}

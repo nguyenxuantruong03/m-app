@@ -12,6 +12,27 @@ export const publicRoutes = [
   "/auth/error",
   "/auth/errorban",
   "/auth/errorbanforever",
+  "/cart",
+  "/category[0-11]+/.+",
+  "/checkoutcash",
+  "/enterprise",
+  "/guarantee",
+  "/home",
+  "/home-product",
+  "/listproduct",
+  "/payment-fail",
+  "/payment-success",
+  "/policy",
+  "/post/*",
+  "/preorder",
+  "/product[0-11]+/.+",
+  "/promotional-code",
+  "/search",
+  "/tags/*",
+  "/utility",
+  "/warehouse/package-product",
+
+  "/api/*"
 ];
 
 /**
@@ -25,6 +46,9 @@ export const authRoutes = [
   "/auth/error",
   "/auth/reset",
   "/auth/new-password",
+  "/auth/errorban",
+  "/auth/errorbanforever",
+  "auth/new-verification"
 ];
 
 /**
@@ -39,3 +63,5 @@ export const apiAuthPrefix = "/api/auth";
  * @type {string}
  */
 export const DEFAULT_LOGIN_REDIRECT = "/";
+
+export const DEFAULT_LOGIN_REDIRECT_USER_or_GUEST = "/home-product"

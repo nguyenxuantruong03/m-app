@@ -13,11 +13,39 @@ const Enterprise = () => {
       const language = localStorage.getItem("language");
       setStoredLanguage(language);
     }
-  }, []);  
+  }, []);
 
   //language
   const languageToUse =
-  user?.id && user?.role !== "GUEST" ? user?.language : storedLanguage || "vi";
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+
+  const getEnterpriseMessage = (language: string) => {
+    switch (language) {
+      case "vi":
+        return "Doanh nghiệp";
+
+      case "en":
+        return "Enterprise";
+
+      case "zh":
+        return "企业";
+
+      case "fr":
+        return "Entreprise";
+
+      case "ja":
+        return "企業";
+
+      default:
+        return "Enterprise"; // Ngôn ngữ mặc định là tiếng Anh
+    }
+  };
+
+  useEffect(() => {
+    document.title = getEnterpriseMessage(languageToUse);
+  }, []);
 
   const getBusinessContactMessage = (language: string) => {
     switch (language) {

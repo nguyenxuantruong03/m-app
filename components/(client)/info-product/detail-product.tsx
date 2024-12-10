@@ -11,6 +11,7 @@ import {
   translateOtherSuggestions,
   translateOtherType,
 } from "@/translate/translate-client";
+import ErrorComponent from "@/components/ui/error";
 
 interface ProductDetailProps {
   data: Product;
@@ -41,69 +42,75 @@ const DetailProduct: React.FC<ProductDetailProps> = ({
 
   return (
     <>
-      <div className="px-4 py-8 sm:px-6 xl:px-8 mt-20">
-      <div className="xl:grid xl:grid-cols-2 xl:item-start xl:gap-x-8 mt-5">
-          <div className="sticky top-20 max-h-[calc(100vh-8rem)] overflow-y-auto">
-            <Gallery
-              images={images}
-              data={data}
+      {!data ? (
+        <ErrorComponent />
+      ) : (
+        <>
+          <div className="px-4 py-8 sm:px-6 xl:px-8 mt-20">
+            <div className="xl:grid xl:grid-cols-2 xl:item-start xl:gap-x-8 mt-5">
+              <div className="sticky top-20 max-h-[calc(100vh-8rem)] overflow-y-auto z-[9999]">
+                <Gallery
+                  images={images}
+                  data={data}
+                  languageToUse={languageToUse}
+                />
+              </div>
+              <div className="mt-10 px-4 sm:mt-16 sm:px-0 xl:mt-0">
+                <InfoProduct data={data} languageToUse={languageToUse} />
+              </div>
+            </div>
+          </div>
+          {/* Infomation khuyen mai va bao hanh */}
+          <div className="xl:max-w-7xl grid xl:grid-cols-2">
+            <InfoPromotion data={data} languageToUse={languageToUse} />
+            <div className="h-[580px] md:h-[460px] w-full shadow-lg mb-5 rounded-md overflow-hidden">
+              <InfoWarranty data={data} languageToUse={languageToUse} />
+            </div>
+          </div>
+          <hr className="my-10" />
+          <h1 className="font-bold text-3xl my-3 text-slate-900 dark:text-slate-200">
+            {otherSuggestionMessage}
+          </h1>
+          {productlistsuggest ? (
+            <ProductListSuggest
+              data={otherSuggestions}
+              route={routeOtherSuggestions}
               languageToUse={languageToUse}
             />
-          </div>
-          <div className="mt-10 px-4 sm:mt-16 sm:px-0 xl:mt-0">
-            <InfoProduct data={data} languageToUse={languageToUse} />
-          </div>
-        </div>
-      </div>
-      {/* Infomation khuyen mai va bao hanh */}
-      <div className="xl:max-w-7xl grid xl:grid-cols-2">
-        <InfoPromotion data={data} languageToUse={languageToUse} />
-        <div className="h-[580px] md:h-[460px] w-full shadow-lg mb-5 rounded-md overflow-hidden">
-          <InfoWarranty data={data} languageToUse={languageToUse} />
-        </div>
-      </div>
-      <hr className="my-10" />
-      <h1 className="font-bold text-3xl my-3 text-slate-900 dark:text-slate-200">
-        {otherSuggestionMessage}
-      </h1>
-      {productlistsuggest ? (
-        <ProductListSuggest
-          data={otherSuggestions}
-          route={routeOtherSuggestions}
-          languageToUse={languageToUse}
-        />
-      ) : (
-        <ProductListSingleSuggest
-          data={otherSuggestions}
-          route={routeOtherSuggestions}
-          languageToUse={languageToUse}
-        />
+          ) : (
+            <ProductListSingleSuggest
+              data={otherSuggestions}
+              route={routeOtherSuggestions}
+              languageToUse={languageToUse}
+            />
+          )}
+          <h1 className="font-bold text-3xl my-3 text-slate-900 dark:text-slate-200">
+            {otherTypeMessage}
+          </h1>
+          {/* Kiểm tra giá trị của suggest để hiển thị component phù hợp */}
+          {productlistsuggest2 ? (
+            <ProductListSuggest
+              data={other}
+              route={routeOther}
+              languageToUse={languageToUse}
+            />
+          ) : (
+            <ProductListSingleSuggest
+              data={other}
+              route={routeOther}
+              languageToUse={languageToUse}
+            />
+          )}
+          <hr className="my-8" />
+          <InfoProductDetail data={data} languageToUse={languageToUse} />
+          <Comment
+            data={data.id}
+            nameProduct={data.heading}
+            commentData={data.comment}
+            responsecommentData={data.responsecomment}
+          />
+        </>
       )}
-      <h1 className="font-bold text-3xl my-3 text-slate-900 dark:text-slate-200">
-        {otherTypeMessage}
-      </h1>
-      {/* Kiểm tra giá trị của suggest để hiển thị component phù hợp */}
-      {productlistsuggest2 ? (
-        <ProductListSuggest
-          data={other}
-          route={routeOther}
-          languageToUse={languageToUse}
-        />
-      ) : (
-        <ProductListSingleSuggest
-          data={other}
-          route={routeOther}
-          languageToUse={languageToUse}
-        />
-      )}
-      <hr className="my-8" />
-      <InfoProductDetail data={data} languageToUse={languageToUse} />
-      <Comment
-        data={data.id}
-        nameProduct={data.heading}
-        commentData={data.comment}
-        responsecommentData={data.responsecomment}
-      />
     </>
   );
 };

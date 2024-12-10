@@ -10,6 +10,7 @@ import FormError from "@/components/form-error";
 import FormSuccess from "@/components/form-success";
 import {
   getToastError,
+  getVerificationMessage,
   translateBackToLogin,
   translateConfirmingVerification,
   translateMissingToken,
@@ -41,6 +42,11 @@ const NewVerificationForm = () => {
   const confirmingVerificationMessage =
     translateConfirmingVerification(languageToUse);
   const backToLoginMessage = translateBackToLogin(languageToUse);
+  const verificationMessage = getVerificationMessage(languageToUse);
+
+  useEffect(() => {
+    document.title = verificationMessage.newVerification;
+  }, []);
 
   const onSubmit = useCallback(() => {
     if (success || error) return;

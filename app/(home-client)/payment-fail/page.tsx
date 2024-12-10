@@ -12,6 +12,7 @@ import {
   translatePaymentProcess,
   translateBackToPayment,
   translateBackToHome,
+  getPaymentFailureMessage,
 } from "@/translate/translate-client";
 
 const PaymentSuccess = () => {
@@ -40,6 +41,11 @@ const PaymentSuccess = () => {
   const paymentProcessMessage = translatePaymentProcess(languageToUse);
   const backToPaymentMessage = translateBackToPayment(languageToUse, countdown);
   const backToHomeMessage = translateBackToHome(languageToUse);
+  const paymentFailureMessage = getPaymentFailureMessage(languageToUse);
+
+  useEffect(() => {
+    document.title = paymentFailureMessage.paymentFailure;
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {

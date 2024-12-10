@@ -10,7 +10,7 @@ import { getError } from "@/translate/translate-client";
 export default function ErrorComponent({
   reset,
 }: {
-  reset: () => void;
+  reset?: () => void;
 }) {
   const user = useCurrentUser();
   const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
@@ -44,7 +44,7 @@ export default function ErrorComponent({
     <div className="flex items-center space-x-1">
           <button
             className="p-2 bg-red-500 text-white rounded-xl hover:bg-green-600"
-            onClick={() => reset()}
+            onClick={() => (reset ? reset() : window.location.reload())}
           >
             {errorMessage.tryAgain}
           </button>

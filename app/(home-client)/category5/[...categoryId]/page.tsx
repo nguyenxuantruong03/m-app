@@ -8,8 +8,9 @@ import { useEffect, useState } from "react";
 import { Billboard, Color, Product, Size } from "@/types/type";
 import DetailCategory from "@/components/(client)/category/detail-category";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getToastError } from "@/translate/translate-client";
+import { getCategoryMessage } from "@/translate/translate-client";
 import toast from "react-hot-toast";
+import LoadingPageComponent from "@/components/ui/loading";
 export const revalidate = 7200;
 
 interface CategoryPageProps {
@@ -36,6 +37,8 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
   const [maxPrice, setMaxPrice] = useState<number>(0);
   const [maxPriceInDatas, setMaxPriceInDatas] = useState<number>(0);
   const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [categoryName, setCategoryName] = useState<string>('');
 
   useEffect(() => {
     // Check if we're running on the client side
@@ -50,7 +53,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
     user?.id && user?.role !== "GUEST"
       ? user?.language
       : storedLanguage || "vi";
-  const toastErrorMessage = getToastError(languageToUse);
+      const categoryMessage = getCategoryMessage(languageToUse);
 
   const handlePriceChange = (min: number, max: number) => {
     setMinPrice(min);
@@ -64,6 +67,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true)
         // Sử dụng Promise.all để lấy tất cả dữ liệu cùng lúc
         const [billboardData, productData, sizeData, colorData] =
           await Promise.all([
@@ -84,6 +88,9 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
           params.categoryId.includes(product.productdetail.categoryId)
         );
 
+          // Lấy tên category từ sản phẩm đầu tiên (nếu có)
+      const categoryName = filteredProductData.length > 0 ? filteredProductData[0].productdetail.category.name : '';
+
         // Tìm giá cao nhất trong danh sách sản phẩm
         const highestPrice = filteredProductData.reduce(
           (max, product) =>
@@ -103,14 +110,32 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
         setProduct(filteredProductData);
         setSize(sizeData);
         setColor(colorData);
+        setCategoryName(categoryName);
       } catch (error) {
-        toast.error(toastErrorMessage);
+        toast.error(categoryMessage.notFound);
+      }finally{
+        setLoading(false)
       }
     };
 
     fetchData();
   }, [params.categoryId, searchParams.sizeId, searchParams.colorId]);
+
+  useEffect(() => {
+    if (loading) {
+      document.title = categoryMessage.loading;
+    } else if (categoryName) {
+      document.title = categoryName;
+    } else {
+      document.title = categoryMessage.default;
+    }
+  }, [categoryName, loading]);
+  
   return (
+    <>
+      {loading ? (
+        <LoadingPageComponent />
+      ) : (
     <Container>
       <DetailCategory
         languageToUse={languageToUse}
@@ -127,6 +152,8 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
         route="product5"
       />
     </Container>
+    )}
+    </>
   );
 };
 

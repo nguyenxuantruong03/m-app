@@ -1,6 +1,7 @@
 "use client";
 import CardWrapper from "@/components/auth/card-wrapper";
 import {
+  getViolationMessage,
   translateAccountBanned,
   translateAccountSuspended,
   translateBackToLogin,
@@ -26,6 +27,11 @@ const ErrorCardBan = () => {
   const accountSuspendedMessage = translateAccountSuspended(languageToUse);
   const backtoLoginMessage = translateBackToLogin(languageToUse);
   const accountBannedMessage = translateAccountBanned(languageToUse);
+  const ViolationMessage = getViolationMessage(languageToUse);
+
+  useEffect(() => {
+    document.title = ViolationMessage.violation;
+  }, []);
 
   return (
     <CardWrapper

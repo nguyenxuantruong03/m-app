@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Container from "@/components/ui/container";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useEffect, useState } from "react";
@@ -13,11 +13,34 @@ const Policy = () => {
       const language = localStorage.getItem("language");
       setStoredLanguage(language);
     }
-  }, []);  
+  }, []);
 
   //language
   const languageToUse =
-  user?.id && user?.role !== "GUEST" ? user?.language : storedLanguage || "vi";
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+
+  const translatePolicy = (language: string) => {
+    switch (language) {
+      case "vi":
+        return "Chính sách"; // Vietnamese
+      case "en":
+        return "Policy"; // English
+      case "zh":
+        return "政策"; // Chinese
+      case "fr":
+        return "Politique"; // French
+      case "ja":
+        return "ポリシー"; // Japanese
+      default:
+        return "Policy"; // Default case if language is not found
+    }
+  };
+
+  useEffect(() => {
+    document.title = translatePolicy(languageToUse);
+  }, []);
 
   const getOrderPolicyAndLegalityMessage = (language: string) => {
     switch (language) {

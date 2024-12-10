@@ -18,6 +18,7 @@ import {
 } from "@/components/(client)/export-product-compare/size-color/match-color-size";
 import {
   getBuyNowTranslation,
+  getCartMessage,
   getCartTranslation,
   getEmptyCartMessage,
   getToastError,
@@ -52,6 +53,7 @@ const CartPage = () => {
   const cartTransalation = getCartTranslation(languageToUse);
   const emptyeCartMesage = getEmptyCartMessage(languageToUse);
   const buynowTranslation = getBuyNowTranslation(languageToUse);
+  const cartMessage = getCartMessage(languageToUse);
 
   const handleBuyNow = () => {
     router.push("/home-product");
@@ -170,6 +172,14 @@ const CartPage = () => {
       };
     }
   }, []);
+
+  useEffect(() => {
+    if (loading || loadingChangeData || loadingChangeLocal || loadingfetchData) {
+      document.title = cartMessage.loading;
+    } else {
+      document.title = cartMessage.cart;
+    }
+  }, [loading,loadingChangeData,loadingChangeLocal,loadingfetchData]);
 
   useEffect(() => {
     setIsMounted(true);

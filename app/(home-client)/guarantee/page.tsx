@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Container from "@/components/ui/container";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useEffect, useState } from "react";
@@ -13,12 +13,35 @@ const Guarantee = () => {
       const language = localStorage.getItem("language");
       setStoredLanguage(language);
     }
-  }, []);  
+  }, []);
 
   //language
   const languageToUse =
-  user?.id && user?.role !== "GUEST" ? user?.language : storedLanguage || "vi";
-  
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+
+  const translateGuarantee = (language: string) => {
+    switch (language) {
+      case "vi":
+        return "Bảo hành"; // Vietnamese
+      case "en":
+        return "Guarantee"; // English
+      case "zh":
+        return "保证"; // Chinese
+      case "fr":
+        return "Garantie"; // French
+      case "ja":
+        return "保証"; // Japanese
+      default:
+        return "Guarantee"; // Default case if language is not found
+    }
+  };
+
+  useEffect(() => {
+    document.title = translateGuarantee(languageToUse);
+  }, []);
+
   const getWarrantyPolicyMessage = (language: string) => {
     switch (language) {
       case "vi":

@@ -9,6 +9,7 @@ import {
   getToastError,
   translateChatSettingUpdated,
 } from "@/translate/translate-client";
+import FormDelay from "./form-delay";
 
 type FieldTypes = "isChatEnabled" | "isChatDelayed" | "isChatFollowersOnly";
 
@@ -17,12 +18,14 @@ interface ToggleCardProps {
   label: string;
   value: boolean;
   languageToUse: string;
+  timeDelay?: number;
 }
 
 export const ToggleCard = ({
   field,
   label,
   value = false,
+  timeDelay,
   languageToUse,
 }: ToggleCardProps) => {
   const [isPending, startTransition] = useTransition();
@@ -41,7 +44,7 @@ export const ToggleCard = ({
   return (
     <div className="rounded-xl bg-muted p-6">
       <div className="flex items-center justify-between">
-        <p className="font-semibold shrink-0">{label}</p>
+        <p className="font-semibold shrink-0 text-sky-300">{label}</p>
         <div className="space-y-2">
           <Switch
             onCheckedChange={onChange}
@@ -52,6 +55,11 @@ export const ToggleCard = ({
           </Switch>
         </div>
       </div>
+        {
+          field === "isChatDelayed" && (
+            <FormDelay data={timeDelay || 3} languageToUse={languageToUse}/>
+          )
+        }
     </div>
   );
 };

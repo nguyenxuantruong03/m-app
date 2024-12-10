@@ -2,6 +2,7 @@ import InfoSocial from "@/app/(setting-user)/components/info-social";
 import InfoUser from "@/app/(setting-user)/components/info-user";
 import prismadb from "@/lib/prismadb";
 import {
+  translateAccountInfo,
   translateBasicInfo,
   translateManagePersonalInfo,
   translateManageProfile,
@@ -94,3 +95,12 @@ const SettingProfilePage = async ({
   );
 };
 export default SettingProfilePage;
+
+
+export async function generateMetadata() {
+  const user =  await currentUser()
+  const AccountInfoMessage = translateAccountInfo(user?.language || "en")
+  return {
+    title: AccountInfoMessage,
+  };
+}

@@ -21,6 +21,7 @@ import {
   translateExpiryDate,
   translateWarehouse,
   translateSavedSuccessfully,
+  getVoucherMessages,
 } from "@/translate/translate-client";
 const Voucher = () => {
   const user = useCurrentUser();
@@ -52,6 +53,15 @@ const Voucher = () => {
   const saveMessage = translateSave(languageToUse);
   const noteMessage = translateNote(languageToUse);
   const discountCodeNotice = translateDiscountCodeNotice(languageToUse);
+  const voucherMessage = getVoucherMessages(languageToUse);
+
+  useEffect(() => {
+    if (loading) {
+      document.title = voucherMessage.loading;
+    } else {
+      document.title = voucherMessage.voucher;
+    }
+  }, [loading]);
 
   useEffect(() => {
     const fetchData = async () => {

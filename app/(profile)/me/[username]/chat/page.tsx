@@ -5,7 +5,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ToggleCardSkeleton } from "./_components/toggle-card";
 import { notFound } from "next/navigation";
 import FormDelay from "./_components/form-delay";
-import { getChatStatus, translateChatSettings, translateNoStreamKey } from "@/translate/translate-client";
+import { getChatConfigMessage, getChatStatus, translateChatSettings, translateNoStreamKey } from "@/translate/translate-client";
+import { currentUser } from "@/lib/auth";
 const ChatPage = async () => {
   const self = await getSelf();
   //language
@@ -58,8 +59,8 @@ const ChatPage = async () => {
           label={chatStatusMessage.delayChat}
           value={stream.isChatDelayed}
           languageToUse={languageToUse}
+          timeDelay={stream.timeDelay}
         />
-        <FormDelay data={stream.timeDelay} languageToUse={languageToUse}/>
         <ToggleCard
           field="isChatFollowersOnly"
           label={chatStatusMessage.mustFollowToChat}
@@ -71,3 +72,11 @@ const ChatPage = async () => {
   );
 };
 export default ChatPage;
+
+export async function generateMetadata() {
+  const curentUsers = await currentUser()
+  const chatConfigMessage = getChatConfigMessage(curentUsers?.language || "en")
+  return {
+    title: chatConfigMessage.chatConfig
+  };
+}

@@ -1,14 +1,15 @@
 import { StreamPlayer, StreamPlayerSkeleton } from "@/components/stream-player";
+import { currentUser } from "@/lib/auth";
 import { getSelf } from "@/lib/stream/auth-service";
 import { getUserByUsername } from "@/lib/user-service";
-import { translateNoStreamKey } from "@/translate/translate-client";
+import { getLiveStreamMessage, getOfflineMessage, translateNoStreamKey } from "@/translate/translate-client";
 import { notFound } from "next/navigation";
-interface CreatorProps {
+interface LivePageProps {
   params: {
     username: string;
   };
 }
-const CreatorPage = async ({ params }: CreatorProps) => {
+const CreatorPage = async ({ params }: LivePageProps) => {
   const user = await getUserByUsername(params.username);
   const self = await getSelf();
   //language
@@ -51,3 +52,13 @@ const CreatorPage = async ({ params }: CreatorProps) => {
   );
 };
 export default CreatorPage;
+
+export async function generateMetadata({ params }: LivePageProps) {
+  const user = await getUserByUsername(params.username);
+  const curentUsers = await currentUser()
+  const liveMessage = getLiveStreamMessage(curentUsers?.language || "en")
+  const offliveMessage = getOfflineMessage(curentUsers?.language || "en")
+  return {
+    title: user && user.stream && user.stream.isLive ? `${liveMessage.liveStream} ${user?.nameuser}` : `${offliveMessage.offline} ${user?.nameuser}`,
+  };
+}

@@ -43,6 +43,7 @@ import {
   translateReturnItem,
   translateOrderCancelled,
   translateCancelOrder,
+  getReturnProductMessages,
 } from "@/translate/translate-client";
 import getCart from "@/actions/client/cart";
 
@@ -91,6 +92,15 @@ const ReturnProdcut = () => {
   const reuturnItemMessage = translateReturnItem(languageToUse);
   const orderCancelledMessage = translateOrderCancelled(languageToUse);
   const cancelOrderMessage = translateCancelOrder(languageToUse);
+  const returnProductMessage = getReturnProductMessages(languageToUse);
+
+  useEffect(() => {
+    if (loading ) {
+      document.title = returnProductMessage.loading;
+    } else {
+      document.title = returnProductMessage.returning;
+    }
+  }, [loading]);
 
   // Function to handle opening the review modal with a specific order
   const handleOpenReview = (order: Order) => {

@@ -47,6 +47,10 @@ const UtilityPage = () => {
   const packageProductMessage = translatePackageProduct(languageToUse);
 
   useEffect(() => {
+    document.title = ubilityMessage;
+  }, []);
+
+  useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth > 640);
     };

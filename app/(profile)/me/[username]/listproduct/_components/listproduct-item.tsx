@@ -11,6 +11,7 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { getAllProductNotQuery } from "@/actions/client/products/get-products";
 import {
   getListProductItem,
+  getProductListMessage,
   getToastError,
   translateBathroom,
   translateCommonUse,
@@ -67,6 +68,15 @@ const ListProductItem = () => {
   const lightBlubMessage = translateLightBulb(languageToUse);
   const commonUseMessage = translateCommonUse(languageToUse);
   const listProductItemMessage = getListProductItem(languageToUse);
+  const productListMessage = getProductListMessage(languageToUse);
+
+  useEffect(() => {
+    if (loading ) {
+      document.title = productListMessage.loading;
+    } else {
+      document.title = productListMessage.productList;
+    }
+  }, [loading]);
 
   useEffect(() => {
     const fetchData = async () => {

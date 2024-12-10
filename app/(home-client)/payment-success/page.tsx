@@ -49,6 +49,7 @@ import {
   translateBeforeClosingBrowser,
   translateBackToPayment,
   translateBackToHome,
+  getPaymentSuccessMessages,
 } from "@/translate/translate-client";
 
 const PaymentSuccess = () => {
@@ -107,6 +108,7 @@ const PaymentSuccess = () => {
     translateBeforeClosingBrowser(languageToUse);
   const backToPaymentMessage = translateBackToPayment(languageToUse, countdown);
   const backToHomeMessage = translateBackToHome(languageToUse);
+  const paymentSuccessMessage = getPaymentSuccessMessages(languageToUse);
 
   const selectedItems = items.filter((item) =>
     cartdb.selectedItems.includes(item.id)
@@ -117,6 +119,14 @@ const PaymentSuccess = () => {
     const params = new URLSearchParams(window.location.search);
     return params.get(param);
   };
+
+  useEffect(() => {
+    if (loading ) {
+      document.title = paymentSuccessMessage.loading;
+    } else {
+      document.title = paymentSuccessMessage.paymentSuccess;
+    }
+  }, [loading]);
 
   //Total Coins
   useEffect(() => {

@@ -1,5 +1,7 @@
 import { Suspense } from "react";
 import { Results, ResultSkeleton } from "./_components/results";
+import { currentUser } from "@/lib/auth";
+import { getListLiveMessage } from "@/translate/translate-client";
 
 export default function Page() {
   return (
@@ -9,4 +11,12 @@ export default function Page() {
       </Suspense>
     </div>
   );
+}
+
+export async function generateMetadata() {
+  const user =  await currentUser()
+  const listLiveMessage = getListLiveMessage(user?.language || "en")
+  return {
+    title: listLiveMessage.listLive,
+  };
 }

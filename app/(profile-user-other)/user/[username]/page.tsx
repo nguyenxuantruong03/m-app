@@ -6,6 +6,7 @@ import {
 } from "@/lib/stream/block-service";
 import { isFollowingUser } from "@/lib/stream/follow-service";
 import { getUserByUsername } from "@/lib/user-service";
+import { getUserMessage } from "@/translate/translate-client";
 import { notFound } from "next/navigation";
 
 interface UserPageProps {
@@ -47,3 +48,12 @@ const UserPage = async ({ params }: UserPageProps) => {
 };
 
 export default UserPage;
+
+export async function generateMetadata({ params }: UserPageProps) {
+  const self = await getUserByUsername(params.username);
+  const curentUsers = await currentUser()
+  const userMessage = getUserMessage(curentUsers?.language || "en")
+  return {
+    title: `${userMessage.user} ${self?.nameuser}`,
+  };
+}

@@ -41,6 +41,7 @@ import {
   translateNoOrder,
   translateDeliverySuccessful,
   translateCompleted,
+  getDeliveredMessages,
 } from "@/translate/translate-client";
 import getCart from "@/actions/client/cart";
 
@@ -87,6 +88,15 @@ const DeliveredProduct = () => {
   const sizeCategoryMessage = translateSizeCategory(languageToUse);
   const deliverySuccessfulMessage = translateDeliverySuccessful(languageToUse);
   const completedMessage = translateCompleted(languageToUse);
+  const deliveredMessage = getDeliveredMessages(languageToUse);
+
+  useEffect(() => {
+    if (loading ) {
+      document.title = deliveredMessage.loading;
+    } else {
+      document.title = deliveredMessage.delivered;
+    }
+  }, [loading]);
 
   // Function to handle opening the review modal with a specific order
   const handleOpenReview = (order: Order) => {

@@ -1,6 +1,7 @@
 "use client";
 import CardWrapper from "@/components/auth/card-wrapper";
 import {
+  getBanPermanentMessage,
   translateAccountPermanentlyBanned,
   translateAccountPermanentlyBanneds,
   translateBackToLogin,
@@ -28,6 +29,11 @@ const ErrorCard = () => {
   const backToLoginMessage = translateBackToLogin(languageToUse);
   const accountPermanentlyBannedsMessage =
     translateAccountPermanentlyBanneds(languageToUse);
+  const banMessage = getBanPermanentMessage(languageToUse);
+
+    useEffect(() => {
+      document.title = banMessage.banPermanent;
+    }, []);
 
   return (
     <CardWrapper

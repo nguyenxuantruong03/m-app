@@ -1,5 +1,4 @@
 "use client";
-import LoadingPageComponent from "@/components/ui/loading";
 import MobileFilter from "@/components/(client)/filter-category/mobile-filter";
 import Filter from "@/components/(client)/filter-category/filter";
 import PriceRangeCategory from "@/components/ui/price-change-ranger-category";
@@ -25,6 +24,7 @@ import {
   translateSortNameAToZ,
   translateSortNameZToA,
 } from "@/translate/translate-client";
+import NoResults from "@/components/ui/no-result";
 
 interface DetailCategoryProps {
   billboard: Billboard | null;
@@ -174,7 +174,7 @@ const DetailCategory: React.FC<DetailCategoryProps> = ({
                   ))}
                 </div>
               </div>
-              {sortedProduct.length === 0 && <LoadingPageComponent />}
+              {sortedProduct.length === 0 && <NoResults />}
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {filterProductsByPrice(sortedProduct).map((item) => (
                   <ProductCard

@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import authConfig from "@/auth.config";
 import {
   DEFAULT_LOGIN_REDIRECT,
+  DEFAULT_LOGIN_REDIRECT_USER_or_GUEST,
   apiAuthPrefix,
   authRoutes,
   publicRoutes,
@@ -23,39 +24,50 @@ export default auth(
 
     // Đây là chức năng phần mềm trung gian chính. Nó kiểm tra xem tuyến hiện tại là tuyến xác thực API, tuyến xác thực hay tuyến công cộng.
     // Dựa trên những lần kiểm tra này, nó sẽ quyết định chuyển hướng người dùng sang một tuyến đường khác hay cho phép tiếp tục yêu cầu.
-    // const { nextUrl } = req;
-    // const isLoggedIn = !!req.auth;
+    const { nextUrl } = req;
+    const isLoggedIn = !!req.auth;
 
-    // const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
-    // const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
-    // const isAuthRoute = authRoutes.includes(nextUrl.pathname);
+        // Default redirect path
+    let redirectPath = DEFAULT_LOGIN_REDIRECT;
 
-    // if (isApiAuthRoute) {
-    //   return;
-    // }
+    // Update redirect path based on role
+    if (isLoggedIn) {
+      const userRole = req.auth?.user?.role;
+      if (userRole === "USER" || userRole === "GUEST") {
+        redirectPath = DEFAULT_LOGIN_REDIRECT_USER_or_GUEST;
+      }
+    }
 
-    // if (isAuthRoute) {
-    //   if (isLoggedIn) {
-    //     // Redirect to the default login redirect path
-    //     return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
-    //   }
-    //   // Allow unauthenticated users to access auth routes
-    //   return;
-    // }
+    const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
+    const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
+    const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
-    // if (!isLoggedIn && !isPublicRoute) {
-    //   let callbackUrl = nextUrl.pathname;
-    //   if (nextUrl.search) {
-    //     callbackUrl += nextUrl.search;
-    //   }
+    if (isApiAuthRoute) {
+      return;
+    }
 
-    //   const endcodeedCallbackUrl = encodeURIComponent(callbackUrl);
+    if (isAuthRoute) {
+      if (isLoggedIn) {
+        // Redirect based on the role
+        return Response.redirect(new URL(redirectPath, nextUrl));
+      }
+      // Allow unauthenticated users to access auth routes
+      return;
+    }
 
-    //   return Response.redirect(
-    //     new URL(`/auth/login?callbackUrl=${endcodeedCallbackUrl}`, nextUrl)
-    //   );
-    // }
-    // return;
+    if (!isLoggedIn && !isPublicRoute) {
+      let callbackUrl = nextUrl.pathname;
+      if (nextUrl.search) {
+        callbackUrl += nextUrl.search;
+      }
+
+      const endcodeedCallbackUrl = encodeURIComponent(callbackUrl);
+
+      return Response.redirect(
+        new URL(`/auth/login?callbackUrl=${endcodeedCallbackUrl}`, nextUrl)
+      );
+    }
+    return;
   }
 );
 

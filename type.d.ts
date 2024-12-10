@@ -5,7 +5,6 @@ declare module "canvas-confetti";
 declare module "react-mentions";
 declare module "react-sound";
 declare module "lodash";
-declare module "react-helmet";
 declare module "crypto-js";
 declare module 'react-copy-to-clipboard';
 declare module "use-sound" {

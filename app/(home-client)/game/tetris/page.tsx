@@ -10,6 +10,7 @@ import {
   translateDesktopOnlyMessage,
   translateNote,
   translateExperienceMessage,
+  getGameTetrisMessage,
 } from "@/translate/translate-client";
 export const revalidate = 86400;
 
@@ -36,6 +37,11 @@ const TetrisPage = () => {
   const desktopOnlyMessage = translateDesktopOnlyMessage(languageToUse);
   const noteMessage = translateNote(languageToUse);
   const experienceMessage = translateExperienceMessage(languageToUse);
+  const gameTetrisMessag = getGameTetrisMessage(languageToUse);
+
+  useEffect(() => {
+    document.title = gameTetrisMessag.game;
+  }, []);
 
   useEffect(() => {
     if (user?.role === "GUEST" || !user?.id) {

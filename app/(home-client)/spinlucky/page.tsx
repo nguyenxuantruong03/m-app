@@ -22,6 +22,7 @@ import {
   translateRefreshMessage,
   getToastError,
   translateOK,
+  getSpinLuckyMessage,
 } from "@/translate/translate-client";
 import toast from "react-hot-toast";
 export const revalidate = 86400;
@@ -77,6 +78,11 @@ const SpinCoinPage: React.FC = () => {
   const noteMessage = translateNote(languageToUse);
   const refreshMessage = translateRefreshMessage(languageToUse);
   const OKMessage = translateOK(languageToUse);
+  const spinlucky = getSpinLuckyMessage(languageToUse);
+
+  useEffect(() => {
+    document.title = spinlucky.spinLucky;
+  }, []);
 
   useEffect(() => {
     if (user?.role === "GUEST" || !user?.id) {

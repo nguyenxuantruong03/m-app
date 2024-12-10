@@ -58,6 +58,7 @@ const SeeDetailSpecifications: React.FC<SeeDetailSpecificationsProps> = ({
       description={message || serviceSummaryMessage}
       isOpen={isOpen}
       onClose={onClose}
+      classNameCustom="max-h-[36rem] md:max-h-[55rem] xl:max-h-[40rem] overflow-y-auto"
     >
       <div className="w-full space-y-2">
         <div className="bg-[#e5002d] rounded-md text-white font-bold p-2 text-center">
@@ -77,7 +78,7 @@ const SeeDetailSpecifications: React.FC<SeeDetailSpecificationsProps> = ({
                 ? `${desc[1]}:`
                 : ""}
             </span>
-            <p>
+            <p className="w-4/5 text-end">
               {typeof value[1] === "string" || typeof value[1] === "number"
                 ? value[1]
                 : ""}

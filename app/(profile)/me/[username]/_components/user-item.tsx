@@ -119,7 +119,7 @@ const UserItem = ({
             languageToUse={languageToUse}
           />
           {filteredReviews.length === 0 && (
-            <p className="text-center text-gray-400 font-semibold text-xl">
+            <p className="text-center text-gray-400 font-semibold text-xl mt-8">
               {noPostMessage}
             </p>
           )}

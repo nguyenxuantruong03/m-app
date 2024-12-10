@@ -27,6 +27,7 @@ import InfoProductPaymentDb from "./components/db/info-product-payment-db";
 import { PaymentSuccessCheckoutCashModal } from "@/components/(client)/modal/payment-success-checkoutCash";
 import {
   getBuyNowTranslation,
+  getCheckoutCashMessage,
   getCopiedToClipboardMessage,
   getEmptyCartMessage,
   getEnterAddressMessage,
@@ -139,6 +140,7 @@ const CheckoutCash = () => {
   const successMessage = getSuccessMessage(languageToUse);
   const orderMessage = getOrderMessage(languageToUse);
   const processingPaymentMessage = getProcessingPaymentMessage(languageToUse);
+  const checkoutCashMessage = getCheckoutCashMessage(languageToUse);
 
   //Total Coins
   useEffect(() => {
@@ -149,6 +151,14 @@ const CheckoutCash = () => {
       });
     }
   }, []);
+
+  useEffect(() => {
+    if (loading || loadingChangeLocal ) {
+      document.title = checkoutCashMessage.loading;
+    } else {
+      document.title = checkoutCashMessage.cashPayment;
+    }
+  }, [loading,loadingChangeLocal]);
 
   const handleBuyNow = () => {
     router.push("/home-product");

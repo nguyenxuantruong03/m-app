@@ -111,7 +111,7 @@ const FormDelay = ({ data, languageToUse }: FormDelayProps) => {
 
   return (
     <div className="mt-2">
-      <span className="underline text-xs cursor-pointer">
+      <span className="underline text-xs cursor-pointer text-amber-500">
         {open ? (
           <span
             onClick={() => {
@@ -151,6 +151,7 @@ const FormDelay = ({ data, languageToUse }: FormDelayProps) => {
                         type="number"
                         disabled={isPending}
                         placeholder={enterSecondMessage}
+                        className="dark:text-slate-200 text-slate-900"
                         {...field}
                         value={timeDelayValue} // Controlled input value in seconds
                         onChange={(e) => {
@@ -175,11 +176,10 @@ const FormDelay = ({ data, languageToUse }: FormDelayProps) => {
             {/* Inform the user about the time delay */}
             {timeDelayValue > 0 && (
               <div className="text-sm ">
-                {chatTimeLimitMessage}
+                <span className="dark:text-slate-200 text-slate-900">{chatTimeLimitMessage} </span>
                 <span className="text-red-500 font-semibold">
                   {timeDelayValue}s
                 </span>
-                .
               </div>
             )}
 

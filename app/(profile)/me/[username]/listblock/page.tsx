@@ -3,9 +3,11 @@ import { columns } from "./_components/column";
 import { DataTable } from "@/components/ui/data-table";
 
 import {
+  getListBlockMessage,
   translateListBlockSettings,
 } from "@/translate/translate-client";
 import { getSelf } from "@/lib/stream/auth-service";
+import { currentUser } from "@/lib/auth";
 
 const CommunityPage = async () => {
   const self = await getSelf();
@@ -47,3 +49,11 @@ const CommunityPage = async () => {
 };
 
 export default CommunityPage;
+
+export async function generateMetadata() {
+  const curentUsers = await currentUser()
+  const listBlockMessage = getListBlockMessage(curentUsers?.language || "en")
+  return {
+    title: listBlockMessage.listBlock
+  };
+}

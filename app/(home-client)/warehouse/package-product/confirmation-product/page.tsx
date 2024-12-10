@@ -41,6 +41,7 @@ import {
   translateNoOrder,
   translateWaitingForConfirmation,
   translateProcessing,
+  getConfirmationMessages,
 } from "@/translate/translate-client";
 import getCart from "@/actions/client/cart";
 
@@ -88,6 +89,15 @@ const ComfirmationProduct = () => {
   const waitingForConfirmationMessage =
     translateWaitingForConfirmation(languageToUse);
   const processingMessage = translateProcessing(languageToUse);
+  const confirmationMessage = getConfirmationMessages(languageToUse);
+
+  useEffect(() => {
+    if (loading ) {
+      document.title = confirmationMessage.loading;
+    } else {
+      document.title = confirmationMessage.waitingForConfirmation;
+    }
+  }, [loading]);
 
   // Function to handle opening the review modal with a specific order
   const handleOpenReview = (order: Order) => {

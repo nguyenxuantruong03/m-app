@@ -13,6 +13,7 @@ import {
   translatePasswordAndSecurity,
   translatePasswordManagementAndSecuritySettings,
   translatePasswordManagementAndTwoFactorVerification,
+  translatePasswordSecurity,
 } from "@/translate/translate-client";
 import { currentUser } from "@/lib/auth";
 import { notFound } from "next/navigation";
@@ -128,3 +129,11 @@ const PasswordSecurityPage = async ({ isCustomWarehouse }: PasswordSecurityProps
 };
 
 export default PasswordSecurityPage;
+
+export async function generateMetadata() {
+  const user =  await currentUser()
+  const PasswordSecurityMessage = translatePasswordSecurity(user?.language || "en")
+  return {
+    title: PasswordSecurityMessage,
+  };
+}

@@ -24,6 +24,7 @@ import {
   translateSortNameAToZ,
   translateSortNameZToA,
   translateHotDeals,
+  getFavoriteProductMessage,
 } from "@/translate/translate-client";
 import toast from "react-hot-toast";
 
@@ -58,6 +59,7 @@ const LikePage = () => {
   const sortNameAToZMessage = translateSortNameAToZ(languageToUse);
   const sortNameZToAMessage = translateSortNameZToA(languageToUse);
   const hotDealsMessage = translateHotDeals(languageToUse);
+  const favoriteProductMessage = getFavoriteProductMessage(languageToUse);
 
   const sortButtons = [
     {
@@ -105,6 +107,14 @@ const LikePage = () => {
       router.push("/home-product");
     }
   }, []);
+
+  useEffect(() => {
+    if (loading) {
+      document.title = favoriteProductMessage.loading;
+    } else {
+      document.title = favoriteProductMessage.favoriteProduct;
+    }
+  }, [loading]);
 
   //Handle sort product
   const handleSortChange = (sortType: any) => {

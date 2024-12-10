@@ -71,6 +71,7 @@ const SeeDetailModal: React.FC<SeeDetailProps> = ({
       description={message || serviceSummaryMessage}
       isOpen={isOpen}
       onClose={onClose}
+      classNameCustom="max-h-[36rem] md:max-h-[55rem] xl:max-h-[40rem] overflow-y-auto"
     >
       <div>
         <h1 className="text-center font-bold text-2xl">

@@ -94,6 +94,7 @@ import {
   translateShipperOnTheWay,
   translateReturnedItem,
   getWareHouseLocationProduct,
+  getLoadingMessage,
 } from "@/translate/translate-client";
 import LocationProduct from "@/components/(client)/location-product/location-product";
 import getCart from "@/actions/client/cart";
@@ -199,6 +200,7 @@ const WareHouseDetail = ({
   const onlinePaymentMessage = translateOnlinePayment(languageToUse);
   const warehouseLocaltionProductMessage =
   getWareHouseLocationProduct(languageToUse);
+  const loadingMessage = getLoadingMessage(languageToUse);
 
   const handleBuyNow = () => {
     router.push("/home-product");
@@ -528,6 +530,14 @@ const WareHouseDetail = ({
   const matchId = data.filter(
     (item: Order) => item.id === params.packageProductId
   );
+
+  useEffect(() => {
+    if (loading ) {
+      document.title = loadingMessage.loading;
+    } else {
+      document.title = matchId[0].orderItem[0].product?.name || matchId[0].name;
+    }
+}, [loading]);
 
   return (
     <div>

@@ -38,6 +38,7 @@ const SeePaymentWarningModal: React.FC<SeePaymentWarningProps> = ({
       description={message || `${amountNotSufficientMessage}.`}
       isOpen={isOpen}
       onClose={onClose}
+      classNameCustom="max-h-[36rem] md:max-h-[55rem] xl:max-h-[40rem] overflow-y-auto"
     >
       <div className="w-full">
         <div className=" bg-yellow-400 rounded-md font-bold p-2  ">

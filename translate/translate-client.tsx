@@ -20551,6 +20551,1391 @@ export const getLoadingFavoriteItem = (language: string): string => {
   }
 };
 
+export const getProductMessage = (language: string) => {
+  switch (language) {
+    case 'vi': 
+      return {
+        notFound: "Không tìm thấy sản phẩm!",
+        loading: "Đang tải sản phẩm...",
+        default: "Không tìm thấy sản phẩm!"
+      };
+      case 'en': 
+      return {
+        notFound: "Product Not Found",
+        loading: "Product Loading ...",
+        default: "Product Not Found"
+      };
+    case 'zh': 
+      return {
+        notFound: "找不到产品!",
+        loading: "产品加载中...",
+        default: "找不到产品!"
+      };
+
+    case 'fr': 
+      return {
+        notFound: "Produit introuvable!",
+        loading: "Chargement du produit...",
+        default: "Produit introuvable!"
+      };
+
+    case 'ja': 
+      return {
+        notFound: "製品が見つかりません！",
+        loading: "製品読み込み中...",
+        default: "製品が見つかりません！"
+      };
+
+    default: 
+      return {
+        notFound: "Product Not Found",
+        loading: "Product Loading ...",
+        default: "Product Not Found"
+      };
+  }
+}
+
+export const getCategoryMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        notFound: "Không tìm thấy sản phẩm!",
+        loading: "Đang tải danh mục ...",
+        default: "Không tìm thấy danh mục!"
+      };
+      case 'en':
+        return {
+          notFound: "Product not found!",
+          loading: "Category loading ...",
+          default: "Category not found!"
+        };
+
+    case 'zh':
+      return {
+        notFound: "未找到产品!",
+        loading: "类别加载中 ...",
+        default: "未找到类别!"
+      };
+
+    case 'fr':
+      return {
+        notFound: "Produit non trouvé!",
+        loading: "Chargement de la catégorie ...",
+        default: "Catégorie non trouvée!"
+      };
+
+    case 'ja':
+      return {
+        notFound: "製品が見つかりません!",
+        loading: "カテゴリー読み込み中 ...",
+        default: "カテゴリーが見つかりません!"
+      };
+
+    default:
+      return {
+        notFound: "Product not found!",
+        loading: "Category loading ...",
+        default: "Category not found!"
+      };
+  }
+}
+
+export const getCartMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        loading: "Đang xử lý...",
+        cart: "Giỏ hàng"
+      };
+      case 'en':
+        return {
+          loading: "Processing...",
+          cart: "Cart"
+        };
+
+    case 'zh':
+      return {
+        loading: "处理中...",
+        cart: "购物车"
+      };
+
+    case 'fr':
+      return {
+        loading: "En cours de traitement...",
+        cart: "Panier"
+      };
+
+    case 'ja':
+      return {
+        loading: "処理中 ...",
+        cart: "カート"
+      };
+
+    default:
+      return {
+        loading: "Processing...",
+        cart: "Cart"
+      };
+  }
+}
+
+export const getCheckoutCashMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        loading: "Đang xử lý...",
+        cashPayment: "Thanh toán tiền mặt"
+      };
+      case 'en':
+        return {
+          loading: "Processing...",
+          cashPayment: "Cash payment"
+        };
+    case 'zh':
+      return {
+        loading: "处理中...",
+        cashPayment: "现金支付"
+      };
+
+    case 'fr':
+      return {
+        loading: "En cours de traitement...",
+        cashPayment: "Paiement en espèces"
+      };
+
+    case 'ja':
+      return {
+        loading: "処理中 ...",
+        cashPayment: "現金払い"
+      };
+
+    default:
+      return {
+        loading: "Processing...",
+        cashPayment: "Cash payment"
+      };
+  }
+}
+
+export const getFavoriteProductMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        loading: "Đang xử lý...",
+        favoriteProduct: "Sản phẩm ưa thích"
+      };
+    case 'en':
+      return {
+        loading: "Processing...",
+        favoriteProduct: "Favorite product"
+      };
+    case 'zh':
+      return {
+        loading: "处理中...",
+        favoriteProduct: "最喜欢的产品"
+      };
+    case 'fr':
+      return {
+        loading: "En cours de traitement...",
+        favoriteProduct: "Produit préféré"
+      };
+    default:
+      return {
+        loading: "Processing...",
+        favoriteProduct: "Favorite product"
+      };
+  }
+}
+
+export const getGameMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        game: "Trò chơi"
+      };
+    case 'en':
+      return {
+        game: "Game"
+      };
+    case 'zh':
+      return {
+        game: "游戏"
+      };
+    case 'fr':
+      return {
+        game: "Jeu"
+      };
+    default:
+      return {
+        game: "Game"
+      };
+  }
+}
+
+export const getGameTetrisMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        game: "Tetris"
+      };
+    case 'en':
+      return {
+        game: "Tetris"
+      };
+    case 'zh':
+      return {
+        game: "Tetris"
+      };
+    case 'fr':
+      return {
+        game: "Tetris"
+      };
+    default:
+      return {
+        game: "Tetris"
+      };
+  }
+}
+
+export const getGamePacmanMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        game: "Pacman"
+      };
+    case 'en':
+      return {
+        game: "Pacman"
+      };
+    case 'zh':
+      return {
+        game: "吃豆人"
+      };
+    case 'fr':
+      return {
+        game: "Pacman"
+      };
+    default:
+      return {
+        game: "Pacman"
+      };
+  }
+}
+
+export const getGameMinesweeperMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        game: "Minesweeper"
+      };
+    case 'en':
+      return {
+        game: "Minesweeper"
+      };
+    case 'zh':
+      return {
+        game: "扫雷"
+      };
+    case 'fr':
+      return {
+        game: "Démineur"
+      };
+    default:
+      return {
+        game: "Minesweeper"
+      };
+  }
+}
+
+export const getGame2048Message = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        game: "2048"
+      };
+    case 'en':
+      return {
+        game: "2048"
+      };
+    case 'zh':
+      return {
+        game: "2048"
+      };
+    case 'fr':
+      return {
+        game: "2048"
+      };
+    default:
+      return {
+        game: "2048"
+      };
+  }
+}
+
+export const getHomeMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        home: "Trang chủ"
+      };
+    case 'en':
+      return {
+        home: "Home"
+      };
+    case 'zh':
+      return {
+        home: "主页"
+      };
+    case 'fr':
+      return {
+        home: "Accueil"
+      };
+    default:
+      return {
+        home: "Home"
+      };
+  }
+}
+
+export const getHomeProductMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        homeProduct: "Sản phẩm trang chủ"
+      };
+    case 'en':
+      return {
+        homeProduct: "Home Product"
+      };
+    case 'zh':
+      return {
+        homeProduct: "主页产品"
+      };
+    case 'fr':
+      return {
+        homeProduct: "Produit d'accueil"
+      };
+    default:
+      return {
+        homeProduct: "Home Product"
+      };
+  }
+}
+
+export const getListProductMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        listProduct: "Danh sách sản phẩm"
+      };
+    case 'en':
+      return {
+        listProduct: "List Product"
+      };
+    case 'zh':
+      return {
+        listProduct: "产品列表"
+      };
+    case 'fr':
+      return {
+        listProduct: "Liste produit"
+      };
+    default:
+      return {
+        listProduct: "List Product"
+      };
+  }
+}
+
+export const getPaymentFailureMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        paymentFailure: "Thanh toán thất bại"
+      };
+    case 'en':
+      return {
+        paymentFailure: "Payment failed"
+      };
+    case 'zh':
+      return {
+        paymentFailure: "支付失败"
+      };
+    case 'fr':
+      return {
+        paymentFailure: "Échec du paiement"
+      };
+    default:
+      return {
+        paymentFailure: "Payment failed"
+      };
+  }
+}
+
+export const getPaymentSuccessMessages = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        paymentSuccess: "Thanh toán thành công",
+        loading: "Đang xử lý..."
+      };
+    case 'en':
+      return {
+        paymentSuccess: "Payment successful",
+        loading: "Processing..."
+      };
+    case 'zh':
+      return {
+        paymentSuccess: "支付成功",
+        loading: "处理中..."
+      };
+    case 'fr':
+      return {
+        paymentSuccess: "Paiement réussi",
+        loading: "En cours de traitement..."
+      };
+    default:
+      return {
+        paymentSuccess: "Payment successful",
+        loading: "Processing..."
+      };
+  }
+}
+
+export const getSearchMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        search: "Tìm kiếm"
+      };
+    case 'en':
+      return {
+        search: "Search"
+      };
+    case 'zh':
+      return {
+        search: "搜索"
+      };
+    case 'fr':
+      return {
+        search: "Recherche"
+      };
+    default:
+      return {
+        search: "Search"
+      };
+  }
+}
+
+export const getSpinLuckyMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        spinLucky: "Quay may mắn"
+      };
+    case 'en':
+      return {
+        spinLucky: "Spin Lucky"
+      };
+    case 'zh':
+      return {
+        spinLucky: "幸运转盘"
+      };
+    case 'fr':
+      return {
+        spinLucky: "Roulette chance"
+      };
+    default:
+      return {
+        spinLucky: "Spin Lucky"
+      };
+  }
+}
+
+export const getVoucherMessages = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        loading: "Đang xử lý...",
+        voucher: "Voucher giảm giá"
+      };
+    case 'en':
+      return {
+        loading: "Processing...",
+        voucher: "Voucher"
+      };
+    case 'zh':
+      return {
+        loading: "处理中...",
+        voucher: "优惠券"
+      };
+    case 'fr':
+      return {
+        loading: "En cours de traitement...",
+        voucher: "Bon de réduction"
+      };
+    default:
+      return {
+        loading: "Processing...",
+        voucher: "Voucher"
+      };
+  }
+}
+
+export const getPackageProductMessages = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        loading: "Đang xử lý...",
+        allOrders: "Tất cả đơn hàng"
+      };
+    case 'en':
+      return {
+        loading: "Processing...",
+        allOrders: "All Orders"
+      };
+    case 'zh':
+      return {
+        loading: "处理中...",
+        allOrders: "所有订单"
+      };
+    case 'fr':
+      return {
+        loading: "En cours de traitement...",
+        allOrders: "Toutes les commandes"
+      };
+    default:
+      return {
+        loading: "Processing...",
+        allOrders: "All Orders"
+      };
+  }
+}
+
+export const getConfirmationMessages = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        loading: "Đang xử lý...",
+        waitingForConfirmation: "Chờ xác nhận"
+      };
+    case 'en':
+      return {
+        loading: "Processing...",
+        waitingForConfirmation: "Waiting for confirmation"
+      };
+    case 'zh':
+      return {
+        loading: "处理中...",
+        waitingForConfirmation: "等待确认"
+      };
+    case 'fr':
+      return {
+        loading: "En cours de traitement...",
+        waitingForConfirmation: "En attente de confirmation"
+      };
+    default:
+      return {
+        loading: "Processing...",
+        waitingForConfirmation: "Waiting for confirmation"
+      };
+  }
+}
+
+export const getDeliveredMessages = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        loading: "Đang xử lý...",
+        delivered: "Đã giao"
+      };
+    case 'en':
+      return {
+        loading: "Processing...",
+        delivered: "Delivered"
+      };
+    case 'zh':
+      return {
+        loading: "处理中...",
+        delivered: "已交付"
+      };
+    case 'fr':
+      return {
+        loading: "En cours de traitement...",
+        delivered: "Livré"
+      };
+    default:
+      return {
+        loading: "Processing...",
+        delivered: "Delivered"
+      };
+  }
+}
+
+export const getDeliveringMessages = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        loading: "Đang xử lý...",
+        delivering: "Đang giao"
+      };
+    case 'en':
+      return {
+        loading: "Processing...",
+        delivering: "Delivering"
+      };
+    case 'zh':
+      return {
+        loading: "处理中...",
+        delivering: "配送中"
+      };
+    case 'fr':
+      return {
+        loading: "En cours de traitement...",
+        delivering: "En cours de livraison"
+      };
+    default:
+      return {
+        loading: "Processing...",
+        delivering: "Delivering"
+      };
+  }
+}
+
+export const getPrepareMessages = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        loading: "Đang xử lý...",
+        preparing: "Soạn hàng"
+      };
+    case 'en':
+      return {
+        loading: "Processing...",
+        preparing: "Preparing goods"
+      };
+    case 'zh':
+      return {
+        loading: "处理中...",
+        preparing: "准备商品"
+      };
+    case 'fr':
+      return {
+        loading: "En cours de traitement...",
+        preparing: "Préparation des marchandises"
+      };
+    default:
+      return {
+        loading: "Processing...",
+        preparing: "Preparing goods"
+      };
+  }
+}
+
+export const getReturnProductMessages = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        loading: "Đang xử lý...",
+        returning: "Trả hàng"
+      };
+    case 'en':
+      return {
+        loading: "Processing...",
+        returning: "Returning goods"
+      };
+    case 'zh':
+      return {
+        loading: "处理中...",
+        returning: "退货"
+      };
+    case 'fr':
+      return {
+        loading: "En cours de traitement...",
+        returning: "Retourner les marchandises"
+      };
+    default:
+      return {
+        loading: "Processing...",
+        returning: "Returning goods"
+      };
+  }
+}
+
+export const getTransportProductMessages = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        loading: "Đang xử lý...",
+        waitingForPickup: "Chờ lấy hàng"
+      };
+    case 'en':
+      return {
+        loading: "Processing...",
+        waitingForPickup: "Waiting for pickup"
+      };
+    case 'zh':
+      return {
+        loading: "处理中...",
+        waitingForPickup: "等待取货"
+      };
+    case 'fr':
+      return {
+        loading: "En cours de traitement...",
+        waitingForPickup: "En attente de la collecte"
+      };
+    default:
+      return {
+        loading: "Processing...",
+        waitingForPickup: "Waiting for pickup"
+      };
+  }
+}
+
+export const getLoadingMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        loading: "Đang xử lý..."
+      };
+    case 'en':
+      return {
+        loading: "Processing..."
+      };
+    case 'zh':
+      return {
+        loading: "处理中..."
+      };
+    case 'fr':
+      return {
+        loading: "En cours de traitement..."
+      };
+    default:
+      return {
+        loading: "Processing..."
+      };
+  }
+}
+
+
+export const getErrorMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        error: "Lỗi!"
+      };
+    case 'en':
+      return {
+        error: "Error!"
+      };
+    case 'zh':
+      return {
+        error: "错误！"
+      };
+    case 'fr':
+      return {
+        error: "Erreur !"
+      };
+    default:
+      return {
+        error: "Error!"
+      };
+  }
+}
+
+export const getViolationMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        violation: "Xử vi phạm"
+      };
+    case 'en':
+      return {
+        violation: "Handle violation"
+      };
+    case 'zh':
+      return {
+        violation: "处理违规"
+      };
+    case 'fr':
+      return {
+        violation: "Traiter la violation"
+      };
+    default:
+      return {
+        violation: "Handle violation"
+      };
+  }
+}
+
+export const getBanPermanentMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        banPermanent: "Cấm vĩnh viễn"
+      };
+    case 'en':
+      return {
+        banPermanent: "Permanent ban"
+      };
+    case 'zh':
+      return {
+        banPermanent: "永久封禁"
+      };
+    case 'fr':
+      return {
+        banPermanent: "Interdiction permanente"
+      };
+    default:
+      return {
+        banPermanent: "Permanent ban"
+      };
+  }
+}
+
+export const getPasswordNewMessages = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        loading: "Đang xử lý...",
+        newPassword: "Mật khẩu mới"
+      };
+    case 'en':
+      return {
+        loading: "Processing...",
+        newPassword: "New password"
+      };
+    case 'zh':
+      return {
+        loading: "处理中...",
+        newPassword: "新密码"
+      };
+    case 'fr':
+      return {
+        loading: "En cours de traitement...",
+        newPassword: "Nouveau mot de passe"
+      };
+    default:
+      return {
+        loading: "Processing...",
+        newPassword: "New password"
+      };
+  }
+}
+
+export const getVerificationMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        newVerification: "Xác minh mới"
+      };
+    case 'en':
+      return {
+        newVerification: "New verification"
+      };
+    case 'zh':
+      return {
+        newVerification: "新验证"
+      };
+    case 'fr':
+      return {
+        newVerification: "Nouvelle vérification"
+      };
+    default:
+      return {
+        newVerification: "New verification"
+      };
+  }
+}
+
+export const getExploreMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        explore: "Khám phá"
+      };
+    case 'en':
+      return {
+        explore: "Explore"
+      };
+    case 'zh':
+      return {
+        explore: "探索"
+      };
+    case 'fr':
+      return {
+        explore: "Explorer"
+      };
+    default:
+      return {
+        explore: "Explore"
+      };
+  }
+}
+
+export const getListLiveMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        listLive: "Danh sách trực tiếp"
+      };
+    case 'en':
+      return {
+        listLive: "Live list"
+      };
+    case 'zh':
+      return {
+        listLive: "直播列表"
+      };
+    case 'fr':
+      return {
+        listLive: "Liste en direct"
+      };
+    default:
+      return {
+        listLive: "Live list"
+      };
+  }
+}
+
+export const getLiveStreamMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        liveStream: "Trực tiếp"
+      };
+    case 'en':
+      return {
+        liveStream: "Livestream'"
+      };
+    case 'zh':
+      return {
+        liveStream: "直播流"
+      };
+    case 'fr':
+      return {
+        liveStream: "Stream en direct"
+      };
+    default:
+      return {
+        liveStream: "Livestream'"
+      };
+  }
+}
+
+export const getOfflineMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        offline: "Ngoại tuyến"
+      };
+    case 'en':
+      return {
+        offline: "Offline'"
+      };
+    case 'zh':
+      return {
+        offline: "离线"
+      };
+    case 'fr':
+      return {
+        offline: "Hors ligne"
+      };
+    default:
+      return {
+        offline: "Offline'"
+      };
+  }
+}
+
+
+export const getUserMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        user: "Người dùng"
+      };
+    case 'en':
+      return {
+        user: "User"
+      };
+    case 'zh':
+      return {
+        user: "用户"
+      };
+    case 'fr':
+      return {
+        user: "Utilisateur"
+      };
+    default:
+      return {
+        user: "User"
+      };
+  }
+}
+
+export const getChatConfigMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        chatConfig: "Cấu hình trò chuyện"
+      };
+    case 'en':
+      return {
+        chatConfig: "Chat config"
+      };
+    case 'zh':
+      return {
+        chatConfig: "聊天设置"
+      };
+    case 'fr':
+      return {
+        chatConfig: "Configuration du chat"
+      };
+    default:
+      return {
+        chatConfig: "Chat config"
+      };
+  }
+}
+
+export const getStreamKeysMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        streamKeys: "Khóa phát sóng"
+      };
+    case 'en':
+      return {
+        streamKeys: "Stream keys"
+      };
+    case 'zh':
+      return {
+        streamKeys: "流密钥"
+      };
+    case 'fr':
+      return {
+        streamKeys: "Clés de diffusion"
+      };
+    default:
+      return {
+        streamKeys: "Stream keys"
+      };
+  }
+}
+
+export const getListBlockMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        listBlock: "Danh sách bị chặn"
+      };
+    case 'en':
+      return {
+        listBlock: "List block"
+      };
+    case 'zh':
+      return {
+        listBlock: "被封锁的列表"
+      };
+    case 'fr':
+      return {
+        listBlock: "Liste des blocages"
+      };
+    default:
+      return {
+        listBlock: "List block"
+      };
+  }
+}
+
+export const getProductListMessage = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        loading: "Đang xử lý...",
+        productList: "Danh sách sản phẩm"
+      };
+    case 'en':
+      return {
+        loading: "Processing...",
+        productList: "Product list"
+      };
+    case 'zh':
+      return {
+        loading: "处理中...",
+        productList: "产品列表"
+      };
+    case 'fr':
+      return {
+        loading: "En cours de traitement...",
+        productList: "Liste des produits"
+      };
+    default:
+      return {
+        loading: "Processing...",
+        productList: "Product list"
+      };
+  }
+}
+
+export const getInfoHotProductDescriptions = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        titleCadivi: "Dây điện Cadivi",
+        descriptionCadivi: "Dây điện Cadivi là sản phẩm nổi bật của thương hiệu Cadivi, chuyên cung cấp các loại dây cáp chất lượng cao cho các ứng dụng điện dân dụng và công nghiệp. Với chất liệu đồng nguyên chất, dây điện Cadivi đảm bảo dẫn điện tốt, an toàn và bền bỉ. Dây có khả năng chống cháy, chịu nhiệt tốt, đáp ứng các tiêu chuẩn quốc tế về chất lượng. Sản phẩm được sử dụng rộng rãi trong các công trình xây dựng, hệ thống điện dân dụng và các ngành công nghiệp.",
+        
+        titleMPE: "Đèn Led MPE",
+        descriptionMPE: "Đèn LED MPE Bulb tiết kiệm năng lượng, có tuổi thọ lên đến 25,000 giờ, giảm chi phí thay thế và bảo trì. Ánh sáng ổn định, không nhấp nháy, mang lại sự thoải mái cho người sử dụng. Sản phẩm dễ lắp đặt, phù hợp cho cả gia đình và văn phòng. Đặc biệt, đèn thân thiện với môi trường, không chứa chất độc hại và có thể tái chế. Đây là lựa chọn lý tưởng để tiết kiệm điện và nâng cao chất lượng chiếu sáng.",
+        
+        titleDienQuang: "Ổ cắm Điện Quang",
+        descriptionDienQuang: "Ổ cắm Điện Quang là sản phẩm điện chất lượng cao, được sản xuất bởi thương hiệu Điện Quang nổi tiếng tại Việt Nam. Sản phẩm được thiết kế an toàn, chắc chắn, và dễ sử dụng, với khả năng chịu được tải trọng lớn, đảm bảo không xảy ra hiện tượng chập cháy. Ổ cắm Điện Quang được ứng dụng rộng rãi trong các gia đình, văn phòng và công trình xây dựng. Với tiêu chuẩn an toàn và độ bền cao, sản phẩm mang đến sự tiện lợi và bảo vệ tối ưu cho người sử dụng.",
+        
+        titleBinhMinh: "Ống nhựa Bình Minh",
+        descriptionBinhMinh: "Ống nhựa Bình Minh là sản phẩm ống nhựa chất lượng cao, được sản xuất bởi Công ty Cổ phần Ống nhựa Bình Minh. Sản phẩm được làm từ nguyên liệu PVC và uPVC, có độ bền cao, chịu được áp lực và hóa chất tốt, được sử dụng phổ biến trong các hệ thống cấp thoát nước, điện và xây dựng. Ống nhựa Bình Minh có khả năng chống ăn mòn, chống cháy, đảm bảo an toàn và tiết kiệm chi phí bảo trì. Đây là lựa chọn tin cậy cho các công trình dân dụng và công nghiệp.",
+        
+        titleSenko: "Quạt Senko",
+        descriptionSenko: "Quạt Senko là sản phẩm quạt điện nổi tiếng tại Việt Nam, được biết đến với thiết kế hiện đại, bền bỉ và hiệu suất làm mát cao. Các sản phẩm quạt Senko được sản xuất với công nghệ tiên tiến, đảm bảo an toàn, tiết kiệm điện năng và hoạt động êm ái. Quạt Senko có nhiều loại, từ quạt đứng, quạt treo tường đến quạt hộp, đáp ứng nhu cầu làm mát cho các không gian khác nhau. Sản phẩm được người tiêu dùng tin tưởng nhờ chất lượng ổn định và giá cả hợp lý.",
+        
+        titleApolo: "Keo Apolo",
+        descriptionApolo: "Keo Apolo là sản phẩm keo dán chất lượng cao, được sử dụng rộng rãi trong các ngành công nghiệp và gia đình. Với công thức đặc biệt, keo Apolo có khả năng kết dính mạnh mẽ, nhanh khô và chịu lực tốt, thích hợp để dán gỗ, kim loại, gạch, nhựa và các vật liệu khác. Keo Apolo không chứa các hóa chất độc hại, an toàn cho người sử dụng và thân thiện với môi trường. Sản phẩm được ưa chuộng nhờ tính hiệu quả, độ bền cao và giá thành hợp lý.",
+        
+        titleATM: "Sơn xịt ATM",
+        descriptionATM: "Sơn xịt ATM là sản phẩm sơn xịt chất lượng cao, được sản xuất để đáp ứng nhu cầu trang trí và bảo vệ bề mặt vật liệu. Sơn xịt ATM có khả năng bám dính tốt, khô nhanh và tạo lớp sơn mịn màng, bền màu. Sản phẩm thích hợp cho nhiều loại vật liệu như kim loại, gỗ, nhựa, và gạch. Sơn xịt ATM dễ sử dụng, không gây mùi khó chịu và có độ phủ cao, mang lại hiệu quả trang trí lâu dài. Đây là lựa chọn lý tưởng cho các công trình nhỏ và sửa chữa nhanh.",
+        
+        titlePinConO: "Pin Con Ó",
+        descriptionPinConO: "Pin Con Ó là sản phẩm pin chất lượng cao, được sản xuất tại Việt Nam, nổi bật với khả năng cung cấp năng lượng ổn định và bền bỉ. Pin Con Ó có nhiều loại, phù hợp với các thiết bị điện tử, đồ chơi, đèn pin, và các thiết bị gia dụng khác. Sản phẩm được người tiêu dùng tin tưởng nhờ tính năng lâu dài, khả năng chống rò rỉ và bảo vệ môi trường. Pin Con Ó mang đến sự tiện lợi và tiết kiệm chi phí cho người sử dụng, đáp ứng nhu cầu sử dụng hàng ngày.",
+        
+        titleDaCat: "Đá cắt Hải Dương",
+        descriptionDaCat: "Đá cắt Hải Dương là sản phẩm chất lượng cao, được sản xuất từ nguyên liệu bền vững, đáp ứng nhu cầu cắt các vật liệu như kim loại, gạch, bê tông và đá. Đá cắt Hải Dương có độ sắc bén cao, khả năng cắt nhanh và chính xác, giúp tiết kiệm thời gian và công sức. Sản phẩm được ứng dụng rộng rãi trong các ngành xây dựng, gia công kim loại, và sửa chữa. Với độ bền lâu dài và hiệu suất ổn định, đá cắt Hải Dương là lựa chọn đáng tin cậy cho người tiêu dùng.",
+        
+        titleVietTiep: "Ổ khóa Việt Tiệp",
+        descriptionVietTiep: "Ổ khóa Việt Tiệp là sản phẩm nổi tiếng tại Việt Nam, được biết đến với độ bền cao và tính bảo mật tốt. Sản phẩm được chế tạo từ thép hợp kim chắc chắn, chống cắt, chống va đập, đảm bảo an toàn cho tài sản. Ổ khóa Việt Tiệp có nhiều loại, phù hợp với nhu cầu sử dụng trong gia đình, văn phòng và các công trình xây dựng. Với thiết kế chắc chắn và dễ sử dụng, ổ khóa Việt Tiệp là lựa chọn tin cậy, giúp bảo vệ tài sản một cách hiệu quả.",
+        
+        titleKimTin: "Que hàn Kim Tín",
+        descriptionKimTin: "Que hàn Kim Tín là sản phẩm que hàn chất lượng cao, được sản xuất bởi thương hiệu Kim Tín, chuyên dùng trong các công việc hàn kim loại như sắt, thép, inox và các vật liệu khác. Que hàn Kim Tín có khả năng tạo mối hàn chắc chắn, mịn màng và chịu lực tốt. Sản phẩm có độ bền cao, dễ sử dụng và cho hiệu quả hàn ổn định. Với mức giá hợp lý và chất lượng vượt trội, que hàn Kim Tín là lựa chọn phổ biến trong các ngành xây dựng, cơ khí và sửa chữa.",
+        
+        titleInax: "Vòi sen tắm Inax",
+        descriptionInax: "Vòi sen tắm Inax là sản phẩm chất lượng cao, được thiết kế hiện đại và sang trọng, phù hợp cho mọi không gian phòng tắm. Với công nghệ tiên tiến, vòi sen tắm Inax có khả năng tiết kiệm nước, đồng thời mang lại trải nghiệm tắm mát mẻ và dễ chịu. Sản phẩm được làm từ chất liệu inox hoặc đồng mạ crom, chống gỉ sét và bền bỉ theo thời gian. Vòi sen tắm Inax dễ dàng lắp đặt và bảo dưỡng, là lựa chọn lý tưởng cho gia đình và các công trình xây dựng."
+      };
+
+    case 'en':
+      return {
+        titleCadivi: "Cadivi Electrical Cable",
+        descriptionCadivi: "Cadivi electrical cables are a standout product of the Cadivi brand, specializing in high-quality cables for both residential and industrial electrical applications. Made from pure copper, Cadivi cables ensure excellent conductivity, safety, and durability. The cables are fire-resistant, heat-resistant, and meet international quality standards. These products are widely used in construction projects, residential electrical systems, and various industries.",
+        
+        titleMPE: "MPE LED Bulb",
+        descriptionMPE: "MPE LED Bulbs are energy-efficient, with a lifespan of up to 25,000 hours, reducing replacement and maintenance costs. The light is stable, flicker-free, providing comfort to users. The product is easy to install and suitable for both home and office use. In particular, the bulb is environmentally friendly, free from harmful substances, and recyclable. It is an ideal choice for saving electricity and enhancing lighting quality.",
+        
+        titleDienQuang: "Dien Quang Power Socket",
+        descriptionDienQuang: "Dien Quang Power Socket is a high-quality electrical product manufactured by the renowned Dien Quang brand in Vietnam. Designed to be safe, sturdy, and user-friendly, it can handle high loads and prevent short circuits. The Dien Quang power socket is widely used in homes, offices, and construction projects. With high safety standards and durability, it provides convenience and optimal protection for users.",
+        
+        titleBinhMinh: "Binh Minh PVC Pipes",
+        descriptionBinhMinh: "Binh Minh PVC pipes are high-quality pipes manufactured by Binh Minh Plastic Joint Stock Company. Made from PVC and uPVC materials, they are highly durable and resistant to pressure and chemicals, commonly used in water supply systems, electricity, and construction. The pipes are corrosion-resistant, fire-resistant, and ensure safety and cost-effective maintenance. This is a trusted choice for both residential and industrial projects.",
+        
+        titleSenko: "Senko Fan",
+        descriptionSenko: "Senko fans are a well-known product in Vietnam, recognized for their modern design, durability, and high cooling performance. Senko fans are manufactured with advanced technology, ensuring safety, energy efficiency, and quiet operation. Senko offers various types of fans, from standing fans to wall-mounted and box fans, suitable for different spaces. The product is trusted for its stable quality and reasonable price.",
+        
+        titleApolo: "Apolo Glue",
+        descriptionApolo: "Apolo glue is a high-quality adhesive used widely in industrial and household applications. With its special formula, Apolo glue offers strong bonding, fast drying, and excellent resistance, making it suitable for gluing wood, metal, ceramic, plastic, and other materials. Apolo glue is non-toxic, safe for users, and environmentally friendly. It is popular for its efficiency, durability, and affordability.",
+        
+        titleATM: "ATM Spray Paint",
+        descriptionATM: "ATM spray paint is a high-quality product designed to meet the needs of decorating and protecting various surfaces. It adheres well, dries quickly, and creates a smooth, durable finish. Suitable for materials like metal, wood, plastic, and ceramics, ATM spray paint is easy to use and provides excellent coverage. It is an ideal choice for quick projects and repairs.",
+        
+        titlePinConO: "Con O Battery",
+        descriptionPinConO: "Con O batteries are high-quality power sources manufactured in Vietnam, known for their stable and long-lasting energy supply. Available in various types, Con O batteries are suitable for electronic devices, toys, flashlights, and household appliances. The product is trusted for its long life, leak-resistant features, and environmental friendliness. Con O batteries offer convenience and cost savings for everyday use.",
+        
+        titleDaCat: "Hai Duong Cutting Disc",
+        descriptionDaCat: "Hai Duong cutting discs are high-quality products designed to cut materials such as metal, stone, concrete, and ceramic. The discs are highly sharp, fast, and accurate, helping save time and effort. These products are widely used in construction, metalworking, and repair industries. With long-lasting durability and stable performance, Hai Duong cutting discs are a reliable choice for users.",
+        
+        titleVietTiep: "Viet Tiep Lock",
+        descriptionVietTiep: "Viet Tiep locks are a well-known product in Vietnam, known for their durability and high security. Manufactured from solid alloy steel, they resist cutting and impact, ensuring safety for property. Viet Tiep locks come in various types, suitable for homes, offices, and construction projects. With robust design and ease of use, Viet Tiep locks are a trusted choice for effective property protection.",
+        
+        titleKimTin: "Kim Tin Welding Rods",
+        descriptionKimTin: "Kim Tin welding rods are high-quality rods manufactured by Kim Tin, specifically designed for welding metals such as steel, stainless steel, and other materials. These rods create strong, smooth welds and are highly durable. They are easy to use and provide consistent welding results. With excellent quality and competitive pricing, Kim Tin welding rods are popular in construction, mechanical, and repair industries.",
+        
+        titleInax: "Inax Shower Head",
+        descriptionInax: "Inax shower heads are high-quality products designed with modern and elegant styles, suitable for any bathroom. With advanced technology, Inax shower heads save water while offering a refreshing and comfortable shower experience. Made from stainless steel or chrome-plated brass, they are rust-resistant and durable over time. Easy to install and maintain, Inax shower heads are an ideal choice for homes and construction projects."
+      };
+      case 'zh':
+  return {
+    titleCadivi: "Cadivi 电缆",
+    descriptionCadivi: "Cadivi 电缆是 Cadivi 品牌的突出产品，专门提供高质量的电缆，适用于住宅和工业电气应用。采用纯铜材料，确保良好的导电性、安全性和耐用性。电缆具备防火和耐高温性能，符合国际质量标准。广泛应用于建筑工程、住宅电气系统和工业领域。",
+    
+    titleMPE: "MPE LED 灯",
+    descriptionMPE: "MPE LED 灯泡节能，使用寿命长达 25,000 小时，减少更换和维护成本。稳定的光线，不闪烁，提供舒适的使用体验。该产品易于安装，适用于家庭和办公室。特别是，LED 灯环保，无有害物质，且可回收。是节能和提高照明质量的理想选择。",
+    
+    titleDienQuang: "Dien Quang 插座",
+    descriptionDienQuang: "Dien Quang 插座是由越南著名品牌 Dien Quang 生产的高质量电气产品。该插座设计安全、坚固、易于使用，具有承受大负荷的能力，确保不发生短路或火灾。广泛应用于家庭、办公室和建筑工程。符合安全标准，具有高耐用性，提供便利和最优保护。",
+    
+    titleBinhMinh: "Binh Minh PVC 管",
+    descriptionBinhMinh: "Binh Minh PVC 管是由 Binh Minh 管道公司生产的高质量塑料管。采用 PVC 和 uPVC 原料，具有高耐久性，能够承受高压和化学物质，广泛用于水管、电力和建筑系统。产品具有抗腐蚀、抗火性能，确保安全并节省维护成本。是住宅和工业项目的可靠选择。",
+    
+    titleSenko: "Senko 风扇",
+    descriptionSenko: "Senko 风扇是越南知名的电风扇产品，以现代设计、耐用性和高效的制冷性能著称。Senko 风扇采用先进技术制造，确保安全、节能、安静运行。多种款式可选，包括立式风扇、壁挂风扇和箱式风扇，适合不同空间的使用。凭借稳定的质量和合理的价格，深受消费者信赖。",
+    
+    titleApolo: "Apolo 胶水",
+    descriptionApolo: "Apolo 胶水是广泛应用于工业和家庭领域的高质量粘合剂。采用特殊配方，Apolo 胶水具有强大的粘结力、快速干燥和良好的耐力，适用于木材、金属、陶瓷、塑料等材料的粘接。无毒、安全且环保。凭借高效、耐用和合理的价格，深受用户喜爱。",
+    
+    titleATM: "ATM 喷漆",
+    descriptionATM: "ATM 喷漆是一款高质量的喷涂产品，适用于装饰和保护各种表面。具有良好的附着力，干燥迅速，能形成光滑、耐久的涂层。适用于金属、木材、塑料和陶瓷等多种材料，使用简便，覆盖力强。是快速项目和修复工作的理想选择。",
+    
+    titlePinConO: "Con O 电池",
+    descriptionPinConO: "Con O 电池是越南生产的高质量电池，以稳定、持久的能量供应著称。多种类型适用于电子设备、玩具、手电筒和家电。凭借长寿命、防漏设计和环保性能，深受消费者喜爱。Con O 电池提供便利和节省日常使用成本。",
+    
+    titleDaCat: "Hải Dương 切割片",
+    descriptionDaCat: "Hải Dương 切割片是高质量的切割工具，适用于切割金属、石材、混凝土和陶瓷等材料。该切割片锋利、快速且精准，能够节省时间和精力。广泛应用于建筑、金属加工和维修行业。凭借持久的耐用性和稳定的性能，Hải Dương 切割片是用户的可靠选择。",
+    
+    titleVietTiep: "Viet Tiep 锁",
+    descriptionVietTiep: "Viet Tiep 锁是越南知名的锁具品牌，以耐用性和高安全性著称。采用坚固的合金钢制造，抗切割和冲击，确保财产安全。Viet Tiep 锁有多种型号，适用于家庭、办公室和建筑项目。凭借稳固的设计和易于使用，Viet Tiep 锁是有效保护财产的可靠选择。",
+    
+    titleKimTin: "Kim Tin 焊条",
+    descriptionKimTin: "Kim Tin 焊条是 Kim Tin 品牌生产的高质量焊条，专为焊接钢、特钢、不锈钢等金属材料设计。焊条能够创造稳固、平滑的焊接接头，具有出色的耐用性，使用简便，焊接效果稳定。凭借卓越的质量和竞争力的定价，Kim Tin 焊条在建筑、机械和维修行业中广受欢迎。",
+    
+    titleInax: "Inax 花洒",
+    descriptionInax: "Inax 花洒是高质量的产品，设计现代、优雅，适合任何浴室。采用先进技术，Inax 花洒节水，同时提供舒适清新的淋浴体验。采用不锈钢或镀铬铜材料，防锈耐用。安装和维护方便，Inax 花洒是家庭和建筑项目的理想选择。"
+  };
+
+case 'fr':
+  return {
+    titleCadivi: "Câble Cadivi",
+    descriptionCadivi: "Le câble Cadivi est un produit phare de la marque Cadivi, spécialisée dans la fourniture de câbles de haute qualité pour des applications électriques domestiques et industrielles. Fabriqué à partir de cuivre pur, le câble Cadivi assure une excellente conductivité, sécurité et durabilité. Il offre également des caractéristiques de résistance au feu et à la chaleur, répondant aux normes internationales de qualité. Ce produit est couramment utilisé dans les projets de construction, les systèmes électriques domestiques et les secteurs industriels.",
+    
+    titleMPE: "Ampoule LED MPE",
+    descriptionMPE: "L'ampoule LED MPE est économe en énergie, avec une durée de vie allant jusqu'à 25 000 heures, réduisant ainsi les coûts de remplacement et de maintenance. Elle offre une lumière stable, sans scintillement, assurant un confort d'utilisation. Facile à installer, elle convient aussi bien aux foyers qu'aux bureaux. De plus, elle est écologique, ne contenant aucune substance toxique et est recyclable. C'est le choix idéal pour économiser de l'énergie et améliorer la qualité de l'éclairage.",
+    
+    titleDienQuang: "Prise Dien Quang",
+    descriptionDienQuang: "La prise Dien Quang est un produit électrique de haute qualité fabriqué par la marque vietnamienne réputée Dien Quang. Ce produit est conçu pour être sûr, solide et facile à utiliser, avec une capacité à supporter de lourdes charges, garantissant qu'il n'y ait pas de court-circuit ou d'incendie. Il est largement utilisé dans les foyers, les bureaux et les projets de construction. Avec des normes de sécurité et une durabilité élevées, il offre commodité et protection optimale.",
+    
+    titleBinhMinh: "Tube PVC Binh Minh",
+    descriptionBinhMinh: "Le tube PVC Binh Minh est un produit de haute qualité fabriqué par l'entreprise Binh Minh Pipe. Composé de PVC et d'uPVC, il offre une grande résistance, capable de supporter la pression et les produits chimiques, et est largement utilisé dans les systèmes d'eau, d'électricité et de construction. Ce produit est résistant à la corrosion, au feu, garantissant sécurité et économies sur les coûts d'entretien. Il est un choix fiable pour les projets résidentiels et industriels.",
+    
+    titleSenko: "Ventilateur Senko",
+    descriptionSenko: "Les ventilateurs Senko sont des produits électriques très connus au Vietnam, reconnus pour leur conception moderne, leur durabilité et leurs performances de refroidissement élevées. Ils sont fabriqués avec des technologies avancées, garantissant sécurité, efficacité énergétique et fonctionnement silencieux. Disponibles en plusieurs types, allant des ventilateurs sur pied aux ventilateurs muraux et box, ces produits répondent aux besoins de rafraîchissement de divers espaces. Avec une qualité constante et un prix abordable, ils sont largement appréciés des consommateurs.",
+    
+    titleApolo: "Colle Apolo",
+    descriptionApolo: "La colle Apolo est un produit de haute qualité utilisé dans de nombreux secteurs industriels et domestiques. Grâce à sa formule spéciale, la colle Apolo offre une adhérence puissante, un séchage rapide et une excellente résistance, idéale pour coller le bois, le métal, la céramique, le plastique et d'autres matériaux. Elle est non toxique, sûre pour l'utilisateur et écologique. Appréciée pour son efficacité, sa durabilité et son prix raisonnable.",
+    
+    titleATM: "Peinture en spray ATM",
+    descriptionATM: "La peinture en spray ATM est un produit de peinture de haute qualité conçu pour répondre aux besoins de décoration et de protection des surfaces. Elle adhère bien, sèche rapidement et crée un fini lisse et durable. Convient à divers matériaux tels que le métal, le bois, le plastique et la céramique, cette peinture est facile à utiliser et offre une excellente couverture. Elle est idéale pour des projets rapides et des réparations.",
+    
+    titlePinConO: "Piles Con O",
+    descriptionPinConO: "Les piles Con O sont des produits de haute qualité fabriqués au Vietnam, offrant une alimentation stable et durable. Disponibles en plusieurs types, ces piles conviennent aux appareils électroniques, jouets, lampes de poche et autres appareils ménagers. Les piles Con O sont appréciées pour leur longévité, leur résistance aux fuites et leur respect de l'environnement. Elles sont pratiques et économiques pour un usage quotidien.",
+    
+    titleDaCat: "Disques de coupe Hải Dương",
+    descriptionDaCat: "Les disques de coupe Hải Dương sont des produits de haute qualité fabriqués à partir de matériaux durables, destinés à couper des matériaux tels que le métal, la céramique, le béton et la pierre. Ces disques sont très tranchants, rapides et précis, ce qui permet de gagner du temps et de l'énergie. Ils sont largement utilisés dans les secteurs du bâtiment, de la métallurgie et de la réparation. Grâce à leur durabilité et à leurs performances constantes, ils sont un choix fiable pour les utilisateurs.",
+    
+    titleVietTiep: "Verrou Viet Tiep",
+    descriptionVietTiep: "Les verrous Viet Tiep sont des produits de sécurité très réputés au Vietnam, connus pour leur solidité et leur sécurité élevée. Fabriqués en acier allié résistant, ils sont anti-coupe et anti-choc, garantissant la sécurité des biens. Disponibles en plusieurs types, ces verrous conviennent aux maisons, bureaux et projets de construction. Avec leur design robuste et leur facilité d'utilisation, les verrous Viet Tiep sont un choix fiable pour protéger les biens efficacement.",
+    
+    titleKimTin: "Barres de soudure Kim Tin",
+    descriptionKimTin: "Les barres de soudure Kim Tin sont des produits de haute qualité fabriqués par la marque Kim Tin, spécialement conçues pour souder des métaux comme l'acier, l'acier inoxydable et d'autres matériaux. Elles créent des soudures solides et lisses et sont très durables. Faciles à utiliser, elles offrent des résultats de soudure constants. Avec une excellente qualité et un prix compétitif, les barres de soudure Kim Tin sont populaires dans les secteurs de la construction, de la mécanique et de la réparation.",
+    
+    titleInax: "Douche Inax",
+    descriptionInax: "Les douches Inax sont des produits de haute qualité, au design moderne et élégant, adaptées à toutes les salles de bain. Grâce à une technologie avancée, les douches Inax économisent de l'eau tout en offrant une expérience de douche rafraîchissante et agréable. Fabriquées en acier inoxydable ou en laiton chromé, elles sont résistantes à la rouille et durables. Faciles à installer et à entretenir, les douches Inax sont un choix idéal pour les foyers et les projets de construction."
+  };
+
+case 'ja':
+  return {
+    titleCadivi: "Cadivi ケーブル",
+    descriptionCadivi: "Cadivi ケーブルは、住宅用および産業用の高品質な電気ケーブルを提供するCadiviブランドの代表的な製品です。純銅製で、優れた導電性、安全性、耐久性を保証します。耐火性および耐熱性があり、国際的な品質基準に準拠しています。建設プロジェクト、住宅の電気システム、産業分野で広く使用されています。",
+    
+    titleMPE: "MPE LED ランプ",
+    descriptionMPE: "MPE LED ランプは省エネで、25,000時間の長寿命を提供し、交換とメンテナンスコストを削減します。安定した光を提供し、ちらつきがなく、使用者に快適さをもたらします。家庭やオフィスに適した簡単な設置が可能です。また、環境に優しく、有害物質を含まず、リサイクル可能です。エネルギーを節約し、照明の質を向上させる理想的な選択肢です。",
+    
+    titleDienQuang: "Dien Quang コンセント",
+    descriptionDienQuang: "Dien Quang コンセントは、ベトナムの有名ブランドDien Quangが製造する高品質の電気製品です。安全で堅牢、使いやすい設計で、大きな負荷にも耐え、ショートや火災を防ぎます。家庭、オフィス、建設現場で広く使用されており、高い安全基準と耐久性を備え、便利で最適な保護を提供します。",
+    
+    titleBinhMinh: "Binh Minh PVC パイプ",
+    descriptionBinhMinh: "Binh Minh PVC パイプは、Binh Minh Pipe Companyによって製造された高品質なパイプです。PVCとuPVC素材で作られ、高耐久性、圧力および化学物質への耐性があります。水道、電力、建設システムで広く使用されています。この製品は腐食、火災に強く、安全で維持コストを節約します。住宅や産業プロジェクトで信頼性のある選択肢です。",
+    
+    titleSenko: "Senko 扇風機",
+    descriptionSenko: "Senko 扇風機は、ベトナムで広く知られている電動ファンで、現代的なデザイン、耐久性、高い冷却性能で有名です。Senkoのファンは最新技術を使用して製造され、安全でエネルギー効率が良く、静かな動作を保証します。スタンディングファン、ウォールファン、ボックスファンなど、様々な種類があり、異なる空間の冷却ニーズに対応しています。安定した品質と手頃な価格で、消費者に信頼されています。",
+    
+    titleApolo: "Apolo 接着剤",
+    descriptionApolo: "Apolo 接着剤は、産業および家庭用に広く使用される高品質な接着剤です。特別なフォーミュラにより、Apolo 接着剤は強力な接着力、速乾性、および優れた耐力を提供し、木材、金属、セラミック、プラスチックなどの材料に適しています。無毒で、安全で環境に優しく、効率的で耐久性があり、手頃な価格で広く愛されています。",
+    
+    titleATM: "ATM スプレー塗料",
+    descriptionATM: "ATM スプレー塗料は、表面の装飾と保護ニーズに対応する高品質なスプレー塗料です。良好な付着力、速乾性、滑らかで耐久性のある仕上がりを提供します。金属、木材、プラスチック、セラミックなどの材料に適しており、使いやすく高いカバー力を持っています。短期間のプロジェクトや修理に理想的な選択肢です。",
+    
+    titlePinConO: "Con O 電池",
+    descriptionPinConO: "Con O 電池は、ベトナム製の高品質な電池で、安定した長寿命のエネルギー供給を提供します。多種類があり、電子機器、玩具、懐中電灯、家庭用電化製品などに適しています。長寿命、漏れ防止、環境に優しい特徴で信頼されています。日常使用に便利でコスト効果の高い選択肢です。",
+    
+    titleDaCat: "Hải Dương 切断ディスク",
+    descriptionDaCat: "Hải Dương 切断ディスクは、高品質で耐久性のある材料で作られており、金属、石材、コンクリート、陶器などの材料を切断するために設計されています。鋭い切れ味、高速性、精密さを提供し、時間と労力を節約できます。建設業、金属加工業、修理業で広く使用されています。長持ちする耐久性と安定したパフォーマンスを提供する信頼性の高い選択肢です。",
+    
+    titleVietTiep: "Viet Tiep 錠前",
+    descriptionVietTiep: "Viet Tiep 錠前は、ベトナムの有名な錠前ブランドで、耐久性と高いセキュリティで知られています。強固な合金鋼で作られており、切断や衝撃に強く、財産を安全に守ります。家庭、オフィス、建設現場で利用可能で、頑丈な設計と使いやすさが特徴です。財産を守るための効果的な選択肢です。",
+    
+    titleKimTin: "Kim Tin 溶接棒",
+    descriptionKimTin: "Kim Tin 溶接棒は、Kim Tin ブランドによる高品質な溶接棒で、鉄鋼、ステンレス鋼などの金属を溶接するために設計されています。溶接ジョイントは強力で滑らかで、耐久性も抜群です。使いやすく、安定した溶接効果を提供します。優れた品質と競争力のある価格で、建設業、機械工業、修理業で広く使用されています。",
+    
+    titleInax: "Inax シャワー",
+    descriptionInax: "Inax シャワーは、高品質な製品で、モダンでエレガントなデザインが特徴です。最新の技術を使い、水を節約しながらも快適なシャワー体験を提供します。ステンレススチールやクロムメッキ銅製で、耐錆性があり、耐久性もあります。取り付けやメンテナンスが簡単で、家庭や建設プロジェクトに最適な選択肢です。"
+  };
+  default:
+    return {
+      titleCadivi: "Cadivi Electrical Cable",
+      descriptionCadivi: "Cadivi electrical cables are a standout product of the Cadivi brand, specializing in high-quality cables for both residential and industrial electrical applications. Made from pure copper, Cadivi cables ensure excellent conductivity, safety, and durability. The cables are fire-resistant, heat-resistant, and meet international quality standards. These products are widely used in construction projects, residential electrical systems, and various industries.",
+      
+      titleMPE: "MPE LED Bulb",
+      descriptionMPE: "MPE LED Bulbs are energy-efficient, with a lifespan of up to 25,000 hours, reducing replacement and maintenance costs. The light is stable, flicker-free, providing comfort to users. The product is easy to install and suitable for both home and office use. In particular, the bulb is environmentally friendly, free from harmful substances, and recyclable. It is an ideal choice for saving electricity and enhancing lighting quality.",
+      
+      titleDienQuang: "Dien Quang Power Socket",
+      descriptionDienQuang: "Dien Quang Power Socket is a high-quality electrical product manufactured by the renowned Dien Quang brand in Vietnam. Designed to be safe, sturdy, and user-friendly, it can handle high loads and prevent short circuits. The Dien Quang power socket is widely used in homes, offices, and construction projects. With high safety standards and durability, it provides convenience and optimal protection for users.",
+      
+      titleBinhMinh: "Binh Minh PVC Pipes",
+      descriptionBinhMinh: "Binh Minh PVC pipes are high-quality pipes manufactured by Binh Minh Plastic Joint Stock Company. Made from PVC and uPVC materials, they are highly durable and resistant to pressure and chemicals, commonly used in water supply systems, electricity, and construction. The pipes are corrosion-resistant, fire-resistant, and ensure safety and cost-effective maintenance. This is a trusted choice for both residential and industrial projects.",
+      
+      titleSenko: "Senko Fan",
+      descriptionSenko: "Senko fans are a well-known product in Vietnam, recognized for their modern design, durability, and high cooling performance. Senko fans are manufactured with advanced technology, ensuring safety, energy efficiency, and quiet operation. Senko offers various types of fans, from standing fans to wall-mounted and box fans, suitable for different spaces. The product is trusted for its stable quality and reasonable price.",
+      
+      titleApolo: "Apolo Glue",
+      descriptionApolo: "Apolo glue is a high-quality adhesive used widely in industrial and household applications. With its special formula, Apolo glue offers strong bonding, fast drying, and excellent resistance, making it suitable for gluing wood, metal, ceramic, plastic, and other materials. Apolo glue is non-toxic, safe for users, and environmentally friendly. It is popular for its efficiency, durability, and affordability.",
+      
+      titleATM: "ATM Spray Paint",
+      descriptionATM: "ATM spray paint is a high-quality product designed to meet the needs of decorating and protecting various surfaces. It adheres well, dries quickly, and creates a smooth, durable finish. Suitable for materials like metal, wood, plastic, and ceramics, ATM spray paint is easy to use and provides excellent coverage. It is an ideal choice for quick projects and repairs.",
+      
+      titlePinConO: "Con O Battery",
+      descriptionPinConO: "Con O batteries are high-quality power sources manufactured in Vietnam, known for their stable and long-lasting energy supply. Available in various types, Con O batteries are suitable for electronic devices, toys, flashlights, and household appliances. The product is trusted for its long life, leak-resistant features, and environmental friendliness. Con O batteries offer convenience and cost savings for everyday use.",
+      
+      titleDaCat: "Hai Duong Cutting Disc",
+      descriptionDaCat: "Hai Duong cutting discs are high-quality products designed to cut materials such as metal, stone, concrete, and ceramic. The discs are highly sharp, fast, and accurate, helping save time and effort. These products are widely used in construction, metalworking, and repair industries. With long-lasting durability and stable performance, Hai Duong cutting discs are a reliable choice for users.",
+      
+      titleVietTiep: "Viet Tiep Lock",
+      descriptionVietTiep: "Viet Tiep locks are a well-known product in Vietnam, known for their durability and high security. Manufactured from solid alloy steel, they resist cutting and impact, ensuring safety for property. Viet Tiep locks come in various types, suitable for homes, offices, and construction projects. With robust design and ease of use, Viet Tiep locks are a trusted choice for effective property protection.",
+      
+      titleKimTin: "Kim Tin Welding Rods",
+      descriptionKimTin: "Kim Tin welding rods are high-quality rods manufactured by Kim Tin, specifically designed for welding metals such as steel, stainless steel, and other materials. These rods create strong, smooth welds and are highly durable. They are easy to use and provide consistent welding results. With excellent quality and competitive pricing, Kim Tin welding rods are popular in construction, mechanical, and repair industries.",
+      
+      titleInax: "Inax Shower Head",
+      descriptionInax: "Inax shower heads are high-quality products designed with modern and elegant styles, suitable for any bathroom. With advanced technology, Inax shower heads save water while offering a refreshing and comfortable shower experience. Made from stainless steel or chrome-plated brass, they are rust-resistant and durable over time. Easy to install and maintain, Inax shower heads are an ideal choice for homes and construction projects."
+    };
+  }
+};
+
+export const getInfoProductHotTitle = (language: string) => {
+  switch (language) {
+    case 'vi':
+  return "Sản phẩm bán chạy";
+
+case 'en':
+  return "Best selling products";
+
+case 'zh':
+  return "畅销产品";
+
+case 'fr':
+  return "Produits populaires";
+
+case 'ja':
+  return "ベストセラー商品";
+
+    default:
+      return "Best selling products";
+  }
+}
 
 // Hàm dịch văn bản, trả về chuỗi đã dịch hoặc chuỗi gốc nếu lỗi
 export async function translateText(

@@ -13,11 +13,34 @@ const Preorder = () => {
       const language = localStorage.getItem("language");
       setStoredLanguage(language);
     }
-  }, []);  
+  }, []);
 
   //language
   const languageToUse =
-  user?.id && user?.role !== "GUEST" ? user?.language : storedLanguage || "vi";
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+
+  const translatePreorder = (language: string) => {
+    switch (language) {
+      case "vi":
+        return "Đặt trước"; // Vietnamese
+      case "en":
+        return "Preorder"; // English
+      case "zh":
+        return "预订"; // Chinese
+      case "fr":
+        return "Précommande"; // French
+      case "ja":
+        return "予約注文"; // Japanese
+      default:
+        return "Preorder"; // Default case if language is not found
+    }
+  };
+
+  useEffect(() => {
+    document.title = translatePreorder(languageToUse);
+  }, []);
 
   const translateOrderMethod = (language: string) => {
     switch (language) {

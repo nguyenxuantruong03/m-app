@@ -1,4 +1,3 @@
-"use client"
 import BuyProduct from "@/components/(client)/home/buy-product";
 import IntroductProduct from "@/components/(client)/home/introduct-product";
 import News from "@/components/(client)/home/news";
@@ -10,28 +9,14 @@ import Slider from "@/components/(client)/home/slider";
 import Marquees from "@/components/(client)/home/marquee";
 import Story from "@/components/(client)/home/story";
 import dynamic from "next/dynamic";
-import { useCurrentUser } from "@/hooks/use-current-user";
-import { useEffect, useState } from "react";
+import { getHomeMessage } from "@/translate/translate-client";
+import { currentUser } from "@/lib/auth";
+import InfoHotProduct from "@/components/(client)/home/Info-hot-product";
 
 const MapAPI = dynamic(() => import("@/components/(client)/leaflet-map/leaflet-map"), {
   ssr: false,
 });
-const HomePage = () => {
-  const user = useCurrentUser();
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
-  
-  useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []);  
-
-  //language
-  const languageToUse =
-          user?.id && user?.role !== "GUEST" ? user?.language : storedLanguage || "vi";
-
+const HomePage = async () => {
   return (
     <>
       <Slider/>
@@ -40,6 +25,7 @@ const HomePage = () => {
       <IntroductProduct/>
       <SellingProduct/>
       <OurProject/>
+      <InfoHotProduct />
       <OverViewStore/>
       <BuyProduct />
       <News />
@@ -49,3 +35,11 @@ const HomePage = () => {
   );
 };
 export default HomePage;
+
+export async function generateMetadata() {
+  const user =  await currentUser()
+  const homeMessage = getHomeMessage(user?.language || "en")
+  return {
+    title: homeMessage.home,
+  };
+}

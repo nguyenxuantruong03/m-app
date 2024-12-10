@@ -21,6 +21,7 @@ import FormSuccess from "@/components/form-success";
 import { newPassword } from "@/actions/actions-signin-sign-up/new-password";
 import PasswordField from "./field/passwordfield";
 import {
+  getPasswordNewMessages,
   translateBackToLogin,
   translateEnterNewPasswordTitle,
   translateNewPassword,
@@ -56,6 +57,15 @@ const NewPasswordForm = () => {
   const backToLoginMessage = translateBackToLogin(languageToUse);
   const newPasswordMessage = translateNewPassword(languageToUse);
   const resetPasswordMessage = translateResetPassword(languageToUse);
+  const passwordResetMessage = getPasswordNewMessages(languageToUse);
+
+  useEffect(() => {
+    if (isPending) {
+      document.title = passwordResetMessage.loading;
+    } else {
+      document.title = passwordResetMessage.newPassword;
+    }
+  }, [isPending]);
 
   // form bên dưới dùng để validate trường nhập theo loginForm bên dưới gọi form đẻ validate code đã xử lý ở  đây và bên dưới dùng destructuring để gọi hết vào
   const form = useForm<z.infer<typeof NewPasswordSchema>>({

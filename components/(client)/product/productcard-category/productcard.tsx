@@ -423,7 +423,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
         product={data}
         languageToUse={languageToUse}
       />
-      <div className="overflow-hidden">
         <div className="bg-white group cursor-pointer rounded-xl border p-3 relative">
           <div className="space-y-2">
             {productQuantityAll && (
@@ -433,11 +432,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   onClick={handleClick}
                   className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center z-[9997]"
                 >
-                  <div className="absolute z-[9999] top-[3px] right-[-95px] bg-red-500 text-white py-[15px] w-[350px] text-center transform rotate-[45deg] font-bold text-lg tracking-[2px] overflow-hidden">
+                {/* Cũ */}
+                  {/* <div className="absolute z-[9999] top-[3px] right-[-95px] bg-red-500 text-white py-[15px] w-[350px] text-center transform rotate-[45deg] font-bold text-lg tracking-[2px] overflow-hidden">
                     <span className="inline-block duration-500 ease-in-out transform transition-transform w-full absolute left-[13%] top-1/2 translate-y-[-50%]">
                       {outOfStockMessage}
                     </span>
-                  </div>
+                  </div> */}
+                {/* Mới */}
+                    <div className="tag-outstock">
+                      <span className="tag-outstock-text">{outOfStockMessage}</span>
+                    </div>
                 </div>
               </>
             )}
@@ -581,7 +585,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
             </div>
           )}
         </div>
-      </div>
     </>
   );
 };

@@ -5,6 +5,7 @@ import {
   translateNews,
   translateProductNewFeatures,
 } from "@/translate/translate-client";
+import { useEffect, useState } from "react";
 
 interface DetailProductProps {
   data: Product;
@@ -15,7 +16,14 @@ const InfoProductDetail: React.FC<DetailProductProps> = ({
   data,
   languageToUse,
 }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<{
+    url: string;
+    alt: string;
+  } | null>(null);
+
   const images = data.imagesalientfeatures;
+
   //languages
   const keyFeaturesMessage = translateKeyFeatures(languageToUse);
   const productNewFeatureMessage = translateProductNewFeatures(
@@ -24,10 +32,33 @@ const InfoProductDetail: React.FC<DetailProductProps> = ({
   );
   const newsMessage = translateNews(languageToUse);
 
+  const openModal = (url: string, alt: string) => {
+    setSelectedImage({ url, alt });
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedImage(null);
+  };
+
+  // Disable scrolling when modal is open
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden"; // Disable scrolling
+    } else {
+      document.body.style.overflow = ""; // Restore scrolling
+    }
+
+    return () => {
+      document.body.style.overflow = ""; // Cleanup on unmount
+    };
+  }, [isModalOpen]);
+
   return (
     <>
       <div className="my-2">
-        <div className=" shadow-inner pt-5 px-5 rounded-lg mx-auto md:mx-0 md:max-w-3xl xl:max-w-7xl">
+        <div className="shadow-inner pt-5 px-5 rounded-lg mx-auto md:mx-0 md:max-w-3xl xl:max-w-7xl">
           <div className="p-2 bg-slate-400 bg-opacity-10 rounded-lg">
             <h1 className="text-center text-lg font-bold text-red-500">
               {keyFeaturesMessage}
@@ -48,21 +79,52 @@ const InfoProductDetail: React.FC<DetailProductProps> = ({
           <p className="text-sm font-bold my-2 text-slate-900 dark:text-slate-200">
             {data.productdetail.description4salientfeatures}
           </p>
-          {images.map((image, index) => (
-            <Image
-              key={index}
-              src={image.url}
-              width="1500"
-              height={index === 0 ? "200" : "300"}
-              alt="Image"
-              className="rounded-md mt-3"
-            />
-          ))}
+          
+          <div className="flex flex-col items-center">
+            {images.map((image, index) => (
+              <Image
+                key={index}
+                src={image.url}
+                width={800}
+                height={200}
+                alt={`Image ${index + 1}`}
+                className="rounded-md mt-3 cursor-pointer"
+                onClick={() => openModal(image.url, `Image ${index + 1}`)}
+              />
+            ))}
+          </div>
+
           <p className="text-sm my-2 text-slate-900 dark:text-slate-200">
             {data.productdetail.contentsalientfeatures}
           </p>
         </div>
       </div>
+
+      {isModalOpen && selectedImage && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+          onClick={closeModal}
+        >
+          <div
+            className="relative bg-white p-4 rounded-lg"
+            onClick={(e) => e.stopPropagation()} // Prevents closing when clicking inside the modal
+          >
+            <Image
+              className="rounded-lg"
+              src={selectedImage.url}
+              alt={selectedImage.alt}
+              width={700}
+              height={700}
+            />
+            <button
+              onClick={closeModal}
+              className="absolute top-2 right-2 text-white text-xl"
+            >
+              &times;
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 };

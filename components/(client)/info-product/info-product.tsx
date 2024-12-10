@@ -819,6 +819,9 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
             {sizeMessage}
           </h3>
           {availableSizes.map((size, index) => (
+            <> 
+            {
+              size.value && (
             <div
               key={index}
               className="inline-flex h-8 w-16 items-center justify-center gap-x-1 cursor-pointer"
@@ -833,10 +836,10 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
               }}
             >
               <button
-                className={`relative text-slate-900 dark:text-slate-200 ${
+                className={`relative text-slate-900 dark:text-slate-200 h-8 w-16 rounded-md border overflow-hidden ${
                   selectedSize === size?.value
-                    ? "border border-red-500 h-8 w-16 rounded-md overflow-hidden"
-                    : ""
+                    ? " border-red-500"
+                    : " border-gray-400  hover:border-red-500"
                 }`}
               >
                 {size?.value}
@@ -850,11 +853,14 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
                 )}
               </button>
             </div>
+              )
+            }
+            </>
           ))}
         </div>
         <div className="text-red-600 text-sm">{errorSize}</div>
         {/* Color */}
-        <div className="flex items-center gap-x-1 cursor-pointer">
+        <div className="flex items-center gap-x-4 cursor-pointer">
           <h3 className="font-semibold text-slate-900 dark:text-slate-200">
             {colorMessage}
           </h3>
@@ -873,10 +879,10 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
                     setQuantity(1);
                     setLoadingLimitQuantity(false);
                   }}
-                  className={`inline-flex items-center justify-center h-8 w-16 relative overflow-hidden ${
+                  className={`inline-flex items-center justify-center h-8 w-16 relative overflow-hidden border rounded-md ${
                     selectedColor === color?.value
-                      ? " border border-red-500 rounded-md"
-                      : ""
+                      ? " border-red-500"
+                      : " border-gray-400 hover:border-red-500"
                   }`}
                 >
                   <div

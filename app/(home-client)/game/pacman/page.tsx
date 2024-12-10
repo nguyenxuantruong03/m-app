@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { translateDesktopOnlyMessage } from "@/translate/translate-client";
+import { getGamePacmanMessage, translateDesktopOnlyMessage } from "@/translate/translate-client";
 
 const SceneNossr = dynamic(() => import("./components/Scene"), {
   ssr: false,
@@ -31,6 +31,11 @@ const Pacman = () => {
       ? user?.language
       : storedLanguage || "vi";
   const desktopOnlyMessage = translateDesktopOnlyMessage(languageToUse);
+  const gamePacmanMessage = getGamePacmanMessage(languageToUse);
+
+  useEffect(() => {
+    document.title = gamePacmanMessage.game;
+  }, []);
 
   useEffect(() => {
     if (user?.role === "GUEST" || !user?.id) {

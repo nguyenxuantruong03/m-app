@@ -4,6 +4,8 @@ import { getStreamByUserId } from "@/lib/stream/stream-service";
 import { KeyCard } from "./_components/key-card";
 import { ConnectModal } from "./_components/connect-modal";
 import { notFound } from "next/navigation";
+import { currentUser } from "@/lib/auth";
+import { getStreamKeysMessage } from "@/translate/translate-client";
 const KeysPages = async () => {
   const self = await getSelf();
   const stream = await getStreamByUserId(self.id);
@@ -30,3 +32,11 @@ const KeysPages = async () => {
   );
 };
 export default KeysPages;
+
+export async function generateMetadata() {
+  const curentUsers = await currentUser()
+  const streamKeyMessage = getStreamKeysMessage(curentUsers?.language || "en")
+  return {
+    title: streamKeyMessage.streamKeys
+  };
+}

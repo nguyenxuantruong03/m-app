@@ -30,6 +30,7 @@ import { Label } from "../ui/label";
 import { useDevice } from "@/providers/device-info-provider";
 import { LoginGuestModal } from "../modals/login-guest-modal";
 import {
+  getLoadingMessage,
   getToastError,
   translateBackToLogin,
   translateConfirmLogin,
@@ -37,6 +38,7 @@ import {
   translateExceededAttempts,
   translateForgotPassword,
   translateGuestLogin,
+  translateLogin,
   translatePassword,
   translateResendError,
   translateResendSuccess,
@@ -126,6 +128,16 @@ const LoginForm = () => {
   const guestLoginMessage = translateGuestLogin(languageToUse);
   const verifyNotRobotMessage = translateVerifyNotRobot(languageToUse);
   const backToLoginMessage = translateBackToLogin(languageToUse);
+  const loginMessage = translateLogin(languageToUse);
+  const loadingMessage = getLoadingMessage(languageToUse);
+
+  useEffect(() => {
+    if (isPending) {
+      document.title = loadingMessage.loading;
+    } else {
+      document.title = loginMessage;
+    }
+  }, [isPending]);
 
   useEffect(() => {
     setIsMounted(true);

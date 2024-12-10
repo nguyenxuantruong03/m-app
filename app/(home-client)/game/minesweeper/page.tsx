@@ -12,6 +12,7 @@ import {
   translateGoodExperience,
   translateClickOnSmile,
   translateStartGameOrRefresh,
+  getGameMinesweeperMessage,
 } from "@/translate/translate-client";
 
 const GameNossr = dynamic(() => import("./components/game"), {
@@ -42,6 +43,11 @@ const Page = () => {
   const goodExperienceMessage = translateGoodExperience(languageToUse);
   const clickOnSmileMessage = translateClickOnSmile(languageToUse);
   const startGameOrRefresh = translateStartGameOrRefresh(languageToUse);
+  const gameMinesweeperMessage = getGameMinesweeperMessage(languageToUse);
+
+  useEffect(() => {
+    document.title = gameMinesweeperMessage.game;
+  }, []);
 
   useEffect(() => {
     if (user?.role === "GUEST" || !user?.id) {

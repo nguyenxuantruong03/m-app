@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
 import {
+  getGameMessage,
   translateDesktopOnlyMessage,
   translateGameCoins,
 } from "@/translate/translate-client";
@@ -34,6 +35,11 @@ const GamePage = () => {
       : storedLanguage || "vi";
   const desktopOnlyMessage = translateDesktopOnlyMessage(languageToUse);
   const gameCoinMessage = translateGameCoins(languageToUse);
+  const gameMessage = getGameMessage(languageToUse);
+
+  useEffect(() => {
+    document.title = gameMessage.game;
+  }, []);
 
   const handleClick2048 = () => {
     router.push("/game/2048");

@@ -1,6 +1,7 @@
 "use client";
 import CardWrapper from "@/components/auth/card-wrapper";
 import {
+  getErrorMessage,
   translateBackToLogin,
   translateErrorMessage,
 } from "@/translate/translate-client";
@@ -24,6 +25,11 @@ const ErrorCard = () => {
   const languageToUse = storedLanguage || language;
   const backToLoginMessage = translateBackToLogin(languageToUse);
   const erorMessage = translateErrorMessage(languageToUse);
+  const errorTitleMessage = getErrorMessage(languageToUse);
+
+  useEffect(() => {
+    document.title = errorTitleMessage.error;
+  }, []);
 
   return (
     <CardWrapper

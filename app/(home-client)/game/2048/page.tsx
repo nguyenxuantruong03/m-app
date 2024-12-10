@@ -18,6 +18,7 @@ import {
   translateUseButtonsOrArrows,
   translateControlOrPressButtons,
   translateStartOrRefreshGame,
+  getGame2048Message,
 } from "@/translate/translate-client";
 
 const IndexPage = () => {
@@ -45,6 +46,11 @@ const IndexPage = () => {
   const buttonOrArrowMessage = translateUseButtonsOrArrows(languageToUse);
   const controlOrPressMessage = translateControlOrPressButtons(languageToUse);
   const startOrRefreshGameMessage = translateStartOrRefreshGame(languageToUse);
+  const game2048Message = getGame2048Message(languageToUse);
+
+  useEffect(() => {
+    document.title = game2048Message.game;
+  }, []);
 
   useEffect(() => {
     if (user?.role === "GUEST" || !user?.id) {

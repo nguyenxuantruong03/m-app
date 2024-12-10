@@ -24,10 +24,12 @@ import NameField from "./field/namefield";
 import { X } from "lucide-react";
 import ReCAPTCHA from "react-google-recaptcha";
 import {
+  getLoadingMessage,
   translateAlreadyHaveAccount,
   translateCreateAccount,
   translateName,
   translatePassword,
+  translateRegister,
   translateVerifyNotRobot,
   translateVerifyNotRobots,
 } from "@/translate/translate-client";
@@ -82,6 +84,16 @@ const RegisterForm = () => {
   const nameMessage = translateName(languageToUse);
   const passwordMessage = translatePassword(languageToUse);
   const verifyNotRobotMessage = translateVerifyNotRobot(languageToUse);
+  const loadingMessage = getLoadingMessage(languageToUse);
+  const registerMessage = translateRegister(languageToUse);
+
+  useEffect(() => {
+    if (isPending) {
+      document.title = loadingMessage.loading;
+    } else {
+      document.title = registerMessage;
+    }
+  }, [isPending]);
 
   useEffect(() => {
     const handleThemeChange = () => {

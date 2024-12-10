@@ -57,7 +57,7 @@ const Service = () => {
     router.push("/home-product");
   };
   return (
-    <div className={` pb-20 ${root.bgwhite}`}>
+    <div className={`pb-20 ${root.bgwhite}`}>
       <Container>
         <div className="bg-service">
           <div className="w-full">

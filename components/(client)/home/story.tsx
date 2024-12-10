@@ -53,7 +53,7 @@ const Story = () => {
     <div className={root.bgwhite}>
       <Container>
         <div className="mx:auto xl:grid xl:grid-cols-2 ">
-          <div className="my-2 md:my-20 relative">
+          <div className="my-2 md:mt-20 mb-10 relative">
             <Image
               className="hidden xl:block bg-cover bg-center relative z-10 ml-24 "
               src="/images/vlxd.jpg"
@@ -70,7 +70,7 @@ const Story = () => {
             />
           </div>
 
-          <div className="p-5 xl:my-20">
+          <div className="p-5 xl:mt-20 mb-10">
             <HeadingEffect heading={storeInfoMessage} />
             <span
               className="font-bold text-3xl text-[#ec2f4b]"

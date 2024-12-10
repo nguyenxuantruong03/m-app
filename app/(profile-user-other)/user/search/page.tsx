@@ -24,3 +24,9 @@ const SearchPage = ({searchParams}:SearchPageProps) => {
 }
  
 export default SearchPage;
+
+export async function generateMetadata({searchParams}:SearchPageProps) {
+    return {
+      title: searchParams.term,
+    };
+  }

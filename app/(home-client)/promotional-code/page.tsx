@@ -13,11 +13,34 @@ const PromotionalCode = () => {
       const language = localStorage.getItem("language");
       setStoredLanguage(language);
     }
-  }, []);  
+  }, []);
 
   //language
   const languageToUse =
-  user?.id && user?.role !== "GUEST" ? user?.language : storedLanguage || "vi";
+    user?.id && user?.role !== "GUEST"
+      ? user?.language
+      : storedLanguage || "vi";
+
+  const translatePromotionalCode = (language: string) => {
+    switch (language) {
+      case "vi":
+        return "Mã khuyến mãi"; // Vietnamese
+      case "en":
+        return "Promotional Code"; // English
+      case "zh":
+        return "促销代码"; // Chinese
+      case "fr":
+        return "Code promotionnel"; // French
+      case "ja":
+        return "プロモーションコード"; // Japanese
+      default:
+        return "Promotional Code"; // Default case if language is not found
+    }
+  };
+
+  useEffect(() => {
+    document.title = translatePromotionalCode(languageToUse);
+  }, []);
 
   const getDiscountCode = (language: string) => {
     switch (language) {
