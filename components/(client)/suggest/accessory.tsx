@@ -22,7 +22,7 @@ const Accessory = ({ languageToUse }: AccessoryProps) => {
               width="80"
               height="100"
               className="object-fit"
-              src="/images-product/boloncontan.webp"
+              src="/images-product/boloncontan.png"
               alt="error"
             />
           </div>
@@ -39,7 +39,7 @@ const Accessory = ({ languageToUse }: AccessoryProps) => {
                 width="75"
                 height="80"
                 className="object-fit"
-                src="/images-product/bongdienquang.webp"
+                src="/images-product/bongdienquang.png"
                 alt="error"
               />
             </div>
@@ -57,7 +57,7 @@ const Accessory = ({ languageToUse }: AccessoryProps) => {
               width="90"
               height="300"
               className="object-fit"
-              src="/images-product/co27.webp"
+              src="/images-product/co27.png"
               alt="error"
             />
           </div>
@@ -73,7 +73,7 @@ const Accessory = ({ languageToUse }: AccessoryProps) => {
               width="100"
               height="70"
               className="object-fit"
-              src="/images-product/dacatsat.webp"
+              src="/images-product/dacatsat.png"
               alt="error"
             />
           </div>
@@ -90,7 +90,7 @@ const Accessory = ({ languageToUse }: AccessoryProps) => {
                 width="120"
                 height="120"
                 className="object-fit"
-                src="/images-product/daphaco.webp"
+                src="/images-product/daphaco.png"
                 alt="error"
               />
             </div>
@@ -108,7 +108,7 @@ const Accessory = ({ languageToUse }: AccessoryProps) => {
                 width="80"
                 height="100"
                 className="object-fit"
-                src="/images-product/daydiencadivi.webp"
+                src="/images-product/daydiencadivi.png"
                 alt="error"
               />
             </div>
@@ -126,7 +126,7 @@ const Accessory = ({ languageToUse }: AccessoryProps) => {
                 width="90"
                 height="100"
                 className="object-fit"
-                src="/images-product/daydiendaphacolon.webp"
+                src="/images-product/daydiendaphacolon.png"
                 alt="error"
               />
             </div>
@@ -144,7 +144,7 @@ const Accessory = ({ languageToUse }: AccessoryProps) => {
                 width="120"
                 height="80"
                 className="object-fit"
-                src="/images-product/denrangdong.webp"
+                src="/images-product/denrangdong.png"
                 alt="error"
               />
             </div>
@@ -161,7 +161,7 @@ const Accessory = ({ languageToUse }: AccessoryProps) => {
               width="120"
               height="100"
               className="object-fit"
-              src="/images-product/keo2mat.webp"
+              src="/images-product/keo2mat.png"
               alt="error"
             />
           </div>
@@ -177,7 +177,7 @@ const Accessory = ({ languageToUse }: AccessoryProps) => {
               width="110"
               height="120"
               className="object-fit"
-              src="/images-product/keoapolo.webp"
+              src="/images-product/keoapolo.png"
               alt="error"
             />
           </div>
@@ -193,7 +193,7 @@ const Accessory = ({ languageToUse }: AccessoryProps) => {
               width="120"
               height="120"
               className="object-fit"
-              src="/images-product/keobepan.webp"
+              src="/images-product/keobepan.png"
               alt="error"
             />
           </div>
@@ -209,7 +209,7 @@ const Accessory = ({ languageToUse }: AccessoryProps) => {
               width="120"
               height="120"
               className="object-fit"
-              src="/images-product/keoconcho.webp"
+              src="/images-product/keoconcho.png"
               alt="error"
             />
           </div>
@@ -225,7 +225,7 @@ const Accessory = ({ languageToUse }: AccessoryProps) => {
               width="170"
               height="150"
               className="object-fit"
-              src="/images-product/keodansat.webp"
+              src="/images-product/keodansat.png"
               alt="error"
             />
           </div>
@@ -242,7 +242,7 @@ const Accessory = ({ languageToUse }: AccessoryProps) => {
                 width="90"
                 height="90"
                 className="object-fit"
-                src="/images-product/khoaviettiep.webp"
+                src="/images-product/khoaviettiep.png"
                 alt="error"
               />
             </div>
@@ -259,7 +259,7 @@ const Accessory = ({ languageToUse }: AccessoryProps) => {
               width="140"
               height="140"
               className="object-fit"
-              src="/images-product/loi27.webp"
+              src="/images-product/loi27.png"
               alt="error"
             />
           </div>
@@ -275,7 +275,7 @@ const Accessory = ({ languageToUse }: AccessoryProps) => {
               width="100"
               height="100"
               className="object-fit"
-              src="/images-product/luoixanh.webp"
+              src="/images-product/luoixanh.png"
               alt="error"
             />
           </div>
@@ -291,7 +291,7 @@ const Accessory = ({ languageToUse }: AccessoryProps) => {
               width="100"
               height="100"
               className="object-fit"
-              src="/images-product/molet.webp"
+              src="/images-product/molet.png"
               alt="error"
             />
           </div>
@@ -307,7 +307,7 @@ const Accessory = ({ languageToUse }: AccessoryProps) => {
               width="110"
               height="110"
               className="object-fit"
-              src="/images-product/noi27.webp"
+              src="/images-product/noi27.png"
               alt="error"
             />
           </div>
@@ -324,7 +324,7 @@ const Accessory = ({ languageToUse }: AccessoryProps) => {
                 width="100"
                 height="100"
                 className="object-fit"
-                src="/images-product/ocamcaythong.webp"
+                src="/images-product/ocamcaythong.png"
                 alt="error"
               />
             </div>
@@ -342,7 +342,7 @@ const Accessory = ({ languageToUse }: AccessoryProps) => {
                 width="100"
                 height="100"
                 className="object-fit"
-                src="/images-product/ocamdienquang.webp"
+                src="/images-product/ocamdienquang.png"
                 alt="error"
               />
             </div>

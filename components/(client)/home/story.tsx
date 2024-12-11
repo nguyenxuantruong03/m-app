@@ -63,7 +63,7 @@ const Story = () => {
             />
             <Image
               className="hidden xl:block -top-10 left-10 z-0 absolute "
-              src="/images/coating.webp"
+              src="/images/coating.png"
               alt="image"
               width="471"
               height="606"

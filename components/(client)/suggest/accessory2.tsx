@@ -25,7 +25,7 @@ const computerComponentSmall = ({
                 width="100"
                 height="100"
                 className="object-fit"
-                src="/images-product/ongluoixanh.webp"
+                src="/images-product/ongluoixanh.png"
                 alt="error"
               />
             </div>
@@ -49,7 +49,7 @@ const computerComponentSmall = ({
               width="120"
               height="100"
               className="object-fit"
-              src="/images-product/ongnhuapvc.webp"
+              src="/images-product/ongnhuapvc.png"
               alt="error"
             />
           </div>
@@ -66,7 +66,7 @@ const computerComponentSmall = ({
               width="100"
               height="100"
               className="object-fit"
-              src="/images-product/pincono.webp"
+              src="/images-product/pincono.png"
               alt="error"
             />
           </div>
@@ -84,7 +84,7 @@ const computerComponentSmall = ({
                 width="60"
                 height="80"
                 className="object-fit"
-                src="/images-product/quatbansenko.webp"
+                src="/images-product/quatbansenko.png"
                 alt="error"
               />
             </div>
@@ -103,7 +103,7 @@ const computerComponentSmall = ({
                 width="70"
                 height="80"
                 className="object-fit"
-                src="/images-product/quattreosenko.webp"
+                src="/images-product/quattreosenko.png"
                 alt="error"
               />
             </div>
@@ -122,7 +122,7 @@ const computerComponentSmall = ({
                 width="100"
                 height="120"
                 className="object-fit"
-                src="/images-product/sifa-thongcong.webp"
+                src="/images-product/sifa-thongcong.png"
                 alt="error"
               />
             </div>
@@ -141,7 +141,7 @@ const computerComponentSmall = ({
                 width="65"
                 height="100"
                 className="object-fit"
-                src="/images-product/sonbachtuyet.webp"
+                src="/images-product/sonbachtuyet.png"
                 alt="error"
               />
             </div>
@@ -159,7 +159,7 @@ const computerComponentSmall = ({
               width="100"
               height="100"
               className="object-fit"
-              src="/images-product/sonexpo.webp"
+              src="/images-product/sonexpo.png"
               alt="error"
             />
           </div>
@@ -176,7 +176,7 @@ const computerComponentSmall = ({
               width="100"
               height="120"
               className="object-fit"
-              src="/images-product/sonxitatm.webp"
+              src="/images-product/sonxitatm.png"
               alt="error"
             />
           </div>
