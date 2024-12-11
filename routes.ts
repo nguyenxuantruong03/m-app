@@ -31,7 +31,6 @@ export const publicRoutes = [
   "/tags/*",
   "/utility",
   "/warehouse/package-product",
-
   "/api/*"
 ];
 

@@ -20739,12 +20739,17 @@ export const getFavoriteProductMessage = (language: string) => {
         loading: "En cours de traitement...",
         favoriteProduct: "Produit préféré"
       };
+    case 'ja':
+      return {
+        loading: "処理中...",
+        favoriteProduct: "お気に入りの商品"
+      };
     default:
       return {
         loading: "Processing...",
         favoriteProduct: "Favorite product"
       };
-  }
+}
 }
 
 export const getGameMessage = (language: string) => {
@@ -20765,11 +20770,15 @@ export const getGameMessage = (language: string) => {
       return {
         game: "Jeu"
       };
+    case 'ja':
+      return {
+        game: "ゲーム"
+      };
     default:
       return {
         game: "Game"
       };
-  }
+}
 }
 
 export const getGameTetrisMessage = (language: string) => {
@@ -20790,11 +20799,16 @@ export const getGameTetrisMessage = (language: string) => {
       return {
         game: "Tetris"
       };
+    case 'ja':
+      return {
+        game: "テトリス"
+      };
     default:
       return {
         game: "Tetris"
       };
-  }
+}
+
 }
 
 export const getGamePacmanMessage = (language: string) => {
@@ -20815,11 +20829,16 @@ export const getGamePacmanMessage = (language: string) => {
       return {
         game: "Pacman"
       };
+    case 'ja':
+      return {
+        game: "パックマン"
+      };
     default:
       return {
         game: "Pacman"
       };
-  }
+}
+
 }
 
 export const getGameMinesweeperMessage = (language: string) => {
@@ -20840,11 +20859,16 @@ export const getGameMinesweeperMessage = (language: string) => {
       return {
         game: "Démineur"
       };
+    case 'ja':
+      return {
+        game: "マインスイーパー"
+      };
     default:
       return {
         game: "Minesweeper"
       };
-  }
+}
+
 }
 
 export const getGame2048Message = (language: string) => {
@@ -20865,11 +20889,16 @@ export const getGame2048Message = (language: string) => {
       return {
         game: "2048"
       };
+    case 'ja':
+      return {
+        game: "2048"
+      };
     default:
       return {
         game: "2048"
       };
-  }
+}
+
 }
 
 export const getHomeMessage = (language: string) => {
@@ -20890,18 +20919,23 @@ export const getHomeMessage = (language: string) => {
       return {
         home: "Accueil"
       };
+    case 'ja':
+      return {
+        home: "ホーム"
+      };
     default:
       return {
         home: "Home"
       };
-  }
+}
+
 }
 
 export const getHomeProductMessage = (language: string) => {
   switch (language) {
     case 'vi':
       return {
-        homeProduct: "Sản phẩm trang chủ"
+        homeProduct: "Trang chủ sản phẩm"
       };
     case 'en':
       return {
@@ -20915,11 +20949,16 @@ export const getHomeProductMessage = (language: string) => {
       return {
         homeProduct: "Produit d'accueil"
       };
+    case 'ja':
+      return {
+        homeProduct: "ホーム製品"
+      };
     default:
       return {
         homeProduct: "Home Product"
       };
-  }
+}
+
 }
 
 export const getListProductMessage = (language: string) => {
@@ -20940,11 +20979,16 @@ export const getListProductMessage = (language: string) => {
       return {
         listProduct: "Liste produit"
       };
+    case 'ja':
+      return {
+        listProduct: "製品リスト"
+      };
     default:
       return {
         listProduct: "List Product"
       };
-  }
+}
+
 }
 
 export const getPaymentFailureMessage = (language: string) => {
@@ -20965,11 +21009,16 @@ export const getPaymentFailureMessage = (language: string) => {
       return {
         paymentFailure: "Échec du paiement"
       };
+    case 'ja':
+      return {
+        paymentFailure: "支払いに失敗しました"
+      };
     default:
       return {
         paymentFailure: "Payment failed"
       };
-  }
+}
+
 }
 
 export const getPaymentSuccessMessages = (language: string) => {
@@ -20994,12 +21043,18 @@ export const getPaymentSuccessMessages = (language: string) => {
         paymentSuccess: "Paiement réussi",
         loading: "En cours de traitement..."
       };
+    case 'ja':
+      return {
+        paymentSuccess: "支払い成功",
+        loading: "処理中..."
+      };
     default:
       return {
         paymentSuccess: "Payment successful",
         loading: "Processing..."
       };
-  }
+}
+
 }
 
 export const getSearchMessage = (language: string) => {
@@ -21020,11 +21075,16 @@ export const getSearchMessage = (language: string) => {
       return {
         search: "Recherche"
       };
+    case 'ja':
+      return {
+        search: "検索"
+      };
     default:
       return {
         search: "Search"
       };
-  }
+}
+
 }
 
 export const getSpinLuckyMessage = (language: string) => {
@@ -21045,11 +21105,16 @@ export const getSpinLuckyMessage = (language: string) => {
       return {
         spinLucky: "Roulette chance"
       };
+    case 'ja':
+      return {
+        spinLucky: "ラッキースピン"
+      };
     default:
       return {
         spinLucky: "Spin Lucky"
       };
-  }
+}
+
 }
 
 export const getVoucherMessages = (language: string) => {
@@ -21074,12 +21139,18 @@ export const getVoucherMessages = (language: string) => {
         loading: "En cours de traitement...",
         voucher: "Bon de réduction"
       };
+    case 'ja':
+      return {
+        loading: "処理中...",
+        voucher: "クーポン"
+      };
     default:
       return {
         loading: "Processing...",
         voucher: "Voucher"
       };
-  }
+}
+
 }
 
 export const getPackageProductMessages = (language: string) => {
@@ -21104,12 +21175,18 @@ export const getPackageProductMessages = (language: string) => {
         loading: "En cours de traitement...",
         allOrders: "Toutes les commandes"
       };
+    case 'ja':
+      return {
+        loading: "処理中...",
+        allOrders: "すべての注文"
+      };
     default:
       return {
         loading: "Processing...",
         allOrders: "All Orders"
       };
-  }
+}
+
 }
 
 export const getConfirmationMessages = (language: string) => {
@@ -21134,12 +21211,18 @@ export const getConfirmationMessages = (language: string) => {
         loading: "En cours de traitement...",
         waitingForConfirmation: "En attente de confirmation"
       };
+    case 'ja':
+      return {
+        loading: "処理中...",
+        waitingForConfirmation: "確認待ち"
+      };
     default:
       return {
         loading: "Processing...",
         waitingForConfirmation: "Waiting for confirmation"
       };
-  }
+}
+
 }
 
 export const getDeliveredMessages = (language: string) => {
@@ -21164,12 +21247,18 @@ export const getDeliveredMessages = (language: string) => {
         loading: "En cours de traitement...",
         delivered: "Livré"
       };
+    case 'ja':
+      return {
+        loading: "処理中...",
+        delivered: "配送済み"
+      };
     default:
       return {
         loading: "Processing...",
         delivered: "Delivered"
       };
-  }
+}
+
 }
 
 export const getDeliveringMessages = (language: string) => {
@@ -21194,12 +21283,18 @@ export const getDeliveringMessages = (language: string) => {
         loading: "En cours de traitement...",
         delivering: "En cours de livraison"
       };
+    case 'ja':
+      return {
+        loading: "処理中...",
+        delivering: "配送中"
+      };
     default:
       return {
         loading: "Processing...",
         delivering: "Delivering"
       };
-  }
+}
+
 }
 
 export const getPrepareMessages = (language: string) => {
@@ -21224,12 +21319,18 @@ export const getPrepareMessages = (language: string) => {
         loading: "En cours de traitement...",
         preparing: "Préparation des marchandises"
       };
+    case 'ja':
+      return {
+        loading: "処理中...",
+        preparing: "商品準備中"
+      };
     default:
       return {
         loading: "Processing...",
         preparing: "Preparing goods"
       };
-  }
+}
+
 }
 
 export const getReturnProductMessages = (language: string) => {
@@ -21254,12 +21355,18 @@ export const getReturnProductMessages = (language: string) => {
         loading: "En cours de traitement...",
         returning: "Retourner les marchandises"
       };
+    case 'ja':
+      return {
+        loading: "処理中...",
+        returning: "返品中"
+      };
     default:
       return {
         loading: "Processing...",
         returning: "Returning goods"
       };
-  }
+}
+
 }
 
 export const getTransportProductMessages = (language: string) => {
@@ -21284,12 +21391,18 @@ export const getTransportProductMessages = (language: string) => {
         loading: "En cours de traitement...",
         waitingForPickup: "En attente de la collecte"
       };
+    case 'ja':
+      return {
+        loading: "処理中...",
+        waitingForPickup: "ピックアップ待ち"
+      };
     default:
       return {
         loading: "Processing...",
         waitingForPickup: "Waiting for pickup"
       };
-  }
+}
+
 }
 
 export const getLoadingMessage = (language: string) => {
@@ -21310,11 +21423,16 @@ export const getLoadingMessage = (language: string) => {
       return {
         loading: "En cours de traitement..."
       };
+    case 'ja':
+      return {
+        loading: "処理中..."
+      };
     default:
       return {
         loading: "Processing..."
       };
-  }
+}
+
 }
 
 
@@ -21336,11 +21454,16 @@ export const getErrorMessage = (language: string) => {
       return {
         error: "Erreur !"
       };
+    case 'ja':
+      return {
+        error: "エラー！"
+      };
     default:
       return {
         error: "Error!"
       };
-  }
+}
+
 }
 
 export const getViolationMessage = (language: string) => {
@@ -21361,11 +21484,16 @@ export const getViolationMessage = (language: string) => {
       return {
         violation: "Traiter la violation"
       };
+    case 'ja':
+      return {
+        violation: "違反処理"
+      };
     default:
       return {
         violation: "Handle violation"
       };
-  }
+}
+
 }
 
 export const getBanPermanentMessage = (language: string) => {
@@ -21386,11 +21514,16 @@ export const getBanPermanentMessage = (language: string) => {
       return {
         banPermanent: "Interdiction permanente"
       };
+    case 'ja':
+      return {
+        banPermanent: "永久禁止"
+      };
     default:
       return {
         banPermanent: "Permanent ban"
       };
-  }
+}
+
 }
 
 export const getPasswordNewMessages = (language: string) => {
@@ -21415,12 +21548,18 @@ export const getPasswordNewMessages = (language: string) => {
         loading: "En cours de traitement...",
         newPassword: "Nouveau mot de passe"
       };
+    case 'ja':
+      return {
+        loading: "処理中...",
+        newPassword: "新しいパスワード"
+      };
     default:
       return {
         loading: "Processing...",
         newPassword: "New password"
       };
-  }
+}
+
 }
 
 export const getVerificationMessage = (language: string) => {
@@ -21441,11 +21580,16 @@ export const getVerificationMessage = (language: string) => {
       return {
         newVerification: "Nouvelle vérification"
       };
+    case 'ja':
+      return {
+        newVerification: "新しい確認"
+      };
     default:
       return {
         newVerification: "New verification"
       };
-  }
+}
+
 }
 
 export const getExploreMessage = (language: string) => {
@@ -21466,11 +21610,16 @@ export const getExploreMessage = (language: string) => {
       return {
         explore: "Explorer"
       };
+    case 'ja':
+      return {
+        explore: "探検する"
+      };
     default:
       return {
         explore: "Explore"
       };
-  }
+}
+
 }
 
 export const getListLiveMessage = (language: string) => {
@@ -21491,11 +21640,16 @@ export const getListLiveMessage = (language: string) => {
       return {
         listLive: "Liste en direct"
       };
+    case 'ja':
+      return {
+        listLive: "ライブリスト"
+      };
     default:
       return {
         listLive: "Live list"
       };
-  }
+}
+
 }
 
 export const getLiveStreamMessage = (language: string) => {
@@ -21506,7 +21660,7 @@ export const getLiveStreamMessage = (language: string) => {
       };
     case 'en':
       return {
-        liveStream: "Livestream'"
+        liveStream: "Livestream"
       };
     case 'zh':
       return {
@@ -21516,11 +21670,16 @@ export const getLiveStreamMessage = (language: string) => {
       return {
         liveStream: "Stream en direct"
       };
+    case 'ja':
+      return {
+        liveStream: "ライブストリーム"
+      };
     default:
       return {
-        liveStream: "Livestream'"
+        liveStream: "Livestream"
       };
-  }
+}
+
 }
 
 export const getOfflineMessage = (language: string) => {
@@ -21531,7 +21690,7 @@ export const getOfflineMessage = (language: string) => {
       };
     case 'en':
       return {
-        offline: "Offline'"
+        offline: "Offline"
       };
     case 'zh':
       return {
@@ -21541,11 +21700,16 @@ export const getOfflineMessage = (language: string) => {
       return {
         offline: "Hors ligne"
       };
+    case 'ja':
+      return {
+        offline: "オフライン"
+      };
     default:
       return {
-        offline: "Offline'"
+        offline: "Offline"
       };
-  }
+}
+
 }
 
 
@@ -21567,11 +21731,16 @@ export const getUserMessage = (language: string) => {
       return {
         user: "Utilisateur"
       };
+    case 'ja':
+      return {
+        user: "ユーザー"
+      };
     default:
       return {
         user: "User"
       };
-  }
+}
+
 }
 
 export const getChatConfigMessage = (language: string) => {
@@ -21592,11 +21761,16 @@ export const getChatConfigMessage = (language: string) => {
       return {
         chatConfig: "Configuration du chat"
       };
+    case 'ja':
+      return {
+        chatConfig: "チャット設定"
+      };
     default:
       return {
         chatConfig: "Chat config"
       };
-  }
+}
+
 }
 
 export const getStreamKeysMessage = (language: string) => {
@@ -21617,11 +21791,16 @@ export const getStreamKeysMessage = (language: string) => {
       return {
         streamKeys: "Clés de diffusion"
       };
+    case 'ja':
+      return {
+        streamKeys: "ストリームキー"
+      };
     default:
       return {
         streamKeys: "Stream keys"
       };
-  }
+}
+
 }
 
 export const getListBlockMessage = (language: string) => {
@@ -21642,11 +21821,16 @@ export const getListBlockMessage = (language: string) => {
       return {
         listBlock: "Liste des blocages"
       };
+    case 'ja':
+      return {
+        listBlock: "ブロックリスト"
+      };
     default:
       return {
         listBlock: "List block"
       };
-  }
+}
+
 }
 
 export const getProductListMessage = (language: string) => {
@@ -21671,12 +21855,18 @@ export const getProductListMessage = (language: string) => {
         loading: "En cours de traitement...",
         productList: "Liste des produits"
       };
+    case 'ja':
+      return {
+        loading: "処理中...",
+        productList: "商品一覧"
+      };
     default:
       return {
         loading: "Processing...",
         productList: "Product list"
       };
-  }
+}
+
 }
 
 export const getInfoHotProductDescriptions = (language: string) => {

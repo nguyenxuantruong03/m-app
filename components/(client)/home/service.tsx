@@ -67,7 +67,7 @@ const Service = () => {
             <div className=" w-[300px] h-[285px] text-center rotate-on-hover relative mx-auto">
               <div className="w-[100px] h-[100px] mx-auto">
                 <Image
-                  src="/images/apartment-icon.png"
+                  src="/images/apartment-icon.webp"
                   className="rotate-on-hover-image"
                   alt="iamge"
                   width="300"
@@ -88,7 +88,7 @@ const Service = () => {
             <div className=" w-[300px] h-[285px] text-center rotate-on-hover relative mx-auto">
               <div className="w-[100px] h-[100px] mx-auto">
                 <Image
-                  src="/images/home-icon.png"
+                  src="/images/home-icon.webp"
                   className="rotate-on-hover-image"
                   alt="iamge"
                   width="300"
@@ -109,7 +109,7 @@ const Service = () => {
             <div className=" w-[300px] h-[285px] text-center rotate-on-hover relative mx-auto">
               <div className="w-[100px] h-[100px] mx-auto">
                 <Image
-                  src="/images/daydien-icon.png"
+                  src="/images/daydien-icon.webp"
                   className="rotate-on-hover-image"
                   alt="iamge"
                   width="300"
@@ -130,7 +130,7 @@ const Service = () => {
             <div className=" w-[300px] h-[285px] text-center rotate-on-hover relative mx-auto">
               <div className="w-[100px] h-[70px] mx-auto">
                 <Image
-                  src="/images/ongnhua-icon.png"
+                  src="/images/ongnhua-icon.webp"
                   className=" mt-10 rotate-on-hover-image"
                   alt="iamge"
                   width="300"

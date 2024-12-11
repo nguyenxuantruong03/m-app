@@ -22,14 +22,25 @@ const InfoHotProduct = () => {
     if (!scrollContainer) return;
   
     const onWheel = (e: WheelEvent) => {
-      e.preventDefault(); // Ngăn cuộn mặc định
-      scrollContainer.scrollLeft += e.deltaY; // Cuộn ngang dựa trên deltaY
+      const containerRect = scrollContainer.getBoundingClientRect();
+      const isMouseInside =
+        e.clientX >= containerRect.left &&
+        e.clientX <= containerRect.right &&
+        e.clientY >= containerRect.top &&
+        e.clientY <= containerRect.bottom;
+  
+      if (isMouseInside) {
+        e.preventDefault(); // Ngăn cuộn mặc định
+        scrollContainer.scrollBy({
+          left: e.deltaY,
+          behavior: "smooth", // Cuộn mượt
+        });
+      }
     };
   
-    scrollContainer.addEventListener("wheel", onWheel);
+    window.addEventListener("wheel", onWheel, { passive: false });
   
-    // Cleanup event listener
-    return () => scrollContainer.removeEventListener("wheel", onWheel);
+    return () => window.removeEventListener("wheel", onWheel);
   }, []);
 
   useEffect(() => {
@@ -59,7 +70,7 @@ const InfoHotProduct = () => {
     {
       title: infoProductHotMessage.titleMPE,
       description: infoProductHotMessage.descriptionMPE,
-      imageSrc: "/images/led-bulb.jpg",
+      imageSrc: "/images/led-bulb.webp",
       link: "/page2",
     },
     {
@@ -71,13 +82,13 @@ const InfoHotProduct = () => {
     {
       title: infoProductHotMessage.titleBinhMinh,
       description: infoProductHotMessage.descriptionBinhMinh,
-      imageSrc: "/images/ong-nhua-binh-minh.jpg",
+      imageSrc: "/images/ong-nhua-binh-minh.webp",
       link: "/page3",
     },
     {
       title: infoProductHotMessage.titleSenko,
       description: infoProductHotMessage.descriptionSenko,
-      imageSrc: "/images/quat-lung-senko.jpg",
+      imageSrc: "/images/quat-lung-senko.webp",
       link: "/page3",
     },
     {
@@ -101,25 +112,25 @@ const InfoHotProduct = () => {
     {
       title: infoProductHotMessage.titleDaCat,
       description: infoProductHotMessage.titleDaCat,
-      imageSrc: "/images/da-cat.png",
+      imageSrc: "/images/da-cat.webp",
       link: "/page3",
     },
     {
       title: infoProductHotMessage.titleVietTiep,
       description: infoProductHotMessage.descriptionVietTiep,
-      imageSrc: "/images/khoa-viet-tiep.png",
+      imageSrc: "/images/khoa-viet-tiep.webp",
       link: "/page3",
     },
     {
       title: infoProductHotMessage.titleKimTin,
       description: infoProductHotMessage.descriptionKimTin,
-      imageSrc: "/images/que-han.png",
+      imageSrc: "/images/que-han.webp",
       link: "/page3",
     },
     {
       title: infoProductHotMessage.titleInax,
       description: infoProductHotMessage.descriptionInax,
-      imageSrc: "/images/voi-sen-tam.jpg",
+      imageSrc: "/images/voi-sen-tam.webp",
       link: "/page3",
     },
   ];

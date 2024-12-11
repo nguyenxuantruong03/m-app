@@ -12,6 +12,7 @@ import dynamic from "next/dynamic";
 import { getHomeMessage } from "@/translate/translate-client";
 import { currentUser } from "@/lib/auth";
 import InfoHotProduct from "@/components/(client)/home/Info-hot-product";
+import FlowerFalling from "@/components/(client)/flower-falling/flower-falling";
 
 const MapAPI = dynamic(() => import("@/components/(client)/leaflet-map/leaflet-map"), {
   ssr: false,
@@ -19,6 +20,7 @@ const MapAPI = dynamic(() => import("@/components/(client)/leaflet-map/leaflet-m
 const HomePage = async () => {
   return (
     <>
+      <FlowerFalling />
       <Slider/>
       <Story/>
       <Service/>

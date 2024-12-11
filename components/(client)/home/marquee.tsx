@@ -1,27 +1,28 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import Marquee from "@/components/ui/marquee";
+import Link from "next/link";
 
 const reviews = [
   {
-    href: "",
-    img: "/images/dienquang-logo.png",
+    href: "/1",
+    img: "/images/dienquang-logo.webp",
+  },
+  {
+    href: "/2",
+    img: "/images/bachtuyet-logo.webp",
+  },
+  {
+    href: "/3",
+    img: "/images/binhminh-logo.webp",
   },
   {
     href: "",
-    img: "/images/bachtuyet-logo.jpg",
+    img: "/images/cadivi-logo.webp",
   },
   {
     href: "",
-    img: "/images/binhminh-logo.png",
-  },
-  {
-    href: "",
-    img: "/images/cadivi-logo.png",
-  },
-  {
-    href: "",
-    img: "/images/daphaco-logo.png",
+    img: "/images/daphaco-logo.webp",
   },
   {
     href: "",
@@ -29,30 +30,35 @@ const reviews = [
   },
   {
     href: "",
-    img: "/images/kimtin-logo.jpg",
+    img: "/images/kimtin-logo.webp",
   },  
   {
     href: "",
-    img: "/images/panasonic-logo.jpg",
+    img: "/images/panasonic-logo.webp",
   },
   {
     href: "",
-    img: "/images/rangdong-logo.jpg",
+    img: "/images/rangdong-logo.webp",
   },
   {
     href: "",
-    img: "/images/senko-logo.png",
+    img: "/images/senko-logo.webp",
+  },
+  {
+    href: "",
+    img: "/images/mpe-logo.webp",
   },
 ];
 
-const firstRow = reviews.slice(0, reviews.length / 2);
-
 const ReviewCard = ({
   img,
+  href
 }: {
   img: string;
+  href: string;
 }) => {
   return (
+    <Link href={href}>
     <figure
     className={cn(
       "relative w-48 h-20 cursor-pointer overflow-hidden rounded-xl border",
@@ -71,6 +77,7 @@ const ReviewCard = ({
       />
     </div>
   </figure>
+  </Link>
   );
 };
 
@@ -78,7 +85,7 @@ export default function Marquees() {
   return (
     <div className="relative flex h-[160px] w-full flex-col items-center justify-center overflow-hidden bg-background md:shadow-xl">
       <Marquee pauseOnHover className="[--duration:20s]">
-        {firstRow.map((review) => (
+        {reviews.map((review) => (
           <ReviewCard key={review.href} {...review} />
         ))}
       </Marquee>

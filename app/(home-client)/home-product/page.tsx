@@ -1,3 +1,4 @@
+import FlowerFalling from "@/components/(client)/flower-falling/flower-falling";
 import LogicProduct from "@/components/(client)/product/logic-product";
 import { currentUser } from "@/lib/auth";
 import { getHomeProductMessage } from "@/translate/translate-client";
@@ -27,6 +28,7 @@ const HomePage = async () => {
 
   return (
     <>
+      <FlowerFalling />
       <SlideItem />
       <LogicProduct />
       <Suggest />

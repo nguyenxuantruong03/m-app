@@ -23,7 +23,7 @@ const Secondhand = ({ languageToUse }: SecondhandProps) => {
               width="100"
               height="110"
               className="object-fit"
-              src="/images-product/te27.png"
+              src="/images-product/te27.webp"
               alt="error"
             />
           </div>
@@ -39,7 +39,7 @@ const Secondhand = ({ languageToUse }: SecondhandProps) => {
               width="90"
               height="90"
               className="object-fit"
-              src="/images-product/thuockeo.png"
+              src="/images-product/thuockeo.webp"
               alt="error"
             />
           </div>
@@ -55,7 +55,7 @@ const Secondhand = ({ languageToUse }: SecondhandProps) => {
               width="95"
               height="100"
               className="object-fit rounded-sm"
-              src="/images-product/bat_xanh.png"
+              src="/images-product/bat_xanh.webp"
               alt="error"
             />
           </div>
@@ -72,7 +72,7 @@ const Secondhand = ({ languageToUse }: SecondhandProps) => {
                 width="85"
                 height="70"
                 className="object-fit"
-                src="/images-product/bong_am_tran_mpe.png"
+                src="/images-product/bong_am_tran_mpe.webp"
                 alt="error"
               />
             </div>
@@ -89,7 +89,7 @@ const Secondhand = ({ languageToUse }: SecondhandProps) => {
               width="120"
               height="120"
               className="object-fit"
-              src="/images-product/co_le_yeti.png"
+              src="/images-product/co_le_yeti.webp"
               alt="error"
             />
           </div>
@@ -106,7 +106,7 @@ const Secondhand = ({ languageToUse }: SecondhandProps) => {
                 width="100"
                 height="120"
                 className="object-fit"
-                src="/images-product/cp_sino.png"
+                src="/images-product/cp_sino.webp"
                 alt="error"
               />
             </div>
@@ -125,7 +125,7 @@ const Secondhand = ({ languageToUse }: SecondhandProps) => {
               width="150"
               height="120"
               className="object-fit"
-              src="/images-product/may-bom-nuoc.png"
+              src="/images-product/may-bom-nuoc.webp"
               alt="error"
             />
           </div>
@@ -142,7 +142,7 @@ const Secondhand = ({ languageToUse }: SecondhandProps) => {
                 width="100"
                 height="100"
                 className="object-fit"
-                src="/images-product/mat_3_lo_sino.png"
+                src="/images-product/mat_3_lo_sino.webp"
                 alt="error"
               />
             </div>
@@ -159,7 +159,7 @@ const Secondhand = ({ languageToUse }: SecondhandProps) => {
               width="120"
               height="150"
               className="object-fit"
-              src="/images-product/que_han.png"
+              src="/images-product/que_han.webp"
               alt="error"
             />
           </div>
@@ -175,7 +175,7 @@ const Secondhand = ({ languageToUse }: SecondhandProps) => {
               width="150"
               height="100"
               className="object-fit"
-              src="/images-product/v_lo.png"
+              src="/images-product/v_lo.webp"
               alt="error"
             />
           </div>
@@ -191,7 +191,7 @@ const Secondhand = ({ languageToUse }: SecondhandProps) => {
               width="150"
               height="150"
               className="object-fit"
-              src="/images-product/xe-rua.png"
+              src="/images-product/xe-rua.webp"
               alt="error"
             />
           </div>

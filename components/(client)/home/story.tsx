@@ -56,14 +56,14 @@ const Story = () => {
           <div className="my-2 md:mt-20 mb-10 relative">
             <Image
               className="hidden xl:block bg-cover bg-center relative z-10 ml-24 "
-              src="/images/vlxd.jpg"
+              src="/images/vlxd.webp"
               alt="image"
               width="471"
               height="606"
             />
             <Image
               className="hidden xl:block -top-10 left-10 z-0 absolute "
-              src="/images/coating.png"
+              src="/images/coating.webp"
               alt="image"
               width="471"
               height="606"

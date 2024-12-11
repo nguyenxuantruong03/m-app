@@ -431,7 +431,7 @@ export default function DropMenuHint() {
                 <div className="max-w-7xl mx-auto shadow-lg flex items-center justify-between p-2 rounded-md">
                   <div className="flex item-center space-x-2">
                     <ImageCellOne
-                      imageUrl="/images/avatar-AI.png"
+                      imageUrl="/images/avatar-AI.webp"
                       createdAt={""}
                       email={""}
                       isClient={true}
