@@ -1,9 +1,9 @@
-import LoadingPageComponent from "@/components/ui/loading";
+import ProductSkeleton from "@/components/(client)/skeleton/product-skeleton";
 
 const Loading = () => {
   return (
     <>
-	<LoadingPageComponent />
+	<ProductSkeleton />
 	</>
   );
 };

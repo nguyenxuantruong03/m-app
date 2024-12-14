@@ -36,7 +36,7 @@ export const ToggleCard = ({
 
   const onChange = async () => {
     startTransition(() => {
-      updateStream({ [field]: !value },languageToUse)
+      updateStream({ [field]: !value }, languageToUse)
         .then(() => toast.success(chatSettingUpdatedMessage))
         .catch(() => toast.error(toastErrorMessage));
     });
@@ -44,7 +44,9 @@ export const ToggleCard = ({
   return (
     <div className="rounded-xl bg-muted p-6">
       <div className="flex items-center justify-between">
-        <p className="font-semibold shrink-0 text-sky-300">{label}</p>
+        <p className="font-semibold shrink-0 text-slate-900 dark:text-slate-200">
+          {label}
+        </p>
         <div className="space-y-2">
           <Switch
             onCheckedChange={onChange}
@@ -55,15 +57,38 @@ export const ToggleCard = ({
           </Switch>
         </div>
       </div>
-        {
-          field === "isChatDelayed" && (
-            <FormDelay data={timeDelay || 3} languageToUse={languageToUse}/>
-          )
-        }
+      {field === "isChatDelayed" && (
+        <FormDelay data={timeDelay || 3} languageToUse={languageToUse} />
+      )}
     </div>
   );
 };
 
-export const ToggleCardSkeleton = () => {
-  return <Skeleton className="rounded-xl p-10 w-full" />;
+interface ToggleCardSkeletonProps {
+  isChatDelay?: boolean;
+}
+
+export const ToggleCardSkeleton = ({
+  isChatDelay = false,
+}: ToggleCardSkeletonProps) => {
+  return (
+    <>
+      {isChatDelay ? (
+        <div className="rounded-xl bg-gray-300 bg-opacity-70 dark:bg-opacity-10 p-6 space-y-2">
+          <div className="flex items-center justify-between gap-x-3 lg:gap-x-10 w-full">
+            <Skeleton className="w-[200px] h-[30px]" />
+            <Skeleton className="w-[20px] h-[20px]" />
+          </div>
+          <Skeleton className="w-[100px] h-[20px]" />
+        </div>
+      ) : (
+        <div className="rounded-xl bg-gray-300 bg-opacity-70 dark:bg-opacity-10 p-6">
+          <div className="flex items-center justify-between gap-x-3 lg:gap-x-10 w-full">
+            <Skeleton className="w-[200px] h-[30px]" />
+            <Skeleton className="w-[20px] h-[20px]" />
+          </div>
+        </div>
+      )}
+    </>
+  );
 };

@@ -35,7 +35,6 @@ import {
   getColorPrice,
   getSizePrice,
 } from "../../export-product-compare/size-color/match-color-size";
-import axios from "axios";
 import PrevNextSwiper from "./prevnextswiper";
 import {
   getOutOfStockMessage,
@@ -80,6 +79,7 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null); // Add currentProduct state
   const [loadingRetchdataFavorite, setLoadingFetchDataFavorite] =
     useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   //languages
   const toastErrorMessage = getToastError(languageToUse);
@@ -122,7 +122,11 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
   };
 
   return (
-    <div className="relative">
+    <div
+      className="relative"
+      onMouseEnter={() => setIsHovered(true)} // Kích hoạt hover
+      onMouseLeave={() => setIsHovered(false)} // Tắt hover
+    >
       {currentProduct && ( // Only render PreviewModal if currentProduct is set
         <PreviewModal
           isOpen={openPreviewModal}
@@ -159,7 +163,7 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
         }}
         freeMode={true}
         modules={[Grid, Autoplay, FreeMode]}
-        className="mySwiper"
+        className="mySwiper space-top"
       >
         {data.map((product) => {
           // ----------Tìm size và color thấp đến cao của sản phẩm ----------------
@@ -169,24 +173,25 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
             let bestSize = null;
             let bestColor = null;
             let bestPromotion = 0;
-        
+
             // Duyệt qua các biến thể từ 1 đến 5
             for (let i = 1; i <= 5; i++) {
               const quantity = productDetail[`quantity${i}`];
-        
+
               // Bỏ qua nếu không có quantity hoặc quantity là 0
               if (!quantity || quantity === 0) continue;
-        
+
               // Lấy các giá trị tương ứng
               const price = productDetail[`price${i}`];
               const percentPromotion = productDetail[`percentpromotion${i}`];
               const size = productDetail[`size${i}`]?.value || null;
               const color = productDetail[`color${i}`]?.value || null;
-        
+
               // Kiểm tra tính hợp lệ của giá và khuyến mãi
               if (price != null && percentPromotion != null) {
-                const discountedPrice = price * ((100 - percentPromotion) / 100);
-        
+                const discountedPrice =
+                  price * ((100 - percentPromotion) / 100);
+
                 // Cập nhật nếu giá sau khuyến mãi thấp hơn giá thấp nhất hiện tại
                 if (discountedPrice < lowestPrice) {
                   lowestPrice = discountedPrice;
@@ -196,7 +201,7 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
                 }
               }
             }
-        
+
             // Xử lý trường hợp tất cả quantity đều bằng 0 hoặc không có giá trị hợp lệ
             if (lowestPrice === Infinity) {
               lowestPrice = productDetail.price1 || 0;
@@ -204,7 +209,7 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
               bestColor = productDetail[`color1`]?.value || null;
               bestPromotion = productDetail.percentpromotion1 || 0;
             }
-        
+
             // Trả về kết quả
             return {
               price: lowestPrice,
@@ -499,10 +504,8 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
           );
 
           return (
-            <SwiperSlide
-              key={product.id}
-            >
-              <div className="group px-3 bg-white cursor-pointer rounded-xl border shadow-inner relative">
+            <SwiperSlide key={product.id}>
+              <div className="group p-3 bg-white cursor-pointer rounded-xl border shadow-inner relative">
                 <div onClick={() => handleClick(product.name)}>
                   <div className="space-y-2">
                     {productQuantityAll && (
@@ -517,16 +520,19 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
                           </div> */}
                           {/* Mới */}
                           <div className="tag-outstock">
-                            <span className="tag-outstock-text">{outOfStockMessage}</span>
+                            <span className="tag-outstock-text">
+                              {outOfStockMessage}
+                            </span>
                           </div>
                         </div>
                       </>
-                     )}
+                    )}
                     <div className="aspect-square rounded-xl bg-gray-100 relative">
                       <Image
                         src={product?.images?.[0].url}
                         alt="Image"
                         className="aspect-square object-cover rounded-md"
+                        blurDataURL="/images/image-placeholder.webp"
                         fill
                         loading="lazy"
                       />
@@ -585,7 +591,7 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
                       onClick={onAddtoCart}
                       icon={
                         <ShoppingCart
-                          className={`${
+                          className={`text-gray-600 ${
                             userId?.role !== "GUEST" && userId?.id
                               ? cartdb.items.some(
                                   (item) =>
@@ -658,7 +664,15 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
             </SwiperSlide>
           );
         })}
-      {data.length > 10 && <PrevNextSwiper />}
+        {data.length > 10 && (
+          <div
+            className={` ${
+              isHovered ? "opacity-100 visible" : "opacity-0 invisible"
+            }`}
+          >
+            <PrevNextSwiper />
+          </div>
+        )}
       </Swiper>
     </div>
   );

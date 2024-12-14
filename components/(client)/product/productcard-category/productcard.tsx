@@ -27,7 +27,6 @@ import {
   getColorPrice,
   getSizePrice,
 } from "../../export-product-compare/size-color/match-color-size";
-import axios from "axios";
 import {
   getOutOfStockMessage,
   getToastError,
@@ -452,6 +451,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             >
               <Image
                 src={data?.images?.[0].url}
+                blurDataURL="/images/image-placeholder.webp"
                 width="500"
                 height="500"
                 alt="Image"
@@ -471,7 +471,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     onClick={onAddtoCart}
                     icon={
                       <ShoppingCart
-                        className={`${
+                        className={`text-gray-600 ${
                           userId?.role !== "GUEST" && userId?.id
                             ? cartdb.items.some(
                                 (item) =>

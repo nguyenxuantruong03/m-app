@@ -6,10 +6,11 @@ import { getAllCategory } from "@/actions/client/categories/get-all-category";
 
 interface MenuProps {
   showCategories?: boolean;
+  loadingBillboard?: boolean;
   languageToUse: string;
 }
 
-const Menu: React.FC<MenuProps> =  ({ showCategories = false,languageToUse }) => {
+const Menu: React.FC<MenuProps> =  ({ showCategories = false,languageToUse, loadingBillboard }) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [categories1, setCategories1] = useState<Category[]>([]);
   const [categories2, setCategories2] = useState<Category[]>([]);
@@ -22,10 +23,12 @@ const Menu: React.FC<MenuProps> =  ({ showCategories = false,languageToUse }) =>
   const [categories9, setCategories9] = useState<Category[]>([]);
   const [categories10, setCategories10] = useState<Category[]>([]);
   const [categories11, setCategories11] = useState<Category[]>([]);
+  const [loadingCategory,setLoadingCategory] = useState(true)
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
+        setLoadingCategory(true)
         // Gọi API để lấy danh sách categories
         const category = await getAllCategory(languageToUse);
   
@@ -53,6 +56,8 @@ const Menu: React.FC<MenuProps> =  ({ showCategories = false,languageToUse }) =>
         setCategories11(categorized["CATEGORY11"] || []);
       } catch (error) {
         console.error("Error fetching categories:", error);
+      } finally{
+        setLoadingCategory(false)
       }
     };
   
@@ -65,6 +70,8 @@ const Menu: React.FC<MenuProps> =  ({ showCategories = false,languageToUse }) =>
     <>
         <div className={innerDivClassName}>
           <MenuTree
+            loadingBillboard={loadingBillboard}
+            loadingCategory={loadingCategory}
             data={categories}
             categories1={categories1}
             categories2={categories2}

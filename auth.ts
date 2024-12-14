@@ -111,7 +111,11 @@ export const {
 
           if (resendCount < 2) {
             // Nếu giá trị nhỏ hơn 2, tăng lên 1
-            await sendUnBanUser(existingUser.language,unbanUser.email, unbanUser.name);
+            await sendUnBanUser(
+              existingUser.language,
+              unbanUser.email,
+              unbanUser.name
+            );
             resendCount++; // Tăng giá trị lên 1
             // Cập nhật giá trị mới cho resendUnBanUser
             await prismadb.user.update({
@@ -128,17 +132,17 @@ export const {
         return "/auth/errorbanforever";
       }
 
-       //--Bước4--Tọa favorite nếu là người đầu và người người dùng không có phobien thì update luôn luôn có phobien
-       if (existingUser) {
+      //--Bước4--Tọa favorite nếu là người đầu và người người dùng không có phobien thì update luôn luôn có phobien
+      if (existingUser) {
         // Bước 1: Kiểm tra xem "phobien" đã có trong favorite của người dùng chưa
         const hasPhobien = existingUser.favorite.includes("phobien");
-      
+
         if (!hasPhobien) {
           //  Kiểm tra xem "phobien" đã tồn tại trong bảng favorites hay chưa
           let favoriteRecord = await prismadb.favorite.findFirst({
             where: { value: "phobien", storeId: "" },
           });
-      
+
           // Nếu chưa có "phobien" trong bảng favorites, tạo mới record với "phobien"
           if (!favoriteRecord) {
             favoriteRecord = await prismadb.favorite.create({
@@ -149,14 +153,14 @@ export const {
               },
             });
           }
-      
+
           //  Đảm bảo người dùng luôn có "phobien" trong danh sách favorite
           if (favoriteRecord?.value) {
             // Kết hợp các giá trị cũ và "phobien" vào danh sách favorite của người dùng
             const updatedFavorites = Array.from(
               new Set([...existingUser.favorite, favoriteRecord.value]) // Loại bỏ phần tử trùng lặp
             );
-      
+
             // Cập nhật lại danh sách favorite của người dùng
             await prismadb.user.update({
               where: { id: existingUser.id },
@@ -167,7 +171,6 @@ export const {
           }
         }
       }
-
 
       //--Bước5--Ngăn chặn đăng nhập mà không cần xác minh email
       if (account?.provider !== "credentials") return true;
@@ -194,6 +197,10 @@ export const {
     },
 
     async session({ token, session }) {
+      // Giờ VN hiện tại
+      const now = new Date();
+      now.setHours(now.getHours() + 7);
+
       if (token.sub && session.user) {
         session.user.id = token.sub;
       }
@@ -240,6 +247,8 @@ export const {
         session.user.locationLat = token.locationLat as number;
         session.user.locationLng = token.locationLng as number;
         session.user.isSharingLocation = token.isSharingLocation as boolean;
+        session.user.isShowAds = token.isShowAds as boolean;
+        session.user.TimeshowAds = token.TimeshowAds as Date;
         session.user.feedbackTimeNextResonse =
           token.feedbackTimeNextResonse as Date;
         const existingUser = await getUserById(token.sub);
@@ -250,9 +259,6 @@ export const {
         }
 
         //--Bước1--Check người dùng có bị ban
-        const now = new Date();
-        now.setHours(now.getHours() + 7);
-
         if (existingUser && existingUser.ban === true) {
           const banExpiresAt = existingUser.banExpires
             ? new Date(existingUser.banExpires)
@@ -304,7 +310,11 @@ export const {
 
             if (resendCount < 2) {
               // Nếu giá trị nhỏ hơn 2, tăng lên 1
-              await sendUnBanUser(existingUser.language, unbanUser.email, unbanUser.name);
+              await sendUnBanUser(
+                existingUser.language,
+                unbanUser.email,
+                unbanUser.name
+              );
               resendCount++; // Tăng giá trị lên 1
               // Cập nhật giá trị mới cho resendUnBanUser
               await prismadb.user.update({
@@ -380,6 +390,23 @@ export const {
           });
         }
       }
+
+      // If isShowAds is true and TimeshowAds exists
+      if (session.user.isShowAds === true && session.user.TimeshowAds) {
+        const timeWithOffset = new Date(session.user.TimeshowAds);
+        timeWithOffset.setHours(timeWithOffset.getHours() + 12);
+
+        if (now > timeWithOffset) {
+          // Update isShowAds to false in the database
+          await prismadb.user.update({
+            where: { id: token.sub },
+            data: {
+              isShowAds: false,
+            },
+          });
+        }
+      }
+
       return {
         ...session,
         redirect: "/auth/errorban",
@@ -436,6 +463,8 @@ export const {
       token.locationLat = existingUser.locationLat;
       token.locationLng = existingUser.locationLng;
       token.isSharingLocation = existingUser.isSharingLocation;
+      token.isShowAds = existingUser.isShowAds;
+      token.TimeshowAds = existingUser.TimeshowAds;
       token.feedbackTimeNextResonse =
         existingUser?.feedback?.[0]?.timeNextResponse;
       if (existingUser.stream) {

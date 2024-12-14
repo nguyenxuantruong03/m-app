@@ -115,12 +115,8 @@ const Navbar = () => {
   return (
     <>
       <div className=" fixed z-[99999] w-full top-0">
-        <div className={`${isHidden ? "hidden" : ""} ${navbarcolor.bg_height}`}>
-          <div className="max-w-[640px] md:max-w-3xl lg:mx-auto lg:max-w-7xl md:p-1 lg:p-0">
-            <div className="md:grid md:grid-cols-3 overflow-hidden overflow-x-auto">
-              <ImageDelivery languageToUse={languageToUse} />
-            </div>
-          </div>
+        <div className={`${isHidden ? "hidden" : "max-w-full p-1 lg:p-0 h-[50px] lg:h-[40px] bg-[#e9efff] animate-fade-down animate-once animate-duration-[400ms] animate-delay-100 animate-ease-linear"}`}>
+            <ImageDelivery languageToUse={languageToUse} />
         </div>
         <div className={navbarcolor.bg}>
           <div className="xl:mx-auto xl:max-w-[85rem]">
@@ -135,6 +131,7 @@ const Navbar = () => {
           </div>
         </div>
       </div>
+
       {/* Mobile */}
       <div className=" fixed z-[99999] w-full bottom-0  md:hidden box-border bg-[#222327] h-[75px] rounded-[5px]">
         <div className="navigation">

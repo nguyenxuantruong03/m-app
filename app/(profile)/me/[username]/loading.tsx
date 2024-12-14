@@ -1,10 +1,10 @@
-import LoadingPageComponent from "@/components/ui/loading";
+import UserProfileSkeleton from "@/components/(client)/skeleton/user-profile-skeleton";
 
 const Loading = () => {
   return (
     <>
-	<LoadingPageComponent />
-	</>
+      <UserProfileSkeleton userSkeleton={false} />
+    </>
   );
 };
 

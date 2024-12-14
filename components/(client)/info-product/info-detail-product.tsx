@@ -2,7 +2,6 @@ import Image from "next/image";
 import { Product } from "@/types/type";
 import {
   translateKeyFeatures,
-  translateNews,
   translateProductNewFeatures,
 } from "@/translate/translate-client";
 import { useEffect, useState } from "react";
@@ -30,7 +29,6 @@ const InfoProductDetail: React.FC<DetailProductProps> = ({
     languageToUse,
     data.productdetail.name1
   );
-  const newsMessage = translateNews(languageToUse);
 
   const openModal = (url: string, alt: string) => {
     setSelectedImage({ url, alt });
@@ -58,45 +56,45 @@ const InfoProductDetail: React.FC<DetailProductProps> = ({
   return (
     <>
       <div className="my-2">
-        <div className="shadow-inner pt-5 px-5 rounded-lg mx-auto md:mx-0 md:max-w-3xl xl:max-w-7xl">
-          <div className="p-2 bg-slate-400 bg-opacity-10 rounded-lg">
-            <h1 className="text-center text-lg font-bold text-red-500">
-              {keyFeaturesMessage}
-            </h1>
-            <p className="text-sm text-slate-900 dark:text-slate-200">
-              {data.productdetail.descriptionsalientfeatures}
+          <div className="shadow-inner pt-5 px-5 rounded-lg mx-auto md:mx-0 md:max-w-3xl xl:max-w-7xl">
+            <div className="p-2 bg-slate-400 bg-opacity-10 rounded-lg">
+              <h1 className="text-center text-lg font-bold text-red-500">
+                {keyFeaturesMessage}
+              </h1>
+              <p className="text-sm text-slate-900 dark:text-slate-200">
+                {data.productdetail.descriptionsalientfeatures}
+              </p>
+            </div>
+            <p className="my-1 text-slate-900 dark:text-slate-200">
+              {data.productdetail.description2salientfeatures}
             </p>
-          </div>
-          <p className="my-1 text-slate-900 dark:text-slate-200">
-            {data.productdetail.description2salientfeatures}
-          </p>
-          <span className="font-bold text-lg text-slate-900 dark:text-slate-200">
-            {productNewFeatureMessage}
-          </span>
-          <div className="pl-2 my-1 text-slate-900 dark:text-slate-200">
-            <p>{data.productdetail.description3salientfeatures}</p>
-          </div>
-          <p className="text-sm font-bold my-2 text-slate-900 dark:text-slate-200">
-            {data.productdetail.description4salientfeatures}
-          </p>
-          
-          <div className="flex flex-col items-center">
-            {images.map((image, index) => (
-              <Image
-                key={index}
-                src={image.url}
-                width={800}
-                height={200}
-                alt={`Image ${index + 1}`}
-                className="rounded-md mt-3 cursor-pointer"
-                onClick={() => openModal(image.url, `Image ${index + 1}`)}
-              />
-            ))}
-          </div>
+            <span className="font-bold text-lg text-slate-900 dark:text-slate-200">
+              {productNewFeatureMessage}
+            </span>
+            <div className="pl-2 my-1 text-slate-900 dark:text-slate-200">
+              <p>{data.productdetail.description3salientfeatures}</p>
+            </div>
+            <p className="text-sm font-bold my-2 text-slate-900 dark:text-slate-200">
+              {data.productdetail.description4salientfeatures}
+            </p>
 
-          <p className="text-sm my-2 text-slate-900 dark:text-slate-200">
-            {data.productdetail.contentsalientfeatures}
-          </p>
+            <div className="flex flex-col items-center">
+              {images.map((image, index) => (
+                <Image
+                  key={index}
+                  src={image.url}
+                  width={800}
+                  height={200}
+                  alt={`Image ${index + 1}`}
+                  className="rounded-md mt-3 cursor-pointer"
+                  onClick={() => openModal(image.url, `Image ${index + 1}`)}
+                />
+              ))}
+            </div>
+
+            <p className="text-sm my-2 text-slate-900 dark:text-slate-200">
+              {data.productdetail.contentsalientfeatures}
+            </p>
         </div>
       </div>
 
@@ -118,7 +116,7 @@ const InfoProductDetail: React.FC<DetailProductProps> = ({
             />
             <button
               onClick={closeModal}
-              className="absolute top-2 right-2 text-white text-xl"
+              className="absolute cursor-pointer top-2 right-2 flex items-center justify-center text-xl rounded-full text-slate-900 w-6 h-6 bg-gray-300 hover:bg-gray-400"
             >
               &times;
             </button>

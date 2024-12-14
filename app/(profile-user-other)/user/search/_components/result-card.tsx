@@ -1,10 +1,25 @@
 import { ImageCredential, Stream, UserRole } from "@prisma/client";
 import Link from "next/link";
 import { VerifiedMark } from "@/components/verified-mark";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNowStrict } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ThumbnailSkeleton,Thumbnail } from "@/app/(profile-user-other)/(livestream-explore)/listlive/_components/thumbnail";
+import {
+  ThumbnailSkeleton,
+  Thumbnail,
+} from "@/app/(profile-user-other)/(livestream-explore)/listlive/_components/thumbnail";
+import vi from "date-fns/locale/vi";
+import en from "date-fns/locale/en-US";
+import zhCN from "date-fns/locale/zh-CN"; // Tiếng Trung giản thể
+import fr from "date-fns/locale/fr";
+import ja from "date-fns/locale/ja";
 
+const locales = {
+  vi,
+  en,
+  zh: zhCN,
+  fr,
+  ja,
+};
 
 interface ResultCardProps {
   data: {
@@ -24,9 +39,10 @@ interface ResultCardProps {
       isLive: boolean;
     } | null;
   };
+  languageToUse: string;
 }
 
-export const ResultCard = ({ data }: ResultCardProps) => {
+export const ResultCard = ({ data, languageToUse }: ResultCardProps) => {
   return (
     <Link href={`/user/${data.nameuser}`}>
       <div className="w-full flex gap-x-4">
@@ -63,7 +79,8 @@ export const ResultCard = ({ data }: ResultCardProps) => {
           <p className="text-sm text-muted-foreground">
             {data?.stream && data?.stream?.updatedAt && (
               <>
-                {formatDistanceToNow(new Date(data?.stream?.updatedAt), {
+                {formatDistanceToNowStrict(new Date(data?.stream?.updatedAt), {
+                  locale: locales[languageToUse as keyof typeof locales],
                   addSuffix: true,
                 })}
               </>

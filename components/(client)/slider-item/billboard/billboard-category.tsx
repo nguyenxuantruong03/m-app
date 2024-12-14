@@ -1,7 +1,6 @@
 "use client";
 import React, { useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperButtons from "../swiperButton";
 import { Autoplay, Pagination, Scrollbar } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
@@ -9,6 +8,7 @@ import "swiper/css/scrollbar";
 import Image from "next/image";
 import { Billboard } from "@/types/type";
 import Link from "next/link";
+import PrevNextSwiper from "../../product/product-list/prevnextswiper";
 
 interface BillboardCategoryProps {
   data: Billboard | null;
@@ -17,7 +17,7 @@ interface BillboardCategoryProps {
 const BillboardCategory: React.FC<BillboardCategoryProps> = ({ data }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const swiperRef = useRef<any>(null);
-  
+
   const renderSlides = () => {
     return data?.imagebillboard?.map((image, index) => (
       <SwiperSlide key={index}>
@@ -29,7 +29,7 @@ const BillboardCategory: React.FC<BillboardCategoryProps> = ({ data }) => {
               alt="Image"
               className="aspect-square object-cover rounded-t-md"
               placeholder="blur"
-              blurDataURL="/images/signup-ipad.png"
+              blurDataURL="/images/image-placeholder.webp"
               loading="lazy"
             />
           </div>
@@ -62,32 +62,33 @@ const BillboardCategory: React.FC<BillboardCategoryProps> = ({ data }) => {
     ));
   };
 
-  if(!data){
-  return null
+  if (!data) {
+    return null;
   }
 
   return (
-    <div className="w-full md:w-[750px] h-[377px] rounded-md shadow-md relative">
-      <Swiper
-        ref={swiperRef}
-        spaceBetween={20}
-        centeredSlides={true}
-        autoplay={{
-          delay: 2500,
-          disableOnInteraction: false,
-        }}
-        scrollbar={{
-          hide: true,
-        }}
-        onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
-        modules={[Autoplay, Pagination, Scrollbar]}
-        className="h-[330px] md:h-[350px] relative group"
-      >
-        {renderSlides()}
-        <div className="absolute top-10 z-10 hidden group-hover:block">
-          <SwiperButtons />
-        </div>
-      </Swiper>
+    <div className="w-full h-[500px] rounded-md shadow-md relative">
+        <Swiper
+          ref={swiperRef}
+          spaceBetween={20}
+          centeredSlides={true}
+          autoplay={{
+            delay: 2500,
+            disableOnInteraction: false,
+          }}
+          scrollbar={{
+            hide: true,
+          }}
+          onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+          modules={[Autoplay, Pagination, Scrollbar]}
+          className="h-[430px] md:h-[465px] relative group"
+        >
+          {renderSlides()}
+          <div className="hidden group-hover:block">
+            <PrevNextSwiper />
+          </div>
+        </Swiper>
+      
       <div className="text-center text-gray-700 flex overflow-x-auto">
         <div className="flex w-full">{renderLabels()}</div>
       </div>

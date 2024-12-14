@@ -95,7 +95,7 @@ const Navigation = ({ languageToUse }: NavigationProps) => {
   if (!user?.nameuser) {
     return (
       <ul className="space-y-2">
-        {[...Array(4)].map((_, i) => (
+        {Array.from({ length: 4 }, (_, i) => (
           <NavItemSkeleton key={i} />
         ))}
       </ul>

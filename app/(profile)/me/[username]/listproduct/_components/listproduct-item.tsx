@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { FormToggleCard } from "./form-toggle-card";
 import { useRouter } from "next/navigation";
-import LoadingPageComponent from "@/components/ui/loading";
 import { Hint } from "@/components/ui/hint";
 import Currency from "@/components/ui/currency";
 import { useCurrentUser } from "@/hooks/use-current-user";
@@ -27,6 +26,8 @@ import {
   translateSocket,
 } from "@/translate/translate-client";
 import toast from "react-hot-toast";
+import NoResults from "@/components/ui/no-result";
+import ListProductSkeleton from "@/components/(client)/skeleton/listproduct-skeleton";
 
 interface ProductWithImages extends Product {
   images: ImageData[];
@@ -38,7 +39,7 @@ const ListProductItem = () => {
   const user = useCurrentUser();
   const router = useRouter();
   const [data, setData] = useState<ProductWithImages[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -233,10 +234,12 @@ const ListProductItem = () => {
     }
   };
 
+  if(loading) return <ListProductSkeleton />
+
   if (!data.length) {
     return (
       <div>
-        <LoadingPageComponent />
+        <NoResults />
       </div>
     );
   }
@@ -343,7 +346,7 @@ const ListProductItem = () => {
                 return (
                   <div
                     key={product.id}
-                    className="bg-white p-2 max-w-xl rounded-md shadow-xl"
+                    className="dark:bg-slate-900 bg-slate-200 p-2 max-w-xl rounded-md shadow-xl"
                   >
                     <div className="grid grid-cols-2 gap-2">
                       <div className="relative">
@@ -363,7 +366,7 @@ const ListProductItem = () => {
                           />
                         </Hint>
                         {product.originalIndex !== undefined && (
-                          <span className="absolute bg-slate-300 top-0 left-0 text-white text-xs font-bold py-1 px-2">
+                          <span className="absolute dark:bg-slate-200 bg-slate-900 top-0 left-0 text-slate-900 dark:text-slate-200 text-xs font-bold py-1 px-2">
                             {product.originalIndex + 1}
                           </span>
                         )}
@@ -379,11 +382,11 @@ const ListProductItem = () => {
                             valueold={discountedPriceOld}
                           />
                         </div>
-                        <p className="text-lg text-gray-300 font-semibold truncate w-44">
+                        <p className="text-lg text-slate-900 dark:text-slate-200 font-semibold truncate w-44">
                           {listProductItemMessage.sold} :{" "}
                           <span>{product.sold}</span>
                         </p>
-                        <p className="text-lg text-gray-300 font-semibold truncate w-44">
+                        <p className="text-lg text-slate-900 dark:text-slate-200 font-semibold truncate w-44">
                           {listProductItemMessage.stock} :{" "}
                           <span>{totalQuantity}</span>
                         </p>

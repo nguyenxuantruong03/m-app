@@ -1,9 +1,10 @@
+import UserProfileSkeleton from "@/components/(client)/skeleton/user-profile-skeleton";
 
 const UserLoading = () => {
   return (
-    <div className="h-full">
-      {/* TODO: làm loading */}
-    </div>
+    <>
+    <UserProfileSkeleton userSkeleton={true}/>
+    </>
   );
 };
 

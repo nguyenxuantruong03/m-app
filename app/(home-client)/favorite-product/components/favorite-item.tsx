@@ -367,6 +367,7 @@ const LikeItem: React.FC<LikeItemProps> = ({
           <div className="aspect-square rounded-xl bg-gray-100">
             <Image
               src={data.product.images[0].url}
+              blurDataURL="/images/image-placeholder.webp"
               width="400"
               height="400"
               alt="error"

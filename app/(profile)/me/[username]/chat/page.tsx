@@ -1,19 +1,23 @@
+import { getChatConfigMessage } from "@/translate/translate-client";
+import { currentUser } from "@/lib/auth";
 import { getSelf } from "@/lib/stream/auth-service";
 import { getStreamByUserId } from "@/lib/stream/stream-service";
 import { ToggleCard } from "./_components/toggle-card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ToggleCardSkeleton } from "./_components/toggle-card";
 import { notFound } from "next/navigation";
-import FormDelay from "./_components/form-delay";
-import { getChatConfigMessage, getChatStatus, translateChatSettings, translateNoStreamKey } from "@/translate/translate-client";
-import { currentUser } from "@/lib/auth";
-const ChatPage = async () => {
+import {
+  getChatStatus,
+  translateChatSettings,
+  translateNoStreamKey,
+} from "@/translate/translate-client";
+import ChatSkeleton from "@/components/(client)/skeleton/chat-skeleton";
+
+const Chat = async () => {
   const self = await getSelf();
   //language
-  const languageToUse = self.language || "vi"
+  const languageToUse = self.language || "vi";
   const noStreamKeyMessage = translateNoStreamKey(languageToUse);
   const translateChatSettingsMessage = translateChatSettings(languageToUse);
-  const chatStatusMessage = getChatStatus(languageToUse) 
+  const chatStatusMessage = getChatStatus(languageToUse);
 
   const stream = await getStreamByUserId(self.id);
   if (
@@ -31,21 +35,16 @@ const ChatPage = async () => {
             {noStreamKeyMessage}
           </div>
         </div>
-        <div className="p-6 space-y-4">
-          <Skeleton className="h-10 w-[200px]" />
-          <div className="space-y-4">
-            <ToggleCardSkeleton />
-            <ToggleCardSkeleton />
-            <ToggleCardSkeleton />
-          </div>
-        </div>
+       <ChatSkeleton />
       </>
     );
   }
   return (
     <div className="p-6">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-200">{translateChatSettingsMessage}</h1>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-200">
+          {translateChatSettingsMessage}
+        </h1>
       </div>
       <div className="space-y-4">
         <ToggleCard
@@ -71,12 +70,12 @@ const ChatPage = async () => {
     </div>
   );
 };
-export default ChatPage;
+export default Chat;
 
 export async function generateMetadata() {
-  const curentUsers = await currentUser()
-  const chatConfigMessage = getChatConfigMessage(curentUsers?.language || "en")
+  const curentUsers = await currentUser();
+  const chatConfigMessage = getChatConfigMessage(curentUsers?.language || "en");
   return {
-    title: chatConfigMessage.chatConfig
+    title: chatConfigMessage.chatConfig,
   };
 }

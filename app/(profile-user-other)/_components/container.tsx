@@ -25,7 +25,7 @@ export const Container = ({ children }: ContainerProps) => {
     <div
       className={cn(
         "flex-1",
-        hideAll ? "ml-0" : collapsed ? "ml-[70px]" : "ml-[70px] lg:ml-60"
+        hideAll ? "ml-0" : collapsed ? "ml-[80px]" : "ml-[70px] lg:ml-60"
       )}
     >
       {children}

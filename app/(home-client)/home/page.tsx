@@ -1,6 +1,5 @@
 import BuyProduct from "@/components/(client)/home/buy-product";
 import IntroductProduct from "@/components/(client)/home/introduct-product";
-import News from "@/components/(client)/home/news";
 import OurProject from "@/components/(client)/home/our-project";
 import OverViewStore from "@/components/(client)/home/overview-store";
 import SellingProduct from "@/components/(client)/home/selling-product";
@@ -13,34 +12,42 @@ import { getHomeMessage } from "@/translate/translate-client";
 import { currentUser } from "@/lib/auth";
 import InfoHotProduct from "@/components/(client)/home/Info-hot-product";
 import FlowerFalling from "@/components/(client)/flower-falling/flower-falling";
+import { root } from "@/components/(client)/color/color";
+import NewsPage from "@/components/(client)/news/news";
 
-const MapAPI = dynamic(() => import("@/components/(client)/leaflet-map/leaflet-map"), {
-  ssr: false,
-});
-const HomePage = async () => {
+const MapAPI = dynamic(
+  () => import("@/components/(client)/leaflet-map/leaflet-map"),
+  {
+    ssr: false,
+  }
+);
+// Chuyển sang CSR hiện tại Metadata đang của SSR
+const HomePage = () => {
   return (
     <>
       <FlowerFalling />
-      <Slider/>
-      <Story/>
-      <Service/>
+      <Slider />
+      <Story />
+      <Service />
       <IntroductProduct/>
-      <SellingProduct/>
-      <OurProject/>
+      <SellingProduct />
+      <OurProject />
       <InfoHotProduct />
-      <OverViewStore/>
+      <OverViewStore />
       <BuyProduct />
-      <News />
+      <div className={`pt-5 ${root.bgwhite}`}>
+        <NewsPage />
+      </div>
       <MapAPI />
-      <Marquees/>
+      <Marquees />
     </>
   );
 };
 export default HomePage;
 
 export async function generateMetadata() {
-  const user =  await currentUser()
-  const homeMessage = getHomeMessage(user?.language || "en")
+  const user = await currentUser();
+  const homeMessage = getHomeMessage(user?.language || "en");
   return {
     title: homeMessage.home,
   };

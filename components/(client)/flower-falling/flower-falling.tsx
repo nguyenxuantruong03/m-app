@@ -27,7 +27,7 @@ const FlowerFalling: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const total = 10; // Increase for denser snow effect
+    const total = 5; // Increase for denser snow effect
     const warp = document.getElementById("container");
 
     const animm = (elm: HTMLElement) => {

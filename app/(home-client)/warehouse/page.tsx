@@ -130,9 +130,11 @@ const Voucher = () => {
                 <Image
                   src={item.imagecoupon[0].url}
                   alt="Coupon Image"
+                  blurDataURL="/images/image-placeholder.webp"
                   layout="fill" // Ensures the image fills its parent container
                   objectFit="cover" // Keeps the aspect ratio
                   className="rounded-md p-2"
+                  loading="lazy"
                 />
               </div>
 

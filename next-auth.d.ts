@@ -38,6 +38,8 @@ export type ExtendedUser = DefaultSession["user"] & {
   locationLat: number;
   locationLng: number;
   isSharingLocation: boolean;
+  isShowAds: boolean;
+  TimeshowAds: DateTime
 };
 
 declare module "next-auth" {

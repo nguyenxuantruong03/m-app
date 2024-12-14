@@ -47,6 +47,11 @@ export const getRecommended = async () => {
               },
             },
           },
+          {
+            NOT: {
+              nameuser: "@guest",  // Thêm điều kiện để lọc người dùng có nameuser là "@guest"
+            },
+          },
         ],
       },
       include: {
@@ -75,6 +80,11 @@ export const getRecommended = async () => {
     });
   } else {
     users = await prismadb.user.findMany({
+      where: {
+        NOT: {
+          nameuser: "@guest", // Thêm điều kiện để lọc người dùng có nameuser là "@guest"
+        },
+      },
       include: {
         imageCredential: true,
         stream: {

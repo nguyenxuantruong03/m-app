@@ -16,6 +16,7 @@ const SlideItem = () => {
   const [billboardsale, setBillboardSale] = useState<Billboard | null>(null);
   const [billboardsaleipad, setBillboardSaleIpad] = useState<Billboard | null>(null);
   const [billboardsalemobile, setBillboardSaleMobile] = useState<Billboard | null>(null);
+  const [loading, setLoading] = useState(true)
   const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -33,6 +34,7 @@ const SlideItem = () => {
       useEffect(() => {
         const fetchBillboards = async () => {
           try {
+            setLoading(true)
             const [billboardData, billboardMiniData, billboardSaleData, billboardIpadData, billboardMobileData] = await Promise.all([
               getBillboard(`${process.env.NEXT_PUBLIC_BILLBOARD_API_KEY}`, languageToUse),
               getBillboard(`${process.env.NEXT_PUBLIC_BILLBOARD_MINI_API_KEY}`, languageToUse),
@@ -48,6 +50,8 @@ const SlideItem = () => {
             setBillboardSaleMobile(billboardMobileData);
           } catch (error) {
             toast.error(errorBillboardMessage);
+          }finally{
+            setLoading(false)
           }
         };
       
@@ -57,14 +61,14 @@ const SlideItem = () => {
 
   return (
     <>
-      <div className="mx-auto max-w-7xl h-[430px] md:h-[432px] lg:h-[408px] my-2 mt-[120px]">
-        <div className="flex space-x-5 md:m-5 xl:m-0">
-          <Menu languageToUse={languageToUse}/>
-          <BillboardImage billboard={billboard} billboardmini={billboardmini}/>
+      <div className="mx-auto max-w-7xl h-[430px] md:h-[432px] lg:h-[435px] xl:h-[405px] my-2 mt-[120px]">
+        <div className="flex space-x-5 md:m-2 xl:m-0">
+          <Menu languageToUse={languageToUse} loadingBillboard={loading}/>
+          <BillboardImage billboard={billboard} billboardmini={billboardmini} loading={loading}/>
         </div>
       </div>
 
-      <BillboardMini billboardsale={billboardsale} billboardsaleipad={billboardsaleipad} billboardsalemobile={billboardsalemobile}/>
+      <BillboardMini loading={loading} billboardsale={billboardsale} billboardsaleipad={billboardsaleipad} billboardsalemobile={billboardsalemobile}/>
     </>
   );
 };

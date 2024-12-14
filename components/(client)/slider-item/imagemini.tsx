@@ -1,12 +1,25 @@
 import { Billboard } from "@/types/type";
 import Image from "next/image";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ImageMiniProps {
+  loading: boolean;
   data: Billboard | null;
 }
 
-const ImageMini: React.FC<ImageMiniProps> = ({ data }) => {
+const ImageMini: React.FC<ImageMiniProps> = ({ data,loading }) => {
+  const isLoading = !data?.imagebillboard || data.imagebillboard.length === 0 || loading;
+
+  const skeletonComponents = Array.from({ length: 3 }).map((_, index) => (
+    <div
+      key={index}
+      className="relative rounded-md shadow-md overflow-hidden h-[138px] space-y-2"
+    >
+      <Skeleton className="w-full h-full rounded-md" />
+    </div>
+  ));
+
   const imageComponents = data?.imagebillboard
     ?.slice(0, 3)
     .map((image, index, array) => (
@@ -26,14 +39,14 @@ const ImageMini: React.FC<ImageMiniProps> = ({ data }) => {
             alt={`Image ${index}`}
             className="object-cover rounded-md"
             placeholder="blur"
-            blurDataURL="/images/signup-ipad.png"
+            blurDataURL="/images/image-placeholder.webp"
             loading="lazy"
           />
         </Link>
       </div>
     ));
 
-  return <>{imageComponents}</>;
+  return <>{isLoading ? skeletonComponents : imageComponents}</>;
 };
 
 export default ImageMini;

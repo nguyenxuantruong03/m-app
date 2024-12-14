@@ -25,6 +25,7 @@ import {
   translateSortNameZToA,
 } from "@/translate/translate-client";
 import NoResults from "@/components/ui/no-result";
+import CategorySkeleton from "../skeleton/category-skeleton";
 
 interface DetailCategoryProps {
   billboard: Billboard | null;
@@ -39,6 +40,7 @@ interface DetailCategoryProps {
   sortOrder: string;
   route: string;
   languageToUse: string;
+  loading: boolean;
 }
 
 const DetailCategory: React.FC<DetailCategoryProps> = ({
@@ -54,6 +56,7 @@ const DetailCategory: React.FC<DetailCategoryProps> = ({
   sortOrder,
   route,
   languageToUse,
+  loading,
 }) => {
   //language
   const sortHighToLowMessage = translateSortHighToLow(languageToUse);
@@ -138,10 +141,12 @@ const DetailCategory: React.FC<DetailCategoryProps> = ({
     return sortedArray;
   }, [product, sortOrder]);
 
+  if(loading) return <CategorySkeleton />;
+
   return (
     <>
       <div className="mt-28 flex items-center justify-center px-2.5">
-        <BillboardCategory data={billboard} />
+        <BillboardCategory data={billboard}/>
       </div>
       <div className="px-4 sm:px-6 lg:px-8 pb-24 mb-5 mt-10">
         <div className="lg:grid lg:grid-cols-5 lg:gap-x-8">

@@ -30,7 +30,6 @@ import useCartdb from "@/hooks/client/db/use-cart-db";
 import { formatSoldValue } from "@/lib/utils";
 import cuid from "cuid";
 import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
-import axios from "axios";
 import {
   getColorPrice,
   getSizePrice,
@@ -79,6 +78,7 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null); // Add currentProduct state
   const [loadingRetchdataFavorite, setLoadingFetchDataFavorite] =
     useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   //languages
   const toastErrorMessage = getToastError(languageToUse);
@@ -165,7 +165,10 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({
   };
 
   return (
-    <div className="relative">
+    <div className="relative"
+    onMouseEnter={() => setIsHovered(true)} // Kích hoạt hover
+      onMouseLeave={() => setIsHovered(false)} // Tắt hover
+    >
       {currentProduct && ( // Only render PreviewModal if currentProduct is set
         <PreviewModal
           isOpen={openPreviewModal}
@@ -202,7 +205,7 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({
         }}
         freeMode={true}
         modules={[Grid, Autoplay, FreeMode]}
-        className="mySwiper"
+        className="mySwiper space-top"
       >
         {data.map((product) => {
           // ----------Tìm size và color thấp đến cao của sản phẩm ----------------
@@ -552,7 +555,7 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({
             <SwiperSlide
               key={product.id}
             >
-              <div className="group px-3 bg-white cursor-pointer rounded-xl border shadow-inner relative">
+              <div className="group p-3 bg-white cursor-pointer rounded-xl border shadow-inner relative">
                 <div
                   onClick={() => handleClick(product.name, product.productType)}
                 >
@@ -579,6 +582,7 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({
                         src={product?.images?.[0].url}
                         alt="Image"
                         className="aspect-square object-cover rounded-md"
+                        blurDataURL="/images/image-placeholder.webp"
                         fill
                         loading="lazy"
                       />
@@ -691,7 +695,7 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({
                       onClick={onAddtoCart}
                       icon={
                         <ShoppingCart
-                          className={`${
+                          className={`text-gray-600 ${
                             userId?.role !== "GUEST" && userId?.id
                               ? cartdb.items.some(
                                   (item) =>
@@ -764,7 +768,15 @@ const ProductListSale: React.FC<ProductListSaleProps> = ({
             </SwiperSlide>
           );
         })}
-      {data.length > 10 && <PrevNextSwiper />}
+      {data.length > 10 && (
+          <div
+            className={` ${
+              isHovered ? "opacity-100 visible" : "opacity-0 invisible"
+            }`}
+          >
+            <PrevNextSwiper />
+          </div>
+        )}
       </Swiper>
     </div>
   );

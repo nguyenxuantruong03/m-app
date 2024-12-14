@@ -156,11 +156,8 @@ const LogicProduct = () => {
     .sort((a, b) => b.count - a.count); // Sắp xếp theo count từ cao đến thấp
   return (
     <>
-    {
-      loading ? (
-        <LoadingPageComponent />
-      ) : (
         <MainProduct
+        loading={loading}
           saleProduct={saleProduct}
           pin={pin}
           quat={quat}
@@ -178,8 +175,6 @@ const LogicProduct = () => {
           aggregatedProductTypes={aggregatedProductTypes}
           languageToUse={languageToUse}
         />
-      )
-    }
     </>
   );
 };

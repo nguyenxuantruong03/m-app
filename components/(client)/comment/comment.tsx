@@ -69,6 +69,20 @@ import {
 } from "@/translate/translate-client";
 import { PolicyViolationModal } from "../modal/policy-violation-modal";
 import { offensiveWords } from "@/vn_offensive_words";
+import { formatDistanceToNowStrict } from "date-fns";
+import vi from 'date-fns/locale/vi';
+import en from 'date-fns/locale/en-US';
+import zhCN from 'date-fns/locale/zh-CN'; // Tiếng Trung giản thể
+import fr from 'date-fns/locale/fr';
+import ja from 'date-fns/locale/ja';
+
+const locales = {
+  vi,
+  en,
+  zh: zhCN,
+  fr,
+  ja
+};
 
 interface CommentProps {
   data: string;
@@ -1004,40 +1018,6 @@ const Comment: React.FC<CommentProps> = ({
     return starElements;
   };
 
-  const formatTimestamp = (timestamp: Date) => {
-    const createdDate = new Date(timestamp);
-    const currentDate = new Date();
-
-    const timeDifference = currentDate.getTime() - createdDate.getTime();
-    const minuteDifference = Math.floor(timeDifference / (1000 * 60));
-    const hourDifference = Math.floor(timeDifference / (1000 * 60 * 60));
-    const dayDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-    const monthDifference = Math.floor(dayDifference / 30);
-    const yearDifference = Math.floor(dayDifference / 365);
-
-    if (yearDifference >= 1) {
-      return yearDifference === 1
-        ? oneYearAgoMessage
-        : `${yearDifference} ${yearAgoMessage}`;
-    } else if (monthDifference >= 1) {
-      return monthDifference === 1
-        ? oneMonthAgoMessage
-        : `${monthDifference} ${monthAgoMessage}`;
-    } else if (dayDifference >= 2) {
-      return `${dayDifference} ${dayAgoMessage}`;
-    } else if (dayDifference === 1) {
-      return oneDayAgoMessage;
-    } else if (hourDifference >= 2) {
-      return `${hourDifference} ${hourAgoMessage}`;
-    } else if (hourDifference === 1) {
-      return oneHourAgoMessage;
-    } else if (minuteDifference >= 2) {
-      return `${minuteDifference} ${minuteAgoMessage}`;
-    } else {
-      return justNowMessage;
-    }
-  };
-
   const truncateName = (name: string, maxLength: number) => {
     if (name.length > maxLength) {
       return name.slice(0, maxLength) + "...";
@@ -1462,7 +1442,10 @@ const Comment: React.FC<CommentProps> = ({
                               )}
                             </div>
                             <p className=" absolute right-0 text-sm font-bold text-slate-900 dark:text-slate-200 text-opacity-60">
-                              {formatTimestamp(comment.createdAt || new Date())}
+                              {formatDistanceToNowStrict(new Date(comment.createdAt || new Date()), {
+                                  locale: locales[languageToUse as keyof typeof locales],
+                                  addSuffix: true,
+                              })}
                             </p>
                           </div>
 
@@ -1681,10 +1664,11 @@ const Comment: React.FC<CommentProps> = ({
                                                       )}
                                                     </div>
                                                     <div className="absolute right-0 text-sm font-bold text-slate-900 dark:text-slate-200 text-opacity-60">
-                                                      {formatTimestamp(
-                                                        response.createdAt ||
-                                                          new Date()
-                                                      )}
+                                                      
+                                                      {formatDistanceToNowStrict(new Date(response.createdAt || new Date()), {
+                                                          locale: locales[languageToUse as keyof typeof locales],
+                                                          addSuffix: true,
+                                                      })}
                                                     </div>
                                                   </div>
                                                   <div
@@ -1800,10 +1784,10 @@ const Comment: React.FC<CommentProps> = ({
                                                     }`}
                                                   >
                                                     <div className="absolute left-0 text-sm font-bold text-gray-800 text-opacity-60">
-                                                      {formatTimestamp(
-                                                        response.createdAt ||
-                                                          new Date()
-                                                      )}
+                                                      {formatDistanceToNowStrict(new Date(response.createdAt || new Date()), {
+                                                          locale: locales[languageToUse as keyof typeof locales],
+                                                          addSuffix: true,
+                                                      })}
                                                     </div>
                                                     <div
                                                       className={`${

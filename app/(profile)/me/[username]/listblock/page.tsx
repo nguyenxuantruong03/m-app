@@ -1,15 +1,17 @@
+import {
+  getListBlockMessage,
+} from "@/translate/translate-client";
+import { currentUser } from "@/lib/auth";
 import { getBlockedUsers } from "@/lib/stream/block-service";
 import { columns } from "./_components/column";
 import { DataTable } from "@/components/ui/data-table";
 
 import {
-  getListBlockMessage,
   translateListBlockSettings,
 } from "@/translate/translate-client";
 import { getSelf } from "@/lib/stream/auth-service";
-import { currentUser } from "@/lib/auth";
 
-const CommunityPage = async () => {
+const ListBlockPage = async () => {
   const self = await getSelf();
   //language
   const languageToUse = self.language || "vi";
@@ -48,7 +50,8 @@ const CommunityPage = async () => {
   );
 };
 
-export default CommunityPage;
+export default ListBlockPage;
+
 
 export async function generateMetadata() {
   const curentUsers = await currentUser()

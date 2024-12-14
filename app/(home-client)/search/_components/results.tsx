@@ -106,7 +106,7 @@ export const ResultsSkeleton = () => {
     <div>
       <Skeleton className="h-8 w-[290px] mb-4" />
       <div className="flex flex-col gap-y-4">
-        {[...Array(4)].map((_, i) => (
+        {Array.from({ length: 4 }, (_, i) => (
           <ResultCardSkeleton key={i} />
         ))}
       </div>

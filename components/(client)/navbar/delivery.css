@@ -516,3 +516,28 @@
   transform: translateX(calc(68px * 4));
 }
 
+@keyframes slideLeftMargin {
+  from {
+    margin-left: 100%;
+  }
+  to {
+    margin-left: 0;
+  }
+}
+
+@keyframes slideRightMargin {
+  from {
+    margin-left: -100%;
+  }
+  to {
+    margin-left: 0;
+  }
+}
+
+.animate-slide-left {
+  animation: slideLeft 0.3s ease-in-out;
+}
+
+.animate-slide-right {
+  animation: slideRight 0.3s ease-in-out;
+}

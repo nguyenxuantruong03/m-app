@@ -420,6 +420,8 @@ const PrepareProduct = () => {
                             className="border border-gray-300"
                             width={100}
                             height={100}
+                            blurDataURL="/images/image-placeholder.webp"
+                            loading="lazy"
                           />
                         ) : (
                           <Image

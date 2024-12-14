@@ -243,7 +243,7 @@ export async function DELETE(
       );
     }
 
-    if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
+    if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
         JSON.stringify({ error: billboardDeleteMessage.name2 }),
         { status: 403 }

@@ -80,5 +80,6 @@ export default auth(
 // so khớp biểu thức chính quy để loại trừ các đường dẫn có phần mở rộng tệp và những đường dẫn bắt đầu bằng "_next"
 // (có thể là nội bộ Next.js), cho phép phần mềm trung gian được áp dụng cho các đường dẫn khác.
 export const config = {
-  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: ["/((?!api/.*|.+\\.[\\w]+$|_next|/).*)", "/game", "/(trpc)(.*)"],
 };
+

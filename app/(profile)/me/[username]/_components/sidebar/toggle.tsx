@@ -49,9 +49,9 @@ const Toggle = ({ languageToUse }: ToggleProps) => {
       )}
 
       {!collapsed && !hideAll && (
-        <div className="p-3 pl-6 mb-2 flex items-center w-full justify-between">
+        <div className="p-3 pl-6 mb-2 hidden lg:flex items-center w-full justify-between">
           {/* "For you" section */}
-          <p className="font-semibold text-gray-300">{dashboardMessage}</p>
+          <p className="font-semibold text-gray-300 block">{dashboardMessage}</p>
 
           <div className="flex items-center space-x-2">
             {/* Collapse button */}

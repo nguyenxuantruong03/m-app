@@ -29,7 +29,7 @@ export default function CustomImage({ src, alt, priority }: Props) {
 
             {isModalOpen && (
                 <div
-                    className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+                    className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[999999999]"
                     onClick={closeModal}
                 >
                     <div
@@ -45,7 +45,7 @@ export default function CustomImage({ src, alt, priority }: Props) {
                         />
                         <button
                             onClick={closeModal}
-                            className="absolute top-2 right-2 text-white text-xl"
+                            className="absolute cursor-pointer top-2 right-2 flex items-center justify-center text-xl rounded-full text-slate-900 w-6 h-6 bg-gray-300 hover:bg-gray-400"
                         >
                             &times;
                         </button>

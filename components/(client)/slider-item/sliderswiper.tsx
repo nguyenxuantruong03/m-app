@@ -2,19 +2,21 @@
 import React, { useState, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Image from "next/image";
-import SwiperButtons from "./swiperButton";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import { Autoplay, Pagination, Scrollbar } from "swiper/modules";
 import { Billboard } from "@/types/type";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
+import PrevNextSwiper from "../product/product-list/prevnextswiper";
 
 interface SliderSwiperProps {
   data: Billboard | null;
+  loading: boolean
 }
 
-const SliderSwiper: React.FC<SliderSwiperProps> = ({ data }) => {
+const SliderSwiper: React.FC<SliderSwiperProps> = ({ data, loading }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const swiperRef = useRef<any>(null);
 
@@ -22,14 +24,14 @@ const SliderSwiper: React.FC<SliderSwiperProps> = ({ data }) => {
     return data?.imagebillboard?.map((image, index) => (
       <SwiperSlide key={index}>
         <Link href={`${image.link ? `${image.link}` : `/home-product`} `}>
-          <div className="overflow-hidden rounded-xl md:aspect-[1/1] bg-cover">
+          <div className="md:aspect-[1/1] bg-cover">
             <Image
               src={image.url}
               fill
               alt="Image"
               className="aspect-square object-cover rounded-t-md"
               placeholder="blur"
-              blurDataURL="/images/signup-ipad.png"
+              blurDataURL="/images/image-placeholder.webp"
               loading="lazy"
             />
           </div>
@@ -44,7 +46,17 @@ const SliderSwiper: React.FC<SliderSwiperProps> = ({ data }) => {
   };
 
   const renderLabels = () => {
-    return data?.imagebillboard?.map((image, index) => (
+    if (!data?.imagebillboard || data.imagebillboard.length === 0 || loading) {
+      return (
+        <div className="flex space-x-2 p-4">
+          <Skeleton className="h-6 w-32" />
+          <Skeleton className="h-6 w-32" />
+          <Skeleton className="h-6 w-32 hidden md:block" />
+        </div>
+      );
+    }
+
+    return data.imagebillboard.map((image, index) => (
       <button
         key={index}
         onClick={() => handleLabelClick(index)}
@@ -63,27 +75,33 @@ const SliderSwiper: React.FC<SliderSwiperProps> = ({ data }) => {
   };
 
   return (
-    <div className="w-[90vw] md:w-[70vw] lg:w-[750px] rounded-md shadow-md dark:bg-slate-700">
-      <Swiper
-        ref={swiperRef}
-        spaceBetween={20}
-        centeredSlides={true}
-        autoplay={{
-          delay: 2500,
-          disableOnInteraction: false,
-        }}
-        scrollbar={{
-          hide: true,
-        }}
-        onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
-        modules={[Autoplay, Pagination, Scrollbar]}
-        className="h-[330px] md:h-[350px] relative group"
-      >
-        {renderSlides()}
-        <div className="absolute top-10 z-10 hidden group-hover:block">
-          <SwiperButtons />
+    <div className="w-[90vw] md:w-[71vw] lg:w-[750px] rounded-md shadow-md dark:bg-slate-700">
+      {data?.imagebillboard && data.imagebillboard.length > 0 && !loading ? (
+        <Swiper
+          ref={swiperRef}
+          spaceBetween={20}
+          centeredSlides={true}
+          autoplay={{
+            delay: 2500,
+            disableOnInteraction: false,
+          }}
+          scrollbar={{
+            hide: true,
+          }}
+          onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+          modules={[Autoplay, Pagination, Scrollbar]}
+          className="w-[90vw] md:w-[71vw] lg:w-[750px] h-[430px] md:h-[350px] relative group rounded-t-md"
+        >
+          {renderSlides()}
+          <div className="hidden group-hover:block">
+            <PrevNextSwiper />
+          </div>
+        </Swiper>
+      ) : (
+        <div className="relative w-[90vw] md:w-[70vw] lg:w-[750px] h-[430px] md:h-[350px] overflow-hidden rounded-md bg-gray-200 dark:bg-slate-800">
+          <Skeleton className="h-full w-full" />
         </div>
-      </Swiper>
+      )}
       <div className="text-center text-gray-700 flex overflow-x-auto">
         <div className="flex w-full">{renderLabels()}</div>
       </div>

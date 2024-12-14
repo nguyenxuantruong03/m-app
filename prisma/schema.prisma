@@ -675,6 +675,9 @@ model User {
   locationLat Float?   // Vị trí khi người dùng tắt chia sẻ
   locationLng Float?   // Vị trí khi người dùng tắt chia sẻ
   isSharingLocation Boolean @default(false)
+  //Hiển thị Quảng cáo
+  isShowAds        Boolean @default(false)
+  TimeshowAds      DateTime @default(now())
 
   //Stream
   following  Follow[] @relation("Following")

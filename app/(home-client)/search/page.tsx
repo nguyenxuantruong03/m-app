@@ -1,8 +1,7 @@
 "use client"
 import { redirect } from "next/navigation";
 import { Results } from "./_components/results";
-import { Suspense, useEffect } from "react";
-import { ResultSkeleton } from "@/app/(profile-user-other)/(livestream-explore)/listlive/_components/results";
+import { useEffect } from "react";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { getSearchMessage } from "@/translate/translate-client";
 
@@ -25,9 +24,7 @@ const SearchPage = ({searchParams}:SearchPageProps) => {
 
     return ( 
         <div className="h-full p-8 max-w-screen-2xl mx-auto mt-20">
-            <Suspense fallback={<ResultSkeleton />}>
             <Results term={searchParams.term}/>
-            </Suspense>
         </div>     
         );
 }

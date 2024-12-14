@@ -1,10 +1,10 @@
-import LoadingPageComponent from "@/components/ui/loading";
+import ExploreSkeleton from "@/components/(client)/skeleton/explore-skeleton";
 
 const Loading = () => {
   return (
     <>
-	<LoadingPageComponent />
-	</>
+      <ExploreSkeleton />
+    </>
   );
 };
 

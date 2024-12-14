@@ -1,4 +1,5 @@
 import FlowerFalling from "@/components/(client)/flower-falling/flower-falling";
+import NewsPage from "@/components/(client)/news/news";
 import LogicProduct from "@/components/(client)/product/logic-product";
 import { currentUser } from "@/lib/auth";
 import { getHomeProductMessage } from "@/translate/translate-client";
@@ -13,19 +14,16 @@ const SlideItem = dynamic(
 const Suggest = dynamic(() => import("@/components/(client)/suggest/Suggest"), {
   ssr: false,
 });
-const NewsPage = dynamic(() => import("@/components/(client)/news/news"), {
-  ssr: false,
-});
 const MapAPI = dynamic(
   () => import("@/components/(client)/leaflet-map/leaflet-map"),
   {
     ssr: false,
   }
 );
-
 export const revalidate = 86400;
-const HomePage = async () => {
 
+// Chuyển sang CSR hiện tại Metadata đang của SSR
+const HomePage = () => {
   return (
     <>
       <FlowerFalling />
@@ -40,8 +38,8 @@ const HomePage = async () => {
 export default HomePage;
 
 export async function generateMetadata() {
-  const user =  await currentUser()
-  const homeProductMessage = getHomeProductMessage(user?.language || "en")
+  const user = await currentUser();
+  const homeProductMessage = getHomeProductMessage(user?.language || "en");
   return {
     title: homeProductMessage.homeProduct,
   };

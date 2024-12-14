@@ -1,12 +1,12 @@
-import UserItem from "@/app/(profile)/me/[username]/_components/user-item";
 import { currentUser } from "@/lib/auth";
+import { getUserByUsername } from "@/lib/user-service";
+import { getUserMessage } from "@/translate/translate-client";
+import UserItem from "@/app/(profile)/me/[username]/_components/user-item";
 import {
   isBlockedbyUsesr,
   isExistingBlockedbyUsesr,
 } from "@/lib/stream/block-service";
 import { isFollowingUser } from "@/lib/stream/follow-service";
-import { getUserByUsername } from "@/lib/user-service";
-import { getUserMessage } from "@/translate/translate-client";
 import { notFound } from "next/navigation";
 
 interface UserPageProps {

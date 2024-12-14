@@ -46,7 +46,7 @@ import {
   translateSocket,
   translateSocketAndFaceplate,
 } from "@/translate/translate-client";
-import { useEffect, useState } from "react";
+import MainProductSkeleton from "../skeleton/main-product-Skeleton";
 
 interface ProductMainListProps {
   saleProduct: Product[];
@@ -65,6 +65,7 @@ interface ProductMainListProps {
   maxTimeSale: Date | null;
   aggregatedProductTypes: { productType: string; count: number }[];
   languageToUse: string;
+  loading: boolean;
 }
 const MainProduct: React.FC<ProductMainListProps> = ({
   saleProduct,
@@ -83,6 +84,7 @@ const MainProduct: React.FC<ProductMainListProps> = ({
   maxTimeSale,
   aggregatedProductTypes,
   languageToUse,
+  loading,
 }) => {
   //language
   const bestSellerMessage = translateBestSeller(languageToUse);
@@ -319,12 +321,18 @@ const MainProduct: React.FC<ProductMainListProps> = ({
           {fanMessage}
         </h1>
         <RelatedTagQuat languageToUse={languageToUse} />
-        {quat.length === 0 && <NoResults />}
-        <ProductList
-          data={quat}
-          route="product1"
-          languageToUse={languageToUse}
-        />
+        {loading ? (
+          <MainProductSkeleton />
+        ) : (
+          <>
+            {quat.length === 0 && <NoResults />}
+            <ProductList
+              data={quat}
+              route="product1"
+              languageToUse={languageToUse}
+            />
+          </>
+        )}
       </>
 
       <>
@@ -332,25 +340,37 @@ const MainProduct: React.FC<ProductMainListProps> = ({
           {electricWireMessage}
         </h1>
         <RelatedTagDaydien languageToUse={languageToUse} />
-        {daydien.length === 0 && <NoResults />}
-        <ProductList
-          data={daydien}
-          route="product3"
-          languageToUse={languageToUse}
-        />
+        {loading ? (
+          <MainProductSkeleton />
+        ) : (
+          <>
+            {daydien.length === 0 && <NoResults />}
+            <ProductList
+              data={daydien}
+              route="product3"
+              languageToUse={languageToUse}
+            />
+          </>
+        )}
       </>
 
       <>
-        <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
+        <h1 className="mb-4 mt-4 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
           {socketAndFaceplateMessage}
         </h1>
         <RelatedTagOcam languageToUse={languageToUse} />
-        {ocam.length === 0 && <NoResults />}
-        <ProductListSingle
-          data={ocam}
-          route="product7"
-          languageToUse={languageToUse}
-        />
+        {loading ? (
+          <MainProductSkeleton />
+        ) : (
+          <>
+            {ocam.length === 0 && <NoResults />}
+            <ProductListSingle
+              data={ocam}
+              route="product7"
+              languageToUse={languageToUse}
+            />
+          </>
+        )}
       </>
 
       <>
@@ -358,12 +378,18 @@ const MainProduct: React.FC<ProductMainListProps> = ({
           {plasticPipeMessage}
         </h1>
         <RelatedTagOngnhua languageToUse={languageToUse} />
-        {ongnhua.length === 0 && <NoResults />}
-        <ProductListSingle
-          data={ongnhua}
-          route="product2"
-          languageToUse={languageToUse}
-        />
+        {loading ? (
+          <MainProductSkeleton />
+        ) : (
+          <>
+            {ongnhua.length === 0 && <NoResults />}
+            <ProductListSingle
+              data={ongnhua}
+              route="product2"
+              languageToUse={languageToUse}
+            />
+          </>
+        )}
       </>
 
       <>
@@ -371,12 +397,18 @@ const MainProduct: React.FC<ProductMainListProps> = ({
           {lightBlubMessage}
         </h1>
         <RelatedTagBongden languageToUse={languageToUse} />
-        {bongden.length === 0 && <NoResults />}
-        <ProductList
-          data={bongden}
-          route="product10"
-          languageToUse={languageToUse}
-        />
+        {loading ? (
+          <MainProductSkeleton />
+        ) : (
+          <>
+            {bongden.length === 0 && <NoResults />}
+            <ProductList
+              data={bongden}
+              route="product10"
+              languageToUse={languageToUse}
+            />
+          </>
+        )}
       </>
 
       {/* ------Không được ưa tiên hiển thị nếu ko có isFeatured--------- */}

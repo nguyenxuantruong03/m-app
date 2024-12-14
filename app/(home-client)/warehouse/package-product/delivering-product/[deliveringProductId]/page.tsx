@@ -606,7 +606,7 @@ const WareHouseDetail = ({
                 />
                 <button
                   onClick={closeModal}
-                  className="z-[999999999] absolute top-2 right-2 text-xl rounded-full w-10 h-10 hover:bg-gray-300 hover:bg-opacity-20"
+                  className="absolute cursor-pointer top-2 right-2 flex items-center justify-center text-xl rounded-full text-slate-900 w-6 h-6 bg-gray-300 hover:bg-gray-400"
                 >
                   &times;
                 </button>
@@ -1082,6 +1082,8 @@ const WareHouseDetail = ({
                         className="border border-gray-300"
                         width={100}
                         height={100}
+                        blurDataURL="/images/image-placeholder.webp"
+                        loading="lazy"
                       />
                     ) : (
                       <Image

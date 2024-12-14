@@ -350,6 +350,42 @@ export const translateBillboardIdPatch = (language: string) => {
   }
 };
 
+export const translateAdsMessage = (language:string) => {
+  switch (language) {
+      case 'vi': 
+          return {
+              userNotFound: "Không tìm thấy người dùng!",
+              systemError: "Lỗi hệ thống khi cập nhật lại ảnh quảng cáo!"
+          };
+      case 'en': 
+          return {
+              userNotFound: "User not found!",
+              systemError: "System error while updating the advertisement image!"
+          };
+      case 'zh':
+          return {
+              userNotFound: "找不到用户！",
+              systemError: "更新广告图片时发生系统错误！"
+          };
+      case 'fr': 
+          return {
+              userNotFound: "Utilisateur introuvable !",
+              systemError: "Erreur système lors de la mise à jour de l'image publicitaire !"
+          };
+      case 'ja': 
+          return {
+              userNotFound: "ユーザーが見つかりません！",
+              systemError: "広告画像の更新中にシステムエラーが発生しました！"
+          };
+      default:
+          return {
+              userNotFound: "Error: Language not supported!",
+              systemError: "Error: Language not supported!"
+          };
+  }
+}
+
+
 export const translateCategoriesPost = (language: string) => {
   switch (language) {
     case "vi":

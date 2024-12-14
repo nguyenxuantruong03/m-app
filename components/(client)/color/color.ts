@@ -52,13 +52,12 @@ export const mainnavcolor={
 }
 
 export const navbarcolor={
-  bg_height:"md:h-[50px] lg:h-[40px] bg-[#e9efff] md:animate-fade-down md:animate-once md:animate-duration-[400ms] md:animate-delay-100 md:animate-ease-linear",
   bg:"bg-[#de0024]"
 }
 
 export const deliverycolor ={
-  bg_rounded__p_mt:"mt-1 p-1 rounded-md bg-red-500 bg-opacity-30 md:w-60 lg:w-80 h-8 md:flex items-center hidden",
-  bg_not_w:"h-8 slider-right mt-0 md:mt-1 p-1 rounded-md bg-red-500 bg-opacity-30"
+  bg_rounded__p_mt:"mt-1 p-1 rounded-md bg-red-500 bg-opacity-30 w-80 flex items-center",
+  bg_not_w:"slider-right mt-0 mt-1 p-1 rounded-md bg-red-500 bg-opacity-30"
 }
 
 //// ----------product ---------////

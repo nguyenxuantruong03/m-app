@@ -63,7 +63,7 @@ export const Recommended: React.FC<RecommendedProps> = ({ data }) => {
 export const RecommendedSkeleton = () => {
   return (
     <ul className="px-2">
-      {[...Array(3)].map((_, i) => (
+      {Array.from({ length: 3 }, (_, i) => (
         <UserItemSkeleton key={i} />
       ))}
     </ul>

@@ -254,7 +254,7 @@ const MainNav: React.FC<mainNavProps> = ({
                     <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center ">
                       <Blocks className="w-6 h-6 text-white" />
                     </div>
-                    <div className="basis-2/3 hidden md:block w-20">
+                    <div className="basis-2/3 hidden md:block w-12 xl:w-20">
                       <div className="text-xs text-white">
                         {convenienceMessage.name}
                       </div>
@@ -469,7 +469,7 @@ const MainNav: React.FC<mainNavProps> = ({
                     </p>
                   </span>
                 </div>
-                <div className="basis-2/3 hidden md:block w-20">
+                <div className="basis-2/3 hidden md:block w-12 xl:w-20">
                   <div className="text-xs text-white">
                     {throwAndHeartMessage.name}
                   </div>
@@ -500,7 +500,7 @@ const MainNav: React.FC<mainNavProps> = ({
                     </p>
                   </span>
                 </div>
-                <div className="basis-2/3 hidden md:block w-20">
+                <div className="basis-2/3 hidden md:block w-12 xl:w-20">
                   <div className="text-xs  text-white">
                     {basketAndGoodsMessage.name}
                   </div>

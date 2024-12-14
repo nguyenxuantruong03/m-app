@@ -17,7 +17,7 @@ import {
   Review,
   Block,
 } from "@prisma/client";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNowStrict } from "date-fns";
 import Image from "next/image";
 import { ZoomImageAttendanceModal } from "@/components/modals/zoom-image-one-modal";
 import { ZoomImageModal } from "@/components/modals/zoom-image-mutiple";
@@ -48,6 +48,19 @@ import {
   translateVerySatisfied,
   translateViewProduct,
 } from "@/translate/translate-client";
+import vi from 'date-fns/locale/vi';
+import en from 'date-fns/locale/en-US';
+import zhCN from 'date-fns/locale/zh-CN'; // Tiếng Trung giản thể
+import fr from 'date-fns/locale/fr';
+import ja from 'date-fns/locale/ja';
+
+const locales = {
+  vi,
+  en,
+  zh: zhCN,
+  fr,
+  ja
+};
 
 interface ExploreCard {
   review: any;
@@ -305,7 +318,7 @@ const ExploreCard = ({ review, user }: ExploreCard) => {
         // Use the first image from imageCredential, fallback to item?.image, or use null as a last option
         const avatarImage = imageCredentials || item?.user.image || null;
         return (
-          <div key={item.id} className="bg-slate-900 rounded-md p-2 text-white">
+          <div key={item.id} className="bg-slate-900  rounded-md p-2 text-white ">
             <div
               className={`flex items-center justify-between ${
                 item.user.stream?.isLive ? "ml-[4.5rem]" : ""
@@ -350,9 +363,10 @@ const ExploreCard = ({ review, user }: ExploreCard) => {
                     </p>
                   </Link>
                   <p className="text-sm text-gray-300">
-                    {formatDistanceToNow(new Date(item.createdAt), {
+                  {formatDistanceToNowStrict(new Date(item.createdAt), {
+                      locale: locales[languageToUse as keyof typeof locales],
                       addSuffix: true,
-                    })}
+                  })}
                   </p>
                 </div>
               </div>

@@ -167,8 +167,8 @@ const ExploreItem = ({ streams, review }: ExploreCardProps) => {
     >
       {openPost && (
         <>
-          <div className="fixed inset-0 bg-black/80 h-full w-full z-40 flex items-center justify-center">
-            <div className="h-[400px] md:h-[500px] overflow-y-auto w-3/4 max-w-md border rounded-md gap-4 bg-slate-900 p-6 shadow-lg transition ease-in-out z-50">
+          <div onClick={() => setOpenPost(false)} className="fixed inset-0 bg-black/80 h-full w-full z-[99999998] flex items-center justify-center">
+            <div className="h-[400px] md:h-[500px] overflow-y-auto w-3/4 max-w-md border rounded-md gap-4 bg-slate-900 p-6 shadow-lg transition ease-in-out z-[99999999]">
               <div className="flex items-center justify-between">
                 <span className="text-lg font-semibold text-foreground break-all line-clamp-2 text-white">
                   {cretaePostMessage}
@@ -177,7 +177,7 @@ const ExploreItem = ({ streams, review }: ExploreCardProps) => {
                   onClick={() => setOpenPost(false)}
                   className="cursor-pointer rounded-sm hover:rounded-full hover:bg-gray-500 hover:bg-opacity-50 p-4 opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none "
                 >
-                  <X className="h-5 w-5 text-white" />
+                  <X className="h-5 w-5 text-slate-200" />
                 </span>
               </div>
               <FormPostExplore
@@ -194,7 +194,7 @@ const ExploreItem = ({ streams, review }: ExploreCardProps) => {
 
       <div className="max-w-3xl mx-auto mt-5 pb-5 space-y-5">
         {user?.id && (
-          <div className="bg-slate-900 rounded-md text-white p-4 mt-5 lg:mt-0 ">
+          <div className="bg-slate-900 rounded-md text-slate-200 p-2 md:p-4 mt-5 lg:mt-0 ">
             <div
               className={`flex items-center space-x-2 ${
                 user?.isLive ? "ml-9" : ""
@@ -234,7 +234,7 @@ const ExploreItem = ({ streams, review }: ExploreCardProps) => {
                 </Link>
               )}
               <div
-                className="w-full bg-gray-300 rounded-full text-slate-900 hover:bg-white hover:bg-opacity-70 p-3 cursor-pointer"
+                className="w-3/5 bg-gray-300 rounded-full text-slate-900 hover:bg-white hover:bg-opacity-70 p-2 md:p-3 cursor-pointer"
                 onClick={() => setOpenPost(true)}
               >
                 {whatAreYouThinkingMessage}

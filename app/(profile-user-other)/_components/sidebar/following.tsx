@@ -47,7 +47,7 @@ export const Following = ({ data }: FollowingProps) => {
           <p className="text-sm text-gray-300">{followingMessage}</p>
         </div>
       )}
-      <ul className="space-y-2 px-2">
+      <ul className="space-y-2">
         {data.map((follow) => (
           <UserItem
             key={follow.following.id}
@@ -74,7 +74,7 @@ export const Following = ({ data }: FollowingProps) => {
 export const FollowingSkeleton = () => {
   return (
     <ul className="px-2 pt-2 lg:pt-0">
-      {[...Array(3)].map((_, i) => (
+      {Array.from({ length: 3 }, (_, i) => (
         <UserItemSkeleton key={i} />
       ))}
     </ul>

@@ -335,8 +335,10 @@ const CartItem: React.FC<CartItemProps> = ({
           fill
           src={data.images[0].url}
           alt=""
+          blurDataURL="/images/image-placeholder.webp"
           className="object-cover object-center cursor-pointer"
           onClick={handleClick}
+          loading="lazy"
         />
       </div>
 
