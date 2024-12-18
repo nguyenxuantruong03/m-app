@@ -148,8 +148,8 @@ const Gallery: React.FC<GalleryProps> = ({
               className="rounded-lg"
               src={modalImage.src}
               alt=""
-              width={700}
-              height={700}
+              width={500}
+              height={500}
             />
             <button
               onClick={closeModal}

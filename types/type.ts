@@ -1,3 +1,5 @@
+import { Conversation, Message } from "@prisma/client";
+
 export interface Store {
   name: string;
 }
@@ -357,6 +359,17 @@ export interface Coupon {
   maxredemptions: number;
   imagecoupon : ImageCoupon[]
 }
+
+//Message 
+export type FullMessageType = Message & {
+  sender: User, 
+  seen: User[]
+};
+
+export type FullConversationType = Conversation & { 
+  users: User[]; 
+  messages: FullMessageType[]
+};
 
 export interface ImageCoupon {
   id: string;

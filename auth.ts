@@ -249,6 +249,7 @@ export const {
         session.user.isSharingLocation = token.isSharingLocation as boolean;
         session.user.isShowAds = token.isShowAds as boolean;
         session.user.TimeshowAds = token.TimeshowAds as Date;
+        session.user.conversationId = token.conversationId as string;
         session.user.feedbackTimeNextResonse =
           token.feedbackTimeNextResonse as Date;
         const existingUser = await getUserById(token.sub);
@@ -407,6 +408,36 @@ export const {
         }
       }
 
+      // ---------Bảo vệ sự riêng tư khách hàng trong sau 24 giờ xóa messenges---------------
+      if (session.user?.conversationId) {
+        // Lấy ra các message trong conversationId
+        const messages = await prismadb.message.findMany({
+          where: {
+            conversationId: session.user.conversationId,
+          },
+        });
+    
+        if (messages.length > 0) {
+          // Lặp qua các messages để kiểm tra và xóa các messages cũ hơn 24 giờ
+          const messagesToDelete = messages.filter((message) => {
+            const messageCreatedAt = new Date(message.createdAt);
+            // So sánh thời gian tạo của message với thời gian hiện tại
+            return (now.getTime() - messageCreatedAt.getTime()) > 24 * 60 * 60 * 1000; // 24 giờ
+          });
+    
+          if (messagesToDelete.length > 0) {
+            // Xóa các message thỏa mãn điều kiện
+            await prismadb.message.deleteMany({
+              where: {
+                id: {
+                  in: messagesToDelete.map((message) => message.id),
+                },
+              },
+            });
+          }
+        }
+      }
+
       return {
         ...session,
         redirect: "/auth/errorban",
@@ -465,6 +496,7 @@ export const {
       token.isSharingLocation = existingUser.isSharingLocation;
       token.isShowAds = existingUser.isShowAds;
       token.TimeshowAds = existingUser.TimeshowAds;
+      token.conversationId = existingUser?.conversations[0]?.id
       token.feedbackTimeNextResonse =
         existingUser?.feedback?.[0]?.timeNextResponse;
       if (existingUser.stream) {

@@ -18,6 +18,7 @@ export const getUserById = async (id:string | undefined) => {
                     createdAt: 'desc'
                 }
             },
+            conversations: true,
             feedback: {
                 orderBy: {
                     createdAt: 'desc',

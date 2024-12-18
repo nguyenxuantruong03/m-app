@@ -111,8 +111,8 @@ const InfoProductDetail: React.FC<DetailProductProps> = ({
               className="rounded-lg"
               src={selectedImage.url}
               alt={selectedImage.alt}
-              width={700}
-              height={700}
+              width={500}
+              height={500}
             />
             <button
               onClick={closeModal}

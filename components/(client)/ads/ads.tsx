@@ -93,8 +93,8 @@ const Ads = () => {
                 className="rounded-lg object-cover"
                 src={billboard.imagebillboard[0].url}
                 alt={billboard.imagebillboard[0].label}
-                width={700}
-                height={700}
+                width={500}
+                height={500}
               />
             </Link>
             <button

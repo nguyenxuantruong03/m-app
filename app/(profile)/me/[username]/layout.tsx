@@ -6,6 +6,7 @@ import { getSelfByUsername } from "@/lib/stream/auth-service";
 import { Navbar } from "@/app/(profile-user-other)/_components/navbar";
 import DropMenuHint from "@/components/(client)/dropmenu-hint";
 import ScrollButton from "@/components/(client)/backtotop/backToTop";
+import BoxChat from "@/components/(client)/boxchat";
 
 interface CreatorLayoutProps {
   params: { username: string };
@@ -29,6 +30,7 @@ const CreatorLayout = async ({ params, children }: CreatorLayoutProps) => {
       </div>
       <ScrollButton />
       <DropMenuHint />
+      <BoxChat />
     </>
   );
 };

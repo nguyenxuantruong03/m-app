@@ -40,6 +40,7 @@ export type ExtendedUser = DefaultSession["user"] & {
   isSharingLocation: boolean;
   isShowAds: boolean;
   TimeshowAds: DateTime
+  conversationId: string;
 };
 
 declare module "next-auth" {

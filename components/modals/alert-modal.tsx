@@ -13,14 +13,14 @@ interface AlertModalProps {
     loading?: boolean;
     message?: string;
     title?: string
-    languageToUse: string;
+    languageToUse?: string;
 }
 
 export const AlertModal: React.FC<AlertModalProps> = ({ isOpen, onClose, onConfirm, loading,message,title,language,languageToUse }) => {
     const [isMounted, setIsMounted] = useState(false);
 
     //language
-    const alertModalMessage = translateAlertModal(languageToUse)
+    const alertModalMessage = translateAlertModal(languageToUse || "vi")
 
     useEffect(() => {
         setIsMounted(true);

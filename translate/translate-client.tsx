@@ -22209,6 +22209,504 @@ export const getProductDescriptionMeta = (language: string, product: Product) =>
 }
 }
 
+export const translateSelectOrStartChat = (language: string) => {
+  switch (language) {
+    case "vi":
+      return "Chọn trò chuyện hoặc bắt đầu một cuộc trò chuyện mới";
+    case "en":
+      return "Select a chat or start a new conversation";
+    case "zh":
+      return "选择聊天或开始新的对话";
+    case "fr":
+      return "Sélectionner une discussion ou commencer une nouvelle conversation";
+    case "ja":
+      return "チャットを選択するか、新しい会話を始める";
+    default:
+      return "Select a chat or start a new conversation";
+  }
+};
+
+export const translateMessages = (language: string) => {
+  switch (language) {
+    case "vi":
+      return "Tin nhắn";
+    case "en":
+      return "Messages";
+    case "zh":
+      return "消息";
+    case "fr":
+      return "Messages";
+    case "ja":
+      return "メッセージ";
+    default:
+      return "Messages";
+  }
+};
+
+export const translateActionMessages = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        sentImage: "Đã gửi một hình ảnh",
+        startedConversation: "Bắt đầu trò chuyện",
+        failedToFetchUnseenMessages: "Lỗi khi tải tin nhắn chưa xem",
+      };
+    case "en":
+      return {
+        sentImage: "Sent an image",
+        startedConversation: "Started a conversation",
+        failedToFetchUnseenMessages: "Failed to fetch unseen messages",
+      };
+    case "zh":
+      return {
+        sentImage: "发送了一张图片",
+        startedConversation: "开始了一个对话",
+        failedToFetchUnseenMessages: "无法获取未读消息",
+      };
+    case "fr":
+      return {
+        sentImage: "A envoyé une image",
+        startedConversation: "A commencé une conversation",
+        failedToFetchUnseenMessages: "Échec de la récupération des messages non lus",
+      };
+    case "ja":
+      return {
+        sentImage: "画像を送信しました",
+        startedConversation: "会話を始めました",
+        failedToFetchUnseenMessages: "未読メッセージの取得に失敗しました",
+      };
+    default:
+      return {
+        sentImage: "Sent an image",
+        startedConversation: "Started a conversation",
+        failedToFetchUnseenMessages: "Failed to fetch unseen messages",
+      };
+  }
+};
+
+export const translateSidebarMessages = (language: string, totalDelete: number, totalSizeInKB: number) => {
+  switch (language) {
+    case "vi":
+      return {
+        cantGetDataMessage: "Không thể lấy dữ liệu tin nhắn!",
+        deleteSuccess: "Xóa thành công!",
+        cantDeleteDataMessage: "Không thể xóa dữ liệu tin nhắn!",
+        cantFindOldMessages: "Không tìm thấy tin nhắn cũ!",
+        confirmDeleteOldMessages: "Bạn có chắc chắn xóa các tin nhắn cũ do hệ thống chưa xử lý?",
+        totalMessages: `Tổng tin nhắn ${totalDelete} và dung lượng ${totalSizeInKB} KB`,
+      };
+    case "en":
+      return {
+        cantGetDataMessage: "Can't get data message!",
+        deleteSuccess: "Deleted successfully!",
+        cantDeleteDataMessage: "Can't delete data message!",
+        cantFindOldMessages: "Can't find old messages!",
+        confirmDeleteOldMessages: "Are you sure you want to delete old messages that the system hasn't processed?",
+        totalMessages: `Total messages ${totalDelete} and size ${totalSizeInKB} KB`,
+      };
+    case "zh":
+      return {
+        cantGetDataMessage: "无法获取数据消息！",
+        deleteSuccess: "删除成功！",
+        cantDeleteDataMessage: "无法删除数据消息！",
+        cantFindOldMessages: "找不到旧消息！",
+        confirmDeleteOldMessages: "您确定要删除系统未处理的旧消息吗？",
+        totalMessages: `总消息 ${totalDelete} 和大小 ${totalSizeInKB} KB`,
+      };
+    case "fr":
+      return {
+        cantGetDataMessage: "Impossible de récupérer les messages !",
+        deleteSuccess: "Supprimé avec succès !",
+        cantDeleteDataMessage: "Impossible de supprimer les messages !",
+        cantFindOldMessages: "Impossible de trouver les anciens messages !",
+        confirmDeleteOldMessages: "Êtes-vous sûr de vouloir supprimer les anciens messages que le système n'a pas traités ?",
+        totalMessages: `Messages totaux ${totalDelete} et taille ${totalSizeInKB} KB`,
+      };
+    case "ja":
+      return {
+        cantGetDataMessage: "データメッセージを取得できません！",
+        deleteSuccess: "削除成功！",
+        cantDeleteDataMessage: "データメッセージを削除できません！",
+        cantFindOldMessages: "古いメッセージが見つかりません！",
+        confirmDeleteOldMessages: "システムが処理していない古いメッセージを削除してもよろしいですか？",
+        totalMessages: `合計メッセージ ${totalDelete} とサイズ ${totalSizeInKB} KB`,
+      };
+    default:
+      return {
+        cantGetDataMessage: "Can't get data message!",
+        deleteSuccess: "Deleted successfully!",
+        cantDeleteDataMessage: "Can't delete data message!",
+        cantFindOldMessages: "Can't find old messages!",
+        confirmDeleteOldMessages: "Are you sure you want to delete old messages that the system hasn't processed?",
+        totalMessages: `Total messages ${totalDelete} and size ${totalSizeInKB} KB`,
+      };
+  }
+};
+
+
+export const translateStatusMessages = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        active: "Hoạt động",
+        offline: "Ngoại tuyến",
+      };
+    case "en":
+      return {
+        active: "Active",
+        offline: "Offline",
+      };
+    case "zh":
+      return {
+        active: "活跃",
+        offline: "离线",
+      };
+    case "fr":
+      return {
+        active: "Actif",
+        offline: "Hors ligne",
+      };
+    case "ja":
+      return {
+        active: "アクティブ",
+        offline: "オフライン",
+      };
+    default:
+      return {
+        active: "Active",
+        offline: "Offline",
+      };
+  }
+};
+
+
+export const translateProfileDrawerMessages = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        somethingWentWrong: "Có gì đó sai!",
+        role: "Vai trò",
+        joined: "Đã tham gia",
+        updateNew: "Cập nhật mới",
+        email: "Email",
+        userName: "Tên người dùng",
+        address: "Địa chỉ",
+        addressOther: "Địa chỉ khác",
+        phoneNumber: "Số điện thoại",
+        birthday: "Sinh nhật",
+        emailVerified: "Email đã xác nhận",
+        lastLogin: "Lần đăng nhập cuối",
+        ban: "Cấm",
+        banExpires: "Cấm hết hạn",
+        banForever: "Cấm vĩnh viễn",
+        timeBanForever: "Thời gian cấm vĩnh viễn",
+        twoFactor: "Xác thực hai yếu tố",
+        citizenVerification: "Xác thực công dân",
+        citizenIdNumber: "Số căn cước công dân",
+        issueDate: "Ngày cấp",
+        issuedBy: "Cấp ở đâu",
+        gender: "Giới tính",
+        degree: "Bằng cấp",
+        maritalStatus: "Tình trạng hôn nhân",
+        workingTime: "Thời gian làm việc",
+        startWorkTime: "Thời gian bắt đầu làm",
+        sendConfirmation: "Gửi xác nhận",
+        qrCode: "Mã QR",
+        nfcCode: "Mã NFC",
+        language: "Ngôn ngữ",
+        workingDay: "Ngày làm việc",
+        confirmDeleteConversation: "Bạn có chắc chắn muốn xóa cuộc trò chuyện này?",
+        actionCannotBeUndone: "Hành động này không thể hoàn tác",
+        delete: "Xóa",
+      };
+    case "en":
+      return {
+        somethingWentWrong: "Something went wrong!",
+        role: "Role",
+        joined: "Joined",
+        updateNew: "Update new",
+        email: "Email",
+        userName: "UserName",
+        address: "Address",
+        addressOther: "Other Address",
+        phoneNumber: "Phone Number",
+        birthday: "Birthday",
+        emailVerified: "Email Verified",
+        lastLogin: "Last Login",
+        ban: "Ban",
+        banExpires: "Ban Expires",
+        banForever: "Ban Forever",
+        timeBanForever: "Time Ban Forever",
+        twoFactor: "Two Factor",
+        citizenVerification: "Citizen Verification",
+        citizenIdNumber: "Citizen ID Number",
+        issueDate: "Issue Date",
+        issuedBy: "Issued By",
+        gender: "Gender",
+        degree: "Degree",
+        maritalStatus: "Marital Status",
+        workingTime: "Working Time",
+        startWorkTime: "Start Work Time",
+        sendConfirmation: "Send Confirmation",
+        qrCode: "QR Code",
+        nfcCode: "NFC Code",
+        language: "Language",
+        workingDay: "Working Day",
+        confirmDeleteConversation: "Are you sure you want to delete this conversation?",
+        actionCannotBeUndone: "This action cannot be undone",
+        delete: "Delete",
+      };
+    case "zh":
+      return {
+        somethingWentWrong: "出了点问题！",
+        role: "角色",
+        joined: "已加入",
+        updateNew: "更新新",
+        email: "Email",
+        userName: "用户名",
+        address: "地址",
+        addressOther: "其他地址",
+        phoneNumber: "电话号码",
+        birthday: "生日",
+        emailVerified: "电子邮件已验证",
+        lastLogin: "最后登录",
+        ban: "禁止",
+        banExpires: "禁止到期",
+        banForever: "永久禁止",
+        timeBanForever: "永久禁止时间",
+        twoFactor: "双因素认证",
+        citizenVerification: "公民验证",
+        citizenIdNumber: "身份证号码",
+        issueDate: "发证日期",
+        issuedBy: "发证机构",
+        gender: "性别",
+        degree: "学历",
+        maritalStatus: "婚姻状况",
+        workingTime: "工作时间",
+        startWorkTime: "开始工作时间",
+        sendConfirmation: "发送确认",
+        qrCode: "二维码",
+        nfcCode: "NFC代码",
+        language: "语言",
+        workingDay: "工作日",
+        confirmDeleteConversation: "您确定要删除此对话吗？",
+        actionCannotBeUndone: "此操作无法撤销",
+        delete: "删除",
+      };
+    case "fr":
+      return {
+        somethingWentWrong: "Quelque chose a mal tourné !",
+        role: "Rôle",
+        joined: "A rejoint",
+        updateNew: "Mise à jour",
+        email: "Email",
+        userName: "Nom d'utilisateur",
+        address: "Adresse",
+        addressOther: "Autre adresse",
+        phoneNumber: "Numéro de téléphone",
+        birthday: "Anniversaire",
+        emailVerified: "E-mail vérifié",
+        lastLogin: "Dernière connexion",
+        ban: "Interdiction",
+        banExpires: "Interdiction expirée",
+        banForever: "Interdiction permanente",
+        timeBanForever: "Durée de l'interdiction permanente",
+        twoFactor: "Authentification à deux facteurs",
+        citizenVerification: "Vérification citoyenne",
+        citizenIdNumber: "Numéro d'identité citoyenne",
+        issueDate: "Date d'émission",
+        issuedBy: "Émis par",
+        gender: "Genre",
+        degree: "Diplôme",
+        maritalStatus: "État civil",
+        workingTime: "Temps de travail",
+        startWorkTime: "Temps de début du travail",
+        sendConfirmation: "Envoyer la confirmation",
+        qrCode: "Code QR",
+        nfcCode: "Code NFC",
+        language: "Langue",
+        workingDay: "Jour de travail",
+        confirmDeleteConversation: "Êtes-vous sûr de vouloir supprimer cette conversation ?",
+        actionCannotBeUndone: "Cette action ne peut pas être annulée",
+        delete: "Supprimer",
+      };
+    case "ja":
+      return {
+        somethingWentWrong: "何かがうまくいかなかった！",
+        role: "役割",
+        joined: "参加済み",
+        updateNew: "新規更新",
+        email: "Email",
+        userName: "ユーザー名",
+        address: "住所",
+        addressOther: "その他の住所",
+        phoneNumber: "電話番号",
+        birthday: "誕生日",
+        emailVerified: "メール確認済み",
+        lastLogin: "最終ログイン",
+        ban: "禁止",
+        banExpires: "禁止期限",
+        banForever: "永久禁止",
+        timeBanForever: "永久禁止期間",
+        twoFactor: "二要素認証",
+        citizenVerification: "市民確認",
+        citizenIdNumber: "市民ID番号",
+        issueDate: "発行日",
+        issuedBy: "発行元",
+        gender: "性別",
+        degree: "学位",
+        maritalStatus: "婚姻状況",
+        workingTime: "勤務時間",
+        startWorkTime: "勤務開始時間",
+        sendConfirmation: "確認を送信",
+        qrCode: "QRコード",
+        nfcCode: "NFCコード",
+        language: "言語",
+        workingDay: "勤務日",
+        confirmDeleteConversation: "この会話を削除してもよろしいですか？",
+        actionCannotBeUndone: "この操作は元に戻せません",
+        delete: "削除",
+      };
+    default:
+      return {
+        somethingWentWrong: "Something went wrong!",
+        role: "Role",
+        joined: "Joined",
+        updateNew: "Update new",
+        email: "Email",
+        userName: "UserName",
+        address: "Address",
+        addressOther: "Other Address",
+        phoneNumber: "Phone Number",
+        birthday: "Birthday",
+        emailVerified: "Email Verified",
+        lastLogin: "Last Login",
+        ban: "Ban",
+        banExpires: "Ban Expires",
+        banForever: "Ban Forever",
+        timeBanForever: "Time Ban Forever",
+        twoFactor: "Two Factor",
+        citizenVerification: "Citizen Verification",
+        citizenIdNumber: "Citizen ID Number",
+        issueDate: "Issue Date",
+        issuedBy: "Issued By",
+        gender: "Gender",
+        degree: "Degree",
+        maritalStatus: "Marital Status",
+        workingTime: "Working Time",
+        startWorkTime: "Start Work Time",
+        sendConfirmation: "Send Confirmation",
+        qrCode: "QR Code",
+        nfcCode: "NFC Code",
+        language: "Language",
+        workingDay: "Working Day",
+        confirmDeleteConversation: "Are you sure you want to delete this conversation?",
+        actionCannotBeUndone: "This action cannot be undone",
+        delete: "Delete",
+      };
+  }
+};
+
+export const translateFormMessages = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        writeMessage: "Viết tin nhắn...",
+      };
+    case "en":
+      return {
+        writeMessage: "Write a message...",
+      };
+    case "zh":
+      return {
+        writeMessage: "写信息...",
+      };
+    case "fr":
+      return {
+        writeMessage: "Écrire un message...",
+      };
+    case "ja":
+      return {
+        writeMessage: "メッセージを書く...",
+      };
+    default:
+      return {
+        writeMessage: "Write a message...",
+      };
+  }
+};
+
+export const translatePeopleMessages = (language: string) => {
+  switch (language) {
+    case "vi":
+      return "Mọi người";
+    case "en":
+      return "People";
+    case "zh":
+      return "人们";
+    case "fr":
+      return "Les gens";
+    case "ja":
+      return "人々";
+    default:
+      return "People";
+  }
+};
+
+export const translateConversationErrorMessages = (language: string) => {
+  switch (language) {
+    case "vi":
+      return "Tạo cuộc trò chuyện thất bại";
+    case "en":
+      return "Failed to create conversation";
+    case "zh":
+      return "创建对话失败";
+    case "fr":
+      return "Échec de la création de la conversation";
+    case "ja":
+      return "会話の作成に失敗しました";
+    default:
+      return "Failed to create conversation";
+  }
+};
+
+
+export const translateBodyMessages = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        helpMessage: "Nhắn tin cho chúng tôi nếu bạn đang gặp thắc mắc.",
+        privacyNotice: "Để đảm bảo sự riêng tư của bạn tin nhắn sẽ được xóa sau 24 giờ!",
+      };
+    case "en":
+      return {
+        helpMessage: "Message us if you have any questions.",
+        privacyNotice: "To ensure your privacy, the message will be deleted after 24 hours!",
+      };
+    case "zh":
+      return {
+        helpMessage: "我们随时愿意帮助您。如果您有任何疑问，请给我们留言。",
+        privacyNotice: "为确保您的隐私，消息将在24小时后删除！",
+      };
+    case "fr":
+      return {
+        helpMessage: "Envoyez-nous un message si vous avez des questions.",
+        privacyNotice: "Pour garantir votre confidentialité, le message sera supprimé après 24 heures !",
+      };
+    case "ja":
+      return {
+        helpMessage: "私たちはいつでもお手伝いします。質問があればメッセージを送ってください。",
+        privacyNotice: "あなたのプライバシーを守るため、メッセージは24時間後に削除されます！",
+      };
+    default:
+      return {
+        helpMessage: "Message us if you have any questions.",
+        privacyNotice: "To ensure your privacy, the message will be deleted after 24 hours!",
+      };
+  }
+};
+
+
 
 // Hàm dịch văn bản, trả về chuỗi đã dịch hoặc chuỗi gốc nếu lỗi
 export async function translateText(

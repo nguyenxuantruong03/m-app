@@ -16,6 +16,7 @@ const Footer = dynamic(() => import("@/components/(client)/footer/footer"), {
 import type { Metadata } from "next";
 import DropMenuHint from "@/components/(client)/dropmenu-hint";
 import Ads from "@/components/(client)/ads/ads";
+import BoxChat from "@/components/(client)/boxchat";
 
 export const metadata: Metadata & { image: string } = {
   title: "VLXD Xuân Trường",
@@ -38,6 +39,7 @@ export default function RootLayout({
       <Footer />
       <DropMenuHint />
       <Ads />
+      <BoxChat />
     </div>
   );
 }

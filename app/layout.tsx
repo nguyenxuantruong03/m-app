@@ -9,6 +9,7 @@ import { SessionProvider } from "next-auth/react";
 import Image from "next/image";
 import { CurrentViewProvider } from "@/localStorage/useLocalStorage-currentView";
 import { DeviceProvider } from "@/providers/device-info-provider";
+import ActiveStatus from "@/components/ActiveStatus";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,6 +32,7 @@ export default async function RootLayout({
             <body
               className={`${inter.className} dark:bg-gradient-to-r from-slate-800 to-slate-900 bg-white`}
             >
+              <ActiveStatus />
               <Image
                 src="/background-image/bg-dark.png"
                 alt="404"

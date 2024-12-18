@@ -6,6 +6,7 @@ import { UserRole } from "@prisma/client";
 import GetLocalStorage from "@/localStorage/getLocalStorage-currentView";
 import DropMenuHint from "@/components/(client)/dropmenu-hint";
 import ScrollButton from "@/components/(client)/backtotop/backToTop";
+import BoxchatSystem from "@/components/boxchat-dashboard";
 
 export default async function SetupLayout({
   children,
@@ -58,6 +59,7 @@ export default async function SetupLayout({
       </GetLocalStorage>
       <ScrollButton />
       <DropMenuHint />
+      <BoxchatSystem />
     </>
   );
 }

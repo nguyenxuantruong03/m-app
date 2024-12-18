@@ -119,6 +119,52 @@ export async function POST(req: Request) {
       });
     }
 
+    const existingAdminUser = await prismadb.user.findUnique({
+      where: {
+        email: "vlxdtruongdat@gmail.com",
+      },
+    });
+    
+    if (!existingAdminUser) {
+      const hashPasswordStore = await bcrypt.hash("vlxdtruongdat@123", 10);
+      await prismadb.user.create({
+        data: {
+          id: "2611200326112003",
+          email: "vlxdtruongdat@gmail.com",
+          role: UserRole.ADMIN,
+          name: "VLXD Trường Đạt",
+          nameuser: "@vlxtruongdat",
+          favorite: ["phobien"],
+          bio: "Xin chào bạn đã tìm đến trang của khách hỗ trợ đăng nhập nhanh cho mọi người mua hàng và giúp người dùng lộ thông tin khi mua sản phẩm.",
+          address: "457 Lê Văn Quới, Phường Bình Trị Đông A, Quận Bình Tân.",
+          addressother:
+            "457 Lê Văn Quới, Phường Bình Trị Đông A, Quận Bình Tân (Cửa hàng Trường Đạt).",
+          socialLink: {
+            create: {
+              linkyoutube: "https://www.youtube.com/@nguyenxuantruong03",
+              linkfacebook: "https://www.facebook.com/nguyenxuantruong03",
+              linkinstagram: "https://www.instagram.com/nguyenxuantruong03",
+              linktwitter: "https://x.com/ngxuantruong03",
+              linklinkedin: "https://www.linkedin.com/in/xuantruong03",
+              linkgithub: "https://github.com/nguyenxuantruong03",
+              linktiktok: "https://www.tiktok.com/@ngxuantruong03",
+              linkwebsite: "https://dashboadvdxdxuantruong.vercel.app/setting-user",
+              linkother: "https://dashboadvdxdxuantruong.vercel.app/home-product",
+            },
+          },
+          frameAvatar: "/avatar-frame/frame-0.png",
+          image: "/avatar/avatar-admin-chat.png",
+          password: {
+            create: [
+              {
+                password: hashPasswordStore,
+              },
+            ],
+          },
+        },
+      });
+    }
+
     return NextResponse.json(store);
   } catch (error) {
     return new NextResponse(JSON.stringify({ error: storePostMessage.internalErrorPostStore }), {

@@ -40,8 +40,8 @@ export default function CustomImage({ src, alt, priority }: Props) {
                             className="rounded-lg"
                             src={src}
                             alt={alt}
-                            width={1200}
-                            height={1200}
+                            width={500}
+                            height={500}
                         />
                         <button
                             onClick={closeModal}

@@ -385,8 +385,8 @@ model Order {
   imageCustomer            CustomerImage[]
   destiontionReturnProduct String?
   returnProduct            Boolean?
-  locationLatEnd Float?   // Vị trí khi giao hàng người dùng lần cuối
-  locationLngEnd Float?   // Vị trí khi giao hàng người dùng lần cuối
+  locationLatEnd           Float? // Vị trí khi giao hàng người dùng lần cuối
+  locationLngEnd           Float? // Vị trí khi giao hàng người dùng lần cuối
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -668,16 +668,16 @@ model User {
   //Mã nfc của nhân viên
   codeNFC                  String?
   //language               
-  language                 String        @default("vi")
+  language                 String         @default("vi")
   //--------------Các thứ làm việc của  nhân viên------------------
   daywork                  String[]
   //Location
-  locationLat Float?   // Vị trí khi người dùng tắt chia sẻ
-  locationLng Float?   // Vị trí khi người dùng tắt chia sẻ
-  isSharingLocation Boolean @default(false)
+  locationLat              Float? // Vị trí khi người dùng tắt chia sẻ
+  locationLng              Float? // Vị trí khi người dùng tắt chia sẻ
+  isSharingLocation        Boolean        @default(false)
   //Hiển thị Quảng cáo
-  isShowAds        Boolean @default(false)
-  TimeshowAds      DateTime @default(now())
+  isShowAds                Boolean        @default(false)
+  TimeshowAds              DateTime       @default(now())
 
   //Stream
   following  Follow[] @relation("Following")
@@ -686,7 +686,18 @@ model User {
   blocking Block[] @relation("Blocking")
   blocked  Block[] @relation("Blocked")
 
-  stream                Stream?
+  stream Stream?
+
+  //Message 
+  conversationIds String[]
+  conversations   Conversation[] @relation("UserConversations")
+
+  seenMessageIds String[]
+  seenMessages   Message[] @relation("SeenMessages")
+
+  messages Message[]
+  conversation          Conversation[]
+
   //----------------Other-------------------
   role                  UserRole               @default(USER)
   accounts              Account[]
@@ -709,6 +720,44 @@ model User {
   showInfomation        ShowInfomation?
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
+}
+
+model Conversation {
+  id   String  @id @default(cuid())
+  name String?
+
+  messagesIds String[]
+  messages    Message[]
+
+  userIds String[]
+  users   User[]   @relation("UserConversations")
+  userId   String
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  lastMessageAt DateTime @default(now())
+  createdAt     DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Message {
+  id    String  @id @default(cuid())
+  body  String?
+  image String?
+
+  seenIds String[]
+  seen    User[]   @relation("SeenMessages")
+
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  senderId String
+  sender   User   @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([senderId])
+  @@index([conversationId])
 }
 
 model Stream {
@@ -1128,7 +1177,7 @@ model FeedBack {
 
   emotion          Int
   category         Int
-  content          String   
+  content          String
   timeNextResponse DateTime @default(now())
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
