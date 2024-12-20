@@ -22706,6 +22706,126 @@ export const translateBodyMessages = (language: string) => {
   }
 };
 
+export const translatePriceChangeRanger = (language: string) => {
+  switch (language) {
+    case "vi":
+      return {
+        minimum: "Tối thiểu",
+        maximum: "Tối đa",
+      };
+    case "en":
+      return {
+        minimum: "Minimum",
+        maximum: "Maximum",
+      };
+    case "zh":
+      return {
+        minimum: "最少",
+        maximum: "最大",
+      };
+    case "fr":
+      return {
+        minimum: "Minimum",
+        maximum: "Maximum",
+      };
+    case "ja":
+      return {
+        minimum: "最小",
+        maximum: "最大",
+      };
+    default:
+      return {
+        minimum: "Minimum",
+        maximum: "Maximum",
+      };
+  }
+};
+
+
+export const translateProductPerPage = (language: string) => {
+  switch (language) {
+    case "vi":
+      return "Số sản phẩm trên trang";
+    case "en":
+      return "Products per page";
+    case "zh":
+      return "每页的产品数量";
+    case "fr":
+      return "Produits par page";
+    case "ja":
+      return "ページごとの製品数";
+    default:
+      return "Products per page";
+  }
+};
+
+export const translateNext = (language: string) => {
+  switch (language) {
+    case "vi":
+      return "Tiếp theo";
+    case "en":
+      return "Next";
+    case "zh":
+      return "下一页";
+    case "fr":
+      return "Suivant";
+    case "ja":
+      return "次へ";
+    default:
+      return "Next";
+  }
+};
+
+export const translatePrevious = (language: string) => {
+  switch (language) {
+    case "vi":
+      return "Trang trước";
+    case "en":
+      return "Previous";
+    case "zh":
+      return "上一页";
+    case "fr":
+      return "Précédent";
+    case "ja":
+      return "前へ";
+    default:
+      return "Previous";
+  }
+};
+
+export const translateMorePages = (language: string) => {
+  switch (language) {
+    case "vi":
+      return "Nhiều trang hơn";
+    case "en":
+      return "More pages";
+    case "zh":
+      return "更多页面";
+    case "fr":
+      return "Plus de pages";
+    case "ja":
+      return "さらにページ";
+    default:
+      return "More pages";
+  }
+};
+
+export const translateNotFoundSizeAndColor = (language: string) => {
+  switch (language) {
+    case "vi":
+      return "Không tìm thấy kích thước và màu!";
+    case "en":
+      return "Size and color not found!";
+    case "zh":
+      return "找不到尺寸和颜色！";
+    case "fr":
+      return "Taille et couleur non trouvées !";
+    case "ja":
+      return "サイズと色が見つかりません！";
+    default:
+      return "Size and color not found!";
+  }
+};
 
 
 // Hàm dịch văn bản, trả về chuỗi đã dịch hoặc chuỗi gốc nếu lỗi

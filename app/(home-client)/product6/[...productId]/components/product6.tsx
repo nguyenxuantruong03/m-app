@@ -44,9 +44,10 @@ const Product6: React.FC<PropductPageProps> = ({ params }) => {
         const suggestedProducts = await getProduct6({
           isFeatured: undefined,
           language: languageToUse,
+          limit: 30
         });
         setProduct(product);
-        setSuggestedProducts(suggestedProducts);
+        setSuggestedProducts(suggestedProducts.translations);
       } catch (error) {
         toast.error(productMessage.notFound);
       } finally {

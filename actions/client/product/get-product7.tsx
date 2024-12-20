@@ -3,22 +3,38 @@ import qs from "query-string"
 
 const URL = `${process.env.NEXT_PUBLIC_API_URL}/product7`
 
-interface Query{
-    isFeatured?: boolean
-    language?: string; // Thêm tham số language
-}
-
-const getProduct7 = async (query: Query):Promise<Product[]> =>{
+interface Query {
+    categoryId?: string | string[]
+    isFeatured?: boolean;
+    language?: string;
+    page?: number; // Trang hiện tại
+    limit?: number; // Số sản phẩm mỗi trang
+    colorId?: string
+    sizeId?: string
+  }
+  
+  const getProduct7 = async (query: Query): Promise<{
+    translations: Product[];
+    pagination: {
+      currentPage: number;
+      totalPages: number;
+    };
+  }> => {
     const url = qs.stringifyUrl({
-        url: URL,
-        query:{
-            isFeatured: query.isFeatured,
-            language: query.language || "vi", // Mặc định là "vi" nếu không truyền language
-        }
-    })
-    const res = await fetch(url)
-    
-    return res.json()
-} 
+      url: URL,
+      query: {
+        colorId: query.colorId,
+        sizeId: query.sizeId,
+        categoryId: query.categoryId,
+        isFeatured: query.isFeatured,
+        language: query.language || "vi",
+        page: query.page || 1,
+        limit: query.limit || 9,
+      },
+    });
+    const res = await fetch(url);
+    return res.json();
+  };
+  
 
 export default getProduct7

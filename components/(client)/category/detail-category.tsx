@@ -1,11 +1,8 @@
 "use client";
-import MobileFilter from "@/components/(client)/filter-category/mobile-filter";
-import Filter from "@/components/(client)/filter-category/filter";
 import PriceRangeCategory from "@/components/ui/price-change-ranger-category";
 import { SortButton } from "@/components/ui/sortButton";
-import BillboardCategory from "@/components/(client)/slider-item/billboard/billboard-category";
 import ProductCard from "@/components/(client)/product/productcard-category/productcard";
-import { Billboard, Color, Size, Product } from "@/types/type";
+import { Product } from "@/types/type";
 import {
   ArrowDownAZ,
   ArrowDownWideNarrow,
@@ -13,12 +10,9 @@ import {
   ArrowUpNarrowWide,
   Percent,
 } from "lucide-react";
-import { useMemo } from "react";
+import { Dispatch, SetStateAction, useMemo } from "react";
 import {
-  translateColors,
-  translateFilter,
   translateHotDeals,
-  translateSizes,
   translateSortHighToLow,
   translateSortLowToHigh,
   translateSortNameAToZ,
@@ -26,11 +20,9 @@ import {
 } from "@/translate/translate-client";
 import NoResults from "@/components/ui/no-result";
 import CategorySkeleton from "../skeleton/category-skeleton";
+import { PaginationWithLinks } from "@/components/ui/pagination-with-links";
 
 interface DetailCategoryProps {
-  billboard: Billboard | null;
-  size: Size[];
-  color: Color[];
   product: Product[];
   minPrice: number;
   maxPrice: number;
@@ -41,12 +33,16 @@ interface DetailCategoryProps {
   route: string;
   languageToUse: string;
   loading: boolean;
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+  } | null;
+  setCurrentPage: Dispatch<SetStateAction<number>>;
+  pageSize: number;
+  setPageSize: Dispatch<SetStateAction<number>>;
 }
 
 const DetailCategory: React.FC<DetailCategoryProps> = ({
-  billboard,
-  size,
-  color,
   product,
   minPrice,
   maxPrice,
@@ -57,6 +53,10 @@ const DetailCategory: React.FC<DetailCategoryProps> = ({
   route,
   languageToUse,
   loading,
+  pagination,
+  setCurrentPage,
+  pageSize,
+  setPageSize,
 }) => {
   //language
   const sortHighToLowMessage = translateSortHighToLow(languageToUse);
@@ -64,9 +64,6 @@ const DetailCategory: React.FC<DetailCategoryProps> = ({
   const sortNameAToZMessage = translateSortNameAToZ(languageToUse);
   const sortNameZToAMessage = translateSortNameZToA(languageToUse);
   const hotDealsMessage = translateHotDeals(languageToUse);
-  const filterMessage = translateFilter(languageToUse);
-  const sizesMessage = translateSizes(languageToUse);
-  const colorsMessage = translateColors(languageToUse);
 
   const sortButtons = [
     {
@@ -141,60 +138,77 @@ const DetailCategory: React.FC<DetailCategoryProps> = ({
     return sortedArray;
   }, [product, sortOrder]);
 
-  if(loading) return <CategorySkeleton />;
-
   return (
-    <>
-      <div className="mt-28 flex items-center justify-center px-2.5">
-        <BillboardCategory data={billboard}/>
+    <div className="mt-6 lg:col-span-4 lg:mt-0">
+      <div className="my-4">
+        <PriceRangeCategory
+          minPrice={minPrice}
+          maxPrice={maxPrice}
+          maxPriceInDatas={maxPriceInDatas}
+          onPriceChange={handlePriceChange}
+          languageToUse={languageToUse}
+        />
       </div>
-      <div className="px-4 sm:px-6 lg:px-8 pb-24 mb-5 mt-10">
-        <div className="lg:grid lg:grid-cols-5 lg:gap-x-8">
-          <MobileFilter size={size} name={filterMessage} color={color} />
-          {/* Desktop and laptop */}
-          <div className="hidden lg:block">
-            <Filter valueKey="sizeId" name={sizesMessage} data={size} />
-            <Filter valueKey="colorId" name={colorsMessage} data={color} />
-          </div>
-          <div className="mt-6 lg:col-span-4 lg:mt-0">
-            <div className="">
-              <div className="mb-4">
-                <PriceRangeCategory
-                  minPrice={minPrice}
-                  maxPrice={maxPrice}
-                  maxPriceInDatas={maxPriceInDatas}
-                  onPriceChange={handlePriceChange}
-                />
-              </div>
-              <div className="flex justify-start items-center mb-4 w-full overflow-x-auto ">
-                <div className="flex space-x-2">
-                  {sortButtons.map((button, index) => (
-                    <SortButton
-                      key={index}
-                      onClick={() => handleSortChange(button.sortType)}
-                      active={sortOrder === button.sortType}
-                      label={button.label}
-                      icon={button.icon}
-                    />
-                  ))}
-                </div>
-              </div>
-              {sortedProduct.length === 0 && <NoResults />}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {filterProductsByPrice(sortedProduct).map((item) => (
-                  <ProductCard
-                    key={item.id}
-                    data={item}
-                    route={route}
-                    languageToUse={languageToUse}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
+      <div className="flex justify-start items-center mb-4 w-full overflow-x-auto ">
+        <div className="flex space-x-2">
+          {sortButtons.map((button, index) => (
+            <SortButton
+              key={index}
+              onClick={() => handleSortChange(button.sortType)}
+              active={sortOrder === button.sortType}
+              label={button.label}
+              icon={button.icon}
+            />
+          ))}
         </div>
       </div>
-    </>
+      {product.length > 9 && pagination && (
+        <PaginationWithLinks
+          page={pagination.currentPage}
+          pageSize={pageSize}
+          totalPages={pagination.totalPages}
+          languageToUse={languageToUse}
+          setCurrentPage={setCurrentPage}
+          pageSizeSelectOptions={{
+            pageSizeOptions: [3, 6, 9, 12, 15, 18, 21, 24, 30, 36, 42],
+            onPageSizeChange: (newPageSize: number) => setPageSize(newPageSize),
+          }}
+        />
+      )}
+      <div className="my-10">
+        {loading ? (
+          <CategorySkeleton />
+        ) : (
+          <>
+            {sortedProduct.length === 0 && <NoResults />}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {filterProductsByPrice(sortedProduct).map((item) => (
+                <ProductCard
+                  key={item.id}
+                  data={item}
+                  route={route}
+                  languageToUse={languageToUse}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+
+      {product.length > 9 && pageSize > 3 && pagination && (
+        <PaginationWithLinks
+          page={pagination.currentPage}
+          pageSize={pageSize}
+          totalPages={pagination.totalPages}
+          languageToUse={languageToUse}
+          setCurrentPage={setCurrentPage}
+          pageSizeSelectOptions={{
+            pageSizeOptions: [3, 6, 9, 12, 24, 36, 42],
+            onPageSizeChange: (newPageSize: number) => setPageSize(newPageSize),
+          }}
+        />
+      )}
+    </div>
   );
 };
 

@@ -109,29 +109,29 @@ const SpinCoinPage: React.FC = () => {
   };
 
   const objIndex: Record<string, number> = {
-    "6000 xu": 1,
-    "7000 xu": 2,
-    "4000 xu": 3,
-    "8000 xu": 4,
-    "9000 xu": 5,
-    "10000 xu": 6,
-    "12000 xu": 7,
-    "5000 xu": 8,
-    "3000 xu": 9,
-    "2000 xu": 10,
+    [`6000 ${coinMessage}`]: 1,
+    [`7000 ${coinMessage}`]: 2,
+    [`4000 ${coinMessage}`]: 3,
+    [`8000 ${coinMessage}`]: 4,
+    [`9000 ${coinMessage}`]: 5,
+    [`10000 ${coinMessage}`]: 6,
+    [`12000 ${coinMessage}`]: 7,
+    [`5000 ${coinMessage}`]: 8,
+    [`3000 ${coinMessage}`]: 9,
+    [`2000 ${coinMessage}`]: 10,
   };
-
+  
   const segments = [
-    { value: "6000 xu", probability: 0.99 }, // 0.005%
-    { value: "7000 xu", probability: 0.99 }, // 0.005%
-    { value: "4000 xu", probability: 0.99 }, // 99%
-    { value: "8000 xu", probability: 0.99 }, // 0.005%
-    { value: "9000 xu", probability: 0.99 }, // 0.005%
-    { value: "10000 xu", probability: 0.99 }, // 0.005%
-    { value: "12000 xu", probability: 0.99 }, // 0.005%
-    { value: "5000 xu", probability: 0.99 }, // 1.25%
-    { value: "3000 xu", probability: 0.00005 }, // 99%
-    { value: "2000 xu", probability: 0.00005 }, // 99%
+    { value: `6000 ${coinMessage}`, probability: 0.99 }, // 0.005%
+    { value: `7000 ${coinMessage}`, probability: 0.99 }, // 0.005%
+    { value: `4000 ${coinMessage}`, probability: 0.99 }, // 99%
+    { value: `8000 ${coinMessage}`, probability: 0.99 }, // 0.005%
+    { value: `9000 ${coinMessage}`, probability: 0.99 }, // 0.005%
+    { value: `10000 ${coinMessage}`, probability: 0.99 }, // 0.005%
+    { value: `12000 ${coinMessage}`, probability: 0.99 }, // 0.005%
+    { value: `5000 ${coinMessage}`, probability: 0.99 }, // 1.25%
+    { value: `3000 ${coinMessage}`, probability: 0.00005 }, // 99%
+    { value: `2000 ${coinMessage}`, probability: 0.00005 }, // 99%
   ];
 
   const weelColors = (): string[] => {
@@ -150,7 +150,7 @@ const SpinCoinPage: React.FC = () => {
   const onFinished = async (coin: string) => {
     setPortal(false);
     setShow(coin);
-    const coinsWon = parseInt(coin.split(" ")[0]); // Assuming "winner" is in the format "X xu"
+    const coinsWon = parseInt(coin.split(" ")[0]); // Assuming "winner" is in the format "X ${coinMessage}"
     const newTotalCoins = totalCoins + coinsWon;
     const newRotation = rotation - 1;
     try {

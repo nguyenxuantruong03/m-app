@@ -29,7 +29,7 @@ const BoxChat = () => {
   const conversationErrorMessage = translateConversationErrorMessages(languageToUse)
 
   useEffect(() => {
-    if (user?.role === "GUEST") {
+    if (user?.role === "GUEST"|| !user?.id) {
       return;
     }
 
@@ -73,7 +73,7 @@ const BoxChat = () => {
   }, [conversationId]);
 
   const handleCreateConvertation = useCallback(async () => {
-    if (user?.role === "GUEST") {
+    if (user?.role === "GUEST" || !user?.id) {
       return;
     }
     setLoading(true);
@@ -84,19 +84,22 @@ const BoxChat = () => {
       });
 
       if (conversationCreate.data.id) {
-        const messages = await axios.patch("/api/messages", {
-          conversationId: conversationCreate.data.id,
-        });
-        const conversation = await axios.patch("/api/conversations", {
-          conversationId: conversationCreate.data.id,
-        });
-
+        // Use Promise.all to handle all three asynchronous calls in parallel
+        const [seenResponse, messages, conversation] = await Promise.all([
+          axios.post(`/api/conversations/${conversationCreate.data.id}/seen`), // Seen request in parallel
+          axios.patch("/api/messages", {
+            conversationId: conversationCreate.data.id,
+          }),
+          axios.patch("/api/conversations", {
+            conversationId: conversationCreate.data.id,
+          }),
+        ]);
+    
+        // Set the state for messages and conversation
         setMessages(messages.data);
         setConversation(conversation.data);
-
-        //Seen tất cả tin nhắn
-        axios.post(`/api/conversations/${conversationCreate.data.id}/seen`);
       }
+
     } catch (error) {
       toast.error(errorToastMessage);
       throw error; // Ném lỗi ra ngoài để catch trong handleButtonClick
@@ -106,7 +109,7 @@ const BoxChat = () => {
   }, []);
 
   const handleButtonClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (user?.role === "GUEST") {
+    if (user?.role === "GUEST" || !user?.id) {
       return;
     }
     try {
@@ -122,7 +125,7 @@ const BoxChat = () => {
 
   //-------------------Unseen------------------------
   useEffect(() => {
-    if (user?.role === "GUEST") {
+    if (user?.role === "GUEST" || !user?.id) {
       return;
     }
     if (!pusherKey) return;
@@ -162,7 +165,7 @@ const BoxChat = () => {
 
   return (
     <>
-      {user?.role !== "GUEST" && (
+      {user?.role !== "GUEST" && user?.id && (
         <div className="relative">
           <button
             disabled={loading}

@@ -1,8 +1,8 @@
-import CategorySkeleton from "@/components/(client)/skeleton/category-skeleton";
+import LoadingPageComponent from './../../../components/ui/loading';
 
 const Loading = () => {
   return (
-    <CategorySkeleton />
+    <LoadingPageComponent />
   );
 }
  

@@ -1,10 +1,7 @@
 "use client";
-import getColors from "@/actions/client/get-colors";
 import getProduct8 from "@/actions/client/product/get-product8";
-import getSizes from "@/actions/client/get-size";
-import getBillboard from "@/actions/client/billboard/get-billboard";
 import { useEffect, useState } from "react";
-import { Billboard, Color, Product, Size } from "@/types/type";
+import { Product } from "@/types/type";
 import DetailCategory from "@/components/(client)/category/detail-category";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { getCategoryNotFoundMessage } from "@/translate/translate-client";
@@ -23,16 +20,19 @@ interface CategoryPageProps {
 
 const Category8: React.FC<CategoryPageProps> = ({ params, searchParams }) => {
   const user = useCurrentUser();
-  const [billboard, setBillboard] = useState<Billboard | null>(null);
   const [product, setProduct] = useState<Product[]>([]);
-  const [size, setSize] = useState<Size[]>([]);
-  const [color, setColor] = useState<Color[]>([]);
   const [sortOrder, setSortOrder] = useState<string>("");
   const [minPrice, setMinPrice] = useState<number>(0);
   const [maxPrice, setMaxPrice] = useState<number>(0);
   const [maxPriceInDatas, setMaxPriceInDatas] = useState<number>(0);
   const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [pageSize, setPageSize] = useState<number>(9); // Default là 9 sản phẩm mỗi trang
+  const [currentPage, setCurrentPage] = useState<number>(1); //Page
+  const [pagination, setPagination] = useState<{
+    currentPage: number;
+    totalPages: number;
+  } | null>(null);
 
   useEffect(() => {
     // Check if we're running on the client side
@@ -62,28 +62,19 @@ const Category8: React.FC<CategoryPageProps> = ({ params, searchParams }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        // Sử dụng Promise.all để lấy tất cả dữ liệu cùng lúc
-        const [billboardData, productData, sizeData, colorData] =
-          await Promise.all([
-            getBillboard(
-              `${process.env.NEXT_PUBLIC_CATEGORIES8}`,
-              languageToUse
-            ),
-            getProduct8({
-              isFeatured: undefined,
-              language: languageToUse,
-            }),
-            getSizes(),
-            getColors(languageToUse),
-          ]);
 
-        // Tìm kiếm category.id === một trong các giá trị trong params.categoryId
-        const filteredProductData = productData.filter((product) =>
-          params.categoryId.includes(product.productdetail.categoryId)
-        );
+        const { translations, pagination } = await getProduct8({
+          colorId: searchParams.colorId, 
+          sizeId: searchParams.sizeId,
+          categoryId: params.categoryId,
+          isFeatured: undefined,
+          language: languageToUse,
+          page: currentPage,
+          limit: pageSize, // Số sản phẩm mỗi trang
+        });
 
-        // Tìm giá cao nhất trong danh sách sản phẩm
-        const highestPrice = filteredProductData.reduce(
+        // Tìm giá cao nhất trong danh sách sản phẩm đã lọc
+        const highestPrice = translations.reduce(
           (max, product) =>
             product.productdetail.price1 *
               ((100 - product.productdetail.percentpromotion1) / 100) +
@@ -95,29 +86,23 @@ const Category8: React.FC<CategoryPageProps> = ({ params, searchParams }) => {
               : max,
           0
         );
+        setPagination(pagination);
         setMaxPrice(Math.floor(highestPrice));
         setMaxPriceInDatas(Math.floor(highestPrice));
-        setBillboard(billboardData);
-        setProduct(filteredProductData);
-        setSize(sizeData);
-        setColor(colorData);
+        setProduct(translations); // Cập nhật danh sách sản phẩm đã lọc
       } catch (error) {
         toast.error(categoryMessage);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
-  }, [params.categoryId, searchParams.sizeId, searchParams.colorId]);
+  }, [currentPage,pageSize,searchParams.colorId,searchParams.sizeId,params.categoryId,languageToUse,categoryMessage]);
 
   return (
     <DetailCategory
       loading={loading}
       languageToUse={languageToUse}
-      billboard={billboard}
-      size={size}
-      color={color}
       product={product}
       minPrice={minPrice}
       maxPrice={maxPrice}
@@ -125,6 +110,10 @@ const Category8: React.FC<CategoryPageProps> = ({ params, searchParams }) => {
       handlePriceChange={handlePriceChange}
       handleSortChange={handleSortChange}
       sortOrder={sortOrder}
+      pagination={pagination}
+      setCurrentPage={setCurrentPage}
+      pageSize={pageSize}
+      setPageSize={setPageSize}
       route="product8"
     />
   );

@@ -1,20 +1,16 @@
 "use client";
-import getColors from "@/actions/client/get-colors";
 import getProduct from "@/actions/client/product/get-product";
-import getSizes from "@/actions/client/get-size";
-import getBillboard from "@/actions/client/billboard/get-billboard";
 import { useEffect, useState } from "react";
-import { Billboard, Color, Product, Size } from "@/types/type";
+import { Product } from "@/types/type";
 import DetailCategory from "@/components/(client)/category/detail-category";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import toast from "react-hot-toast";
-import CategorySkeleton from "@/components/(client)/skeleton/category-skeleton";
 import { getCategoryNotFoundMessage } from "@/translate/translate-client";
 export const revalidate = 7200;
 
 interface CategoryPageProps {
   params: {
-    categoryId: string;
+    categoryId: string | string[];
   };
   searchParams: {
     colorId: string;
@@ -24,16 +20,19 @@ interface CategoryPageProps {
 
 const Category: React.FC<CategoryPageProps> = ({ params, searchParams }) => {
   const user = useCurrentUser();
-  const [billboard, setBillboard] = useState<Billboard | null>(null);
   const [product, setProduct] = useState<Product[]>([]);
-  const [size, setSize] = useState<Size[]>([]);
-  const [color, setColor] = useState<Color[]>([]);
   const [sortOrder, setSortOrder] = useState<string>("");
   const [minPrice, setMinPrice] = useState<number>(0);
   const [maxPrice, setMaxPrice] = useState<number>(0);
   const [maxPriceInDatas, setMaxPriceInDatas] = useState<number>(0);
   const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [pageSize, setPageSize] = useState<number>(9); // Default là 9 sản phẩm mỗi trang
+  const [currentPage, setCurrentPage] = useState<number>(1); //Page
+  const [pagination, setPagination] = useState<{
+    currentPage: number;
+    totalPages: number;
+  } | null>(null);
 
   useEffect(() => {
     // Check if we're running on the client side
@@ -63,27 +62,19 @@ const Category: React.FC<CategoryPageProps> = ({ params, searchParams }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [billboardData, productData, sizeData, colorData] =
-          await Promise.all([
-            getBillboard(
-              `${process.env.NEXT_PUBLIC_CATEGORIES}`,
-              languageToUse
-            ),
-            getProduct({
-              isFeatured: undefined,
-              language: languageToUse,
-            }),
-            getSizes(),
-            getColors(languageToUse),
-          ]);
 
-        // Tìm kiếm category.id === một trong các giá trị trong params.categoryId
-        const filteredProductData = productData.filter((product) =>
-          params.categoryId.includes(product.productdetail.categoryId)
-        );
+        const { translations, pagination } = await getProduct({
+          colorId: searchParams.colorId, 
+          sizeId: searchParams.sizeId,
+          categoryId: params.categoryId,
+          isFeatured: undefined,
+          language: languageToUse,
+          page: currentPage,
+          limit: pageSize, // Số sản phẩm mỗi trang
+        });
 
         // Tìm giá cao nhất trong danh sách sản phẩm đã lọc
-        const highestPrice = filteredProductData.reduce(
+        const highestPrice = translations.reduce(
           (max, product) =>
             product.productdetail.price1 *
               ((100 - product.productdetail.percentpromotion1) / 100) +
@@ -95,12 +86,10 @@ const Category: React.FC<CategoryPageProps> = ({ params, searchParams }) => {
               : max,
           0
         );
+        setPagination(pagination);
         setMaxPrice(Math.floor(highestPrice));
         setMaxPriceInDatas(Math.floor(highestPrice));
-        setBillboard(billboardData);
-        setProduct(filteredProductData); // Cập nhật danh sách sản phẩm đã lọc
-        setSize(sizeData);
-        setColor(colorData);
+        setProduct(translations); // Cập nhật danh sách sản phẩm đã lọc
       } catch (error) {
         toast.error(categoryMessage);
       } finally {
@@ -108,19 +97,13 @@ const Category: React.FC<CategoryPageProps> = ({ params, searchParams }) => {
       }
     };
     fetchData();
-  }, [params.categoryId, searchParams.sizeId, searchParams.colorId]);
+  }, [currentPage,pageSize,searchParams.colorId,searchParams.sizeId,params.categoryId,languageToUse,categoryMessage]);
 
   return (
     <>
-      {loading ? (
-        <CategorySkeleton />
-      ) : (
         <DetailCategory
           loading={loading}
           languageToUse={languageToUse}
-          billboard={billboard}
-          size={size}
-          color={color}
           product={product}
           minPrice={minPrice}
           maxPrice={maxPrice}
@@ -128,9 +111,12 @@ const Category: React.FC<CategoryPageProps> = ({ params, searchParams }) => {
           handlePriceChange={handlePriceChange}
           handleSortChange={handleSortChange}
           sortOrder={sortOrder}
+          pagination={pagination}
+          setCurrentPage={setCurrentPage}
+          pageSize={pageSize}
+          setPageSize={setPageSize}
           route="product0"
         />
-      )}
     </>
   );
 };

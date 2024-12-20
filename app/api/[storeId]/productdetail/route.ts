@@ -428,16 +428,6 @@ export async function GET(
   try {
     const { searchParams } = new URL(req.url);
     const categoryId = searchParams.get("categoryId") || undefined;
-    const color1Id = searchParams.get("color1Id") || undefined;
-    const color2Id = searchParams.get("color2Id") || undefined;
-    const color3Id = searchParams.get("color3Id") || undefined;
-    const color4Id = searchParams.get("color4Id") || undefined;
-    const color5Id = searchParams.get("color5Id") || undefined;
-    const size1Id = searchParams.get("size1Id") || undefined;
-    const size2Id = searchParams.get("size2Id") || undefined;
-    const size3Id = searchParams.get("size3Id") || undefined;
-    const size4Id = searchParams.get("size4Id") || undefined;
-    const size5Id = searchParams.get("size5Id") || undefined;
     const language = searchParams.get("language") || "vi"; // Mặc định là "vi" nếu không có language
 
     if (!params.storeId) {
@@ -451,16 +441,6 @@ export async function GET(
       where: {
         storeId: params.storeId,
         categoryId,
-        color1Id,
-        size1Id,
-        color2Id,
-        size2Id,
-        color3Id,
-        size3Id,
-        color4Id,
-        size4Id,
-        color5Id,
-        size5Id,
       },
       include: {
         category: true,
@@ -494,152 +474,152 @@ export async function GET(
 
           const translatedProduct = {
             ...productDetail,
-            title: await translateField(productDetail?.title, language),
-            name1: await translateField(productDetail?.name1, language),
-            name2: await translateField(productDetail?.name2, language),
-            name3: await translateField(productDetail?.name3, language),
-            name4: await translateField(productDetail?.name4, language),
-            name5: await translateField(productDetail?.name5, language),
-            promotionheading: await translateField(
-              productDetail?.promotionheading,
-              language
-            ),
-            promotiondescription: await translateField(
-              productDetail?.promotiondescription,
-              language
-            ),
-            descriptionsalientfeatures: await translateField(
-              productDetail?.descriptionsalientfeatures,
-              language
-            ),
-            description2salientfeatures: await translateField(
-              productDetail?.description2salientfeatures,
-              language
-            ),
-            description3salientfeatures: await translateField(
-              productDetail?.description3salientfeatures,
-              language
-            ),
-            description4salientfeatures: await translateField(
-              productDetail?.description4salientfeatures,
-              language
-            ),
-            contentsalientfeatures: await translateField(
-              productDetail?.contentsalientfeatures,
-              language
-            ),
-            descriptionspecifications: await translateField(
-              productDetail?.descriptionspecifications,
-              language
-            ),
-            valuespecifications: await translateField(
-              productDetail?.valuespecifications,
-              language
-            ),
-            description2specifications: await translateField(
-              productDetail?.description2specifications,
-              language
-            ),
-            value2specifications: await translateField(
-              productDetail?.value2specifications,
-              language
-            ),
-            description3specifications: await translateField(
-              productDetail?.description3specifications,
-              language
-            ),
-            value3specifications: await translateField(
-              productDetail?.value3specifications,
-              language
-            ),
-            description4specifications: await translateField(
-              productDetail?.description4specifications,
-              language
-            ),
-            value4specifications: await translateField(
-              productDetail?.value4specifications,
-              language
-            ),
-            description5specifications: await translateField(
-              productDetail?.description5specifications,
-              language
-            ),
-            value5specifications: await translateField(
-              productDetail?.value5specifications,
-              language
-            ),
-            description6specifications: await translateField(
-              productDetail?.description6specifications,
-              language
-            ),
-            value6specifications: await translateField(
-              productDetail?.value6specifications,
-              language
-            ),
-            description7specifications: await translateField(
-              productDetail?.description7specifications,
-              language
-            ),
-            value7specifications: await translateField(
-              productDetail?.value7specifications,
-              language
-            ),
-            description8specifications: await translateField(
-              productDetail?.description8specifications,
-              language
-            ),
-            value8specifications: await translateField(
-              productDetail?.value8specifications,
-              language
-            ),
-            description9specifications: await translateField(
-              productDetail?.description9specifications,
-              language
-            ),
-            value9specifications: await translateField(
-              productDetail?.value9specifications,
-              language
-            ),
-            description10specifications: await translateField(
-              productDetail?.description10specifications,
-              language
-            ),
-            value10specifications: await translateField(
-              productDetail?.value10specifications,
-              language
-            ),
-            description11specifications: await translateField(
-              productDetail?.description11specifications,
-              language
-            ),
-            value11specifications: await translateField(
-              productDetail?.value11specifications,
-              language
-            ),
-            description12specifications: await translateField(
-              productDetail?.description12specifications,
-              language
-            ),
-            value12specifications: await translateField(
-              productDetail?.value12specifications,
-              language
-            ),
-            description13specifications: await translateField(
-              productDetail?.description13specifications,
-              language
-            ),
-            value13specifications: await translateField(
-              productDetail?.value13specifications,
-              language
-            ),
-            description14specifications: await translateField(
-              productDetail?.description14specifications,
-              language
-            ),
-            value14specifications: await translateField(
-              productDetail?.value14specifications,
-              language
-            ),
+            // title: await translateField(productDetail?.title, language),
+            // name1: await translateField(productDetail?.name1, language),
+            // name2: await translateField(productDetail?.name2, language),
+            // name3: await translateField(productDetail?.name3, language),
+            // name4: await translateField(productDetail?.name4, language),
+            // name5: await translateField(productDetail?.name5, language),
+            // promotionheading: await translateField(
+            //   productDetail?.promotionheading,
+            //   language
+            // ),
+            // promotiondescription: await translateField(
+            //   productDetail?.promotiondescription,
+            //   language
+            // ),
+            // descriptionsalientfeatures: await translateField(
+            //   productDetail?.descriptionsalientfeatures,
+            //   language
+            // ),
+            // description2salientfeatures: await translateField(
+            //   productDetail?.description2salientfeatures,
+            //   language
+            // ),
+            // description3salientfeatures: await translateField(
+            //   productDetail?.description3salientfeatures,
+            //   language
+            // ),
+            // description4salientfeatures: await translateField(
+            //   productDetail?.description4salientfeatures,
+            //   language
+            // ),
+            // contentsalientfeatures: await translateField(
+            //   productDetail?.contentsalientfeatures,
+            //   language
+            // ),
+            // descriptionspecifications: await translateField(
+            //   productDetail?.descriptionspecifications,
+            //   language
+            // ),
+            // valuespecifications: await translateField(
+            //   productDetail?.valuespecifications,
+            //   language
+            // ),
+            // description2specifications: await translateField(
+            //   productDetail?.description2specifications,
+            //   language
+            // ),
+            // value2specifications: await translateField(
+            //   productDetail?.value2specifications,
+            //   language
+            // ),
+            // description3specifications: await translateField(
+            //   productDetail?.description3specifications,
+            //   language
+            // ),
+            // value3specifications: await translateField(
+            //   productDetail?.value3specifications,
+            //   language
+            // ),
+            // description4specifications: await translateField(
+            //   productDetail?.description4specifications,
+            //   language
+            // ),
+            // value4specifications: await translateField(
+            //   productDetail?.value4specifications,
+            //   language
+            // ),
+            // description5specifications: await translateField(
+            //   productDetail?.description5specifications,
+            //   language
+            // ),
+            // value5specifications: await translateField(
+            //   productDetail?.value5specifications,
+            //   language
+            // ),
+            // description6specifications: await translateField(
+            //   productDetail?.description6specifications,
+            //   language
+            // ),
+            // value6specifications: await translateField(
+            //   productDetail?.value6specifications,
+            //   language
+            // ),
+            // description7specifications: await translateField(
+            //   productDetail?.description7specifications,
+            //   language
+            // ),
+            // value7specifications: await translateField(
+            //   productDetail?.value7specifications,
+            //   language
+            // ),
+            // description8specifications: await translateField(
+            //   productDetail?.description8specifications,
+            //   language
+            // ),
+            // value8specifications: await translateField(
+            //   productDetail?.value8specifications,
+            //   language
+            // ),
+            // description9specifications: await translateField(
+            //   productDetail?.description9specifications,
+            //   language
+            // ),
+            // value9specifications: await translateField(
+            //   productDetail?.value9specifications,
+            //   language
+            // ),
+            // description10specifications: await translateField(
+            //   productDetail?.description10specifications,
+            //   language
+            // ),
+            // value10specifications: await translateField(
+            //   productDetail?.value10specifications,
+            //   language
+            // ),
+            // description11specifications: await translateField(
+            //   productDetail?.description11specifications,
+            //   language
+            // ),
+            // value11specifications: await translateField(
+            //   productDetail?.value11specifications,
+            //   language
+            // ),
+            // description12specifications: await translateField(
+            //   productDetail?.description12specifications,
+            //   language
+            // ),
+            // value12specifications: await translateField(
+            //   productDetail?.value12specifications,
+            //   language
+            // ),
+            // description13specifications: await translateField(
+            //   productDetail?.description13specifications,
+            //   language
+            // ),
+            // value13specifications: await translateField(
+            //   productDetail?.value13specifications,
+            //   language
+            // ),
+            // description14specifications: await translateField(
+            //   productDetail?.description14specifications,
+            //   language
+            // ),
+            // value14specifications: await translateField(
+            //   productDetail?.value14specifications,
+            //   language
+            // ),
             category: {
               ...productDetail?.category,
               name: await translateField(

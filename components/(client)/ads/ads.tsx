@@ -33,7 +33,7 @@ const Ads = () => {
 
   useEffect(() => {
     // Chỉ fetchData nếu người dùng không tắt quảng cáo
-    if (!user?.isShowAds) {
+    if (user?.id && !user?.isShowAds) {
       const fetchData = async () => {
         try {
           const data = await getBillboard(
@@ -52,7 +52,7 @@ const Ads = () => {
 
   // Kiểm tra nếu không có billboard hoặc quảng cáo không được hiển thị, không mở modal
   useEffect(() => {
-    if (!billboard || !billboard.imagebillboard?.[0]) {
+    if (!billboard || !billboard.imagebillboard?.[0] || !user?.id ) {
       return; // Không mở modal nếu không có billboard, hoặc quảng cáo đã được người dùng xem
     }
     //----------Mở modal--------

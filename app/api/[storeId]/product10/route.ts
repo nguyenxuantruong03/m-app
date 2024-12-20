@@ -206,6 +206,17 @@ export async function GET(
       isFeaturedParam === null ? undefined : isFeaturedParam === "true";
     const productdetailId = searchParams.get("productdetailId") || undefined;
     const language = searchParams.get("language") || "vi"; // Mặc định là "vi" nếu không có language
+
+    const categoryIds = searchParams.get("categoryId")?.split(",") || undefined;
+    const colorId = searchParams.get("colorId") || undefined;
+    const sizeId = searchParams.get("sizeId") || undefined;
+    // Lấy giá trị page và limit từ query params, nếu không có thì trả về undefined
+    const page = searchParams.has("page") ? parseInt(searchParams.get("page") as string, 10) : undefined;
+    const limit = searchParams.has("limit") ? parseInt(searchParams.get("limit") as string, 10) : undefined;
+
+    // Nếu cả page và limit đều có giá trị, tính offset
+    const offset = page && limit ? (page - 1) * limit : undefined;
+
     const productType = ProductType.PRODUCT10;
     const productType8 = ProductType.PRODUCT8;
     if (!params.storeId) {
@@ -224,6 +235,31 @@ export async function GET(
           in: [productType, productType8],
         },
         productdetailId,
+        productdetail: {
+          ...(categoryIds ? { categoryId: { in: categoryIds } } : {}),
+          ...(colorId
+            ? {
+                OR: [
+                  { color1Id: colorId },
+                  { color2Id: colorId },
+                  { color3Id: colorId },
+                  { color4Id: colorId },
+                  { color5Id: colorId },
+                ],
+              }
+            : {}),
+          ...(sizeId
+            ? {
+                OR: [
+                  { size1Id: sizeId },
+                  { size2Id: sizeId },
+                  { size3Id: sizeId },
+                  { size4Id: sizeId },
+                  { size5Id: sizeId },
+                ],
+              }
+            : {}),
+        },
       },
       include: {
         images: true,
@@ -245,10 +281,73 @@ export async function GET(
           },
         },
       },
+      // Chỉ thêm skip hoặc take nếu offset hoặc limit có giá trị
+      ...(offset && { skip: offset }),
+      ...(limit && { take: limit }),
       orderBy: {
         createdAt: "desc",
       },
     });
+
+    // Sort by productType alternating between productType and productType8
+    const alternatingProducts = [];
+    let productTypeQueue = products.filter(p => p && p.productType === productType);  // Explicit check for undefined
+    let productType7Queue = products.filter(p => p && p.productType === productType8);  // Explicit check for undefined
+
+    while (productTypeQueue.length || productType7Queue.length) {
+      if (productTypeQueue.length) {
+        const product = productTypeQueue.shift();
+        if (product) {
+          alternatingProducts.push(product);  // Only push if product is defined
+        }
+      }
+      if (productType7Queue.length) {
+        const product = productType7Queue.shift();
+        if (product) {
+          alternatingProducts.push(product);  // Only push if product is defined
+        }
+      }
+    }
+
+    const totalProducts = await prismadb.product.count({
+      where: {
+        storeId: params.storeId,
+        isFeatured,
+        isArchived: false,
+        productdetailId,
+        productType: {
+          in: [productType, productType8],
+        },
+        productdetail: {
+          ...(categoryIds ? { categoryId: { in: categoryIds } } : {}),
+          ...(colorId
+            ? {
+                OR: [
+                  { color1Id: colorId },
+                  { color2Id: colorId },
+                  { color3Id: colorId },
+                  { color4Id: colorId },
+                  { color5Id: colorId },
+                ],
+              }
+            : {}),
+          ...(sizeId
+            ? {
+                OR: [
+                  { size1Id: sizeId },
+                  { size2Id: sizeId },
+                  { size3Id: sizeId },
+                  { size4Id: sizeId },
+                  { size5Id: sizeId },
+                ],
+              }
+            : {}),
+        },
+      },
+    });
+
+   // Kiểm tra xem limit có phải là undefined hay không trước khi tính totalPages
+   const totalPages = limit !== undefined ? Math.ceil(totalProducts / limit) : undefined;
 
     const getTranslatedValue = async (value:any, language: string) => {
       if (language === "vi" || !value) {
@@ -259,7 +358,7 @@ export async function GET(
     };
     
     const translations = await Promise.all(
-      products.map(async (product) => {
+      alternatingProducts.map(async (product) => {
         const translatedProduct = {
           ...product,
           heading: await getTranslatedValue(product.heading, language),
@@ -364,7 +463,13 @@ export async function GET(
       })
     );
 
-    return NextResponse.json(translations);
+    return NextResponse.json({
+      translations,
+      pagination: {
+        currentPage: page,
+        totalPages
+      },
+    });
   } catch (error) {
     return new NextResponse(
       JSON.stringify({ error: `${productGetMessage.internalError}10` }),

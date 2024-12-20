@@ -1,4 +1,3 @@
-import Container from "./../../../../components/ui/container";
 import Category1 from "./components/category1";
 import { currentUser } from "@/lib/auth";
 import { getCategoryNotFoundMessage } from "@/translate/translate-client";
@@ -20,9 +19,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
   searchParams,
 }) => {
   return (
-    <Container>
       <Category1 params={params} searchParams={searchParams} />
-    </Container>
   );
 };
 
