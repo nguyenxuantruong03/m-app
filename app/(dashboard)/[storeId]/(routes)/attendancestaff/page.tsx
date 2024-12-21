@@ -287,7 +287,6 @@ export default function Home() {
 
   const handleCheckAttendanceStart = async () => {
     if (selectedDate) {
-      setIsCheckingAttendanceStart(true);
       setIsCheckingAttendanceEnd(true);
       setIsAddingEvent(true);
       setIsDeleting(false);
