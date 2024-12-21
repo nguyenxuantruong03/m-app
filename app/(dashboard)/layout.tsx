@@ -45,6 +45,10 @@ export default async function SetupLayout({
 
   const checkRole = allowedRoles.includes(user.role as UserRole);
 
+  if(!checkRole){
+    redirect("/home-product");
+  }
+
   return (
     <>
       <GetLocalStorage>

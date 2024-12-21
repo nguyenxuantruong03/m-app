@@ -116,7 +116,6 @@ export default function Home() {
   const [isCheckingAttendanceEnd, setIsCheckingAttendanceEnd] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isAddingEvent, setIsAddingEvent] = useState(false);
-  const [isAttendanceStartCalled, setIsAttendanceStartCalled] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleString());
   const [isDelayCheckAttendaceText, setDelayCheckAttendaceText] = useState("");
   const [isEnd, setIsEnd] = useState<boolean>(false);
@@ -252,27 +251,6 @@ export default function Home() {
       }
     }
   }, []);
-
-  //Dùng để check nếu như ngày hiện tại chưa có ❎ thì disable nếu có thì không
-  useEffect(() => {
-    const today = new Date();
-    const todayEvents = allEvents.filter((event) => {
-      const eventDate = new Date(event.start);
-      const vnTimeZone = "Asia/Ho_Chi_Minh";
-      const zonedDateTimeVN = utcToZonedTime(eventDate, vnTimeZone);
-      return (
-        zonedDateTimeVN.getDate() === today.getDate() &&
-        zonedDateTimeVN.getMonth() === today.getMonth() &&
-        zonedDateTimeVN.getFullYear() === today.getFullYear()
-      );
-    });
-    // Kiểm tra nếu có ít nhất một sự kiện trong ngày hiện tại và có ít nhất một sự kiện có attendancestart === "❎"
-    const isAttendanceStartCalled = todayEvents.some(
-      (event) => event.attendancestart === "❎"
-    );
-    // Nếu có ít nhất một sự kiện có attendancestart === "❎", không disable, ngược lại thì disable
-    setIsAttendanceStartCalled(isAttendanceStartCalled);
-  }, [allEvents]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -899,15 +877,6 @@ export default function Home() {
           setAllEvents(
             allEvents.filter((event) => String(event.id) !== String(idToDelete))
           );
-          // Check if the deleted event was the last attendance start event
-          const isStartEventDeleted = allEvents.some(
-            (event) =>
-              event.attendancestart === "❎" &&
-              String(event.id) !== String(idToDelete)
-          );
-          if (isStartEventDeleted) {
-            setIsAttendanceStartCalled(false); // Reset isAttendanceStartCalled if start event is deleted
-          }
           setShowDeleteModal(false);
           setIdToDelete(null);
 
@@ -1124,19 +1093,18 @@ export default function Home() {
             className="px-4 py-2 rounded-md"
             disabled={isCheckingAttendanceStart}
           >
-           {attendanceStaffMessage.attendance}
+            {attendanceStaffMessage.attendance}
           </Button>
 
           <Button
             onClick={handleCheckAttendanceEnd}
             className="px-4 py-2 rounded-md"
             disabled={
-              !isAttendanceStartCalled ||
               isCheckingAttendanceEnd ||
               isEnd === true
             }
           >
-          {attendanceStaffMessage.finish}
+            {attendanceStaffMessage.finish}
           </Button>
         </div>
       </main>
