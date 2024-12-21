@@ -16,7 +16,7 @@ import axios from "axios";
 import { WheelSpinColumn } from "./column";
 import { Input } from "@/components/ui/input";
 import "./styles.css";
-import { getwheelSpinAction } from "@/translate/translate-dashboard";
+import { getUserBonusMessages, getwheelSpinAction } from "@/translate/translate-dashboard";
 
 interface CellActionProps {
   data: WheelSpinColumn;
@@ -48,6 +48,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   //language
   const wheelSpinActionMessage = getwheelSpinAction(data.language);
+  const userBonusMessage = getUserBonusMessages(data.language);
 
   // Hàm để kiểm tra xem tất cả ba input có giá trị không
   const areAllInputsFilledbonus = () => {
@@ -143,7 +144,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              {" "}
+              {userBonusMessage.bonus}: {data.email}
               {wheelSpinActionMessage.content}{" "}
               <span className="font-bold">{bonusTitle}</span>.
               {wheelSpinActionMessage.addedBonus}{" "}
@@ -250,7 +251,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         promise.then(() => {
           return (
             <p>
-              {" "}
+              {userBonusMessage.unbonus}: {data.email}
               {wheelSpinActionMessage.content}{" "}
               <span className="font-bold">{unbonusTitle}</span>.{" "}
               {wheelSpinActionMessage.deducted}{" "}

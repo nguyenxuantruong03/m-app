@@ -20,7 +20,7 @@ import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getProductClient, translateProductsClientLightBulb } from "@/translate/translate-dashboard";
+import { getEnterNameTranslation, getProductClient, translateProductsClientLightBulb } from "@/translate/translate-dashboard";
 
 interface ProductClientProps {
   data: ProductColumn[];
@@ -40,6 +40,7 @@ const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
   const languageToUse = user?.language || "vi";
   const productClientMessage = getProductClient(languageToUse);
   const productClientLightBulbMessage = translateProductsClientLightBulb(languageToUse);
+  const enterNameMessage = getEnterNameTranslation(languageToUse);
 
   const handleDelete = async () => {
     setLoading(true);
@@ -87,14 +88,15 @@ const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
           <Button
             onClick={() => router.push(`/${params.storeId}/product10/new`)}
           >
-            <Plus className="mr-2 h-4 w-4" />
-            {productClientMessage.addNew}
+            <Plus className="md:mr-2 h-4 w-4" />
+            <span className="hidden md:block">{productClientMessage.addNew}</span>
           </Button>
         </div>
       </div>
       <Separator />
       <DataTable
-        searchKey="name"
+        placeholder={enterNameMessage}
+        searchKey="heading"
         columns={columns}
         data={data}
         onSelect={(rows) => {

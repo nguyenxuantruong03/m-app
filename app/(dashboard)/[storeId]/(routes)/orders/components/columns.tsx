@@ -25,11 +25,78 @@ import {
   Undo2,
   Undo,
   ImageIcon,
-  AlarmClockCheck 
+  AlarmClockCheck,
 } from "lucide-react";
 import FormatDate from "@/components/format-Date";
 import ImageCellMutiple from "@/components/image-cell-multiple";
-import { getStatusDisplay } from "@/translate/translate-dashboard";
+import {
+  getStatusDisplay,
+  translateOrderColumn,
+} from "@/translate/translate-dashboard";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import React from "react";
+
+interface OrderHeaderMessage {
+  product: string;
+  returnImage: string;
+  deliveredImage: string;
+  return: string;
+  status: string;
+  otherStatus: string;
+  deliveryStaffEmail: string;
+  deliveryStaffName: string;
+  emailShipper: string;
+  nameShipper: string;
+  debtCollectionEmail: string;
+  debtCollectionName: string;
+  systemPhone: string;
+  systemEmail: string;
+  systemName: string;
+  systemAddress: string;
+  email: string;
+  name: string;
+  phoneNumber: string;
+  gender: string;
+  paymentMethod: string;
+  notes: string;
+  address: string;
+  otherAddress: string;
+  totalAmount: string;
+  reward: string;
+  payment: string;
+  cashPayment: string;
+  shipperDebt: string;
+  updateTime: string;
+  createTime: string;
+}
+
+// Header trasnlate
+const HeaderColumn = ({
+  column,
+  labelKey,
+  icon,
+}: {
+  column: any;
+  labelKey: keyof OrderHeaderMessage;
+  icon: React.ElementType;
+}) => {
+  const user = useCurrentUser();
+  const orderHeaderMessage: OrderHeaderMessage = translateOrderColumn(
+    user?.language || "vi"
+  );
+
+  // Dùng labelKey để truy xuất giá trị động
+  const label = orderHeaderMessage[labelKey] || labelKey;
+
+  return (
+    <SpanColumn
+      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    >
+      {label}
+      {icon && React.createElement(icon, { className: "ml-2 h-4 w-4" })}
+    </SpanColumn>
+  );
+};
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -53,20 +120,20 @@ export type OrderColumn = {
   totalPrice: string;
   status: string;
   statusOther: string | null;
-  emailStaff:string | null | undefined,
-  emailShipper:string | null | undefined,
-  emailUserGetDebt:string | null | undefined,
-  nameStaff:string | null | undefined,
-  nameShipper:string | null | undefined,
-  nameUserGetDebt:string | null | undefined,
+  emailStaff: string | null | undefined;
+  emailShipper: string | null | undefined;
+  emailUserGetDebt: string | null | undefined;
+  nameStaff: string | null | undefined;
+  nameShipper: string | null | undefined;
+  nameUserGetDebt: string | null | undefined;
   receiveCash: boolean;
   debtShipper: boolean;
-  destiontionReturnProduct:string | null;
+  destiontionReturnProduct: string | null;
   returnProduct: boolean | null;
   imagereturnProduct: { url: string }[];
-  imagereturnProductUrl: string[]
+  imagereturnProductUrl: string[];
   imageCustomer: { url: string }[];
-  imageCustomerUrl: string[]
+  imageCustomerUrl: string[];
   createdAt: Date;
   updatedAt: Date;
   language: string;
@@ -88,29 +155,23 @@ export const columns: ColumnDef<OrderColumn>[] = [
   },
   {
     accessorKey: "products",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Sản phẩm
-          <Package className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="product"
+        icon={Package}
+      />
+    ),
   },
   {
     accessorKey: "imagereturnProduct",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Hình ảnh trả hàng
-          <ImageIcon className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="returnImage"
+        icon={ImageIcon}
+      />
+    ),
     cell: ({ row }) => {
       const imagereturnProduct = row.original.imagereturnProduct;
       const image = row.original.imagereturnProductUrl;
@@ -119,16 +180,13 @@ export const columns: ColumnDef<OrderColumn>[] = [
   },
   {
     accessorKey: "imageCustomer",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Hình ảnh đã giao
-          <ImageIcon className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="deliveredImage"
+        icon={ImageIcon}
+      />
+    ),
     cell: ({ row }) => {
       const imageCustomer = row.original.imageCustomer;
       const image = row.original.imageCustomerUrl;
@@ -137,319 +195,247 @@ export const columns: ColumnDef<OrderColumn>[] = [
   },
   {
     accessorKey: "returnProduct",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Trả hàng
-          <Undo2 className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
-    cell: ({ row }) => {
-      return (
-        <div>
-          {row.original.returnProduct ? (
-            <Undo  className="h-5 w-5 text-green-600" />
-          ) : (
-            <Undo  className="h-5 w-5 text-red-600" />
-          )}
-        </div>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="return"
+        icon={Undo2}
+      />
+    ),
+    cell: ({ row }) => (
+      <div>
+        {row.original.returnProduct ? (
+          <Undo className="h-5 w-5 text-green-600" />
+        ) : (
+          <Undo className="h-5 w-5 text-red-600" />
+        )}
+      </div>
+    ),
   },
   {
     accessorKey: "status",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Trạng thái
-          <Activity className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="status"
+        icon={Activity}
+      />
+    ),
     cell: ({ row }) => {
       const status = row.original.status;
       const language = row.original.language; // Ngôn ngữ hiện tại
-
       return <div>{getStatusDisplay(status, language)}</div>;
     },
   },
   {
     accessorKey: "statusOther",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Trạng thái khác
-          <Package className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="otherStatus"
+        icon={Package}
+      />
+    ),
   },
   {
     accessorKey: "emailStaff",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email nhân viên
-          <UserPlus  className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="deliveryStaffEmail"
+        icon={UserPlus}
+      />
+    ),
   },
   {
     accessorKey: "nameStaff",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Tên nhân viên
-          <UserPlus  className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="deliveryStaffName"
+        icon={UserPlus}
+      />
+    ),
   },
   {
     accessorKey: "emailShipper",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email shipper
-          <UserPlus  className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="emailShipper"
+        icon={UserPlus}
+      />
+    ),
   },
   {
     accessorKey: "nameShipper",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Tên shipper
-          <UserPlus className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="nameShipper"
+        icon={UserPlus}
+      />
+    ),
   },
   {
     accessorKey: "emailUserGetDebt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email nhân viên nhận tiền nợ
-          <UserPlus  className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="debtCollectionEmail"
+        icon={UserPlus}
+      />
+    ),
   },
   {
     accessorKey: "nameUserGetDebt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Tên nhân viên nhận tiền nợ
-          <UserPlus className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="debtCollectionName"
+        icon={UserPlus}
+      />
+    ),
   },
   {
     accessorKey: "phonenumbercurrent",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Sđt hệ thống
-          <Phone className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="systemPhone"
+        icon={Phone}
+      />
+    ),
   },
   {
     accessorKey: "emailcurrent",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email hệ thống
-          <SquareUserRound className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="systemEmail"
+        icon={SquareUserRound}
+      />
+    ),
   },
   {
     accessorKey: "namecurrent",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Tên hệ thống
-          <Tag className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="systemName"
+        icon={Tag}
+      />
+    ),
   },
   {
     accessorKey: "addresscurrent",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Địa chỉ hệ thống
-          <MapPin className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="systemAddress"
+        icon={MapPin}
+      />
+    ),
   },
   {
     accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <SquareUserRound className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="email"
+        icon={SquareUserRound}
+      />
+    ),
   },
   {
     accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Tên
-          <Tag className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="name"
+        icon={Tag}
+      />
+    ),
   },
   {
     accessorKey: "phone",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Số điện thoại
-          <Phone className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="phoneNumber"
+        icon={Phone}
+      />
+    ),
   },
   {
     accessorKey: "gender",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Giới tính
-          <User className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="gender"
+        icon={User}
+      />
+    ),
   },
   {
     accessorKey: "deliveryMethod",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Phương thúc thanh toán
-          <ReceiptText className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="paymentMethod"
+        icon={ReceiptText}
+      />
+    ),
   },
   {
     accessorKey: "note",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Ghi chú
-          <NotebookPen className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="notes"
+        icon={NotebookPen}
+      />
+    ),
   },
   {
     accessorKey: "address",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Địa chỉ
-          <MapPin className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="address"
+        icon={MapPin}
+      />
+    ),
   },
   {
     accessorKey: "addressOther",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Địa chỉ khác
-          <MapPin className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="otherAddress"
+        icon={MapPin}
+      />
+    ),
   },
   {
     accessorKey: "totalPrice",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Tông giá tiền
-          <CircleDollarSign className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="totalAmount"
+        icon={CircleDollarSign}
+      />
+    ),
   },
   {
     accessorKey: "isGift",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Tặng thưởng
-          <Gift className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="reward"
+        icon={Gift}
+      />
+    ),
     cell: ({ row }) => {
       return (
         <div>
@@ -468,16 +454,13 @@ export const columns: ColumnDef<OrderColumn>[] = [
   },
   {
     accessorKey: "isPaid",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thanh toán
-          <WalletCards className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="payment"
+        icon={WalletCards}
+      />
+    ),
     cell: ({ row }) => {
       return (
         <div>
@@ -492,23 +475,20 @@ export const columns: ColumnDef<OrderColumn>[] = [
   },
   {
     accessorKey: "receiveCash",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thanh toán tiền mặt
-          <WalletCards className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="cashPayment"
+        icon={WalletCards}
+      />
+    ),
     cell: ({ row }) => {
       return (
         <div>
           {row.original.receiveCash ? (
-            <HandCoins  className="h-5 w-5 text-green-600" />
+            <HandCoins className="h-5 w-5 text-green-600" />
           ) : (
-            <HandCoins  className="h-5 w-5 text-red-600" />
+            <HandCoins className="h-5 w-5 text-red-600" />
           )}
         </div>
       );
@@ -516,23 +496,20 @@ export const columns: ColumnDef<OrderColumn>[] = [
   },
   {
     accessorKey: "debtShipper",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Shipper nợ
-          <WalletCards className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="shipperDebt"
+        icon={WalletCards}
+      />
+    ),
     cell: ({ row }) => {
       return (
         <div>
           {row.original.debtShipper ? (
             <Receipt className="h-5 w-5 text-green-600" />
           ) : (
-            <Receipt  className="h-5 w-5 text-red-600" />
+            <Receipt className="h-5 w-5 text-red-600" />
           )}
         </div>
       );
@@ -540,37 +517,39 @@ export const columns: ColumnDef<OrderColumn>[] = [
   },
   {
     accessorKey: "updatedAt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian cập nhật
-          <AlarmClockCheck className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="updateTime"
+        icon={AlarmClockCheck}
+      />
+    ),
     cell: ({ row }) => {
-      return <FormatDate data={row.original.updatedAt} language={row.original.language}/>;
+      return (
+        <FormatDate
+          data={row.original.updatedAt}
+          language={row.original.language}
+        />
+      );
     },
   },
   {
     accessorKey: "createdAt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian tạo
-          <Clock12 className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="createTime"
+        icon={Clock12}
+      />
+    ),
     cell: ({ row }) => {
       return (
-      <FormatDate data={row.original.createdAt} language={row.original.language}/>
-      )
-    }
+        <FormatDate
+          data={row.original.createdAt}
+          language={row.original.language}
+        />
+      );
+    },
   },
   {
     id: "actions",

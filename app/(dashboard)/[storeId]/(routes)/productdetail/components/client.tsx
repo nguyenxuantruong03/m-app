@@ -20,7 +20,7 @@ import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getProductDetailClient } from "@/translate/translate-dashboard";
+import { getEnterTitleTranslation, getProductDetailClient } from "@/translate/translate-dashboard";
 
 interface ProductDetailClientProps {
   data: ProductDetailColumn[];
@@ -39,6 +39,7 @@ const ProductDetailClient: React.FC<ProductDetailClientProps> = ({ data }) => {
   const user = useCurrentUser()
   const languageToUse = user?.language || "vi";
   const productDetailClientMessage = getProductDetailClient(languageToUse)
+  const enterTitleMessage = getEnterTitleTranslation(languageToUse)
 
   const handleDelete = async () => {
     setLoading(true);
@@ -84,13 +85,14 @@ const ProductDetailClient: React.FC<ProductDetailClientProps> = ({ data }) => {
           <Button
             onClick={() => router.push(`/${params.storeId}/productdetail/new`)}
           >
-            <Plus className="mr-2 h-4 w-4" />
-            {productDetailClientMessage.addNew}
+            <Plus className="md:mr-2 h-4 w-4" />
+            <span className="hidden md:block">{productDetailClientMessage.addNew}</span>
           </Button>
         </div>
       </div>
       <Separator />
       <DataTable
+        placeholder={enterTitleMessage}
         searchKey="title"
         columns={columns}
         data={data}

@@ -353,7 +353,7 @@ export default function Home() {
           // Đặt giờ và phút từ user.timestartwork vào ngày hiện tại
           currentDate.setHours(parseInt(hours, 10));
           currentDate.setMinutes(parseInt(minutes, 10));
-          if (currentTime.getTime() <= currentDate.getTime()) {
+          if (currentTime.getTime() < currentDate.getTime()) {
             toast.error(
               `${attendanceStartMessage.checkInNotYetTime}:${userId?.timestartwork}!`
             );
@@ -1013,7 +1013,7 @@ export default function Home() {
         <div className="grid grid-cols-1 xl:grid-cols-10 w-full xl:p-12">
           <div
             id="draggable-el"
-            className="grid grid-rows-[auto,1fr] ml-0 mb-8 xl:mb-0 w-full border-2 p-2 rounded-md xl:-ml-8 xl:h-[55%] 2xl:h-[35%] bg-violet-50 dark:bg-[#2a3e4f]"
+            className="grid grid-rows-[auto,1fr] ml-0 mb-8 xl:mb-0 w-full border-2 p-2 rounded-md xl:-ml-8 xl:h-[55%] 2xl:h-[35%] bg-violet-50 dark:bg-[#2a3e4f] xl:sticky xl:top-40"
           >
             <h1 className="flex items-center justify-center gap-x-1 font-bold text-lg mb-2 text-center text-black dark:text-white">
               {attendanceStaffMessage.dragEvent}
@@ -1118,13 +1118,13 @@ export default function Home() {
           languageToUse={languageToUse}
         />
 
-        <div className="xl:fixed bottom-4 right-0 z-[9999] my-3 mr-5 w-full flex item-center justify-end space-x-5">
+        <div className="xl:fixed bottom-4 left-0 z-[9999] m-3 w-full flex justify-center xl:justify-normal item-center space-x-5">
           <Button
             onClick={handleCheckAttendanceStart}
             className="px-4 py-2 rounded-md"
             disabled={isCheckingAttendanceStart}
           >
-            {attendanceStaffMessage.attendance}
+           {attendanceStaffMessage.attendance}
           </Button>
 
           <Button
@@ -1136,7 +1136,7 @@ export default function Home() {
               isEnd === true
             }
           >
-            {attendanceStaffMessage.finish}
+          {attendanceStaffMessage.finish}
           </Button>
         </div>
       </main>

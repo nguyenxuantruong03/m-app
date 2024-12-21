@@ -9,6 +9,35 @@ import SpanColumn from "@/components/span-column";
 import EditRow from "../_components/edit-row";
 import ImageCellMutiple from "@/components/image-cell-multiple";
 import FormatDate from "@/components/format-Date";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { translateBillboard } from "@/translate/translate-dashboard";
+import React from "react";
+
+interface BillboardHeaderMessage {
+  label: string;
+  description: string;
+  image: string;
+  updatedTime: string;
+  createdTime: string;
+}
+
+// Header trasnlate
+const HeaderColumn = ({ column, labelKey, icon }: { column: any; labelKey: keyof BillboardHeaderMessage; icon: React.ElementType }) => {
+  const user = useCurrentUser();
+  const billboardHeaderMessage: BillboardHeaderMessage = translateBillboard(user?.language || "vi");
+
+  // Dùng labelKey để truy xuất giá trị động
+  const label = billboardHeaderMessage[labelKey] || labelKey;
+
+  return (
+    <SpanColumn onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+      {label}
+      {icon && React.createElement(icon, { className: "ml-2 h-4 w-4" })}
+    </SpanColumn>
+  );
+};
+
+export default HeaderColumn;
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -48,16 +77,7 @@ export const columns: ColumnDef<BillboardColumn>[] = [
   },
   {
     accessorKey: "label",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Nhãn
-          <Tag className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => <HeaderColumn column={column} labelKey="label" icon={Tag} />,
     cell: ({ row }) => (
       <EditRow
         data={row.original.label}
@@ -65,23 +85,14 @@ export const columns: ColumnDef<BillboardColumn>[] = [
         id={row.original.id}
         description={row.original.description}
         imagebillboard={row.original.imagebillboardpatch}
-        field= "label"
-        language= {row.original.language}
+        field="label"
+        language={row.original.language}
       />
     ),
   },
   {
     accessorKey: "description",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Mô tả
-          <MessageCircleMore className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => <HeaderColumn column={column} labelKey="description" icon={MessageCircleMore} />,
     cell: ({ row }) => (
       <EditRow
         data={row.original.description}
@@ -89,24 +100,14 @@ export const columns: ColumnDef<BillboardColumn>[] = [
         id={row.original.id}
         description={row.original.description}
         imagebillboard={row.original.imagebillboardpatch}
-        field= "description"
-        language= {row.original.language}
+        field="description"
+        language={row.original.language}
       />
     ),
   },
   {
     accessorKey: "imagebillboard",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Hình ảnh
-          <ImageIcon className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
-    // Define a custom cell to render the image
+    header: ({ column }) => <HeaderColumn column={column} labelKey="image" icon={ImageIcon} />,
     cell: ({ row }) => {
       const imageUrl = row.original.imagebillboardpatch;
       const image = row.original.imagebillboard;
@@ -115,39 +116,13 @@ export const columns: ColumnDef<BillboardColumn>[] = [
   },
   {
     accessorKey: "updatedAt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian cập nhật
-          <AlarmClockCheck  className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
-    cell: ({ row }) => {
-      return (
-      <FormatDate data={row.original.updatedAt} language={row.original.language}/>
-      )
-    }
+    header: ({ column }) => <HeaderColumn column={column} labelKey="updatedTime" icon={AlarmClockCheck} />,
+    cell: ({ row }) => <FormatDate data={row.original.updatedAt} language={row.original.language} />,
   },
   {
     accessorKey: "createdAt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian tạo
-          <Clock12 className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
-    cell: ({ row }) => {
-      return (
-      <FormatDate data={row.original.createdAt} language={row.original.language}/>
-      )
-    }
+    header: ({ column }) => <HeaderColumn column={column} labelKey="createdTime" icon={Clock12} />,
+    cell: ({ row }) => <FormatDate data={row.original.createdAt} language={row.original.language} />,
   },
   {
     id: "actions",

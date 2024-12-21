@@ -9,7 +9,7 @@ import { useCurrentRole } from "@/hooks/use-current-role";
 import { ManageAttendancesColumn, columns } from "./column";
 import Downloadfile from "@/components/file/downloadfilepage";
 import { useState } from "react";
-import { getManageAttendanceClient } from "@/translate/translate-dashboard";
+import { getEnterEmailTranslation, getManageAttendanceClient } from "@/translate/translate-dashboard";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
 interface AttendanceClientProps {
@@ -25,6 +25,7 @@ const AttendanceClient: React.FC<AttendanceClientProps> = ({ data }) => {
   const user = useCurrentUser();
   const languageToUse = user?.language || "vi";
   const manageAttendaceClientMessage = getManageAttendanceClient(languageToUse)
+  const enterEmailMessage = getEnterEmailTranslation(languageToUse)
 
   return (
     <>
@@ -37,6 +38,7 @@ const AttendanceClient: React.FC<AttendanceClientProps> = ({ data }) => {
       </div>
       <Separator />
       <DataTable
+        placeholder={enterEmailMessage}
         searchKey="email"
         columns={columns}
         data={data}

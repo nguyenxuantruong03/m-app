@@ -14262,3 +14262,2456 @@ export const getDeliverySharingLocation = (language:string) => {
           };
   }
 }
+
+
+export const getUserBonusMessages = (language: string) => {
+  switch (language) {
+      case 'vi': // Tiếng Việt
+          return {
+              bonus: 'Đã gửi thưởng cho người dùng',
+              unbonus: 'Đã hủy thưởng cho người dùng',
+          };
+      case 'en': // Tiếng Anh
+          return {
+              bonus: 'User has been given a bonus',
+              unbonus: 'User has been unbonused',
+          };
+      case 'zh': // Tiếng Trung
+          return {
+              bonus: '用户已获得奖金',
+              unbonus: '用户奖金已取消',
+          };
+      case 'fr': // Tiếng Pháp
+          return {
+              bonus: 'Le bonus a été attribué à l’utilisateur',
+              unbonus: 'Le bonus a été retiré à l’utilisateur',
+          };
+      case 'ja': // Tiếng Nhật
+          return {
+              bonus: 'ユーザーにボーナスが送信されました',
+              unbonus: 'ユーザーのボーナスが解除されました',
+          };
+      default: // Ngôn ngữ mặc định
+          return {
+            bonus: 'User has been given a bonus',
+            unbonus: 'User has been unbonused',
+          };
+  }
+}
+
+export const translateEmailPreferenceNoteMessage = (language:string) => {
+  switch (language) {
+    case 'vi': // Tiếng Việt
+        return {
+            title: 'Lưu ý',
+            message1: '- Khi gửi email đến người dùng mà dựa vào sở thích, sẽ chỉ gửi được người dùng có vai trò là USER.',
+            message2: '- Nếu chỉ định người dùng cần gửi thì có thể gửi đến tất cả vai trò.',
+        };
+
+    case 'en': // Tiếng Anh
+        return {
+            title: 'Note',
+            message1: '- When sending emails to users based on preferences, the system will only send to users with the USER role.',
+            message2: '- If you specify the users to send emails to, it can include all roles.',
+        };
+
+    case 'zh': // Tiếng Trung
+        return {
+            title: '注意',
+            message1: '- 根据偏好向用户发送电子邮件时，系统仅发送给角色为USER的用户。',
+            message2: '- 如果指定需要发送的用户，则可以包含所有角色。',
+        };
+
+    case 'fr': // Tiếng Pháp
+        return {
+            title: 'Remarque',
+            message1: '- Lors de l\'envoi d\'e-mails aux utilisateurs en fonction des préférences, le système n\'enverra qu\'aux utilisateurs ayant le rôle USER.',
+            message2: '- Si vous spécifiez les utilisateurs à qui envoyer, cela peut inclure tous les rôles.',
+        };
+
+    case 'ja': // Tiếng Nhật
+        return {
+            title: '注意',
+            message1: '- 好みに基づいてユーザーにメールを送信する場合、システムはUSERロールのユーザーにのみ送信されます。',
+            message2: '- 送信するユーザーを指定する場合、すべてのロールが含まれる可能性があります。',
+        };
+
+    default: // Ngôn ngữ mặc định
+    return {
+      title: 'Note',
+      message1: '- When sending emails to users based on preferences, the system will only send to users with the USER role.',
+      message2: '- If you specify the users to send emails to, it can include all roles.',
+  };
+}
+};
+
+
+export const getEnterSubjectTranslation = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return 'Hãy nhập chủ đề...';
+      case 'en':
+          return 'Please enter the subject...';
+      case 'zh':
+          return '请输入主题...';
+      case 'fr':
+          return 'Veuillez entrer le sujet...';
+      case 'ja':
+          return '件名を入力してください...';
+      default:
+          return 'Please enter the subject...';
+  }
+};
+
+export const getEnterLabelTranslation = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return 'Hãy nhập nhãn...';
+      case 'en':
+          return 'Please enter the label...';
+      case 'zh':
+          return '请输入标签...';
+      case 'fr':
+          return 'Veuillez entrer l\'étiquette...';
+      case 'ja':
+          return 'ラベルを入力してください...';
+      default:
+          return 'Please enter the label...';
+  }
+};
+
+
+export const getEnterNameTranslation = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return 'Hãy nhập tên...';
+      case 'en':
+          return 'Please enter the name...';
+      case 'zh':
+          return '请输入名字...';
+      case 'fr':
+          return 'Veuillez entrer le nom...';
+      case 'ja':
+          return '名前を入力してください...';
+      default:
+          return 'Please enter the name...';
+  }
+};
+
+
+export const getEnterEmailTranslation = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return 'Hãy nhập email...';
+      case 'en':
+          return 'Please enter the email...';
+      case 'zh':
+          return '请输入电子邮件...';
+      case 'fr':
+          return 'Veuillez entrer l\'email...';
+      case 'ja':
+          return 'メールアドレスを入力してください...';
+      default:
+          return 'Please enter the email...';
+  }
+};
+
+export const getEnterTitleTranslation = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return 'Nhập tiêu đề...';
+      case 'en':
+          return 'Please enter the title...';
+      case 'zh':
+          return '请输入标题...';
+      case 'fr':
+          return 'Veuillez entrer le titre...';
+      case 'ja':
+          return 'タイトルを入力してください...';
+      default:
+          return 'Please enter the title...';
+  }
+};
+
+export const getEnterUserTranslation = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return 'Hãy nhập người dùng...';
+      case 'en':
+          return 'Please enter the user...';
+      case 'zh':
+          return '请输入用户...';
+      case 'fr':
+          return 'Veuillez entrer l\'utilisateur...';
+      case 'ja':
+          return 'ユーザーを入力してください...';
+      default:
+          return 'Please enter the user...';
+  }
+};
+
+
+export const translateBillboard = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return {
+              label: 'Nhãn',
+              description: 'Mô tả',
+              image: 'Hình ảnh',
+              updatedTime: 'Thời gian cập nhật',
+              createdTime: 'Thời gian tạo',
+          };
+      case 'en':
+          return {
+              label: 'Label',
+              description: 'Description',
+              image: 'Image',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+      case 'zh':
+          return {
+              label: '标签',
+              description: '描述',
+              image: '图片',
+              updatedTime: '更新时间',
+              createdTime: '创建时间',
+          };
+      case 'fr':
+          return {
+              label: 'Étiquette',
+              description: 'Description',
+              image: 'Image',
+              updatedTime: 'Temps de mise à jour',
+              createdTime: 'Temps de création',
+          };
+      case 'ja':
+          return {
+              label: 'ラベル',
+              description: '説明',
+              image: '画像',
+              updatedTime: '更新日時',
+              createdTime: '作成日時',
+          };
+      default:
+          return {
+              label: 'Label',
+              description: 'Description',
+              image: 'Image',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+  }
+};
+
+
+export const translateCategoryColumn = (language: string) => {
+    switch (language) {
+        case 'vi':
+            return {
+                name: 'Tên',
+                updatedTime: 'Thời gian cập nhật',
+                createdTime: 'Thời gian tạo',
+            };
+        case 'en':
+            return {
+                name: 'Name',
+                updatedTime: 'Updated Time',
+                createdTime: 'Created Time',
+            };
+        case 'zh':
+            return {
+                name: '名字',
+                updatedTime: '更新时间',
+                createdTime: '创建时间',
+            };
+        case 'fr':
+            return {
+                name: 'Nom',
+                updatedTime: 'Temps de mise à jour',
+                createdTime: 'Temps de création',
+            };
+        case 'ja':
+            return {
+                name: '名前',
+                updatedTime: '更新日時',
+                createdTime: '作成日時',
+            };
+        default:
+            return {
+                name: 'Name',
+                updatedTime: 'Updated Time',
+                createdTime: 'Created Time',
+            };
+    }
+};
+
+
+export const translateColorColumn = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return {
+              name: 'Tên',
+              color: 'Màu',
+              updatedTime: 'Thời gian cập nhật',
+              createdTime: 'Thời gian tạo',
+          };
+      case 'en':
+          return {
+              name: 'Name',
+              color: 'Color',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+      case 'zh':
+          return {
+              name: '名字',
+              color: '颜色',
+              updatedTime: '更新时间',
+              createdTime: '创建时间',
+          };
+      case 'fr':
+          return {
+              name: 'Nom',
+              color: 'Couleur',
+              updatedTime: 'Temps de mise à jour',
+              createdTime: 'Temps de création',
+          };
+      case 'ja':
+          return {
+              name: '名前',
+              color: '色',
+              updatedTime: '更新日時',
+              createdTime: '作成日時',
+          };
+      default:
+          return {
+              name: 'Name',
+              color: 'Color',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+  }
+};
+
+export const translateCommentColumn = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return {
+              name: 'Tên',
+              email: 'Email',
+              role: 'Vai trò',
+              rating: 'Đánh giá',
+              comment: 'Bình luận',
+              feedback: 'Phản hồi',
+              updatedTime: 'Thời gian cập nhật',
+              createdTime: 'Thời gian tạo',
+          };
+      case 'en':
+          return {
+              name: 'Name',
+              email: 'Email',
+              role: 'Role',
+              rating: 'Rating',
+              comment: 'Comment',
+              feedback: 'Feedback',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+      case 'zh':
+          return {
+              name: '名字',
+              email: '电子邮件',
+              role: '角色',
+              rating: '评分',
+              comment: '评论',
+              feedback: '反馈',
+              updatedTime: '更新时间',
+              createdTime: '创建时间',
+          };
+      case 'fr':
+          return {
+              name: 'Nom',
+              email: 'Email',
+              role: 'Rôle',
+              rating: 'Évaluation',
+              comment: 'Commentaire',
+              feedback: 'Retour',
+              updatedTime: 'Temps de mise à jour',
+              createdTime: 'Temps de création',
+          };
+      case 'ja':
+          return {
+              name: '名前',
+              email: 'メール',
+              role: '役割',
+              rating: '評価',
+              comment: 'コメント',
+              feedback: 'フィードバック',
+              updatedTime: '更新日時',
+              createdTime: '作成日時',
+          };
+      default:
+          return {
+              name: 'Name',
+              email: 'Email',
+              role: 'Role',
+              rating: 'Rating',
+              comment: 'Comment',
+              feedback: 'Feedback',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+  }
+};
+
+
+export const translateCouponColumn = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return {
+              name: 'Tên',
+              discountImage: 'Hình ảnh giảm giá',
+              discountPercentage: '% giảm',
+              timeRange: 'Khoảng thời gian',
+              userCount: 'Số lượng người dùng',
+              durationInMonth: 'Thời lượng trong tháng',
+              rewardExchange: 'Đổi thưởng',
+              updatedTime: 'Thời gian cập nhật',
+              createdTime: 'Thời gian tạo',
+          };
+      case 'en':
+          return {
+              name: 'Name',
+              discountImage: 'Discount Image',
+              discountPercentage: 'Discount %',
+              timeRange: 'Time Range',
+              userCount: 'User Count',
+              durationInMonth: 'Duration in Month',
+              rewardExchange: 'Reward Exchange',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+      case 'zh':
+          return {
+              name: '名字',
+              discountImage: '折扣图片',
+              discountPercentage: '折扣%',
+              timeRange: '时间范围',
+              userCount: '用户数量',
+              durationInMonth: '月份内的持续时间',
+              rewardExchange: '奖励兑换',
+              updatedTime: '更新时间',
+              createdTime: '创建时间',
+          };
+      case 'fr':
+          return {
+              name: 'Nom',
+              discountImage: 'Image de réduction',
+              discountPercentage: '% de réduction',
+              timeRange: 'Plage de temps',
+              userCount: 'Nombre d\'utilisateurs',
+              durationInMonth: 'Durée en mois',
+              rewardExchange: 'Échange de récompenses',
+              updatedTime: 'Temps de mise à jour',
+              createdTime: 'Temps de création',
+          };
+      case 'ja':
+          return {
+              name: '名前',
+              discountImage: '割引画像',
+              discountPercentage: '割引%',
+              timeRange: '時間範囲',
+              userCount: 'ユーザー数',
+              durationInMonth: '月内の期間',
+              rewardExchange: '報酬交換',
+              updatedTime: '更新日時',
+              createdTime: '作成日時',
+          };
+      default:
+          return {
+              name: 'Name',
+              discountImage: 'Discount Image',
+              discountPercentage: 'Discount %',
+              timeRange: 'Time Range',
+              userCount: 'User Count',
+              durationInMonth: 'Duration in Month',
+              rewardExchange: 'Reward Exchange',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+  }
+};
+
+
+export const translateFavoriteColumn = (language: string) => {
+    switch (language) {
+        case 'vi':
+            return {
+                name: 'Tên',
+                favorite: 'Ưa thích',
+                updatedTime: 'Thời gian cập nhật',
+                createdTime: 'Thời gian tạo',
+            };
+        case 'en':
+            return {
+                name: 'Name',
+                favorite: 'Favorite',
+                updatedTime: 'Updated Time',
+                createdTime: 'Created Time',
+            };
+        case 'zh':
+            return {
+                name: '名字',
+                favorite: '喜好',
+                updatedTime: '更新时间',
+                createdTime: '创建时间',
+            };
+        case 'fr':
+            return {
+                name: 'Nom',
+                favorite: 'Favori',
+                updatedTime: 'Temps de mise à jour',
+                createdTime: 'Temps de création',
+            };
+        case 'ja':
+            return {
+                name: '名前',
+                favorite: 'お気に入り',
+                updatedTime: '更新日時',
+                createdTime: '作成日時',
+            };
+        default:
+            return {
+                name: 'Name',
+                favorite: 'Favorite',
+                updatedTime: 'Updated Time',
+                createdTime: 'Created Time',
+            };
+    }
+};
+
+
+export const translateFeedBackColumn = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return {
+              name: 'Tên',
+              email: 'Email',
+              emotion: 'Cảm xúc',
+              category: 'Danh mục',
+              content: 'Nội dung',
+              updatedTime: 'Thời gian cập nhật',
+              createdTime: 'Thời gian tạo',
+          };
+      case 'en':
+          return {
+              name: 'Name',
+              email: 'Email',
+              emotion: 'Emotion',
+              category: 'Category',
+              content: 'Content',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+      case 'zh':
+          return {
+              name: '名字',
+              email: 'Email',
+              emotion: '情感',
+              category: '分类',
+              content: '内容',
+              updatedTime: '更新时间',
+              createdTime: '创建时间',
+          };
+      case 'fr':
+          return {
+              name: 'Nom',
+              email: 'Email',
+              emotion: 'Émotion',
+              category: 'Catégorie',
+              content: 'Contenu',
+              updatedTime: 'Temps de mise à jour',
+              createdTime: 'Temps de création',
+          };
+      case 'ja':
+          return {
+              name: '名前',
+              email: 'Email',
+              emotion: '感情',
+              category: 'カテゴリー',
+              content: '内容',
+              updatedTime: '更新日時',
+              createdTime: '作成日時',
+          };
+      default:
+          return {
+              name: 'Name',
+              email: 'Email',
+              emotion: 'Emotion',
+              category: 'Category',
+              content: 'Content',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+  }
+};
+
+
+export const translateImageBillboardColumn = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return {
+              label: 'Nhãn',
+              description: 'Mô tả',
+              image: 'Hình ảnh',
+              url: 'Đường dẫn',
+              updatedTime: 'Thời gian cập nhật',
+              createdTime: 'Thời gian tạo',
+          };
+      case 'en':
+          return {
+              label: 'Label',
+              description: 'Description',
+              image: 'Image',
+              url: 'URL',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+      case 'zh':
+          return {
+              label: '标签',
+              description: '描述',
+              image: '图片',
+              url: '链接',
+              updatedTime: '更新时间',
+              createdTime: '创建时间',
+          };
+      case 'fr':
+          return {
+              label: 'Étiquette',
+              description: 'Description',
+              image: 'Image',
+              url: 'Lien',
+              updatedTime: 'Temps de mise à jour',
+              createdTime: 'Temps de création',
+          };
+      case 'ja':
+          return {
+              label: 'ラベル',
+              description: '説明',
+              image: '画像',
+              url: 'URL',
+              updatedTime: '更新日時',
+              createdTime: '作成日時',
+          };
+      default:
+          return {
+              label: 'Label',
+              description: 'Description',
+              image: 'Image',
+              url: 'URL',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+  }
+};
+
+export const translateManageAttendanceColumn = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return {
+              name: 'Tên',
+              email: 'Email',
+              attendanceImage: 'Hình ảnh điểm danh',
+              qrCode: 'Qr code',
+              workingTime: 'Thời gian làm việc',
+              title: 'Tiêu đề',
+              startWork: 'Bắt đầu làm',
+              lateTime: 'Thời gian trễ',
+              endWork: 'Kết thúc làm',
+              allDay: 'Cả ngày',
+              checkAttendanceImage: 'Kiểm tra ảnh điểm danh',
+              updateImage: 'Cập nhật hình ảnh',
+              updateNFC: 'Cập nhật NFC',
+              updatedTime: 'Thời gian cập nhật',
+              createdTime: 'Thời gian tạo',
+          };
+      case 'en':
+          return {
+              name: 'Name',
+              email: 'Email',
+              attendanceImage: 'Attendance Image',
+              qrCode: 'Qr code',
+              workingTime: 'Working Time',
+              title: 'Title',
+              startWork: 'Start Work',
+              lateTime: 'Late Time',
+              endWork: 'End Work',
+              allDay: 'All Day',
+              checkAttendanceImage: 'Check Attendance Image',
+              updateImage: 'Update Image',
+              updateNFC: 'Update NFC',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+      case 'zh':
+          return {
+              name: '名字',
+              email: 'Email',
+              attendanceImage: '考勤图片',
+              qrCode: '二维码',
+              workingTime: '工作时间',
+              title: '标题',
+              startWork: '开始工作',
+              lateTime: '迟到时间',
+              endWork: '结束工作',
+              allDay: '全天',
+              checkAttendanceImage: '检查考勤图片',
+              updateImage: '更新图片',
+              updateNFC: '更新NFC',
+              updatedTime: '更新时间',
+              createdTime: '创建时间',
+          };
+      case 'fr':
+          return {
+              name: 'Nom',
+              email: 'Email',
+              attendanceImage: 'Image de présence',
+              qrCode: 'Qr code',
+              workingTime: 'Temps de travail',
+              title: 'Titre',
+              startWork: 'Commencer le travail',
+              lateTime: 'Temps de retard',
+              endWork: 'Fin du travail',
+              allDay: 'Toute la journée',
+              checkAttendanceImage: 'Vérifier l\'image de présence',
+              updateImage: 'Mettre à jour l\'image',
+              updateNFC: 'Mettre à jour le NFC',
+              updatedTime: 'Temps de mise à jour',
+              createdTime: 'Temps de création',
+          };
+      case 'ja':
+          return {
+              name: '名前',
+              email: 'Email',
+              attendanceImage: '出席画像',
+              qrCode: 'Qrコード',
+              workingTime: '勤務時間',
+              title: 'タイトル',
+              startWork: '勤務開始',
+              lateTime: '遅刻時間',
+              endWork: '勤務終了',
+              allDay: '終日',
+              checkAttendanceImage: '出席画像を確認',
+              updateImage: '画像を更新',
+              updateNFC: 'NFCを更新',
+              updatedTime: '更新日時',
+              createdTime: '作成日時',
+          };
+      default:
+          return {
+              name: 'Name',
+              email: 'Email',
+              attendanceImage: 'Attendance Image',
+              qrCode: 'Qr code',
+              workingTime: 'Working Time',
+              title: 'Title',
+              startWork: 'Start Work',
+              lateTime: 'Late Time',
+              endWork: 'End Work',
+              allDay: 'All Day',
+              checkAttendanceImage: 'Check Attendance Image',
+              updateImage: 'Update Image',
+              updateNFC: 'Update NFC',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+  }
+};
+
+
+export const translateManageStaffColumn = (language: string) => {
+  switch (language) {
+    case 'vi':
+        return {
+            name: 'Tên',
+            email: 'Email',
+            socialImage: 'Hình ảnh mạng xã hội',
+            webImage: 'Hình ảnh web',
+            role: 'Vai trò',
+            idNumber: 'Số chứng minh nhân dân',
+            phoneNumber: 'Số điện thoại',
+            idIssueDate: 'Ngày cấp CMND',
+            dateOfBirth: 'Ngày sinh',
+            urlQrCode: 'Url Qrcode',
+            nfcCode: 'NFCcode',
+            workingTime: 'Thời gian làm việc',
+            issuedPlace: 'Cấp ở đâu',
+            gender: 'Giới tính',
+            education: 'Học vấn',
+            maritalStatus: 'Hôn nhân',
+            workingDay: 'Thứ làm việc',
+            identifier: 'Định danh',
+            sendConfirmation: 'Gửi xác nhận',
+            updatedTime: 'Thời gian cập nhật',
+            createdTime: 'Thời gian tạo',
+            startTime: 'Thời gian bắt đầu làm', // Thêm trường này
+        };
+    case 'en':
+        return {
+            name: 'Name',
+            email: 'Email',
+            socialImage: 'Social Image',
+            webImage: 'Web Image',
+            role: 'Role',
+            idNumber: 'ID Number',
+            phoneNumber: 'Phone Number',
+            idIssueDate: 'ID Issue Date',
+            dateOfBirth: 'Date of Birth',
+            urlQrCode: 'URL Qrcode',
+            nfcCode: 'NFC Code',
+            workingTime: 'Working Time',
+            issuedPlace: 'Issued Place',
+            gender: 'Gender',
+            education: 'Education',
+            maritalStatus: 'Marital Status',
+            workingDay: 'Working Day',
+            identifier: 'Identifier',
+            sendConfirmation: 'Send Confirmation',
+            updatedTime: 'Updated Time',
+            createdTime: 'Created Time',
+            startTime: 'Start Time', // Thêm trường này
+        };
+    case 'zh':
+        return {
+            name: '名字',
+            email: '电子邮件',
+            socialImage: '社交图片',
+            webImage: '网页图片',
+            role: '角色',
+            idNumber: '身份证号码',
+            phoneNumber: '电话号码',
+            idIssueDate: '身份证签发日期',
+            dateOfBirth: '出生日期',
+            urlQrCode: '二维码链接',
+            nfcCode: 'NFC代码',
+            workingTime: '工作时间',
+            issuedPlace: '签发地点',
+            gender: '性别',
+            education: '教育',
+            maritalStatus: '婚姻状况',
+            workingDay: '工作日',
+            identifier: '标识符',
+            sendConfirmation: '发送确认',
+            updatedTime: '更新时间',
+            createdTime: '创建时间',
+            startTime: '开始时间', // Thêm trường này
+        };
+    case 'fr':
+        return {
+            name: 'Nom',
+            email: 'Email',
+            socialImage: 'Image sociale',
+            webImage: 'Image Web',
+            role: 'Rôle',
+            idNumber: 'Numéro d\'identité',
+            phoneNumber: 'Numéro de téléphone',
+            idIssueDate: 'Date d\'émission de la carte d\'identité',
+            dateOfBirth: 'Date de naissance',
+            urlQrCode: 'URL Qrcode',
+            nfcCode: 'Code NFC',
+            workingTime: 'Temps de travail',
+            issuedPlace: 'Lieu d\'émission',
+            gender: 'Genre',
+            education: 'Éducation',
+            maritalStatus: 'État matrimonial',
+            workingDay: 'Jour de travail',
+            identifier: 'Identifiant',
+            sendConfirmation: 'Envoyer la confirmation',
+            updatedTime: 'Temps de mise à jour',
+            createdTime: 'Temps de création',
+            startTime: 'Heure de début', // Thêm trường này
+        };
+    case 'ja':
+        return {
+            name: '名前',
+            email: 'メール',
+            socialImage: 'ソーシャル画像',
+            webImage: 'ウェブ画像',
+            role: '役割',
+            idNumber: '身分証明書番号',
+            phoneNumber: '電話番号',
+            idIssueDate: '身分証明書発行日',
+            dateOfBirth: '生年月日',
+            urlQrCode: 'URL Qrcode',
+            nfcCode: 'NFCコード',
+            workingTime: '勤務時間',
+            issuedPlace: '発行地',
+            gender: '性別',
+            education: '学歴',
+            maritalStatus: '婚姻状況',
+            workingDay: '勤務日',
+            identifier: '識別子',
+            sendConfirmation: '確認を送信',
+            updatedTime: '更新日時',
+            createdTime: '作成日時',
+            startTime: '開始時間', // Thêm trường này
+        };
+    default:
+        return {
+            name: 'Name',
+            email: 'Email',
+            socialImage: 'Social Image',
+            webImage: 'Web Image',
+            role: 'Role',
+            idNumber: 'ID Number',
+            phoneNumber: 'Phone Number',
+            idIssueDate: 'ID Issue Date',
+            dateOfBirth: 'Date of Birth',
+            urlQrCode: 'URL Qrcode',
+            nfcCode: 'NFC Code',
+            workingTime: 'Working Time',
+            issuedPlace: 'Issued Place',
+            gender: 'Gender',
+            education: 'Education',
+            maritalStatus: 'Marital Status',
+            workingDay: 'Working Day',
+            identifier: 'Identifier',
+            sendConfirmation: 'Send Confirmation',
+            updatedTime: 'Updated Time',
+            createdTime: 'Created Time',
+            startTime: 'Start Time', // Thêm trường này
+        };
+}
+};
+
+
+export const translateProductColumn = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return {
+              productName: 'Tên sản phẩm',
+              image: 'Hình ảnh',
+              featuredImage: 'Hình ảnh nổi bật',
+              showOnHomePage: 'Hiển thị trang chính',
+              outOfStock: 'Hết hàng',
+              description: 'Mô tả',
+              productDetail: 'Sản phẩm chi tiết',
+              updatedTime: 'Thời gian cập nhật',
+              createdTime: 'Thời gian tạo',
+          };
+      case 'en':
+          return {
+              productName: 'Product Name',
+              image: 'Image',
+              featuredImage: 'Featured Image',
+              showOnHomePage: 'Show on Home Page',
+              outOfStock: 'Out of Stock',
+              description: 'Description',
+              productDetail: 'Product Detail',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+      case 'zh':
+          return {
+              productName: '产品名称',
+              image: '图片',
+              featuredImage: '特色图片',
+              showOnHomePage: '显示在首页',
+              outOfStock: '售罄',
+              description: '描述',
+              productDetail: '产品详情',
+              updatedTime: '更新时间',
+              createdTime: '创建时间',
+          };
+      case 'fr':
+          return {
+              productName: 'Nom du produit',
+              image: 'Image',
+              featuredImage: 'Image en vedette',
+              showOnHomePage: 'Afficher sur la page d\'accueil',
+              outOfStock: 'Rupture de stock',
+              description: 'Description',
+              productDetail: 'Détail du produit',
+              updatedTime: 'Temps de mise à jour',
+              createdTime: 'Temps de création',
+          };
+      case 'ja':
+          return {
+              productName: '商品名',
+              image: '画像',
+              featuredImage: '注目画像',
+              showOnHomePage: 'ホームページに表示',
+              outOfStock: '在庫切れ',
+              description: '説明',
+              productDetail: '商品詳細',
+              updatedTime: '更新日時',
+              createdTime: '作成日時',
+          };
+      default:
+          return {
+              productName: 'Product Name',
+              image: 'Image',
+              featuredImage: 'Featured Image',
+              showOnHomePage: 'Show on Home Page',
+              outOfStock: 'Out of Stock',
+              description: 'Description',
+              productDetail: 'Product Detail',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+  }
+};
+
+
+export const translateSalaryStaffColumn = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return {
+              name: 'Tên',
+              email: 'Email',
+              qualification: 'Bằng cấp',
+              bonus: 'Thưởng thêm',
+              salary: 'Lương',
+              totalSalary: 'Tổng lương',
+              sendMail: 'Gửi mail',
+              paySalary: 'Trả lương',
+              updatedTime: 'Thời gian cập nhật',
+              createdTime: 'Thời gian tạo',
+          };
+      case 'en':
+          return {
+              name: 'Name',
+              email: 'Email',
+              qualification: 'Qualification',
+              bonus: 'Bonus',
+              salary: 'Salary',
+              totalSalary: 'Total Salary',
+              sendMail: 'Send Mail',
+              paySalary: 'Pay Salary',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+      case 'zh':
+          return {
+              name: '名字',
+              email: '电子邮件',
+              qualification: '学历',
+              bonus: '额外奖励',
+              salary: '工资',
+              totalSalary: '总工资',
+              sendMail: '发送邮件',
+              paySalary: '支付工资',
+              updatedTime: '更新时间',
+              createdTime: '创建时间',
+          };
+      case 'fr':
+          return {
+              name: 'Nom',
+              email: 'Email',
+              qualification: 'Qualification',
+              bonus: 'Bonus',
+              salary: 'Salaire',
+              totalSalary: 'Salaire total',
+              sendMail: 'Envoyer un mail',
+              paySalary: 'Payer le salaire',
+              updatedTime: 'Temps de mise à jour',
+              createdTime: 'Temps de création',
+          };
+      case 'ja':
+          return {
+              name: '名前',
+              email: 'メール',
+              qualification: '資格',
+              bonus: '追加ボーナス',
+              salary: '給与',
+              totalSalary: '総給与',
+              sendMail: 'メールを送信',
+              paySalary: '給与を支払う',
+              updatedTime: '更新日時',
+              createdTime: '作成日時',
+          };
+      default:
+          return {
+              name: 'Name',
+              email: 'Email',
+              qualification: 'Qualification',
+              bonus: 'Bonus',
+              salary: 'Salary',
+              totalSalary: 'Total Salary',
+              sendMail: 'Send Mail',
+              paySalary: 'Pay Salary',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+  }
+};
+
+
+export const translateSentEmailUser = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return {
+              user: 'Người dùng',
+              subject: 'Chủ đề',
+              sendEmailToUser: 'Gửi email đến người dùng',
+              description: 'Mô tả',
+              sendMail: 'Gửi Mail',
+              updatedTime: 'Thời gian cập nhật',
+              createdTime: 'Thời gian tạo',
+          };
+      case 'en':
+          return {
+              user: 'User',
+              subject: 'Subject',
+              sendEmailToUser: 'Send email to user',
+              description: 'Description',
+              sendMail: 'Send Mail',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+      case 'zh':
+          return {
+              user: '用户',
+              subject: '主题',
+              sendEmailToUser: '发送电子邮件给用户',
+              description: '描述',
+              sendMail: '发送邮件',
+              updatedTime: '更新时间',
+              createdTime: '创建时间',
+          };
+      case 'fr':
+          return {
+              user: 'Utilisateur',
+              subject: 'Sujet',
+              sendEmailToUser: 'Envoyer un email à l\'utilisateur',
+              description: 'Description',
+              sendMail: 'Envoyer le mail',
+              updatedTime: 'Temps de mise à jour',
+              createdTime: 'Temps de création',
+          };
+      case 'ja':
+          return {
+              user: 'ユーザー',
+              subject: '件名',
+              sendEmailToUser: 'ユーザーにメールを送信',
+              description: '説明',
+              sendMail: 'メールを送信',
+              updatedTime: '更新日時',
+              createdTime: '作成日時',
+          };
+      default:
+          return {
+              user: 'User',
+              subject: 'Subject',
+              sendEmailToUser: 'Send email to user',
+              description: 'Description',
+              sendMail: 'Send Mail',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+  }
+};
+
+
+export const translateSettingUserColumn = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return {
+              name: 'Tên',
+              email: 'Email',
+              dateOfBirth: 'Sinh nhật',
+              emailConfirmation: 'Xác nhận Email',
+              password: 'Mật khẩu',
+              lastLogin: 'Đăng nhập cuối',
+              socialImage: 'Hình ảnh mạng xã hội',
+              webImage: 'Hình ảnh trên web',
+              role: 'Vai trò',
+              socialAccount: 'Tài khoản mạng xã hội',
+              tokenType: 'Loại mã thông báo',
+              identifier: 'Định danh',
+              twoStepVerification: 'Xác minh 2 bước',
+              banUser: 'Cấm người dùng',
+              unbanTime: 'Thời gian mở cấm',
+              permanentBan: 'Ban vĩnh viễn',
+              banTime: 'Thời gian Ban',
+              sendVerificationCode: 'Gửi mã xác thực',
+              sendPasswordResetEmail: 'Gửi Email làm mới mật khẩu',
+              sendResetPasswordToken: 'Gửi mã thông báo Đặt lại mật khẩu',
+              sendTwoStepVerification: 'Gửi xác minh 2 bước',
+              sendUnbanNotification: 'Gửi thông báo thời gian mở cấm',
+              sendBanExpiredNotification: 'Gửi thông báo đã hết ban',
+              updatedTime: 'Thời gian cập nhật',
+              createdTime: 'Thời gian tạo',
+          };
+      case 'en':
+          return {
+              name: 'Name',
+              email: 'Email',
+              dateOfBirth: 'Date of Birth',
+              emailConfirmation: 'Email Confirmation',
+              password: 'Password',
+              lastLogin: 'Last Login',
+              socialImage: 'Social Image',
+              webImage: 'Web Image',
+              role: 'Role',
+              socialAccount: 'Social Account',
+              tokenType: 'Token Type',
+              identifier: 'Identifier',
+              twoStepVerification: 'Two-Step Verification',
+              banUser: 'Ban User',
+              unbanTime: 'Unban Time',
+              permanentBan: 'Permanent Ban',
+              banTime: 'Ban Time',
+              sendVerificationCode: 'Send Verification Code',
+              sendPasswordResetEmail: 'Send Password Reset Email',
+              sendResetPasswordToken: 'Send Password Reset Token',
+              sendTwoStepVerification: 'Send Two-Step Verification',
+              sendUnbanNotification: 'Send Unban Notification',
+              sendBanExpiredNotification: 'Send Ban Expired Notification',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+      case 'zh':
+          return {
+              name: '名字',
+              email: 'Email',
+              dateOfBirth: '出生日期',
+              emailConfirmation: '邮箱确认',
+              password: '密码',
+              lastLogin: '最后登录',
+              socialImage: '社交图片',
+              webImage: '网页图片',
+              role: '角色',
+              socialAccount: '社交账号',
+              tokenType: '令牌类型',
+              identifier: '标识符',
+              twoStepVerification: '二步验证',
+              banUser: '禁止用户',
+              unbanTime: '解除禁令时间',
+              permanentBan: '永久封禁',
+              banTime: '封禁时间',
+              sendVerificationCode: '发送验证码',
+              sendPasswordResetEmail: '发送密码重置邮件',
+              sendResetPasswordToken: '发送密码重置令牌',
+              sendTwoStepVerification: '发送二步验证',
+              sendUnbanNotification: '发送解除禁令通知',
+              sendBanExpiredNotification: '发送禁令到期通知',
+              updatedTime: '更新时间',
+              createdTime: '创建时间',
+          };
+      case 'fr':
+          return {
+              name: 'Nom',
+              email: 'Email',
+              dateOfBirth: 'Date de naissance',
+              emailConfirmation: 'Confirmation Email',
+              password: 'Mot de passe',
+              lastLogin: 'Dernière connexion',
+              socialImage: 'Image sociale',
+              webImage: 'Image Web',
+              role: 'Rôle',
+              socialAccount: 'Compte social',
+              tokenType: 'Type de token',
+              identifier: 'Identifiant',
+              twoStepVerification: 'Vérification en deux étapes',
+              banUser: 'Interdire l\'utilisateur',
+              unbanTime: 'Temps de levée de l\'interdiction',
+              permanentBan: 'Bannissement permanent',
+              banTime: 'Temps de bannissement',
+              sendVerificationCode: 'Envoyer le code de vérification',
+              sendPasswordResetEmail: 'Envoyer un e-mail de réinitialisation du mot de passe',
+              sendResetPasswordToken: 'Envoyer le token de réinitialisation du mot de passe',
+              sendTwoStepVerification: 'Envoyer la vérification à deux étapes',
+              sendUnbanNotification: 'Envoyer la notification de levée de l\'interdiction',
+              sendBanExpiredNotification: 'Envoyer la notification de fin de bannissement',
+              updatedTime: 'Temps de mise à jour',
+              createdTime: 'Temps de création',
+          };
+      case 'ja':
+          return {
+              name: '名前',
+              email: 'Email',
+              dateOfBirth: '生年月日',
+              emailConfirmation: 'メール確認',
+              password: 'パスワード',
+              lastLogin: '最終ログイン',
+              socialImage: 'ソーシャル画像',
+              webImage: 'ウェブ画像',
+              role: '役割',
+              socialAccount: 'ソーシャルアカウント',
+              tokenType: 'トークンタイプ',
+              identifier: '識別子',
+              twoStepVerification: '二段階認証',
+              banUser: 'ユーザー禁止',
+              unbanTime: '解除時間',
+              permanentBan: '永久禁止',
+              banTime: '禁止時間',
+              sendVerificationCode: '確認コードを送信',
+              sendPasswordResetEmail: 'パスワードリセットメールを送信',
+              sendResetPasswordToken: 'パスワードリセットトークンを送信',
+              sendTwoStepVerification: '二段階認証を送信',
+              sendUnbanNotification: '解除通知を送信',
+              sendBanExpiredNotification: '禁止期間終了通知を送信',
+              updatedTime: '更新日時',
+              createdTime: '作成日時',
+          };
+      default:
+          return {
+              name: 'Name',
+              email: 'Email',
+              dateOfBirth: 'Date of Birth',
+              emailConfirmation: 'Email Confirmation',
+              password: 'Password',
+              lastLogin: 'Last Login',
+              socialImage: 'Social Image',
+              webImage: 'Web Image',
+              role: 'Role',
+              socialAccount: 'Social Account',
+              tokenType: 'Token Type',
+              identifier: 'Identifier',
+              twoStepVerification: 'Two-Step Verification',
+              banUser: 'Ban User',
+              unbanTime: 'Unban Time',
+              permanentBan: 'Permanent Ban',
+              banTime: 'Ban Time',
+              sendVerificationCode: 'Send Verification Code',
+              sendPasswordResetEmail: 'Send Password Reset Email',
+              sendResetPasswordToken: 'Send Password Reset Token',
+              sendTwoStepVerification: 'Send Two-Step Verification',
+              sendUnbanNotification: 'Send Unban Notification',
+              sendBanExpiredNotification: 'Send Ban Expired Notification',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+  }
+};
+
+
+export const translateShippingrateColumn = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return {
+              name: 'Tên',
+              amount: 'Số tiền',
+              taxBehavior: 'Hành vi Thuế',
+              minTime: 'Thời gian thấp nhất',
+              minUnit: 'Đơn vị thấp nhất',
+              maxTime: 'Thời gian tối đa',
+              maxUnit: 'Đơn vị tối đa',
+              activity: 'Hoạt động',
+              tax: 'Thuế',
+              updatedTime: 'Thời gian cập nhật',
+              createdTime: 'Thời gian tạo',
+          };
+      case 'en':
+          return {
+              name: 'Name',
+              amount: 'Amount',
+              taxBehavior: 'Tax Behavior',
+              minTime: 'Minimum Time',
+              minUnit: 'Minimum Unit',
+              maxTime: 'Maximum Time',
+              maxUnit: 'Maximum Unit',
+              activity: 'Activity',
+              tax: 'Tax',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+      case 'zh':
+          return {
+              name: '名字',
+              amount: '金额',
+              taxBehavior: '税务行为',
+              minTime: '最短时间',
+              minUnit: '最小单位',
+              maxTime: '最长时间',
+              maxUnit: '最大单位',
+              activity: '活动',
+              tax: '税',
+              updatedTime: '更新时间',
+              createdTime: '创建时间',
+          };
+      case 'fr':
+          return {
+              name: 'Nom',
+              amount: 'Montant',
+              taxBehavior: 'Comportement Fiscal',
+              minTime: 'Temps minimum',
+              minUnit: 'Unité minimale',
+              maxTime: 'Temps maximum',
+              maxUnit: 'Unité maximale',
+              activity: 'Activité',
+              tax: 'Taxe',
+              updatedTime: 'Temps de mise à jour',
+              createdTime: 'Temps de création',
+          };
+      case 'ja':
+          return {
+              name: '名前',
+              amount: '金額',
+              taxBehavior: '税務行動',
+              minTime: '最小時間',
+              minUnit: '最小単位',
+              maxTime: '最大時間',
+              maxUnit: '最大単位',
+              activity: 'アクティビティ',
+              tax: '税金',
+              updatedTime: '更新日時',
+              createdTime: '作成日時',
+          };
+      default:
+          return {
+              name: 'Name',
+              amount: 'Amount',
+              taxBehavior: 'Tax Behavior',
+              minTime: 'Minimum Time',
+              minUnit: 'Minimum Unit',
+              maxTime: 'Maximum Time',
+              maxUnit: 'Maximum Unit',
+              activity: 'Activity',
+              tax: 'Tax',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+  }
+};
+
+
+export const translateSizeColumn = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return {
+              name: 'Tên',
+              size: 'Kích thước',
+              updatedTime: 'Thời gian cập nhật',
+              createdTime: 'Thời gian tạo',
+          };
+      case 'en':
+          return {
+              name: 'Name',
+              size: 'Size',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+      case 'zh':
+          return {
+              name: '名字',
+              size: '尺寸',
+              updatedTime: '更新时间',
+              createdTime: '创建时间',
+          };
+      case 'fr':
+          return {
+              name: 'Nom',
+              size: 'Taille',
+              updatedTime: 'Temps de mise à jour',
+              createdTime: 'Temps de création',
+          };
+      case 'ja':
+          return {
+              name: '名前',
+              size: 'サイズ',
+              updatedTime: '更新日時',
+              createdTime: '作成日時',
+          };
+      default:
+          return {
+              name: 'Name',
+              size: 'Size',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+  }
+};
+
+
+export const translateSystemColumn = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return {
+              old: 'Cũ',
+              new: 'Mới',
+              delete: 'Xóa',
+              type: 'Loại',
+              user: 'Người dùng',
+              updatedTime: 'Thời gian cập nhật',
+              createdTime: 'Thời gian tạo',
+          };
+      case 'en':
+          return {
+              old: 'Old',
+              new: 'New',
+              delete: 'Delete',
+              type: 'Type',
+              user: 'User',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+      case 'zh':
+          return {
+              old: '旧',
+              new: '新',
+              delete: '删除',
+              type: '类型',
+              user: '用户',
+              updatedTime: '更新时间',
+              createdTime: '创建时间',
+          };
+      case 'fr':
+          return {
+              old: 'Ancien',
+              new: 'Nouveau',
+              delete: 'Supprimer',
+              type: 'Type',
+              user: 'Utilisateur',
+              updatedTime: 'Temps de mise à jour',
+              createdTime: 'Temps de création',
+          };
+      case 'ja':
+          return {
+              old: '古い',
+              new: '新しい',
+              delete: '削除',
+              type: 'タイプ',
+              user: 'ユーザー',
+              updatedTime: '更新日時',
+              createdTime: '作成日時',
+          };
+      default:
+          return {
+              old: 'Old',
+              new: 'New',
+              delete: 'Delete',
+              type: 'Type',
+              user: 'User',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+  }
+};
+
+
+export const transalteTaxrateColumn = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return {
+              name: 'Tên',
+              discountPercentage: 'Phần trăm giảm',
+              taxType: 'Loại thuế',
+              description: 'Mô tả',
+              taxRateType: 'Thuế suất là bao gồm hay độc quyền',
+              activity: 'Hoạt động',
+              updatedTime: 'Thời gian cập nhật',
+              createdTime: 'Thời gian tạo',
+          };
+      case 'en':
+          return {
+              name: 'Name',
+              discountPercentage: 'Discount Percentage',
+              taxType: 'Tax Type',
+              description: 'Description',
+              taxRateType: 'Is Tax Rate Inclusive or Exclusive',
+              activity: 'Activity',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+      case 'zh':
+          return {
+              name: '名字',
+              discountPercentage: '折扣百分比',
+              taxType: '税种',
+              description: '描述',
+              taxRateType: '税率是包含还是独占',
+              activity: '活动',
+              updatedTime: '更新时间',
+              createdTime: '创建时间',
+          };
+      case 'fr':
+          return {
+              name: 'Nom',
+              discountPercentage: 'Pourcentage de réduction',
+              taxType: 'Type de taxe',
+              description: 'Description',
+              taxRateType: 'Le taux de taxe est-il inclus ou exclus',
+              activity: 'Activité',
+              updatedTime: 'Temps de mise à jour',
+              createdTime: 'Temps de création',
+          };
+      case 'ja':
+          return {
+              name: '名前',
+              discountPercentage: '割引率',
+              taxType: '税の種類',
+              description: '説明',
+              taxRateType: '税率は包括的か独占的か',
+              activity: '活動',
+              updatedTime: '更新日時',
+              createdTime: '作成日時',
+          };
+      default:
+          return {
+              name: 'Name',
+              discountPercentage: 'Discount Percentage',
+              taxType: 'Tax Type',
+              description: 'Description',
+              taxRateType: 'Is Tax Rate Inclusive or Exclusive',
+              activity: 'Activity',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+  }
+};
+
+
+export const translateWheelSpinColumn = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return {
+              name: 'Tên',
+              email: 'Email',
+              spin: 'Vòng quay',
+              coin: 'Xu',
+              updatedTime: 'Thời gian cập nhật',
+              createdTime: 'Thời gian tạo',
+          };
+      case 'en':
+          return {
+              name: 'Name',
+              email: 'Email',
+              spin: 'Spin',
+              coin: 'Coin',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+      case 'zh':
+          return {
+              name: '名字',
+              email: '电子邮件',
+              spin: '旋转',
+              coin: '硬币',
+              updatedTime: '更新时间',
+              createdTime: '创建时间',
+          };
+      case 'fr':
+          return {
+              name: 'Nom',
+              email: 'Email',
+              spin: 'Tour',
+              coin: 'Pièce',
+              updatedTime: 'Temps de mise à jour',
+              createdTime: 'Temps de création',
+          };
+      case 'ja':
+          return {
+              name: '名前',
+              email: 'メール',
+              spin: 'スピン',
+              coin: 'コイン',
+              updatedTime: '更新日時',
+              createdTime: '作成日時',
+          };
+      default:
+          return {
+              name: 'Name',
+              email: 'Email',
+              spin: 'Spin',
+              coin: 'Coin',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+  }
+};
+
+
+export const translateStoreColumn = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return {
+              name: 'Tên',
+              updatedTime: 'Thời gian cập nhật',
+              createdTime: 'Thời gian tạo',
+          };
+      case 'en':
+          return {
+              name: 'Name',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+      case 'zh':
+          return {
+              name: '名字',
+              updatedTime: '更新时间',
+              createdTime: '创建时间',
+          };
+      case 'fr':
+          return {
+              name: 'Nom',
+              updatedTime: 'Temps de mise à jour',
+              createdTime: 'Temps de création',
+          };
+      case 'ja':
+          return {
+              name: '名前',
+              updatedTime: '更新日時',
+              createdTime: '作成日時',
+          };
+      default:
+          return {
+              name: 'Name',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+  }
+};
+
+
+export const translateListBlockColumn = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return {
+              username: 'Tên người dùng',
+              banDate: 'Ngày cấm',
+          };
+      case 'en':
+          return {
+              username: 'Username',
+              banDate: 'Ban Date',
+          };
+      case 'zh':
+          return {
+              username: '用户名',
+              banDate: '禁用日期',
+          };
+      case 'fr':
+          return {
+              username: 'Nom d\'utilisateur',
+              banDate: 'Date de ban',
+          };
+      case 'ja':
+          return {
+              username: 'ユーザー名',
+              banDate: '禁止日',
+          };
+      default:
+          return {
+              username: 'Username',
+              banDate: 'Ban Date',
+          };
+  }
+};
+
+
+export const translateProductDetailColumn = (language: string) => {
+  switch (language) {
+      case 'vi':
+          return {
+              title: 'Tiêu đề',
+              productName1: 'Tên sản phẩm 1',
+              productPrice1: 'Giá sản phẩm 1',
+              discount1: 'Giảm giá %',
+              quantity1: 'Số lượng 1',
+              size1: 'Kích cỡ 1',
+              color1: 'Màu 1',
+              productName2: 'Tên sản phẩm 2',
+              productPrice2: 'Giá sản phẩm 2',
+              discount2: 'Giảm giá %',
+              quantity2: 'Số lượng 2',
+              size2: 'Kích cỡ 2',
+              color2: 'Màu 2',
+              productName3: 'Tên sản phẩm 3',
+              productPrice3: 'Giá sản phẩm 3',
+              discount3: 'Giảm giá %',
+              quantity3: 'Số lượng 3',
+              size3: 'Kích cỡ 3',
+              color3: 'Màu 3',
+              productName4: 'Tên sản phẩm 4',
+              productPrice4: 'Giá sản phẩm 4',
+              discount4: 'Giảm giá %',
+              quantity4: 'Số lượng 4',
+              size4: 'Kích cỡ 4',
+              color4: 'Màu 4',
+              productName5: 'Tên sản phẩm 5',
+              productPrice5: 'Giá sản phẩm 5',
+              discount5: 'Giảm giá %',
+              quantity5: 'Số lượng 5',
+              size5: 'Kích cỡ 5',
+              color5: 'Màu 5',
+              promotionTitle: 'Tiêu đề khuyến mãi',
+              promotionContent: 'Nội dung khuyến mãi',
+              insurance1: 'Tiền bảo hiểm 1',
+              insurance2: 'Tiền bảo hiểm 2',
+              insurance3: 'Tiền bảo hiểm 3',
+              insurance4: 'Tiền bảo hiểm 4',
+              type: 'Loại',
+              description: 'Mô tả',
+              specifications: 'Thông số',
+              featuredDescription1: 'Mô tả nổi bật',
+              featuredDescription2: 'Mô tả nổi bật 2',
+              featuredDescription3: 'Mô tả nổi bật 3',
+              featuredDescription4: 'Mô tả nổi bật 4',
+              featuredContent: 'Nội dung nổi bật',
+              updatedTime: 'Thời gian cập nhật',
+              createdTime: 'Thời gian tạo',
+          };
+      case 'en':
+          return {
+              title: 'Title',
+              productName1: 'Product Name 1',
+              productPrice1: 'Product Price 1',
+              discount1: 'Discount %',
+              quantity1: 'Quantity 1',
+              size1: 'Size 1',
+              color1: 'Color 1',
+              productName2: 'Product Name 2',
+              productPrice2: 'Product Price 2',
+              discount2: 'Discount %',
+              quantity2: 'Quantity 2',
+              size2: 'Size 2',
+              color2: 'Color 2',
+              productName3: 'Product Name 3',
+              productPrice3: 'Product Price 3',
+              discount3: 'Discount %',
+              quantity3: 'Quantity 3',
+              size3: 'Size 3',
+              color3: 'Color 3',
+              productName4: 'Product Name 4',
+              productPrice4: 'Product Price 4',
+              discount4: 'Discount %',
+              quantity4: 'Quantity 4',
+              size4: 'Size 4',
+              color4: 'Color 4',
+              productName5: 'Product Name 5',
+              productPrice5: 'Product Price 5',
+              discount5: 'Discount %',
+              quantity5: 'Quantity 5',
+              size5: 'Size 5',
+              color5: 'Color 5',
+              promotionTitle: 'Promotion Title',
+              promotionContent: 'Promotion Content',
+              insurance1: 'Insurance 1',
+              insurance2: 'Insurance 2',
+              insurance3: 'Insurance 3',
+              insurance4: 'Insurance 4',
+              type: 'Type',
+              description: 'Description',
+              specifications: 'Specifications',
+              featuredDescription1: 'Featured Description',
+              featuredDescription2: 'Featured Description 2',
+              featuredDescription3: 'Featured Description 3',
+              featuredDescription4: 'Featured Description 4',
+              featuredContent: 'Featured Content',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+      case 'zh':
+          return {
+              title: '标题',
+              productName1: '产品名称 1',
+              productPrice1: '产品价格 1',
+              discount1: '折扣 %',
+              quantity1: '数量 1',
+              size1: '尺寸 1',
+              color1: '颜色 1',
+              productName2: '产品名称 2',
+              productPrice2: '产品价格 2',
+              discount2: '折扣 %',
+              quantity2: '数量 2',
+              size2: '尺寸 2',
+              color2: '颜色 2',
+              productName3: '产品名称 3',
+              productPrice3: '产品价格 3',
+              discount3: '折扣 %',
+              quantity3: '数量 3',
+              size3: '尺寸 3',
+              color3: '颜色 3',
+              productName4: '产品名称 4',
+              productPrice4: '产品价格 4',
+              discount4: '折扣 %',
+              quantity4: '数量 4',
+              size4: '尺寸 4',
+              color4: '颜色 4',
+              productName5: '产品名称 5',
+              productPrice5: '产品价格 5',
+              discount5: '折扣 %',
+              quantity5: '数量 5',
+              size5: '尺寸 5',
+              color5: '颜色 5',
+              promotionTitle: '促销标题',
+              promotionContent: '促销内容',
+              insurance1: '保险金 1',
+              insurance2: '保险金 2',
+              insurance3: '保险金 3',
+              insurance4: '保险金 4',
+              type: '类型',
+              description: '描述',
+              specifications: '规格',
+              featuredDescription1: '特色描述',
+              featuredDescription2: '特色描述 2',
+              featuredDescription3: '特色描述 3',
+              featuredDescription4: '特色描述 4',
+              featuredContent: '特色内容',
+              updatedTime: '更新时间',
+              createdTime: '创建时间',
+          };
+      case 'fr':
+          return {
+              title: 'Titre',
+              productName1: 'Nom du produit 1',
+              productPrice1: 'Prix du produit 1',
+              discount1: 'Réduction %',
+              quantity1: 'Quantité 1',
+              size1: 'Taille 1',
+              color1: 'Couleur 1',
+              productName2: 'Nom du produit 2',
+              productPrice2: 'Prix du produit 2',
+              discount2: 'Réduction %',
+              quantity2: 'Quantité 2',
+              size2: 'Taille 2',
+              color2: 'Couleur 2',
+              productName3: 'Nom du produit 3',
+              productPrice3: 'Prix du produit 3',
+              discount3: 'Réduction %',
+              quantity3: 'Quantité 3',
+              size3: 'Taille 3',
+              color3: 'Couleur 3',
+              productName4: 'Nom du produit 4',
+              productPrice4: 'Prix du produit 4',
+              discount4: 'Réduction %',
+              quantity4: 'Quantité 4',
+              size4: 'Taille 4',
+              color4: 'Couleur 4',
+              productName5: 'Nom du produit 5',
+              productPrice5: 'Prix du produit 5',
+              discount5: 'Réduction %',
+              quantity5: 'Quantité 5',
+              size5: 'Taille 5',
+              color5: 'Couleur 5',
+              promotionTitle: 'Titre de la promotion',
+              promotionContent: 'Contenu de la promotion',
+              insurance1: 'Assurance 1',
+              insurance2: 'Assurance 2',
+              insurance3: 'Assurance 3',
+              insurance4: 'Assurance 4',
+              type: 'Type',
+              description: 'Description',
+              specifications: 'Spécifications',
+              featuredDescription1: 'Description vedette',
+              featuredDescription2: 'Description vedette 2',
+              featuredDescription3: 'Description vedette 3',
+              featuredDescription4: 'Description vedette 4',
+              featuredContent: 'Contenu vedette',
+              updatedTime: 'Temps de mise à jour',
+              createdTime: 'Temps de création',
+          };
+      case 'ja':
+          return {
+              title: 'タイトル',
+              productName1: '製品名 1',
+              productPrice1: '製品価格 1',
+              discount1: '割引 %',
+              quantity1: '数量 1',
+              size1: 'サイズ 1',
+              color1: '色 1',
+              productName2: '製品名 2',
+              productPrice2: '製品価格 2',
+              discount2: '割引 %',
+              quantity2: '数量 2',
+              size2: 'サイズ 2',
+              color2: '色 2',
+              productName3: '製品名 3',
+              productPrice3: '製品価格 3',
+              discount3: '割引 %',
+              quantity3: '数量 3',
+              size3: 'サイズ 3',
+              color3: '色 3',
+              productName4: '製品名 4',
+              productPrice4: '製品価格 4',
+              discount4: '割引 %',
+              quantity4: '数量 4',
+              size4: 'サイズ 4',
+              color4: '色 4',
+              productName5: '製品名 5',
+              productPrice5: '製品価格 5',
+              discount5: '割引 %',
+              quantity5: '数量 5',
+              size5: 'サイズ 5',
+              color5: '色 5',
+              promotionTitle: 'プロモーションタイトル',
+              promotionContent: 'プロモーション内容',
+              insurance1: '保険金 1',
+              insurance2: '保険金 2',
+              insurance3: '保険金 3',
+              insurance4: '保険金 4',
+              type: 'タイプ',
+              description: '説明',
+              specifications: '仕様',
+              featuredDescription1: '注目の説明',
+              featuredDescription2: '注目の説明 2',
+              featuredDescription3: '注目の説明 3',
+              featuredDescription4: '注目の説明 4',
+              featuredContent: '注目の内容',
+              updatedTime: '更新日時',
+              createdTime: '作成日時',
+          };
+      default:
+          return {
+              title: 'Title',
+              productName1: 'Product Name 1',
+              productPrice1: 'Product Price 1',
+              discount1: 'Discount %',
+              quantity1: 'Quantity 1',
+              size1: 'Size 1',
+              color1: 'Color 1',
+              productName2: 'Product Name 2',
+              productPrice2: 'Product Price 2',
+              discount2: 'Discount %',
+              quantity2: 'Quantity 2',
+              size2: 'Size 2',
+              color2: 'Color 2',
+              productName3: 'Product Name 3',
+              productPrice3: 'Product Price 3',
+              discount3: 'Discount %',
+              quantity3: 'Quantity 3',
+              size3: 'Size 3',
+              color3: 'Color 3',
+              productName4: 'Product Name 4',
+              productPrice4: 'Product Price 4',
+              discount4: 'Discount %',
+              quantity4: 'Quantity 4',
+              size4: 'Size 4',
+              color4: 'Color 4',
+              productName5: 'Product Name 5',
+              productPrice5: 'Product Price 5',
+              discount5: 'Discount %',
+              quantity5: 'Quantity 5',
+              size5: 'Size 5',
+              color5: 'Color 5',
+              promotionTitle: 'Promotion Title',
+              promotionContent: 'Promotion Content',
+              insurance1: 'Insurance 1',
+              insurance2: 'Insurance 2',
+              insurance3: 'Insurance 3',
+              insurance4: 'Insurance 4',
+              type: 'Type',
+              description: 'Description',
+              specifications: 'Specifications',
+              featuredDescription1: 'Featured Description',
+              featuredDescription2: 'Featured Description 2',
+              featuredDescription3: 'Featured Description 3',
+              featuredDescription4: 'Featured Description 4',
+              featuredContent: 'Featured Content',
+              updatedTime: 'Updated Time',
+              createdTime: 'Created Time',
+          };
+  }
+};
+
+
+export const translateDeliveryColumn = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        product: 'Sản phẩm',
+        return: 'Trả hàng',
+        status: 'Trạng thái',
+        otherStatus: 'Trạng thái khác',
+        systemPhone: 'Sđt hệ thống',
+        systemEmail: 'Email hệ thống',
+        systemName: 'Tên hệ thống',
+        systemAddress: 'Địa chỉ hệ thống',
+        email: 'Email',
+        name: 'Tên',
+        phoneNumber: 'Số điện thoại',
+        paymentMethod: 'Phương thức thanh toán',
+        notes: 'Ghi chú',
+        address: 'Địa chỉ',
+        otherAddress: 'Địa chỉ khác',
+        totalAmount: 'Tổng giá tiền',
+        reward: 'Tặng thưởng',
+        payment: 'Thanh toán',
+        cashPayment: 'Thanh toán tiền mặt',
+        updateTime: 'Thời gian cập nhật',
+        createTime: 'Thời gian tạo',
+        deliveryStaffEmail: 'Email nhân viên giao hàng',
+        deliveryStaffName: 'Tên nhân viên giao hàng',
+        gender: 'Giới tính',
+        imageCustomer: 'Hình ảnh khách hàng',
+        emailShipper: 'Email Shipper',
+        nameShipper: 'Tên Shipper',
+        shipperDebt: 'Shipper nợ'
+      };
+    case 'en':
+      return {
+        product: 'Product',
+        return: 'Return',
+        status: 'Status',
+        otherStatus: 'Other status',
+        systemPhone: 'System phone',
+        systemEmail: 'System email',
+        systemName: 'System name',
+        systemAddress: 'System address',
+        email: 'Email',
+        name: 'Name',
+        phoneNumber: 'Phone number',
+        paymentMethod: 'Payment method',
+        notes: 'Notes',
+        address: 'Address',
+        otherAddress: 'Other address',
+        totalAmount: 'Total amount',
+        reward: 'Reward',
+        payment: 'Payment',
+        cashPayment: 'Cash payment',
+        updateTime: 'Update time',
+        createTime: 'Create time',
+        deliveryStaffEmail: 'Delivery staff email',
+        deliveryStaffName: 'Delivery staff name',
+        gender: 'Gender',
+        imageCustomer: 'Customer image',
+        emailShipper: 'Shipper email',
+        nameShipper: 'Shipper name',
+        shipperDebt: 'Shipper debt'
+      };
+    case 'zh':
+      return {
+        product: '产品',
+        return: '退货',
+        status: '状态',
+        otherStatus: '其他状态',
+        systemPhone: '系统电话',
+        systemEmail: '系统邮箱',
+        systemName: '系统名称',
+        systemAddress: '系统地址',
+        email: '邮箱',
+        name: '姓名',
+        phoneNumber: '电话号码',
+        paymentMethod: '支付方式',
+        notes: '备注',
+        address: '地址',
+        otherAddress: '其他地址',
+        totalAmount: '总金额',
+        reward: '奖励',
+        payment: '付款',
+        cashPayment: '现金支付',
+        updateTime: '更新时间',
+        createTime: '创建时间',
+        deliveryStaffEmail: '送货员邮箱',
+        deliveryStaffName: '送货员姓名',
+        gender: '性别',
+        imageCustomer: '客户图像',
+        emailShipper: '发货员邮箱',
+        nameShipper: '发货员姓名',
+        shipperDebt: '发货员欠款'
+      };
+    case 'fr':
+      return {
+        product: 'Produit',
+        return: 'Retour',
+        status: 'Statut',
+        otherStatus: 'Autre statut',
+        systemPhone: 'Téléphone du système',
+        systemEmail: 'Email du système',
+        systemName: 'Nom du système',
+        systemAddress: 'Adresse du système',
+        email: 'Email',
+        name: 'Nom',
+        phoneNumber: 'Numéro de téléphone',
+        paymentMethod: 'Méthode de paiement',
+        notes: 'Notes',
+        address: 'Adresse',
+        otherAddress: 'Autre adresse',
+        totalAmount: 'Montant total',
+        reward: 'Récompense',
+        payment: 'Paiement',
+        cashPayment: 'Paiement en espèces',
+        updateTime: 'Heure de mise à jour',
+        createTime: 'Heure de création',
+        deliveryStaffEmail: 'Email du livreur',
+        deliveryStaffName: 'Nom du livreur',
+        gender: 'Sexe',
+        imageCustomer: 'Image du client',
+        emailShipper: 'Email du transporteur',
+        nameShipper: 'Nom du transporteur',
+        shipperDebt: 'Dette du transporteur'
+      };
+    case 'ja':
+      return {
+        product: '製品',
+        return: '返品',
+        status: '状態',
+        otherStatus: 'その他の状態',
+        systemPhone: 'システム電話',
+        systemEmail: 'システムメール',
+        systemName: 'システム名',
+        systemAddress: 'システム住所',
+        email: 'メール',
+        name: '名前',
+        phoneNumber: '電話番号',
+        paymentMethod: '支払い方法',
+        notes: 'メモ',
+        address: '住所',
+        otherAddress: 'その他の住所',
+        totalAmount: '合計金額',
+        reward: '報酬',
+        payment: '支払い',
+        cashPayment: '現金払い',
+        updateTime: '更新時間',
+        createTime: '作成時間',
+        deliveryStaffEmail: '配達員のメール',
+        deliveryStaffName: '配達員の名前',
+        gender: '性別',
+        imageCustomer: '顧客画像',
+        emailShipper: '出荷人メール',
+        nameShipper: '出荷人名',
+        shipperDebt: '出荷人の借金'
+      };
+    default:
+      return {
+        product: 'Product',
+        return: 'Return',
+        status: 'Status',
+        otherStatus: 'Other status',
+        systemPhone: 'System phone',
+        systemEmail: 'System email',
+        systemName: 'System name',
+        systemAddress: 'System address',
+        email: 'Email',
+        name: 'Name',
+        phoneNumber: 'Phone number',
+        paymentMethod: 'Payment method',
+        notes: 'Notes',
+        address: 'Address',
+        otherAddress: 'Other address',
+        totalAmount: 'Total amount',
+        reward: 'Reward',
+        payment: 'Payment',
+        cashPayment: 'Cash payment',
+        updateTime: 'Update time',
+        createTime: 'Create time',
+        deliveryStaffEmail: 'Delivery staff email',
+        deliveryStaffName: 'Delivery staff name',
+        gender: 'Gender',
+        imageCustomer: 'Customer image',
+        emailShipper: 'Shipper email',
+        nameShipper: 'Shipper name',
+        shipperDebt: 'Shipper debt'
+      };
+  }
+};
+
+
+export const translateOrderColumn = (language: string) => {
+  switch (language) {
+    case 'vi':
+      return {
+        product: 'Sản phẩm',
+        returnImage: 'Hình ảnh trả hàng',
+        deliveredImage: 'Hình ảnh đã giao',
+        return: 'Trả hàng',
+        reasonForReturn: 'Lý do trả hàng', // New translation
+        status: 'Trạng thái',
+        otherStatus: 'Trạng thái khác',
+        deliveryStaffEmail: 'Email nhân viên',
+        deliveryStaffName: 'Tên nhân viên',
+        emailShipper: 'Email shipper',
+        nameShipper: 'Tên shipper',
+        debtCollectionEmail: 'Email nhân viên nhận tiền nợ',
+        debtCollectionName: 'Tên nhân viên nhận tiền nợ',
+        systemPhone: 'Sđt hệ thống',
+        systemEmail: 'Email hệ thống',
+        systemName: 'Tên hệ thống',
+        systemAddress: 'Địa chỉ hệ thống',
+        email: 'Email',
+        name: 'Tên',
+        phoneNumber: 'Số điện thoại',
+        gender: 'Giới tính',
+        paymentMethod: 'Phương thức thanh toán',
+        notes: 'Ghi chú',
+        address: 'Địa chỉ',
+        otherAddress: 'Địa chỉ khác',
+        totalAmount: 'Tổng giá tiền',
+        reward: 'Tặng thưởng',
+        payment: 'Thanh toán',
+        cashPayment: 'Thanh toán tiền mặt',
+        shipperDebt: 'Shipper nợ',
+        updateTime: 'Thời gian cập nhật',
+        createTime: 'Thời gian tạo'
+      };
+    case 'en':
+      return {
+        product: 'Products',
+        returnImage: 'Return image',
+        deliveredImage: 'Delivered image',
+        return: 'Return',
+        reasonForReturn: 'Reason for return', // New translation
+        status: 'Status',
+        otherStatus: 'Other status',
+        deliveryStaffEmail: 'Delivery staff email',
+        deliveryStaffName: 'Delivery staff name',
+        emailShipper: 'Shipper email',
+        nameShipper: 'Shipper name',
+        debtCollectionEmail: 'Debt collection staff email',
+        debtCollectionName: 'Debt collection staff name',
+        systemPhone: 'System phone',
+        systemEmail: 'System email',
+        systemName: 'System name',
+        systemAddress: 'System address',
+        email: 'Email',
+        name: 'Name',
+        phoneNumber: 'Phone number',
+        gender: 'Gender',
+        paymentMethod: 'Payment method',
+        notes: 'Notes',
+        address: 'Address',
+        otherAddress: 'Other address',
+        totalAmount: 'Total amount',
+        reward: 'Reward',
+        payment: 'Payment',
+        cashPayment: 'Cash payment',
+        shipperDebt: 'Shipper debt',
+        updateTime: 'Update time',
+        createTime: 'Create time'
+      };
+    case 'zh':
+      return {
+        product: '产品',
+        returnImage: '退货图片',
+        deliveredImage: '已交货图片',
+        return: '退货',
+        reasonForReturn: '退货原因', // New translation
+        status: '状态',
+        otherStatus: '其他状态',
+        deliveryStaffEmail: '配送员邮箱',
+        deliveryStaffName: '配送员姓名',
+        emailShipper: '发货员邮箱',
+        nameShipper: '发货员姓名',
+        debtCollectionEmail: '收债员工邮箱',
+        debtCollectionName: '收债员工姓名',
+        systemPhone: '系统电话',
+        systemEmail: '系统邮箱',
+        systemName: '系统名称',
+        systemAddress: '系统地址',
+        email: '邮箱',
+        name: '姓名',
+        phoneNumber: '电话号码',
+        gender: '性别',
+        paymentMethod: '支付方式',
+        notes: '备注',
+        address: '地址',
+        otherAddress: '其他地址',
+        totalAmount: '总金额',
+        reward: '奖励',
+        payment: '付款',
+        cashPayment: '现金支付',
+        shipperDebt: '发货员欠款',
+        updateTime: '更新时间',
+        createTime: '创建时间'
+      };
+    case 'fr':
+      return {
+        product: 'Produits',
+        returnImage: 'Image de retour',
+        deliveredImage: 'Image livrée',
+        return: 'Retour',
+        reasonForReturn: 'Raison du retour', // New translation
+        status: 'Statut',
+        otherStatus: 'Autre statut',
+        deliveryStaffEmail: 'Email du livreur',
+        deliveryStaffName: 'Nom du livreur',
+        emailShipper: 'Email du transporteur',
+        nameShipper: 'Nom du transporteur',
+        debtCollectionEmail: 'Email du collecteur de dettes',
+        debtCollectionName: 'Nom du collecteur de dettes',
+        systemPhone: 'Téléphone du système',
+        systemEmail: 'Email du système',
+        systemName: 'Nom du système',
+        systemAddress: 'Adresse du système',
+        email: 'Email',
+        name: 'Nom',
+        phoneNumber: 'Numéro de téléphone',
+        gender: 'Sexe',
+        paymentMethod: 'Méthode de paiement',
+        notes: 'Notes',
+        address: 'Adresse',
+        otherAddress: 'Autre adresse',
+        totalAmount: 'Montant total',
+        reward: 'Récompense',
+        payment: 'Paiement',
+        cashPayment: 'Paiement en espèces',
+        shipperDebt: 'Dette du transporteur',
+        updateTime: 'Heure de mise à jour',
+        createTime: 'Heure de création'
+      };
+    case 'ja':
+      return {
+        product: '製品',
+        returnImage: '返品画像',
+        deliveredImage: '配送済み画像',
+        return: '返品',
+        reasonForReturn: '返品理由', // New translation
+        status: '状態',
+        otherStatus: 'その他の状態',
+        deliveryStaffEmail: '配達員のメール',
+        deliveryStaffName: '配達員の名前',
+        emailShipper: '出荷人メール',
+        nameShipper: '出荷人名',
+        debtCollectionEmail: '債権回収員のメール',
+        debtCollectionName: '債権回収員の名前',
+        systemPhone: 'システム電話',
+        systemEmail: 'システムメール',
+        systemName: 'システム名',
+        systemAddress: 'システム住所',
+        email: 'メール',
+        name: '名前',
+        phoneNumber: '電話番号',
+        gender: '性別',
+        paymentMethod: '支払い方法',
+        notes: 'メモ',
+        address: '住所',
+        otherAddress: 'その他の住所',
+        totalAmount: '合計金額',
+        reward: '報酬',
+        payment: '支払い',
+        cashPayment: '現金払い',
+        shipperDebt: '出荷人の借金',
+        updateTime: '更新時間',
+        createTime: '作成時間'
+      };
+    default:
+      return {
+        product: 'Products',
+        returnImage: 'Return image',
+        deliveredImage: 'Delivered image',
+        return: 'Return',
+        reasonForReturn: 'Reason for return', // New translation
+        status: 'Status',
+        otherStatus: 'Other status',
+        deliveryStaffEmail: 'Delivery staff email',
+        deliveryStaffName: 'Delivery staff name',
+        emailShipper: 'Shipper email',
+        nameShipper: 'Shipper name',
+        debtCollectionEmail: 'Debt collection staff email',
+        debtCollectionName: 'Debt collection staff name',
+        systemPhone: 'System phone',
+        systemEmail: 'System email',
+        systemName: 'System name',
+        systemAddress: 'System address',
+        email: 'Email',
+        name: 'Name',
+        phoneNumber: 'Phone number',
+        gender: 'Gender',
+        paymentMethod: 'Payment method',
+        notes: 'Notes',
+        address: 'Address',
+        otherAddress: 'Other address',
+        totalAmount: 'Total amount',
+        reward: 'Reward',
+        payment: 'Payment',
+        cashPayment: 'Cash payment',
+        shipperDebt: 'Shipper debt',
+        updateTime: 'Update time',
+        createTime: 'Create time'
+      };
+  }
+};

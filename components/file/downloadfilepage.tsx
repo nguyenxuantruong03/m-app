@@ -122,8 +122,8 @@ const Downloadfile: React.FC<DownloadfileProps> = ({ data, filename,languageToUs
       <DropdownMenu>
         <DropdownMenuTrigger>
           <Button>
-            <FolderDown className="mr-2 h-4 w-4" />
-            {downloadFileMessage.downloadFile}
+            <FolderDown className="md:mr-2 h-4 w-4" />
+            <span className="hidden md:block">{downloadFileMessage.downloadFile}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>

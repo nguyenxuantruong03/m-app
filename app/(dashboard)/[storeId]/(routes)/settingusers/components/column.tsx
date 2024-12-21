@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
-import { useState } from "react";
+import React, { useState } from "react";
 import { UserRole } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
@@ -43,7 +43,66 @@ const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 import { format, subHours } from "date-fns";
 import FireworksComponent from "@/components/canvas-confetti";
 import FormatDate from "@/components/format-Date";
-import { getSettingUserColumn } from "@/translate/translate-dashboard";
+import {
+  getSettingUserColumn,
+  translateSettingUserColumn,
+} from "@/translate/translate-dashboard";
+import { useCurrentUser } from "@/hooks/use-current-user";
+
+interface SettingUserHeaderMessage {
+  name: string;
+  email: string;
+  dateOfBirth: string;
+  emailConfirmation: string;
+  password: string;
+  lastLogin: string;
+  socialImage: string;
+  webImage: string;
+  role: string;
+  socialAccount: string;
+  tokenType: string;
+  identifier: string;
+  twoStepVerification: string;
+  banUser: string;
+  unbanTime: string;
+  permanentBan: string;
+  banTime: string;
+  sendVerificationCode: string;
+  sendPasswordResetEmail: string;
+  sendResetPasswordToken: string;
+  sendTwoStepVerification: string;
+  sendUnbanNotification: string;
+  sendBanExpiredNotification: string;
+  updatedTime: string
+  createdTime: string
+}
+
+// Header trasnlate
+const HeaderColumn = ({
+  column,
+  labelKey,
+  icon,
+}: {
+  column: any;
+  labelKey: keyof SettingUserHeaderMessage;
+  icon: React.ElementType;
+}) => {
+  const user = useCurrentUser();
+  const settingUserHeaderMessage: SettingUserHeaderMessage =
+    translateSettingUserColumn(user?.language || "vi");
+
+  // Dùng labelKey để truy xuất giá trị động
+  const label = settingUserHeaderMessage[labelKey] || labelKey;
+
+  return (
+    <SpanColumn
+      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    >
+      {label}
+      {icon && React.createElement(icon, { className: "ml-2 h-4 w-4" })}
+    </SpanColumn>
+  );
+};
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -76,9 +135,9 @@ export type SettingUsersColumn = {
   timebanforever: Date | null | undefined;
   dateofbirth: Date | null;
   isBirthdayToday?: boolean | null;
-  updatedAt: Date
+  updatedAt: Date;
   createdAt: Date | null;
-  language: string
+  language: string;
 };
 
 interface RoleCellProps<T> {
@@ -164,7 +223,7 @@ const RoleCell = <T extends SettingUsersColumn>({ row }: RoleCellProps<T>) => {
           {settingUserColumnMessage.save}
         </Button>
         <Button variant="outline" onClick={handleCancel} disabled={loading}>
-        {settingUserColumnMessage.cancel}
+          {settingUserColumnMessage.cancel}
         </Button>
       </div>
     </div>
@@ -193,16 +252,9 @@ const RoleCell = <T extends SettingUsersColumn>({ row }: RoleCellProps<T>) => {
 export const columns: ColumnDef<SettingUsersColumn>[] = [
   {
     accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Tên
-          <Tag className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="name" icon={Tag} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
@@ -253,16 +305,9 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
 
   {
     accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <User className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="email" icon={User} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
@@ -284,16 +329,9 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
 
   {
     accessorKey: "birthday",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Sinh nhật
-          <Cake className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="dateOfBirth" icon={Cake} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
@@ -336,16 +374,9 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
 
   {
     accessorKey: "emailVerified",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Xác nhận Email
-          <Mail className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="emailConfirmation" icon={Mail} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
@@ -370,16 +401,9 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
 
   {
     accessorKey: "password",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Mật khẩu
-          <KeyRound className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="password" icon={KeyRound} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
@@ -401,16 +425,9 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
 
   {
     accessorKey: "lastlogin",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Đăng nhập cuối
-          <ScanFace className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="lastLogin" icon={ScanFace} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
@@ -443,16 +460,9 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
 
   {
     accessorKey: "image",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Hình ảnh mạng xã hội
-          <ImageUp className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="socialImage" icon={ImageUp} />
+    ),
     cell: ({ row }) => {
       const imageUrl = row.original.image;
       const updateImage = row.original.createdAt
@@ -482,16 +492,9 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
   },
   {
     accessorKey: "imageCredential",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Hình ảnh trên web
-          <ImageIcon className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="webImage" icon={ImageIcon} />
+    ),
     cell: ({ row }) => {
       const imageUrl = row.original.imageCredential;
       const updateImage = row.original.createdAt
@@ -521,31 +524,17 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
   },
   {
     accessorKey: "role",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Vai trò
-          <SquareUserRound className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="role" icon={SquareUserRound} />
+    ),
     cell: RoleCell,
   },
 
   {
     accessorKey: "accounts.provider",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Tài khoản mạng xã hội
-          <Globe className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="socialAccount" icon={Globe} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
@@ -567,16 +556,9 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
 
   {
     accessorKey: "accounts.token_type",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Loại mã thông báo
-          <Coins className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="tokenType" icon={Coins} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
@@ -597,16 +579,9 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
   },
   {
     accessorKey: "isCitizen",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Đinh danh
-          <Check className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="identifier" icon={Check} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
@@ -631,16 +606,9 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
   },
   {
     accessorKey: "isTwoFactorEnabled",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Xác minh 2 bước
-          <LockKeyhole className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="twoStepVerification" icon={LockKeyhole} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
@@ -666,16 +634,9 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
 
   {
     accessorKey: "ban",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Cấm người dùng
-          <CircleSlash className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="banUser" icon={CircleSlash} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
@@ -693,16 +654,9 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
 
   {
     accessorKey: "banExpiresTime",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian mở cấm
-          <Hourglass className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="unbanTime" icon={Hourglass} />
+    ),
     cell: ({ row }) => {
       const banExpires = row.original.banExpiresTime
         ? format(
@@ -720,16 +674,9 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
 
   {
     accessorKey: "isbanforever",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Ban vĩnh viễn
-          <Ban className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="permanentBan" icon={Ban} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
@@ -755,16 +702,9 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
 
   {
     accessorKey: "timebanforever",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian Ban
-          <AlarmClockOff className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="banTime" icon={AlarmClockOff} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
@@ -797,16 +737,9 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
 
   {
     accessorKey: "resendTokenVerify",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Gửi mã xác thực
-          <SendHorizontal className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="sendVerificationCode" icon={SendHorizontal} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
@@ -847,16 +780,9 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
 
   {
     accessorKey: "resendEmailResetPassword",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Gửi Email làm mới mật khẩu
-          <SendHorizontal className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="sendPasswordResetEmail" icon={SendHorizontal} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
@@ -897,16 +823,9 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
 
   {
     accessorKey: "resendTokenResetPassword",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Gửi mã thông báo Đặt lại mật khẩu
-          <SendHorizontal className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="sendResetPasswordToken" icon={SendHorizontal} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
@@ -947,16 +866,9 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
 
   {
     accessorKey: "resendCount",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Gửi xác minh 2 bước
-          <SendHorizontal className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="sendTwoStepVerification" icon={SendHorizontal} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
@@ -997,16 +909,9 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
 
   {
     accessorKey: "resendBanUserNotStart",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Gửi thông báo thời gian mở cấm
-          <SendHorizontal className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="sendUnbanNotification" icon={SendHorizontal} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
@@ -1028,16 +933,9 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
 
   {
     accessorKey: "resendUnBanUser",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Gửi thông báo đã hết ban
-          <SendHorizontal className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="sendBanExpiredNotification" icon={SendHorizontal} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
@@ -1059,37 +957,31 @@ export const columns: ColumnDef<SettingUsersColumn>[] = [
 
   {
     accessorKey: "updatedAt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian cập nhật
-          <AlarmClockCheck className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="updatedTime" icon={AlarmClockCheck} />
+    ),
     cell: ({ row }) => {
-      return <FormatDate data={row.original.updatedAt} language={row.original.language}/>;
+      return (
+        <FormatDate
+          data={row.original.updatedAt}
+          language={row.original.language}
+        />
+      );
     },
   },
   {
     accessorKey: "createdAt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian tạo
-          <Clock12 className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="createdTime" icon={Clock12} />
+    ),
     cell: ({ row }) => {
       return (
-      <FormatDate data={row.original.createdAt} language={row.original.language}/>
-      )
-    }
+        <FormatDate
+          data={row.original.createdAt}
+          language={row.original.language}
+        />
+      );
+    },
   },
 
   {

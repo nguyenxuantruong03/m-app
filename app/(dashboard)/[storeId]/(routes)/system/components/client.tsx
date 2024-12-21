@@ -10,7 +10,7 @@ import { SystemsColumn, columns } from "./column";
 import Downloadfile from "@/components/file/downloadfilepage";
 import { useState } from "react";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getSystemClient } from "@/translate/translate-dashboard";
+import { getEnterUserTranslation, getSystemClient } from "@/translate/translate-dashboard";
 
 interface SettingUserClientProps {
   data: SystemsColumn[];
@@ -25,6 +25,7 @@ const SettingUserClient: React.FC<SettingUserClientProps> = ({ data }) => {
   const user = useCurrentUser();
   const languageToUse = user?.language || "vi";
   const systemClientMessage = getSystemClient(languageToUse)
+  const enterUserMessage = getEnterUserTranslation(languageToUse)
 
   return (
     <>
@@ -41,6 +42,7 @@ const SettingUserClient: React.FC<SettingUserClientProps> = ({ data }) => {
       </div>
       <Separator />
       <DataTable
+        placeholder={enterUserMessage}
         searchKey="user"
         columns={columns}
         data={data}

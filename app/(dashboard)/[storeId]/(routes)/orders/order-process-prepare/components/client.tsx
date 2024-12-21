@@ -7,7 +7,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { OrderColumn, columns } from "./columns";
 import Downloadfile from "@/components/file/downloadfilepage";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getOrderProcessPrepareClient } from "@/translate/translate-dashboard";
+import { getEnterEmailTranslation, getOrderProcessPrepareClient } from "@/translate/translate-dashboard";
 
 interface OrderProps {
   data: OrderColumn[];
@@ -18,6 +18,8 @@ const OrderClient: React.FC<OrderProps> = ({ data }) => {
     const user = useCurrentUser();
     const languageToUse = user?.language || "vi";
     const orderProcessPrepareClientMessage = getOrderProcessPrepareClient(languageToUse)
+    const enterEmailMessage = getEnterEmailTranslation(languageToUse)
+    
   return (
     <>
     <div className="flex items-center justify-between">
@@ -28,7 +30,7 @@ const OrderClient: React.FC<OrderProps> = ({ data }) => {
       <Downloadfile data={data} filename="orders" languageToUse={languageToUse}/>
     </div>
       <Separator />
-      <DataTable languageToUse={languageToUse} searchKey="email" columns={columns} data={data} onSelect={()=>{}} onDelete={()=>{}} open={false} setOpen={() => false}/>
+      <DataTable placeholder={enterEmailMessage} languageToUse={languageToUse} searchKey="email" columns={columns} data={data} onSelect={()=>{}} onDelete={()=>{}} open={false} setOpen={() => false}/>
     </>
   );
 };

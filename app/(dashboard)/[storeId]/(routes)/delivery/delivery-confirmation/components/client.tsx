@@ -9,6 +9,7 @@ import Downloadfile from "@/components/file/downloadfilepage";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import {
   getDeliveryComfirmationClient,
+  getEnterEmailTranslation,
   getLocationClientDelivery,
 } from "@/translate/translate-dashboard";
 import { Button } from "@/components/ui/button";
@@ -34,6 +35,8 @@ const OrderClient: React.FC<OrderProps> = ({ data }) => {
     getDeliveryComfirmationClient(languageToUse);
   const locationClientDeliveryMessage =
     getLocationClientDelivery(languageToUse);
+  const enterEmailMessage = getEnterEmailTranslation(languageToUse)
+  
     
   //Xử lý chia sẻ vị trí hiện tại giao hạn
   const [isConnected, setIsConnected] = useState(false);
@@ -119,9 +122,9 @@ const OrderClient: React.FC<OrderProps> = ({ data }) => {
 
           {isSharingLocation ? (
             <Button onClick={stopSharingLocation} disabled={!isConnected}>
-              <span className="flex space-x-2">
-                <MapPinOff className="w-5 h-5" />
-                {locationClientDeliveryMessage.stopShare}
+              <span className="flex md:space-x-2">
+                <MapPinOff className="w-4 h-4" />
+                <span className="hidden md:block">{locationClientDeliveryMessage.stopShare}</span>
               </span>
             </Button>
           ) : (
@@ -129,9 +132,9 @@ const OrderClient: React.FC<OrderProps> = ({ data }) => {
               onClick={() => shareLocation()}
               disabled={!isUserAllowedToShare || !isConnected}
             >
-              <span className="flex space-x-2">
-                <MapPin className="w-5 h-5" />
-                {locationClientDeliveryMessage.share}
+              <span className="flex md:space-x-2">
+                <MapPin className="w-4 h-4" />
+                <span className="hidden md:block">{locationClientDeliveryMessage.share}</span>
               </span>
             </Button>
           )}
@@ -139,6 +142,7 @@ const OrderClient: React.FC<OrderProps> = ({ data }) => {
       </div>
       <Separator />
       <DataTable
+        placeholder={enterEmailMessage}
         languageToUse={languageToUse}
         searchKey="email"
         columns={columns}

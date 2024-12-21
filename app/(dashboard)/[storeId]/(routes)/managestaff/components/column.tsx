@@ -38,7 +38,64 @@ import ImageCellOne from "@/components/image-cell-one";
 import EditRow from "../_components/edit-row";
 import FormatDate from "@/components/format-Date";
 import { ImageCredential } from "@/types/type";
-import { getDayName } from "@/translate/translate-dashboard";
+import {
+  getDayName,
+  translateManageStaffColumn,
+} from "@/translate/translate-dashboard";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import React from "react";
+
+interface ManageStaffHeaderMessage {
+  name: string;
+  email: string;
+  socialImage: string;
+  webImage: string;
+  role: string;
+  idNumber: string;
+  phoneNumber: string;
+  idIssueDate: string;
+  dateOfBirth: string;
+  urlQrCode: string;
+  nfcCode: string;
+  workingTime: string;
+  issuedPlace: string;
+  gender: string;
+  education: string;
+  maritalStatus: string;
+  workingDay: string;
+  identifier: string;
+  sendConfirmation: string;
+  startTime: string
+  updatedTime: string;
+  createdTime: string;
+}
+
+// Header trasnlate
+const HeaderColumn = ({
+  column,
+  labelKey,
+  icon,
+}: {
+  column: any;
+  labelKey: keyof ManageStaffHeaderMessage;
+  icon: React.ElementType;
+}) => {
+  const user = useCurrentUser();
+  const manageStaffHeaderMessage: ManageStaffHeaderMessage =
+    translateManageStaffColumn(user?.language || "vi");
+
+  // Dùng labelKey để truy xuất giá trị động
+  const label = manageStaffHeaderMessage[labelKey] || labelKey;
+
+  return (
+    <SpanColumn
+      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    >
+      {label}
+      {icon && React.createElement(icon, { className: "ml-2 h-4 w-4" })}
+    </SpanColumn>
+  );
+};
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -66,13 +123,13 @@ export type ManageStaffsColumn = {
   urlimageCheckAttendance: string | null;
   codeNFC: string | null;
   daywork: string[];
-  imageCredentialUrl: ImageCredential[]
+  imageCredentialUrl: ImageCredential[];
   dateRangepatch: Date | null;
   dateofbirthpatach: Date | null;
-  updatedAt: Date
+  updatedAt: Date;
   createdAt: Date;
-  createdAtString: string | null
-  language: string
+  createdAtString: string | null;
+  language: string;
 };
 
 export const columns: ColumnDef<ManageStaffsColumn>[] = [
@@ -100,18 +157,10 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
   },
   {
     accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Tên
-          <Tag className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="name" icon={Tag} />
+    ),
     cell: ({ row }) => {
-      // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
       return (
         <span>
@@ -131,18 +180,10 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
   },
   {
     accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <User className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="email" icon={User} />
+    ),
     cell: ({ row }) => {
-      // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
       return (
         <div className={isBanned ? "line-through text-gray-400" : ""}>
@@ -153,21 +194,13 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
   },
   {
     accessorKey: "image",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Hình ảnh mạng xã hội
-          <ImageIcon className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="socialImage" icon={ImageIcon} />
+    ),
     cell: ({ row }) => {
       const imageUrl = row.original.image;
       const updateImage = row.original.createdAtString;
       const email = row.original.email;
-      // Check if the image URL is available
       if (imageUrl) {
         return (
           <ImageCellOne
@@ -183,21 +216,13 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
   },
   {
     accessorKey: "imageCredential",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Hình ảnh web
-          <ImageUp className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="webImage" icon={ImageUp} />
+    ),
     cell: ({ row }) => {
       const imageUrl = row.original.imageCredential;
       const updateImage = row.original.createdAtString;
       const email = row.original.email;
-      // Check if the image URL is available
       if (imageUrl) {
         return (
           <ImageCellOne
@@ -213,16 +238,9 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
   },
   {
     accessorKey: "role",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Vai trò
-          <SquareUserRound className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="role" icon={SquareUserRound} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const role = row.original.role;
@@ -250,21 +268,12 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
       );
     },
   },
-
   {
     accessorKey: "numberCCCD",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Sô Chứng minh nhân dân
-          <SquareAsterisk className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="idNumber" icon={SquareAsterisk} />
+    ),
     cell: ({ row }) => {
-      // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
       return (
         <span>
@@ -284,18 +293,10 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
   },
   {
     accessorKey: "phonenumber",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Số điện thoại
-          <Phone className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="phoneNumber" icon={Phone} />
+    ),
     cell: ({ row }) => {
-      // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
       return (
         <span>
@@ -315,18 +316,10 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
   },
   {
     accessorKey: "dateRange",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Ngày cấp CMND
-          <CalendarPlus className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="idIssueDate" icon={CalendarPlus} />
+    ),
     cell: ({ row }) => {
-      // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
       return (
         <span>
@@ -346,18 +339,10 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
   },
   {
     accessorKey: "dateofbirth",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Ngày sinh
-          <Cake className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="dateOfBirth" icon={Cake} />
+    ),
     cell: ({ row }) => {
-      // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
       return (
         <span>
@@ -377,16 +362,9 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
   },
   {
     accessorKey: "urlimageCheckAttendance",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          UrlQrcode
-          <QrCode className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="urlQrCode" icon={QrCode} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       return (
@@ -402,16 +380,9 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
   },
   {
     accessorKey: "codeNFC",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          NFCcode
-          <SmartphoneNfc className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="nfcCode" icon={SmartphoneNfc} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       return (
@@ -427,18 +398,10 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
   },
   {
     accessorKey: "timestartwork",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian làm việc
-          <BriefcaseBusiness className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="startTime" icon={BriefcaseBusiness} />
+    ),
     cell: ({ row }) => {
-      // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
       return (
         <span>
@@ -458,18 +421,10 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
   },
   {
     accessorKey: "issued",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Cấp ở đâu
-          <Pin className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="issuedPlace" icon={Pin} />
+    ),
     cell: ({ row }) => {
-      // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
       return (
         <span>
@@ -487,33 +442,12 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
       );
     },
   },
-  //Nguyên bản chưa dich tiếng việt
-  // {
-  //   accessorKey: "gender",
-  //   header: "gender",
-  //   cell: ({ row }) => {
-  //     const isBanned = row.original.ban === true;
-  //     return (
-  //       <div className={isBanned ? "line-through text-gray-400" : ""}>
-  //         {row.original.gender}
-  //       </div>
-  //     );
-  //   },
-  // },
   {
     accessorKey: "gender",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Giới tính
-          <Users className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="gender" icon={Users} />
+    ),
     cell: ({ row }) => {
-      // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
       return (
         <span>
@@ -533,16 +467,9 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
   },
   {
     accessorKey: "workingTime",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian làm việc
-          <AlarmClock className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="workingTime" icon={AlarmClock} />
+    ),
     cell: ({ row }) => {
       // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
@@ -564,18 +491,10 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
   },
   {
     accessorKey: "degree",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Học vấn
-          <GraduationCap className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="education" icon={GraduationCap} />
+    ),
     cell: ({ row }) => {
-      // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
       return (
         <span>
@@ -593,21 +512,12 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
       );
     },
   },
-
   {
     accessorKey: "maritalStatus",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Hôn nhân
-          <Heart className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="maritalStatus" icon={ShieldCheck} />
+    ),
     cell: ({ row }) => {
-      // Kiểm tra nếu bị ban
       const isBanned = row.original.ban === true;
       return (
         <span>
@@ -627,16 +537,9 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
   },
   {
     accessorKey: "daywork",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thứ làm việc
-          <CalendarClock className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="workingDay" icon={CalendarClock} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const allDays = [
@@ -669,16 +572,9 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
 
   {
     accessorKey: "isCitizen",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Định dạnh
-          <Check className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="identifier" icon={Check} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       return (
@@ -694,16 +590,9 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
   },
   {
     accessorKey: "sentVeirifi",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Gửi xác nhận
-          <SendHorizontal className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="sendConfirmation" icon={SendHorizontal} />
+    ),
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       return (
@@ -719,37 +608,23 @@ export const columns: ColumnDef<ManageStaffsColumn>[] = [
   },
   {
     accessorKey: "updatedAt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian cập nhật
-          <AlarmClockCheck className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="updatedTime" icon={Clock12} />
+    ),
     cell: ({ row }) => {
       return <FormatDate data={row.original.updatedAt} language={row.original.language}/>;
     },
   },
   {
     accessorKey: "createdAt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian tạo
-          <Clock12 className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="createdTime" icon={AlarmClockCheck} />
+    ),
     cell: ({ row }) => {
       return (
-      <FormatDate data={row.original.createdAt} language={row.original.language}/>
-      )
-    }
+        <FormatDate data={row.original.createdAt} language={row.original.language}/>
+        )
+    },
   },
   {
     id: "actions",

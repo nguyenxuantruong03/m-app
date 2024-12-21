@@ -20,7 +20,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { useState } from "react";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getCategoriesClient, translateCategoriesClientSocket } from "@/translate/translate-dashboard";
+import { getCategoriesClient, getEnterNameTranslation, translateCategoriesClientSocket } from "@/translate/translate-dashboard";
 
 interface CategoriesClientProps {
   data: CategoriesColumn[];
@@ -40,6 +40,7 @@ const CategoriesClient: React.FC<CategoriesClientProps> = ({ data }) => {
   const languageToUse = user?.language || "vi";
   const categoriesClientMessage = getCategoriesClient(languageToUse);
   const categoriesClientSocketMessage = translateCategoriesClientSocket(languageToUse);
+  const enterNameMessage = getEnterNameTranslation(languageToUse)
 
   const handleDelete = async () => {
     setLoading(true);
@@ -87,13 +88,14 @@ const CategoriesClient: React.FC<CategoriesClientProps> = ({ data }) => {
           <Button
             onClick={() => router.push(`/${params.storeId}/categories7/new`)}
           >
-            <Plus className="mr-2 h-4 w-4" />
-            {categoriesClientMessage.addNew}
+            <Plus className="md:mr-2 h-4 w-4" />
+            <span className="hidden md:block">{categoriesClientMessage.addNew}</span>
           </Button>
         </div>
       </div>
       <Separator />
       <DataTable
+        placeholder={enterNameMessage}
         searchKey="name"
         columns={columns}
         data={data}

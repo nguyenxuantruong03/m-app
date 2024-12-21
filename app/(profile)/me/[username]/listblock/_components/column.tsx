@@ -7,6 +7,30 @@ import { UnblockButton } from "./unblock-button";
 import FormatDate from "@/components/format-Date";
 import CircleAvatar from "@/components/ui/circle-avatar";
 import SpanColumn from "@/components/span-column";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import React from "react";
+import { translateListBlockColumn } from "@/translate/translate-dashboard";
+
+interface ListBlockHeaderMessage {
+  username: string
+  banDate: string
+}
+
+// Header trasnlate
+const HeaderColumn = ({ column, labelKey, icon }: { column: any; labelKey: keyof ListBlockHeaderMessage; icon: React.ElementType }) => {
+  const user = useCurrentUser();
+  const listBlockHeaderMessage: ListBlockHeaderMessage = translateListBlockColumn(user?.language || "vi");
+
+  // Dùng labelKey để truy xuất giá trị động
+  const label = listBlockHeaderMessage[labelKey] || labelKey;
+
+  return (
+    <SpanColumn onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+      {label}
+      {icon && React.createElement(icon, { className: "ml-2 h-4 w-4" })}
+    </SpanColumn>
+  );
+};
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -27,13 +51,7 @@ export const columns: ColumnDef<BlockUser>[] = [
   {
     accessorKey: "nameuser",
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Tên người dùng
-        <UserRoundX  className="ml-2 w-4 h-4" />
-      </Button>
+      <HeaderColumn column={column} labelKey="username" icon={UserRoundX} />
     ),
     cell: ({ row }) => (
       <div className="flex items-center gap-x-4">
@@ -52,16 +70,9 @@ export const columns: ColumnDef<BlockUser>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Ngày cấm
-          <Clock12 className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="banDate" icon={Clock12} />
+    ),
     cell: ({ row }) => {
       return (
       <FormatDate data={row.original.createdAt} language={row.original.languageToUse}/>

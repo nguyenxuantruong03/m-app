@@ -19,7 +19,7 @@ import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { translateStoreClient } from "@/translate/translate-dashboard";
+import { getEnterNameTranslation, translateStoreClient } from "@/translate/translate-dashboard";
 
 interface SizeClientProps {
   data: StoreColumn[];
@@ -37,6 +37,7 @@ const StoreClient: React.FC<SizeClientProps> = ({ data }) => {
   const user = useCurrentUser();
   const languageToUse = user?.language || "vi"
   const storeClientMessage = translateStoreClient(languageToUse)
+  const enterNameMessage = getEnterNameTranslation(languageToUse)
 
   const handleDelete = async () => {
     setLoading(true);
@@ -78,13 +79,14 @@ const StoreClient: React.FC<SizeClientProps> = ({ data }) => {
         <div className="flex space-x-3">
           <Downloadfile data={data} filename="store"  languageToUse={languageToUse}/>
           <Button onClick={() => router.push(`/store/new`)}>
-            <Plus className="mr-2 h-4 w-4" />
-            {storeClientMessage.addNew}
+            <Plus className="md:mr-2 h-4 w-4" />
+            <span className="hidden md:block">{storeClientMessage.addNew}</span>
           </Button>
         </div>
       </div>
       <Separator />
       <DataTable
+        placeholder={enterNameMessage}
         searchKey="name"
         columns={columns}
         data={data}

@@ -19,7 +19,7 @@ import Downloadfile from "@/components/file/downloadfilepage";
 import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { getProductClient, translateProductsClientCommonItems } from "@/translate/translate-dashboard";
+import { getEnterNameTranslation, getProductClient, translateProductsClientCommonItems } from "@/translate/translate-dashboard";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
 interface ProductClientProps {
@@ -40,6 +40,7 @@ const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
   const languageToUse = user?.language || "vi";
   const productClientMessage = getProductClient(languageToUse);
   const productClientCommonItemsMessage = translateProductsClientCommonItems(languageToUse);
+  const enterNameMessage = getEnterNameTranslation(languageToUse);
 
   const handleDelete = async () => {
     setLoading(true);
@@ -87,14 +88,15 @@ const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
           <Button
             onClick={() => router.push(`/${params.storeId}/product11/new`)}
           >
-            <Plus className="mr-2 h-4 w-4" />
-            {productClientMessage.addNew}
+            <Plus className="md:mr-2 h-4 w-4" />
+            <span className="hidden md:block">{productClientMessage.addNew}</span>
           </Button>
         </div>
       </div>
       <Separator />
       <DataTable
-        searchKey="name"
+        placeholder={enterNameMessage}
+        searchKey="heading"
         columns={columns}
         data={data}
         onSelect={(rows) => {

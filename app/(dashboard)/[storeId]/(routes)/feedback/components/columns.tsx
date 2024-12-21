@@ -11,11 +11,58 @@ import {
   MessageSquareMore,
   Sticker,
   User,
-  Smile, Meh, Frown, Annoyed, Angry,
-  AlarmClockCheck
+  Smile,
+  Meh,
+  Frown,
+  Annoyed,
+  Angry,
+  AlarmClockCheck,
 } from "lucide-react";
 import FormatDate from "@/components/format-Date";
-import { translateFeedbackMessages } from "@/translate/translate-dashboard";
+import {
+  translateFeedBackColumn,
+  translateFeedbackMessages,
+} from "@/translate/translate-dashboard";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import React from "react";
+
+interface FeedbackHeaderMessage {
+  name: string;
+  email: string;
+  emotion: string;
+  category: string;
+  content: string;
+  updatedTime: string;
+  createdTime: string;
+}
+
+// Header trasnlate
+const HeaderColumn = ({
+  column,
+  labelKey,
+  icon,
+}: {
+  column: any;
+  labelKey: keyof FeedbackHeaderMessage;
+  icon: React.ElementType;
+}) => {
+  const user = useCurrentUser();
+  const feedbackHeaderMessage: FeedbackHeaderMessage = translateFeedBackColumn(
+    user?.language || "vi"
+  );
+
+  // Dùng labelKey để truy xuất giá trị động
+  const label = feedbackHeaderMessage[labelKey] || labelKey;
+
+  return (
+    <SpanColumn
+      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    >
+      {label}
+      {icon && React.createElement(icon, { className: "ml-2 h-4 w-4" })}
+    </SpanColumn>
+  );
+};
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -26,7 +73,7 @@ export type FeedBackColumn = {
   content: string;
   email: string | null;
   name: string | null;
-  updatedAt: Date
+  updatedAt: Date;
   createdAt: Date;
   language: string;
 };
@@ -56,67 +103,51 @@ export const columns: ColumnDef<FeedBackColumn>[] = [
   },
   {
     accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Name
-          <User className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="name" icon={User} />
+    ),
   },
   {
     accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <Contact className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="email" icon={Contact} />
+    ),
   },
   {
     accessorKey: "emotion",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Cảm xúc
-          <Sticker className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="emotion" icon={Sticker} />
+    ),
     cell: ({ row }) => {
       const emotionMap: { [key in 1 | 2 | 3 | 4 | 5]: JSX.Element } = {
         1: (
           <span className=" flex items-center space-x-1">
-            {translateFeedbackMessages(row.original.language).good} <Smile className="w-5 h-5 stroke-current fill-[#22c55e] text-slate-900"/>
+            {translateFeedbackMessages(row.original.language).good}{" "}
+            <Smile className="w-5 h-5 stroke-current fill-[#22c55e] text-slate-900" />
           </span>
         ),
         2: (
           <span className=" flex items-center space-x-1">
-            {translateFeedbackMessages(row.original.language).average} <Meh className="w-5 h-5 stroke-current fill-[#2563eb] text-slate-900"/>
+            {translateFeedbackMessages(row.original.language).average}{" "}
+            <Meh className="w-5 h-5 stroke-current fill-[#2563eb] text-slate-900" />
           </span>
         ),
         3: (
           <span className=" flex items-center space-x-1">
-            {translateFeedbackMessages(row.original.language).bad} <Frown className="w-5 h-5 stroke-current fill-[#facc15] text-slate-900"/>
+            {translateFeedbackMessages(row.original.language).bad}{" "}
+            <Frown className="w-5 h-5 stroke-current fill-[#facc15] text-slate-900" />
           </span>
         ),
         4: (
           <span className=" flex items-center space-x-1">
-            {translateFeedbackMessages(row.original.language).poorService} <Annoyed className="w-5 h-5 stroke-current fill-[#dc2626] text-slate-900"/>
+            {translateFeedbackMessages(row.original.language).poorService}{" "}
+            <Annoyed className="w-5 h-5 stroke-current fill-[#dc2626] text-slate-900" />
           </span>
         ),
         5: (
           <span className=" flex items-center space-x-1">
-            {translateFeedbackMessages(row.original.language).terrible}<Angry className="w-5 h-5 stroke-current fill-[#f97316] text-slate-900"/>
+            {translateFeedbackMessages(row.original.language).terrible}
+            <Angry className="w-5 h-5 stroke-current fill-[#f97316] text-slate-900" />
           </span>
         ),
       };
@@ -126,19 +157,13 @@ export const columns: ColumnDef<FeedBackColumn>[] = [
   },
   {
     accessorKey: "category",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Loại
-          <AlignStartVertical className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="category" icon={AlignStartVertical} />
+    ),
     cell: ({ row }) => {
       const categoryMap: { [key in 1 | 2 | 3 | 4 | 5 | 6]: string } = {
-        1: translateFeedbackMessages(row.original.language).unprofessionalService,
+        1: translateFeedbackMessages(row.original.language)
+          .unprofessionalService,
         2: translateFeedbackMessages(row.original.language).delayedResponse,
         3: translateFeedbackMessages(row.original.language).complicatedPayment,
         4: translateFeedbackMessages(row.original.language).noResponse,
@@ -151,55 +176,41 @@ export const columns: ColumnDef<FeedBackColumn>[] = [
   },
   {
     accessorKey: "content",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Nội dung
-          <MessageSquareMore className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="content" icon={MessageSquareMore} />
+    ),
   },
   {
     accessorKey: "updatedAt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian cập nhật
-          <AlarmClockCheck  className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="updatedTime" icon={AlarmClockCheck} />
+    ),
     cell: ({ row }) => {
       return (
-      <FormatDate data={row.original.updatedAt} language={row.original.language}/>
-      )
-    }
+        <FormatDate
+          data={row.original.updatedAt}
+          language={row.original.language}
+        />
+      );
+    },
   },
   {
     accessorKey: "createdAt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian tạo
-          <Clock12 className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="createdTime" icon={Clock12} />
+    ),
     cell: ({ row }) => {
       return (
-      <FormatDate data={row.original.createdAt} language={row.original.language}/>
-      )
-    }
+        <FormatDate
+          data={row.original.createdAt}
+          language={row.original.language}
+        />
+      );
+    },
   },
   {
     id: "actions",
-    cell: ({ row }) => <CellAction data={row.original}/>,
+    cell: ({ row }) => <CellAction data={row.original} />,
   },
 ];
+

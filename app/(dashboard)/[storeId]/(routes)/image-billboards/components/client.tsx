@@ -14,7 +14,7 @@ import axios from "axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getImageBillboardClient } from "@/translate/translate-dashboard";
+import { getEnterLabelTranslation, getImageBillboardClient } from "@/translate/translate-dashboard";
 
 interface BillboardClientProps {
   data: BillboardColumn[];
@@ -32,6 +32,7 @@ const BillboardClient: React.FC<BillboardClientProps> = ({ data }) => {
   const user = useCurrentUser();
   const languageToUse = user?.language || "vi";
   const imageBillboardClientMessage = getImageBillboardClient(languageToUse);
+  const enterLabelMessage = getEnterLabelTranslation(languageToUse);
 
   const handleDelete = async () => {
     setLoading(true);
@@ -76,6 +77,7 @@ const BillboardClient: React.FC<BillboardClientProps> = ({ data }) => {
       </div>
       <Separator />
       <DataTable
+        placeholder={enterLabelMessage}
         searchKey="label"
         columns={columns}
         data={data}

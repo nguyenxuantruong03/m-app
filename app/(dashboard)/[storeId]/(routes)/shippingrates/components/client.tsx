@@ -20,7 +20,7 @@ import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getShippingRateClient } from "@/translate/translate-dashboard";
+import { getEnterNameTranslation, getShippingRateClient } from "@/translate/translate-dashboard";
 
 interface ShippingRatesClientProps {
   data: ShippingRatesColumn[];
@@ -39,6 +39,7 @@ const ShippingRatesClient: React.FC<ShippingRatesClientProps> = ({ data }) => {
     const user = useCurrentUser();
     const languageToUse = user?.language || "vi";
     const shippingRateClientMessage = getShippingRateClient(languageToUse)
+    const enterNameMessage = getEnterNameTranslation(languageToUse)
 
   const handleDelete = async () => {
     setLoading(true);
@@ -84,13 +85,14 @@ const ShippingRatesClient: React.FC<ShippingRatesClientProps> = ({ data }) => {
           <Button
             onClick={() => router.push(`/${params.storeId}/shippingrates/new`)}
           >
-            <Plus className="mr-2 h-4 w-4" />
-            {shippingRateClientMessage.addNew}
+            <Plus className="md:mr-2 h-4 w-4" />
+            <span className="hidden md:block">{shippingRateClientMessage.addNew}</span>
           </Button>
         </div>
       </div>
       <Separator />
       <DataTable
+        placeholder={enterNameMessage}
         searchKey="name"
         columns={columns}
         data={data}

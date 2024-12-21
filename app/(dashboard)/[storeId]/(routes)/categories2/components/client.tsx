@@ -19,7 +19,7 @@ import DownloadFile from "@/components/file/downloadfilepage";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { getCategoriesClient, translateCategoriesClientPlastic } from "@/translate/translate-dashboard";
+import { getCategoriesClient, getEnterNameTranslation, translateCategoriesClientPlastic } from "@/translate/translate-dashboard";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
 interface CategoriesClientProps {
@@ -40,6 +40,7 @@ const CategoriesClient: React.FC<CategoriesClientProps> = ({ data }) => {
    const languageToUse = user?.language || "vi"
    const categoriesClientMessage = getCategoriesClient(languageToUse)
    const categoriesClientPlasticMessage = translateCategoriesClientPlastic(languageToUse)
+  const enterNameMessage = getEnterNameTranslation(languageToUse)
 
   const handleDelete = async () => {
     setLoading(true);
@@ -85,13 +86,14 @@ const CategoriesClient: React.FC<CategoriesClientProps> = ({ data }) => {
           <Button
             onClick={() => router.push(`/${params.storeId}/categories2/new`)}
           >
-            <Plus className="mr-2 h-4 w-4" />
-            {categoriesClientMessage.addNew}
+            <Plus className="md:mr-2 h-4 w-4" />
+            <span className="hidden md:block">{categoriesClientMessage.addNew}</span>
           </Button>
         </div>
       </div>
       <Separator />
       <DataTable
+        placeholder={enterNameMessage}
         searchKey="name"
         columns={columns}
         data={data}

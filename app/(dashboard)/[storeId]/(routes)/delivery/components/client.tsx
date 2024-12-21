@@ -8,6 +8,7 @@ import { OrderColumn, columns } from "./columns";
 import Downloadfile from "@/components/file/downloadfilepage";
 import {
   getDeliveryClient,
+  getEnterEmailTranslation,
   getLocationClientDelivery,
 } from "@/translate/translate-dashboard";
 import { Button } from "@/components/ui/button";
@@ -30,6 +31,7 @@ const OrderClient: React.FC<OrderProps> = ({ data }) => {
   const deliveryClientMessage = getDeliveryClient(languageToUse);
   const locationClientDeliveryMessage =
     getLocationClientDelivery(languageToUse);
+  const enterEmailMessage = getEnterEmailTranslation(languageToUse)
     
 //Xử lý chia sẻ vị trí hiện tại giao hạn
   const [isConnected, setIsConnected] = useState(false);
@@ -113,16 +115,16 @@ const OrderClient: React.FC<OrderProps> = ({ data }) => {
 
           {isSharingLocation ? (
             <Button onClick={stopSharingLocation} disabled={!isConnected}>
-              <span className="flex space-x-2">
-                <MapPinOff className="w-5 h-5" />
-                {locationClientDeliveryMessage.stopShare}
+              <span className="flex md:space-x-2">
+                <MapPinOff className="w-4 h-4" />
+                <span className="hidden md:block">{locationClientDeliveryMessage.stopShare}</span>
               </span>
             </Button>
           ) : (
             <Button onClick={() => shareLocation()} disabled={!isUserAllowedToShare || !isConnected}>
-              <span className="flex space-x-2">
-                <MapPin className="w-5 h-5" />
-                {locationClientDeliveryMessage.share}
+              <span className="flex md:space-x-2">
+                <MapPin className="w-4 h-4" />
+                <span className="hidden md:block">{locationClientDeliveryMessage.share}</span>
               </span>
             </Button>
           )}
@@ -130,6 +132,7 @@ const OrderClient: React.FC<OrderProps> = ({ data }) => {
       </div>
       <Separator />
       <DataTable
+        placeholder={enterEmailMessage}
         languageToUse={languageToUse}
         searchKey="email"
         columns={columns}

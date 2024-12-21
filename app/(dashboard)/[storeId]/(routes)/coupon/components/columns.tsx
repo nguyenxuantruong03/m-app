@@ -19,7 +19,37 @@ import { Clock12 } from "lucide-react";
 import ImageCellMutiple from "@/components/image-cell-multiple";
 import EditRow from "../_components/edit-row";
 import FormatDate from "@/components/format-Date";
-import { getUsersLabel, getMonthLabel } from '@/translate/translate-dashboard';
+import { getUsersLabel, getMonthLabel, translateCouponColumn } from '@/translate/translate-dashboard';
+import { useCurrentUser } from "@/hooks/use-current-user";
+import React from "react";
+
+interface CouponHeaderMessage {
+  name: string
+  discountImage: string
+  discountPercentage: string
+  timeRange: string
+  userCount: string
+  durationInMonth: string
+  rewardExchange: string
+  updatedTime: string;
+  createdTime: string
+}
+
+// Header trasnlate
+const HeaderColumn = ({ column, labelKey, icon }: { column: any; labelKey: keyof CouponHeaderMessage; icon: React.ElementType }) => {
+  const user = useCurrentUser();
+  const couponHeaderMessage: CouponHeaderMessage = translateCouponColumn(user?.language || "vi");
+
+  // Dùng labelKey để truy xuất giá trị động
+  const label = couponHeaderMessage[labelKey] || labelKey;
+
+  return (
+    <SpanColumn onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+      {label}
+      {icon && React.createElement(icon, { className: "ml-2 h-4 w-4" })}
+    </SpanColumn>
+  );
+};
 
 export type CouponColumn = {
   id: string;
@@ -62,16 +92,9 @@ export const columns: ColumnDef<CouponColumn>[] = [
   },
   {
     accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Tên
-          <Tag className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="name" icon={Tag} />
+    ),
     cell: ({ row }) => (
       <EditRow
         id={row.original.id}
@@ -90,17 +113,9 @@ export const columns: ColumnDef<CouponColumn>[] = [
   },
   {
     accessorKey: "imagecoupon",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Hình ảnh giảm giá
-          <ImageIcon className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
-    // Define a custom cell to render the image
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="discountImage" icon={ImageIcon} />
+    ),
     cell: ({ row }) => {
       const imageUrl = row.original.imagecouponpatch;
       const image = row.original.imagecoupon;
@@ -109,16 +124,9 @@ export const columns: ColumnDef<CouponColumn>[] = [
   },
   {
     accessorKey: "percent",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          % giảm
-          <TicketPercent className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="discountPercentage" icon={TicketPercent} />
+    ),
     cell: ({ row }) => {
       const percentValue = row.original.percent;
       if (percentValue != null) {
@@ -129,98 +137,77 @@ export const columns: ColumnDef<CouponColumn>[] = [
   },
   {
     accessorKey: "duration",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Khoảng thời gian
-          <Hourglass className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="timeRange" icon={Hourglass} />
+    ),
     cell: ({ row }) => {
       const getDurationLabel = (durationValue: string | null, language: string): string => {
-        if (!durationValue) return ""; // Xử lý khi durationValue là null hoặc undefined
-  
+        if (!durationValue) return "";
+
         switch (language) {
-          case "vi": // Tiếng Việt
+          case "vi":
             return {
               forever: "mãi mãi",
               once: "một lần mỗi tháng",
               repeating: "lặp đi lặp lại mỗi tháng",
             }[durationValue] || "";
-          case "en": // Tiếng Anh
+          case "en":
             return {
               forever: "forever",
               once: "once a month",
               repeating: "repeating every month",
             }[durationValue] || "";
-          case "zh": // Tiếng Trung
+          case "zh":
             return {
               forever: "永远",
               once: "每月一次",
               repeating: "每月重复",
             }[durationValue] || "";
-          case "fr": // Tiếng Pháp
+          case "fr":
             return {
               forever: "pour toujours",
               once: "une fois par mois",
               repeating: "répétitif chaque mois",
             }[durationValue] || "";
-          case "ja": // Tiếng Nhật
+          case "ja":
             return {
               forever: "永遠",
               once: "毎月一回",
               repeating: "毎月繰り返し",
             }[durationValue] || "";
           default:
-            return ""; // Ngôn ngữ không hỗ trợ
+            return "";
         }
       };
-  
-      const language = row.original.language; // Ngôn ngữ hiện tại
-      const durationValue = row.original.duration; // Giá trị thời gian
+
+      const language = row.original.language;
+      const durationValue = row.original.duration;
       return getDurationLabel(durationValue, language);
     },
   },
   {
     accessorKey: "maxredemptions",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Số lượng người dùng
-          <TrendingDown className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="userCount" icon={TrendingDown} />
+    ),
     cell: ({ row }) => {
       const maxRedemptionsValue = row.original.maxredemptions;
-      const language = row.original.language; // Ngôn ngữ hiện tại
+      const language = row.original.language;
       if (maxRedemptionsValue != null) {
         return `${maxRedemptionsValue} ${getUsersLabel(language, maxRedemptionsValue)}`;
       }
       return "";
-    }
+    },
   },
   {
     accessorKey: "durationinmoth",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời lượng trong tháng
-          <Repeat2 className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="durationInMonth" icon={Repeat2} />
+    ),
     cell: ({ row }) => {
       const durationValue = row.original.durationinmoth;
-      const language = row.original.language; // Ngôn ngữ hiện tại
-  
+      const language = row.original.language;
+
       if (durationValue != null) {
         if (durationValue !== 0) {
           return `${durationValue} ${getMonthLabel(language)}`;
@@ -233,57 +220,30 @@ export const columns: ColumnDef<CouponColumn>[] = [
   },
   {
     accessorKey: "redeemby",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Đổi thưởng
-          <AlarmClockOff className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="rewardExchange" icon={AlarmClockOff} />
+    ),
     cell: ({ row }) => {
-      return (
-      <FormatDate data={row.original.redeemby} language={row.original.language}/>
-      )
-    }
+      return <FormatDate data={row.original.redeemby} language={row.original.language} />;
+    },
   },
   {
     accessorKey: "updatedAt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian cập nhật
-          <AlarmClockCheck  className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="updatedTime" icon={AlarmClockCheck} />
+    ),
     cell: ({ row }) => {
-      return (
-      <FormatDate data={row.original.updatedAt} language={row.original.language}/>
-      )
-    }
+      return <FormatDate data={row.original.updatedAt} language={row.original.language} />;
+    },
   },
   {
     accessorKey: "createdAt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian tạo
-          <Clock12 className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="createdTime" icon={Clock12} />
+    ),
     cell: ({ row }) => {
-      return (
-      <FormatDate data={row.original.createdAt} language={row.original.language}/>
-      )
-    }
+      return <FormatDate data={row.original.createdAt} language={row.original.language} />;
+    },
   },
   {
     id: "actions",

@@ -16,7 +16,7 @@ import toast from "react-hot-toast";
 import Downloadfile from "@/components/file/downloadfilepage";
 import { useState } from "react";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getManagestaffClient } from "@/translate/translate-dashboard";
+import { getEnterEmailTranslation, getManagestaffClient } from "@/translate/translate-dashboard";
 
 interface SettingUserClientProps {
   data: ManageStaffsColumn[];
@@ -32,6 +32,7 @@ const SettingUserClient: React.FC<SettingUserClientProps> = ({ data }) => {
   const user = useCurrentUser();
   const languageToUse = user?.language || "vi";
   const manageStaffClientMessage = getManagestaffClient(languageToUse)
+  const enterEmailMessage = getEnterEmailTranslation(languageToUse)
 
   const onSentVerifyAll = async () => {
     try {
@@ -77,13 +78,14 @@ const SettingUserClient: React.FC<SettingUserClientProps> = ({ data }) => {
             onClick={onSentVerifyAll}
             disabled={data.every((item) => item.sentVeirifi)}
           >
-            <ReplyAll className="mr-2 h-4 w-4" />
-            {manageStaffClientMessage.sentAll}
+            <ReplyAll className="md:mr-2 h-4 w-4" />
+            <span className="hidden md:block">{manageStaffClientMessage.sentAll}</span>
           </Button>
         </div>
       </div>
       <Separator />
       <DataTable
+        placeholder={enterEmailMessage}
         searchKey="email"
         columns={columns}
         data={data}

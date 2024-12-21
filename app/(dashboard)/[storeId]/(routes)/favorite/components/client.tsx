@@ -20,7 +20,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getFavoriteClient } from "@/translate/translate-dashboard";
+import { getEnterNameTranslation, getFavoriteClient } from "@/translate/translate-dashboard";
 
 interface FavoriteClientProps {
   data: FavoriteColumn[];
@@ -39,6 +39,7 @@ const FavoriteClient: React.FC<FavoriteClientProps> = ({ data }) => {
   const user = useCurrentUser();
   const languageToUse = user?.language || "vi";
   const favoriteClientMessage = getFavoriteClient(languageToUse)
+  const enterNameMessage = getEnterNameTranslation(languageToUse)
 
   const handleDelete = async () => {
     setLoading(true);
@@ -84,13 +85,14 @@ const FavoriteClient: React.FC<FavoriteClientProps> = ({ data }) => {
           <Button
             onClick={() => router.push(`/${params.storeId}/favorite/new`)}
           >
-            <Plus className="mr-2 h-4 w-4" />
-            {favoriteClientMessage.addNew}
+            <Plus className="md:mr-2 h-4 w-4" />
+            <span className="hidden md:block">{favoriteClientMessage.addNew}</span>
           </Button>
         </div>
       </div>
       <Separator />
       <DataTable
+        placeholder={enterNameMessage}
         searchKey="name"
         columns={columns}
         data={data}

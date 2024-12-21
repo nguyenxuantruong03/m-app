@@ -25,7 +25,40 @@ import {
   getShippingTaxcodeText,
   getTaxBehaviorMessage,
   getUnitText,
+  translateShippingrateColumn,
 } from "@/translate/translate-dashboard";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import React from "react";
+
+interface ShippingRateHeaderMessage {
+  name: string,
+  amount: string,
+  taxBehavior: string,
+  minTime: string,
+  minUnit: string,
+  maxTime: string,
+  maxUnit: string,
+  activity: string,
+  tax: string,
+  updatedTime: string,
+  createdTime: string,
+}
+
+// Header trasnlate
+const HeaderColumn = ({ column, labelKey, icon }: { column: any; labelKey: keyof ShippingRateHeaderMessage; icon: React.ElementType }) => {
+  const user = useCurrentUser();
+  const shippingRateHeaderMessage: ShippingRateHeaderMessage = translateShippingrateColumn(user?.language || "vi");
+
+  // Dùng labelKey để truy xuất giá trị động
+  const label = shippingRateHeaderMessage[labelKey] || labelKey;
+
+  return (
+    <SpanColumn onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+      {label}
+      {icon && React.createElement(icon, { className: "ml-2 h-4 w-4" })}
+    </SpanColumn>
+  );
+};
 
 export type ShippingRatesColumn = {
   id: string;
@@ -69,16 +102,13 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
   },
   {
     accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Tên
-          <Tag className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="name"
+        icon={Tag}
+      />
+    ),
     cell: ({ row }) => (
       <EditRow
         data={row.original.name}
@@ -99,69 +129,53 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
   },
   {
     accessorKey: "amount",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Số tiền
-          <CircleDollarSign className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="amount"
+        icon={CircleDollarSign}
+      />
+    ),
   },
   {
     accessorKey: "taxbehavior",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thuế
-          <Receipt className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="taxBehavior"
+        icon={Receipt}
+      />
+    ),
     cell: ({ row }) => {
-      // Ví dụ sử dụng
-      const language = row.original.language // Ngôn ngữ hiện tại
-      const taxBehaviorType = row.original.taxbehavior; // Loại thuế từ dữ liệu
-      const taxBehaviorMessage = getTaxBehaviorMessage(
-        language,
-        taxBehaviorType
-      );
+      const language = row.original.language;
+      const taxBehaviorType = row.original.taxbehavior;
+      const taxBehaviorMessage = getTaxBehaviorMessage(language, taxBehaviorType);
 
       return <div>{taxBehaviorMessage}</div>;
     },
   },
   {
     accessorKey: "valuemin",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian thấp nhất
-          <AlarmClockMinus className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="minTime"
+        icon={AlarmClockMinus}
+      />
+    ),
   },
   {
     accessorKey: "unitmin",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Đơn vị thấp nhất
-          <Tally1 className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="minUnit"
+        icon={Tally1}
+      />
+    ),
     cell: ({ row }) => {
-      const language = row.original.language; // Ví dụ ngôn ngữ đang dùng là "vi"
-      const unit = row.original.unitmin; // Lấy giá trị đơn vị từ dữ liệu
+      const language = row.original.language;
+      const unit = row.original.unitmin;
       const unitText = getUnitText(language, unit);
 
       return <div>{unitText}</div>;
@@ -169,32 +183,26 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
   },
   {
     accessorKey: "valuemax",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian tối đa
-          <AlarmClockPlus  className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="maxTime"
+        icon={AlarmClockPlus}
+      />
+    ),
   },
   {
     accessorKey: "unitmax",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Đơn vị tối đa
-          <Tally4 className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="maxUnit"
+        icon={Tally4}
+      />
+    ),
     cell: ({ row }) => {
-      const language = row.original.language; // Ví dụ ngôn ngữ đang dùng là "vi"
-      const unit = row.original.unitmax; // Lấy giá trị đơn vị từ dữ liệu
+      const language = row.original.language;
+      const unit = row.original.unitmax;
       const unitText = getUnitText(language, unit);
 
       return <div>{unitText}</div>;
@@ -202,16 +210,13 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
   },
   {
     accessorKey: "active",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Hoạt động
-          <Sparkles className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="activity"
+        icon={Sparkles}
+      />
+    ),
     cell: ({ row }) => {
       const isActive = row.original.active;
       return isActive ? (
@@ -223,20 +228,16 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
   },
   {
     accessorKey: "taxcode",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thuế
-          <ReceiptText className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="tax"
+        icon={ReceiptText}
+      />
+    ),
     cell: ({ row }) => {
-      // Sử dụng hàm getShippingTaxcodeText trong trang của bạn:
-      const language = row.original.language; // Ví dụ ngôn ngữ đang sử dụng là "vi"
-      const taxcode = row.original.taxcode; // Lấy giá trị mã thuế từ dữ liệu
+      const language = row.original.language;
+      const taxcode = row.original.taxcode;
       const taxcodeText = getShippingTaxcodeText(language, taxcode);
 
       return <div>{taxcodeText}</div>;
@@ -244,37 +245,29 @@ export const columns: ColumnDef<ShippingRatesColumn>[] = [
   },
   {
     accessorKey: "updatedAt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian cập nhật
-          <AlarmClockCheck className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="updatedTime"
+        icon={AlarmClockCheck}
+      />
+    ),
     cell: ({ row }) => {
       return <FormatDate data={row.original.updatedAt} language={row.original.language}/>;
     },
   },
   {
     accessorKey: "createdAt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian tạo
-          <Clock12 className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
-    cell: ({ row }) => {
-      return (
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="createdTime"
+        icon={Clock12}
+      />
+    ),
+    cell: ({ row }) => (
       <FormatDate data={row.original.createdAt} language={row.original.language}/>
-      )
-    }
+    )
   },
   {
     id: "actions",

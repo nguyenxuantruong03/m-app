@@ -20,7 +20,7 @@ import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getTaxrateClient } from "@/translate/translate-dashboard";
+import { getEnterNameTranslation, getTaxrateClient } from "@/translate/translate-dashboard";
 
 interface TaxRateClientProps {
   data: TaxRateColumn[];
@@ -39,6 +39,7 @@ const TaxRateClient: React.FC<TaxRateClientProps> = ({ data }) => {
     const user = useCurrentUser();
     const languageToUse = user?.language || "vi";
     const taxrateClientMessage = getTaxrateClient(languageToUse)
+    const enterNameMessage = getEnterNameTranslation(languageToUse)
 
   const handleDelete = async () => {
     setLoading(true);
@@ -82,13 +83,14 @@ const TaxRateClient: React.FC<TaxRateClientProps> = ({ data }) => {
         <div className="flex space-x-3">
           <Downloadfile data={data} filename="taxrate" languageToUse={languageToUse}/>
           <Button onClick={() => router.push(`/${params.storeId}/taxrate/new`)}>
-            <Plus className="mr-2 h-4 w-4" />
-            {taxrateClientMessage.addNew}
+            <Plus className="md:mr-2 h-4 w-4" />
+            <span className="hidden md:block">{taxrateClientMessage.addNew}</span>
           </Button>
         </div>
       </div>
       <Separator />
       <DataTable
+        placeholder={enterNameMessage}
         searchKey="name"
         columns={columns}
         data={data}

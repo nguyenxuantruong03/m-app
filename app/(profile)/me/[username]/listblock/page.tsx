@@ -10,18 +10,21 @@ import {
   translateListBlockSettings,
 } from "@/translate/translate-client";
 import { getSelf } from "@/lib/stream/auth-service";
+import { getEnterEmailTranslation } from "@/translate/translate-dashboard";
 
 const ListBlockPage = async () => {
   const self = await getSelf();
   //language
   const languageToUse = self.language || "vi";
   const listBlockSettingMessage = translateListBlockSettings(languageToUse);
+  const enterEmailMessage = getEnterEmailTranslation(languageToUse);
 
   const blockedUsers = await getBlockedUsers();
 
   const formattedData = blockedUsers.map((block) => ({
     ...block,
     userId: block.blocked.id,
+    email: block.blocked.email,
     imageUrl: block.blocked.imageCredential[0].url || block.blocked.image || "",
     nameuser: block.blocked.nameuser,
     createdAt: block.blocker.blocking.find((item: any) => item)?.createdAt!,
@@ -40,9 +43,10 @@ const ListBlockPage = async () => {
         </h1>
       </div>
       <DataTable
+        placeholder={enterEmailMessage}
         columns={columns}
         data={formattedData}
-        searchKey="nameuser"
+        searchKey="email"
         showSelected={false}
         languageToUse={languageToUse}
       />

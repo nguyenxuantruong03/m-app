@@ -15,7 +15,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useParams } from "next/navigation";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { translateFeedbackClient } from "@/translate/translate-dashboard";
+import { getEnterEmailTranslation, translateFeedbackClient } from "@/translate/translate-dashboard";
 
 interface SizeClientProps {
   data: FeedBackColumn[];
@@ -33,6 +33,7 @@ const FeedBackClient: React.FC<SizeClientProps> = ({ data }) => {
   //language
   const languageToUse = user?.language || "vi"
   const feedBackClientMessage = translateFeedbackClient(languageToUse)
+  const enterEmailMessage = getEnterEmailTranslation(languageToUse)
 
   const handleDelete = async () => {
     setLoading(true);
@@ -77,7 +78,8 @@ const FeedBackClient: React.FC<SizeClientProps> = ({ data }) => {
       </div>
       <Separator />
       <DataTable
-        searchKey="name"
+        placeholder={enterEmailMessage}
+        searchKey="email"
         columns={columns}
         data={data}
         onSelect={(rows) => {

@@ -20,7 +20,7 @@ import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getCouponClient } from "@/translate/translate-dashboard";
+import { getCouponClient, getEnterNameTranslation } from "@/translate/translate-dashboard";
 
 interface CouponClientProps {
   data: CouponColumn[];
@@ -39,6 +39,7 @@ const CouponClient: React.FC<CouponClientProps> = ({ data }) => {
   const user = useCurrentUser();
   const languageToUse = user?.language || "vi";
   const couponClientMessage = getCouponClient(languageToUse)
+  const enterNameMessage = getEnterNameTranslation(languageToUse)
 
   const handleDelete = async () => {
     setLoading(true);
@@ -82,13 +83,14 @@ const CouponClient: React.FC<CouponClientProps> = ({ data }) => {
         <div className="flex space-x-3">
           <Downloadfile data={data} filename="coupon" languageToUse={languageToUse}/>
           <Button onClick={() => router.push(`/${params.storeId}/coupon/new`)}>
-            <Plus className="mr-2 h-4 w-4" />
-            {couponClientMessage.addNew}
+            <Plus className="md:mr-2 h-4 w-4" />
+            <span className="hidden md:block">{couponClientMessage.addNew}</span>
           </Button>
         </div>
       </div>
       <Separator />
       <DataTable
+        placeholder={enterNameMessage}
         searchKey="name"
         columns={columns}
         data={data}

@@ -40,6 +40,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   searchKey: string;
+  placeholder: string;
   onDelete?: (rows: Row<TData>[]) => void;
   onSelect?: (rows: Row<TData>[]) => void;
   disable?: boolean;
@@ -59,6 +60,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   searchKey,
+  placeholder,
   onDelete,
   onSelect,
   disable,
@@ -160,7 +162,7 @@ export function DataTable<TData, TValue>({
       />
       <div className="lg:flex items-center py-4 space-y-2 lg:space-y-0 lg:space-x-3 grid grid-rows-2">
         <Input
-          placeholder={dataTableMessage.search}
+          placeholder={placeholder}
           value={
             (table.getColumn(searchKey || "")?.getFilterValue() as string) ?? ""
           }
@@ -265,7 +267,7 @@ export function DataTable<TData, TValue>({
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
-          {dataTableMessage.previous}
+          {dataTableMessage.next}
         </Button>
       </div>
     </div>

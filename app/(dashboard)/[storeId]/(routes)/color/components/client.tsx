@@ -20,7 +20,7 @@ import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getColorClient } from "@/translate/translate-dashboard";
+import { getColorClient, getEnterNameTranslation } from "@/translate/translate-dashboard";
 
 interface ColorClientProps {
   data: ColorColumn[];
@@ -39,6 +39,7 @@ const ColorClient: React.FC<ColorClientProps> = ({ data }) => {
   const user = useCurrentUser();
   const languageToUse = user?.language || "vi";
   const colorClientMessage = getColorClient(languageToUse)
+  const enterNameMessage = getEnterNameTranslation(languageToUse)
 
   const handleDelete = async () => {
     setLoading(true);
@@ -82,13 +83,14 @@ const ColorClient: React.FC<ColorClientProps> = ({ data }) => {
         <div className="flex space-x-3">
           <Downloadfile data={data} filename="color" languageToUse={languageToUse}/>
           <Button onClick={() => router.push(`/${params.storeId}/color/new`)}>
-            <Plus className="mr-2 h-4 w-4" />
-            {colorClientMessage.addNew}
+          <Plus className="md:mr-2 h-4 w-4" />
+          <span className="hidden md:block">{colorClientMessage.addNew}</span>
           </Button>
         </div>
       </div>
       <Separator />
       <DataTable
+        placeholder={enterNameMessage}
         searchKey="name"
         columns={columns}
         data={data}

@@ -10,7 +10,7 @@ import { WheelSpinColumn, columns } from "./column";
 import Downloadfile from "@/components/file/downloadfilepage";
 import { useState } from "react";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getWheelSpinClient } from "@/translate/translate-dashboard";
+import { getEnterEmailTranslation, getWheelSpinClient } from "@/translate/translate-dashboard";
 
 interface WheelSpinClientProps {
   data: WheelSpinColumn[];
@@ -25,6 +25,8 @@ const WheelSpinClient: React.FC<WheelSpinClientProps> = ({ data }) => {
     const user = useCurrentUser();
     const languageToUse = user?.language || "vi";
     const wheelSpinClientMessage = getWheelSpinClient(languageToUse);
+    const enterEmailMessage = getEnterEmailTranslation(languageToUse);
+
   return (
     <>
       <div className="flex items-center justify-between">
@@ -36,6 +38,7 @@ const WheelSpinClient: React.FC<WheelSpinClientProps> = ({ data }) => {
       </div>
       <Separator />
       <DataTable
+        placeholder={enterEmailMessage}
         searchKey="email"
         columns={columns}
         data={data}

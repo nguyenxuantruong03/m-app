@@ -212,7 +212,7 @@ export const ManageStaffForm: React.FC<ManageStaffFormProps> = ({
                 <Image
                   className="h-10 w-10 rounded-full"
                   src={
-                    data.imageCredential
+                    data.imageCredential[0]?.url
                       ? data.imageCredential[0]?.url
                       : data.image || ""
                   }

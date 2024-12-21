@@ -22,7 +22,7 @@ import axios from "axios";
 import useConversation from "@/hooks/useConversation";
 import { useRouter } from "next/navigation";
 import { AlertModal } from "@/components/modals/alert-modal";
-import { translateProfileDrawerMessages, translateStatusMessages } from "@/translate/translate-client";
+import { translateDeleteSuccess, translateProfileDrawerMessages, translateStatusMessages } from "@/translate/translate-client";
 
 interface ProfileDrawerProps {
   data: any & {
@@ -45,6 +45,7 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({ data, currentUser, langua
 
   const statusMessage = translateStatusMessages(language)
   const profileDrawerMessage = translateProfileDrawerMessages(language)
+  const deleteSuccessMessage = translateDeleteSuccess(language)
 
   const onDelete = useCallback(() => {
     setIsLoading(true);
@@ -52,6 +53,7 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({ data, currentUser, langua
       .delete(`/api/conversations/${conversationId}`)
       .then(() => {
         setConFirmOpen(false);
+        toast.success(deleteSuccessMessage)
         router.push("/conversations");
         router.refresh();
       })

@@ -10,7 +10,7 @@ import { SalaryStaffsColumn, columns } from "./column";
 import Downloadfile from "@/components/file/downloadfilepage";
 import { useState } from "react";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getSalaryStaffClient } from "@/translate/translate-dashboard";
+import { getEnterEmailTranslation, getSalaryStaffClient } from "@/translate/translate-dashboard";
 
 interface SalaryStaffClientProps {
   data: SalaryStaffsColumn[];
@@ -25,6 +25,7 @@ const SalaryStaffClient: React.FC<SalaryStaffClientProps> = ({ data }) => {
     const user = useCurrentUser();
     const languageToUse = user?.language || "vi";
     const salaryStaffClientMessage = getSalaryStaffClient(languageToUse);
+    const enterEmailMessage = getEnterEmailTranslation(languageToUse);
 
   return (
     <>
@@ -37,7 +38,8 @@ const SalaryStaffClient: React.FC<SalaryStaffClientProps> = ({ data }) => {
       </div>
       <Separator />
       <DataTable
-        searchKey="name"
+        placeholder={enterEmailMessage}
+        searchKey="email"
         columns={columns}
         data={data}
         onSelect={() => {}}

@@ -10,7 +10,7 @@ import { SettingUsersColumn, columns } from "./column";
 import Downloadfile from "@/components/file/downloadfilepage";
 import { useState } from "react";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getSettingUserClient } from "@/translate/translate-dashboard";
+import { getEnterEmailTranslation, getSettingUserClient } from "@/translate/translate-dashboard";
 
 interface SettingUserClientProps {
   data: SettingUsersColumn[];
@@ -25,6 +25,7 @@ const SettingUserClient: React.FC<SettingUserClientProps> = ({ data }) => {
     const user = useCurrentUser();
     const languageToUse = user?.language || "vi";
     const settingUserClientMessage = getSettingUserClient(languageToUse)
+    const enterEmailMessage = getEnterEmailTranslation(languageToUse);
   return (
     <>
       <div className="flex items-center justify-between">
@@ -36,6 +37,7 @@ const SettingUserClient: React.FC<SettingUserClientProps> = ({ data }) => {
       </div>
       <Separator />
       <DataTable
+        placeholder={enterEmailMessage}
         searchKey="email"
         columns={columns}
         data={data}

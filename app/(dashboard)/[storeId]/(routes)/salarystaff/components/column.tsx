@@ -2,9 +2,65 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
-import { AlarmClockCheck, Banknote, Circle, Clock12, GraduationCap, HandCoins, NavigationOff, Receipt, SendHorizontal, Tag, User } from "lucide-react";
+import {
+  AlarmClockCheck,
+  Banknote,
+  Circle,
+  Clock12,
+  GraduationCap,
+  HandCoins,
+  NavigationOff,
+  Receipt,
+  SendHorizontal,
+  Tag,
+  User,
+} from "lucide-react";
 import SpanColumn from "@/components/span-column";
 import FormatDate from "@/components/format-Date";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { translateSalaryStaffColumn } from "@/translate/translate-dashboard";
+import React from "react";
+
+interface SalaryStaffHeaderMessage {
+  name: string;
+  email: string;
+  qualification: string;
+  bonus: string;
+  salary: string;
+  totalSalary: string;
+  sendMail: string;
+  paySalary: string;
+  updatedTime: string;
+  createdTime: string;
+}
+
+// Header trasnlate
+const HeaderColumn = ({
+  column,
+  labelKey,
+  icon,
+}: {
+  column: any;
+  labelKey: keyof SalaryStaffHeaderMessage;
+  icon: React.ElementType;
+}) => {
+  const user = useCurrentUser();
+  const salaryStaffHeaderMessage: SalaryStaffHeaderMessage = translateSalaryStaffColumn(
+    user?.language || "vi"
+  );
+
+  // Dùng labelKey để truy xuất giá trị động
+  const label = salaryStaffHeaderMessage[labelKey] || labelKey;
+
+  return (
+    <SpanColumn
+      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    >
+      {label}
+      {icon && React.createElement(icon, { className: "ml-2 h-4 w-4" })}
+    </SpanColumn>
+  );
+};
 
 export type SalaryStaffsColumn = {
   id: string;
@@ -16,51 +72,41 @@ export type SalaryStaffsColumn = {
   isSent: boolean | null;
   isPaid: boolean | null;
   degree: string | null;
-  updatedAt: Date
+  updatedAt: Date;
   createdAt: Date;
   language: string;
 };
 
-
 export const columns: ColumnDef<SalaryStaffsColumn>[] = [
   {
     accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Tên
-          <Tag className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="name"
+        icon={Tag}
+      />
+    ),
   },
   {
     accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <User className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="email"
+        icon={User}
+      />
+    ),
   },
   {
     accessorKey: "degree",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Bằng cấp
-          <GraduationCap className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="qualification"
+        icon={GraduationCap}
+      />
+    ),
     cell: ({ row }) => {
       type Language = "vi" | "en" | "zh" | "fr" | "ja";
 
@@ -106,44 +152,40 @@ export const columns: ColumnDef<SalaryStaffsColumn>[] = [
           MastersDegree: "修士号",
         },
       };
-      
-      const getDegreeText = (degree: string | null | undefined, language: Language) => {
+
+      const getDegreeText = (
+        degree: string | null | undefined,
+        language: Language
+      ) => {
         const languageMappings = degreeMappings[language];
-      
+
         if (languageMappings) {
-          const degreeText = degree ? languageMappings[degree as keyof typeof languageMappings] : "";
+          const degreeText = degree
+            ? languageMappings[degree as keyof typeof languageMappings]
+            : "";
           return degreeText || "";
         }
-      
+
         return "";
       };
-      
-      // Example usage inside your React component
+
       const degreeValue: string | null | undefined = row.original.degree;
-      const language: Language = row.original.language as Language; // Assuming this is where the language comes from
-      
+      const language: Language = row.original.language as Language;
+
       const degreeText = getDegreeText(degreeValue, language);
-      
-      return (
-        <div>
-          {degreeText}
-        </div>
-      );
-      
+
+      return <div>{degreeText}</div>;
     },
   },
   {
     accessorKey: "bonus",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thưởng thêm
-          <HandCoins className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="bonus"
+        icon={HandCoins}
+      />
+    ),
     cell: ({ row }) => {
       const bonus = row.original.bonus;
       return bonus ? (
@@ -155,19 +197,17 @@ export const columns: ColumnDef<SalaryStaffsColumn>[] = [
   },
   {
     accessorKey: "salaryday",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Lương
-          <Receipt className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="salary"
+        icon={Receipt}
+      />
+    ),
     cell: ({ row }) => {
       const salaryday = row.original.salaryday;
-      const salarydayValue = typeof salaryday === 'string' ? parseInt(salaryday) : salaryday;
+      const salarydayValue =
+        typeof salaryday === "string" ? parseInt(salaryday) : salaryday;
       return salarydayValue !== undefined && salarydayValue !== 0 ? (
         <span>{salaryday}</span>
       ) : (
@@ -177,16 +217,13 @@ export const columns: ColumnDef<SalaryStaffsColumn>[] = [
   },
   {
     accessorKey: "salarytotal",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Tổng lương
-          <Banknote className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="totalSalary"
+        icon={Banknote}
+      />
+    ),
     cell: ({ row }) => {
       const salarytotal = row.original.salarytotal;
       return salarytotal ? (
@@ -198,20 +235,17 @@ export const columns: ColumnDef<SalaryStaffsColumn>[] = [
   },
   {
     accessorKey: "isSent",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Gửi mail
-          <SendHorizontal className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="sendMail"
+        icon={SendHorizontal}
+      />
+    ),
     cell: ({ row }) => {
       const isAllday = row.original.isSent;
       return isAllday ? (
-        <SendHorizontal  className="w-5 h-5 text-green-500" />
+        <SendHorizontal className="w-5 h-5 text-green-500" />
       ) : (
         <NavigationOff className="w-5 h-5 text-red-500" />
       );
@@ -219,16 +253,13 @@ export const columns: ColumnDef<SalaryStaffsColumn>[] = [
   },
   {
     accessorKey: "isPaid",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Trả lương
-          <Receipt className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="paySalary"
+        icon={Receipt}
+      />
+    ),
     cell: ({ row }) => {
       const isAllday = row.original.isPaid;
       return isAllday ? (
@@ -240,40 +271,43 @@ export const columns: ColumnDef<SalaryStaffsColumn>[] = [
   },
   {
     accessorKey: "updatedAt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian cập nhật
-          <AlarmClockCheck className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="updatedTime"
+        icon={AlarmClockCheck}
+      />
+    ),
     cell: ({ row }) => {
-      return <FormatDate data={row.original.updatedAt} language={row.original.language}/>;
+      return (
+        <FormatDate
+          data={row.original.updatedAt}
+          language={row.original.language}
+        />
+      );
     },
   },
   {
     accessorKey: "createdAt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian tạo
-          <Clock12 className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn
+        column={column}
+        labelKey="createdTime"
+        icon={Clock12}
+      />
+    ),
     cell: ({ row }) => {
       return (
-      <FormatDate data={row.original.createdAt} language={row.original.language}/>
-      )
-    }
+        <FormatDate
+          data={row.original.createdAt}
+          language={row.original.language}
+        />
+      );
+    },
   },
   {
     id: "actions",
     cell: ({ row }) => <CellAction data={row.original} />,
   },
 ];
+

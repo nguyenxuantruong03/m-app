@@ -6,19 +6,19 @@ import { DataTable } from "@/components/ui/data-table";
 import { OrderColumn, columns } from "./columns";
 import Downloadfile from "@/components/file/downloadfilepage";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getOrderClient } from "@/translate/translate-dashboard";
+import { getEnterEmailTranslation, getOrderClient } from "@/translate/translate-dashboard";
 
 interface OrderProps {
   data: OrderColumn[];
 }
-
-
 
 const OrderClient: React.FC<OrderProps> = ({ data }) => {
   //language
   const user = useCurrentUser();
   const languageToUse = user?.language || "vi";
   const orderClientMessage = getOrderClient(languageToUse)
+  const enterEmailMessage = getEnterEmailTranslation(languageToUse)
+
   return (
     <>
       <div className="flex items-center justify-between">
@@ -30,6 +30,7 @@ const OrderClient: React.FC<OrderProps> = ({ data }) => {
       </div>
       <Separator />
       <DataTable
+        placeholder={enterEmailMessage}
         searchKey="email"
         columns={columns}
         data={data}

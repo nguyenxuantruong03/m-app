@@ -19,6 +19,37 @@ import { Checkbox } from "@/components/ui/checkbox";
 import ImageCellMutiple from "@/components/image-cell-multiple";
 import EditRow from "../_components/edit-row";
 import FormatDate from "@/components/format-Date";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { translateProductColumn } from "@/translate/translate-dashboard";
+import React from "react";
+
+interface ProductHeaderMessage {
+  productName: string
+  image: string
+  featuredImage: string
+  showOnHomePage: string
+  outOfStock: string
+  description: string
+  productDetail: string
+  updatedTime: string;
+  createdTime: string
+}
+
+// Header trasnlate
+const HeaderColumn = ({ column, labelKey, icon }: { column: any; labelKey: keyof ProductHeaderMessage; icon: React.ElementType }) => {
+  const user = useCurrentUser();
+  const productHeaderMessage: ProductHeaderMessage = translateProductColumn(user?.language || "vi");
+
+  // Dùng labelKey để truy xuất giá trị động
+  const label = productHeaderMessage[labelKey] || labelKey;
+
+  return (
+    <SpanColumn onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+      {label}
+      {icon && React.createElement(icon, { className: "ml-2 h-4 w-4" })}
+    </SpanColumn>
+  );
+};
 
 export type ProductColumn = {
   id: string;
@@ -63,16 +94,9 @@ export const columns: ColumnDef<ProductColumn>[] = [
   },
   {
     accessorKey: "heading",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Heading
-          <Tag className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="productName" icon={Tag} />
+    ),
     cell: ({ row }) => (
       <EditRow
         id={row.original.id}
@@ -93,16 +117,9 @@ export const columns: ColumnDef<ProductColumn>[] = [
   },
   {
     accessorKey: "images",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Hình ảnh
-          <ImageIcon className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="image" icon={ImageIcon} />
+    ),
     cell: ({ row }) => {
       const imageUrl = row.original.imagesUrl;
       const image = row.original.images;
@@ -111,16 +128,9 @@ export const columns: ColumnDef<ProductColumn>[] = [
   },
   {
     accessorKey: "imagesalientfeatures",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Hình ảnh nổi bật
-          <ImageUp className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="featuredImage" icon={ImageUp} />
+    ),
     cell: ({ row }) => {
       const imageUrl = row.original.imagesalientfeaturesUrl;
       const image = row.original.imagesalientfeatures;
@@ -129,16 +139,9 @@ export const columns: ColumnDef<ProductColumn>[] = [
   },
   {
     accessorKey: "isFeatured",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Hiển thị trang chính
-          <Home className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="showOnHomePage" icon={Home} />
+    ),
     cell: ({ row }) => {
       const isFeatured = row.original.isFeatured;
       return isFeatured ? (
@@ -150,16 +153,9 @@ export const columns: ColumnDef<ProductColumn>[] = [
   },
   {
     accessorKey: "isArchived",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Hết hàng
-          <PackageX className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="outOfStock" icon={PackageX} />
+    ),
     cell: ({ row }) => {
       const isArchived = row.original.isArchived;
       return isArchived ? (
@@ -171,16 +167,9 @@ export const columns: ColumnDef<ProductColumn>[] = [
   },
   {
     accessorKey: "description",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Mô tả
-          <NotebookText className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="description" icon={NotebookText} />
+    ),
     cell: ({ row }) => (
       <EditRow
         id={row.original.id}
@@ -201,50 +190,27 @@ export const columns: ColumnDef<ProductColumn>[] = [
   },
   {
     accessorKey: "productdetail",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Sản phẩm chi tiết
-          <View className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="productDetail" icon={View} />
+    ),
   },
   {
     accessorKey: "updatedAt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian cập nhật
-          <AlarmClockCheck className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
-    cell: ({ row }) => {
-      return <FormatDate data={row.original.updatedAt} language={row.original.language}/>;
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="updatedTime" icon={AlarmClockCheck} />
+    ),
+    cell: ({ row }) => (
+      <FormatDate data={row.original.updatedAt} language={row.original.language} />
+    ),
   },
   {
     accessorKey: "createdAt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian tạo
-          <Clock12 className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
-    cell: ({ row }) => {
-      return (
-      <FormatDate data={row.original.createdAt} language={row.original.language}/>
-      )
-    }
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="createdTime" icon={Clock12} />
+    ),
+    cell: ({ row }) => (
+      <FormatDate data={row.original.createdAt} language={row.original.language} />
+    ),
   },
   {
     id: "actions",

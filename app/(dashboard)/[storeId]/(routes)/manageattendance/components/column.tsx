@@ -27,7 +27,57 @@ import Link from "next/link";
 import { Image as ImageIcon } from "lucide-react";
 import ImageCellOne from "@/components/image-cell-one";
 import FormatDate from "@/components/format-Date";
-import { getNotFoundMessage } from "@/translate/translate-dashboard";
+import {
+  getNotFoundMessage,
+  translateManageAttendanceColumn,
+} from "@/translate/translate-dashboard";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import React from "react";
+
+interface ManageAttendaceHeaderMessage {
+  name: string;
+  email: string;
+  attendanceImage: string;
+  qrCode: string;
+  workingTime: string;
+  title: string;
+  startWork: string;
+  lateTime: string;
+  endWork: string;
+  allDay: string;
+  checkAttendanceImage: string;
+  updateImage: string;
+  updateNFC: string;
+  updatedTime: string;
+  createdTime: string;
+}
+
+// Header trasnlate
+const HeaderColumn = ({
+  column,
+  labelKey,
+  icon,
+}: {
+  column: any;
+  labelKey: keyof ManageAttendaceHeaderMessage;
+  icon: React.ElementType;
+}) => {
+  const user = useCurrentUser();
+  const manageAttendanceHeaderMessage: ManageAttendaceHeaderMessage =
+    translateManageAttendanceColumn(user?.language || "vi");
+
+  // Dùng labelKey để truy xuất giá trị động
+  const label = manageAttendanceHeaderMessage[labelKey] || labelKey;
+
+  return (
+    <SpanColumn
+      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    >
+      {label}
+      {icon && React.createElement(icon, { className: "ml-2 h-4 w-4" })}
+    </SpanColumn>
+  );
+};
 
 export type ManageAttendancesColumn = {
   id: string;
@@ -54,47 +104,25 @@ export type ManageAttendancesColumn = {
 export const columns: ColumnDef<ManageAttendancesColumn>[] = [
   {
     accessorKey: "user",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Tên
-          <Tag className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="name" icon={Tag} />
+    ),
   },
   {
     accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <User className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="email" icon={User} />
+    ),
   },
   {
     accessorKey: "image",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Hình ảnh điểm danh
-          <ImageIcon className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="attendanceImage" icon={ImageIcon} />
+    ),
     cell: ({ row }) => {
       const imageUrl = row.original.urlImageAttendance;
       const updateImage = row.original.updateImage;
       const email = row.original.email;
-      // Check if the image URL is available
       if (imageUrl) {
         return (
           <ImageCellOne
@@ -110,19 +138,11 @@ export const columns: ColumnDef<ManageAttendancesColumn>[] = [
   },
   {
     accessorKey: "qrcodeCheckAttendance",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Qr code
-          <QrCode className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="qrCode" icon={QrCode} />
+    ),
     cell: ({ row }) => {
       const linkqrcode = row.original.qrcodeCheckAttendance;
-      // Check if the image URL is available
       if (linkqrcode) {
         return (
           <Link
@@ -134,74 +154,43 @@ export const columns: ColumnDef<ManageAttendancesColumn>[] = [
           </Link>
         );
       } else {
-        return <span className="text-red-500 font-bold">{getNotFoundMessage(row.original.language)}</span>;
+        return (
+          <span className="text-red-500 font-bold">
+            {getNotFoundMessage(row.original.language)}
+          </span>
+        );
       }
     },
   },
   {
     accessorKey: "wokingTime",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian làm việc
-          <BriefcaseBusiness className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="workingTime" icon={BriefcaseBusiness} />
+    ),
   },
   {
     accessorKey: "title",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Tiêu đề
-          <Captions className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="title" icon={Captions} />
+    ),
   },
   {
     accessorKey: "start",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Bất đầu làm
-          <Timer className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="startWork" icon={Timer} />
+    ),
   },
   {
     accessorKey: "delayTime",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian trễ
-          <AlarmClockMinus className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="lateTime" icon={AlarmClockMinus} />
+    ),
   },
   {
     accessorKey: "end",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Kết thúc làm
-          <TimerOff className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="endWork" icon={TimerOff} />
+    ),
     cell: ({ row }) => {
       const endTime = row.original.end;
       return endTime ? (
@@ -213,16 +202,9 @@ export const columns: ColumnDef<ManageAttendancesColumn>[] = [
   },
   {
     accessorKey: "allDay",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Cả ngày
-          <CalendarCheck className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="allDay" icon={CalendarCheck} />
+    ),
     cell: ({ row }) => {
       const isAllday = row.original.allDay;
       return isAllday ? (
@@ -234,16 +216,9 @@ export const columns: ColumnDef<ManageAttendancesColumn>[] = [
   },
   {
     accessorKey: "isCheckAttendanceImage",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Kiểm tra ảnh điểm danh 
-          <ImagePlus className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="checkAttendanceImage" icon={ImagePlus} />
+    ),
     cell: ({ row }) => {
       const isCheckAttendanceImage = row.original.isCheckAttendanceImage;
       return isCheckAttendanceImage ? (
@@ -255,62 +230,38 @@ export const columns: ColumnDef<ManageAttendancesColumn>[] = [
   },
   {
     accessorKey: "updateImage",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Cập nhật hình ảnh
-          <ImageUp className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="updateImage" icon={ImageUp} />
+    ),
   },
   {
     accessorKey: "updateNFC",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Cập nhật NFC
-          <SmartphoneNfc className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="updateNFC" icon={SmartphoneNfc} />
+    ),
   },
   {
     accessorKey: "updatedAt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian cập nhật
-          <AlarmClockCheck className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
-    cell: ({ row }) => {
-      return <FormatDate data={row.original.updatedAt} language={row.original.language}/>;
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="updatedTime" icon={AlarmClockCheck} />
+    ),
+    cell: ({ row }) => (
+      <FormatDate
+        data={row.original.updatedAt}
+        language={row.original.language}
+      />
+    ),
   },
   {
     accessorKey: "createdAt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian tạo
-          <Clock12 className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
-    cell: ({ row }) => {
-      return (
-      <FormatDate data={row.original.createdAt} language={row.original.language}/>
-      )
-    }
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="createdTime" icon={Clock12} />
+    ),
+    cell: ({ row }) => (
+      <FormatDate
+        data={row.original.createdAt}
+        language={row.original.language}
+      />
+    ),
   },
 ];

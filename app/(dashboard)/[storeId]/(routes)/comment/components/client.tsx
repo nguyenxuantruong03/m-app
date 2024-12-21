@@ -10,7 +10,7 @@ import { CommentColumn, columns } from "./column";
 import Downloadfile from "@/components/file/downloadfilepage";
 import { useState } from "react";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getCommentClient } from "@/translate/translate-dashboard";
+import { getCommentClient, getEnterEmailTranslation } from "@/translate/translate-dashboard";
 
 interface CommentClientProps {
   data: CommentColumn[];
@@ -25,6 +25,8 @@ const CommentClient: React.FC<CommentClientProps> = ({ data }) => {
     const user = useCurrentUser();
     const languageToUse = user?.language || "vi";
     const commentClientMessage = getCommentClient(languageToUse);
+    const enterEmailMessage = getEnterEmailTranslation(languageToUse);
+
   return (
     <>
       <div className="flex items-center justify-between">
@@ -36,7 +38,8 @@ const CommentClient: React.FC<CommentClientProps> = ({ data }) => {
       </div>
       <Separator />
       <DataTable
-        searchKey="name"
+        placeholder={enterEmailMessage}
+        searchKey="email"
         columns={columns}
         data={data}
         onSelect={() => {}}

@@ -8,6 +8,35 @@ import SpanColumn from "@/components/span-column";
 import { Clock12 } from "lucide-react";
 import EditRow from "../_components/edit-row";
 import FormatDate from "@/components/format-Date";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import React from "react";
+import { translateSentEmailUser } from "@/translate/translate-dashboard";
+
+interface SentEmailUserHeaderMessage {
+  user: string
+  subject: string
+  sendEmailToUser: string
+  description: string
+  sendMail: string
+  updatedTime: string;
+  createdTime: string
+}
+
+// Header trasnlate
+const HeaderColumn = ({ column, labelKey, icon }: { column: any; labelKey: keyof SentEmailUserHeaderMessage; icon: React.ElementType }) => {
+  const user = useCurrentUser();
+  const colorHeaderMessage: SentEmailUserHeaderMessage = translateSentEmailUser(user?.language || "vi");
+
+  // Dùng labelKey để truy xuất giá trị động
+  const label = colorHeaderMessage[labelKey] || labelKey;
+
+  return (
+    <SpanColumn onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+      {label}
+      {icon && React.createElement(icon, { className: "ml-2 h-4 w-4" })}
+    </SpanColumn>
+  );
+};
 
 export type SentEmailUserColumn = {
   id: string;
@@ -46,29 +75,15 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
   },
   {
     accessorKey: "user",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Người dùng
-          <User className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="user" icon={User} />
+    ),
   },
   {
     accessorKey: "subject",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Chủ đề
-          <Tag className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="subject" icon={Tag} />
+    ),
     cell: ({ row }) => (
       <EditRow
         id={row.original.id}
@@ -82,37 +97,19 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
   },
   {
     accessorKey: "sentemailuser",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Gửi email đến người dùng
-          <SendHorizontal className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="sendEmailToUser" icon={SendHorizontal} />
+    ),
     cell: ({ row }) => {
       const cleanedStr = row.original.sentemailuser.join(", ").replace(/@\[(.*?)\]\(.*?\)/g, '$1');
-      return (
-        <span>
-          {cleanedStr}
-        </span>
-      );
+      return <span>{cleanedStr}</span>;
     },
-  },  
+  },
   {
     accessorKey: "description",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Mô tả
-          <NotebookPen className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="description" icon={NotebookPen} />
+    ),
     cell: ({ row }) => (
       <EditRow
         id={row.original.id}
@@ -126,16 +123,9 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
   },
   {
     accessorKey: "isSent",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Gửi Mail
-          <SendHorizontal className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="sendMail" icon={SendHorizontal} />
+    ),
     cell: ({ row }) => {
       const isAllday = row.original.isSent;
       return isAllday ? (
@@ -147,37 +137,17 @@ export const columns: ColumnDef<SentEmailUserColumn>[] = [
   },
   {
     accessorKey: "updatedAt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian cập nhật
-          <AlarmClockCheck className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
-    cell: ({ row }) => {
-      return <FormatDate data={row.original.updatedAt} language={row.original.language}/>;
-    },
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="updatedTime" icon={AlarmClockCheck} />
+    ),
+    cell: ({ row }) => <FormatDate data={row.original.updatedAt} language={row.original.language} />,
   },
   {
     accessorKey: "createdAt",
-    header: ({ column }) => {
-      return (
-        <SpanColumn
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Thời gian tạo
-          <Clock12 className="ml-2 h-4 w-4" />
-        </SpanColumn>
-      );
-    },
-    cell: ({ row }) => {
-      return (
-      <FormatDate data={row.original.createdAt} language={row.original.language}/>
-      )
-    }
+    header: ({ column }) => (
+      <HeaderColumn column={column} labelKey="createdTime" icon={Clock12} />
+    ),
+    cell: ({ row }) => <FormatDate data={row.original.createdAt} language={row.original.language} />,
   },
   {
     id: "actions",
