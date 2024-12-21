@@ -161,6 +161,13 @@ export async function POST(
     // Tính toán thời gian chậm trễ (tính bằng mili giây)
     const delayTime = currentTime.getTime() - currentDate.getTime();
 
+    if (currentTime.getTime() > currentDate.getTime()) {
+      return new NextResponse(
+        JSON.stringify({ error: eventCalendarPostMessage.timeStartWorkMessage }),
+        { status: 403 }
+      );
+    }
+
     // Chuyển đổi thời gian chậm trễ từ mili giây sang giờ
     delayHours = delayTime / (1000 * 60 * 60); // 1000 milliseconds * 60 seconds * 60 minutes = 1 hour
 
@@ -298,17 +305,8 @@ export async function POST(
         emailTimeend
       );
     }
-    //Dùng để kiểm tra thời gian hiện tại phải lớn hơn hoặc bằng thời gian timestartwork mới được điểm danh
-    if (currentTime.getTime() >= currentDate.getTime()) {
+    
       return NextResponse.json(eventCalendar);
-    } else {
-      return new NextResponse(
-        JSON.stringify({
-          error: eventCalendarPostMessage.timeStartWorkMessage,
-        }),
-        { status: 500 }
-      );
-    }
   } catch (error) {
     return new NextResponse(
       JSON.stringify({ error: eventCalendarPostMessage.internalError }),

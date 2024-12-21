@@ -86,7 +86,7 @@ export async function GET(
 
     if (latestEvent) {
       const latestEventEnd = new Date(latestEvent.end!);
-      if (currentTimeVN >= latestEventEnd) {
+      if (currentTimeVN > latestEventEnd) {
         return NextResponse.json(latestEvent);
       } else {
         return new NextResponse(
