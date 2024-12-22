@@ -4,8 +4,6 @@ import { Container } from "./_components/container";
 import { Sidebar } from "./_components/sidebar";
 import { getSelfByUsername } from "@/lib/stream/auth-service";
 import { Navbar } from "@/app/(profile-user-other)/_components/navbar";
-import DropMenuHint from "@/components/(client)/dropmenu-hint";
-import ScrollButton from "@/components/(client)/backtotop/backToTop";
 import BoxChat from "@/components/(client)/boxchat";
 
 interface CreatorLayoutProps {
@@ -28,8 +26,6 @@ const CreatorLayout = async ({ params, children }: CreatorLayoutProps) => {
           <Container>{children}</Container>
         </div>
       </div>
-      <ScrollButton />
-      <DropMenuHint />
       <BoxChat />
     </>
   );
