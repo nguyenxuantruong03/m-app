@@ -87,15 +87,6 @@ const ChatGemini = ({
   }, [chatHistory]);
 
   const handleUserInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    //Check xúc phạm
-    const containsOffensiveWord = offensiveWords.some((word) =>
-      userInputAI.includes(word)
-    );
-    if (containsOffensiveWord) {
-      setPoliciViolationModal(true); 
-      return; 
-    }
-
     const input = event.target.value;
     setUserInputAI(input);
     if (input.trim() === "") {

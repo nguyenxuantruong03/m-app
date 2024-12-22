@@ -76,7 +76,7 @@ export const ChatForm = ({
           disabled={isDisabled}
           placeholder={sendMessage}
           className={cn(
-            "border-white/10 pr-10",
+            "border-white/10 pr-10 dark:text-slate-200",
             (isFollowersOnly || isDelayed) && "rounded-b-none border-b-0"
           )}
         />

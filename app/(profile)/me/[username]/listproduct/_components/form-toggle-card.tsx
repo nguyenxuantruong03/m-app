@@ -23,7 +23,6 @@ interface ToggleCardProps {
   valueisProductShowLive?: boolean;
   disabled: boolean;
   totalQuantity: number;
-  setLoading: Dispatch<SetStateAction<boolean>>;
   setData: any;
   languageToUse: string
 }
@@ -33,7 +32,6 @@ export const FormToggleCard = ({
   labelPin,
   labelShowLive,
   disabled,
-  setLoading,
   valueisProductLivePin = false,
   valueisProductShowLive = false,
   setData,
@@ -71,7 +69,6 @@ export const FormToggleCard = ({
     };
 
     try {
-      setLoading(true);
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/getAllProductNotQuery`,
         updatedData
@@ -94,9 +91,7 @@ export const FormToggleCard = ({
       } else {
         toast.error(toastErrorMessage);
       }
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   // Effect to initialize switch state

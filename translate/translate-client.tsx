@@ -1940,17 +1940,17 @@ export const translateBrowserCloseMessage = (language: string) => {
 export const translateBackToPayment = (language: string, countdown: number) => {
   switch (language) {
     case "vi":
-      return `Trở lại trang thanh toán trong ${countdown} giây. <br /> Xin vui lòng chờ trong giây lát...`;
+      return `Trở lại trang thanh toán trong ${countdown} giây. Xin vui lòng chờ trong giây lát...`;
     case "en":
-      return `Back to the payment page in ${countdown} seconds. <br /> Please wait a moment...`;
+      return `Back to the payment page in ${countdown} seconds. Please wait a moment...`;
     case "zh":
-      return `将在 ${countdown} 秒内返回支付页面。 <br /> 请稍等片刻...`;
+      return `将在 ${countdown} 秒内返回支付页面。 请稍等片刻...`;
     case "fr":
-      return `Retour à la page de paiement dans ${countdown} secondes. <br /> Veuillez patienter un instant...`;
+      return `Retour à la page de paiement dans ${countdown} secondes. Veuillez patienter un instant...`;
     case "ja":
-      return `支払いページに ${countdown} 秒で戻ります。 <br /> 少々お待ちください...`;
+      return `支払いページに ${countdown} 秒で戻ります。 少々お待ちください...`;
     default:
-      return `Back to the payment page in ${countdown} seconds. <br /> Please wait a moment...`; // Default is English
+      return `Back to the payment page in ${countdown} seconds. Please wait a moment...`; // Default is English
   }
 };
 

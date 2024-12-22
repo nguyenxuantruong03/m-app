@@ -399,7 +399,6 @@ const ListProductItem = () => {
                           valueisProductShowLive={product.isProductShowLive}
                           disabled={totalQuantity === 0 || loading}
                           totalQuantity={totalQuantity}
-                          setLoading={setLoading}
                           setData={setData}
                           languageToUse={languageToUse}
                         />

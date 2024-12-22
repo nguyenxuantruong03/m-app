@@ -8,7 +8,6 @@ import {
 } from "../ui/sheet";
 import { Hint } from "@/components/ui/hint";
 import { useEffect, useState, MouseEventHandler } from "react";
-import axios from "axios";
 import { Product, ProductDetail, Image as ImageData } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -555,7 +554,7 @@ const ShoppingCardInLive = ({
                                   disabled={productQuantityAll || loading}
                                   className="p-1.5 rounded-l-lg bg-gray-300" // Added padding and rounded left corner
                                 >
-                                  <Plus className="w-5 h-5" />
+                                  <Plus className="w-5 h-5 text-slate-900" />
                                 </button>
                                 <button
                                   onClick={onAddtoPushCart}
@@ -706,7 +705,7 @@ const ShoppingCardInLive = ({
                             disabled={productQuantityAll || loading}
                             className="p-1.5 rounded-l-lg bg-gray-300" // Added padding and rounded left corner
                           >
-                            <Plus className="w-5 h-5" />
+                            <Plus className="w-5 h-5 text-slate-900" />
                           </button>
                           <button
                             onClick={onAddtoPushCart}
