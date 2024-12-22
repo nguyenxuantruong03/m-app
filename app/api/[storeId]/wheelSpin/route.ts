@@ -11,7 +11,7 @@ export async function POST(
   let { coin, rotation, userId, isCheckPayment, idOrderItem } = body;
 
   const user = await currentUser();
-  //language
+  // language
   const LanguageToUse = user?.language || "vi";
   const wheelSpinPostMessage = translateWheelSpinPost(LanguageToUse);
 
@@ -22,12 +22,9 @@ export async function POST(
         { status: 403 }
       );
     }
-    // Convert coin and rotation to numbers if they are strings representing numbers or set to 0 if invalid
-    // Check and convert coin to number if it is a string
-    coin =
-      typeof coin === "number" ? coin : isNaN(Number(coin)) ? 0 : Number(coin);
 
-    // Check and convert rotation to number if it is a string
+    // Convert coin and rotation to numbers if they are strings or set to 0 if invalid
+    coin = typeof coin === "number" ? coin : isNaN(Number(coin)) ? 0 : Number(coin);
     rotation =
       typeof rotation === "number"
         ? rotation
@@ -35,40 +32,42 @@ export async function POST(
         ? 0
         : Number(rotation);
 
-    // Kiểm tra sự tồn tại của người dùng với userId
+    // Check for existing user entry
     const existingEntry = await prismadb.wheelSpin.findFirst({
       where: {
         userId: userId,
       },
     });
 
-    let finalCoin;
+    let finalCoin, finalRotation;
 
     if (isCheckPayment) {
       // Nếu isCheckPayment, luôn đặt coin là 0
       finalCoin = 0;
+      finalRotation = existingEntry ? existingEntry.rotation + rotation : rotation;
     } else {
-      // Nếu không có isCheckPayment, cộng giá trị hiện tại với adjustedCoin
+      // If not isCheckPayment, only use the provided coin and rotation
       finalCoin = existingEntry ? existingEntry.coin + coin : coin;
+      finalRotation = existingEntry ? existingEntry.rotation + rotation : rotation;
     }
 
     let result;
 
     if (existingEntry) {
-      // Nếu đã tồn tại, cập nhật thông tin
+      // Update existing entry
       result = await prismadb.wheelSpin.update({
         where: { id: existingEntry.id },
         data: {
           coin: finalCoin,
-          rotation: existingEntry.rotation + rotation,
+          rotation: finalRotation,
         },
       });
     } else {
-      // Nếu chưa tồn tại, tạo mới
+      // Create a new entry
       result = await prismadb.wheelSpin.create({
         data: {
           coin: finalCoin,
-          rotation,
+          rotation: finalRotation,
           userId: userId || "",
           storeId: params.storeId,
         },
@@ -121,12 +120,10 @@ export async function GET() {
       return total + coinAmount;
     }, 0);
 
-    console.log("totalCoins",totalCoins)
     // Tính tổng rotation
     const latestRotation = coins.reduce((total, coin) => {
       return total + coin.rotation;
     }, 0);
-    console.log("latestRotation",latestRotation)
 
     return NextResponse.json({ totalCoins, latestRotation });
   } catch (error) {

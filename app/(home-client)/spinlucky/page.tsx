@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import WheelComponent from "./weel";
-import TrPortal from "./portal";
 import Confetti from "react-confetti";
 import Image from "next/image";
 import Container from "@/components/ui/container";
@@ -44,7 +43,6 @@ const SpinCoinPage: React.FC = () => {
   const param = useParams();
   const router = useRouter();
   const user = useCurrentUser();
-  const [portal, setPortal] = useState<boolean>(false);
   const [show, setShow] = useState<string | false>(false);
   const [totalCoins, setTotalCoins] = useState<number>(0);
   const [rotation, setRotation] = useState<number>(0);
@@ -84,14 +82,17 @@ const SpinCoinPage: React.FC = () => {
     document.title = spinlucky.spinLucky;
   }, []);
 
+  const fetchData = async () => {
+    const response = await axios.get(`/api/${param.storeId}/wheelSpin`);
+    setTotalCoins(response.data.totalCoins);
+    setRotation(response.data.latestRotation);
+  };
+
   useEffect(() => {
     if (user?.role === "GUEST" || !user?.id) {
       router.push("/home-product");
     } else {
-      axios.get(`/api/${param.storeId}/wheelSpin`).then((response) => {
-        setTotalCoins(response.data.totalCoins);
-        setRotation(response.data.latestRotation);
-      });
+      fetchData()
     }
 
     document.addEventListener("click", handleDocumentClick);
@@ -120,7 +121,7 @@ const SpinCoinPage: React.FC = () => {
     [`3000 ${coinMessage}`]: 9,
     [`2000 ${coinMessage}`]: 10,
   };
-  
+
   const segments = [
     { value: `6000 ${coinMessage}`, probability: 0.99 }, // 0.005%
     { value: `7000 ${coinMessage}`, probability: 0.99 }, // 0.005%
@@ -148,9 +149,9 @@ const SpinCoinPage: React.FC = () => {
   const segColors = weelColors();
 
   const onFinished = async (coin: string) => {
-    setPortal(false);
     setShow(coin);
     const coinsWon = parseInt(coin.split(" ")[0]); // Assuming "winner" is in the format "X ${coinMessage}"
+    const rotationWon = -1;
     const newTotalCoins = totalCoins + coinsWon;
     const newRotation = rotation - 1;
     try {
@@ -158,13 +159,11 @@ const SpinCoinPage: React.FC = () => {
       await axios.post(`/api/${param.storeId}/wheelSpin`, {
         userId: user?.id,
         coin: coinsWon,
-        rotation: newRotation,
+        rotation: rotationWon,
       });
       setTotalCoins(newTotalCoins);
-      const response = await axios.get(`/api/${param.storeId}/wheelSpin`);
       setRotation(newRotation);
-      setTotalCoins(response.data.totalCoins);
-      setRotation(response.data.latestRotation);
+      fetchData()
     } catch (error) {
       toast.error(toastErrorMessage);
     }
@@ -212,7 +211,6 @@ const SpinCoinPage: React.FC = () => {
             rotation={rotation}
             languageToUse={languageToUse}
           />
-          {portal ? <TrPortal /> : null}
           {show && (
             <div
               className="box p-4 bg-red-300 shadow-xl overflow-hidden w-80 z-20 absolute mt-10 rounded-md"

@@ -18,6 +18,30 @@ interface WheelProps {
   languageToUse: string
 }
 
+const getDefaultValues = () => {
+  const windowWidth = typeof window !== "undefined" ? window.innerWidth : 1024; // Default to desktop size if `window` is undefined
+  if (windowWidth < 768) { // Mobile size
+    return {
+      size: 170,
+      centerX: 185,
+      centerY: 200,
+      canvasWidth: 375,
+      canvasHeight: 400,
+    };
+  } else { // Tablet or Desktop size
+    return {
+      size: 290,
+      centerX: 300,
+      centerY: 300,
+      canvasWidth: 600,
+      canvasHeight: 600,
+    };
+  }
+};
+
+const { size: defaultSize, centerX: defaultCenterX, centerY: defaultCenterY, canvasWidth: defaultCanvasWidth, canvasHeight: defaultCanvasHeight } = getDefaultValues();
+
+
 const WheelComponent: React.FC<WheelProps> = ({
   segments,
   segColors,
@@ -39,11 +63,11 @@ const WheelComponent: React.FC<WheelProps> = ({
   const timerDelay = segments.length;
   let angleCurrent = 0;
   let angleDelta = 0;
-  const [size, setSize] = useState(180); // Default size for mobile
-  const [centerX, setCenterX] = useState(185); // Default centerX for mobile
-  const [centerY, setCenterY] = useState(200); // Default centerY for mobile
-  const [canvasWidth, setCanvasWidth] = useState(180); // state to manage canvas width
-  const [canvasHeight, setCanvasHeight] = useState(180); // state to manage canvas height
+  const [size, setSize] = useState(defaultSize); // Default size for mobile
+  const [centerX, setCenterX] = useState(defaultCenterX); // Default centerX for mobile
+  const [centerY, setCenterY] = useState(defaultCenterY); // Default centerY for mobile
+  const [canvasWidth, setCanvasWidth] = useState(defaultCanvasWidth); // state to manage canvas width
+  const [canvasHeight, setCanvasHeight] = useState(defaultCanvasHeight); // state to manage canvas height
 
   let canvasContext: CanvasRenderingContext2D | null = null;
   let maxSpeed = Math.PI / segments.length;

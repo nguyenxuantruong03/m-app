@@ -252,13 +252,13 @@ const MainNav: React.FC<mainNavProps> = ({
                 <div className="flex flex-col md:flex-row justify-center  items-center relative">
                   <div className="basis-1/2 md:flex gap-2">
                     <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center ">
-                      <Blocks className="w-6 h-6 text-gray-400" />
+                      <Blocks className="w-6 h-6 text-white" />
                     </div>
                     <div className="basis-2/3 hidden md:block w-12 xl:w-20">
-                      <div className="text-xs text-gray-400">
+                      <div className="text-xs text-white">
                         {convenienceMessage.name}
                       </div>
-                      <div className="text-xs text-gray-400">
+                      <div className="text-xs text-white">
                         {convenienceMessage.name2}
                       </div>
                     </div>
@@ -300,7 +300,7 @@ const MainNav: React.FC<mainNavProps> = ({
                       <div className="flex flex-col md:flex-row items-center">
                         <div className="basis-1/2 md:flex gap-2">
                           <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center relative">
-                            <Gift className="w-6 h-6 text-white" />
+                            <Gift className="w-6 h-6 dark:text-white text-slate-900" />
                             <span className="w-5 h-5 absolute bg-[#e53350] rounded-full left-[10px] top-0 -mt[1px] shadow-lg">
                               <p className="text-[0.75rem] text-center font-semibold text-white">
                                 {rotation}
@@ -313,7 +313,7 @@ const MainNav: React.FC<mainNavProps> = ({
                                 "text-xs w-20",
                                 pathname === `/spinlucky`
                                   ? "text-sky-500"
-                                  : "text-white"
+                                  : "dark:text-white text-slate-900"
                               )}
                             >
                               {spinAndLuckyMessage.name}
@@ -323,7 +323,7 @@ const MainNav: React.FC<mainNavProps> = ({
                                 "text-xs w-20",
                                 pathname === `/spinlucky`
                                   ? "text-sky-500"
-                                  : "text-white"
+                                  : "dark:text-white text-slate-900"
                               )}
                             >
                               {spinAndLuckyMessage.name1}
@@ -339,7 +339,7 @@ const MainNav: React.FC<mainNavProps> = ({
                       <div className="flex flex-col md:flex-row items-center">
                         <div className="basis-1/2 md:flex gap-2">
                           <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center relative">
-                            <TicketPercent className="w-6 h-6 text-white" />
+                            <TicketPercent className="w-6 h-6 dark:text-white text-slate-900" />
                             {/* <span className="w-5 h-5 absolute bg-[#e53350] rounded-full  left-[10px] top-0 -mt[1px] shadow-lg">
                             <p className="text-[0.75rem] text-center font-semibold text-white">
                               {rotation}{" "}
@@ -352,7 +352,7 @@ const MainNav: React.FC<mainNavProps> = ({
                                 "text-xs w-20",
                                 pathname === `/warehouse`
                                   ? "text-sky-500"
-                                  : "text-white"
+                                  : "dark:text-white text-slate-900"
                               )}
                             >
                               {discountAndSuperShockingMessage.name}
@@ -362,7 +362,7 @@ const MainNav: React.FC<mainNavProps> = ({
                                 "text-xs w-20",
                                 pathname === `/warehouse`
                                   ? "text-sky-500"
-                                  : "text-white"
+                                  : "dark:text-white text-slate-900"
                               )}
                             >
                               {discountAndSuperShockingMessage.name2}
@@ -381,15 +381,15 @@ const MainNav: React.FC<mainNavProps> = ({
                       <div className="flex flex-col md:flex-row items-center">
                         <div className="basis-1/2 md:flex gap-2">
                           <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center relative">
-                            <PackageSearch className="w-6 h-6 text-white" />
+                            <PackageSearch className="w-6 h-6 dark:text-white text-slate-900" />
                           </div>
                           <div className="basis-2/3 text-red-500">
                             <div
                               className={cn(
-                                "text-xs flex gap-4 text-white",
+                                "text-xs flex gap-4 ",
                                 pathname === `/warehouse/package-product`
                                   ? "text-sky-500"
-                                  : "text-white"
+                                  : "dark:text-white text-slate-900"
                               )}
                             >
                               {packageProductMessage.name}
@@ -399,7 +399,7 @@ const MainNav: React.FC<mainNavProps> = ({
                                 "text-xs w-20",
                                 pathname === `/warehouse/package-product`
                                   ? "text-sky-500"
-                                  : "text-white"
+                                  : "dark:text-white text-slate-900"
                               )}
                             >
                               {packageProductMessage.name2}
