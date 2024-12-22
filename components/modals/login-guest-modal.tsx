@@ -19,7 +19,6 @@ interface LoginGuestModalProps {
   onClose: () => void;
   onConfirm: () => void;
   loading?: boolean;
-  isCaptchaVerified?: boolean;
   languageToUse: string;
 }
 
@@ -28,7 +27,6 @@ export const LoginGuestModal: React.FC<LoginGuestModalProps> = ({
   onClose,
   onConfirm,
   loading,
-  isCaptchaVerified,
   languageToUse,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
@@ -51,11 +49,7 @@ export const LoginGuestModal: React.FC<LoginGuestModalProps> = ({
   };
 
   const handleConfirm = () => {
-    if (!isCaptchaVerified) {
-      onClose();
-    } else {
       onConfirm();
-    }
   };
 
   useEffect(() => {

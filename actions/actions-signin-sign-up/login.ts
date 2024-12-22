@@ -112,11 +112,12 @@ export const login = async (
     return { error: `${invalidEmailMessage}!` };
   }
 
-  if (!existingUser?.emailVerified) {
+  if (values.email !== "guest@gmail.com" && !existingUser?.emailVerified) {
     return {
       error: emailNotConfirmedOrInvalidMessage,
     };
   }
+  
 
   // Truy vấn mật khẩu của người dùng từ mô hình Password
   const userPasswords = await prismadb.password.findMany({

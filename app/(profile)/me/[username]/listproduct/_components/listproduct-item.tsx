@@ -366,14 +366,14 @@ const ListProductItem = () => {
                           />
                         </Hint>
                         {product.originalIndex !== undefined && (
-                          <span className="absolute dark:bg-slate-200 bg-slate-900 top-0 left-0 text-slate-900 dark:text-slate-200 text-xs font-bold py-1 px-2">
+                          <span className="absolute bg-slate-300 top-0 left-0 text-white text-xs font-bold py-1 px-2">
                             {product.originalIndex + 1}
                           </span>
                         )}
                       </div>
 
                       <div className="space-y-2">
-                        <p className="text-lg font-semibold truncate w-44">
+                        <p className="text-lg font-semibold truncate w-44 dark:text-slate-200 text-slate-900">
                           {product.heading}
                         </p>
                         <div className="flex items-center justify-between">

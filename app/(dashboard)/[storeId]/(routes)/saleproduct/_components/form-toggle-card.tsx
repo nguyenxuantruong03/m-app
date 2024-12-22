@@ -34,8 +34,6 @@ interface SalProductProps {
   valueIsSale?: boolean;
   disabled: boolean;
   totalQuantity: number;
-  setLoading: Dispatch<SetStateAction<boolean>>;
-  loading: boolean;
   setData: any;
 }
 
@@ -43,15 +41,14 @@ export const FormSaleProduct = ({
   id,
   label,
   disabled,
-  setLoading,
   valueTimeSaleStart,
   valueTimeSaleEnd,
   valueIsSale = false,
   setData,
-  loading,
   totalQuantity,
 }: SalProductProps) => {
   const user = useCurrentUser();
+  const [productLoading, setProductLoading] = useState<Record<string, boolean>>({});
 
   //language
   const languageToUse = user?.language || "vi";
@@ -90,7 +87,11 @@ export const FormSaleProduct = ({
     }
 
     try {
-      setLoading(true);
+      setProductLoading((prev) => ({
+        ...prev,
+        [id]: true, // Set the specific product as loading
+      }));
+
       await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/saleProduct`, {
         id,
         ...data,
@@ -102,13 +103,19 @@ export const FormSaleProduct = ({
     } catch (error: unknown) {
       toast.error(slateProductFormToggleCardMessage.somethingWentWrong);
     } finally {
-      setLoading(false);
+      setProductLoading((prev) => ({
+        ...prev,
+        [id]: false, // Set the specific product as not loading
+      }));
     }
   };
 
   const onClear = async () => {
     try {
-      setLoading(true);
+      setProductLoading((prev) => ({
+        ...prev,
+        [id]: true, // Set the specific product as loading
+      }));  
       // Call the API to clear the sale for the product (if needed)
       await axios.delete(
         `${process.env.NEXT_PUBLIC_API_URL}/saleProduct/clear`,
@@ -144,8 +151,11 @@ export const FormSaleProduct = ({
         // Hiển thị thông báo lỗi mặc định cho người dùng
         toast.error(slateProductFormToggleCardMessage.somethingWentWrong);
       }
-    } finally{
-      setLoading(false);
+    } finally {
+      setProductLoading((prev) => ({
+        ...prev,
+        [id]: false, // Set the specific product as not loading
+      }));
     }
   };
 
@@ -186,7 +196,7 @@ export const FormSaleProduct = ({
                     <Switch
                       onCheckedChange={field.onChange}
                       checked={field.value}
-                      disabled={disabled}
+                      disabled={disabled || productLoading[id]}
                     >
                       {field.value ? "On" : "Off"}
                     </Switch>
@@ -206,7 +216,7 @@ export const FormSaleProduct = ({
                   <FormControl>
                     <Input
                       type="datetime-local"
-                      disabled={loading}
+                      disabled={disabled || productLoading[id]}
                       value={
                         field.value
                           ? field.value instanceof Date
@@ -235,7 +245,7 @@ export const FormSaleProduct = ({
                   <FormControl>
                     <Input
                       type="datetime-local"
-                      disabled={loading}
+                      disabled={disabled || productLoading[id]}
                       value={
                         field.value
                           ? field.value instanceof Date
@@ -255,16 +265,16 @@ export const FormSaleProduct = ({
 
             {isModified && (
               <div className="flex items-center space-x-2">
-                <Button type="submit" variant="secondary" disabled={loading}>
-                  {loading ? slateProductFormToggleCardMessage.waiting : slateProductFormToggleCardMessage.saveChanges}
+                <Button type="submit" variant="secondary" disabled={disabled || productLoading[id]}>
+                  {productLoading[id] ? slateProductFormToggleCardMessage.waiting : slateProductFormToggleCardMessage.saveChanges}
                 </Button>
                 <Button
                   type="button"
                   onClick={onClear}
                   variant="destructive"
-                  disabled={loading}
+                  disabled={disabled || productLoading[id]}
                 >
-                  {loading ? slateProductFormToggleCardMessage.waiting : slateProductFormToggleCardMessage.clear}
+                  {productLoading[id] ? slateProductFormToggleCardMessage.waiting : slateProductFormToggleCardMessage.clear}
                 </Button>
               </div>
             )}

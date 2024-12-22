@@ -221,9 +221,15 @@ const LoginForm = () => {
     setLoginClicked(true);
     setError("");
     setSuccess("");
-    if (showCaptcha && !isCaptchaVerified) {
-      return setError(verifyRobotMessage);
-    } else {
+    // If it's a guest login, bypass captcha verification
+  if (values.email === "guest@gmail.com") {
+    setCaptchaVerified(true); // Force captcha as verified for guest login
+  }
+
+  // Proceed only if captcha is verified (for non-guest logins)
+  if (showCaptcha && !isCaptchaVerified && !(values.email === "guest@gmail.com")) {
+    return setError(verifyRobotMessage);
+  } else {
       startTransition(() => {
         login(values, callbackUrl, deviceInfo, languageToUse)
           .then((data) => {
@@ -284,7 +290,6 @@ const LoginForm = () => {
         onClose={() => setOpenGuestModal(false)}
         onConfirm={handleGuestLogin}
         loading={isPending}
-        isCaptchaVerified={isCaptchaVerified}
       />
       <CardWrapper
         headerLabel={welcomeBackMessage}

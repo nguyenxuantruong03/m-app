@@ -31,24 +31,19 @@ export async function PATCH(req: Request) {
       );
     }
 
-    const timeSaleStartUTC = new Date(timeSaleStart!);
-    const timeSaleEndUTC = new Date(timeSaleEnd!);
-
-    // Thêm 7 tiếng vào thời gian UTC
-    const timeSaleStartLocal = new Date(
-      timeSaleStartUTC.getTime() + 7 * 60 * 60 * 1000
-    );
-    const timeSaleEndLocal = new Date(
-      timeSaleEndUTC.getTime() + 7 * 60 * 60 * 1000
-    );
+    const timeSaleStartProduct = new Date(timeSaleStart!);
+    timeSaleStartProduct.setHours(timeSaleStartProduct.getHours() + 7);
+    
+    const timeSaleEndProduct = new Date(timeSaleEnd!);
+    timeSaleEndProduct.setHours(timeSaleEndProduct.getHours() + 7);    
 
     const product = await prismadb.product.update({
       where: {
         id: id,
       },
       data: {
-        timeSaleStart: timeSaleStartLocal,
-        timeSaleEnd: timeSaleEndLocal,
+        timeSaleStart: timeSaleStartProduct,
+        timeSaleEnd: timeSaleEndProduct,
         isSale: isSale,
       },
     });

@@ -27,6 +27,7 @@ import {
   translateCommonUse,
 } from "@/translate/translate-client";
 import { getSaleProductList } from "@/translate/translate-dashboard";
+import NoResults from "@/components/ui/no-result";
 
 interface ProductWithImages extends Product {
   images: ImageData[];
@@ -239,10 +240,12 @@ const ListProductItem = () => {
     }
   };
 
+  if(loading) return <LoadingPageComponent />
+
   if (!data.length) {
     return (
       <div>
-        <LoadingPageComponent />
+        <NoResults />
       </div>
     );
   }
@@ -366,7 +369,7 @@ const ListProductItem = () => {
                       key={product.id}
                       className="bg-white p-2 max-w-xl rounded-md shadow-xl"
                     >
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="flex gap-2">
                         <div className="relative">
                           <Hint
                             label={saleProductListMessage.viewProduct}
@@ -423,9 +426,7 @@ const ListProductItem = () => {
                             valueIsSale={product.isSale}
                             disabled={totalQuantity === 0 || loading}
                             totalQuantity={totalQuantity}
-                            setLoading={setLoading}
                             setData={setData}
-                            loading={loading}
                           />
                         </div>
                       </div>

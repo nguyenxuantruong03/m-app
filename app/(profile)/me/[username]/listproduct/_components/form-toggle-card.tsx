@@ -38,6 +38,7 @@ export const FormToggleCard = ({
   totalQuantity,
   languageToUse
 }: ToggleCardProps) => {
+  const [productLoading, setProductLoading] = useState<Record<string, boolean>>({});
   //language
   const toastErrorMessage = getToastError(languageToUse)
   const toggleCardMessage = getToggleCard(languageToUse)
@@ -69,6 +70,11 @@ export const FormToggleCard = ({
     };
 
     try {
+      setProductLoading((prev) => ({
+        ...prev,
+        [id]: true, // Set the specific product as loading
+      }));
+
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/getAllProductNotQuery`,
         updatedData
@@ -91,7 +97,12 @@ export const FormToggleCard = ({
       } else {
         toast.error(toastErrorMessage);
       }
-    } 
+    } finally {
+      setProductLoading((prev) => ({
+        ...prev,
+        [id]: false, // Set the specific product as not loading
+      }));
+    }
   };
 
   // Effect to initialize switch state
@@ -118,7 +129,7 @@ export const FormToggleCard = ({
                     toggleSwitch("isProductShowLive", checked);
                   }}
                   checked={isProductShowLive}
-                  disabled={disabled}
+                  disabled={disabled || productLoading[id]}
                 >
                   {isProductShowLive ? "On" : "Off"}
                 </Switch>
@@ -134,7 +145,7 @@ export const FormToggleCard = ({
                     toggleSwitch("isProductLivePin", checked);
                   }}
                   checked={isProductLivePin}
-                  disabled={disabled}
+                  disabled={disabled || productLoading[id]}
                 >
                   {isProductLivePin ? "On" : "Off"}
                 </Switch>

@@ -170,7 +170,7 @@ const BoxChat = () => {
           <button
             disabled={loading}
             onClick={handleButtonClick}
-            className={`fixed bottom-20 md:bottom-10 left-4 md:left-10 rounded-full bg-red-500 p-3 md:p-4 font-mono font-bold text-white transition-colors duration-300 ease-linear ${
+            className={`fixed bottom-20 md:bottom-10 left-4 md:left-10 z-[99999999999] rounded-full bg-red-500 p-3 md:p-4 font-mono font-bold text-white transition-colors duration-300 ease-linear ${
               unseenMessageCount > 0
                 ? "before:absolute before:right-1/2 before:top-1/2 before:-z-[1] before:h-3/4 before:w-2/3 before:origin-bottom-left before:-translate-y-1/2 before:translate-x-1/2 before:animate-ping before:rounded-full before:bg-red-500"
                 : ""
