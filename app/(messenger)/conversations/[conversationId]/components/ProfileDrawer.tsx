@@ -325,7 +325,7 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({ data, currentUser, langua
           />
         </SheetTrigger>
         <SheetContent side="right" className="p-0 sm:max-w-md">
-          <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
+          <div className="flex h-full flex-col overflow-y-scroll dark:bg-slate-900 bg-white py-6 shadow-xl">
             <div
               className="
                     relative 
@@ -366,6 +366,7 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({ data, currentUser, langua
                             flex 
                             items-center 
                             justify-center
+                            text-slate-900
                             "
                     >
                       <Trash2 size={20} />
@@ -384,7 +385,7 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({ data, currentUser, langua
                           <dt className="text-sm font-medium text-gray-500 sm:w-40 sm:flex-shrink-0">
                             {detail.label}:
                           </dt>
-                          <dd className=" mt-1  text-sm text-gray-900 sm:col-span-2">
+                          <dd className=" mt-1  text-sm text-gray-900 dark:text-slate-200 sm:col-span-2">
                             {detail.value}
                           </dd>
                         </div>

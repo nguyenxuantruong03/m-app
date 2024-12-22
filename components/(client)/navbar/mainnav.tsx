@@ -252,13 +252,13 @@ const MainNav: React.FC<mainNavProps> = ({
                 <div className="flex flex-col md:flex-row justify-center  items-center relative">
                   <div className="basis-1/2 md:flex gap-2">
                     <div className="basis-1/3 flex md:flex-col flex-row items-center justify-center ">
-                      <Blocks className="w-6 h-6 text-white" />
+                      <Blocks className="w-6 h-6 text-gray-400" />
                     </div>
                     <div className="basis-2/3 hidden md:block w-12 xl:w-20">
-                      <div className="text-xs text-white">
+                      <div className="text-xs text-gray-400">
                         {convenienceMessage.name}
                       </div>
-                      <div className="text-xs text-white">
+                      <div className="text-xs text-gray-400">
                         {convenienceMessage.name2}
                       </div>
                     </div>

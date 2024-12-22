@@ -142,7 +142,7 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
         <div className="focus:outline-none">
           <span className="absolute inset-0" aria-hidden="true" />
           <div className="flex justify-between items-center mb-1">
-            <p className={`text-md font-medium ${selected ? "text-slate-900 dark:text-slate-200" : "text-gray-900 dark:text-slate-200"}`}>
+            <p className={`text-md font-medium ${selected ? "text-slate-900" : "text-gray-900 dark:text-slate-200"}`}>
               {data.name || otherUser.name}
             </p>
             {lastMessage?.createdAt && (

@@ -39,7 +39,6 @@ export async function POST(
     const existingEntry = await prismadb.wheelSpin.findFirst({
       where: {
         userId: userId,
-        storeId: params.storeId,
       },
     });
 
@@ -121,10 +120,14 @@ export async function GET() {
       const coinAmount = coin.coin;
       return total + coinAmount;
     }, 0);
+
+    console.log("totalCoins",totalCoins)
     // Tính tổng rotation
     const latestRotation = coins.reduce((total, coin) => {
       return total + coin.rotation;
     }, 0);
+    console.log("latestRotation",latestRotation)
+
     return NextResponse.json({ totalCoins, latestRotation });
   } catch (error) {
     return new NextResponse(
