@@ -96,8 +96,8 @@ export async function POST(
     } = body;
 
     // Validation for unique size and color
-    const sizeIds = [size1Id, size2Id, size3Id, size4Id, size5Id];
-    const colorIds = [color1Id, color2Id, color3Id, color4Id, color5Id];
+    const sizeIds = [size1Id, size2Id, size3Id, size4Id, size5Id].filter(Boolean); // Loại bỏ các giá trị null/undefined
+    const colorIds = [color1Id, color2Id, color3Id, color4Id, color5Id].filter(Boolean); // Loại bỏ các giá trị null/undefined
 
     if (new Set(sizeIds).size !== sizeIds.length) {
       return new NextResponse(
