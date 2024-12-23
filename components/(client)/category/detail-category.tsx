@@ -162,7 +162,7 @@ const DetailCategory: React.FC<DetailCategoryProps> = ({
           ))}
         </div>
       </div>
-      {product.length > 9 && pagination && (
+      {pagination && pagination.totalPages >= 2 && (
         <PaginationWithLinks
           page={pagination.currentPage}
           pageSize={pageSize}
@@ -195,7 +195,7 @@ const DetailCategory: React.FC<DetailCategoryProps> = ({
         )}
       </div>
 
-      {product.length > 9 && pageSize > 3 && pagination && (
+      {pagination && pagination.totalPages >= 2 && (
         <PaginationWithLinks
           page={pagination.currentPage}
           pageSize={pageSize}

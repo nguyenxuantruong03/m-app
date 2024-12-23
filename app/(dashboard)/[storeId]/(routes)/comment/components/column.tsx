@@ -17,6 +17,7 @@ import FormatDate from "@/components/format-Date";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { translateCommentColumn } from "@/translate/translate-dashboard";
 import React from "react";
+import { UserRole } from "@prisma/client";
 
 interface CommentHeaderMessage {
   name: string
@@ -125,16 +126,33 @@ export const columns: ColumnDef<CommentColumn>[] = [
     cell: ({ row }) => {
       const isBanned = row.original.ban === true;
       const isBanforever = row.original.isbanforever;
+      const isAdmin = row.original.role === UserRole.ADMIN;
+      const isStaff = row.original.role === UserRole.STAFF;
+      const isShipper = row.original.role === UserRole.SHIPPER;
+      const isMaketing = row.original.role === UserRole.MARKETING;
+      const isGuest = row.original.role === UserRole.GUEST;
       return (
         <div
-          className={
-            isBanforever
-              ? "line-through text-red-500"
-              : isBanned
-              ? "line-through text-gray-400"
-              : ""
-          }
-        >
+        className={`cursor-pointer font-bold ${
+          isAdmin
+            ? "text-red-500"
+            : isStaff
+            ? "text-blue-500"
+            : isShipper
+            ? "text-indigo-500"
+            : isMaketing
+            ? "text-purple-500"
+            : isGuest
+            ? "text-fuchsia-500"
+            : "dark:text-amber-500 text-black"
+        } ${
+          isBanforever
+            ? "line-through text-red-500"
+            : isBanned
+            ? "line-through text-gray-400"
+            : ""
+        }`}
+      >
           {row.original.role}
         </div>
       );

@@ -42,7 +42,7 @@ const OrderComfirmation = async ({
   });
 
   const formattedOrder: OrderColumn[] = order
-    .filter((item) => item.user?.id === item.userIdShipper) // Only keep orders where user.id matches userIdStaff
+    .filter((item) => user?.id === item.userIdShipper) // Only keep orders where user.id matches userIdStaff
     .map((item) => ({
       id: item.id,
       phone: item.phone.split(",").join(", "),

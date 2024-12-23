@@ -21,6 +21,7 @@ const OrderPage = async ({ params }: { params: { storeId: string } }) => {
   const order = await prismadb.order.findMany({
     where: {
       storeId: params.storeId,
+      
       status: {
         in: [
           StatusOrder.Da_giao,
@@ -51,7 +52,7 @@ const OrderPage = async ({ params }: { params: { storeId: string } }) => {
 
   // Filter orders by userIdShipper and format them
   const formattedOrder: OrderColumn[] = order
-    .filter((item) => item.user?.id === item.userIdShipper) // Only keep orders where user.id matches userIdShipper
+    .filter((item) => user?.id === item.userIdShipper) // Only keep orders where user.id matches userIdShipper
     .map((item) => ({
       id: item.id,
       phone: item.phone.split(",").join(", "),

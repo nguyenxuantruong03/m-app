@@ -293,7 +293,7 @@ const OrderForm: React.FC<OrderProps> = ({ data, language }) => {
             onChange={(e) => setSearchValue(e.target.value)}
           />
           <button id="search-btn">
-            <Search className="w-9 h-9 p-1 border-slate-800 rounded-full border-solid border-2 bg-white" />
+            <Search className="w-9 h-9 p-1 border-slate-800 rounded-full border-solid border-2 bg-white text-slate-900" />
           </button>
         </div>
       )}
@@ -304,9 +304,9 @@ const OrderForm: React.FC<OrderProps> = ({ data, language }) => {
       >
         <p>
           {isSearchVisible ? (
-            <EyeOff className="w-8 h-8 p-1 border-slate-800 rounded-full border-solid border-2 bg-white" />
+            <EyeOff className="w-8 h-8 p-1 border-slate-800 rounded-full border-solid border-2 bg-white text-slate-900" />
           ) : (
-            <Search className="w-8 h-8 p-1 border-slate-800 rounded-full border-solid border-2 bg-white" />
+            <Search className="w-8 h-8 p-1 border-slate-800 rounded-full border-solid border-2 bg-white text-slate-900" />
           )}
         </p>
       </div>

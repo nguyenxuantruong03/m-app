@@ -16,7 +16,7 @@ const OrderPage = async ({
 }) => {
   const user = await currentUser()
   const role = await currentRole();
-  const isRole = role === UserRole.ADMIN || role === UserRole.STAFF;
+  const isRole = role === UserRole.ADMIN || role === UserRole.STAFF || role === UserRole.SHIPPER;
   const showOrderRole = isRole;
   const order = await prismadb.order.findMany({
     where: {
@@ -89,7 +89,7 @@ const OrderPage = async ({
     language: user?.language || "vi"
   }));
   return (
-    <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF]}>
+    <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF, UserRole.SHIPPER]}>
       <div className={` ${showOrderRole}`}>
         {showOrderRole && <OrderForm data={formattedOrder} language={user?.language || "vi"}/>}
       </div>

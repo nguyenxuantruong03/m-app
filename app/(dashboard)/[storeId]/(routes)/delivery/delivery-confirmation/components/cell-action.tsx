@@ -396,7 +396,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                       <DropdownMenuItem
                         disabled={loading}
                         onClick={() =>
-                          router.push(`/${params.storeId}/orders/${data.id}`)
+                          router.push(`/${params.storeId}/delivery/${data.id}`)
                         }
                       >
                         <Pin className="h-4 w-4 mr-2" />
