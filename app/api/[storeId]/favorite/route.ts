@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
-import { translateText } from "@/translate/translate-client";
 import { translateFavoriteDelete, translateFavoriteGet, translateFavoritePost } from "@/translate/translate-api";
 
 export async function POST(
@@ -117,8 +116,6 @@ export async function GET(
   const LanguageToUse = user?.language || "vi";
   const favoriteGetMessage = translateFavoriteGet(LanguageToUse);
 
-  const { searchParams } = new URL(req.url);
-  const language = searchParams.get("language") || "vi"; // Mặc định là "vi" nếu không có language
   try {
     if (!params.storeId) {
       return new NextResponse(
@@ -147,34 +144,7 @@ export async function GET(
       },
     });
 
-    const translations = await Promise.all(
-      favorites.map(async (favorite) => {
-        try {
-          // Chỉ dịch name nếu ngôn ngữ không phải là "vi"
-          let translatedName = favorite.name ?? "";
-    
-          if (language !== "vi") {
-            translatedName = await translateText(favorite.name ?? "", language);
-    
-            // Nếu không có dữ liệu dịch, giữ lại name gốc
-            if (!translatedName) {
-              translatedName = favorite.name ?? "";
-            }
-          }
-    
-          return {
-            ...favorite,
-            name: translatedName,
-          };
-        } catch (error) {
-          // Nếu có lỗi trong quá trình dịch, trả về dữ liệu gốc
-          return favorite;
-        }
-      })
-    );
-    
-
-    return NextResponse.json(translations);
+    return NextResponse.json(favorites);
   } catch (error) {
     return new NextResponse(
       JSON.stringify({ error: favoriteGetMessage.internalError }),

@@ -174,7 +174,7 @@ const FormPost = ({ setOpen, self, id, userId }: FormPostProps) => {
         setLoadingCategory(true);
 
         // Lấy categories
-        const allCategories = await getAllCategory(languageToUse);
+        const allCategories = await getAllCategory();
         setCategories(allCategories);
       } catch {
         toast.error(toastErrorMessage);
@@ -199,9 +199,7 @@ const FormPost = ({ setOpen, self, id, userId }: FormPostProps) => {
         setLoadingProduct(true);
 
         // Lấy products
-        const allProducts = await getAllProductNotQuery(
-          self && self.role !== "GUEST" ? self.language : storedLanguage
-        );
+        const allProducts = await getAllProductNotQuery();
         setProducts(allProducts);
       } catch {
         toast.error(toastErrorMessage);

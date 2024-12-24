@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { currentUser } from "@/lib/auth";
 import { ImageBillboard, UserRole } from "@prisma/client";
-import { translateText } from "@/translate/translate-client";
 import {
   translateBillboardIdDelete,
   translateBillboardIdGet,
@@ -36,9 +35,6 @@ export async function GET(
   const billboardIdGetMessage = translateBillboardIdGet(LanguageToUse);
 
   try {
-    const { searchParams } = new URL(req.url);
-    const language = searchParams.get("language") || "vi"; // Mặc định là "vi" nếu không có language
-
     if (!params.billboardId) {
       return new NextResponse(
         JSON.stringify({ error: billboardIdGetMessage.name1 }),
@@ -63,36 +59,8 @@ export async function GET(
       );
     }
 
-    // Helper function to translate fields
-const translateField = async (field:any, language:string) => {
-  return language !== "vi" ? await translateText(field || "", language) : field;
-};
-
-// Dịch label và description của billboard
-const translatedLabelText = await translateField(billboard.label, language);
-const translatedDescriptionText = await translateField(billboard.description, language);
-
-// Dịch các imagebillboard
-const translatedImageBillboards = await Promise.all(
-  billboard.imagebillboard.map(async (imageBillboard) => {
-    const translatedImageLabelText = await translateField(imageBillboard.label, language);
-    const translatedImageDescriptionText = await translateField(imageBillboard.description, language);
-
-    return {
-      ...imageBillboard,
-      label: translatedImageLabelText,
-      description: translatedImageDescriptionText,
-    };
-  })
-);
-
     // Trả về kết quả đã dịch
-    return NextResponse.json({
-      ...billboard,
-      label: translatedLabelText,
-      description: translatedDescriptionText,
-      imagebillboard: translatedImageBillboards,
-    });
+    return NextResponse.json(billboard);
   } catch (error) {
     return new NextResponse(
       JSON.stringify({ error: billboardIdGetMessage.name3 }),

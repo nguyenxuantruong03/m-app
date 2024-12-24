@@ -2,9 +2,9 @@ import { Category } from "@/types/type"
 
 const URLCategories = `${process.env.NEXT_PUBLIC_API_URL}/getAllCategory`;
 
-export const getAllCategory = async (language: string): Promise<Category[]> => {
+export const getAllCategory = async (): Promise<Category[]> => {
   try {
-    const res = await fetch(`${URLCategories}?language=${language}`);
+    const res = await fetch(`${URLCategories}`);
 
     if (!res.ok) {
       throw new Error("Failed to fetch categories");

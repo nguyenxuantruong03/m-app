@@ -31,7 +31,6 @@ const LogicProduct = () => {
         setLoading(true)
         const products = await getAllProduct({
           isFeatured: true,
-          language: languageToUse,
         });
         setProducts(products);
       }catch(error){

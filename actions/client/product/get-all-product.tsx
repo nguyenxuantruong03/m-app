@@ -5,7 +5,6 @@ const URL = `${process.env.NEXT_PUBLIC_API_URL}/getAllProduct`;
 
 interface Query {
   isFeatured?: boolean;
-  language?: string; // Thêm tham số language
 }
 
 const getAllProduct = async (query: Query): Promise<Product[]> => {
@@ -13,7 +12,6 @@ const getAllProduct = async (query: Query): Promise<Product[]> => {
     url: URL,
     query: {
       isFeatured: query.isFeatured,
-      language: query.language || "vi", // Mặc định là "vi" nếu không truyền language
     },
   });
 

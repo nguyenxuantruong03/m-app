@@ -28,7 +28,7 @@ export async function generateMetadata({
   const user = await currentUser();
   const languageToUse = user?.language || "vi";
   const productNotFoundMessage = getProductNotFoundMessage(languageToUse);
-  const product = await getProducts7(productId, languageToUse);
+  const product = await getProducts7(productId);
   const productDescriptionMetaMessage = getProductDescriptionMeta(languageToUse,product)
 
   const title = product ? product.heading : productNotFoundMessage;

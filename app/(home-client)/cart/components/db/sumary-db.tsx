@@ -134,9 +134,9 @@ const SumaryDb: React.FC<SumaryProps> = ({
     try {
       setLoadingChange(true);
 
-      await cartdb.removeSelectedItems(userId, languageToUse);
+      await cartdb.removeSelectedItems(userId);
       // Sau khi xóa, đảm bảo rằng các trạng thái được cập nhật
-      await cartdb.fetchCartItems(userId, languageToUse); // Làm mới dữ liệu giỏ hàng
+      await cartdb.fetchCartItems(userId); // Làm mới dữ liệu giỏ hàng
       toast.success(toastSuccessCartItemDeleteMessage);
     } catch (error) {
       toast.error(toastErrorMessage);
@@ -240,7 +240,7 @@ const SumaryDb: React.FC<SumaryProps> = ({
         try {
           setLoadingChange(true);
 
-          await cartdb.fetchCartItems(userId, languageToUse);
+          await cartdb.fetchCartItems(userId);
         } catch (error) {
           console.error(error);
         } finally {

@@ -3,7 +3,6 @@ import { currentUser } from "@/lib/auth";
 
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
-import { translateText } from "@/translate/translate-client";
 import { translateBillboardDelete, translatebillboardGet, translateBillboardPost } from "@/translate/translate-api";
 
 export async function POST(
@@ -137,8 +136,6 @@ export async function GET(
   { params }: { params: { storeId: string } }
 ) {
   const user = await currentUser();
-  const { searchParams } = new URL(req.url);
-  const language = searchParams.get("language") || "vi"; // Mặc định là "vi" nếu không có language
   
   //language
   const LanguageToUse = user?.language || "vi";
@@ -163,55 +160,6 @@ export async function GET(
         createdAt: "desc",
       },
     });
-
-    const translations = await Promise.all(
-      billboards.map(async (billboard) => {
-        try {
-          // Helper function to translate only if the language is not 'vi' (Vietnamese)
-          const safeTranslate = async (text: string, language: string) => {
-            // Proceed with translation only if language is different from 'vi'
-            if (text && language && language !== 'vi') {
-              try {
-                const translated = await translateText(text, language);
-                // If translation is successful and different, return the translated text
-                return translated !== text ? translated : text;
-              } catch (error) {
-                return text; // Return original text if translation fails
-              }
-            }
-            return text; // Return original text if language is 'vi' or no text
-          };
-    
-          // Translate label and description of billboard
-          const translatedLabelText = await safeTranslate(billboard.label || "", language);
-          const translatedDescriptionText = await safeTranslate(billboard.description || "", language);
-    
-          // Translate imagebillboards if available
-          const translatedImageBillboards = await Promise.all(
-            billboard.imagebillboard.map(async (imageBillboard) => {
-              const translatedImageLabelText = await safeTranslate(imageBillboard.label || "", language);
-              const translatedImageDescriptionText = await safeTranslate(imageBillboard.description || "", language);
-    
-              return {
-                ...imageBillboard,
-                label: translatedImageLabelText,
-                description: translatedImageDescriptionText,
-              };
-            })
-          );
-    
-          return {
-            ...billboard,
-            label: translatedLabelText,
-            description: translatedDescriptionText,
-            imagebillboard: translatedImageBillboards,
-          };
-        } catch (error) {
-          return billboard; // Return original billboard if any error occurs
-        }
-      })
-    );
-    
 
     return NextResponse.json(billboards);
   } catch (error) {

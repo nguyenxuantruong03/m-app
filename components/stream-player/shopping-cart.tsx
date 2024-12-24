@@ -107,7 +107,7 @@ const ShoppingCardInLive = ({
     const fetchData = async () => {
       try {
         setLoading(true);
-        const product = await getAllProductNotQuery(languageToUse);
+        const product = await getAllProductNotQuery();
 
         setData(product);
       } catch (error) {
@@ -306,7 +306,6 @@ const ShoppingCardInLive = ({
           // Sử dụng getCart thay vì axios.post
           const cartItemData = await getCart({
             userId: userId?.id || "",
-            language: languageToUse,
           });
 
           const size = availableSize;

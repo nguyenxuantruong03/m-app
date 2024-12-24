@@ -300,7 +300,7 @@ const NavbarIcon = ({
               <HoverCard>
                 <HoverCardTrigger>
                   {orderTitle(languageToUse).map((order, index) => (
-                    <div key={index}>order.icon</div>
+                    <div key={index}>{order.icon}</div>
                   ))}
                 </HoverCardTrigger>
                 <HoverCardContent>{mainNavMessage.name7}</HoverCardContent>

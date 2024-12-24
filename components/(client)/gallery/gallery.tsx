@@ -153,7 +153,7 @@ const Gallery: React.FC<GalleryProps> = ({
             />
             <button
               onClick={closeModal}
-              className="absolute cursor-pointer top-2 right-2 flex items-center justify-center text-xl rounded-full text-slate-900 w-6 h-6 bg-gray-300 hover:bg-gray-400"
+              className="absolute cursor-pointer top-2 right-2 text-2xl rounded-full w-8 h-8 bg-gray-300 hover:bg-gray-400"
             >
               &times;
             </button>
@@ -167,7 +167,7 @@ const Gallery: React.FC<GalleryProps> = ({
             </button>
             <button
               onClick={nextImage}
-              className="absolute cursor-pointer top-2 right-2 text-2xl rounded-full w-8 h-8 bg-gray-300 hover:bg-gray-400"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:text-slate-900 bg-black bg-opacity-50 hover:bg-black hover:bg-opacity-30 rounded-full p-2"
             >
               <ChevronRight className="w-8 h-8" />
             </button>

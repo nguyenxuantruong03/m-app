@@ -63,18 +63,17 @@ const Category2: React.FC<CategoryPageProps> = ({ params, searchParams }) => {
       try {
         setLoading(true);
 
-        const { translations, pagination } = await getProduct2({
+        const { products, pagination } = await getProduct2({
           colorId: searchParams.colorId, 
           sizeId: searchParams.sizeId,
           categoryId: params.categoryId,
           isFeatured: undefined,
-          language: languageToUse,
           page: currentPage,
           limit: pageSize, // Số sản phẩm mỗi trang
         });
 
         // Tìm giá cao nhất trong danh sách sản phẩm đã lọc
-        const highestPrice = translations.reduce(
+        const highestPrice = products.reduce(
           (max, product) =>
             product.productdetail.price1 *
               ((100 - product.productdetail.percentpromotion1) / 100) +
@@ -89,7 +88,7 @@ const Category2: React.FC<CategoryPageProps> = ({ params, searchParams }) => {
         setPagination(pagination);
         setMaxPrice(Math.floor(highestPrice));
         setMaxPriceInDatas(Math.floor(highestPrice));
-        setProduct(translations); // Cập nhật danh sách sản phẩm đã lọc
+        setProduct(products); // Cập nhật danh sách sản phẩm đã lọc
       } catch (error) {
         toast.error(categoryMessage);
       } finally {

@@ -33,7 +33,7 @@ L.Icon.Default.mergeOptions({
 });
 
 //-----------------------Code LeftLet----------------------
-const OrderForm: React.FC<OrderProps> = ({ data, language }) => {
+const DeliveryForm: React.FC<OrderProps> = ({ data, language }) => {
   const [searchValue, setSearchValue] = useState("");
   const [isSearchVisible, setIsSearchVisible] = useState(true);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -57,6 +57,9 @@ const OrderForm: React.FC<OrderProps> = ({ data, language }) => {
   const addressOrder = data.map((datas) =>
     extractRelevantAddress(datas?.address)
   );
+
+  console.log("addressOrder",addressOrder)
+  console.log("data",data)
 
   useEffect(() => {
     const map = L.map("map").setView([10.77621, 106.60444], 16);
@@ -255,11 +258,17 @@ const OrderForm: React.FC<OrderProps> = ({ data, language }) => {
   const geocode = async (location: string | number[]): Promise<Coordinates> => {
     try {
       const address = Array.isArray(location)
-        ? `${location[0]}, ${location[1]}`
-        : location;
+      ? `${location[0]}, ${location[1]}`
+      : location;
+
+       // Loại bỏ "Địa chỉ 1:" và "Địa chỉ 2:" khỏi chuỗi
+       const cleanedAddress = address.replace(/Địa chỉ \d+:\s?/g, "");
+
+       console.log("cleanedAddress",cleanedAddress);
+
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-          address
+          cleanedAddress
         )}`
       );
       const data = await response.json();
@@ -318,4 +327,4 @@ const OrderForm: React.FC<OrderProps> = ({ data, language }) => {
   );
 };
 
-export default OrderForm;
+export default DeliveryForm;

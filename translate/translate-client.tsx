@@ -22826,26 +22826,3 @@ export const translateNotFoundSizeAndColor = (language: string) => {
       return "Size and color not found!";
   }
 };
-
-
-// Hàm dịch văn bản, trả về chuỗi đã dịch hoặc chuỗi gốc nếu lỗi
-export async function translateText(
-  text: string,
-  language: string
-): Promise<string> {
-  if (!text) return ""; // Trả về chuỗi rỗng nếu không có dữ liệu
-  const response = await axios({
-    baseURL: endpoint,
-    url: `/translate?api-version=3.0&to=${language}`, // Dynamic language
-    method: "POST",
-    headers: {
-      "Ocp-Apim-Subscription-Key": key,
-      "Ocp-Apim-Subscription-Region": location,
-      "Content-type": "application/json",
-      "X-ClientTraceId": cuid(),
-    },
-    data: [{ Text: text }],
-  });
-
-  return response.data[0]?.translations[0]?.text || text;
-}

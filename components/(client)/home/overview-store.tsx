@@ -61,7 +61,7 @@ const OverViewStore = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const allProducts = await getAllProductNotQuery(languageToUse);
+        const allProducts = await getAllProductNotQuery();
         const allUser = await getAllUser();
         setDataAllProduct(allProducts);
         setDataAllUser(allUser);

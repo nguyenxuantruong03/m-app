@@ -287,7 +287,7 @@ const PaymentSuccess = () => {
           //hasRunToastRef: Ngăn chặn chỉ cho API chạy 1 lần nếu ko có nó call liên tục bên ngoài
           hasRunToastRef.current = true;
           try {
-            await cartdb.removeSelectedItems(user?.id || "", languageToUse);
+            await cartdb.removeSelectedItems(user?.id || "");
             toast.success(payementSuccessMessage);
           } catch (error) {
             toast.error(toastErrorMessage);

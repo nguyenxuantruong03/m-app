@@ -42,7 +42,7 @@ export default function CategoryLayout({
       try {
         setLoading(true);
         const [billboardData] = await Promise.all([
-          getBillboard(`${process.env.NEXT_PUBLIC_CATEGORIES4}`, languageToUse),
+          getBillboard(`${process.env.NEXT_PUBLIC_CATEGORIES4}`),
         ]);
         setBillboard(billboardData);
       } catch (error) {

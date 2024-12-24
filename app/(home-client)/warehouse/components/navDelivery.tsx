@@ -47,7 +47,7 @@ const NavbarDelivery = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const warehouse = await getWareHouse(languageToUse);
+        const warehouse = await getWareHouse();
         setData(warehouse);
       } catch (error) {
         console.error("Fetch data error!");

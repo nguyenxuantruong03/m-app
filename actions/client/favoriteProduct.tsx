@@ -5,7 +5,6 @@ const URL = `/api/client/favoriteProduct`
 
 interface Query{
     userId?: string
-    language?: string; // Thêm tham số language
 }
 
 const getFavoriteProduct = async (query: Query):Promise<FavoriteUnion[]> =>{
@@ -13,7 +12,6 @@ const getFavoriteProduct = async (query: Query):Promise<FavoriteUnion[]> =>{
         url: URL,
         query:{
             userId: query.userId,
-            language: query.language || "vi", // Mặc định là "vi" nếu không truyền language
         }
     })
     const res = await fetch(url)

@@ -32,7 +32,7 @@ export async function generateMetadata({
   const languageToUse = user?.language || "vi";
   const categoryNotFoundMessage = getCategoryNotFoundMessage(languageToUse);
   // Assuming getCategories1 returns an array of categories
-  const categories = await getCategories4(languageToUse);
+  const categories = await getCategories4();
   // Find the category by its id
   const category = categories.find((cat) => cat.id === categoryId[0]);
   // If category is found, get its name, else use a default message

@@ -18,8 +18,8 @@ interface CartStore {
   getSelectedItemWarranty: (id: string) => string | null;
   selectWarranty: (id: string, warrantyOption: string | null) => string | null;
   selectedWarranties: Record<string, string | null>;
-  removeSelectedItems: (userId: string,language: string) => void;
-  fetchCartItems: (userId: string,language: string) => void; // New method to fetch cart items
+  removeSelectedItems: (userId: string) => void;
+  fetchCartItems: (userId: string) => void; // New method to fetch cart items
 }
 
 const useCartdb = create<CartStore>((set, get) => ({
@@ -30,9 +30,9 @@ const useCartdb = create<CartStore>((set, get) => ({
   selectedWarranties: {},
   loading: false,
 
-  fetchCartItems: async (userId: string, language: string) => {
+  fetchCartItems: async (userId: string) => {
     try {
-      const getcart = await getCart({ userId: userId, language: language });
+      const getcart = await getCart({ userId: userId });
       set({ items: getcart || [] }); // Trả về [] nếu getCart không trả về dữ liệu
     } catch (error) {
       set({ items: [] }); // Đảm bảo items luôn là một mảng
@@ -158,8 +158,8 @@ const useCartdb = create<CartStore>((set, get) => ({
     }));
   },
 
-  removeSelectedItems: async (userId: string,lanague: string) => {
-    await get().fetchCartItems(userId,lanague);
+  removeSelectedItems: async (userId: string) => {
+    await get().fetchCartItems(userId);
 
     // Now that we have the latest cart items, map selected product IDs to cart item IDs
     const cartItemIds = get().items

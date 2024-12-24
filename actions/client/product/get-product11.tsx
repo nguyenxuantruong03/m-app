@@ -6,7 +6,6 @@ const URL = `${process.env.NEXT_PUBLIC_API_URL}/product11`
 interface Query {
     categoryId?: string | string[]
     isFeatured?: boolean;
-    language?: string;
     page?: number; // Trang hiện tại
     limit?: number; // Số sản phẩm mỗi trang
     colorId?: string
@@ -14,7 +13,7 @@ interface Query {
   }
   
   const getProduct11 = async (query: Query): Promise<{
-    translations: Product[];
+    products: Product[];
     pagination: {
       currentPage: number;
       totalPages: number;
@@ -27,7 +26,6 @@ interface Query {
         sizeId: query.sizeId,
         categoryId: query.categoryId,
         isFeatured: query.isFeatured,
-        language: query.language || "vi",
         page: query.page || 1,
         limit: query.limit || 9,
       },

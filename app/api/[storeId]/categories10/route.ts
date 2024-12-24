@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { CategoryType, UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
-import { translateText } from "@/translate/translate-client";
 import {
   translateCategoriesDelete,
   translateCategoriesGet,
@@ -130,9 +129,6 @@ export async function GET(
 
   const categoryType = CategoryType.CATEGORY10;
 
-  const { searchParams } = new URL(req.url);
-  const language = searchParams.get("language") || "vi"; // Mặc định là "vi" nếu không có language
-
   try {
     if (!params.storeId) {
       return new NextResponse(
@@ -148,36 +144,7 @@ export async function GET(
       },
     });
 
-    const translations = await Promise.all(
-      categories.map(async (category) => {
-        try {
-          // Chỉ dịch tên nếu ngôn ngữ không phải "vi"
-          let translatedName = category.name;
-
-          if (language !== "vi") {
-            translatedName = await translateText(category.name, language);
-            
-            // Nếu không có dữ liệu dịch, giữ lại tên gốc
-            if (!translatedName) {
-              translatedName = category.name;
-            }
-          }
-
-          return {
-            ...category,
-            name: translatedName,
-          };
-        } catch (error) {
-          // Nếu có lỗi trong khi dịch, trả về dữ liệu gốc
-          return {
-            ...category,
-            name: category.name,
-          };
-        }
-      })
-    );
-
-    return NextResponse.json(translations);
+    return NextResponse.json(categories);
   } catch (error) {
     return new NextResponse(
       JSON.stringify({ error: `${categoriesGetMessage.name2} 10` }),

@@ -122,9 +122,9 @@ const MainNav: React.FC<mainNavProps> = ({
     if (role !== "GUEST" && userId) {
       const fetchData = async () => {
         try {
-          await cartdb.fetchCartItems(userId, languageToUse);
+          await cartdb.fetchCartItems(userId);
 
-          await favorite.fetchFavoriteItems(userId, languageToUse);
+          await favorite.fetchFavoriteItems(userId);
         } catch (error) {
           console.error(error);
         }

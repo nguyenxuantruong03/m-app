@@ -94,7 +94,7 @@ const LikePage = () => {
       const fetchData = async () => {
         setLoading(true);
         try {
-          await favorite.fetchFavoriteItems(user?.id || "", languageToUse);
+          await favorite.fetchFavoriteItems(user?.id || "");
         } catch (error) {
           toast.error(toastErrorMessage);
         } finally {

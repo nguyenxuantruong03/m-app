@@ -494,7 +494,7 @@ const CheckoutCash = () => {
         if (user?.role === "GUEST" && !user?.id) {
           await cart.removeSelectedItems();
         } else {
-          await cartdb.removeSelectedItems(user?.id || "", languageToUse);
+          await cartdb.removeSelectedItems(user?.id || "");
         }
 
         setOpen(true);

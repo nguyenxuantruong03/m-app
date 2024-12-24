@@ -5,7 +5,6 @@ const URL = `/api/client/cart/get-items`
 
 interface Query{
     userId?: string
-    language?: string; // Thêm tham số language
 }
 
 const getCart = async (query: Query):Promise<CartItemType[]> =>{
@@ -13,7 +12,6 @@ const getCart = async (query: Query):Promise<CartItemType[]> =>{
         url: URL,
         query:{
             userId: query.userId,
-            language: query.language || "vi", // Mặc định là "vi" nếu không truyền language
         }
     })
     const res = await fetch(url)

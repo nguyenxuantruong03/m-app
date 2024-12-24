@@ -225,7 +225,6 @@ const LikeItem: React.FC<LikeItemProps> = ({
           // Sử dụng getCart thay cho axios.post
           const cartItemData = await getCart({
             userId: user?.id || "",
-            language: languageToUse,
           });
 
           const matchingItem = cartItemData.find(

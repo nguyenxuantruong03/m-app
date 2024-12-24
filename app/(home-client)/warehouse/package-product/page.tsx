@@ -179,7 +179,7 @@ const Delivery = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const warehouse = await getWareHouse(languageToUse);
+        const warehouse = await getWareHouse();
         setData(warehouse);
       } catch (error) {
         toast.error(toastErrorMessage);
@@ -299,7 +299,6 @@ const Delivery = () => {
           // Thay axios.post bằng await getCart
           const cartItemData = await getCart({
             userId: user.id, // Lấy userId từ user object
-            language: languageToUse, // Ngôn ngữ sử dụng
           });
         
           const matchingItem = cartItemData.filter(

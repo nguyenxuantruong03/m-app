@@ -79,7 +79,7 @@ export const FormToggleCard = ({
         `${process.env.NEXT_PUBLIC_API_URL}/getAllProductNotQuery`,
         updatedData
       );
-      const product = await getAllProductNotQuery(languageToUse);
+      const product = await getAllProductNotQuery();
 
       setData(product);
       toast.success(toggleCardMessage.productUpdated);

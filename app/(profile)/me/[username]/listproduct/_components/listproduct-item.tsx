@@ -83,7 +83,7 @@ const ListProductItem = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const products = await getAllProductNotQuery(languageToUse);
+        const products = await getAllProductNotQuery();
 
         const productsWithIndex = products.map((product: any) => ({
           ...product,

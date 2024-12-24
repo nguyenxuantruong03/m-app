@@ -151,7 +151,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
       const fetchData = async () => {
         try {
           setLoadingFetchDataFavorite(true);
-          await favorite.fetchFavoriteItems(user?.id || "", languageToUse);
+          await favorite.fetchFavoriteItems(user?.id || "");
         } catch (error) {
           toast.error(toastErrorMessage);
         } finally {
@@ -345,7 +345,6 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
         (async () => {
           const cartItemData = await getCart({
             userId: user?.id || "",
-            language: languageToUse,
           });
 
           const matchingItem = cartItemData.find(
@@ -529,7 +528,6 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
           // Fetch cart data using getCart
           const cartItemData = await getCart({
             userId: user?.id || "",
-            language: languageToUse,
           });
 
           const matchingItem = cartItemData.find(

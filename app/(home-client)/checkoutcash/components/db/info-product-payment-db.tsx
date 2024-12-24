@@ -231,7 +231,7 @@ const InfoProductPaymentDb: React.FC<CartItemProps> = ({
     setLoadingChange(true);
     try {
       await cartdb.removeItem(data.id, userId, language);
-      await cartdb.fetchCartItems(userId, language);
+      await cartdb.fetchCartItems(userId);
     } catch (error) {
       toast.error(errorMessage);
       setLoadingChange(false);

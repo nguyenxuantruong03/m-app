@@ -4,7 +4,6 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { Duration, UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
-import { translateText } from "@/translate/translate-client";
 import { translateCouponDelete, translateCouponGet, translateCouponPost } from "@/translate/translate-api";
 
 export async function POST(
@@ -193,9 +192,6 @@ export async function GET(
   const LanguageToUse = user?.language || "vi";
   const couponGetMessage = translateCouponGet(LanguageToUse);
 
-  const { searchParams } = new URL(req.url);
-  const language = searchParams.get("language") || "vi"; // Mặc định là "vi" nếu không có language
-
   try {
     if (!params.storeId) {
       return new NextResponse(
@@ -216,34 +212,7 @@ export async function GET(
       },
     });
 
-    const translations = await Promise.all(
-      coupons.map(async (coupon) => {
-        try {
-          // Chỉ dịch description
-          let translatedDescription = coupon.description ?? "";
-    
-          if (language !== "vi") {
-            translatedDescription = await translateText(coupon.description ?? "", language);
-    
-            // Nếu không có dữ liệu dịch, giữ lại description gốc
-            if (!translatedDescription) {
-              translatedDescription = coupon.description ?? "";
-            }
-          }
-    
-          return {
-            ...coupon,
-            description: translatedDescription,
-          };
-        } catch (error) {
-          // Nếu có lỗi trong quá trình dịch, trả về dữ liệu gốc
-          return coupon; 
-        }
-      })
-    );
-    
-
-    return NextResponse.json(translations);
+    return NextResponse.json(coupons);
   } catch (error) {
     return new NextResponse(
       JSON.stringify({ error: couponGetMessage.internalError }),

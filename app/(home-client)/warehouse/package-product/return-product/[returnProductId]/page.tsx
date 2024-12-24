@@ -212,7 +212,7 @@ const WareHouseDetail = ({
       try {
         setLoading(true);
 
-        const warehouse = await getWareHouse(languageToUse);
+        const warehouse = await getWareHouse();
         setData(warehouse);
       } catch (error) {
         toast.error(toastErrorMessage);
@@ -454,7 +454,6 @@ const WareHouseDetail = ({
           // Sử dụng getCart thay cho axios.post
           const cartItemData = await getCart({
             userId: user.id, // Lấy userId từ user object
-            language: languageToUse, // Ngôn ngữ sử dụng
           });
         
           // Tìm sản phẩm trong giỏ hàng
@@ -534,12 +533,17 @@ const WareHouseDetail = ({
   );
 
   useEffect(() => {
-    if (loading ) {
+    if (loading) {
       document.title = loadingMessage.loading;
+    } else if (matchId.length > 0) {
+      // Chỉ thay đổi title nếu matchId không rỗng
+      document.title =
+        matchId[0]?.orderItem?.[0]?.product?.heading || matchId[0]?.name || "";
     } else {
-      document.title = matchId[0].orderItem[0].product?.name || matchId[0].name;
+      // Xử lý trường hợp không có dữ liệu phù hợp
+      document.title = "No matching data found";
     }
-}, [loading]);
+  }, [loading, matchId]);
 
   return (
     <div>
@@ -966,7 +970,7 @@ const WareHouseDetail = ({
                             </p>
                             <div className="flex items-center space-x-1">
                               <span className="font-semibold text-slate-900 dark:text-slate-200">
-                                {warehouseLocaltionProductMessage.deliveryName}
+                                {warehouseLocaltionProductMessage.deliveryName}:
                               </span>
                               <span className="text-slate-900 dark:text-slate-200">
                                 {order.shipper.name}
@@ -986,27 +990,6 @@ const WareHouseDetail = ({
                               </span>
                               <span className="text-slate-900 dark:text-slate-200">
                                 {order.shipper.phonenumber}
-                              </span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              <span className="font-semibold text-slate-900 dark:text-slate-200">
-                                {
-                                  warehouseLocaltionProductMessage.deliveryStatus
-                                }
-                                :
-                              </span>
-                              <span className=" text-slate-900 dark:text-slate-200">
-                                {order.shipper.isSharingLocation ? (
-                                  <span className="text-green-500">
-                                    {
-                                      warehouseLocaltionProductMessage.delivering
-                                    }
-                                  </span>
-                                ) : (
-                                  <span className="text-yellow-500">
-                                    {warehouseLocaltionProductMessage.inTransit}
-                                  </span>
-                                )}
                               </span>
                             </div>
                             <Button

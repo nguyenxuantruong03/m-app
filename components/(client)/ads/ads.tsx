@@ -37,8 +37,7 @@ const Ads = () => {
       const fetchData = async () => {
         try {
           const data = await getBillboard(
-            `${process.env.NEXT_PUBLIC_ADS}`,
-            user?.language || "vi"
+            `${process.env.NEXT_PUBLIC_ADS}`
           );
           setBillboard(data);
         } catch (error) {

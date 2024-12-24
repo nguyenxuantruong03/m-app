@@ -176,7 +176,7 @@ const FormPostExplore = ({
         setLoadingCategory(true);
 
         // Lấy categories
-        const allCategories = await getAllCategory(languageToUse);
+        const allCategories = await getAllCategory();
         setCategories(allCategories);
       } catch {
         toast.error(toastErrorMessage);
@@ -205,7 +205,7 @@ const FormPostExplore = ({
           userId && role !== "GUEST" ? language : storedLanguage || "vi";
 
         // Lấy products
-        const allProducts = await getAllProductNotQuery(languageToUse);
+        const allProducts = await getAllProductNotQuery();
         setProducts(allProducts);
       } catch {
         toast.error(toastErrorMessage);

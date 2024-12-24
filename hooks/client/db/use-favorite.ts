@@ -21,7 +21,7 @@ interface LikeStore {
   getSortedItems: () => FavoriteUnion[];
   filteredItems: FavoriteUnion[]; // Add a new state for filtered items
   setFilteredItems: (items: FavoriteUnion[]) => void;
-  fetchFavoriteItems: (userId: string, language: string) => void;
+  fetchFavoriteItems: (userId: string) => void;
 }
 
 const useFavorite = create<LikeStore>((set, get) => ({
@@ -32,9 +32,9 @@ const useFavorite = create<LikeStore>((set, get) => ({
 
   setFilteredItems: (items: FavoriteUnion[]) => set({ filteredItems: items }),
 
-  fetchFavoriteItems: async (userId: string, language: string) => {
+  fetchFavoriteItems: async (userId: string) => {
     try {
-      const favoriteProduct = await getFavoriteProduct({ userId: userId, language: language });
+      const favoriteProduct = await getFavoriteProduct({ userId: userId });
       set({ items: favoriteProduct || [] }); // Trả về [] nếu không có dữ liệu
     } catch (error) {
       set({ items: [] }); // Trả về [] nếu có lỗi

@@ -30,7 +30,7 @@ const Menu: React.FC<MenuProps> =  ({ showCategories = false,languageToUse, load
       try {
         setLoadingCategory(true)
         // Gọi API để lấy danh sách categories
-        const category = await getAllCategory(languageToUse);
+        const category = await getAllCategory();
   
         // Tạo một object để lưu các categories theo categoryType
         const categorized = category.reduce((acc: Record<string, any[]>, item: any) => {

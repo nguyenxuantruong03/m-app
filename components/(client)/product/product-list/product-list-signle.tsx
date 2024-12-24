@@ -106,7 +106,7 @@ const ProductListSingle: React.FC<ProductListProps> = ({
       const fetchData = async () => {
         try {
           setLoadingFetchDataFavorite(true);
-          await favorite.fetchFavoriteItems(userId?.id || "", languageToUse);
+          await favorite.fetchFavoriteItems(userId?.id || "");
         } catch (error) {
           toast.error(toastErrorMessage);
         } finally {
@@ -320,7 +320,6 @@ const ProductListSingle: React.FC<ProductListProps> = ({
                   // Fetch cart data using getCart
                   const cartItemData = await getCart({
                     userId: userId?.id || "",
-                    language: languageToUse,
                   });
 
                   const size = availableSize;

@@ -231,7 +231,7 @@ const CartItemDatabase: React.FC<CartItemProps> = ({
     try {
       await cartdb.removeItem(data.id, userId, languageToUse);
 
-      await cartdb.fetchCartItems(userId, languageToUse);
+      await cartdb.fetchCartItems(userId);
     } catch (error) {
       toast.error(errorMessage);
       setLoadingChange(false);

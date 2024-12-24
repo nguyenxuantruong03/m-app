@@ -114,7 +114,7 @@ const ComfirmationProduct = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const warehouse = await getWareHouse(languageToUse);
+        const warehouse = await getWareHouse();
         setData(warehouse);
       } catch (error) {
         toast.error(toastErrorMessage);
@@ -209,7 +209,6 @@ const ComfirmationProduct = () => {
           // Sử dụng getCart thay cho axios.post
           const cartItemData = await getCart({
             userId: user.id, // Lấy userId từ user object
-            language: languageToUse, // Ngôn ngữ sử dụng
           });
         
           // Tìm sản phẩm trong giỏ hàng

@@ -52,7 +52,6 @@ const ColorSizeSideBar = ({ categoryId }: ColorSizeSideBarProps) => {
         setLoading(true);
         const productDetails: ProductDetail[] = await getProductDetail({
           categoryId: categoryId,
-          language: languageToUse,
         });
 
         const sizesArray: Size[] = [];

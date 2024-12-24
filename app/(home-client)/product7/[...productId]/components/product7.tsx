@@ -40,14 +40,13 @@ const Product7: React.FC<PropductPageProps> = ({ params }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const product = await getProducts7(params.productId, languageToUse);
+        const product = await getProducts7(params.productId);
         const suggestedProducts = await getProduct7({
           isFeatured: undefined,
-          language: languageToUse,
           limit: 30
         });
         setProduct(product);
-        setSuggestedProducts(suggestedProducts.translations);
+        setSuggestedProducts(suggestedProducts.products);
       } catch (error) {
         toast.error(productMessage.notFound);
       } finally {

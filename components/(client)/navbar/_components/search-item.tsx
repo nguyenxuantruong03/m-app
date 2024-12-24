@@ -38,7 +38,7 @@ const SearchItem = ({ value, languageToUse }: SearchItemProps) => {
       if (!value) return; // Ngăn gọi API nếu value rỗng
       try {
         setLoading(true);
-        const searchData = await getSearchProduct({ value, language: languageToUse });
+        const searchData = await getSearchProduct({ value });
         setData(searchData);
       } catch (error) {
       } finally {

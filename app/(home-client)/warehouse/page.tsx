@@ -67,7 +67,7 @@ const Voucher = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const coupon = await getCoupon(languageToUse);
+        const coupon = await getCoupon();
 
         // Lọc dữ liệu để chỉ lấy những coupon có redeemBy > now
         const now = new Date();

@@ -171,7 +171,6 @@ const ImageDelivery = ({ languageToUse }: ImageDeliveryProps) => {
 
         const products = await getAllProduct({
           isFeatured: true,
-          language: languageToUse,
         });
         setProducts(products);
       } catch (error) {

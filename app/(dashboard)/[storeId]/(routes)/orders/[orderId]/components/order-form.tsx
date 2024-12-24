@@ -255,11 +255,15 @@ const OrderForm: React.FC<OrderProps> = ({ data,language }) => {
   const geocode = async (location: string | number[]): Promise<Coordinates> => {
     try {
       const address = Array.isArray(location)
-        ? `${location[0]}, ${location[1]}`
-        : location;
+      ? `${location[0]}, ${location[1]}`
+      : location;
+    
+      // Loại bỏ "Địa chỉ 1:" và "Địa chỉ 2:" khỏi chuỗi
+      const cleanedAddress = address.replace(/Địa chỉ \d+:\s?/g, "");
+      
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-          address
+          cleanedAddress
         )}`
       );
       const data = await response.json();

@@ -150,7 +150,7 @@ const Menu = () => {
     const fetchCategories = async () => {
       try {
         // Gọi API để lấy danh sách categories
-        const category = await getAllCategory(languageToUse);
+        const category = await getAllCategory();
 
         // Tạo một object để lưu các categories theo categoryType
         const categorized = category.reduce(

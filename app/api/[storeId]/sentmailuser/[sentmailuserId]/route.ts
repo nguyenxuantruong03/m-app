@@ -10,7 +10,6 @@ import {
   translateSentEmailIdPatch,
   translateSentEmailIdPost,
 } from "@/translate/translate-api";
-import { translateText } from "@/translate/translate-client";
 
 type SentEmailUserValue =
   | string
@@ -446,29 +445,11 @@ export async function POST(
             continue;
           }
 
-          const userLanguage = user.language ?? "vi"; // Ngôn ngữ mặc định là "vi" nếu là null hoặc undefined
-
-          // Dịch tiêu đề và nội dung email theo ngôn ngữ của người dùng
-          const translateField = async (field: any, language: string) => {
-            if (language === "vi") return field; // Không dịch nếu ngôn ngữ là "vi"
-            const translated = await translateText(field || "", language);
-            return translated || field; // Trả về bản dịch nếu có, ngược lại giữ lại giá trị gốc
-          };
-
-          const translatedSubject = await translateField(
-            sentEmailUser.subject,
-            userLanguage
-          );
-          const translatedDescription = await translateField(
-            sentEmailUser.description,
-            userLanguage
-          );
-
           // Gửi email với nội dung đã dịch (chỉ gửi một lần)
           await sendSpamEmail(
             [user.email],
-            translatedSubject,
-            translatedDescription
+            sentEmailUser.subject,
+            sentEmailUser.description,
           );
 
           // Thêm email vào danh sách đã gửi
@@ -493,31 +474,11 @@ export async function POST(
             continue;
           }
 
-          // Đảm bảo rằng ngôn ngữ mặc định là "vi"
-          const userLanguage = user.language ?? "vi";
-
-          // Hàm dịch với kiểm tra ngôn ngữ
-          const translateField = async (field: any, language: string) => {
-            if (language === "vi" || !field) return field; // Không dịch nếu ngôn ngữ là "vi" hoặc không có dữ liệu
-            const translated = await translateText(field, language);
-            return translated || field; // Trả về bản dịch nếu có, ngược lại giữ lại giá trị gốc
-          };
-
-          // Dịch tiêu đề và nội dung email theo ngôn ngữ của người dùng
-          const translatedSubject = await translateField(
-            sentEmailUser.subject,
-            userLanguage
-          );
-          const translatedDescription = await translateField(
-            sentEmailUser.description,
-            userLanguage
-          );
-
           // Gửi email riêng lẻ cho từng user với nội dung đã dịch
           await sendSpamEmail(
             [user.email],
-            translatedSubject,
-            translatedDescription
+            sentEmailUser.subject,
+            sentEmailUser.description,
           );
 
           // Thêm email vào danh sách đã gửi
@@ -542,31 +503,11 @@ export async function POST(
             continue;
           }
 
-          // Đảm bảo rằng ngôn ngữ mặc định là "vi"
-          const userLanguage = user.language ?? "vi";
-
-          // Hàm dịch với kiểm tra ngôn ngữ
-          const translateField = async (field: any, language: string) => {
-            if (language === "vi" || !field) return field; // Không dịch nếu ngôn ngữ là "vi" hoặc không có dữ liệu
-            const translated = await translateText(field, language);
-            return translated || field; // Trả về bản dịch nếu có, ngược lại giữ lại giá trị gốc
-          };
-
-          // Dịch tiêu đề và nội dung email theo ngôn ngữ của người dùng
-          const translatedSubject = await translateField(
-            sentEmailUser.subject,
-            userLanguage
-          );
-          const translatedDescription = await translateField(
-            sentEmailUser.description,
-            userLanguage
-          );
-
           // Gửi email riêng lẻ cho từng user với nội dung đã dịch
           await sendSpamEmail(
             [user.email],
-            translatedSubject,
-            translatedDescription
+            sentEmailUser.subject,
+            sentEmailUser.description
           );
 
           // Thêm email vào danh sách đã gửi

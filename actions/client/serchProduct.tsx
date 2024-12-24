@@ -5,7 +5,6 @@ const URL = `${process.env.NEXT_PUBLIC_API_URL}/searchProduct`
 
 interface Query{
     value: string
-    language: string; // Thêm tham số language
 }
 
 const getSearchProduct = async (query: Query):Promise<Product[]> =>{
@@ -13,7 +12,6 @@ const getSearchProduct = async (query: Query):Promise<Product[]> =>{
         url: URL,
         query:{
             value: query.value,
-            language: query.language,
         }
     })
     const res = await fetch(url)

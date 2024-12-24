@@ -162,7 +162,7 @@ const CartPage = () => {
               ? currentUser?.language
               : storedLanguage || "vi";
 
-          await cartdb.fetchCartItems(currentUser?.id || "", languageToUse);
+          await cartdb.fetchCartItems(currentUser?.id || "");
         } catch (error) {
           toast.error(toastError);
         } finally {

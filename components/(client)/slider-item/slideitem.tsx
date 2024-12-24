@@ -36,11 +36,11 @@ const SlideItem = () => {
           try {
             setLoading(true)
             const [billboardData, billboardMiniData, billboardSaleData, billboardIpadData, billboardMobileData] = await Promise.all([
-              getBillboard(`${process.env.NEXT_PUBLIC_BILLBOARD_API_KEY}`, languageToUse),
-              getBillboard(`${process.env.NEXT_PUBLIC_BILLBOARD_MINI_API_KEY}`, languageToUse),
-              getBillboard(`${process.env.NEXT_PUBLIC_BILLBOARD_SALE_API_KEY}`, languageToUse),
-              getBillboard(`${process.env.NEXT_PUBLIC_BILLBOARD_IPAD_API_KEY}`, languageToUse),
-              getBillboard(`${process.env.NEXT_PUBLIC_BILLBOARD_MOBILE_API_KEY}`, languageToUse),
+              getBillboard(`${process.env.NEXT_PUBLIC_BILLBOARD_API_KEY}`),
+              getBillboard(`${process.env.NEXT_PUBLIC_BILLBOARD_MINI_API_KEY}`),
+              getBillboard(`${process.env.NEXT_PUBLIC_BILLBOARD_SALE_API_KEY}`),
+              getBillboard(`${process.env.NEXT_PUBLIC_BILLBOARD_IPAD_API_KEY}`),
+              getBillboard(`${process.env.NEXT_PUBLIC_BILLBOARD_MOBILE_API_KEY}`),
             ]);
       
             setBillboard(billboardData);

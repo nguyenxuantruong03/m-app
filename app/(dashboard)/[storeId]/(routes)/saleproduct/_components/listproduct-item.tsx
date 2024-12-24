@@ -59,7 +59,7 @@ const ListProductItem = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const product = await getAllProductNotQuery(languageToUse);
+        const product = await getAllProductNotQuery();
 
         const productsWithIndex = product.map((product: any) => ({
           ...product,
@@ -214,7 +214,7 @@ const ListProductItem = () => {
     try {
       setLoading(true);
       await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/saleProduct`);
-      const product = await getAllProductNotQuery(languageToUse);
+      const product = await getAllProductNotQuery();
 
       setData(product);
       toast.success(saleProductListMessage.productUpdated);
@@ -229,7 +229,7 @@ const ListProductItem = () => {
     try {
       setLoading(true);
       await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/saleProduct`);
-      const product = await getAllProductNotQuery(languageToUse);
+      const product = await getAllProductNotQuery();
 
       setData(product);
       toast.success(saleProductListMessage.productUpdated);

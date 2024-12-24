@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { currentRole, currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
-import { translateText } from "@/translate/translate-client";
 import {
   translateColorDelete,
   translateColorGet,
@@ -134,9 +133,6 @@ export async function GET(
   const LanguageToUse = user?.language || "vi";
   const colorGetMessage = translateColorGet(LanguageToUse);
 
-  const { searchParams } = new URL(req.url);
-  const language = searchParams.get("language") || "vi"; // Mặc định là "vi" nếu không có language
-
   try {
     if (!params.storeId) {
       return new NextResponse(
@@ -151,33 +147,7 @@ export async function GET(
       },
     });
 
-    const translations = await Promise.all(
-      colors.map(async (color) => {
-        try {
-          // Chỉ dịch name
-          let translatedName = color.name;
-    
-          if (language !== "vi") {
-            translatedName = await translateText(color.name, language);
-    
-            // Nếu không có dữ liệu dịch, giữ lại tên gốc
-            if (!translatedName) {
-              translatedName = color.name;
-            }
-          }
-    
-          return {
-            ...color,
-            name: translatedName,
-          };
-        } catch (error) {
-          // Nếu có lỗi trong quá trình dịch, trả về dữ liệu gốc
-          return color; 
-        }
-      })
-    );
-    
-    return NextResponse.json(translations);
+    return NextResponse.json(colors);
   } catch (error) {
     return new NextResponse(
       JSON.stringify({ error: colorGetMessage.internalError }),

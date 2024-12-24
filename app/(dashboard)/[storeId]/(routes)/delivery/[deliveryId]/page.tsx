@@ -1,7 +1,7 @@
 import prismadb from "@/lib/prismadb";
 import dynamic from "next/dynamic";
 
-const OrderForm = dynamic(() => import("./components/order-form"), {
+const DeliveryForm = dynamic(() => import("./components/delivery-form"), {
   ssr: false,
 });
 import { formatter } from "@/lib/utils";
@@ -9,10 +9,10 @@ import { UserRole } from "@prisma/client";
 import { currentRole, currentUser } from "@/lib/auth";
 import { RoleGate } from "@/components/auth/role-gate";
 
-const OrderPage = async ({
+const DelivertPage = async ({
   params,
 }: {
-  params: { storeId: string; orderId: string };
+  params: { storeId: string; deliveryId: string };
 }) => {
   const user = await currentUser()
   const role = await currentRole();
@@ -20,7 +20,7 @@ const OrderPage = async ({
   const showOrderRole = isRole;
   const order = await prismadb.order.findMany({
     where: {
-      id: params.orderId,
+      id: params.deliveryId,
     },
     include: {
       orderItem: {
@@ -91,10 +91,10 @@ const OrderPage = async ({
   return (
     <RoleGate allowedRole={[UserRole.ADMIN, UserRole.STAFF, UserRole.SHIPPER]}>
       <div className={` ${showOrderRole}`}>
-        {showOrderRole && <OrderForm data={formattedOrder} language={user?.language || "vi"}/>}
+        {showOrderRole && <DeliveryForm data={formattedOrder} language={user?.language || "vi"}/>}
       </div>
     </RoleGate>
   );
 };
 
-export default OrderPage;
+export default DelivertPage;

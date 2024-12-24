@@ -97,7 +97,7 @@ export const FormSaleProduct = ({
         ...data,
       });
 
-      const product = await getAllProductNotQuery(languageToUse);
+      const product = await getAllProductNotQuery();
       setData(product);
       toast.success(slateProductFormToggleCardMessage.productUpdated);
     } catch (error: unknown) {
