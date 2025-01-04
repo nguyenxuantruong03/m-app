@@ -19,15 +19,10 @@ import FormError from "@/components/form-error";
 import FormSuccess from "@/components/form-success";
 import EmailField from "./field/emailfield";
 import { reset } from "@/actions/actions-signin-sign-up/reset";
-import {
-  getLoadingMessage,
-  translateBackToLogin,
-  translateForgotPassword,
-  translateResetPassword,
-  translateSentToEmail,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 const ResetPasswordForm = () => {
+  const t = useTranslations()
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
@@ -37,28 +32,14 @@ const ResetPasswordForm = () => {
   //language
   const [language, setLanguage] = useState("vi");
   const [isOpen, setOpen] = useState(false);
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
 
-  useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []);
-
-  const languageToUse = storedLanguage || language;
-  const backToLoginMessage = translateBackToLogin(languageToUse);
-  const forgotPasswordMessage = translateForgotPassword(languageToUse);
-  const sentToEmailMessage = translateSentToEmail(languageToUse);
-  const resetPasswordMessage = translateResetPassword(languageToUse);
-  const loadingMessage = getLoadingMessage(languageToUse);
+  const languageToUse = language;
 
   useEffect(() => {
     if (isPending) {
-      document.title = loadingMessage.loading;
+      document.title = t("loading.loading");
     } else {
-      document.title = resetPasswordMessage;
+      document.title = t("auth.resetPassword");
     }
   }, [isPending]);
 
@@ -87,9 +68,9 @@ const ResetPasswordForm = () => {
   };
   return (
     <CardWrapper
-      headerLabel={forgotPasswordMessage}
+      headerLabel={t("auth.forgotPassword")}
       backButtonHref="/auth/login"
-      backButtonLabel={backToLoginMessage}
+      backButtonLabel={t("auth.backToLogin")}
       setLanguage={setLanguage}
       languageToUse={languageToUse}
       setOpen={setOpen}
@@ -106,7 +87,6 @@ const ResetPasswordForm = () => {
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <EmailField
-                      languageToUse={languageToUse}
                       field={field}
                       isPending={isPending}
                       email={email}
@@ -134,7 +114,7 @@ const ResetPasswordForm = () => {
             type="submit"
             disabled={isPending || !isEmailValid}
           >
-            {sentToEmailMessage}
+            {t("auth.sentToEmail")}
           </Button>
         </form>
       </Form>

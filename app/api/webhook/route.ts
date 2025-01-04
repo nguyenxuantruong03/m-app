@@ -6,13 +6,27 @@ import prismadb from "@/lib/prismadb";
 import { Resend } from "resend";
 import twilio from "twilio";
 import { formatter } from "@/lib/utils";
-import viLocale from "date-fns/locale/vi";
 import { format } from "date-fns";
 import { StatusOrder } from "@prisma/client";
+import { currentUser } from "@/lib/auth";
+import vi from 'date-fns/locale/vi';
+import en from 'date-fns/locale/en-US';
+import { createTranslator } from "next-intl";
+
+const locales = {
+  vi: vi,
+  en: en
+};
 
 export async function POST(req: Request) {
+  const user = await currentUser();
   const body = await req.text();
   const signature = headers().get("Stripe-Signature") as string;
+
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
 
   let event: Stripe.Event;
   try {
@@ -22,9 +36,12 @@ export async function POST(req: Request) {
       process.env.STRIPE_WEBHOOK_SECRET!
     );
   } catch (error) {
-    return new NextResponse(JSON.stringify({ error: "Webhook Error." }), {
-      status: 400,
-    });
+    return new NextResponse(
+      JSON.stringify({ error: t("toastError.webhookError") }),
+      {
+        status: 400,
+      }
+    );
   }
   const session = event.data.object as Stripe.Checkout.Session;
   const address = session?.customer_details?.address;
@@ -242,7 +259,7 @@ export async function POST(req: Request) {
 
       // Nếu số lượng bằng 0, ném lỗi
       if (quantityData === 0) {
-        throw new Error(`Số lượng không đủ cho sản phẩm ID ${data.id}`);
+        throw new Error(t("product.errorProductId", { id: data.id }));
       }
 
       return {
@@ -271,12 +288,16 @@ export async function POST(req: Request) {
             const newQuantity = quantityData - quantityBuy;
             if (newQuantity < 0) {
               throw new Error(
-                `Số lượng cho sản phẩm ID ${productId} không thể âm. Số lượng hiện tại: ${quantityData}, số lượng cần trừ: ${quantityBuy}`
+                t("product.errorProductNegative", {
+                  productId: productId,
+                  quantityData: quantityData,
+                  quantityBuy: quantityBuy,
+                })
               );
             }
 
             // Cập nhật sản phẩm với số lượng mới và số lượng đã bán
-              await prismadb.product.update({
+            await prismadb.product.update({
               where: { id: productId },
               include: {
                 productdetail: {
@@ -309,7 +330,6 @@ export async function POST(req: Request) {
       }
     }
 
-    try {
       //------------------ Dùng để sent Email đến người dùng --------------------------
       // Fetch the product details and order items
       const orderItems = await prismadb.orderItem.findMany({
@@ -341,8 +361,8 @@ export async function POST(req: Request) {
       tableRows.push(`<tr>
     <td colspan="4">${
       order.isPaid
-        ? '<p style="font-weight: 700; color: #16a34a;">Đã thanh toán</p>'
-        : '<p style="font-weight: 700; color: #dc2626;">Số tiền cần thanh toán</p>'
+        ? `<p style="font-weight: 700; color: #16a34a;">${t("webhook.paid")}</p>`
+        : `<p style="font-weight: 700; color: #dc2626;">${t("webhook.amountToPay")}</p>`
     }</td>
   <td>${formatter.format(totalPrice)}</td>
   </tr>`);
@@ -354,19 +374,9 @@ export async function POST(req: Request) {
         currentDate,
         "E '-' dd/MM/yyyy '-' HH:mm:ss a",
         {
-          locale: viLocale,
+          locale: locales[languageToUse as keyof typeof locales]
         }
       );
-
-      const addressComponents = [
-        address?.line1
-      ];
-    
-      const nonNullAddressComponents = addressComponents.filter(
-        (c) => c !== null && c !== undefined
-      );
-    
-      const addressString = nonNullAddressComponents.join(", ");
 
       const sentEmailUserHTML = `
    <div>
@@ -374,18 +384,18 @@ export async function POST(req: Request) {
        <svg style="color: #16a34a;" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check"><path d="M20 6 9 17l-5-5"/></svg>
       <path d="M20 6 9 17l-5-5"/>
     </svg>
-      <p style="text-align: center; font-weight:700; margin-left:4px; color:#16a34a;">ĐẶT HÀNG THÀNH CÔNG</p>
+      <p style="text-align: center; font-weight:700; margin-left:4px; color:#16a34a;">${t("webhook.orderSuccess")}</p>
     </div>
 
-  <p>Cảm ơn <span style="font-weight: 700;">${
+  <p>${t("webhook.thankYou")} <span style="font-weight: 700;">${
     order.name
-  }</span> đã tin tưởng của hàng VLXD Xuân Trường. Mã vận đơn của bạn là <span style="font-weight: 700;">${
+  }</span> ${t("webhook.trustMessage")} <span style="font-weight: 700;">${
         order.id
       }</span>.</p>
   ${
     order.address &&
     order.address !== "Trống" &&
-    `<p style="margin-bottom: 15px;">Sau khi shop nhận đơn hàng, sản phẩm sẽ được giao đến địa chỉ <span style="font-weight: 700;">${addressString}</span> trong <span style="font-weight: 700;">Dự kiến trước ngày ${formatDate}</span>.</p>`
+    `<p style="margin-bottom: 15px;">${t("webhook.deliveryAddress")} <span style="font-weight: 700;">${addressString}</span> ${t("webhook.deliveryTimeframe")} <span style="font-weight: 700;">${t("webhook.estimatedDelivery")} ${formatDate}</span>.</p>`
   }
 </div>
 
@@ -405,24 +415,24 @@ export async function POST(req: Request) {
 </table>
 
 <div style="margin-top: 12px;">
-  Bạn có thể theo dõi đơn hàng tại <span style="font-weight: 700;">Vận chuyển đơn hàng</span> sau đó dán mã vận đơn chúng tôi đã gửi cho bạn.
+  ${t("webhook.trackOrder")} <span style="font-weight: 700;">${t("webhook.shippingOrder")}</span> ${t("webhook.applyTrackingCode")}.
 </div>
 
-<p style="margin-top: 25px; margin-bottom: 20px;">VLXD Xuân Trường rất hân hạnh được phục vụ bạn!</p>
+<p style="margin-top: 25px; margin-bottom: 20px;">${t("webhook.honorMessage")}</p>
 
 <div style="margin-top: 5px; display: flex; justify-content: center; align-items: center;">
 <a href="${
         process.env.NEXT_PUBLIC_URL
       }" style="text-decoration: none; color: inherit; cursor: pointer;" target="_blank">
   <button style="padding: 12px; border-radius: 5px; background: transparent;">
-  Tiếp tục mua hàng
+  ${t("webhook.continueShopping")}
   </button>
 </a>
   <a href="${
     process.env.NEXT_PUBLIC_URL
   }/warehouse/package-product" style="text-decoration: none; color: #dc2626; cursor: pointer;" target="_blank">
   <button style="padding: 12px; margin-left: 10px; border-radius: 5px; border: 1px solid #dc2626; background: transparent;">
-  Chi tiết đơn hàng
+  ${t("webhook.detailOrder")}
   </button>
   </a>
 </div>
@@ -437,7 +447,7 @@ export async function POST(req: Request) {
       await resend.emails.send({
         from: "mail@vlxdxuantruong.email",
         to: [order?.email || ""],
-        subject: "Order Completed",
+        subject: t("webhook.orderCompleted"),
         html: `
         ${sentEmailUserHTML}
         
@@ -445,13 +455,11 @@ export async function POST(req: Request) {
       });
       // // Resend SMS
       // await client.messages.create({
-      //   body: "Đơn hàng đặt thành công. Cám ơn bạn đã đặt hàng. Nếu có thắc mắc gọi đến 0352261103.",
+      //   body: t("webhook.resendSMSBody"),
       //   from: messagefrom,
       //   to: session?.customer_details?.phone || "",
       // });
-    } catch (error) {
-      console.error("Error sending email:", error);
-    }
+    
   }
   return new NextResponse(null, { status: 200 });
 }

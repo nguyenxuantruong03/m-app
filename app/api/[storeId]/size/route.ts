@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
-import { translateSizeDelete, translateSizeGet, translateSizePost } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 export async function POST(
   req: Request,
@@ -11,29 +11,31 @@ export async function POST(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const sizePostMessage = translateSizePost(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
     const { name, value } = body;
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: sizePostMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: sizePostMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!name) {
       return new NextResponse(
-        JSON.stringify({ error: sizePostMessage.nameRequired }),
+        JSON.stringify({ error: t("toastError.name") }),
         {
           status: 400,
         }
@@ -42,7 +44,7 @@ export async function POST(
 
     if (!value) {
       return new NextResponse(
-        JSON.stringify({ error: sizePostMessage.valueRequired }),
+        JSON.stringify({ error: t("toastError.size.valueRequired") }),
         {
           status: 400,
         }
@@ -51,21 +53,8 @@ export async function POST(
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: sizePostMessage.storeIdRequired }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: sizePostMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -79,7 +68,7 @@ export async function POST(
 
     if (existingSize) {
       return new NextResponse(
-        JSON.stringify({ error: sizePostMessage.sizeAlreadyExists }),
+        JSON.stringify({ error: t("toastError.size.sizeAlreadyExists") }),
         { status: 400 }
       );
     }
@@ -113,7 +102,7 @@ export async function POST(
     return NextResponse.json(size);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: sizePostMessage.internalError }),
+      JSON.stringify({ error: t("toastError.size.internalErrorPostSize") }),
       { status: 500 }
     );
   }
@@ -125,12 +114,14 @@ export async function GET(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const sizeGetMessage = translateSizeGet(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: sizeGetMessage.storeIdRequired }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 400 }
       );
     }
@@ -144,7 +135,7 @@ export async function GET(
     return NextResponse.json(size);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: sizeGetMessage.internalError }),
+      JSON.stringify({ error: t("toastError.size.internalErrorGetSize") }),
       { status: 500 }
     );
   }
@@ -156,43 +147,32 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const sizeDeleteMessage = translateSizeDelete(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
     const { ids } = body;
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: sizeDeleteMessage.userNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: sizeDeleteMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!ids || ids.length === 0) {
       return new NextResponse(
-        JSON.stringify({ error: sizeDeleteMessage.idsArrayNotEmpty }),
+        JSON.stringify({ error: t("toastError.idsArrayNotEmpty") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: sizeDeleteMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -232,10 +212,10 @@ export async function DELETE(
       },
     });
 
-    return NextResponse.json({ message: sizeDeleteMessage.deleteSuccess });
+    return NextResponse.json({ message: t("toastSuccess.deletionSuccess") });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: sizeDeleteMessage.internalError }),
+      JSON.stringify({ error: t("toastError.size.internalErrorDeleteSize") }),
       { status: 500 }
     );
   }

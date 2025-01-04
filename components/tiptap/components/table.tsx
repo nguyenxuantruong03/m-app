@@ -1,20 +1,19 @@
 import { Toggle } from "@/components/ui/toggle";
-import { translateTable } from "@/translate/translate-dashboard";
 import { Editor } from "@tiptap/react";
+import { useTranslations } from "next-intl";
 
 interface TablePageProps {
   editor: Editor;
   disabled: boolean;
-  languageToUse: string
 }
-const TablePage: React.FC<TablePageProps> = ({ editor, disabled,languageToUse }) => {
+const TablePage: React.FC<TablePageProps> = ({ editor, disabled }) => {
+  const t = useTranslations("tiptap.table")
   //language
-  const tableMessage = translateTable(languageToUse)
   return (
     <div className="  space-x-3  space-y-3">
-      <h2 className="text-lg font-bold text-orange-500">{tableMessage.table}</h2>
+      <h2 className="text-lg font-bold text-orange-500">{t("table")}</h2>
       <Toggle
-        title={tableMessage.createTable}
+        title={t("createTable")}
         variant="outline"
         onClick={() =>
           editor
@@ -25,145 +24,145 @@ const TablePage: React.FC<TablePageProps> = ({ editor, disabled,languageToUse })
         }
         disabled={disabled}
       >
-        {tableMessage.insertTable}
+        {t("insertTable")}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().addColumnBefore().run()}
-        title={tableMessage.addColumnBefore}
+        title={t("addColumnBefore")}
         disabled={disabled}
       >
-        {tableMessage.addColumnBefore}
+        {t("addColumnBefore")}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().addColumnAfter().run()}
-        title={tableMessage.addColumnAfter}
+        title={t("addColumnAfter")}
         disabled={disabled}
       >
-        {tableMessage.addColumnAfter}
+        {t("addColumnAfter")}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().deleteColumn().run()}
-        title={tableMessage.deleteColumn}
+        title={t("deleteColumn")}
         disabled={disabled}
       >
-        {tableMessage.deleteColumn}
+        {t("deleteColumn")}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().addRowBefore().run()}
-        title={tableMessage.addRowBefore}
+        title={t("addRowBefore")}
         disabled={disabled}
       >
-        {tableMessage.addRowBefore}
+        {t("addRowBefore")}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().addRowAfter().run()}
-        title={tableMessage.addRowAfter}
+        title={t("addRowAfter")}
         disabled={disabled}
       >
-        {tableMessage.addRowAfter}
+        {t("addRowAfter")}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().deleteRow().run()}
-        title={tableMessage.deleteRow}
+        title={t("deleteRow")}
         disabled={disabled}
       >
-        {tableMessage.deleteRow}
+        {t("deleteRow")}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().deleteTable().run()}
-        title={tableMessage.deleteTable}
+        title={t("deleteTable")}
         disabled={disabled}
       >
-        {tableMessage.deleteTable}
+        {t("deleteTable")}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().mergeCells().run()}
-        title={tableMessage.mergeCells}
+        title={t("mergeCells")}
         disabled={disabled}
       >
-        {tableMessage.mergeCells}
+        {t("mergeCells")}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().splitCell().run()}
-        title={tableMessage.splitCell}
+        title={t("splitCell")}
         disabled={disabled}
       >
-        {tableMessage.splitCell}
+        {t("splitCell")}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().toggleHeaderColumn().run()}
-        title={tableMessage.toggleHeaderColumn}
+        title={t("toggleHeaderColumn")}
         disabled={disabled}
       >
-        {tableMessage.toggleHeaderColumn}
+        {t("toggleHeaderColumn")}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().toggleHeaderRow().run()}
-        title={tableMessage.toggleHeaderRow}
+        title={t("toggleHeaderRow")}
         disabled={disabled}
       >
-        {tableMessage.toggleHeaderRow}
+        {t("toggleHeaderRow")}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().toggleHeaderCell().run()}
-        title={tableMessage.toggleHeaderCell}
+        title={t("toggleHeaderCell")}
         disabled={disabled}
       >
-        {tableMessage.toggleHeaderCell}
+        {t("toggleHeaderCell")}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().mergeOrSplit().run()}
-        title={tableMessage.mergeOrSplit}
+        title={t("mergeOrSplit")}
         disabled={disabled}
       >
-        {tableMessage.mergeOrSplit}
+        {t("mergeOrSplit")}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() =>
           editor.chain().focus().setCellAttribute("colspan", 2).run()
         }
-        title={tableMessage.setCellAttribute}
+        title={t("setCellAttribute")}
         disabled={disabled}
       >
-        {tableMessage.setCellAttribute}
+        {t("setCellAttribute")}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().fixTables().run()}
-        title={tableMessage.fixTables}
+        title={t("fixTables")}
         disabled={disabled}
       >
-        {tableMessage.fixTables}
+        {t("fixTables")}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().goToNextCell().run()}
-        title={tableMessage.goToNextCell}
+        title={t("goToNextCell")}
         disabled={disabled}
       >
-        {tableMessage.goToNextCell}
+        {t("goToNextCell")}
       </Toggle>
       <Toggle
         variant="outline"
         onClick={() => editor.chain().focus().goToPreviousCell().run()}
-        title={tableMessage.goToPreviousCell}
+        title={t("goToPreviousCell")}
         disabled={disabled}
       >
-        {tableMessage.goToPreviousCell}
+        {t("goToPreviousCell")}
       </Toggle>
     </div>
   );

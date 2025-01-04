@@ -6,26 +6,24 @@ import { X } from "lucide-react";
 import Avatar from "../../../AvatarBoxChat";
 import useOtherUser from "@/hooks/useOtherUser";
 import useActiveList from "@/hooks/useActiveList";
-import { translateStatusMessages } from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface HeaderProps {
   conversation: Conversation & {
     users: User[];
   };
   onClose: () => void;
-  language: string
 }
 
-const Header: React.FC<HeaderProps> = ({ conversation, onClose, language }) => {
+const Header: React.FC<HeaderProps> = ({ conversation, onClose }) => {
+  const t = useTranslations()
   const otherUser = useOtherUser(conversation);
 
   const { members } = useActiveList();
   const isActive = members.indexOf(otherUser?.email!) !== -1;
 
-  const statusMessage = translateStatusMessages(language)
-
   const statusText = useMemo(() => {
-    return isActive ? statusMessage.active : statusMessage.offline;
+    return isActive ? t("message.active") : t("message.offline");
   }, [isActive]);
   return (
     <div

@@ -16,18 +16,9 @@ import { Button } from "@/components/ui/button";
 import { ChatMessage } from "@/types/type";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import ImageCellOne from "@/components/image-cell-one";
-import {
-  getToastError,
-  translateAskQuestion,
-  translateEnterYourContent,
-  translateGoodAfternoonAskQuestion,
-  translateGoodEveningAskQuestion,
-  translateGoodMorningAskQuestion,
-  translateGoodNightAskQuestion,
-  translateToday,
-} from "@/translate/translate-client";
 import toast from "react-hot-toast";
 import { offensiveWords } from "@/vn_offensive_words";
+import { useTranslations } from "next-intl";
 
 type ModelResponse = {
   response: {
@@ -38,20 +29,21 @@ type ModelResponse = {
 interface ChatGeminiProps {
   setChatHistory: Dispatch<SetStateAction<ChatMessage[]>>;
   chatHistory: ChatMessage[];
-  languageToUse: string;
   setUserInputAI: Dispatch<SetStateAction<string>>;
   userInputAI: string;
   setPoliciViolationModal: Dispatch<SetStateAction<boolean>>;
+  languageToUse: string
 }
 
 const ChatGemini = ({
   setChatHistory,
   chatHistory,
-  languageToUse,
   setUserInputAI,
   userInputAI,
-  setPoliciViolationModal
+  setPoliciViolationModal,
+  languageToUse
 }: ChatGeminiProps) => {
+  const t = useTranslations()
   const user = useCurrentUser();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [minHeight, setMinHeight] = useState(40);
@@ -61,20 +53,6 @@ const ChatGemini = ({
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const chatEndRef = useRef<HTMLDivElement>(null);
-
-  //language
-  const toastErrorMessage = getToastError(languageToUse);
-  const askQuestionMessage = translateAskQuestion(languageToUse);
-  const goodMorningAskQuestionMessage =
-    translateGoodMorningAskQuestion(languageToUse);
-  const goodAfternoonAskQuestionMessage =
-    translateGoodAfternoonAskQuestion(languageToUse);
-  const goodEveningAskQuestionMessage =
-    translateGoodEveningAskQuestion(languageToUse);
-  const goodNightAskQuestionMessage =
-    translateGoodNightAskQuestion(languageToUse);
-  const todayMessage = translateToday(languageToUse);
-  const enterYourContentMessage = translateEnterYourContent(languageToUse);
 
   // Scroll to bottom function
   const scrollToBottom = () => {
@@ -138,7 +116,7 @@ const ChatGemini = ({
       ]);
       scrollToBottom();
     } catch (error) {
-      toast.error(toastErrorMessage);
+      toast.error(t("toastError.somethingWentWrong"));
     } finally {
       setUserInputAI("");
       setMinHeight(40);
@@ -147,15 +125,15 @@ const ChatGemini = ({
   };
 
   const currentHour = new Date().getHours();
-  let greetingMessage = askQuestionMessage;
+  let greetingMessage = t("AI.askQuestion");
   if (currentHour >= 6 && currentHour < 12) {
-    greetingMessage = goodMorningAskQuestionMessage;
+    greetingMessage = t("AI.goodMorningAskQuestion");
   } else if (currentHour >= 12 && currentHour < 14) {
-    greetingMessage = goodAfternoonAskQuestionMessage;
+    greetingMessage = t("AI.goodAfternoonAskQuestion");
   } else if (currentHour >= 14 && currentHour < 18) {
-    greetingMessage = goodEveningAskQuestionMessage;
+    greetingMessage = t("AI.goodNightAskQuestion");
   } else {
-    greetingMessage = goodNightAskQuestionMessage;
+    greetingMessage = t("AI.goodEveningAskQuestion");
   }
 
   return (
@@ -164,7 +142,7 @@ const ChatGemini = ({
         {!isLoading && chatHistory.length <= 0 ? (
           <div className="space-y-3 mt-10">
             <div className="line-with-text">
-              <span className="text-sm text-gray-400">{todayMessage}</span>
+              <span className="text-sm text-gray-400">{t("AI.today")}</span>
             </div>
             <div className="flex items-center space-x-5">
               <Avatar>
@@ -222,7 +200,7 @@ const ChatGemini = ({
               <Textarea
                 disabled={isLoading}
                 className="bg-white dark:text-slate-900 flex-grow p-3 pr-12 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none overflow-y-auto"
-                placeholder={enterYourContentMessage}
+                placeholder={t("AI.enterYourContent")}
                 rows={1}
                 style={{ minHeight: `${minHeight}px`, maxHeight: "150px" }}
                 value={userInputAI}

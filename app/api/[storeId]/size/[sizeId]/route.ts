@@ -3,11 +3,7 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
-import {
-  translateSizeIdDelete,
-  translateSizeIdGet,
-  translateSizeIdPatch,
-} from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 type SizeValue = string | Date | undefined;
 
@@ -22,26 +18,28 @@ export async function GET(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const sizeIdGetMessgae = translateSizeIdGet(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!params.sizeId) {
       return new NextResponse(
-        JSON.stringify({ error: sizeIdGetMessgae.sizeIdRequired }),
+        JSON.stringify({ error: t("toastError.size.sizeAlreadyExists") }),
         { status: 400 }
       );
     }
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: sizeIdGetMessgae.userNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: sizeIdGetMessgae.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -55,7 +53,7 @@ export async function GET(
     return NextResponse.json(size);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: sizeIdGetMessgae.internalError }),
+      JSON.stringify({ error: t("toastError.size.internalErrorGetSize") }),
       { status: 500 }
     );
   }
@@ -67,40 +65,29 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const sizeIdDeleteMessage = translateSizeIdDelete(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: sizeIdDeleteMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: sizeIdDeleteMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!params.sizeId) {
       return new NextResponse(
-        JSON.stringify({ error: sizeIdDeleteMessage.sizeIdRequired }),
+        JSON.stringify({ error: t("toastError.size.sizeIdRequired") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: sizeIdDeleteMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -131,7 +118,7 @@ export async function DELETE(
     return NextResponse.json(size);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: sizeIdDeleteMessage.internalError }),
+      JSON.stringify({ error: t("toastError.size.internalErrorDeleteSize") }),
       { status: 500 }
     );
   }
@@ -143,29 +130,31 @@ export async function PATCH(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const sizeIdPatchMessage = translateSizeIdPatch(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
     const { name, value } = body;
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: sizeIdPatchMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: sizeIdPatchMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!name) {
       return new NextResponse(
-        JSON.stringify({ error: sizeIdPatchMessage.nameRequired }),
+        JSON.stringify({ error: t("toastError.name")}),
         {
           status: 400,
         }
@@ -174,7 +163,7 @@ export async function PATCH(
 
     if (!value) {
       return new NextResponse(
-        JSON.stringify({ error: sizeIdPatchMessage.valueRequired }),
+        JSON.stringify({ error: t("toastError.size.valueRequired") }),
         {
           status: 400,
         }
@@ -183,21 +172,8 @@ export async function PATCH(
 
     if (!params.sizeId) {
       return new NextResponse(
-        JSON.stringify({ error: sizeIdPatchMessage.sizeIdRequired }),
+        JSON.stringify({ error: t("toastError.size.sizeIdRequired") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: sizeIdPatchMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -209,7 +185,7 @@ export async function PATCH(
 
     if (!existingSize) {
       return new NextResponse(
-        JSON.stringify({ error: sizeIdPatchMessage.sizeNotFound }),
+        JSON.stringify({ error: t("toastError.size.sizeNotFound") }),
         { status: 404 }
       );
     }
@@ -228,7 +204,7 @@ export async function PATCH(
     if (duplicateSize) {
       return new NextResponse(
         JSON.stringify({
-          error: sizeIdPatchMessage.sizeAlreadyExists,
+          error: t("toastError.size.sizeAlreadyExists"),
         }),
         { status: 400 }
       );
@@ -288,7 +264,7 @@ export async function PATCH(
     return NextResponse.json(size);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: sizeIdPatchMessage.internalError }),
+      JSON.stringify({ error: t("toastError.size.internalErrorPatchSize") }),
       { status: 500 }
     );
   }

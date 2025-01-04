@@ -1,17 +1,19 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
+import { createTranslator } from "next-intl";
 import { NextResponse } from "next/server";
-import { translateWareHouseGet } from "@/translate/translate-api";
 
 export async function GET(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const wareHouseGetMessage = translateWareHouseGet(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: wareHouseGetMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
@@ -63,7 +65,7 @@ export async function GET(req: Request) {
     return NextResponse.json(ordersWithShipper);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: wareHouseGetMessage.internalError }),
+      JSON.stringify({ error: t("toastError.warehouse.internalErrorGetWarehouse") }),
       { status: 500 }
     );
   }

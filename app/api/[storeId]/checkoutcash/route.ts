@@ -8,10 +8,7 @@ import viLocale from "date-fns/locale/vi";
 import { format } from "date-fns";
 import { StatusOrder } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
-import {
-  translateCheckOutCashPost,
-  translateOrderErrorPatch,
-} from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 export async function POST(
   req: Request,
@@ -19,8 +16,10 @@ export async function POST(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const checkOutCashPostMessage = translateCheckOutCashPost(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
     const { encryptedData } = body;
@@ -298,7 +297,7 @@ export async function POST(
         return new NextResponse(
           JSON.stringify({
             error: `${
-              checkOutCashPostMessage.insufficientQuantity
+              t("toastError.checkout.insufficientQuantity")
             }: ${outOfStockProducts.join(", ")}`,
           }),
           { status: 403 }
@@ -372,7 +371,7 @@ export async function POST(
 
     // Add the total row
     tableRows.push(`<tr>
-    <td colspan="4"><strong>${checkOutCashPostMessage.totalAmount}</strong></td>
+    <td colspan="4"><strong>${t("toastError.checkout.totalAmount")}</strong></td>
     <td>${formatter.format(totalPrice)}</td>
   </tr>`);
 
@@ -390,19 +389,19 @@ export async function POST(
       <path d="M20 6 9 17l-5-5"/>
     </svg>
       <p style="text-align: center; font-weight:700; margin-left:4px; color:#16a34a;">${
-        checkOutCashPostMessage.orderSuccess
+        t("toastError.checkout.orderSuccess")
       }</p>
     </div>
 
-  <p>${checkOutCashPostMessage.thankYou} <span style="font-weight: 700;">${
+  <p>${t("toastError.checkout.thankYou")} <span style="font-weight: 700;">${
       order.name
-    }</span> ${checkOutCashPostMessage.orderInfo} <span style="font-weight: 700;">${
+    }</span> ${t("toastError.checkout.orderInfo")} <span style="font-weight: 700;">${
       order.id
     }</span>.</p>
   ${
     order.address && order.address !== "Trống"
-      ? `<p style="margin-bottom: 15px;">${checkOutCashPostMessage.deliveryInfo} <span style="font-weight: 700;">${order.address}</span> ${checkOutCashPostMessage.deliveryTime} <span style="font-weight: 700;">${checkOutCashPostMessage.estimatedArrival} ${formatDate}</span>.</p>`
-      : `<p style="margin-bottom: 15px;">${checkOutCashPostMessage.shopPrepare}</p>`
+      ? `<p style="margin-bottom: 15px;">${t("toastError.checkout.deliveryInfo")} <span style="font-weight: 700;">${order.address}</span> ${t("toastError.checkout.deliveryTime")} <span style="font-weight: 700;">${t("toastError.checkout.estimatedArrival")} ${formatDate}</span>.</p>`
+      : `<p style="margin-bottom: 15px;">${t("toastError.checkout.shopPrepare")}</p>`
   }
 </div>
 
@@ -410,19 +409,19 @@ export async function POST(
   <thead>
     <tr>
       <th style="background-color: #FFCC00; padding: 5px;">${
-        checkOutCashPostMessage.orderId
+        t("toastError.checkout.orderId")
       }</th>
       <th style="background-color: #FFCC00; padding: 5px;">${
-        checkOutCashPostMessage.productName
+        t("toastError.checkout.productName")
       }</th>
       <th style="background-color: #FFCC00; padding: 5px;">${
-        checkOutCashPostMessage.quantity
+        t("toastError.checkout.quantity")
       }</th>
       <th style="background-color: #FFCC00; padding: 5px;">${
-        checkOutCashPostMessage.warranty
+        t("toastError.checkout.warranty")
       }</th>
       <th style="background-color: #FFCC00; padding: 5px;">${
-        checkOutCashPostMessage.price
+        t("toastError.checkout.price")
       }</th>
     </tr>
   </thead>
@@ -432,13 +431,13 @@ export async function POST(
 </table>
 
 <div style="margin-top: 12px;">
-  ${checkOutCashPostMessage.trackOrder} <span style="font-weight: 700;">${
-      checkOutCashPostMessage.shippingInfo
-    }</span> ${checkOutCashPostMessage.shippingInstructions}
+  ${t("toastError.checkout.trackOrder")} <span style="font-weight: 700;">${
+      t("toastError.checkout.shippingInfo")
+    }</span> ${t("toastError.checkout.shippingInstructions")}
 </div>
 
 <p style="margin-top: 25px; margin-bottom: 20px;">${
-      checkOutCashPostMessage.customerService
+      t("toastError.checkout.customerService")
     }</p>
 
 <div style="margin-top: 5px; display: flex; justify-content: center; align-items: center;">
@@ -446,14 +445,14 @@ export async function POST(
       process.env.NEXT_PUBLIC_URL
     }" style="text-decoration: none; color: inherit; cursor: pointer;" target="_blank">
   <button style="padding: 12px; border-radius: 5px; background: transparent;">
-  ${checkOutCashPostMessage.continueShopping}
+  ${t("toastError.checkout.continueShopping")}
   </button>
 </a>
   <a href="${
     process.env.NEXT_PUBLIC_URL
   }/warehouse/package-product" style="text-decoration: none; color: #dc2626; cursor: pointer;" target="_blank">
   <button style="padding: 12px; margin-left: 10px; border-radius: 5px; border: 1px solid #dc2626; background: transparent;">
-  ${checkOutCashPostMessage.orderDetails}
+  ${t("toastError.checkout.orderDetails")}
   </button>
   </a>
 </div>
@@ -470,7 +469,7 @@ export async function POST(
       await resend.emails.send({
         from: "mail@vlxdxuantruong.email",
         to: [order?.email || ""],
-        subject: `${checkOutCashPostMessage.orderCompleted}`,
+        subject: `${t("toastError.checkout.orderCompleted")}`,
         html: `
         ${sentEmailUserHTML}
         
@@ -484,13 +483,13 @@ export async function POST(
       //   to: order?.phone || "",
       // });
     } catch (error) {
-      console.error(checkOutCashPostMessage.emailError);
+      console.error(t("toastError.checkout.emailError"));
     }
 
     return NextResponse.json(order);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: checkOutCashPostMessage.checkoutError }),
+      JSON.stringify({ error: t("toastError.checkout.checkoutError") }),
       { status: 500 }
     );
   }
@@ -502,8 +501,10 @@ export async function PATCH(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const checkOutCashPatchMessage = translateOrderErrorPatch(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
     const { responseIdOrderCurrent } = body;
@@ -520,7 +521,7 @@ export async function PATCH(
     return NextResponse.json(orders);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: checkOutCashPatchMessage }),
+      JSON.stringify({ error: t("toastError.checkout.orderErrorPatch") }),
       { status: 500 }
     );
   }

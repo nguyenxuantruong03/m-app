@@ -18,18 +18,14 @@ import { Button } from "../ui/button";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
-import { useCurrentUser } from "@/hooks/use-current-user";
-import { translateStoreModal } from "@/translate/translate-dashboard";
+import { useTranslations } from "next-intl";
 
 const formSchema = z.object({
   name: z.string().min(6),
 });
 
 export const ChoosestoreModal = () => {
-  const user = useCurrentUser();
-  //language
-  const languagetoUse = user?.language || "vi";
-  const storeModalMessage = translateStoreModal(languagetoUse);
+  const t = useTranslations()
 
   const storeModal = usechoosestoreModal();
   const [loading, setLoading] = useState(false);
@@ -60,7 +56,7 @@ export const ChoosestoreModal = () => {
         );
       } else {
         // Hiển thị thông báo lỗi mặc định cho người dùng
-        toast.error(storeModalMessage.somethingWentWrong);
+        toast.error(t("toastError.somethingWentWrong"));
       }
     } finally {
       setLoading(false);
@@ -69,8 +65,8 @@ export const ChoosestoreModal = () => {
 
   return (
     <Modal
-      title={storeModalMessage.createStore}
-      description={storeModalMessage.createStoreOrProduct}
+      title={t("store.createStore")}
+      description={t("store.createStoreOrProduct")}
       isOpen={storeModal.isOpen}
       onClose={storeModal.onClose}
     >
@@ -82,16 +78,16 @@ export const ChoosestoreModal = () => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{storeModalMessage.storeName}</FormLabel>
+                  <FormLabel>{t("store.storeName")}</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder={storeModalMessage.pleaseEnterStoreName}
+                      placeholder={t("store.pleaseEnterStoreName")}
                       {...field}
                     />
                   </FormControl>
                   <FormDescription>
-                    {storeModalMessage.publicDisplayName}
+                    {t('store.publicDisplayName')}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -103,11 +99,11 @@ export const ChoosestoreModal = () => {
                 variant="outline"
                 onClick={storeModal.onClose}
               >
-                {storeModalMessage.cancel}
+                {t("action.cancel")}
               </Button>
 
               <Button disabled={loading} type="submit">
-                {storeModalMessage.continue}
+                {t("action.continue")}
               </Button>
             </div>
           </form>

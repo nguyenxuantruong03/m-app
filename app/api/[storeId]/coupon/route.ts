@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { Duration, UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
-import { translateCouponDelete, translateCouponGet, translateCouponPost } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 export async function POST(
   req: Request,
@@ -12,8 +12,10 @@ export async function POST(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const couponPostMessage = translateCouponPost(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
     const {
@@ -30,27 +32,27 @@ export async function POST(
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: couponPostMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: couponPostMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: couponPostMessage.nameRequired }), {
+      return new NextResponse(JSON.stringify({ error: t("toastError.name") }), {
         status: 400,
       });
     }
 
     if (!percent) {
       return new NextResponse(
-        JSON.stringify({ error: couponPostMessage.percentRequired }),
+        JSON.stringify({ error: t("toastError.coupon.percentRequired") }),
         {
           status: 400,
         }
@@ -59,28 +61,15 @@ export async function POST(
 
     if (!imagecoupon || !imagecoupon.length) {
       return new NextResponse(
-        JSON.stringify({ error: couponPostMessage.imageRequired }),
+        JSON.stringify({ error: t("toastError.coupon.imageRequired") }),
         { status: 400 }
       );
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: couponPostMessage.storeIdRequired }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: couponPostMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -94,12 +83,12 @@ export async function POST(
         duration_in_months = durationinmoth;
       } else {
         return new NextResponse(
-          JSON.stringify({ error: couponPostMessage.invalidDurationMonths }),
+          JSON.stringify({ error: t("toastError.coupon.invalidDurationMonths") }),
           { status: 400 }
         );
       }
     } else {
-      return new NextResponse(JSON.stringify({ error: couponPostMessage.invalidDuration }), {
+      return new NextResponse(JSON.stringify({ error: t("toastError.coupon.invalidDuration") }), {
         status: 400,
       });
     }
@@ -177,7 +166,7 @@ export async function POST(
     return NextResponse.json(createdCoupon);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: couponPostMessage.internalError }),
+      JSON.stringify({ error: t("toastError.coupon.internalErrorPostCoupon") }),
       { status: 500 }
     );
   }
@@ -189,13 +178,15 @@ export async function GET(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const couponGetMessage = translateCouponGet(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: couponGetMessage.storeIdRequired }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 400 }
       );
     }
@@ -215,7 +206,7 @@ export async function GET(
     return NextResponse.json(coupons);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: couponGetMessage.internalError }),
+      JSON.stringify({ error: t("toastError.coupon.internalErrorGetCoupon") }),
       { status: 500 }
     );
   }
@@ -227,29 +218,31 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const couponDeleteMessage = translateCouponDelete(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
     const { ids } = body;
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: couponDeleteMessage.userNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: couponDeleteMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!ids || ids.length === 0) {
       return new NextResponse(
-        JSON.stringify({ error: couponDeleteMessage.emptyIdsArray }),
+        JSON.stringify({ error: t("toastError.idsArrayNotEmpty") }),
         { status: 400 }
       );
     }
@@ -262,7 +255,7 @@ export async function DELETE(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: couponDeleteMessage.storeIdNotFound }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 405 }
       );
     }
@@ -313,10 +306,10 @@ export async function DELETE(
       },
     });
 
-    return NextResponse.json({ message: couponDeleteMessage.deleteSuccess });
+    return NextResponse.json({ message: t("toastSuccess.deletionSuccess") });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: couponDeleteMessage.internalError }),
+      JSON.stringify({ error: t("toastError.coupon.internalErrorDeleteCoupon") }),
       { status: 500 }
     );
   }

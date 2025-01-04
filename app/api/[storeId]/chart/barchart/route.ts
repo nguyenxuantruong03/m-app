@@ -1,7 +1,7 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
-import { translateBarChart } from "@/translate/translate-api";
 import { UserRole } from "@prisma/client";
+import { createTranslator } from "next-intl";
 import { NextResponse } from "next/server";
 
 interface GraphData {
@@ -11,7 +11,7 @@ interface GraphData {
 }
 
 // Define the available languages
-type Language = "vi" | "en" | "zh" | "fr" | "ja";
+type Language = "vi" | "en";
 
 const monthNames: Record<Language, string[]> = {
   vi: [
@@ -42,48 +42,6 @@ const monthNames: Record<Language, string[]> = {
     "November",
     "December",
   ],
-  zh: [
-    "一月",
-    "二月",
-    "三月",
-    "四月",
-    "五月",
-    "六月",
-    "七月",
-    "八月",
-    "九月",
-    "十月",
-    "十一月",
-    "十二月",
-  ],
-  fr: [
-    "Janvier",
-    "Février",
-    "Mars",
-    "Avril",
-    "Mai",
-    "Juin",
-    "Juillet",
-    "Août",
-    "Septembre",
-    "Octobre",
-    "Novembre",
-    "Décembre",
-  ],
-  ja: [
-    "1月",
-    "2月",
-    "3月",
-    "4月",
-    "5月",
-    "6月",
-    "7月",
-    "8月",
-    "9月",
-    "10月",
-    "11月",
-    "12月",
-  ],
 };
 
 export async function POST(req: Request) {
@@ -91,20 +49,22 @@ export async function POST(req: Request) {
   const { storeId, dateRange } = body;
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const barChartMessage = translateBarChart(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: barChartMessage.name1 }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: barChartMessage.name2 }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -150,7 +110,7 @@ export async function POST(req: Request) {
     }
 
     // Safely access the language or default to 'vi' if undefined
-    const language: Language = (LanguageToUse as Language) || "vi"; // Type assertion here
+    const language: Language = (languageToUse as Language) || "vi"; // Type assertion here
     const months = monthNames[language]; // TypeScript knows language is valid now
 
     const graphData: GraphData[] = months.map((monthName, index) => ({
@@ -164,7 +124,7 @@ export async function POST(req: Request) {
     return NextResponse.json(graphData);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: barChartMessage.name3 }),
+      JSON.stringify({ error: t("toastError.chart.intternalErrorBar") }),
       { status: 500 }
     );
   }

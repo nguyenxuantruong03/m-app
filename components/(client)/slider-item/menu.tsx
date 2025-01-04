@@ -7,10 +7,9 @@ import { getAllCategory } from "@/actions/client/categories/get-all-category";
 interface MenuProps {
   showCategories?: boolean;
   loadingBillboard?: boolean;
-  languageToUse: string;
 }
 
-const Menu: React.FC<MenuProps> =  ({ showCategories = false,languageToUse, loadingBillboard }) => {
+const Menu: React.FC<MenuProps> =  ({ showCategories = false, loadingBillboard }) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [categories1, setCategories1] = useState<Category[]>([]);
   const [categories2, setCategories2] = useState<Category[]>([]);
@@ -84,7 +83,6 @@ const Menu: React.FC<MenuProps> =  ({ showCategories = false,languageToUse, load
             categories9={categories9}
             categories10={categories10}
             categories11={categories11}
-            languageToUse={languageToUse}
           />
         </div>
     </>

@@ -2,21 +2,17 @@
 
 import { Maximize,Minimize } from "lucide-react";
 import { Hint } from "@/components/ui/hint";
-import { translateExitFullscreen, translateFullscreen } from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface FullscreenControlProps{
     isFullscreen: boolean;
     onToggle: () => void
-    languageToUse: string;
 }
 
-export const FullscreenControl = ({isFullscreen,onToggle,languageToUse}:FullscreenControlProps) =>{
-    //languages
-    const exitFullScreenMessage = translateExitFullscreen(languageToUse)
-    const fullScreenMessage = translateFullscreen(languageToUse)
-
+export const FullscreenControl = ({isFullscreen,onToggle}:FullscreenControlProps) =>{
+    const t = useTranslations()
     const Icon = isFullscreen ? Minimize : Maximize;
-    const label = isFullscreen ? exitFullScreenMessage : fullScreenMessage
+    const label = isFullscreen ? t("action.exitFullScreen") : t("action.fullscreen")
 
     return (
         <div className="flex items-center justify-center gap-4">

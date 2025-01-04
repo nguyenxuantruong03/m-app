@@ -3,11 +3,7 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { currentUser } from "@/lib/auth";
 import { ImageBillboard, UserRole } from "@prisma/client";
-import {
-  translateBillboardIdDelete,
-  translateBillboardIdGet,
-  translateBillboardIdPatch,
-} from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 // Update the BillboardValue type to include the new types
 type BillboardValue =
@@ -31,13 +27,15 @@ export async function GET(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const billboardIdGetMessage = translateBillboardIdGet(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     if (!params.billboardId) {
       return new NextResponse(
-        JSON.stringify({ error: billboardIdGetMessage.name1 }),
+        JSON.stringify({ error: t("toastError.billboard.billboardID") }),
         { status: 400 }
       );
     }
@@ -54,7 +52,7 @@ export async function GET(
     // Kiểm tra nếu không tìm thấy billboard
     if (!billboard) {
       return new NextResponse(
-        JSON.stringify({ error: billboardIdGetMessage.name2 }),
+        JSON.stringify({ error: t("toastError.billboard.billboardNotFound") }),
         { status: 404 }
       );
     }
@@ -63,7 +61,7 @@ export async function GET(
     return NextResponse.json(billboard);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: billboardIdGetMessage.name3 }),
+      JSON.stringify({ error: t("toastError.billboard.intternalErrorGetBillboard") }),
       { status: 500 }
     );
   }
@@ -75,40 +73,36 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const billboardIdDeleteMessage = translateBillboardIdDelete(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: billboardIdDeleteMessage.name1 }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: billboardIdDeleteMessage.name2 }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!params.billboardId) {
       return new NextResponse(
-        JSON.stringify({ error: billboardIdDeleteMessage.name3 }),
+        JSON.stringify({ error: t("toastError.billboard.billboardID") }),
         { status: 400 }
       );
     }
 
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
+    if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: billboardIdDeleteMessage.name4 }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 400 }
       );
     }
@@ -153,7 +147,7 @@ export async function DELETE(
     return NextResponse.json(billboard);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: billboardIdDeleteMessage.name5 }),
+      JSON.stringify({ error: t("toastError.billboard.intternalErrorDeleteBillboard") }),
       { status: 500 }
     );
   }
@@ -165,8 +159,10 @@ export async function PATCH(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const billboardIdPatchMessage = translateBillboardIdPatch(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     const body = await req.json();
@@ -174,21 +170,21 @@ export async function PATCH(
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: billboardIdPatchMessage.name1 }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: billboardIdPatchMessage.name2 }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!label) {
       return new NextResponse(
-        JSON.stringify({ error: billboardIdPatchMessage.name3 }),
+        JSON.stringify({ error: t("toastError.label") }),
         {
           status: 400,
         }
@@ -197,7 +193,7 @@ export async function PATCH(
 
     if (!description) {
       return new NextResponse(
-        JSON.stringify({ error: billboardIdPatchMessage.name4 }),
+        JSON.stringify({ error: t("toastError.description") }),
         {
           status: 400,
         }
@@ -206,28 +202,22 @@ export async function PATCH(
 
     if (!imagebillboard || !imagebillboard.length) {
       return new NextResponse(
-        JSON.stringify({ error: billboardIdPatchMessage.name5 }),
+        JSON.stringify({ error: t("toastError.billboard.imageBillboard") }),
         { status: 400 }
       );
     }
 
     if (!params.billboardId) {
       return new NextResponse(
-        JSON.stringify({ error: billboardIdPatchMessage.name6 }),
+        JSON.stringify({ error: t("toastError.billboard.billboardID") }),
         { status: 400 }
       );
     }
 
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
+    if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: billboardIdPatchMessage.name7 }),
-        { status: 405 }
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
+        { status: 400 }
       );
     }
 
@@ -243,7 +233,7 @@ export async function PATCH(
     // Kiểm tra nếu không tìm thấy billboard
     if (!existingBillboard) {
       return new NextResponse(
-        JSON.stringify({ error: billboardIdPatchMessage.name9 }),
+        JSON.stringify({ error: t("toastError.billboard.billboardNotFound") }),
         { status: 404 }
       );
     }
@@ -261,7 +251,7 @@ export async function PATCH(
 
     if (labelExists) {
       return new NextResponse(
-        JSON.stringify({ error: billboardIdPatchMessage.name10 }),
+        JSON.stringify({ error: t("toastError.labelAlreadyExists") }),
         { status: 400 }
       );
     }
@@ -372,7 +362,7 @@ export async function PATCH(
     return NextResponse.json(billboard);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: billboardIdPatchMessage.name8 }),
+      JSON.stringify({ error: t("toastError.billboard.intternalErrorPatchBillboard") }),
       { status: 500 }
     );
   }

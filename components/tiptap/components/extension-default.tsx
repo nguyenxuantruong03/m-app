@@ -19,13 +19,12 @@ import {
 import { Editor } from "@tiptap/react";
 import { Toggle } from "@/components/ui/toggle";
 import { useState } from "react";
-import { translateExtensionDefault } from "@/translate/translate-dashboard";
+import { useTranslations } from "next-intl";
 interface ExtensionDefaultPage {
   editor: Editor;
   showColorPicker: boolean;
   setShowColorPicker: React.Dispatch<React.SetStateAction<boolean>>;
   disabled: boolean;
-  languageToUse: string
 }
 
 const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
@@ -33,20 +32,18 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
   showColorPicker,
   setShowColorPicker,
   disabled,
-  languageToUse
 }) => {
+  const t  = useTranslations("tiptap.extension")
   const [selectedFontFamily, setSelectedFontFamily] = useState("Inter"); // Font mặc định
-  //language
-  const extensionDefaultMessage = translateExtensionDefault(languageToUse)
 
   return (
     <>
-      <h2 className="text-lg font-bold text-green-600">{extensionDefaultMessage.default}</h2>
+      <h2 className="text-lg font-bold text-green-600">{t("default")}</h2>
       <Toggle
         size="sm"
         pressed={editor.isActive("bold")}
         onPressedChange={() => editor.chain().focus().toggleBold().run()}
-        title={extensionDefaultMessage.bold}
+        title={t("bold")}
         disabled={disabled}
       >
         <Bold className="h-4 w-4" />
@@ -55,7 +52,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         size="sm"
         pressed={editor.isActive("italic")}
         onPressedChange={() => editor.chain().focus().toggleItalic().run()}
-        title={extensionDefaultMessage.italic}
+        title={t("italic")}
         disabled={disabled}
       >
         <Italic className="h-4 w-4" />
@@ -65,7 +62,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         pressed={editor.isActive("strike")}
         onPressedChange={() => editor.chain().focus().toggleStrike().run()}
         disabled={disabled}
-        title={extensionDefaultMessage.strikethrough}
+        title={t("strikethrough")}
       >
         <Strikethrough className="h-4 w-4" />
       </Toggle>
@@ -74,7 +71,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         pressed={editor.isActive("blockquote")}
         onPressedChange={() => editor.chain().focus().toggleBlockquote().run()}
         disabled={disabled}
-        title={extensionDefaultMessage.blockquote}
+        title={t("blockquote")}
       >
         <BlocksIcon className="h-4 w-4" />
       </Toggle>
@@ -83,7 +80,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         pressed={editor.isActive("code")}
         onPressedChange={() => editor.chain().focus().toggleCodeBlock().run()}
         disabled={disabled}
-        title={extensionDefaultMessage.code}
+        title={t("code")}
       >
         <Code className="h-4 w-4" />
       </Toggle>
@@ -92,7 +89,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         pressed={showColorPicker}
         onPressedChange={() => setShowColorPicker((prev: boolean) => !prev)}
         disabled={disabled}
-        title={extensionDefaultMessage.highlight}
+        title={t("highlight")}
       >
         <Highlighter className="h-4 w-4" />
       </Toggle>
@@ -101,7 +98,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         pressed={editor.isActive("unhighlight")}
         onPressedChange={() => editor.chain().focus().unsetHighlight().run()}
         disabled={disabled}
-        title={extensionDefaultMessage.removeHighlight}
+        title={t("removeHighlight")}
       >
         <Eraser className="h-4 w-4" />
       </Toggle>
@@ -110,7 +107,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         pressed={editor.isActive("subscript")}
         onPressedChange={() => editor.chain().focus().toggleSubscript().run()}
         disabled={disabled}
-        title={extensionDefaultMessage.subtitle}
+        title={t("subtitle")}
       >
         <Subscript className="h-4 w-4" />
       </Toggle>
@@ -119,7 +116,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         pressed={editor.isActive("horizontalRule")}
         onPressedChange={() => editor.chain().focus().setHorizontalRule().run()}
         disabled={disabled}
-        title={extensionDefaultMessage.horizontalRule}
+        title={t("horizontalRule")}
       >
         <AlignEndHorizontal className="h-4 w-4" />
       </Toggle>
@@ -128,7 +125,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         pressed={editor.isActive("underline")}
         onPressedChange={() => editor.chain().focus().toggleUnderline().run()}
         disabled={disabled}
-        title={extensionDefaultMessage.underline}
+        title={t("underline")}
       >
         <Underline className="h-4 w-4" />
       </Toggle>
@@ -138,7 +135,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         pressed={editor.isActive("hardBreak")}
         onPressedChange={() => editor.chain().focus().setHardBreak().run()}
         disabled={disabled}
-        title={extensionDefaultMessage.lineHeight}
+        title={t("lineHeight")}
       >
         <AlignVerticalSpaceAround className="h-4 w-4" />
       </Toggle>
@@ -153,7 +150,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
             .run()
         }
         disabled={disabled}
-        title={extensionDefaultMessage.link}
+        title={t("link")}
       >
         <Link className="h-4 w-4" />
       </Toggle>
@@ -162,7 +159,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         pressed={editor.isActive("unLink")}
         onPressedChange={() => editor.chain().focus().unsetLink().run()}
         disabled={disabled}
-        title={extensionDefaultMessage.unlink}
+        title={t("unlink")}
       >
         <Unlink className="h-4 w-4" />
       </Toggle>
@@ -199,7 +196,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         pressed={editor.isActive("undo")}
         onPressedChange={() => editor.chain().focus().undo().run()}
         disabled={disabled}
-        title={extensionDefaultMessage.undo}
+        title={t("undo")}
       >
         <Undo className="h-4 w-4" />
       </Toggle>
@@ -208,7 +205,7 @@ const ExtensionDefaultPage: React.FC<ExtensionDefaultPage> = ({
         pressed={editor.isActive("redo")}
         onPressedChange={() => editor.chain().focus().redo().run()}
         disabled={disabled}
-        title={extensionDefaultMessage.redo}
+        title={t("tiptap,extension.redo")}
       >
         <Redo className="h-4 w-4" />
       </Toggle>

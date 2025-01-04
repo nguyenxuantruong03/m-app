@@ -1,13 +1,6 @@
 import { Hint } from "@/components/ui/hint";
-import {
-  translateBadNotIcon,
-  translateGood,
-  translatePoor,
-  translateSelectEmotion,
-  translateTemporary,
-  translateTooBad,
-} from "@/translate/translate-client";
 import { Smile, Meh, Frown, Annoyed, Angry } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Dispatch, SetStateAction } from "react";
 
 interface EmotionFeedBackProps {
@@ -15,7 +8,6 @@ interface EmotionFeedBackProps {
   indexEmotion: number | null;
   setErrorEmotion: Dispatch<SetStateAction<boolean>>;
   errorEmotion: boolean;
-  languageToUse: string;
 }
 
 const EmotionFeedBack = ({
@@ -23,15 +15,8 @@ const EmotionFeedBack = ({
   indexEmotion,
   setErrorEmotion,
   errorEmotion,
-  languageToUse,
 }: EmotionFeedBackProps) => {
-  //language
-  const goodMessage = translateGood(languageToUse);
-  const temporaryMessage = translateTemporary(languageToUse);
-  const badNotIconMessage = translateBadNotIcon(languageToUse);
-  const poorMessage = translatePoor(languageToUse);
-  const tooBadMessage = translateTooBad(languageToUse);
-  const selectEmotionMessage = translateSelectEmotion(languageToUse);
+  const t = useTranslations()
 
   const handleClick = (emotionIndex: number) => {
     if (indexEmotion === emotionIndex) {
@@ -48,7 +33,7 @@ const EmotionFeedBack = ({
   return (
     <div className="space-y-2">
       <div className="flex items-center space-x-2 justify-center">
-        <Hint label={goodMessage}>
+        <Hint label={t("feedback.emotion.good")}>
           <Smile
             onClick={() => handleClick(1)}
             className={`w-14 h-14 stroke-current  ${
@@ -57,7 +42,7 @@ const EmotionFeedBack = ({
             strokeWidth="0.75"
           />
         </Hint>
-        <Hint label={temporaryMessage}>
+        <Hint label={t("feedback.emotion.temporary")}>
           <Meh
             onClick={() => handleClick(2)}
             className={`w-14 h-14 stroke-current  ${
@@ -66,7 +51,7 @@ const EmotionFeedBack = ({
             strokeWidth="0.75"
           />
         </Hint>
-        <Hint label={badNotIconMessage}>
+        <Hint label={t("feedback.emotion.bad")}>
           <Frown
             onClick={() => handleClick(3)}
             className={`w-14 h-14 stroke-current  ${
@@ -75,7 +60,7 @@ const EmotionFeedBack = ({
             strokeWidth="0.75"
           />
         </Hint>
-        <Hint label={poorMessage}>
+        <Hint label={t("feedback.emotion.poor")}>
           <Annoyed
             onClick={() => handleClick(4)}
             className={`w-14 h-14 stroke-current  ${
@@ -84,7 +69,7 @@ const EmotionFeedBack = ({
             strokeWidth="0.75"
           />
         </Hint>
-        <Hint label={tooBadMessage}>
+        <Hint label={t("feedback.emotion.toobad")}>
           <Angry
             onClick={() => handleClick(5)}
             className={`w-14 h-14 stroke-current  ${
@@ -95,7 +80,7 @@ const EmotionFeedBack = ({
         </Hint>
       </div>
       {errorEmotion && (
-        <p className="text-red-500 text-xs">{selectEmotionMessage}</p>
+        <p className="text-red-500 text-xs">{t("feedback.emotion.selectEmotion")}</p>
       )}
     </div>
   );

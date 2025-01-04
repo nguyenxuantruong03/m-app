@@ -1,25 +1,20 @@
 import { Play, Pause } from "lucide-react";
 import { Hint } from "@/components/ui/hint";
-import { translatePause, translatePlay } from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface PlayPauseControlProps {
   isPlaying: boolean;
   onToggle: () => void;
-  languageToUse: string;
 }
 
 export const PlayPauseControl = ({
   isPlaying,
   onToggle,
-  languageToUse,
 }: PlayPauseControlProps) => {
-  //languages
-
-  const playMessage = translatePlay(languageToUse);
-  const pauseMessage = translatePause(languageToUse);
+  const t = useTranslations()
 
   const Icon = isPlaying ? Pause : Play;
-  const label = isPlaying ? pauseMessage : playMessage;
+  const label = isPlaying ? t("action.pause") : t("action.play");
   return (
     <>
       <Hint label={label} asChild>

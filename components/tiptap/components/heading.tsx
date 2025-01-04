@@ -8,24 +8,22 @@ import {
   Heading6,
 } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
-import { translateHeadings } from "@/translate/translate-dashboard";
+import { useTranslations } from "next-intl";
 
 interface HeadingPageProps {
   editor: Editor;
   disabled: boolean;
-  languageToUse: string;
 }
 
-const HeadingPage: React.FC<HeadingPageProps> = ({ editor, disabled,languageToUse }) => {
-  //language
-  const headingMessage = translateHeadings(languageToUse)
+const HeadingPage: React.FC<HeadingPageProps> = ({ editor, disabled }) => {
+  const t = useTranslations("tiptap.heading")
   return (
     <div>
-      <h2 className="text-lg font-bold text-blue-600">{headingMessage.heading}</h2>
+      <h2 className="text-lg font-bold text-blue-600">{t("heading")}</h2>
       <Toggle
         size="sm"
         pressed={editor.isActive("heading1")}
-        title={headingMessage.heading1}
+        title={t("heading1")}
         onPressedChange={() =>
           editor.chain().focus().toggleHeading({ level: 1 }).run()
         }
@@ -36,7 +34,7 @@ const HeadingPage: React.FC<HeadingPageProps> = ({ editor, disabled,languageToUs
       <Toggle
         size="sm"
         pressed={editor.isActive("heading2")}
-        title={headingMessage.heading2}
+        title={t("heading2")}
         onPressedChange={() =>
           editor.chain().focus().toggleHeading({ level: 2 }).run()
         }
@@ -47,7 +45,7 @@ const HeadingPage: React.FC<HeadingPageProps> = ({ editor, disabled,languageToUs
       <Toggle
         size="sm"
         pressed={editor.isActive("heading3")}
-        title={headingMessage.heading3}
+        title={t("heading3")}
         onPressedChange={() =>
           editor.chain().focus().toggleHeading({ level: 3 }).run()
         }
@@ -58,7 +56,7 @@ const HeadingPage: React.FC<HeadingPageProps> = ({ editor, disabled,languageToUs
       <Toggle
         size="sm"
         pressed={editor.isActive("heading4")}
-        title={headingMessage.heading4}
+        title={t("heading4")}
         onPressedChange={() =>
           editor.chain().focus().toggleHeading({ level: 4 }).run()
         }
@@ -69,7 +67,7 @@ const HeadingPage: React.FC<HeadingPageProps> = ({ editor, disabled,languageToUs
       <Toggle
         size="sm"
         pressed={editor.isActive("heading5")}
-        title={headingMessage.heading5}
+        title={t("heading5")}
         onPressedChange={() =>
           editor.chain().focus().toggleHeading({ level: 5 }).run()
         }
@@ -80,7 +78,7 @@ const HeadingPage: React.FC<HeadingPageProps> = ({ editor, disabled,languageToUs
       <Toggle
         size="sm"
         pressed={editor.isActive("heading6")}
-        title={headingMessage.heading6}
+        title={t("heading6")}
         onPressedChange={() =>
           editor.chain().focus().toggleHeading({ level: 6 }).run()
         }

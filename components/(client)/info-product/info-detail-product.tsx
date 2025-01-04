@@ -1,20 +1,16 @@
 import Image from "next/image";
 import { Product } from "@/types/type";
-import {
-  translateKeyFeatures,
-  translateProductNewFeatures,
-} from "@/translate/translate-client";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface DetailProductProps {
   data: Product;
-  languageToUse: string;
 }
 
 const InfoProductDetail: React.FC<DetailProductProps> = ({
   data,
-  languageToUse,
 }) => {
+  const t = useTranslations()
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<{
     url: string;
@@ -22,13 +18,6 @@ const InfoProductDetail: React.FC<DetailProductProps> = ({
   } | null>(null);
 
   const images = data.imagesalientfeatures;
-
-  //languages
-  const keyFeaturesMessage = translateKeyFeatures(languageToUse);
-  const productNewFeatureMessage = translateProductNewFeatures(
-    languageToUse,
-    data.productdetail.name1
-  );
 
   const openModal = (url: string, alt: string) => {
     setSelectedImage({ url, alt });
@@ -59,7 +48,7 @@ const InfoProductDetail: React.FC<DetailProductProps> = ({
           <div className="shadow-inner pt-5 px-5 rounded-lg mx-auto md:mx-0 md:max-w-3xl xl:max-w-7xl">
             <div className="p-2 bg-slate-400 bg-opacity-10 rounded-lg">
               <h1 className="text-center text-lg font-bold text-red-500">
-                {keyFeaturesMessage}
+                {t("action.keyFeatures")}
               </h1>
               <p className="text-sm text-slate-900 dark:text-slate-200">
                 {data.productdetail.descriptionsalientfeatures}
@@ -69,7 +58,7 @@ const InfoProductDetail: React.FC<DetailProductProps> = ({
               {data.productdetail.description2salientfeatures}
             </p>
             <span className="font-bold text-lg text-slate-900 dark:text-slate-200">
-              {productNewFeatureMessage}
+              {t("product.productNewFeatures", {name: data.productdetail.name1})}
             </span>
             <div className="pl-2 my-1 text-slate-900 dark:text-slate-200">
               <p>{data.productdetail.description3salientfeatures}</p>

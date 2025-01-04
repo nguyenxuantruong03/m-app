@@ -1,33 +1,21 @@
 import { InfomationWebsitecolor } from "@/components/(client)/color/color";
-import {
-  translateContact,
-  translateOrZalo,
-  translateWebsiteBelongsToXuanTruong,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 
-interface InfomationWebsiteProps {
-  languageToUse: string;
-}
 
-const InfomationWebsite = ({ languageToUse }: InfomationWebsiteProps) => {
-  //language
-  const websiteBelongsToXuanTruongMessage =
-    translateWebsiteBelongsToXuanTruong(languageToUse);
-  const contactMessage = translateContact(languageToUse);
-  const orZaloMessage = translateOrZalo(languageToUse);
-
+const InfomationWebsite = () => {
+  const t = useTranslations()
   return (
     <>
-      <div>{websiteBelongsToXuanTruongMessage}</div>
+      <div>{t("footer.websiteBelongsToXuanTruong")}</div>
       <div>
-        {contactMessage}{" "}
+        {t("footer.contact")}{" "}
         <span className={InfomationWebsitecolor.textfont}>
           <Link href="tel:0352261103">035.261.103</Link>
         </span>
       </div>
       <div>
-        {orZaloMessage}{" "}
+        {t("footer.orZalo")}{" "}
         <span className={InfomationWebsitecolor.textfont}>
           <Link href="tel:0352261103">035.261.103</Link>
         </span>{" "}

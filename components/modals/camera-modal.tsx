@@ -2,11 +2,11 @@
 
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Modal from "../ui/modal";
-import Camera from "@/app/(dashboard)/[storeId]/(routes)/attendancestaff/ChooseCheckAttendance/camera";
+import Camera from "@/app/[locale]/(dashboard)/[storeId]/(routes)/attendancestaff/ChooseCheckAttendance/camera";
 import { format } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import viLocale from "date-fns/locale/vi";
-import { translateAttendanceCamera } from "@/translate/translate-dashboard";
+import { useTranslations } from "next-intl";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 
 interface CameraModalProps {
@@ -19,7 +19,6 @@ interface CameraModalProps {
   isCheckAttendanceTitle: string;
   isCheckAttendanceStart: string | Date;
   isCheckAttendanceEnd: string | Date;
-  languageToUse: string;
 }
 
 export const CameraModal: React.FC<CameraModalProps> = ({
@@ -32,8 +31,8 @@ export const CameraModal: React.FC<CameraModalProps> = ({
   isCheckAttendanceTitle,
   isCheckAttendanceStart,
   isCheckAttendanceEnd,
-  languageToUse,
 }) => {
+  const t = useTranslations();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -74,18 +73,16 @@ export const CameraModal: React.FC<CameraModalProps> = ({
       )
     : null;
 
-  //language
-  const cameraAttendanceModalMessage = translateAttendanceCamera(
-    languageToUse,
-    userId,
-    isCheckAttendanceTitle,
-    start,
-    end
-  );
+  const statusKey =
+  isCheckAttendanceTitle === "✅"
+  ? t("attendance.camera.statusFinish")
+  : t("attendance.camera.statusStart");
+  const endText = end ? t("attendance.camera.timeEnd", { end }) : "";
+
   return (
     <Modal
-      title={cameraAttendanceModalMessage.attendanceMessage}
-      description={cameraAttendanceModalMessage.salaryInfo}
+      title={t("attendance.camera.attendanceMessage",{userId:userId, eventTitle: isCheckAttendanceTitle, status: statusKey, start:start, end:endText })}
+      description={t("attendance.camera.salaryInfo")}
       isOpen={isOpen}
       onClose={onClose}
       maxWidth="5xl"
@@ -96,7 +93,6 @@ export const CameraModal: React.FC<CameraModalProps> = ({
         loading={loading}
         dataEventCamera={dataEventCamera}
         setShowCameraModal={setShowCameraModal}
-        languageToUse={languageToUse}
       />
     </Modal>
   );

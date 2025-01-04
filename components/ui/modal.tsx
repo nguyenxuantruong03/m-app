@@ -5,7 +5,6 @@ import { DialogHeader,Dialog, DialogContent, DialogDescription, DialogTitle } fr
 interface ModalProps{
     title?: string;
     description?: string;
-    descriptionLanguage?: React.ReactNode
     isOpen: boolean;
     onClose?: () => void;
     children?: React.ReactNode;
@@ -18,7 +17,7 @@ interface ModalProps{
     classNameCustom?:string;
     isPadding?: boolean
 }
-const Modal:React.FC<ModalProps> = ({title,description,isOpen,onClose,children,maxWidth,textCenter,top,customClass,showCloseButton,customWidth,classNameCustom,descriptionLanguage,isPadding}) => {
+const Modal:React.FC<ModalProps> = ({title,description,isOpen,onClose,children,maxWidth,textCenter,top,customClass,showCloseButton,customWidth,classNameCustom,isPadding}) => {
 
     const onChange =(open:boolean) =>{
         if(!open && onClose){
@@ -31,9 +30,7 @@ const Modal:React.FC<ModalProps> = ({title,description,isOpen,onClose,children,m
             <DialogContent isPadding={isPadding} customWidth={customWidth} showCloseButton={showCloseButton} className={`${classNameCustom} max-w-${maxWidth || "xl"} ${customClass}  ${top ? 'dialog-content-camera' : ''}`} >
                 <DialogHeader>
                     <DialogTitle className={textCenter ? "text-center" : ""}>{title}</DialogTitle>
-                    { descriptionLanguage ? <DialogDescription className={textCenter ? "text-center" : ""}>{descriptionLanguage}</DialogDescription> 
-                    :  <DialogDescription className={textCenter ? "text-center" : ""}>{description}</DialogDescription>
-                    }
+                    <DialogDescription className={textCenter ? "text-center" : ""}>{description}</DialogDescription>
                 </DialogHeader>
                 <div>
                     {children}

@@ -11,10 +11,9 @@ import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getLocationShipperToUser } from "@/translate/translate-client";
-import { localizationData } from "@/translate/translate-dashboard";
 import toast from "react-hot-toast";
 import { socket } from "@/app/socket";
+import { useTranslations } from "next-intl";
 
 interface Location {
   lat: number;
@@ -35,17 +34,17 @@ interface LocationproductProps {
 }
 
 const LocationProduct = ({userShipperId,locationLat,locationLng}:LocationproductProps) => {
+  const t= useTranslations("map")
+  const user = useCurrentUser();
   const [userALocation, setUserALocation] = useState<Location | null>(null);
   const [myLocation, setMyLocation] = useState<Location | null>(null);
   const [map, setMap] = useState<any>(null);
   const [routingControl, setRoutingControl] =
     useState<L.Routing.Control | null>(null);
   const [marker, setMarker] = useState<any>(null); // State lưu trữ marker
-  const user = useCurrentUser();
 
   //language
   const languageToUse = user?.language || "vi";
-  const locationShipperToUserMessage = getLocationShipperToUser(languageToUse);
 
   useEffect(() => {
     const mapInstance = L.map("map").setView(
@@ -65,10 +64,61 @@ const LocationProduct = ({userShipperId,locationLat,locationLng}:Locationproduct
     }).addTo(mapInstance);
 
     if (languageToUse === "vi") {
-      L.Routing.Localization["vi"] = localizationData["vi"];
-    } else {
-      delete L.Routing.Localization["vi"]; // Remove any custom localization for non-Vietnamese languages
-    }
+          L.Routing.Localization["vi"] = {
+            directions: {
+              north: t("directions.north"),
+              northeast: t("directions.northeast"),
+              east: t("directions.east"),
+              southeast: t("directions.southeast"),
+              south: t("directions.south"),
+              southwest: t("directions.southwest"),
+              west: t("directions.west"),
+              northwest: t("directions.northwest"),
+            },
+            instructions: {
+              straight: t("instructions.straight"),
+              slightLeft: t("instructions.slightLeft"),
+              left: t("instructions.left"),
+              sharpLeft: t("instructions.sharpLeft"),
+              slightRight: t("instructions.slightRight"),
+              right: t("instructions.right"),
+              sharpRight: t("instructions.sharpRight"),
+              uturn: t("instructions.uturn"),
+            },
+            maneuvers: {
+              merge: t("maneuvers.merge"),
+              depart: t("maneuvers.depart"),
+              arrive: t("maneuvers.arrive"),
+              fork: t("maneuvers.fork"),
+              endOfRoad: t("maneuvers.endOfRoad"),
+              passRoundabout: t("maneuvers.passRoundabout"),
+              accessRoundabout: t("maneuvers.accessRoundabout"),
+              stayOnRoundabout: t("maneuvers.stayOnRoundabout"),
+              startAtEndOfStreet: t("maneuvers.startAtEndOfStreet"),
+              start: t("maneuvers.start"),
+              turn: t("maneuvers.turn"),
+              turnLeft: t("maneuvers.turnLeft"),
+              turnRight: t("maneuvers.turnRight"),
+              multiple: t("maneuvers.multiple"),
+            },
+            errors: {
+              locationNotFound: t("errors.locationNotFound"),
+              cantProjectRouteOnSatellite: t("errors.cantProjectRouteOnSatellite"),
+              routeNotFound: t("errors.routeNotFound"),
+              cantFindRoute: t("errors.cantFindRoute"),
+              requestFailed: t("errors.requestFailed"),
+              tooManyStops: t("errors.tooManyStops"),
+              unableToSync: t("errors.unableToSync"),
+            },
+            other: {
+              useRouteAnyway: t("other.useRouteAnyway"),
+              isCurrently: t("other.isCurrently"),
+              poweredBy: t("other.poweredBy"),
+            },
+          };
+        } else {
+          delete L.Routing.Localization["vi"]; // Remove any custom localization for non-Vietnamese languages
+        }
 
     return () => {
       mapInstance.remove();
@@ -86,10 +136,10 @@ const LocationProduct = ({userShipperId,locationLat,locationLng}:Locationproduct
         setMyLocation(currentLocation);
 
         const myMarker = L.marker([latitude, longitude]).addTo(map);
-        myMarker.bindPopup(locationShipperToUserMessage.you).openPopup();
+        myMarker.bindPopup(t("form.you")).openPopup();
       },
       (error) => {
-        toast.error(locationShipperToUserMessage.message);
+        toast.error(t("form.message"));
       }
     );
   }, [map]);
@@ -110,12 +160,12 @@ const LocationProduct = ({userShipperId,locationLat,locationLng}:Locationproduct
 
           if (marker) {
             marker.setLatLng([location.lat, location.lng]); // Cập nhật vị trí marker
-            marker.setPopupContent(locationShipperToUserMessage.shipperComing); // Cập nhật nội dung popup (nếu cần)
+            marker.setPopupContent(t("form.shipperComing")); // Cập nhật nội dung popup (nếu cần)
             marker.openPopup(); // Mở popup nếu cần
           } else {
             const newMarker = L.marker([location.lat, location.lng]).addTo(map);
             newMarker
-              .bindPopup(locationShipperToUserMessage.shipperComing)
+              .bindPopup(t("form.shipperComing"))
               .openPopup();
             setMarker(newMarker);
           }
@@ -183,7 +233,7 @@ const LocationProduct = ({userShipperId,locationLat,locationLng}:Locationproduct
       const shipperMarker = L.marker([destination.lat, destination.lng]).addTo(
         map
       );
-      shipperMarker.bindPopup(locationShipperToUserMessage.shipper).openPopup();
+      shipperMarker.bindPopup(t("form.shipper")).openPopup();
       setMarker(shipperMarker); // Lưu shipperMarker vào state
 
       // Cập nhật routing control

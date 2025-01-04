@@ -1,21 +1,23 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
-import { translateProductSalePatch } from "@/translate/translate-api";
 import { UserRole } from "@prisma/client";
+import { createTranslator } from "next-intl";
 import { NextResponse } from "next/server";
 
 export async function DELETE(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const productSalatePatchMessage = translateProductSalePatch(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
 
     const { id } = body;
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: productSalatePatchMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
@@ -26,7 +28,7 @@ export async function DELETE(req: Request) {
       user.role !== UserRole.MARKETING
     ) {
       return new NextResponse(
-        JSON.stringify({ error: productSalatePatchMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -46,7 +48,7 @@ export async function DELETE(req: Request) {
   } catch (error) {
     console.error(error); // Log the error for debugging
     return new NextResponse(
-      JSON.stringify({ error: productSalatePatchMessage.internalError }),
+      JSON.stringify({ error: t("toastError.saleproduct.internalErrorPatchSaleProduct") }),
       { status: 500 }
     );
   }

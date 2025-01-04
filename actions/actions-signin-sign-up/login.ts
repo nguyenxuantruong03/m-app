@@ -24,27 +24,7 @@ import { getTwoFactorConfirmationbyUserId } from "@/data/two-factor-confirmation
 import { format } from "date-fns";
 import bcrypt from "bcryptjs";
 import { UAInfo } from "@/providers/device-info-provider";
-import {
-  getInvalidEmailMessage,
-  getToastError,
-  translateAccountBannedTime,
-  translateAccountPermanentlyBannedPolicyViolation,
-  translateDeviceExists,
-  translateDeviceInfoNotFound,
-  translateDeviceLimitExceeded,
-  translateDeviceNotFound,
-  translateDeviceSaveError,
-  translateDeviceSearchError,
-  translateEmailNotConfirmedOrInvalid,
-  translateIncorrectPassword,
-  translateIncorrectVerificationCode,
-  translateInvalid,
-  translateInvalidEmailOrPassword,
-  translateTooManyVerificationRequests,
-  translateValidInfo,
-  translateVerificationCodeExpired,
-  translateVerificationCodeNotFound,
-} from "@/translate/translate-client";
+import { createTranslator } from "next-intl";
 
 export const login = async (
   values: z.infer<typeof LoginSchema>,
@@ -52,50 +32,15 @@ export const login = async (
   deviceInfo?: UAInfo | null,
   languageToUse?: string
 ) => {
-  //languages
-  const accountPermanentlyBannedPolicyViolationMessage =
-    translateAccountPermanentlyBannedPolicyViolation(languageToUse || "vi");
-  const invalidEmailMessage = getInvalidEmailMessage(languageToUse || "vi");
-  const emailNotConfirmedOrInvalidMessage = translateEmailNotConfirmedOrInvalid(
-    languageToUse || "vi"
-  );
-  const invalidMessage = translateInvalid(languageToUse!);
-  const incorrectPasswordMessage = translateIncorrectPassword(
-    languageToUse || "vi"
-  );
-  const validInfoMessage = translateValidInfo(languageToUse || "vi");
-  const deviceLimitExceededMessage = translateDeviceLimitExceeded(
-    languageToUse || "vi"
-  );
-  const verificationCodeNotFoundMessage = translateVerificationCodeNotFound(
-    languageToUse || "vi"
-  );
-  const incorrectVerificationCodeMessage = translateIncorrectVerificationCode(
-    languageToUse || "vi"
-  );
-  const verificationCodeExpiredMessage = translateVerificationCodeExpired(
-    languageToUse || "vi"
-  );
-  const deviceExitsMessage = translateDeviceExists(languageToUse || "vi");
-  const deviceSearchErrorMessage = translateDeviceSearchError(
-    languageToUse || "vi"
-  );
-  const deviceNotFoundMessage = translateDeviceNotFound(languageToUse || "vi");
-  const deviceSaveErrorMessage = translateDeviceSaveError(
-    languageToUse || "vi"
-  );
-  const deviceInfoNotFoundMessage = translateDeviceInfoNotFound(
-    languageToUse || "vi"
-  );
-  const invalidEmailOrPasswordMessage = translateInvalidEmailOrPassword(
-    languageToUse || "vi"
-  );
-  const toastErrorMessage = getToastError(languageToUse || "vi");
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse || "vi", messages });
+
 
   //safeParse: Phân tích an toàn
   const validatedFields = LoginSchema.safeParse(values);
   if (!validatedFields.success) {
-    return { error: invalidMessage };
+    return { error: t("login.invalid") };
   }
 
   const { email, password, code } = validatedFields.data;
@@ -104,17 +49,17 @@ export const login = async (
 
   if (existingUser?.isbanforever) {
     return {
-      error: accountPermanentlyBannedPolicyViolationMessage,
+      error: t("login.accountPermanentlyBannedPolicyViolation"),
     };
   }
 
   if (!existingUser?.email) {
-    return { error: `${invalidEmailMessage}!` };
+    return { error: `${t("login.invalidEmail")}!` };
   }
 
   if (values.email !== "guest@gmail.com" && !existingUser?.emailVerified) {
     return {
-      error: emailNotConfirmedOrInvalidMessage,
+      error: t("login.emailNotConfirmedOrInvalid"),
     };
   }
   
@@ -143,7 +88,7 @@ export const login = async (
   }
 
   if (!passwordsMatch) {
-    return { error: incorrectPasswordMessage };
+    return { error: t("login.incorrectPassword") };
   }
 
   if (existingUser?.role !== "GUEST" && existingUser?.id) {
@@ -158,7 +103,7 @@ export const login = async (
           ? format(banExpiresAt, "dd/MM/yyyy '-' HH:mm:ss a")
           : "";
         return {
-          error: translateAccountBannedTime(languageToUse || "vi", daysLeft),
+          error: t("login.accountBannedTime",{daysLeft:daysLeft}),
         };
       } else {
         // Ban period has expired, unban the user
@@ -201,7 +146,7 @@ export const login = async (
         verificationtoken.email,
         verificationtoken.token
       );
-      return { success: validInfoMessage };
+      return { success: t("login.validInfo") };
     }
 
     // Dùng để kiểm tra thiết bị xem có quá giới hạn không
@@ -220,7 +165,7 @@ export const login = async (
     const totalDeviceCount = existingDeviceLimitDevice.length;
     if (totalDeviceCount > effectiveLimitDevice) {
       return {
-        error: deviceLimitExceededMessage,
+        error: t("login.deviceLimitExceeded"),
       };
     }
 
@@ -233,17 +178,17 @@ export const login = async (
         );
 
         if (!twoFactorToken) {
-          return { error: verificationCodeNotFoundMessage };
+          return { error: t("login.verificationCodeNotFound") };
         }
 
         if (twoFactorToken.token !== code) {
-          return { error: incorrectVerificationCodeMessage };
+          return { error: t("login.incorrectVerificationCode") };
         }
 
         const hasExpired = new Date(twoFactorToken.expires) < new Date();
 
         if (hasExpired) {
-          return { error: verificationCodeExpiredMessage };
+          return { error: t("login.verificationCodeExpired") };
         }
         await prismadb.twoFactorToken.delete({
           where: { id: twoFactorToken.id },
@@ -283,10 +228,7 @@ export const login = async (
             ? format(banUser.banExpires, "dd/MM/yyyy '-' HH:mm:ss a")
             : "";
           return {
-            error: translateTooManyVerificationRequests(
-              languageToUse || "vi",
-              timeBan
-            ),
+            error: t("login.tooManyVerificationRequests",{timeBan: timeBan})
           };
         } else {
           // Tăng resendCount lên 1 và lưu lại vào cơ sở dữ liệu
@@ -373,14 +315,14 @@ export const login = async (
                 const cutString = deviceInfo.ua.substring(start + 1, end);
 
                 if (deviceInfo.ua.includes(cutString)) {
-                  console.error(deviceExitsMessage);
+                  console.error(t("login.deviceExits"));
                   deviceExists = true;
                 }
               } else {
-                console.error(deviceSearchErrorMessage);
+                console.error(t("login.deviceSearchError"));
               }
             } else {
-              console.error(deviceNotFoundMessage);
+              console.error(t("login.deviceNotFound"));
             }
           });
 
@@ -413,7 +355,7 @@ export const login = async (
           }
         }
       } catch (errors) {
-        console.error(deviceSaveErrorMessage, errors);
+        console.error(t("login.deviceSaveError"), errors);
       }
     };
 
@@ -427,15 +369,15 @@ export const login = async (
         saveDeviceInfoResult,
       ]);
     } else {
-      console.error(deviceInfoNotFoundMessage);
+      console.error(t("login.deviceInfoNotFound"));
     }
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CredentialsSignin":
-          return { error: invalidEmailOrPasswordMessage };
+          return { error: t("login.invalidEmailOrPassword") };
         default:
-          return { error: toastErrorMessage };
+          return { error: t("login.somethingWentWrong") };
       }
     }
     throw error;

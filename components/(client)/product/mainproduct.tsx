@@ -29,24 +29,8 @@ import RelatedTagKeo from "./list-related-tag/related-tag-keo";
 import RelatedTagVatlieunhatam from "./list-related-tag/related-tag-vatlieunhatam";
 import RelatedTagDothuongdung from "./list-related-tag/related-tag-dothuongdung";
 import RelatedTagQuat from "./list-related-tag/related-tag-quat";
-import {
-  translateBathroomMaterials,
-  translateBestSeller,
-  translateCommonItems,
-  translateCuttingStone,
-  translateElectricWire,
-  translateFan,
-  translateGlue,
-  translateLightBulb,
-  translateLock,
-  translatePaint,
-  translatePin,
-  translatePipe,
-  translatePlasticPipe,
-  translateSocket,
-  translateSocketAndFaceplate,
-} from "@/translate/translate-client";
 import MainProductSkeleton from "../skeleton/main-product-Skeleton";
+import { useTranslations } from "next-intl";
 
 interface ProductMainListProps {
   saleProduct: Product[];
@@ -64,7 +48,6 @@ interface ProductMainListProps {
   dothuongdung: Product[];
   maxTimeSale: Date | null;
   aggregatedProductTypes: { productType: string; count: number }[];
-  languageToUse: string;
   loading: boolean;
 }
 const MainProduct: React.FC<ProductMainListProps> = ({
@@ -83,39 +66,23 @@ const MainProduct: React.FC<ProductMainListProps> = ({
   dothuongdung,
   maxTimeSale,
   aggregatedProductTypes,
-  languageToUse,
   loading,
 }) => {
-  //language
-  const bestSellerMessage = translateBestSeller(languageToUse);
-  const pinMesage = translatePin(languageToUse);
-  const fanMessage = translateFan(languageToUse);
-  const plasticPipeMessage = translatePlasticPipe(languageToUse);
-  const pipeMessage = translatePipe(languageToUse);
-  const electricWireMessage = translateElectricWire(languageToUse);
-  const cuttingStoneMessage = translateCuttingStone(languageToUse);
-  const lockMessage = translateLock(languageToUse);
-  const glueMessage = translateGlue(languageToUse);
-  const socketAndFaceplateMessage = translateSocketAndFaceplate(languageToUse);
-  const socketMessage = translateSocket(languageToUse);
-  const paintMessage = translatePaint(languageToUse);
-  const bathroomMaterialsMessage = translateBathroomMaterials(languageToUse);
-  const lightBlubMessage = translateLightBulb(languageToUse);
-  const commonItemMessage = translateCommonItems(languageToUse);
+  const t = useTranslations()
 
   const productTypeDisplayNames: Record<string, string> = {
-    PRODUCT: pinMesage,
-    PRODUCT1: fanMessage,
-    PRODUCT2: pipeMessage,
-    PRODUCT3: electricWireMessage,
-    PRODUCT4: cuttingStoneMessage,
-    PRODUCT5: lockMessage,
-    PRODUCT6: glueMessage,
-    PRODUCT7: socketMessage,
-    PRODUCT8: paintMessage,
-    PRODUCT9: bathroomMaterialsMessage,
-    PRODUCT10: lightBlubMessage,
-    PRODUCT11: commonItemMessage,
+    PRODUCT: t("product.pin"),
+    PRODUCT1: t("product.fan"),
+    PRODUCT2: t("product.pipe"),
+    PRODUCT3: t("product.electricWire"),
+    PRODUCT4: t("product.cuttingStone"),
+    PRODUCT5: t("product.lock"),
+    PRODUCT6: t("product.glue"),
+    PRODUCT7: t("product.socket"),
+    PRODUCT8: t("product.paint"),
+    PRODUCT9: t("product.bathroomMaterials"),
+    PRODUCT10: t("product.lightBlub"),
+    PRODUCT11: t("product.commonItem"),
   };
 
   return (
@@ -157,35 +124,19 @@ const MainProduct: React.FC<ProductMainListProps> = ({
               <div>
                 <div className="content text-[16px] md:text-[30px] hidden xl:block">
                   <div
-                    className={`content__container h-[51px] pl-11 ${
-                      languageToUse === "ja" ? "pr-[24rem]" : "pr-[28rem]"
-                    } mt-2.5`}
+                    className={`content__container h-[51px] pl-11 pr-[28rem] mt-2.5`}
                   >
                     <p className="content__container__text">
-                      {bestSellerMessage}
+                      {t("action.bestSeller")}
                     </p>
 
                     <ul
-                      className={`content__container__list ${
-                        languageToUse === "en" && "pl-[10rem]"
-                      } ${languageToUse === "fr" && "pl-[10rem]"} ${
-                        languageToUse === "ja" && "pl-[12rem]"
-                      } ${languageToUse === "vi" && "pl-[8.5rem]"} ${
-                        languageToUse === "zh" && "pl-[10rem]"
-                      } text-[30px] mt-0`}
+                      className={`content__container__list pl-[8.5rem] text-[30px] mt-0`}
                     >
                       {aggregatedProductTypes.map(({ productType, count }) => (
                         <li
                           key={productType}
-                          className={`m-0 ${
-                            languageToUse === "vi" && "leading-[50px]"
-                          } ${
-                            languageToUse === "ja"
-                              ? "leading-[45px]"
-                              : ["zh", "en", "fr"].includes(languageToUse)
-                              ? "leading-[47px]"
-                              : ""
-                          }`}
+                          className={`m-0 leading-[50px]`}
                         >
                           {productTypeDisplayNames[productType] || productType}
                         </li>
@@ -311,16 +262,16 @@ const MainProduct: React.FC<ProductMainListProps> = ({
                 </div>
               </div>
             </div>
-            <ProductListSale data={saleProduct} languageToUse={languageToUse} />
+            <ProductListSale data={saleProduct} />
           </div>
         </>
       )}
 
       <>
         <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
-          {fanMessage}
+          {t("product.fan")}
         </h1>
-        <RelatedTagQuat languageToUse={languageToUse} />
+        <RelatedTagQuat />
         {loading ? (
           <MainProductSkeleton />
         ) : (
@@ -329,7 +280,7 @@ const MainProduct: React.FC<ProductMainListProps> = ({
             <ProductList
               data={quat}
               route="product1"
-              languageToUse={languageToUse}
+            
             />
           </>
         )}
@@ -337,9 +288,9 @@ const MainProduct: React.FC<ProductMainListProps> = ({
 
       <>
         <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
-          {electricWireMessage}
+          {t("product.electricWire")}
         </h1>
-        <RelatedTagDaydien languageToUse={languageToUse} />
+        <RelatedTagDaydien />
         {loading ? (
           <MainProductSkeleton />
         ) : (
@@ -348,7 +299,7 @@ const MainProduct: React.FC<ProductMainListProps> = ({
             <ProductList
               data={daydien}
               route="product3"
-              languageToUse={languageToUse}
+            
             />
           </>
         )}
@@ -356,9 +307,9 @@ const MainProduct: React.FC<ProductMainListProps> = ({
 
       <>
         <h1 className="mb-4 mt-4 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
-          {socketAndFaceplateMessage}
+          {t("product.socketAndFaceplate")}
         </h1>
-        <RelatedTagOcam languageToUse={languageToUse} />
+        <RelatedTagOcam />
         {loading ? (
           <MainProductSkeleton />
         ) : (
@@ -367,7 +318,7 @@ const MainProduct: React.FC<ProductMainListProps> = ({
             <ProductListSingle
               data={ocam}
               route="product7"
-              languageToUse={languageToUse}
+            
             />
           </>
         )}
@@ -375,9 +326,9 @@ const MainProduct: React.FC<ProductMainListProps> = ({
 
       <>
         <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
-          {plasticPipeMessage}
+          {t("product.plasticPipe")}
         </h1>
-        <RelatedTagOngnhua languageToUse={languageToUse} />
+        <RelatedTagOngnhua />
         {loading ? (
           <MainProductSkeleton />
         ) : (
@@ -386,7 +337,7 @@ const MainProduct: React.FC<ProductMainListProps> = ({
             <ProductListSingle
               data={ongnhua}
               route="product2"
-              languageToUse={languageToUse}
+            
             />
           </>
         )}
@@ -394,9 +345,9 @@ const MainProduct: React.FC<ProductMainListProps> = ({
 
       <>
         <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
-          {lightBlubMessage}
+          {t("product.lightBlub")}
         </h1>
-        <RelatedTagBongden languageToUse={languageToUse} />
+        <RelatedTagBongden />
         {loading ? (
           <MainProductSkeleton />
         ) : (
@@ -405,7 +356,7 @@ const MainProduct: React.FC<ProductMainListProps> = ({
             <ProductList
               data={bongden}
               route="product10"
-              languageToUse={languageToUse}
+            
             />
           </>
         )}
@@ -415,13 +366,13 @@ const MainProduct: React.FC<ProductMainListProps> = ({
       {pin.length > 0 && (
         <>
           <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
-            {pinMesage}
+            {t("product.pin")}
           </h1>
-          <RelatedTagPin languageToUse={languageToUse} />
+          <RelatedTagPin />
           <ProductListSingle
             data={pin}
             route="product0"
-            languageToUse={languageToUse}
+          
           />
         </>
       )}
@@ -429,13 +380,13 @@ const MainProduct: React.FC<ProductMainListProps> = ({
       {son.length > 0 && (
         <>
           <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
-            {paintMessage}
+            {t("product.paint")}
           </h1>
-          <RelatedTagSon languageToUse={languageToUse} />
+          <RelatedTagSon />
           <ProductListSingle
             data={son}
             route="son"
-            languageToUse={languageToUse}
+          
           />
         </>
       )}
@@ -443,13 +394,13 @@ const MainProduct: React.FC<ProductMainListProps> = ({
       {dacat.length > 0 && (
         <>
           <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
-            {cuttingStoneMessage}
+            {t("product.cuttingStone")}
           </h1>
-          <RelatedTagDaCat languageToUse={languageToUse} />
+          <RelatedTagDaCat />
           <ProductListSingle
             data={dacat}
             route="product4"
-            languageToUse={languageToUse}
+          
           />
         </>
       )}
@@ -457,13 +408,13 @@ const MainProduct: React.FC<ProductMainListProps> = ({
       {okhoa.length > 0 && (
         <>
           <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
-            {lockMessage}
+            {t("product.lock")}
           </h1>
-          <RelatedTagOkhoa languageToUse={languageToUse} />
+          <RelatedTagOkhoa />
           <ProductListSingle
             data={okhoa}
             route="product5"
-            languageToUse={languageToUse}
+          
           />
         </>
       )}
@@ -471,13 +422,13 @@ const MainProduct: React.FC<ProductMainListProps> = ({
       {keo.length > 0 && (
         <>
           <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
-            {glueMessage}
+            {t("product.glue")}
           </h1>
-          <RelatedTagKeo languageToUse={languageToUse} />
+          <RelatedTagKeo />
           <ProductListSingle
             data={keo}
             route="product6"
-            languageToUse={languageToUse}
+          
           />
         </>
       )}
@@ -485,13 +436,13 @@ const MainProduct: React.FC<ProductMainListProps> = ({
       {vatlieunhatam.length > 0 && (
         <>
           <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
-            {bathroomMaterialsMessage}
+            {t("product.bathroomMaterials")}
           </h1>
-          <RelatedTagVatlieunhatam languageToUse={languageToUse} />
+          <RelatedTagVatlieunhatam />
           <ProductListSingle
             data={vatlieunhatam}
             route="product9"
-            languageToUse={languageToUse}
+          
           />
         </>
       )}
@@ -499,13 +450,13 @@ const MainProduct: React.FC<ProductMainListProps> = ({
       {dothuongdung.length > 0 && (
         <>
           <h1 className="mb-4 mt-4 md:mt-10 font-bold text-3xl md:ml-6 lg:ml-0 text-slate-900 dark:text-slate-200">
-            {commonItemMessage}
+            {t("product.commonItem")}
           </h1>
-          <RelatedTagDothuongdung languageToUse={languageToUse} />
+          <RelatedTagDothuongdung />
           <ProductListSingle
             data={dothuongdung}
             route="product11"
-            languageToUse={languageToUse}
+          
           />
         </>
       )}

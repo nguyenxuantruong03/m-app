@@ -2,11 +2,11 @@
 
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Modal from "../ui/modal";
-import NFC from "@/app/(dashboard)/[storeId]/(routes)/attendancestaff/ChooseCheckAttendance/nfc";
+import NFC from "@/app/[locale]/(dashboard)/[storeId]/(routes)/attendancestaff/ChooseCheckAttendance/nfc";
 import { format } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import viLocale from "date-fns/locale/vi";
-import { translateNfcAttendance } from "@/translate/translate-dashboard";
+import { useTranslations } from "next-intl";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 
 interface NfcModalProps {
@@ -19,7 +19,6 @@ interface NfcModalProps {
   isCheckAttendanceTitle: string;
   isCheckAttendanceStart: string | Date;
   isCheckAttendanceEnd:  string | Date;
-  languageToUse: string;
 }
 
 export const NfcModal: React.FC<NfcModalProps> = ({
@@ -32,8 +31,8 @@ export const NfcModal: React.FC<NfcModalProps> = ({
   isCheckAttendanceTitle,
   isCheckAttendanceStart,
   isCheckAttendanceEnd,
-  languageToUse
 }) => {
+  const t = useTranslations()
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -74,19 +73,16 @@ const end = isCheckAttendanceEnd
     )
   : null;
 
-  //language
-  const nfcAttendanceMessage = translateNfcAttendance(
-    languageToUse,
-    userId,
-    isCheckAttendanceTitle,
-    start,
-    end
-  )
+  const statusKey =
+  isCheckAttendanceTitle === "✅"
+      ? t("attendance.nfc.statusFinish")
+      : t("attendance.nfc.statusStart");
+  const endText = end ? t("attendance.nfc.timeEnd", { end }) : "";
 
   return (
     <Modal
-    title={nfcAttendanceMessage.attendanceMessage}
-      description={nfcAttendanceMessage.salaryInfo}
+    title={t("attendance.nfc.attendanceMessage",{userId:userId, eventTitle: isCheckAttendanceTitle, status: statusKey, start:start, end:endText })}
+      description={t("attendance.nfc.salaryInfo")}
       isOpen={isOpen}
       onClose={onClose}
       textCenter={true}
@@ -96,7 +92,6 @@ const end = isCheckAttendanceEnd
         loading={loading}
         dataEventNFC={dataEventNFC}
         setShowNFCModal={setShowNFCModal}
-        languageToUse={languageToUse}
       />
     </Modal>
   );

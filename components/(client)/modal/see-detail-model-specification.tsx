@@ -1,10 +1,6 @@
 import Modal from "@/components/ui/modal";
-import {
-  translateProductProtection,
-  translateServiceSummary,
-  translateSpecifications,
-} from "@/translate/translate-client";
 import { Product } from "@/types/type";
+import { useTranslations } from "next-intl";
 
 interface SeeDetailSpecificationsProps {
   data: Product;
@@ -12,7 +8,6 @@ interface SeeDetailSpecificationsProps {
   onClose: () => void;
   message?: string;
   title?: string;
-  languageToUse: string;
 }
 
 const SeeDetailSpecifications: React.FC<SeeDetailSpecificationsProps> = ({
@@ -21,14 +16,9 @@ const SeeDetailSpecifications: React.FC<SeeDetailSpecificationsProps> = ({
   onClose,
   message,
   title,
-  languageToUse,
 }) => {
   const { productdetail } = data;
-
-  //languages
-  const productProtectionMessage = translateProductProtection(languageToUse);
-  const serviceSummaryMessage = translateServiceSummary(languageToUse);
-  const specificationMessage = translateSpecifications(languageToUse);
+  const t = useTranslations()
 
   // Lấy tất cả các cặp key-value của productdetail
   const specificationEntries = Object.entries(productdetail);
@@ -54,15 +44,15 @@ const SeeDetailSpecifications: React.FC<SeeDetailSpecificationsProps> = ({
 
   return (
     <Modal
-      title={title || productProtectionMessage}
-      description={message || serviceSummaryMessage}
+      title={title || t("warranty.productProtection")}
+      description={message || t("action.serviceSummary")}
       isOpen={isOpen}
       onClose={onClose}
       classNameCustom="max-h-[36rem] md:max-h-[55rem] xl:max-h-[40rem] overflow-y-auto"
     >
       <div className="w-full space-y-2">
         <div className="bg-[#e5002d] rounded-md text-white font-bold p-2 text-center">
-          {specificationMessage}
+          {t("action.specifications")}
         </div>
         {specifications.map(([desc, value], index) => (
           <div

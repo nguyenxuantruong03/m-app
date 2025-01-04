@@ -9,24 +9,7 @@ import { formatter } from "@/lib/utils";
 import Modal from "@/components/ui/modal";
 import FormatDate from "@/components/format-Date";
 import { Button } from "@/components/ui/button";
-import {
-  translateAddress,
-  translateAmountToPay,
-  translateAutoCopyOrderCode,
-  translateCheckBeforeTurningOff,
-  translateCustomerName,
-  translateExit,
-  translateInvoice,
-  translateNote,
-  translateOrderCode,
-  translateOrderCreatedDate,
-  translatePasteUpperCase,
-  translatePaymentSuccess,
-  translateReceiveAt,
-  translateSearchExit,
-  translateTrackProduct,
-  translateWhenYouClick,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface PaymentSuccessCheckoutCashModallProps {
   isOpen: boolean;
@@ -34,33 +17,14 @@ interface PaymentSuccessCheckoutCashModallProps {
   loading?: boolean;
   message?: string;
   title?: string;
-  languageToUse: string;
 }
 
 export const PaymentSuccessCheckoutCashModal: React.FC<
   PaymentSuccessCheckoutCashModallProps
-> = ({ isOpen, loading, message, title, data, languageToUse }) => {
+> = ({ isOpen, loading, message, title, data }) => {
+  const t = useTranslations()
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
-
-  //languages
-  const addressMessage = translateAddress(languageToUse);
-  const receiveAtMessage = translateReceiveAt(languageToUse);
-  const invoiceMessage = translateInvoice(languageToUse);
-  const checkBeforeTurningOffMessage =
-    translateCheckBeforeTurningOff(languageToUse);
-  const orderCodeMessage = translateOrderCode(languageToUse);
-  const paymentSuccessMessage = translatePaymentSuccess(languageToUse);
-  const customerNameMessage = translateCustomerName(languageToUse);
-  const amountToPayMessage = translateAmountToPay(languageToUse);
-  const orderCreateDateMessage = translateOrderCreatedDate(languageToUse);
-  const noteMessage = translateNote(languageToUse);
-  const whenYouClickMessage = translateWhenYouClick(languageToUse);
-  const trackProductMessage = translateTrackProduct(languageToUse);
-  const autoCopyOrderCodeMessage = translateAutoCopyOrderCode(languageToUse);
-  const searchExitMessage = translateSearchExit(languageToUse);
-  const exitMessage = translateExit(languageToUse);
-  const pastUpperCaseMessage = translatePasteUpperCase(languageToUse);
 
   useEffect(() => {
     setIsMounted(true);
@@ -96,30 +60,30 @@ export const PaymentSuccessCheckoutCashModal: React.FC<
   const displayedNameAdress =
     data.address &&
     (data.address.includes("Không có") || data.address.includes("Trống"))
-      ? `${receiveAtMessage}:`
-      : `${addressMessage}:`;
+      ? `${t("order.receive")}:`
+      : `${t("info.address")}:`;
 
   return (
     <Modal
-      title={title || invoiceMessage}
-      description={message || checkBeforeTurningOffMessage}
+      title={title || t("order.invoice")}
+      description={message || t("order.checkBeforeTurningOff")}
       isOpen={isOpen}
       showCloseButton={false}
     >
       <>
         <div className="space-y-4">
           <p className="text-green-600 font-bold text-lg text-center">
-            {paymentSuccessMessage}
+            {t("order.paymentSuccess")}
           </p>
           <div className="flex justify-between">
             <div className="text-sm text-gray-500 font-semibold">
-              {orderCodeMessage}
+              {t("order.orderCode")}:
             </div>
             <div className="text-sm">{data.id}</div>
           </div>
           <div className="flex justify-between">
             <div className="text-sm text-gray-500 font-semibold">
-              {customerNameMessage}:
+              {t("order.customerName")}:
             </div>
             <div className="text-sm">{data.name}</div>
           </div>
@@ -135,7 +99,7 @@ export const PaymentSuccessCheckoutCashModal: React.FC<
           </div>
           <div className="flex justify-between">
             <div className="text-sm text-gray-500 font-semibold">
-              {amountToPayMessage}
+              {t("order.amountToPay")}:
             </div>
             <div className="text-sm text-red-600 font-semibold">
               {data?.orderItem[0]?.pricesales ? (
@@ -149,22 +113,22 @@ export const PaymentSuccessCheckoutCashModal: React.FC<
           </div>
           <div className="flex justify-between">
             <div className="text-sm text-gray-500 font-semibold">
-              {orderCreateDateMessage}:
+              {t("order.orderCreateDate")}:
             </div>
             <div className="text-sm">
-              <FormatDate subtractiontime={true} data={data.createdAt} language={languageToUse}/>
+              <FormatDate subtractiontime={true} data={data.createdAt}/>
             </div>
           </div>
         </div>
         <p className="mt-5">
-          <span className="font-bold text-yellow-500">{noteMessage}:</span>
-          {whenYouClickMessage}
+          <span className="font-bold text-yellow-500">{t("order.note")}:</span>
+          {t("order.whenYouClick")}
           <span className="text-green-600 font-bold">
-            {trackProductMessage}
+            {t("order.trackProduct")}
           </span>
-          {autoCopyOrderCodeMessage}{" "}
-          <span className="font-bold">{pastUpperCaseMessage}</span>
-          {searchExitMessage}
+          {t("order.autoCopyOrderCode")}{" "}
+          <span className="font-bold">{t("order.pastUpperCase")}</span>
+          {t("order.searchExit")}
         </p>
         <div className="pt-6 space-x-2 flex items-center justify-end w-full">
           <Button
@@ -172,7 +136,7 @@ export const PaymentSuccessCheckoutCashModal: React.FC<
             variant="outline"
             onClick={() => router.push("/cart")}
           >
-            {exitMessage}
+            {t("order.exit")}
           </Button>
 
           <Button
@@ -182,7 +146,7 @@ export const PaymentSuccessCheckoutCashModal: React.FC<
           >
             <p className="h-12 flex justify-center items-center font-bold">
               <Truck className="size-12 mr-2" />
-              <span>{trackProductMessage}</span>
+              <span>{t("order.trackProduct")}</span>
             </p>
           </Button>
         </div>

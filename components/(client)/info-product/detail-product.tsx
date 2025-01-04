@@ -7,12 +7,9 @@ import InfoProductDetail from "./info-detail-product";
 import Comment from "@/components/(client)/comment/comment";
 import ProductListSingleSuggest from "@/components/(client)/product/product-list/product-list-signle-suggest";
 import ProductListSuggest from "@/components/(client)/product/product-list/product-list-suggest";
-import {
-  translateOtherSuggestions,
-  translateOtherType,
-} from "@/translate/translate-client";
 import ErrorComponent from "@/components/ui/error";
 import ProductSkeleton from "../skeleton/product-skeleton";
+import { useTranslations } from "next-intl";
 
 interface ProductDetailProps {
   data: Product | null;
@@ -23,7 +20,6 @@ interface ProductDetailProps {
   routeOtherSuggestions?: string;
   other: Product[];
   routeOther?: string;
-  languageToUse: string;
   loading: boolean;
 }
 
@@ -36,12 +32,9 @@ const DetailProduct: React.FC<ProductDetailProps> = ({
   other,
   routeOther = "",
   productlistsuggest2,
-  languageToUse,
   loading
 }) => {
-  //languages
-  const otherSuggestionMessage = translateOtherSuggestions(languageToUse);
-  const otherTypeMessage = translateOtherType(languageToUse);
+  const t = useTranslations()
 
   if (loading) return <ProductSkeleton />;
 
@@ -55,57 +48,52 @@ const DetailProduct: React.FC<ProductDetailProps> = ({
           <Gallery
             images={images || []}
             data={data}
-            languageToUse={languageToUse}
           />
         </div>
         <div className="mt-10 px-4 sm:mt-16 sm:px-0 xl:mt-0">
-          <InfoProduct data={data} languageToUse={languageToUse} />
+          <InfoProduct data={data} />
         </div>
       </div>
     </div>
     {/* Infomation khuyen mai va bao hanh */}
     <div className="xl:max-w-7xl grid xl:grid-cols-2">
-      <InfoPromotion data={data} languageToUse={languageToUse} />
+      <InfoPromotion data={data} />
       <div className="h-[580px] md:h-[460px] w-full shadow-lg mb-5 rounded-md overflow-hidden">
-        <InfoWarranty data={data} languageToUse={languageToUse} />
+        <InfoWarranty data={data} />
       </div>
     </div>
     <hr className="my-10" />
     <h1 className="font-bold text-3xl my-3 text-slate-900 dark:text-slate-200">
-      {otherSuggestionMessage}
+      {t("action.otherSuggestion")}
     </h1>
     {productlistsuggest ? (
       <ProductListSuggest
         data={otherSuggestions}
         route={routeOtherSuggestions}
-        languageToUse={languageToUse}
       />
     ) : (
       <ProductListSingleSuggest
         data={otherSuggestions}
         route={routeOtherSuggestions}
-        languageToUse={languageToUse}
       />
     )}
     <h1 className="font-bold text-3xl my-3 text-slate-900 dark:text-slate-200">
-      {otherTypeMessage}
+      {t("action.otherType")}
     </h1>
     {/* Kiểm tra giá trị của suggest để hiển thị component phù hợp */}
     {productlistsuggest2 ? (
       <ProductListSuggest
         data={other}
         route={routeOther}
-        languageToUse={languageToUse}
       />
     ) : (
       <ProductListSingleSuggest
         data={other}
         route={routeOther}
-        languageToUse={languageToUse}
       />
     )}
     <hr className="my-8" />
-    <InfoProductDetail data={data} languageToUse={languageToUse} />
+    <InfoProductDetail data={data} />
     <Comment
       data={data.id}
       nameProduct={data.heading}

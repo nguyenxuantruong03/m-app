@@ -1,7 +1,7 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
-import { translateFeedbackIdDelete } from "@/translate/translate-api";
 import { UserRole } from "@prisma/client";
+import { createTranslator } from "next-intl";
 import { NextResponse } from "next/server";
 
 export async function DELETE(
@@ -10,41 +10,30 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const feedbackIdDeleteMessage = translateFeedbackIdDelete(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: feedbackIdDeleteMessage.userIdNotFound }),
+        JSON.stringify({ error: t('toastError.userNotFound') }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: feedbackIdDeleteMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied")}),
         { status: 403 }
       );
     }
 
     if (!params.feedbackId) {
       return new NextResponse(
-        JSON.stringify({ error: feedbackIdDeleteMessage.feedbackIdRequired }),
+        JSON.stringify({ error: t("toastError.feedback.feedbackIdRequired") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: feedbackIdDeleteMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -106,7 +95,7 @@ export async function DELETE(
     return NextResponse.json(feedBack);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: feedbackIdDeleteMessage.internalError }),
+      JSON.stringify({ error: t("toastError.feedback.internalErrorDeleteFeedback") }),
       { status: 500 }
     );
   }

@@ -3,7 +3,7 @@ import { currentUser } from "@/lib/auth";
 
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
-import { translateImageBillboardDelete, translateImageBillboardGet } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 
 export async function GET(
@@ -11,20 +11,22 @@ export async function GET(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const imageBillboardGetMessage = translateImageBillboardGet(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: imageBillboardGetMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: imageBillboardGetMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -38,7 +40,7 @@ export async function GET(
     return NextResponse.json(billboards);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: imageBillboardGetMessage.internalError }),
+      JSON.stringify({ error: t("toastError.billboard.intternalErrorGetBillboard") }),
       { status: 500 }
     );
   }
@@ -50,8 +52,10 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const imageBillboardDeleteMessage = translateImageBillboardDelete(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
 
@@ -59,21 +63,21 @@ export async function DELETE(
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: imageBillboardDeleteMessage.userNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: imageBillboardDeleteMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!ids || ids.length === 0) {
       return new NextResponse(
-        JSON.stringify({ error: imageBillboardDeleteMessage.emptyIdsArray }),
+        JSON.stringify({ error: t("toastError.idsArrayNotEmpty") }),
         { status: 400 }
       );
     }
@@ -115,10 +119,10 @@ export async function DELETE(
       },
     });
 
-    return NextResponse.json({ message: imageBillboardDeleteMessage.deleteSuccess });
+    return NextResponse.json({ message: t("toastSuccess.deletionSuccess") });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: imageBillboardDeleteMessage.internalError }),
+      JSON.stringify({ error: t("toastError.billboard.intternalErrorDeleteBillboard") }),
       { status: 500 }
     );
   }

@@ -13,14 +13,8 @@ import { Languages, ChevronDown, Check } from "lucide-react";
 import { Hint } from "@/components/ui/hint";
 import VietNamSVG from "@/public/svg/vietnam";
 import EnglishSVG from "@/public/svg/english";
-import ChineseSVG from "@/public/svg/chinese";
-import FrenchSVG from "@/public/svg/french";
-import JapaneseSVG from "@/public/svg/japan";
 import toast from "react-hot-toast";
-import {
-  getLanguageToastError,
-  translateLanguage,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface TranslationProps {
   setLanguage: Dispatch<SetStateAction<string>>;
@@ -37,10 +31,8 @@ export default function Translation({
   setIsConfirmLanguage,
   languageToUse,
 }: TranslationProps) {
+  const t = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
-
-  //language
-  const languageMessage = translateLanguage(languageToUse);
 
   const handleLanguageClick = (language: string) => {
     if (languageToUse !== language) {
@@ -48,8 +40,7 @@ export default function Translation({
       setIsConfirmLanguage(true);
     } else {
       // Lấy thông báo từ getLanguageToastError
-      const toastMessage = getLanguageToastError(language);
-      toast.error(toastMessage);
+      toast.error(t("toastError.somethingWentWrong"));
       setIsConfirmLanguage(false);
     }
   };
@@ -59,14 +50,14 @@ export default function Translation({
       <DropdownMenu onOpenChange={(open) => setIsOpen(open)}>
         <DropdownMenuTrigger asChild>
           <Button variant="destructive" disabled={loading || loadingLanguage}>
-            <Hint label={languageMessage}>
+            <Hint label={t("message.language")}>
               {isOpen ? <ChevronDown /> : <Languages />}
             </Hint>
           </Button>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent side="top">
-          <DropdownMenuLabel>{languageMessage}</DropdownMenuLabel>
+          <DropdownMenuLabel>{t("message.language")}</DropdownMenuLabel>
           <DropdownMenuSeparator />
 
           <DropdownMenuItem
@@ -89,39 +80,6 @@ export default function Translation({
               <EnglishSVG /> <span>EN</span>
             </div>
             {languageToUse === "en" && <Check className="h-4 w-4" />}
-          </DropdownMenuItem>
-
-          <DropdownMenuItem
-            disabled={languageToUse === "zh"}
-            onClick={() => handleLanguageClick("zh")}
-            className="flex items-center justify-between"
-          >
-            <div className="flex items-center space-x-2">
-              <ChineseSVG /> <span>ZH</span>
-            </div>
-            {languageToUse === "zh" && <Check className="h-4 w-4" />}
-          </DropdownMenuItem>
-
-          <DropdownMenuItem
-            disabled={languageToUse === "fr"}
-            onClick={() => handleLanguageClick("fr")}
-            className="flex items-center justify-between"
-          >
-            <div className="flex items-center space-x-2">
-              <FrenchSVG /> <span>FR</span>
-            </div>
-            {languageToUse === "fr" && <Check className="h-4 w-4" />}
-          </DropdownMenuItem>
-
-          <DropdownMenuItem
-            disabled={languageToUse === "ja"}
-            onClick={() => handleLanguageClick("ja")}
-            className="flex items-center justify-between"
-          >
-            <div className="flex items-center space-x-2">
-              <JapaneseSVG /> <span>JA</span>
-            </div>
-            {languageToUse === "ja" && <Check className="h-4 w-4" />}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

@@ -5,11 +5,7 @@ import { Button } from "../../ui/button";
 import { Trash2, Image as Imageicon } from "lucide-react";
 import Image from "next/image";
 import { CldUploadWidget } from "next-cloudinary";
-import {
-  translateCancel,
-  translateProfileSettings,
-  translateSave,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface UploadAvatarNavbarProps {
   classNamesForm?: string | undefined;
@@ -17,7 +13,6 @@ interface UploadAvatarNavbarProps {
   onChange: (value: string) => void;
   onRemove: (value: string) => void;
   value: string[];
-  languageToUse: string;
 }
 
 const UploadAvatarNavbar: React.FC<UploadAvatarNavbarProps> = ({
@@ -26,16 +21,11 @@ const UploadAvatarNavbar: React.FC<UploadAvatarNavbarProps> = ({
   onRemove,
   value,
   classNamesForm,
-  languageToUse,
 }) => {
+  const t = useTranslations()
   const [isMounted, setIsMounted] = useState(false);
   const [isImageUploaded, setIsImageUploaded] = useState(false);
   const [showImageOverlay, setShowImageOverlay] = useState(false);
-
-  //languages
-  const profileSettingMessage = translateProfileSettings(languageToUse);
-  const saveMessgae = translateSave(languageToUse);
-  const cancelMessage = translateCancel(languageToUse);
 
   //Ngăn chặn hành khi cuộn chuột khi đã xuất hiện showImageOverlay
   useEffect(() => {
@@ -101,7 +91,7 @@ const UploadAvatarNavbar: React.FC<UploadAvatarNavbarProps> = ({
         }}
         variant="outline"
       >
-        {profileSettingMessage.backgroundImage}
+        {t("navbardashboard.imageForm.backgroundImage")}
       </Button>
     );
   };
@@ -130,7 +120,7 @@ const UploadAvatarNavbar: React.FC<UploadAvatarNavbarProps> = ({
                   className={`flex items-center justify-center ${classNamesForm}`}
                 >
                   <Imageicon className="w-4 h-4 mr-1" />{" "}
-                  {profileSettingMessage.backgroundImage}
+                  {t("navbardashboard.imageForm.backgroundImage")}
                 </Button>
               </>
             );
@@ -172,12 +162,12 @@ const UploadAvatarNavbar: React.FC<UploadAvatarNavbarProps> = ({
             </div>
             <div className="mx-auto">
               <p className="text-gray-500 font-bold my-2">
-                {profileSettingMessage.changeImage}{" "}
+                {t("navbardashboard.imageForm.changeImage")}{" "}
               </p>
               <p className="text-sm text-gray-400">
-                {profileSettingMessage.note}
+                {t("navbardashboard.imageForm.note")}
                 <span className="ml-1">
-                  {profileSettingMessage.avatarDescription}
+                  {t("navbardashboard.imageForm.avatarDescription")}
                 </span>
               </p>
             </div>
@@ -188,7 +178,7 @@ const UploadAvatarNavbar: React.FC<UploadAvatarNavbarProps> = ({
               variant="secondary"
               disabled={disabled}
             >
-              {saveMessgae}
+              {t("action.save")}
             </Button>
 
             <Button
@@ -197,7 +187,7 @@ const UploadAvatarNavbar: React.FC<UploadAvatarNavbarProps> = ({
               variant="destructive"
               disabled={disabled}
             >
-              {cancelMessage}
+              {t("action.cancel")}
             </Button>
           </>
         )}

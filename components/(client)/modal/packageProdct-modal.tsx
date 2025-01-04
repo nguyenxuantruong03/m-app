@@ -13,17 +13,7 @@ import {
 import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import useCartdb from "@/hooks/client/db/use-cart-db";
-import {
-  getOutOfStockMessage,
-  getToastError,
-  translateAddProduct,
-  translateAddToCartError,
-  translateAgree,
-  translateCancel,
-  translateOutOfStock,
-  translateOutOfStockCartError,
-  translateProductQuantityError,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface AlertModalProps {
   isOpen: boolean;
@@ -32,7 +22,6 @@ interface AlertModalProps {
   message?: string;
   title?: string;
   user: any;
-  languageToUse: string;
 }
 
 export const PackageModal: React.FC<AlertModalProps> = ({
@@ -42,25 +31,12 @@ export const PackageModal: React.FC<AlertModalProps> = ({
   title,
   order,
   user,
-  languageToUse,
 }) => {
+  const t = useTranslations()
   const [isMounted, setIsMounted] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const cartdb = useCartdb();
-
-  //languages
-  const toastErrorMessage = getToastError(languageToUse);
-  const productQuantityErrorMessage =
-    translateProductQuantityError(languageToUse);
-  const addToCartErrorMessage = translateAddToCartError(languageToUse);
-  const outOfStockInventoryMessage = translateOutOfStock(languageToUse);
-  const outOfStockCartErrorMessage =
-    translateOutOfStockCartError(languageToUse);
-  const outOfStockMessage = getOutOfStockMessage(languageToUse);
-  const cancelMessage = translateCancel(languageToUse);
-  const addProductMessage = translateAddProduct(languageToUse);
-  const agreeMessage = translateAgree(languageToUse);
 
   useEffect(() => {
     setIsMounted(true);
@@ -128,7 +104,7 @@ export const PackageModal: React.FC<AlertModalProps> = ({
 
           // Check for errors and product availability
           if (!orderItem.size && !orderItem.color) {
-            toast.error(productQuantityErrorMessage);
+            toast.error(t("product.productNotFound"));
             return;
           }
           if (!orderItem.product) {
@@ -160,7 +136,6 @@ export const PackageModal: React.FC<AlertModalProps> = ({
                   existingCartItem.quantity + Number(orderItem.quantity),
                   orderItem.warranty || null,
                   user?.id || "",
-                  languageToUse
                 );
               } else {
                 // Add a new product to the cart
@@ -175,7 +150,7 @@ export const PackageModal: React.FC<AlertModalProps> = ({
               }
             }
           } catch (error) {
-            toast.error(addToCartErrorMessage);
+            toast.error(t("product.addToCartError"));
           } finally {
             router.push("/cart");
             setLoading(false);
@@ -192,8 +167,8 @@ export const PackageModal: React.FC<AlertModalProps> = ({
 
   return (
     <Modal
-      title={title || outOfStockInventoryMessage}
-      description={message || outOfStockCartErrorMessage}
+      title={title || t("product.insufficientStock")}
+      description={message || t("product.outOfStockCartError")}
       isOpen={isOpen}
       onClose={onClose}
     >
@@ -239,7 +214,7 @@ export const PackageModal: React.FC<AlertModalProps> = ({
               const href = `/${route}/${productName}`;
               router.push(href);
             } else {
-              toast.error(toastErrorMessage);
+              toast.error(t("toastError.somethingWentWrong"));
             }
           };
 
@@ -295,7 +270,7 @@ export const PackageModal: React.FC<AlertModalProps> = ({
               <span className="text-sm">{item.product?.heading}</span>
               <span className="text-sm">
                 {quantity === 0 ? (
-                  <span className="text-gray-500">{outOfStockMessage}</span>
+                  <span className="text-gray-500">{t("product.outOfStock")}</span>
                 ) : (
                   <span>x{item.quantity}</span>
                 )}
@@ -306,7 +281,7 @@ export const PackageModal: React.FC<AlertModalProps> = ({
 
         <div className="flex justify-end items-center space-x-3">
           <Button disabled={loading} variant="outline" onClick={onClose}>
-            {cancelMessage}
+            {t("action.cancel")}
           </Button>
           <Button
             variant="destructive"
@@ -316,10 +291,10 @@ export const PackageModal: React.FC<AlertModalProps> = ({
             {loading ? (
               <span className="flex items-center">
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
-                {addProductMessage}
+                {t("warehouse.addProduct")}
               </span>
             ) : (
-              agreeMessage
+              t("action.agree")
             )}
           </Button>
         </div>

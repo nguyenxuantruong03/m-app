@@ -2,19 +2,18 @@ import { utcToZonedTime } from "date-fns-tz";
 import { format } from "date-fns";
 import viLocale from "date-fns/locale/vi";
 import enLocale from "date-fns/locale/en-US";
-import zhLocale from "date-fns/locale/zh-CN";
-import frLocale from "date-fns/locale/fr";
-import jaLocale from "date-fns/locale/ja";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 interface FormatDateProps {
   data: Date | null;
   noneTime?: boolean;
   subtractiontime?: boolean;
-  language: string;
 }
 
-const FormatDate: React.FC<FormatDateProps> = ({ data, noneTime, subtractiontime, language }) => {
+const FormatDate: React.FC<FormatDateProps> = ({ data, noneTime, subtractiontime }) => {
   if (!data) return null;
+  const user = useCurrentUser()
+  const language = user?.language
 
   const vietnamTimeZone = "Asia/Ho_Chi_Minh";
   const zonedDate = utcToZonedTime(new Date(data), vietnamTimeZone);
@@ -24,12 +23,9 @@ const FormatDate: React.FC<FormatDateProps> = ({ data, noneTime, subtractiontime
   const localeMap: Record<string, Locale> = {
     vi: viLocale,
     en: enLocale,
-    zh: zhLocale,
-    fr: frLocale,
-    ja: jaLocale,
   };
 
-  const locale = localeMap[language] || enLocale; // Default to English if language is not supported
+  const locale = localeMap[language || "vi"] || enLocale; // Default to English if language is not supported
 
   return (
     <>

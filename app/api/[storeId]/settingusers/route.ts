@@ -6,9 +6,9 @@ import {
   sendVerifyAccountisCitizenShipper,
 } from "@/lib/mail";
 import prismadb from "@/lib/prismadb";
-import { translateSettingUserBan, translateSettingUserDelete, translateSettingUserGet, translateSettingUserPatch } from "@/translate/translate-api";
 import { UserRole } from "@prisma/client";
 import { format, subHours } from "date-fns";
+import { createTranslator } from "next-intl";
 import { NextResponse } from "next/server";
 
 type SettingUserValue =
@@ -28,19 +28,21 @@ interface ChangeRecord {
 export async function GET(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const settingUserGetMessage = translateSettingUserGet(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: settingUserGetMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: settingUserGetMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -63,7 +65,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json(settinguser);
   } catch (error) {
-    return new NextResponse(JSON.stringify({ error: settingUserGetMessage.internalError }), {
+    return new NextResponse(JSON.stringify({ error: t("toastError.user.internalErrorGetUser") }), {
       status: 500,
     });
   }
@@ -77,20 +79,22 @@ export async function PATCH(
   const { userId, newRole } = body;
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const settingUserPatchMessage = translateSettingUserPatch(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: settingUserPatchMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: settingUserPatchMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -111,7 +115,7 @@ export async function PATCH(
     ) {
       return new NextResponse(
         JSON.stringify({
-          error: settingUserPatchMessage.adminRequired,
+          error: t("toastError.user.adminRequired")
         }),
         { status: 400 }
       );
@@ -120,7 +124,7 @@ export async function PATCH(
     if (existingUser?.isbanforever) {
       return new NextResponse(
         JSON.stringify({
-          error: settingUserPatchMessage.userBanned,
+          error: t("toastError.user.userBanned")
         }),
         { status: 400 }
       );
@@ -191,7 +195,7 @@ export async function PATCH(
     return NextResponse.json(roleupdate);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: settingUserPatchMessage.internalError }),
+      JSON.stringify({ error: t("toastError.user.internalErrorPatchUser") }),
       { status: 400 }
     );
   }
@@ -203,8 +207,10 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const settingUserDeleteMessage = translateSettingUserDelete(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   const body = await req.json();
   const { id } = body;
@@ -212,14 +218,14 @@ export async function DELETE(
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: settingUserDeleteMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: settingUserDeleteMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -235,7 +241,7 @@ export async function DELETE(
     if (existingUser?.isbanforever) {
       return new NextResponse(
         JSON.stringify({
-          error: settingUserDeleteMessage.userBanned,
+          error: t("toastError.user.userBanned")
         }),
         { status: 400 }
       );
@@ -245,7 +251,7 @@ export async function DELETE(
     if (adminCount <= 1 && existingUser?.role === "ADMIN") {
       return new NextResponse(
         JSON.stringify({
-          error: settingUserDeleteMessage.adminRequired,
+          error: t("toastError.user.adminRequired")
         }),
         { status: 400 }
       );
@@ -254,7 +260,7 @@ export async function DELETE(
     if (user?.id === id) {
       return new NextResponse(
         JSON.stringify({
-          error: settingUserDeleteMessage.selfBanError,
+          error: t("toastError.user.selfBanError")
         }),
         { status: 400 }
       );
@@ -300,7 +306,7 @@ export async function DELETE(
     return NextResponse.json(banforeverUser);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: settingUserDeleteMessage.internalError }),
+      JSON.stringify({ error: t("toastError.user.internalErrorDeleteUser") }),
       { status: 400 }
     );
   }
@@ -312,8 +318,10 @@ export async function POST(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const settingUserBanMessgae = translateSettingUserBan(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   const body = await req.json();
   const userCheck = await currentUser();
@@ -321,14 +329,14 @@ export async function POST(
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: settingUserBanMessgae.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: settingUserBanMessgae.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -339,7 +347,7 @@ export async function POST(
 
     if (userCheck?.id === existingUser?.id) {
       return new NextResponse(
-        JSON.stringify({ error: settingUserBanMessgae.selfBanError }),
+        JSON.stringify({ error: t("toastError.user.selfBanError") }),
         {
           status: 404,
         }
@@ -349,7 +357,7 @@ export async function POST(
     if (existingUser?.ban) {
       return new NextResponse(
         JSON.stringify({
-          error: settingUserBanMessgae.userBanned,
+          error: t("toastError.user.userBanned")
         }),
         { status: 400 }
       );
@@ -358,14 +366,14 @@ export async function POST(
     if (user?.id === userId) {
       return new NextResponse(
         JSON.stringify({
-          error: settingUserBanMessgae.selfBanProhibited,
+          error: t("toastError.user.selfBanProhibited")
         }),
         { status: 400 }
       );
     }
 
     if (!existingUser?.id) {
-      return new NextResponse(JSON.stringify({ error: settingUserBanMessgae.userNotFound }), {
+      return new NextResponse(JSON.stringify({ error: t("toastError.userNotFound") }), {
         status: 404,
       });
     }
@@ -373,7 +381,7 @@ export async function POST(
     if (existingUser?.isbanforever) {
       return new NextResponse(
         JSON.stringify({
-          error: settingUserBanMessgae.userPermanentlyBanned,
+          error: t("toastError.user.userPermanentlyBanned")
         }),
         { status: 400 }
       );
@@ -430,7 +438,7 @@ export async function POST(
 
     return NextResponse.json(banuser);
   } catch (error) {
-    return new NextResponse(JSON.stringify({ error: settingUserBanMessgae.internalError }), {
+    return new NextResponse(JSON.stringify({ error: t("toastError.user.internalErrorBanUser") }), {
       status: 500,
     });
   }

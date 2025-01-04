@@ -1,20 +1,14 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 import "./index.scss";
 import Link from "next/link";
-import { useCurrentUser } from "@/hooks/use-current-user";
 import { root } from "../color/color";
-import {
-  getInfoHotProductDescriptions,
-  getInfoProductHotTitle,
-} from "@/translate/translate-client";
 import HeadingEffect from "../uis-home/HeadingEffect";
+import { useTranslations } from "next-intl";
 
 const InfoHotProduct = () => {
-  const user = useCurrentUser();
-  const [isMounted, setIsMounted] = useState(false);
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+  const t = useTranslations()
   const scrollContainerRef = useRef<HTMLDivElement | null>(null); 
 
   useEffect(() => {
@@ -42,94 +36,78 @@ const InfoHotProduct = () => {
   
     return () => window.removeEventListener("wheel", onWheel);
   }, []);
-
-  useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []);
-
-  //language
-  const languageToUse =
-    user?.id && user?.role !== "GUEST"
-      ? user?.language
-      : storedLanguage || "vi";
-  const infoProductHotMessage = getInfoHotProductDescriptions(languageToUse);
-  const infoProductHotTitleMessage = getInfoProductHotTitle(languageToUse);
-
+  
   // Mảng dữ liệu cho Title và Description
   const cardsData = [
     {
-      title: infoProductHotMessage.titleCadivi,
-      description: infoProductHotMessage.descriptionCadivi,
+      title: t("home.titleCadivi"),
+      description: t("home.descriptionCadivi"),
       imageSrc: "/images/daydien-cadivi.webp",
       link: "/page1",
     },
     {
-      title: infoProductHotMessage.titleMPE,
-      description: infoProductHotMessage.descriptionMPE,
+      title: t("home.titleMPE"),
+      description: t("home.descriptionMPE"),
       imageSrc: "/images/led-bulb.webp",
       link: "/page2",
     },
     {
-      title: infoProductHotMessage.titleDienQuang,
-      description: infoProductHotMessage.descriptionDienQuang,
+      title: t("home.titleDienQuang"),
+      description: t("home.descriptionDienQuang"),
       imageSrc: "/images/o-cam-dien-quang.webp",
       link: "/page3",
     },
     {
-      title: infoProductHotMessage.titleBinhMinh,
-      description: infoProductHotMessage.descriptionBinhMinh,
+      title: t("home.titleBinhMinh"),
+      description: t("home.descriptionBinhMinh"),
       imageSrc: "/images/ong-nhua-binh-minh.webp",
       link: "/page3",
     },
     {
-      title: infoProductHotMessage.titleSenko,
-      description: infoProductHotMessage.descriptionSenko,
+      title: t("home.titleSenko"),
+      description: t("home.descriptionSenko"),
       imageSrc: "/images/quat-lung-senko.webp",
       link: "/page3",
     },
     {
-      title: infoProductHotMessage.titleApolo,
-      description: infoProductHotMessage.descriptionApolo,
+      title: t("home.titleApolo"),
+      description: t("home.descriptionApolo"),
       imageSrc: "/images/Keo-Apolo.webp",
       link: "/page3",
     },
     {
-      title: infoProductHotMessage.titleATM,
-      description: infoProductHotMessage.descriptionATM,
+      title: t("home.titleATM"),
+      description: t("home.descriptionATM"),
       imageSrc: "/images/son-xit-ATM.webp",
       link: "/page3",
     },
     {
-      title: infoProductHotMessage.titlePinConO,
-      description: infoProductHotMessage.descriptionPinConO,
+      title: t("home.titlePinConO"),
+      description: t("home.descriptionPinConO"),
       imageSrc: "/images/pin-con-o.webp",
       link: "/page3",
     },
     {
-      title: infoProductHotMessage.titleDaCat,
-      description: infoProductHotMessage.titleDaCat,
+      title: t("home.titleDaCat"),
+      description: t("home.titleDaCat"),
       imageSrc: "/images/da-cat.webp",
       link: "/page3",
     },
     {
-      title: infoProductHotMessage.titleVietTiep,
-      description: infoProductHotMessage.descriptionVietTiep,
+      title: t("home.titleVietTiep"),
+      description: t("home.descriptionVietTiep"),
       imageSrc: "/images/khoa-viet-tiep.webp",
       link: "/page3",
     },
     {
-      title: infoProductHotMessage.titleKimTin,
-      description: infoProductHotMessage.descriptionKimTin,
+      title: t("home.titleKimTin"),
+      description: t('home.descriptionKimTin'),
       imageSrc: "/images/que-han.webp",
       link: "/page3",
     },
     {
-      title: infoProductHotMessage.titleInax,
-      description: infoProductHotMessage.descriptionInax,
+      title: t("home.titleInax"),
+      description: t("home.descriptionInax"),
       imageSrc: "/images/voi-sen-tam.webp",
       link: "/page3",
     },
@@ -139,7 +117,7 @@ const InfoHotProduct = () => {
     <div className={`pb-20 ${root.bgwhite}`}>
       <div className="mx-2">
         <div className="w-full">
-              <HeadingEffect heading={infoProductHotTitleMessage} />
+              <HeadingEffect heading={t("home.infoProductHotTitle")} />
             </div>
             <div className="flex items-center overflow-auto space-x-8 max-w-7xl mx-auto p-9" ref={scrollContainerRef}>
               {cardsData.map((card, index) => (

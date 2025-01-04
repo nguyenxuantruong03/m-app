@@ -4,11 +4,7 @@ import prismadb from "@/lib/prismadb";
 import { Category, Color, Size, UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
 import { Decimal } from "@prisma/client/runtime/library";
-import {
-  translateProductDetailIdDelete,
-  translateProductDetailIdGet,
-  translateProductDetailIdPatch,
-} from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 type ProductDetailValue =
   | string
@@ -32,13 +28,15 @@ export async function GET(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const productDetailIdGetMessage = translateProductDetailIdGet(LanguageToUse);
+   const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!params.productdetailId) {
       return new NextResponse(
         JSON.stringify({
-          error: productDetailIdGetMessage.productDetailIdRequired,
+          error: t("toastError.productdetail.productDetailIdRequired")
         }),
         { status: 400 }
       );
@@ -67,7 +65,7 @@ export async function GET(
   } catch (error) {
     return new NextResponse(
       JSON.stringify({
-        error: productDetailIdGetMessage.internalErrorGetProductDetail,
+        error: t("toastError.productdetail.internalErrorGetProductDetail")
       }),
       { status: 500 }
     );
@@ -80,13 +78,15 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const productDetailIdDeleteMessage =
-    translateProductDetailIdDelete(LanguageToUse);
+   const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
+
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdDeleteMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
@@ -94,7 +94,7 @@ export async function DELETE(
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
         JSON.stringify({
-          error: productDetailIdDeleteMessage.permissionDenied,
+          error: t("toastError.permissionDenied")
         }),
         { status: 403 }
       );
@@ -103,22 +103,9 @@ export async function DELETE(
     if (!params.productdetailId) {
       return new NextResponse(
         JSON.stringify({
-          error: productDetailIdDeleteMessage.productDetailIdRequired,
+          error: t("toastError.productdetail.productDetailIdRequired")
         }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: productDetailIdDeleteMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -149,7 +136,7 @@ export async function DELETE(
   } catch (error) {
     return new NextResponse(
       JSON.stringify({
-        error: productDetailIdDeleteMessage.internalErrorDeleteProductDetail,
+        error: t("toastError.productdetail.internalErrorDeleteProductDetail")
       }),
       { status: 500 }
     );
@@ -162,9 +149,11 @@ export async function PATCH(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const productDetailIdPatchMessage =
-    translateProductDetailIdPatch(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
+
   try {
     const body = await req.json();
 
@@ -248,35 +237,35 @@ export async function PATCH(
 
     if (new Set(sizeIds).size !== sizeIds.length) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.sizeNotAllowed }),
+        JSON.stringify({ error: t("toastError.productdetail.sizeNotAllowed") }),
         { status: 400 }
       );
     }
 
     if (new Set(colorIds).size !== colorIds.length) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.colorNotAllowed }),
+        JSON.stringify({ error: t("toastError.productdetail.colorNotAllowed") }),
         { status: 400 }
       );
     }
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!title) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.titleRequired }),
+        JSON.stringify({ error: t("toastError.productdetail.titleRequired") }),
         {
           status: 400,
         }
@@ -286,7 +275,7 @@ export async function PATCH(
     if (!categoryId) {
       return new NextResponse(
         JSON.stringify({
-          error: productDetailIdPatchMessage.categoryIdRequired,
+          error: t("toastError.categoryId")
         }),
         { status: 400 }
       );
@@ -295,7 +284,7 @@ export async function PATCH(
     if (!promotionheading) {
       return new NextResponse(
         JSON.stringify({
-          error: productDetailIdPatchMessage.promotionHeadingRequired,
+          error: t("toastError.productdetail.promotionHeadingRequired")
         }),
         { status: 400 }
       );
@@ -303,7 +292,7 @@ export async function PATCH(
     if (!promotiondescription) {
       return new NextResponse(
         JSON.stringify({
-          error: productDetailIdPatchMessage.promotionDescriptionRequired,
+          error: t("toastError.productdetail.promotionDescriptionRequired")
         }),
         { status: 400 }
       );
@@ -311,21 +300,21 @@ export async function PATCH(
 
     if (!size1Id) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.sizeIdRequired }),
+        JSON.stringify({ error: t("toastError.sizeRequired") }),
         { status: 400 }
       );
     }
 
     if (!color1Id) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.colorIdRequired }),
+        JSON.stringify({ error: t("toastError.colorRequired") }),
         { status: 400 }
       );
     }
 
     if (!name1) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.nameRequired }),
+        JSON.stringify({ error: t("toastError.nameRequired") }),
         {
           status: 400,
         }
@@ -334,7 +323,7 @@ export async function PATCH(
 
     if (!price1) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.priceRequired }),
+        JSON.stringify({ error: t("toastError.productdetail.priceRequired") }),
         {
           status: 400,
         }
@@ -343,7 +332,7 @@ export async function PATCH(
 
     if (!quantity1) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.quantityRequired }),
+        JSON.stringify({ error: t("toastError.productdetail.quantityRequired") }),
         {
           status: 400,
         }
@@ -353,16 +342,23 @@ export async function PATCH(
     if (!descriptionsalientfeatures) {
       return new NextResponse(
         JSON.stringify({
-          error: productDetailIdPatchMessage.descriptionSalientFeaturesRequired,
+          error: t("toastError.productdetail.descriptionSpecificationsRequired")
         }),
         { status: 400 }
       );
     }
-
+    if (!valuespecifications) {
+      return new NextResponse(
+        JSON.stringify({
+          error: t("toastError.productdetail.valueSpecificationsRequired")
+        }),
+        { status: 400 }
+      );
+    }
     if (!contentsalientfeatures) {
       return new NextResponse(
         JSON.stringify({
-          error: productDetailIdPatchMessage.contentSalientFeaturesRequired,
+          error: t("toastError.productdetail.contentSalientFeaturesRequired")
         }),
         { status: 400 }
       );
@@ -378,7 +374,7 @@ export async function PATCH(
     // Nếu sizeId không tồn tại, trả về thông báo lỗi
     if (!size) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.chooseSize }),
+        JSON.stringify({ error: t("toastError.productdetail.chooseSize") }),
         {
           status: 404,
         }
@@ -394,7 +390,7 @@ export async function PATCH(
     // Nếu sizeId không tồn tại, trả về thông báo lỗi
     if (!color) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.chooseColor }),
+        JSON.stringify({ error: t("toastError.productdetail.chooseColor") }),
         { status: 404 }
       );
     }
@@ -408,7 +404,7 @@ export async function PATCH(
     // Nếu sizeId không tồn tại, trả về thông báo lỗi
     if (!category) {
       return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.chooseCategory }),
+        JSON.stringify({ error: t("toastError.productdetail.chooseCategory") }),
         { status: 404 }
       );
     }
@@ -416,22 +412,9 @@ export async function PATCH(
     if (!params.productdetailId) {
       return new NextResponse(
         JSON.stringify({
-          error: productDetailIdPatchMessage.productDetailIdRequired,
+          error: t("toastError.productdetail.productDetailIdRequired")
         }),
         { status: 404 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: productDetailIdPatchMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -446,7 +429,7 @@ export async function PATCH(
 
     if (existingTitle) {
       return new NextResponse(
-        JSON.stringify(productDetailIdPatchMessage.titleExists),
+        JSON.stringify(t("toastError.productdetail.titleExists")),
         {
           status: 400,
         }
@@ -475,7 +458,7 @@ export async function PATCH(
     // Kiểm tra nếu không tìm thấy bản ghi
     if (!existingProductDetail) {
       return new NextResponse(
-        JSON.stringify(productDetailIdPatchMessage.productNotFound),
+        JSON.stringify(t("toastError.productdetail.productDetailNotFound")),
         {
           status: 404,
         }
@@ -611,7 +594,7 @@ export async function PATCH(
     return NextResponse.json(productDetail);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: productDetailIdPatchMessage.internalError }),
+      JSON.stringify({ error: t("toastError.productdetail.internalErrorPatchProductDetail") }),
       { status: 500 }
     );
   }

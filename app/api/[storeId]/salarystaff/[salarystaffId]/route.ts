@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 import { formatter } from "@/lib/utils";
 import { Decimal } from "@prisma/client/runtime/library";
 import { UserRole } from "@prisma/client";
-import { translateSalaryStaffIdGet, translateSalaryStaffIdPatch, translateSalaryStaffIdPost } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 type SalaryStaffValue =string | number | boolean | Date | Decimal | null | undefined;
 
@@ -18,20 +18,22 @@ interface ChangeRecord {
 export async function GET(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const salaryStaffIdGetMessage = translateSalaryStaffIdGet(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: salaryStaffIdGetMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: salaryStaffIdGetMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -57,7 +59,7 @@ export async function GET(req: Request) {
     return NextResponse.json(salarystaff);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: salaryStaffIdGetMessage.internalError }),
+      JSON.stringify({ error: t("toastError.salarystaff.internalErrorGetSalaryStaff") }),
       { status: 500 }
     );
   }
@@ -69,19 +71,21 @@ export async function PATCH(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const salaryStaffIdPatchMessage = translateSalaryStaffIdPatch(LanguageToUse)
+   const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: salaryStaffIdPatchMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: salaryStaffIdPatchMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -166,7 +170,7 @@ export async function PATCH(
     return NextResponse.json(caculateSalary);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: salaryStaffIdPatchMessage.internalError }),
+      JSON.stringify({ error: t("toastError.salarystaff.internalErrorPatchSalaryStaff") }),
       { status: 500 }
     );
   }
@@ -178,19 +182,21 @@ export async function POST(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const slaryStaffIdPostMessage = translateSalaryStaffIdPost(LanguageToUse)
+   const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: slaryStaffIdPostMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: slaryStaffIdPostMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -263,7 +269,7 @@ export async function POST(
     return NextResponse.json(caculateSalary);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: slaryStaffIdPostMessage.internalError }),
+      JSON.stringify({ error: t("toastError.salarystaff.internalErrorPostSalaryStaff") }),
       { status: 500 }
     );
   }

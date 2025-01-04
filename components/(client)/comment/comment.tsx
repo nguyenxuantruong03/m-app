@@ -13,75 +13,16 @@ import CircleAvatar from "@/components/ui/circle-avatar";
 import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
 import Link from "next/link";
 import { ResponseComment, Comment as CommentType } from "@/types/type";
-import {
-  getToastError,
-  translateCancel,
-  translateCollapse,
-  translateComment,
-  translateConfirmDeleteComment,
-  translateConfirmDeleteFeedback,
-  translateDayAgo,
-  translateDelete,
-  translateDeleteSuccess,
-  translateDeleteUnsuccessful,
-  translateDeleting,
-  translateEdit,
-  translateEditedTimes,
-  translateEditFailure,
-  translateEditing,
-  translateEditSuccess,
-  translateEnterFeedback,
-  translateEnterFeedbackContent,
-  translateEnterReviewContent,
-  translateEvaluating,
-  translateEvaluationFailure,
-  translateEvaluationSuccess,
-  translateFeedbackEmpty,
-  translateFeedbackFailure,
-  translateHourAgo,
-  translateInputTooLong,
-  translateJustNow,
-  translateMinutesAgo,
-  translateMonthAgo,
-  translateNotRatedYet,
-  translateOneDayAgo,
-  translateOneHourAgo,
-  translateOneMonthAgo,
-  translateOneYearAgo,
-  translatePleaseChooseStar,
-  translateProcessingResponse,
-  translateProduct,
-  translateRate,
-  translateRating,
-  translateResponse,
-  translateRetryAfter,
-  translateRetryAfterMinutes,
-  translateRetryFeedback,
-  translateReviewAndComment,
-  translateReviewAndCommentLowercase,
-  translateReviewLowercase,
-  translateSeeAll,
-  translateStarsLowercase,
-  translateSuccessResponse,
-  translateUpdate,
-  translateUpdateError,
-  translateYearAgo,
-} from "@/translate/translate-client";
 import { PolicyViolationModal } from "../modal/policy-violation-modal";
 import { offensiveWords } from "@/vn_offensive_words";
 import { formatDistanceToNowStrict } from "date-fns";
 import vi from 'date-fns/locale/vi';
 import en from 'date-fns/locale/en-US';
-import zhCN from 'date-fns/locale/zh-CN'; // Tiếng Trung giản thể
-import fr from 'date-fns/locale/fr';
-import ja from 'date-fns/locale/ja';
+import { useTranslations } from "next-intl";
 
 const locales = {
   vi,
   en,
-  zh: zhCN,
-  fr,
-  ja
 };
 
 interface CommentProps {
@@ -96,6 +37,8 @@ const Comment: React.FC<CommentProps> = ({
   commentData,
   responsecommentData,
 }) => {
+  const t = useTranslations()
+  const user = useCurrentUser();
   const param = useParams();
   const [loading, setLoading] = useState(false);
   const [rating, setRating] = useState<number | null>(null);
@@ -142,17 +85,7 @@ const Comment: React.FC<CommentProps> = ({
   const scrollPositionRef = useRef<number | null>(null);
   const textareaResponseRef = useRef<HTMLDivElement>(null);
   const scrollPositionResponseRef = useRef<number | null>(null);
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []);
-
-  const user = useCurrentUser();
+  const languageToUse = user?.language || "vi";
 
   const handleEllipsisClick = (commentId: string | null) => {
     setShowOptions(showOptions === commentId ? null : commentId);
@@ -166,67 +99,6 @@ const Comment: React.FC<CommentProps> = ({
       setShowOptions(null);
     }
   };
-
-  //language
-  const languageToUse =
-    user?.id && user?.role !== "GUEST"
-      ? user?.language
-      : storedLanguage || "vi";
-  const toastErrorMessage = getToastError(languageToUse);
-  const feedbackEmptyMessage = translateFeedbackEmpty(languageToUse);
-  const processingReponseMessage = translateProcessingResponse(languageToUse);
-  const successResponseMessage = translateSuccessResponse(languageToUse);
-  const feedBackFailureMessage = translateFeedbackFailure(languageToUse);
-  const deletingMessage = translateDeleting(languageToUse);
-  const deleteSuccessMessage = translateDeleteSuccess(languageToUse);
-  const deleteUnsuccessfulMessage = translateDeleteUnsuccessful(languageToUse);
-  const editingMessage = translateEditing(languageToUse);
-  const editSuccessMessage = translateEditSuccess(languageToUse);
-  const editFailureMessage = translateEditFailure(languageToUse);
-  const updateErrorMessage = translateUpdateError(languageToUse);
-  const pleaseChooseStarMessage = translatePleaseChooseStar(languageToUse);
-  const enterFeedBackMessage = translateEnterFeedback(languageToUse);
-  const productMessage = translateProduct(languageToUse);
-  const evaluatingMessage = translateEvaluating(languageToUse);
-  const evaluationSuccessMessage = translateEvaluationSuccess(languageToUse);
-  const evaluationFailureMessage = translateEvaluationFailure(languageToUse);
-  const oneYearAgoMessage = translateOneYearAgo(languageToUse);
-  const yearAgoMessage = translateYearAgo(languageToUse);
-  const oneMonthAgoMessage = translateOneMonthAgo(languageToUse);
-  const monthAgoMessage = translateMonthAgo(languageToUse);
-  const oneDayAgoMessage = translateOneDayAgo(languageToUse);
-  const dayAgoMessage = translateDayAgo(languageToUse);
-  const oneHourAgoMessage = translateOneHourAgo(languageToUse);
-  const hourAgoMessage = translateHourAgo(languageToUse);
-  const minuteAgoMessage = translateMinutesAgo(languageToUse);
-  const justNowMessage = translateJustNow(languageToUse);
-  const confirmDeleteCommentMessage = translateConfirmDeleteComment(
-    languageToUse,
-    commentNameToDelete
-  );
-  const confirmDeleteResponseMessage = translateConfirmDeleteFeedback(
-    languageToUse,
-    commentNameToDelete
-  );
-  const reviewAndCommentMessage = translateReviewAndComment(languageToUse);
-  const reviewAndCommentMessageLowercaseMessage =
-    translateReviewAndCommentLowercase(languageToUse);
-  const reviewLowercaseMessage = translateReviewLowercase(languageToUse);
-  const ratingMessage = translateRating(languageToUse);
-  const enterReviewContentMessage = translateEnterReviewContent(languageToUse);
-  const enterFeedbackContentMessage =
-    translateEnterFeedbackContent(languageToUse);
-  const updateMessage = translateUpdate(languageToUse);
-  const cancelMessage = translateCancel(languageToUse);
-  const rateMessage = translateRate(languageToUse);
-  const commentMessage = translateComment(languageToUse);
-  const editMessage = translateEdit(languageToUse);
-  const deleteMessage = translateDelete(languageToUse);
-  const responseMessage = translateResponse(languageToUse);
-  const collapseMessage = translateCollapse(languageToUse);
-  const seeAllMessage = translateSeeAll(languageToUse);
-  const startLowercaseMessagae = translateStarsLowercase(languageToUse);
-  const notRatedYetMessage = translateNotRatedYet(languageToUse);
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
@@ -284,7 +156,7 @@ const Comment: React.FC<CommentProps> = ({
           if (now < futureTime) {
             if (diffSeconds > 0) {
               setErrorResponse(
-                translateRetryFeedback(languageToUse, diffSeconds)
+                t("comment.retryFeedback", {diffSeconds: diffSeconds})
               );
               return;
             }
@@ -296,12 +168,12 @@ const Comment: React.FC<CommentProps> = ({
           responseDescriptions === undefined ||
           !responseDescriptions.trim()
         ) {
-          setErrorResponse(feedbackEmptyMessage);
+          setErrorResponse(t("comment.feedbackEmpty"));
           return;
         }
 
         if (responseDescriptions.length >= 121) {
-          setErrorResponse(translateInputTooLong(languageToUse, 120));
+          setErrorResponse(t("comment.inputTooLong",{maxLength: 120}));
           return;
         } else {
           setErrorResponse("");
@@ -353,13 +225,13 @@ const Comment: React.FC<CommentProps> = ({
               setEditingResponseId(null);
             }),
           {
-            loading: processingReponseMessage,
-            success: <span>{successResponseMessage}</span>,
-            error: <span>{feedBackFailureMessage}</span>,
+            loading: t("loading.loadingResponse"),
+            success: <span>{t("comment.successResponse")}</span>,
+            error: <span>{t("comment.feedBackFailure")}</span>,
           }
         );
       } catch (error) {
-        toast.error(toastErrorMessage);
+        toast.error(t("toastError.somethingWentWrong"));
       } finally {
         setLoading(false);
       }
@@ -403,13 +275,13 @@ const Comment: React.FC<CommentProps> = ({
               setShowResponseForm(null);
             }),
           {
-            loading: deletingMessage,
-            success: <span>{deleteSuccessMessage}</span>,
-            error: <span>{deleteUnsuccessfulMessage}</span>,
+            loading: t("loading.loadingDelete"),
+            success: <span>{t("comment.deleteSuccess")}</span>,
+            error: <span>{t("comment.deleteUnsuccessful")}</span>,
           }
         );
       } catch (error) {
-        toast.error(toastErrorMessage);
+        toast.error(t("toastError.somethingWentWrong"));
       } finally {
         setLoading(false);
       }
@@ -471,12 +343,12 @@ const Comment: React.FC<CommentProps> = ({
         responseDescriptions === undefined ||
         !responseDescriptions.trim()
       ) {
-        setErrorResponse(feedbackEmptyMessage);
+        setErrorResponse(t("comment.feedbackEmpty"));
         return;
       }
 
       if (responseDescriptions.length >= 121) {
-        setErrorResponse(translateInputTooLong(languageToUse, 120));
+        setErrorResponse(t("comment.inputTooLong",{maxLength: 120}));
         return;
       } else {
         setErrorResponse("");
@@ -531,14 +403,14 @@ const Comment: React.FC<CommentProps> = ({
                 setShowResponseForm(null);
               }),
             {
-              loading: editingMessage,
-              success: <span>{editSuccessMessage}</span>,
-              error: <span>{editFailureMessage}</span>,
+              loading: t("loading.loadingEdit"),
+              success: <span>{t("comment.editSuccess")}</span>,
+              error: <span>{t("comment.editFailure")}</span>,
             }
           );
         } catch (error) {
-          toast.error(toastErrorMessage);
-          setErrorResponse(updateErrorMessage);
+          toast.error(t("toastError.somethingWentWrong"));
+          setErrorResponse(t("comment.updateError"));
         } finally {
           setLoading(false);
         }
@@ -568,7 +440,7 @@ const Comment: React.FC<CommentProps> = ({
               const responseComments: ResponseComment[] = responsecommentData;
               return { ...comment, responses: responseComments };
             } catch (error) {
-              toast.error(toastErrorMessage);
+              toast.error(t("toastError.somethingWentWrong"));
               return comment; // Return the original comment if there's an error
             } finally {
               setLoading(false);
@@ -589,7 +461,7 @@ const Comment: React.FC<CommentProps> = ({
 
         setCommentsByRating(commentsByRating);
       } catch (error) {
-        toast.error(toastErrorMessage);
+        toast.error(t("toastError.somethingWentWrong"));
       } finally {
         setLoading(false);
       }
@@ -659,7 +531,7 @@ const Comment: React.FC<CommentProps> = ({
         changeReview: true,
       };
       if (updatedComment.comment.length >= 120) {
-        setErrorResponse(translateInputTooLong(languageToUse, 120));
+        setErrorResponse(t("comment.inputTooLong",{maxLength: 120}));
         return;
       }
 
@@ -713,13 +585,13 @@ const Comment: React.FC<CommentProps> = ({
               }
             }),
           {
-            loading: "editingMessage",
-            success: <span>{editSuccessMessage}</span>,
-            error: <span>{editFailureMessage}</span>,
+            loading: t("loading.loadingEdit"),
+            success: <span>{t("comment.editSuccess")}</span>,
+            error: <span>{t("comment.editFailure")}</span>,
           }
         );
       } catch (error) {
-        toast.error(toastErrorMessage);
+        toast.error(t("toastError.somethingWentWrong"));
       } finally {
         setLoading(false);
       }
@@ -758,13 +630,13 @@ const Comment: React.FC<CommentProps> = ({
               setOpenComment(false);
             }),
           {
-            loading: deletingMessage,
-            success: <span>{deleteSuccessMessage}</span>,
-            error: <span>{deleteUnsuccessfulMessage}</span>,
+            loading: t("loading.loadingDelete"),
+            success: <span>{t("comment.deleteSuccess")}</span>,
+            error: <span>{t("comment.deleteUnsuccessful")}</span>,
           }
         );
       } catch (error) {
-        toast.error(toastErrorMessage);
+        toast.error(t("toastError.somethingWentWrong"));
       } finally {
         setLoading(false);
       }
@@ -782,7 +654,7 @@ const Comment: React.FC<CommentProps> = ({
   const handleCommentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newComment = e.target.value;
     if (newComment.length >= 121) {
-      setCommentError(translateInputTooLong(languageToUse, 120));
+      setCommentError(t("comment.inputTooLong",{maxLength: 120}));
     } else {
       setComment(newComment);
       setCommentError("");
@@ -792,7 +664,7 @@ const Comment: React.FC<CommentProps> = ({
   const handleResponseCommentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newComment = e.target.value;
     if (newComment.length >= 121) {
-      setErrorResponse(translateInputTooLong(languageToUse, 120));
+      setErrorResponse(t("comment.inputTooLong",{maxLength: 120}));
     } else {
       setResponseDescriptions(newComment);
       setErrorResponse("");
@@ -833,27 +705,27 @@ const Comment: React.FC<CommentProps> = ({
         if (now < futureTime) {
           if (diffMinutes > 0) {
             setCommentError(
-              translateRetryAfterMinutes(languageToUse, diffMinutes)
+              t("comment.retryAfterMinutes", {diffMinutes: diffMinutes})
             );
           } else {
-            setCommentError(translateRetryAfter(languageToUse, diffSeconds));
+            setCommentError(t("comment.retryAfterSecond", {diffSeconds: diffSeconds}));
           }
           return;
         }
       }
 
       if (rating === null) {
-        setRatingError(pleaseChooseStarMessage);
+        setRatingError(t("comment.pleaseChooseStar"));
         return;
       }
 
       if (comment.trim() === "") {
-        setCommentError(enterFeedBackMessage);
+        setCommentError(t("comment.enterFeedBack"));
         return;
       }
 
       if (comment.length >= 121) {
-        setCommentError(translateInputTooLong(languageToUse, 120));
+        setCommentError(t("comment.inputTooLong",{maxLength: 120}));
         return;
       } else {
         setCommentError("");
@@ -867,7 +739,7 @@ const Comment: React.FC<CommentProps> = ({
             .post(`/api/${param.storeId}/comments/`, {
               rating: rating as number,
               comment,
-              productId: data || productMessage,
+              productId: data || t("product.product"),
             })
             .then((response) => {
               // Tạo bản sao của response.data và thêm thông tin user
@@ -899,13 +771,13 @@ const Comment: React.FC<CommentProps> = ({
               setRatingError("");
             }),
           {
-            loading: evaluatingMessage,
-            success: evaluationSuccessMessage,
-            error: evaluationFailureMessage,
+            loading: t("loading.loadingComment"),
+            success: t("comment.evaluationSuccess"),
+            error: t("comment.evaluationFailure"),
           }
         );
       } catch (error) {
-        toast.error(toastErrorMessage);
+        toast.error(t("toastError.somethingWentWrong"));
       } finally {
         setLoading(false);
       }
@@ -1030,29 +902,26 @@ const Comment: React.FC<CommentProps> = ({
       <AlertGuestModal
         isOpen={alertGuestModal}
         onClose={() => setAlertGuestModal(false)}
-        languageToUse={languageToUse}
       />
 
       <PolicyViolationModal 
       isOpen={policiViolationModal}
       onClose={() => setPoliciViolationModal(false)}
-      languageToUse={languageToUse}
       value={comment || responseDescriptions}
       setResponseDescriptions={setResponseDescriptions}
       setComment={setComment}
       />
 
       <AlertModal
-        message={confirmDeleteCommentMessage}
+        message={t("comment.confirmDeleteComment",{commentNameToDelete: commentNameToDelete})}
         isOpen={openComment}
         onClose={() => setOpenComment(false)}
         onConfirm={() => handleDeleteComment(commentIdToDelete)}
         loading={loading}
-        languageToUse={languageToUse}
       />
 
       <AlertModal
-        message={confirmDeleteResponseMessage}
+        message={t("comment.confirmDeleteResponse", {commentNameToDelete: commentNameToDelete})}
         isOpen={openCommentResponse}
         onClose={() => setOpenCommentResponse(false)}
         onConfirm={() =>
@@ -1062,12 +931,11 @@ const Comment: React.FC<CommentProps> = ({
           )
         }
         loading={loading}
-        languageToUse={languageToUse}
       />
 
       <div className="p-4 shadow-lg dark:border-slate-800 dark:border my-6 rounded-md">
         <h2 className="text-xl font-semibold mb-4 text-slate-900 dark:text-slate-200">
-          {reviewAndCommentMessage} - {nameProduct}
+          {t("comment.reviewAndComment")} - {nameProduct}
         </h2>
         <div className="grid md:grid-cols-2 shadow-inner p-2">
           <div className="m-auto">
@@ -1081,7 +949,7 @@ const Comment: React.FC<CommentProps> = ({
               )}
             </h3>
             <h3 className="text-slate-900 dark:text-slate-200">
-              {totalReviews} {reviewAndCommentMessageLowercaseMessage}
+              {totalReviews} {t("comment.reviewAndCommentLowercase")}
             </h3>
           </div>
 
@@ -1113,7 +981,7 @@ const Comment: React.FC<CommentProps> = ({
                 </div>
               ) : (
                 <h3 className="absolute right-0 text-slate-900 dark:text-slate-200">
-                  {starReviewCounts[4]} {reviewLowercaseMessage}
+                  {starReviewCounts[4]} {t("comment.reviewLowercase")}
                 </h3>
               )}
             </div>
@@ -1145,7 +1013,7 @@ const Comment: React.FC<CommentProps> = ({
                 </div>
               ) : (
                 <h3 className="absolute right-0 text-slate-900 dark:text-slate-200">
-                  {starReviewCounts[3]} {reviewLowercaseMessage}
+                  {starReviewCounts[3]} {t("comment.reviewLowercase")}
                 </h3>
               )}
             </div>
@@ -1177,7 +1045,7 @@ const Comment: React.FC<CommentProps> = ({
                 </div>
               ) : (
                 <h3 className="absolute right-0 text-slate-900 dark:text-slate-200">
-                  {starReviewCounts[2]} {reviewLowercaseMessage}
+                  {starReviewCounts[2]} {t("comment.reviewLowercase")}
                 </h3>
               )}
             </div>
@@ -1209,7 +1077,7 @@ const Comment: React.FC<CommentProps> = ({
                 </div>
               ) : (
                 <h3 className="absolute right-0 text-slate-900 dark:text-slate-200">
-                  {starReviewCounts[1]} {reviewLowercaseMessage}
+                  {starReviewCounts[1]} {t("comment.reviewLowercase")}
                 </h3>
               )}
             </div>
@@ -1238,12 +1106,12 @@ const Comment: React.FC<CommentProps> = ({
                   }}
                 >
                   <h3 className={commentcolor.text}>
-                    {starReviewCounts[0]} {reviewLowercaseMessage}
+                    {starReviewCounts[0]} {t("comment.reviewLowercase")}
                   </h3>
                 </div>
               ) : (
                 <h3 className="absolute right-0 text-slate-900 dark:text-slate-200">
-                  {starReviewCounts[0]} {reviewLowercaseMessage}
+                  {starReviewCounts[0]} {t("comment.reviewLowercase")}
                 </h3>
               )}
             </div>
@@ -1252,10 +1120,10 @@ const Comment: React.FC<CommentProps> = ({
 
         <div className="my-4" ref={textareaRef}>
           <span className="text-lg text-slate-900 dark:text-slate-200">
-            {ratingMessage}:{" "}
+            {t("comment.rating")}:{" "}
             {rating !== null
-              ? `${rating} ${startLowercaseMessagae}`
-              : notRatedYetMessage}
+              ? `${rating} ${t("comment.startLowercase")}`
+              : t("comment.notRatedYet")}
           </span>
           <div className="flex space-x-2">
             {stars.map((_, index) => (
@@ -1302,7 +1170,7 @@ const Comment: React.FC<CommentProps> = ({
             disabled={loading}
             value={comment}
             onChange={handleCommentChange}
-            placeholder={enterReviewContentMessage}
+            placeholder={t("comment.enterReviewContent")}
             className={`w-full p-2 bg-white border rounded focus:outline-none focus:ring focus:border-blue-300 ${
               commentError ? "border-red-500" : ""
             }`}
@@ -1325,7 +1193,7 @@ const Comment: React.FC<CommentProps> = ({
                   commentcolor.gradient;
               }}
             >
-              {updateMessage}
+              {t("action.update")}
             </button>
             <button
               disabled={loading}
@@ -1341,7 +1209,7 @@ const Comment: React.FC<CommentProps> = ({
                   commentcolor.gradient;
               }}
             >
-              {cancelMessage}
+              {t("action.cancel")}
             </button>
           </div>
         ) : (
@@ -1358,7 +1226,7 @@ const Comment: React.FC<CommentProps> = ({
               event.currentTarget.style.backgroundImage = commentcolor.gradient;
             }}
           >
-            {rateMessage}
+            {t("comment.rating")}
           </button>
         )}
 
@@ -1431,10 +1299,7 @@ const Comment: React.FC<CommentProps> = ({
                                   (
                                   {(comment.totalchange ?? 0) === 0
                                     ? ""
-                                    : `(${translateEditedTimes(
-                                        languageToUse,
-                                        comment.totalchange
-                                      )})`}
+                                    : `(${t("comment.editedTimes",{totalChange: comment.totalchange})})`}
                                   )
                                 </span>
                               ) : (
@@ -1457,13 +1322,13 @@ const Comment: React.FC<CommentProps> = ({
                           >
                             <div>
                               <p className="text-slate-900 whitespace-pre-wrap break-words max-w-[18rem] md:max-w-2xl lg:max-w-4xl xl:max-w-7xl">
-                                {commentMessage}: {comment.comment}
+                                {t("comment.comment")}: {comment.comment}
                               </p>
                               {/* Format the date and time */}
                               <div className="flex space-x-2 items-center text-sm">
                                 <p className="text-slate-900">
                                   {" "}
-                                  {rateMessage}:{" "}
+                                  {t("comment.rating")}:{" "}
                                 </p>
                                 {stars.map((_, starIndex) => (
                                   <Star
@@ -1511,7 +1376,7 @@ const Comment: React.FC<CommentProps> = ({
                                           className="text-gray-900 hover:text-opacity-60 hover:text-gray-800 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1 whitespace-nowrap"
                                         >
                                           <Pencil className="w-5 h-5" />
-                                          {editMessage}
+                                          {t("action.edit")}
                                         </button>
                                         <button
                                           disabled={loading}
@@ -1525,7 +1390,7 @@ const Comment: React.FC<CommentProps> = ({
                                           className="text-gray-900 hover:text-opacity-60 hover:text-gray-800 hover:bg-gray-500 hover:bg-opacity-10 rounded-md p-2 text-base font-semibold flex items-center gap-1"
                                         >
                                           <Trash2 className="w-5 h-5" />{" "}
-                                          {deleteMessage}
+                                          {t("action.delete")}
                                         </button>
                                       </div>
                                     </div>
@@ -1654,10 +1519,7 @@ const Comment: React.FC<CommentProps> = ({
                                                           {(response.totalchange ??
                                                             0) === 0
                                                             ? ""
-                                                            : `(${translateEditedTimes(
-                                                                languageToUse,
-                                                                response.totalchange
-                                                              )})`}
+                                                            : `(${t("comment.editedTimes",{totalChange: response.totalchange})})`}
                                                         </span>
                                                       ) : (
                                                         ""
@@ -1725,7 +1587,7 @@ const Comment: React.FC<CommentProps> = ({
                                                                   >
                                                                     <Pencil className="w-5 h-5" />{" "}
                                                                     {
-                                                                      editMessage
+                                                                      t("action.edit")
                                                                     }
                                                                   </button>
                                                                   <button
@@ -1753,7 +1615,7 @@ const Comment: React.FC<CommentProps> = ({
                                                                   >
                                                                     <Trash2 className="w-5 h-5" />{" "}
                                                                     {
-                                                                      deleteMessage
+                                                                      t("action.delete")
                                                                     }
                                                                   </button>
                                                                 </div>
@@ -1839,10 +1701,7 @@ const Comment: React.FC<CommentProps> = ({
                                                           {(response.totalchange ??
                                                             0) === 0
                                                             ? ""
-                                                            : `(${translateEditedTimes(
-                                                                languageToUse,
-                                                                response.totalchange
-                                                              )})`}
+                                                            : `(${t("comment.editedTimes",{totalChange: response.totalchange})})`}
                                                         </span>
                                                       ) : (
                                                         ""
@@ -1933,7 +1792,7 @@ const Comment: React.FC<CommentProps> = ({
                                                                   >
                                                                     <Pencil className="w-5 h-5" />{" "}
                                                                     {
-                                                                      editMessage
+                                                                      t("action.edit")
                                                                     }
                                                                   </button>
                                                                   <button
@@ -1961,7 +1820,7 @@ const Comment: React.FC<CommentProps> = ({
                                                                   >
                                                                     <Trash2 className="w-5 h-5" />{" "}
                                                                     {
-                                                                      deleteMessage
+                                                                      t("action.delete")
                                                                     }
                                                                   </button>
                                                                 </div>
@@ -1992,7 +1851,7 @@ const Comment: React.FC<CommentProps> = ({
                                   disabled={loading}
                                   value={responseDescriptions}
                                   onChange={handleResponseCommentChange}
-                                  placeholder={enterFeedbackContentMessage}
+                                  placeholder={t("comment.enterFeedbackContent")}
                                   className={`w-full bg-white p-2 border rounded focus:outline-none focus:ring focus:border-blue-300 ${
                                     errorResponse ? "border-red-500" : ""
                                   }`}
@@ -2024,7 +1883,7 @@ const Comment: React.FC<CommentProps> = ({
                                         commentcolor.gradient;
                                     }}
                                   >
-                                    {updateMessage}
+                                    {t("action.update")}
                                   </button>
                                   <button
                                     disabled={loading}
@@ -2044,7 +1903,7 @@ const Comment: React.FC<CommentProps> = ({
                                         commentcolor.gradient;
                                     }}
                                   >
-                                    {cancelMessage}
+                                    {t("action.cancel")}
                                   </button>
                                 </div>
                               ) : (
@@ -2066,7 +1925,7 @@ const Comment: React.FC<CommentProps> = ({
                                       commentcolor.gradient;
                                   }}
                                 >
-                                  {responseMessage}
+                                  {t("comment.response")}
                                 </button>
                               )}
                             </>
@@ -2095,7 +1954,6 @@ const Comment: React.FC<CommentProps> = ({
                               ).length || 0
                             }
                             loading={loading}
-                            languageToUse={languageToUse}
                           />
                         </li>
                       ))}
@@ -2118,7 +1976,7 @@ const Comment: React.FC<CommentProps> = ({
               : commentcolor.gradient,
           }}
         >
-          {collapsedComments ? collapseMessage : seeAllMessage}
+          {collapsedComments ? t("action.collapse") : t("relatedTag.see_all")}
         </button>
       </div>
     </Container>

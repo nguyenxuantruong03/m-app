@@ -1,29 +1,11 @@
 import Modal from "@/components/ui/modal";
-import {
-  getProcessingTime,
-  translate6Months,
-  translateApplicableProduct,
-  translateExchangePolicy6Month,
-  translateExchangeWarrantyProduct6Month,
-  translateItems,
-  translateManufacturerDefect,
-  translateProcessingTime,
-  translateTestPolicy,
-  translateUnlimitedWarrantyPolicy,
-  translateVIPExchange6Months,
-  translateVIPExchangePolicy,
-  translateWarrantyBenefitsAndServices,
-  translateWarrantyConditions,
-  translateWarrantyExclusionNote,
-  translateWarrantyPeriod,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface SeeDetail4Props {
   isOpen: boolean;
   onClose: () => void;
   message?: string;
   title?: string;
-  languageToUse: string;
 }
 
 const SeeDetail4Modal: React.FC<SeeDetail4Props> = ({
@@ -31,60 +13,38 @@ const SeeDetail4Modal: React.FC<SeeDetail4Props> = ({
   onClose,
   message,
   title,
-  languageToUse,
 }) => {
-  //languages
-  const VIPExchange6MonthMessage = translateVIPExchange6Months(languageToUse);
-  const exchangePolocy6MonthMessage =
-    translateExchangePolicy6Month(languageToUse);
-  const VIPExchangePolicyMessage = translateVIPExchangePolicy(languageToUse);
-  const applicableProductMessage = translateApplicableProduct(languageToUse);
-  const itemMessage = translateItems(languageToUse);
-  const warrantyPeriodMessage = translateWarrantyPeriod(languageToUse);
-  const month6Message = translate6Months(languageToUse);
-  const warrantyBenifitAndServiceMessage =
-    translateWarrantyBenefitsAndServices(languageToUse);
-  const testPolicyMessage = translateTestPolicy(languageToUse);
-  const unlimitedWarrantyPolicyMessage =
-    translateUnlimitedWarrantyPolicy(languageToUse);
-  const exchangewarrantyProduct6MonthMessage =
-    translateExchangeWarrantyProduct6Month(languageToUse);
-  const warrantyCoditionMessage = translateWarrantyConditions(languageToUse);
-  const manufactureDefectMessage = translateManufacturerDefect(languageToUse);
-  const warrantyExclusionNoteMessage =
-    translateWarrantyExclusionNote(languageToUse);
-  const processingTimeMessage = getProcessingTime(languageToUse);
-  const processingTimesmessage = translateProcessingTime(languageToUse);
+  const t = useTranslations()
 
   return (
     <Modal
-      title={title || VIPExchange6MonthMessage}
-      description={message || exchangePolocy6MonthMessage}
+      title={title || t("warranty.VIPExchange6Months")}
+      description={message || t("warranty.exchangeNewProduct6Months")}
       isOpen={isOpen}
       onClose={onClose}
       classNameCustom="max-h-[36rem] md:max-h-[55rem] xl:max-h-[40rem] overflow-y-auto"
     >
       <div>
         <h1 className=" bg-[#e5002d] rounded-md text-white font-bold p-2">
-          {VIPExchangePolicyMessage}
+          {t("warranty.VIPExchangePolicy")}
         </h1>
-        <p className="font-bold">{applicableProductMessage}:</p>
-        <p>+ {itemMessage}.</p>
+        <p className="font-bold">{t("warranty.applicableProduct")}:</p>
+        <p>+ {t("warranty.items")}.</p>
         <div className="flex">
-          <p className="font-bold">{warrantyPeriodMessage}:</p>
-          <p className="ml-2">{month6Message}</p>
+          <p className="font-bold">{t("warranty.warrantyPeriod")}:</p>
+          <p className="ml-2">{t("warranty.6Month")}</p>
         </div>
-        <p className="font-bold">{warrantyBenifitAndServiceMessage}:</p>
-        <p className="mt-3">+ {testPolicyMessage}. </p>
-        <p>+ {unlimitedWarrantyPolicyMessage}.</p>
-        <p>+ {exchangewarrantyProduct6MonthMessage}.</p>
+        <p className="font-bold">{t("warranty.warrantyBenefitsAndServices")}:</p>
+        <p className="mt-3">+ {t("warranty.testPolicy")}. </p>
+        <p>+ {t("warranty.unlimitedWarrantyPolicy")}.</p>
+        <p>+ {t("warranty.exchangeWarrantyProduct6Month")}.</p>
         <div className="flex mt-3">
-          <p className="font-bold">{warrantyCoditionMessage}:</p>
-          <p className="ml-2">{manufactureDefectMessage}.</p>
+          <p className="font-bold">{t("warranty.warrantyConditions")}:</p>
+          <p className="ml-2">{t("warranty.manufacturerDefect")}.</p>
         </div>
-        <p>{warrantyExclusionNoteMessage}.</p>
-        <p className="font-bold">{processingTimeMessage}:</p>
-        <p className="">+ {processingTimesmessage}.</p>
+        <p>{t("warranty.warrantyExclusionNote")}.</p>
+        <p className="font-bold">{t("warranty.processingTime")}:</p>
+        <p className="">+ {t("warranty.processing24hTime")}.</p>
       </div>
     </Modal>
   );

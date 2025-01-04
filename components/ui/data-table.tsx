@@ -27,7 +27,7 @@ import { Trash } from "lucide-react";
 import { AlertModal } from "../modals/alert-modal";
 import { DatePickerWithRange } from "./pick-calendar";
 import { DateRange } from "react-day-picker";
-import { getDataTable } from "@/translate/translate-dashboard";
+import { useTranslations } from "next-intl";
 
 const formatter = new Intl.NumberFormat("de-DE", {
   style: "currency",
@@ -48,7 +48,6 @@ interface DataTableProps<TData, TValue> {
   setOpen?: (open: boolean) => void;
   showSelected?: boolean;
   showTotal?: boolean;
-  languageToUse: string;
 }
 
 interface DataTableRow {
@@ -68,16 +67,13 @@ export function DataTable<TData, TValue>({
   setOpen,
   showSelected = true,
   showTotal = false,
-  languageToUse
 }: DataTableProps<TData, TValue>) {
+  const t = useTranslations()
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [filteredData, setFilteredData] = useState<TData[]>(data);
   const prevRowSelection = useRef(rowSelection);
-
-  //language
-  const dataTableMessage = getDataTable(languageToUse)
 
   // Add the index column to the columns
   const indexedColumns = [
@@ -158,7 +154,6 @@ export function DataTable<TData, TValue>({
           table.resetRowSelection();
         }}
         loading={disable}
-        languageToUse={languageToUse}
       />
       <div className="lg:flex items-center py-4 space-y-2 lg:space-y-0 lg:space-x-3 grid grid-rows-2">
         <Input
@@ -180,19 +175,19 @@ export function DataTable<TData, TValue>({
             onClick={() => setOpen?.(true)}
           >
             <Trash className="size-4 mr-2" />
-            {dataTableMessage.delete} ({Object.keys(rowSelection).length})
+            {t("action.delete")} ({Object.keys(rowSelection).length})
           </Button>
         )}
-        <DatePickerWithRange onDateChange={handleDateChange} data={data} languageToUse={languageToUse}/>
+        <DatePickerWithRange onDateChange={handleDateChange} data={data} />
       </div>
       {/* Conditionally display total calculations if showTotal is true */}
       {showTotal && (
         <div className="my-4">
           <p className="text-lg font-semibold">
-            <span className="text-red-500">{dataTableMessage.totalShipperDebt}:</span> <span className="text-yellow-500">{formatter.format(calculateTotalDebt())}</span>
+            <span className="text-red-500">{t("dataTable.totalShipperDebt")}:</span> <span className="text-yellow-500">{formatter.format(calculateTotalDebt())}</span>
           </p>
           <p className="text-lg font-semibold">
-            <span className="text-green-500">{dataTableMessage.totalCollectedFromShipper}:</span> {formatter.format(calculateTotal())}
+            <span className="text-green-500">{t("dataTable.totalCollectedFromShipper")}:</span> {formatter.format(calculateTotal())}
           </p>
         </div>
       )}
@@ -239,7 +234,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center dark:text-slate-200"
                 >
-                  {dataTableMessage.noResults}
+                  {t("dataTable.noResults")}
                 </TableCell>
               </TableRow>
             )}
@@ -249,8 +244,8 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center justify-end space-x-2 py-4">
         {showSelected && (
           <div className="flex-1 text-sm text-muted-foreground">
-            {Object.keys(rowSelection).length} {dataTableMessage.of}
-            {table.getFilteredRowModel().rows.length} {dataTableMessage.rowsSelected}.
+            {Object.keys(rowSelection).length} {t("dataTable.of")}
+            {table.getFilteredRowModel().rows.length} {t("dataTable.rowsSelected")}.
           </div>
         )}
         <Button
@@ -259,7 +254,7 @@ export function DataTable<TData, TValue>({
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
-          {dataTableMessage.previous}
+          {t("action.previousPage")}
         </Button>
         <Button
           variant="outline"
@@ -267,7 +262,7 @@ export function DataTable<TData, TValue>({
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
-          {dataTableMessage.next}
+          {t("action.nextPage")}
         </Button>
       </div>
     </div>

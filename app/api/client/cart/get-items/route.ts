@@ -1,13 +1,15 @@
 import prismadb from "@/lib/prismadb";
 import { NextResponse } from "next/server";
 import { currentUser } from "@/lib/auth";
-import { translateCartItemGet } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 export async function GET(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const cartItemGetMessage = translateCartItemGet(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get("userId") || ""; // Mặc định là "vi" nếu không có language
@@ -44,7 +46,7 @@ export async function GET(req: Request) {
     return NextResponse.json(carts);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: cartItemGetMessage}),
+      JSON.stringify({ error: t("toastError.internalErrorCartItemGet")}),
       { status: 500 }
     );
   }

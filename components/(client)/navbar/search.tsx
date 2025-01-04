@@ -6,13 +6,10 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import SearchItem from "./_components/search-item";
-import { translateSearchProduct } from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
-interface SearchPageProps {
-  languageToUse: string;
-}
-
-export const SearchPage = ({ languageToUse }: SearchPageProps) => {
+export const SearchPage = () => {
+  const t = useTranslations()
   const router = useRouter();
   const [value, setValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -28,9 +25,6 @@ export const SearchPage = ({ languageToUse }: SearchPageProps) => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []); // Empty dependency array to ensure this only registers once
-
-  //languages
-  const searchProductMessage = translateSearchProduct(languageToUse);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -76,7 +70,7 @@ export const SearchPage = ({ languageToUse }: SearchPageProps) => {
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onFocus={handleInputFocus}
-          placeholder={searchProductMessage}
+          placeholder={t("search.searchProduct")}
           className="rounded-r-none focus-visible:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0 bg-white"
         />
         {value && (
@@ -107,7 +101,7 @@ export const SearchPage = ({ languageToUse }: SearchPageProps) => {
             } left-0 right-0 md:left-auto md:right-auto bg-white rounded-md shadow-md max-w-[23rem] md:max-w-md w-full z-[9999] mx-auto`}
             onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
           >
-            <SearchItem value={value} languageToUse={languageToUse} />
+            <SearchItem value={value} />
           </div>
         </div>
       )}

@@ -6,14 +6,10 @@ import { AccessToken } from "livekit-server-sdk";
 import { getSelf } from "@/lib/stream/auth-service";
 import { isBlockedbyUsesr } from "@/lib/stream/block-service";
 import { getUserById } from "@/lib/user-service";
-import { translateUserBlocked, translateUserNotFound } from "@/translate/translate-client";
+import { createTranslator } from "next-intl";
 
-export const createViewerToken = async (hostIdentity: string, languageToUse:string) => {
+export const createViewerToken = async (hostIdentity: string) => {
   let self;
-
-  //languages
-  const userNotFoundMessage = translateUserNotFound(languageToUse)
-  const userBlockedMessage = translateUserBlocked(languageToUse)
 
   try {
     self = await getSelf();
@@ -24,16 +20,21 @@ export const createViewerToken = async (hostIdentity: string, languageToUse:stri
     self = { id, nameuser };
   }
 
+  const languageToUse = self?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
+
   const host = await getUserById(hostIdentity);
 
   if (!host) {
-    throw new Error(userNotFoundMessage);
+    throw new Error(t("toastError.userNotFound"));
   }
 
   const isBlocked = await isBlockedbyUsesr(host.id);
 
   if (isBlocked) {
-    throw new Error(userBlockedMessage);
+    throw new Error(t("toastError.userBlocked"));
   }
 
   const isHost = self.id === host.id;

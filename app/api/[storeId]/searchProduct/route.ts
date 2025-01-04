@@ -1,10 +1,17 @@
 import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
+import { currentUser } from "@/lib/auth";
+import { createTranslator } from "next-intl";
 
 export async function GET(req: Request) {
+  const user = await currentUser();
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
+  const { searchParams } = new URL(req.url);
+  const value = searchParams.get("value") || "";
   try {
-    const { searchParams } = new URL(req.url);
-    const value = searchParams.get("value") || "";
 
     const searchProduct = await prismadb.product.findMany({
       where: {
@@ -31,16 +38,16 @@ export async function GET(req: Request) {
         name: true,
         heading: true,
         productType: true,
-        images:{
+        images: {
           select: {
-            url: true
-          }
+            url: true,
+          },
         },
         productdetail: {
           select: {
             price1: true,
-            percentpromotion1: true
-          }
+            percentpromotion1: true,
+          },
         },
       },
       orderBy: [
@@ -54,7 +61,7 @@ export async function GET(req: Request) {
     return NextResponse.json(searchProduct);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Internal error get product." }),
+      JSON.stringify({ error: t("toastError.product.internalErrorGetProduct") }),
       { status: 500 }
     );
   }

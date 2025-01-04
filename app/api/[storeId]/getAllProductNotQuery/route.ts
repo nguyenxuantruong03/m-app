@@ -1,7 +1,7 @@
 import prismadb from "@/lib/prismadb";
 import { NextResponse } from "next/server";
 import { currentUser } from "@/lib/auth";
-import { translateGetProductNotQuery, translateProductNotQueryPatch } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 export async function GET(
   req: Request,
@@ -9,13 +9,15 @@ export async function GET(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const productNotQueryMessage = translateGetProductNotQuery(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: productNotQueryMessage.storeIdRequired }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 400 }
       );
     }
@@ -60,7 +62,7 @@ export async function GET(
     return NextResponse.json(products);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: productNotQueryMessage.internalError }),
+      JSON.stringify({ error: t("toastError.product.internalErrorGetProduct") }),
       { status: 500 }
     );
   }
@@ -69,15 +71,17 @@ export async function GET(
 export async function POST(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const productNotQueryPatchMessage = translateProductNotQueryPatch(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
     const { id, isProductShowLive, isProductLivePin } = body;
 
     if (!id) {
       return new NextResponse(
-        JSON.stringify({ error: productNotQueryPatchMessage.productIdNotFound }),
+        JSON.stringify({ error: t("toastError.product.productIdNotFound") }),
         { status: 403 }
       );
     }
@@ -107,7 +111,7 @@ export async function POST(req: Request) {
     return NextResponse.json(product);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: productNotQueryPatchMessage.internalError }),
+      JSON.stringify({ error: t("toastError.product.internalErrorGetProduct") }),
       { status: 500 }
     );
   }

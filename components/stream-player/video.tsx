@@ -15,11 +15,7 @@ import { cn } from "@/lib/utils";
 import "./video.css";
 import Link from "next/link";
 import CircleAvatar from "../ui/circle-avatar";
-import {
-  translateClickToSeeLive,
-  translateFollower,
-  translateFollowers,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface VideoProps {
   hostName: string;
@@ -33,7 +29,6 @@ interface VideoProps {
   showInfo?: boolean;
   showExtension?: boolean;
   frameAvatar: string;
-  languageToUse: string;
 }
 
 export const Video = ({
@@ -48,15 +43,11 @@ export const Video = ({
   showInfo = false,
   showExtension = true,
   frameAvatar,
-  languageToUse,
 }: VideoProps) => {
-  //languages
-  const followerMessage = translateFollower(languageToUse);
-  const followersMessage = translateFollowers(languageToUse);
-  const clickToSeeMessage = translateClickToSeeLive(languageToUse);
+  const t = useTranslations()
 
   const followedByLabel =
-    followedByCount === 1 ? followerMessage : followersMessage;
+    followedByCount === 1 ? t("profile.follower") : t("profile.followers");
   const connectionState = useConnectionState();
   const participant = useRemoteParticipant(hostIdentity);
   const tracks = useTracks([
@@ -68,7 +59,7 @@ export const Video = ({
 
   if (!participant && connectionState === ConnectionState.Connected) {
     content = (
-      <OfflineVideo nameuser={hostName} languageToUse={languageToUse} />
+      <OfflineVideo nameuser={hostName}/>
     );
   } else if (!participant || tracks.length === 0) {
     content = <LoadingVideo label={connectionState} />;
@@ -78,7 +69,6 @@ export const Video = ({
         participant={participant}
         showExtension={showExtension}
         nameuser={hostName}
-        languageToUse={languageToUse}
       />
     );
   }
@@ -139,7 +129,7 @@ export const Video = ({
                 <div className="loading-bar"></div>
                 <div className="loading-bar"></div>
               </div>
-              <span className="text-[#dc2626]">{clickToSeeMessage}</span>
+              <span className="text-[#dc2626]">{t("profile.clickToSee")}</span>
             </div>
           </div>
         </Link>

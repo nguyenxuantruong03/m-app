@@ -45,11 +45,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import {
-  translateLogin,
-  translateMenuHintNavbarMultiple,
-  translateRegister,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 type ListItemProps = React.ComponentPropsWithoutRef<"a"> & {
   title: string; // Assuming title is also a custom prop you want to pass
@@ -59,10 +55,10 @@ type ListItemProps = React.ComponentPropsWithoutRef<"a"> & {
 
 interface NavbarMultypleProps {
   userId: any;
-  languageToUse: string;
 }
 
-const NavbarMultiple = ({ languageToUse, userId }: NavbarMultypleProps) => {
+const NavbarMultiple = ({ userId }: NavbarMultypleProps) => {
+  const t = useTranslations()
   const [open, setOpen] = useState(false);
   const params = useParams();
   const pathname = usePathname();
@@ -70,22 +66,26 @@ const NavbarMultiple = ({ languageToUse, userId }: NavbarMultypleProps) => {
     ? params.storeId[0]
     : params.storeId;
 
-  const routes = route(storeId, pathname, languageToUse);
-  const staffs = staff(storeId, pathname, languageToUse);
-  const billboards = billboard(storeId, pathname, languageToUse);
-  const category = categories(storeId, pathname, languageToUse);
-  const parameters = parameter(storeId, pathname, languageToUse);
-  const products = product(storeId, pathname, languageToUse);
-  const orders = order(storeId, pathname, languageToUse);
-  const users = user(storeId, pathname, languageToUse);
-  const checkouts = checkout(storeId, pathname, languageToUse);
-  const settings = setting(storeId, pathname, languageToUse);
-
-  //language
-  const loginMessage = translateLogin(languageToUse);
-  const registerMessage = translateRegister(languageToUse);
-  const menuHintNavbarMultipleMessage =
-    translateMenuHintNavbarMultiple(languageToUse);
+  const routes = route(storeId, pathname);
+  const staffs = staff(storeId, pathname);
+  const billboards = billboard(storeId, pathname);
+  const category = categories(storeId, pathname);
+  const parameters = parameter(storeId, pathname);
+  const products = product(storeId, pathname);
+  const orders = order(storeId, pathname);
+  const users = user(storeId, pathname);
+  const checkouts = checkout(storeId, pathname);
+  const settings = setting(storeId, pathname);
+  const routerOnlyTitle = routeTitle()
+  const staffOnlyTitle = staffTitle()
+  const billboardOnlyTitle = billboardTitle()
+  const categoryOnlyTitle = categoryTitle()
+  const parameterOnlyTitle = parameterTitle()
+  const productOnlyTitle = productTitle()
+  const orderOnlyTitle = orderTitle()
+  const userOnlyTitle = userTitle()
+  const checkoutOnlyTitle = checkoutTitle()
+  const settingOnlyTitle = settingTitle()
 
   return (
     <>
@@ -122,7 +122,7 @@ const NavbarMultiple = ({ languageToUse, userId }: NavbarMultypleProps) => {
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
-                      {routeTitle(languageToUse).map((route, index) => (
+                      {routerOnlyTitle.map((route, index) => (
                         <div key={index}>{route.mainicon}</div>
                       ))}
                     </NavigationMenuTrigger>
@@ -183,7 +183,7 @@ const NavbarMultiple = ({ languageToUse, userId }: NavbarMultypleProps) => {
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
-                      {staffTitle(languageToUse).map((staff, index) => (
+                      {staffOnlyTitle.map((staff, index) => (
                         <div key={index}>{staff.mainicon}</div>
                       ))}
                     </NavigationMenuTrigger>
@@ -224,7 +224,7 @@ const NavbarMultiple = ({ languageToUse, userId }: NavbarMultypleProps) => {
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
-                      {billboardTitle(languageToUse).map((billboard, index) => (
+                      {billboardOnlyTitle.map((billboard, index) => (
                         <div key={index}>{billboard.mainicon}</div>
                       ))}
                     </NavigationMenuTrigger>
@@ -285,7 +285,7 @@ const NavbarMultiple = ({ languageToUse, userId }: NavbarMultypleProps) => {
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
-                      {categoryTitle(languageToUse).map((categories, index) => (
+                      {categoryOnlyTitle.map((categories, index) => (
                         <div key={index}>{categories.mainicon}</div>
                       ))}
                     </NavigationMenuTrigger>
@@ -326,7 +326,7 @@ const NavbarMultiple = ({ languageToUse, userId }: NavbarMultypleProps) => {
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
-                      {parameterTitle(languageToUse).map((parameter, index) => (
+                      {parameterOnlyTitle.map((parameter, index) => (
                         <div key={index}>{parameter.mainicon}</div>
                       ))}
                     </NavigationMenuTrigger>
@@ -387,7 +387,7 @@ const NavbarMultiple = ({ languageToUse, userId }: NavbarMultypleProps) => {
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
-                      {productTitle(languageToUse).map((product, index) => (
+                      {productOnlyTitle.map((product, index) => (
                         <div key={index}>{product.mainicon}</div>
                       ))}
                     </NavigationMenuTrigger>
@@ -428,7 +428,7 @@ const NavbarMultiple = ({ languageToUse, userId }: NavbarMultypleProps) => {
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
-                      {orderTitle(languageToUse).map((order, index) => (
+                      {orderOnlyTitle.map((order, index) => (
                         <div key={index}>{order.mainicon}</div>
                       ))}
                     </NavigationMenuTrigger>
@@ -489,7 +489,7 @@ const NavbarMultiple = ({ languageToUse, userId }: NavbarMultypleProps) => {
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
-                      {userTitle(languageToUse).map((user, index) => (
+                      {userOnlyTitle.map((user, index) => (
                         <div key={index}>{user.mainicon}</div>
                       ))}
                     </NavigationMenuTrigger>
@@ -550,7 +550,7 @@ const NavbarMultiple = ({ languageToUse, userId }: NavbarMultypleProps) => {
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
-                      {checkoutTitle(languageToUse).map((checkout, index) => (
+                      {checkoutOnlyTitle.map((checkout, index) => (
                         <div key={index}>{checkout.mainicon}</div>
                       ))}
                     </NavigationMenuTrigger>
@@ -593,7 +593,7 @@ const NavbarMultiple = ({ languageToUse, userId }: NavbarMultypleProps) => {
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="text-slate-700 dark:text-slate-300">
-                      {settingTitle(languageToUse).map((setting) => (
+                      {settingOnlyTitle.map((setting) => (
                         <>{setting.mainicon}</>
                       ))}
                     </NavigationMenuTrigger>
@@ -651,7 +651,7 @@ const NavbarMultiple = ({ languageToUse, userId }: NavbarMultypleProps) => {
                   >
                     <span className="flex items-center 2xl:text-base lg:text-sm">
                       <CircleUser className="h-4 w-4 lg:h-5 lg:w-5 2xl:size-4 mr-1" />
-                      {loginMessage}
+                      {t("auth.login")}
                     </span>
                   </Link>
                   <Link
@@ -660,7 +660,7 @@ const NavbarMultiple = ({ languageToUse, userId }: NavbarMultypleProps) => {
                   >
                     <span className="flex items-center 2xl:text-base lg:text-sm">
                       <UserRoundPlus className="h-4 w-4 lg:h-5 lg:w-5 2xl:size-4 mr-1" />
-                      {registerMessage}
+                      {t("auth.register")}
                     </span>
                   </Link>
                 </div>
@@ -750,7 +750,7 @@ const NavbarMultiple = ({ languageToUse, userId }: NavbarMultypleProps) => {
               <div className="mt-6">
                 {/* Navbar của responsive */}
                 <nav className="grid gap-y-8">
-                  <NavbarMultipleResponsive languageToUse={languageToUse} />
+                  <NavbarMultipleResponsive />
                 </nav>
               </div>
             </div>
@@ -760,42 +760,42 @@ const NavbarMultiple = ({ languageToUse, userId }: NavbarMultypleProps) => {
                   href="#"
                   className="flex items-center text-base font-medium text-slate-700 dark:text-slate-300 hover:text-gray-700"
                 >
-                  {menuHintNavbarMultipleMessage.name1}
+                  {t("navbardashboard.menuHintNavbarMultiple.enterprise")}
                   <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
                   className="flex items-center text-base font-medium text-slate-700 dark:text-slate-300 hover:text-gray-700"
                 >
-                  {menuHintNavbarMultipleMessage.name2}
+                  {t("navbardashboard.menuHintNavbarMultiple.blog")}
                   <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
                   className="flex items-center text-base font-medium text-slate-700 dark:text-slate-300 hover:text-gray-700"
                 >
-                  {menuHintNavbarMultipleMessage.name3}
+                  {t("navbardashboard.menuHintNavbarMultiple.helpCenter")}
                   <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
                   className="flex items-center text-base font-medium text-slate-700 dark:text-slate-300 hover:text-gray-700"
                 >
-                  {menuHintNavbarMultipleMessage.name4}
+                  {t("navbardashboard.menuHintNavbarMultiple.guides")}
                   <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
                   className="flex items-center text-base font-medium text-slate-700 dark:text-slate-300 hover:text-gray-700"
                 >
-                  {menuHintNavbarMultipleMessage.name5}
+                  {t("navbardashboard.menuHintNavbarMultiple.security")}
                   <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   href="#"
                   className="flex items-center text-base font-medium text-slate-700 dark:text-slate-300 hover:text-gray-700"
                 >
-                  {menuHintNavbarMultipleMessage.name6}
+                  {t("navbardashboard.menuHintNavbarMultiple.events")}
                   <ArrowUpRight className="h-5 w-5 ml-1" />
                 </Link>
               </div>

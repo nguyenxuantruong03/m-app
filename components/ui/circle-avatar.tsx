@@ -125,19 +125,9 @@ const CircleAvatar = ({
   const user = useCurrentUser();
   const { width, height } = getFrameDimensions(user?.frameAvatar);
   const [showImage, setShowImage] = useState(false);
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []); 
 
   //language
-  const languageToUse =
-  user?.id && user?.role !== "GUEST" ? user?.language : storedLanguage || "vi";
+  const languageToUse = user?.language || "vi";
 
   const openImage = () => setShowImage(true);
 

@@ -1,21 +1,12 @@
 import { Dispatch, SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  translateComplicatedPayment,
-  translateDelayedResponse,
-  translateNoResponseToCall,
-  translateOtherMessage,
-  translateSelectCategoryFeedback,
-  translateUnprofessionalService,
-  translateWebsitePerformanceIssues,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface CategoryFeedBackProps {
   setIndexCategory: Dispatch<SetStateAction<number | null>>;
   indexCategory: number | null;
   setErrorCategory: Dispatch<SetStateAction<boolean>>;
   errorCategory: boolean;
-  languageToUse: string;
 }
 
 const CategoryFeedBack = ({
@@ -23,19 +14,8 @@ const CategoryFeedBack = ({
   indexCategory,
   setErrorCategory,
   errorCategory,
-  languageToUse,
 }: CategoryFeedBackProps) => {
-  //Language
-  const unprofessionalServiceMessage =
-    translateUnprofessionalService(languageToUse);
-  const delayedResponseMessage = translateDelayedResponse(languageToUse);
-  const complicatedPaymentMessage = translateComplicatedPayment(languageToUse);
-  const noResponseToCallMessage = translateNoResponseToCall(languageToUse);
-  const websitePerformanceIssuesMessage =
-    translateWebsitePerformanceIssues(languageToUse);
-  const otherMessage = translateOtherMessage(languageToUse);
-  const selectCategoryFeedbackMessage =
-    translateSelectCategoryFeedback(languageToUse);
+  const t = useTranslations()
 
   const handleClick = (categoryIndex: number) => {
     if (indexCategory === categoryIndex) {
@@ -50,12 +30,12 @@ const CategoryFeedBack = ({
   };
 
   const TypeCategory = [
-    { index: 1, label: unprofessionalServiceMessage },
-    { index: 2, label: delayedResponseMessage },
-    { index: 3, label: complicatedPaymentMessage },
-    { index: 4, label: noResponseToCallMessage },
-    { index: 5, label: websitePerformanceIssuesMessage },
-    { index: 6, label: otherMessage },
+    { index: 1, label: t("feedback.categoryfeedback.unprofessionalService") },
+    { index: 2, label: t("feedback.categoryfeedback.delayedResponse") },
+    { index: 3, label: t("feedback.categoryfeedback.complicatedPayment") },
+    { index: 4, label: t("feedback.categoryfeedback.noResponseToCall") },
+    { index: 5, label: t("feedback.categoryfeedback.websitePerformanceIssues") },
+    { index: 6, label: t("feedback.categoryfeedback.other") },
   ];
 
   return (
@@ -77,7 +57,7 @@ const CategoryFeedBack = ({
         ))}
       </div>
       {errorCategory && (
-        <p className="text-red-500 text-xs">{selectCategoryFeedbackMessage}</p>
+        <p className="text-red-500 text-xs">{t("feedback.categoryfeedback.selectCategoryFeedback")}</p>
       )}
     </div>
   );

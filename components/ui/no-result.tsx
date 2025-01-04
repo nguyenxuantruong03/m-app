@@ -1,28 +1,9 @@
-import { useCurrentUser } from "@/hooks/use-current-user";
-import { getNotFound } from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 
 const NoResults = () => {
-  const user = useCurrentUser();
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []);
-
-  //language
-  const languageToUse =
-    user?.id && user?.role !== "GUEST"
-      ? user?.language
-      : storedLanguage || "vi";
+  const t = useTranslations()
   
-  const notFoundMessage = getNotFound(languageToUse)
-
     return ( 
         <section className="bg-white py-10">
         <div className=" max-w-7xl mx-auto">
@@ -37,13 +18,13 @@ const NoResults = () => {
               >
               </div>
               <div className="mt-5">
-                <h3 className="text-3xl xl:text-8xl font-bold text-slate-900">{notFoundMessage.noProduct}</h3>
-                <p className="mt-5 text-slate-900">{notFoundMessage.suggestion}</p>
+                <h3 className="text-3xl xl:text-8xl font-bold text-slate-900">{t("noResult.noProduct")}</h3>
+                <p className="mt-5 text-slate-900">{t("noResult.suggestion")}</p>
                 <Link
                   href="/home-product"
                   className="text-white bg-green-500 px-8 py-4 rounded-full inline-block mt-5"
                 >
-                  {notFoundMessage.goToHome}
+                  {t("noResult.goToHome")}
                 </Link>
               </div>
             </div>

@@ -5,13 +5,15 @@ import { UpdateImageSchema } from "@/schemas";
 import prismadb from "@/lib/prismadb";
 import { getUserById } from "@/data/user";
 import { currentUser } from "@/lib/auth";
-import { getUploadImageAction } from "@/translate/translate-client";
+import { createTranslator } from "next-intl";
 
 export const image = async (values: z.infer<typeof UpdateImageSchema>,languageToUse: string) => {
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   const validatedFields = UpdateImageSchema.safeParse(values);
-  const uploadImageActionMessage = getUploadImageAction(languageToUse);
   if (!validatedFields.success) {
-    return { error: uploadImageActionMessage.invalid };
+    return { error: t("uploadImage.invalid") };
   }
   const { imageCredential } = validatedFields.data;
 
@@ -28,8 +30,8 @@ export const image = async (values: z.infer<typeof UpdateImageSchema>,languageTo
       }
     });
   } else {
-    return { error: uploadImageActionMessage.userNotFound };
+    return { error: t("uploadImage.userNotFound") };
   }
 
-  return { success: uploadImageActionMessage.success };
+  return { success: t("uploadImage.success") };
 };

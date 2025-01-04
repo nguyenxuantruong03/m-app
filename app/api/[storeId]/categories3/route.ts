@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { CategoryType, UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
-import { translateCategoriesDelete, translateCategoriesGet, translateCategoriesPost } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 export async function POST(
   req: Request,
@@ -12,51 +12,39 @@ export async function POST(
   const categoryType = CategoryType.CATEGORY3;
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const categoriesPostMessage = translateCategoriesPost(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
+
   try {
-
     const body = await req.json();
-
     const { name } = body;
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: categoriesPostMessage.name1 }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: categoriesPostMessage.name2 }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: categoriesPostMessage.name3 }), {
+      return new NextResponse(JSON.stringify({ error: t("toastError.name") }), {
         status: 400,
       });
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: categoriesPostMessage.name4 }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: categoriesPostMessage.name5 }),
-        { status: 405 }
       );
     }
 
@@ -71,7 +59,7 @@ export async function POST(
 
     if (existingCategory) {
       return new NextResponse(
-        JSON.stringify({ error: categoriesPostMessage.name7 }),
+        JSON.stringify({ error: t("toastError.categoryAlreadyExists") }),
         { status: 400 }
       );
     }
@@ -79,8 +67,8 @@ export async function POST(
     const category = await prismadb.category.create({
       data: {
         name,
-        storeId: params.storeId,
         categoryType: categoryType,
+        storeId: params.storeId,
       },
     });
 
@@ -107,7 +95,7 @@ export async function POST(
     return NextResponse.json(category);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: `${categoriesPostMessage.name6} 3` }),
+      JSON.stringify({ error: t("toastError.category.intternalErrorPostCategory") }),
       { status: 500 }
     );
   }
@@ -119,18 +107,21 @@ export async function GET(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const categoriesGetMessage = translateCategoriesGet(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   const categoryType = CategoryType.CATEGORY3;
 
   try {
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: categoriesGetMessage.name1 }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 400 }
       );
     }
+
     const categories = await prismadb.category.findMany({
       where: {
         storeId: params.storeId,
@@ -141,7 +132,7 @@ export async function GET(
     return NextResponse.json(categories);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: `${categoriesGetMessage.name2} 3` }),
+      JSON.stringify({ error: t("toastError.category.intternalErrorGetCategory") }),
       { status: 500 }
     );
   }
@@ -153,8 +144,10 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const categoriesDeleteMessage = translateCategoriesDelete(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     const body = await req.json();
@@ -164,35 +157,29 @@ export async function DELETE(
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: categoriesDeleteMessage.name1 }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: categoriesDeleteMessage.name2 }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!ids || ids.length === 0) {
       return new NextResponse(
-        JSON.stringify({ error: categoriesDeleteMessage.name3 }),
+        JSON.stringify({ error: t("toastError.idsArrayNotEmpty") }),
         { status: 400 }
       );
     }
 
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
+    if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: categoriesDeleteMessage.name4 }),
-        { status: 405 }
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
+        { status: 400 }
       );
     }
 
@@ -231,10 +218,10 @@ export async function DELETE(
       },
     });
 
-    return NextResponse.json({ message: categoriesDeleteMessage.name5 });
+    return NextResponse.json({ message: t("toastSuccess.deletionSuccess") });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: `${categoriesDeleteMessage.name6} 3` }),
+      JSON.stringify({ error: t("toastError.category.intternalErrorDeleteCategory") }),
       { status: 500 }
     );
   }

@@ -6,21 +6,12 @@ import { getVerificationTokenByToken } from "@/data/verification-token";
 import { generateVerificationToken } from "@/lib/tokens";
 import { sendVerificationEmail } from "@/lib/mail";
 import { format } from "date-fns";
-import {
-  translateAccountLockedForVerification,
-  translateEmailNotExist,
-  translateEmailVerified,
-  translateTokenExpired,
-  translateTooManyVerificationRequests,
-} from "@/translate/translate-client";
+import { createTranslator } from "next-intl";
 
 export const newVerification = async (token: string, languageToUse: string) => {
-  //languages
-  const emailVerifiedMessage = translateEmailVerified(languageToUse);
-  const tokenExpiredMessage = translateTokenExpired(languageToUse);
-  const emailNotExitMessage = translateEmailNotExist(languageToUse);
-  const accountLockedForVerificationMessage =
-    translateAccountLockedForVerification(languageToUse);
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   const existingToken = await getVerificationTokenByToken(token);
   const user = await prismadb.user.findUnique({
@@ -29,23 +20,23 @@ export const newVerification = async (token: string, languageToUse: string) => {
   });
 
   if (user?.emailVerified) {
-    return { success: emailVerifiedMessage };
+    return { success: t("newVerification.emailVerified") };
   }
 
   if (!existingToken) {
     return {
-      error: tokenExpiredMessage,
+      error: t("newVerification.tokenExpired"),
     };
   }
 
   const existingUser = await getUserByEmail(existingToken.email);
   if (!existingUser) {
-    return { error: emailNotExitMessage };
+    return { error: t("newVerification.emailNotExit") };
   }
 
   // Check ban status again after potential update
   if (existingUser.ban) {
-    return { error: accountLockedForVerificationMessage };
+    return { error: t("newVerification.accountLockedForVerification") };
   }
 
   let resendTokenVerifyCount = existingUser.resendTokenVerify || 0; // Đếm số lần gửi resendTokenVerify
@@ -67,7 +58,7 @@ export const newVerification = async (token: string, languageToUse: string) => {
       ? format(banUser.banExpires, "dd/MM/yyyy '-' HH:mm:ss a")
       : "";
     return {
-      error: translateTooManyVerificationRequests(languageToUse, timeBan),
+      error: t("newVerification.tooManyVerificationRequests",{timeBan: timeBan}),
     };
   }
 
@@ -95,7 +86,7 @@ export const newVerification = async (token: string, languageToUse: string) => {
       await sendVerificationEmail(languageToUse,existingToken.email, newToken.token);
     }
     return {
-      error: tokenExpiredMessage,
+      error: t("newVerification.tokenExpired"),
     };
   }
 
@@ -112,5 +103,5 @@ export const newVerification = async (token: string, languageToUse: string) => {
     where: { id: existingToken.id },
   });
 
-  return { success: emailVerifiedMessage };
+  return { success: t("newVerification.emailVerified") };
 };

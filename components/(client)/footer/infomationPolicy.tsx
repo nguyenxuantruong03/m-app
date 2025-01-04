@@ -1,38 +1,22 @@
-import {
-  translateDiscountCode,
-  translateOrderingPolicyAndLegalTerms,
-  translatePreOrderAndPayOnDelivery,
-  translatePurchaseAndPayOnline,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 
-interface InformationPolicyProps {
-  languageToUse: string;
-}
-
-const InformationPolicy = ({ languageToUse }: InformationPolicyProps) => {
-  //language
-  const purchaseAndPayOnlineMessage =
-    translatePurchaseAndPayOnline(languageToUse);
-  const preOrderAndPayOnDeliveryMessage =
-    translatePreOrderAndPayOnDelivery(languageToUse);
-  const orderingToPolicyandLegaltermsMesage =
-    translateOrderingPolicyAndLegalTerms(languageToUse);
-  const discountCodeMessage = translateDiscountCode(languageToUse);
+const InformationPolicy = () => {
+  const t = useTranslations()
 
   return (
     <>
       <Link href="/payment-online">
-        <div>{purchaseAndPayOnlineMessage}</div>
+        <div>{t("footer.purchaseAndPayOnline")}</div>
       </Link>
       <Link href="/preorder">
-        <div>{preOrderAndPayOnDeliveryMessage}</div>
+        <div>{t("footer.preOrderAndPayOnDelivery")}</div>
       </Link>
       <Link href="/policy">
-        <div>{orderingToPolicyandLegaltermsMesage}</div>
+        <div>{t("footer.orderingToPolicyandLegalterms")}</div>
       </Link>
       <Link href="/promotional-code">
-        <div>{discountCodeMessage}</div>
+        <div>{t("footer.discountCode")}</div>
       </Link>
     </>
   );

@@ -11,9 +11,10 @@ import { pusherClient } from "@/lib/pusher";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import BoxchatSkeleton from "@/components/(client)/skeleton/boxchat-skeleton";
 import toast from "react-hot-toast";
-import { getToastError, translateConversationErrorMessages } from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 const BoxChat = () => {
+  const t = useTranslations()
   const user = useCurrentUser();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [conversation, setConversation] = useState<any>(null);
@@ -22,11 +23,6 @@ const BoxChat = () => {
   const [unseenMessages, setUnseenMessages] = useState<any[]>([]);
   const conversationId = user?.conversationId;
   const pusherKey = user?.email;
-
-  const languageToUse = user?.language || "vi"
-
-  const errorToastMessage = getToastError(languageToUse)
-  const conversationErrorMessage = translateConversationErrorMessages(languageToUse)
 
   useEffect(() => {
     if (user?.role === "GUEST"|| !user?.id) {
@@ -101,7 +97,7 @@ const BoxChat = () => {
       }
 
     } catch (error) {
-      toast.error(errorToastMessage);
+      toast.error(t("toastError.somethingWentWrong"));
       throw error; // Ném lỗi ra ngoài để catch trong handleButtonClick
     } finally {
       setLoading(false);
@@ -117,7 +113,7 @@ const BoxChat = () => {
       setDrawerOpen((prev) => !prev); // Mở drawer sau khi hoàn tất
       await handleCreateConvertation(); // Chờ hàm tạo conversation hoàn tất
     } catch (error) {
-      toast.error(conversationErrorMessage);
+      toast.error(t("message.conversationError"));
     } finally {
       setLoading(false); // Dừng hiển thị loading
     }
@@ -194,10 +190,9 @@ const BoxChat = () => {
                 <Header
                   conversation={conversation}
                   onClose={() => setDrawerOpen(false)}
-                  language={languageToUse}
                 />
-                <Body language={languageToUse} initialMessages={messages} conversation={conversation} />
-                <Form language={languageToUse} loading={loading} conversationId={conversationId} />
+                <Body initialMessages={messages} conversation={conversation} />
+                <Form loading={loading} conversationId={conversationId} />
               </div>
             ) : (
               <>

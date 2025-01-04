@@ -10,6 +10,8 @@ import Image from "next/image";
 import { CurrentViewProvider } from "@/localStorage/useLocalStorage-currentView";
 import { DeviceProvider } from "@/providers/device-info-provider";
 import ActiveStatus from "@/components/ActiveStatus";
+import { getMessages } from "next-intl/server";
+import { NextIntlClientProvider } from "next-intl"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,34 +26,37 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
+  const message = await getMessages()
   return (
     <SessionProvider session={session}>
-      <CurrentViewProvider>
-        <DeviceProvider>
-          <html lang="en" className="light">
-            <body
-              className={`${inter.className} dark:bg-gradient-to-r from-slate-800 to-slate-900 bg-white`}
-            >
-              <ActiveStatus />
-              <Image
-                src="/background-image/bg-dark.png"
-                alt="404"
-                fill
-                className="z-[-1] bg-image"
-              />
-              <ThemeProvider
-                attribute="class"
-                defaultTheme="system"
-                enableSystem
+      <NextIntlClientProvider messages={message} locale="vi">
+        <CurrentViewProvider>
+          <DeviceProvider>
+            <html lang="vi" className="light">
+              <body
+                className={`${inter.className} dark:bg-gradient-to-r from-slate-800 to-slate-900 bg-white`}
               >
-                <ModalProvider />
-                <ToasterProvider />
-                {children}
-              </ThemeProvider>
-            </body>
-          </html>
-        </DeviceProvider>
-      </CurrentViewProvider>
+                <ActiveStatus />
+                <Image
+                  src="/background-image/bg-dark.png"
+                  alt="404"
+                  fill
+                  className="z-[-1] bg-image"
+                />
+                <ThemeProvider
+                  attribute="class"
+                  defaultTheme="system"
+                  enableSystem
+                >
+                  <ModalProvider />
+                  <ToasterProvider />
+                  {children}
+                </ThemeProvider>
+              </body>
+            </html>
+          </DeviceProvider>
+        </CurrentViewProvider>
+      </NextIntlClientProvider>
     </SessionProvider>
   );
 }

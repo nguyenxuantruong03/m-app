@@ -4,7 +4,7 @@ import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
 import { stripe } from "@/lib/stripe";
-import { translateTaxRateIdDelete, translateTaxRateIdGet, translateTaxRateIdPatch } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 type TaxRateValue = string | number | Date | boolean | undefined | null;
 
@@ -19,27 +19,29 @@ export async function GET(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const taxRateIdGetMessage = translateTaxRateIdGet(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     if (!params.taxrateId) {
       return new NextResponse(
-        JSON.stringify({ error: taxRateIdGetMessage.taxRateIdRequired }),
+        JSON.stringify({ error: t("toastError.taxrate.taxRateIdRequired") }),
         { status: 400 }
       );
     }
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: taxRateIdGetMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: taxRateIdGetMessage.permissionDenied  }),
+        JSON.stringify({ error: t("toastError.permissionDenied")  }),
         { status: 403 }
       );
     }
@@ -53,7 +55,7 @@ export async function GET(
     return NextResponse.json(taxRate);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: taxRateIdGetMessage.internalError }),
+      JSON.stringify({ error: t("toastError.taxrate.internalErrorGetTaxrate") }),
       { status: 500 }
     );
   }
@@ -65,40 +67,29 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const taxRateIdDeleteMessage = translateTaxRateIdDelete(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: taxRateIdDeleteMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: taxRateIdDeleteMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!params.taxrateId) {
       return new NextResponse(
-        JSON.stringify({ error: taxRateIdDeleteMessage.taxRateIdRequired }),
+        JSON.stringify({ error: t("toastError.taxrate.taxRateIdRequired") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: taxRateIdDeleteMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -135,7 +126,7 @@ export async function DELETE(
     return NextResponse.json(taxRate);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: taxRateIdDeleteMessage.internalError }),
+      JSON.stringify({ error: t("toastError.taxrate.internalErrorDelete") }),
       { status: 500 }
     );
   }
@@ -147,8 +138,10 @@ export async function PATCH(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const taxRateIdPatchMessage = translateTaxRateIdPatch(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     const body = await req.json();
@@ -156,64 +149,52 @@ export async function PATCH(
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: taxRateIdPatchMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: taxRateIdPatchMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: taxRateIdPatchMessage.nameRequired }), {
+      return new NextResponse(JSON.stringify({ error: t("toastError.name") }), {
         status: 400,
       });
     }
 
     if (!description) {
-      return new NextResponse(JSON.stringify({ error: taxRateIdPatchMessage.descriptionRequired }), {
+      return new NextResponse(JSON.stringify({ error: t("toastError.description") }), {
         status: 400,
       });
     }
 
     if (!percentage) {
-      return new NextResponse(JSON.stringify({ error: taxRateIdPatchMessage.percentageRequired }), {
+      return new NextResponse(JSON.stringify({ error: t("toastError.taxrate.percentageRequired") }), {
         status: 400,
       });
     }
 
     if (!inclusive) {
-      return new NextResponse(JSON.stringify({ error: taxRateIdPatchMessage.inclusiveRequired }), {
+      return new NextResponse(JSON.stringify({ error: t("toastError.taxrate.inclusiveRequired") }), {
         status: 400,
       });
     }
 
     if (!active) {
-      return new NextResponse(JSON.stringify({ error: taxRateIdPatchMessage.activeRequired }), {
+      return new NextResponse(JSON.stringify({ error: t("toastError.taxrate.activeRequired") }), {
         status: 400,
       });
     }
 
     if (!params.taxrateId) {
       return new NextResponse(
-        JSON.stringify({ error: taxRateIdPatchMessage.taxRateIdRequired }),
+        JSON.stringify({ error: t("toastError.taxrate.taxRateIdRequired") }),
         { status: 400 }
-      );
-    }
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: taxRateIdPatchMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -230,7 +211,7 @@ export async function PATCH(
 
     if (duplicateTaxRate) {
       return new NextResponse(
-        JSON.stringify({ error: taxRateIdPatchMessage.taxrateAlreadyExists }),
+        JSON.stringify({ error: t("toastError.taxrate.taxrateAlreadyExists") }),
         { status: 400 }
       );
     }
@@ -243,7 +224,7 @@ export async function PATCH(
 
     if (!existingTaxRate) {
       return new NextResponse(
-        JSON.stringify({ error: taxRateIdPatchMessage.taxRateNotFound }),
+        JSON.stringify({ error: t("toastError.taxrate.taxRateNotFound") }),
         { status: 404 }
       );
     }
@@ -316,7 +297,7 @@ export async function PATCH(
     return NextResponse.json(taxRateupdate);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: taxRateIdPatchMessage.internalError }),
+      JSON.stringify({ error: t("toastError.taxrate.internalErrorPatchTaxrate") }),
       { status: 500 }
     );
   }

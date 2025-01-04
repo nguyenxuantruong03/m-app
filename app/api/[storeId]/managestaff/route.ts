@@ -4,7 +4,7 @@ import prismadb from "@/lib/prismadb";
 import { sendVerifyAccountisCitizen } from "@/lib/mail";
 import { currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
-import { translateManageStaffGet, translateManageStaffPatch, translateManageStaffPost } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 type ManageStaffValue = boolean | undefined | null;
 
@@ -16,19 +16,21 @@ interface ChangeRecord {
 export async function GET(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const manageStaffGetMessage = translateManageStaffGet(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: manageStaffGetMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: manageStaffGetMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -38,7 +40,7 @@ export async function GET(req: Request) {
     return NextResponse.json(managestaff);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: manageStaffGetMessage.internalError }),
+      JSON.stringify({ error: t("toastError.user.internalErrorGetUser") }),
       { status: 500 }
     );
   }
@@ -50,22 +52,24 @@ export async function PATCH(
 ) {
   const userId = await currentUser();
   //language
-  const LanguageToUse = userId?.language || "vi";
-  const manageStaffPatchMessage = translateManageStaffPatch(LanguageToUse)
+  const languageToUse = userId?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
     const { id, sentVeirifi } = body;
 
     if (!userId) {
       return new NextResponse(
-        JSON.stringify({ error: manageStaffPatchMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (userId.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: manageStaffPatchMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -119,7 +123,7 @@ export async function PATCH(
     });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: manageStaffPatchMessage.internalError }),
+      JSON.stringify({ error: t("toastError.user.internalErrorPatchUser") }),
       { status: 500 }
     );
   }
@@ -131,20 +135,22 @@ export async function POST(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const manageStaffPostMessage = translateManageStaffPost(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: manageStaffPostMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
   
     if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: manageStaffPostMessage.permissionDenied}),
+        JSON.stringify({ error: t("toastError.permissionDenied")}),
         { status: 403 }
       );
     }
@@ -212,7 +218,7 @@ export async function POST(
     });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: manageStaffPostMessage.internalError }),
+      JSON.stringify({ error: t("toastError.user.internalErrorGetUser") }),
       { status: 500 }
     );
   }

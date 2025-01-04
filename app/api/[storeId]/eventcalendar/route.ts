@@ -6,29 +6,26 @@ import { format, subHours } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import { NextResponse } from "next/server";
 import viLocale from "date-fns/locale/vi";
-import {
-  translateEvenCalendarDelete,
-  translateEvenCalendarGet,
-  translateEvenCalendarPatch,
-  translateEvenCalendarPost,
-} from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 export async function GET(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const eventCalendarGetMessage = translateEvenCalendarGet(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: eventCalendarGetMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role === UserRole.GUEST || user.role === UserRole.USER) {
       return new NextResponse(
-        JSON.stringify({ error: eventCalendarGetMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -41,7 +38,7 @@ export async function GET(req: Request) {
     return NextResponse.json(eventCalendar);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: eventCalendarGetMessage.internalError }),
+      JSON.stringify({ error: t("toastError.attendance.intternalErrorGetAttendance") }),
       { status: 500 }
     );
   }
@@ -75,53 +72,42 @@ export async function POST(
     });
 
     //language
-    const LanguageToUse = user?.language || "vi";
-    const eventCalendarPostMessage = translateEvenCalendarPost(LanguageToUse, user?.timestartwork);
+    const languageToUse = user?.language || "vi";
+    let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
     
     if (!user?.timestartwork) {
       return new NextResponse(
-        JSON.stringify({ error: eventCalendarPostMessage.missingTimeStartWork }),
+        JSON.stringify({ error: t("toastError.attendance.missingWorkingTime") }),
         { status: 403 }
       );
     }
   try {
     if (!userId) {
       return new NextResponse(
-        JSON.stringify({ error: eventCalendarPostMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (userId.role === UserRole.GUEST || userId.role === UserRole.USER) {
       return new NextResponse(
-        JSON.stringify({ error: eventCalendarPostMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!start) {
-      return new NextResponse(JSON.stringify({ error: eventCalendarPostMessage.startRequired }), {
+      return new NextResponse(JSON.stringify({ error: t("toastError.attendance.startRequired") }), {
         status: 403,
       });
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: eventCalendarPostMessage.storeIdRequired  }),
+        JSON.stringify({ error: t("toastError.storeIdRequired")  }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: eventCalendarPostMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -134,7 +120,7 @@ export async function POST(
 
     if (!user?.workingTime) {
       return new NextResponse(
-        JSON.stringify({ error: eventCalendarPostMessage.missingWorkingTime }),
+        JSON.stringify({ error: t("toastError.attendance.missingWorkingTime") }),
         { status: 403 }
       );
     }
@@ -148,14 +134,14 @@ export async function POST(
 
     if (dateWorkAttendance && !dateWorkAttendance.includes(dayName)) {
       return new NextResponse(
-        JSON.stringify({ error: eventCalendarPostMessage.notYourWorkingDay }),
+        JSON.stringify({ error: t("toastError.attendance.notYourWorkingDay") }),
         { status: 403 }
       );
     }
 
     //currentTime: là thời gian hiện tại  còn curentDate là chuyển đổi thành Date của user.timestartwork
     const { currentTime, currentDate } = await getCurrentTimeWithWorkingTime(
-      user,eventCalendarPostMessage.invalidUserOrMissingWorkingTime
+      user,t("toastError.attendance.invalidUserOrMissingWorkingTime")
     );
 
     // Tính toán thời gian chậm trễ (tính bằng mili giây)
@@ -173,7 +159,7 @@ export async function POST(
     if (delayHours >= 2) {
       return new NextResponse(
         JSON.stringify({
-          error: eventCalendarPostMessage.lateAttendance,
+          error: t("toastError.attendance.lateAttendance"),
         }),
         { status: 500 }
       );
@@ -238,7 +224,7 @@ export async function POST(
         break;
       default:
         return new NextResponse(
-          JSON.stringify({ error: eventCalendarPostMessage.invalidWorkingTime }),
+          JSON.stringify({ error: t("toastError.attendance.invalidWorkingTime") }),
           { status: 400 }
         );
     }
@@ -302,7 +288,7 @@ export async function POST(
       return NextResponse.json(eventCalendar);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: eventCalendarPostMessage.internalError }),
+      JSON.stringify({ error: t("toastError.attendance.intternalErrorPostAttendance") }),
       { status: 500 }
     );
   }
@@ -314,49 +300,38 @@ export async function PATCH(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const eventCalendarPatchMessage = translateEvenCalendarPatch(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
     const { title, start, allDay, attendancestart, attendanceend } = body;
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: eventCalendarPatchMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role === UserRole.GUEST || user.role === UserRole.USER) {
       return new NextResponse(
-        JSON.stringify({ error: eventCalendarPatchMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!start) {
-      return new NextResponse(JSON.stringify({ error: eventCalendarPatchMessage.startRequired }), {
+      return new NextResponse(JSON.stringify({ error: t("toastError.attendance.startRequired") }), {
         status: 403,
       });
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: eventCalendarPatchMessage.storeIdRequired }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: eventCalendarPatchMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -376,7 +351,7 @@ export async function PATCH(
     return NextResponse.json(eventCalendar);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: eventCalendarPatchMessage.internalError }),
+      JSON.stringify({ error: t("toastError.attendance.intternalErrorPatchAttendance") }),
       { status: 500 }
     );
   }
@@ -388,8 +363,10 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const eventCalendarDeleteMessage = translateEvenCalendarDelete(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     // Extract event ID from the request body
@@ -397,43 +374,29 @@ export async function DELETE(
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: eventCalendarDeleteMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role === UserRole.GUEST || user.role === UserRole.USER) {
       return new NextResponse(
-        JSON.stringify({ error: eventCalendarDeleteMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!eventId) {
       return new NextResponse(
-        JSON.stringify({ error: eventCalendarDeleteMessage.eventIdRequired }),
+        JSON.stringify({ error: t("toastError.attendance.eventcalendarIdRequired") }),
         { status: 403 }
       );
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: eventCalendarDeleteMessage.storeIdRequired }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 400 }
-      );
-    }
-
-    // Check if the user has access to the specified store
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: eventCalendarDeleteMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -448,7 +411,7 @@ export async function DELETE(
     return NextResponse.json(deletedEvent);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: eventCalendarDeleteMessage.internalError }),
+      JSON.stringify({ error: t("toastError.attendance.intternalErrorDeleteAttendance")}),
       { status: 500 }
     );
   }

@@ -4,23 +4,15 @@ import HeadingDescription from "./Head-Deas";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import {
-  translateBuildingMaterialsStore,
-  translateViewProduct,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 type Props = {
   url: string;
-  languageToUse: string;
 };
 
-const Video: React.FC<Props> = ({ url, languageToUse }) => {
+const Video: React.FC<Props> = ({ url }) => {
+  const t = useTranslations()
   const router = useRouter();
-
-  //languages
-  const buildingMaterialStoreMessage =
-    translateBuildingMaterialsStore(languageToUse);
-  const viewProductMessage = translateViewProduct(languageToUse);
 
   const handleClickProduct = () => {
     router.push("/home-product");
@@ -40,7 +32,7 @@ const Video: React.FC<Props> = ({ url, languageToUse }) => {
         <HeadingDescription
           fontSizeheading="33px"
           fontSizedescription="25px"
-          heading={buildingMaterialStoreMessage}
+          heading={t("home.buildingMaterialStore")}
           description="Trường Đạt"
           colordes="#fff"
           color="#fff"
@@ -50,7 +42,7 @@ const Video: React.FC<Props> = ({ url, languageToUse }) => {
           <Button className="video-button-text">
             {" "}
             {
-              viewProductMessage
+              t("home.viewProduct")
             } <ArrowRight className="video-button-icon" />{" "}
           </Button>
         </div>

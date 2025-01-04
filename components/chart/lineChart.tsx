@@ -11,7 +11,7 @@ import {
   YAxis,
 } from "recharts";
 import { Skeleton } from "../ui/skeleton";
-import { translateSelectDateMessage } from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface GraphData {
   name: string;
@@ -20,16 +20,13 @@ interface GraphData {
 interface LineChartProps {
   data: GraphData[];
   loading: boolean;
-  languageToUse: string;
 }
 
 export const LineChart: React.FC<LineChartProps> = ({
   data,
   loading,
-  languageToUse,
 }) => {
-  //language
-  const selectDataMessgae = translateSelectDateMessage(languageToUse);
+  const t = useTranslations()
 
   if (loading) {
     return (
@@ -44,7 +41,7 @@ export const LineChart: React.FC<LineChartProps> = ({
   if (!data) {
     return (
       <div className="w-full h-[350px] flex items-center justify-center">
-        <span className="text-center">{selectDataMessgae}</span>
+        <span className="text-center">{t("chart.selectDate")}</span>
       </div>
     );
   }

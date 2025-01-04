@@ -6,7 +6,7 @@ import { currentUser } from "@/lib/auth";
 import { sendUpdateManageStaff } from "@/lib/mail-sendUpdate-Staff";
 import { sendDismissal } from "@/lib/mail";
 import { format } from "date-fns";
-import { translateManageStaffIdDelete, translateManageStaffIdGet, translateManageStaffIdPatch } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 type ManageStaffValue =
   | string
@@ -34,26 +34,28 @@ export async function GET(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const manageStaffIdGetMessage = translateManageStaffIdGet(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!params.managestaffId) {
       return new NextResponse(
-        JSON.stringify({ error: manageStaffIdGetMessage.manageStaffIdRequired }),
+        JSON.stringify({ error: t("toastError.user.manageStaffIdRequired") }),
         { status: 400 }
       );
     }
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: manageStaffIdGetMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: manageStaffIdGetMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -67,7 +69,7 @@ export async function GET(
     return NextResponse.json(managestaff);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: manageStaffIdGetMessage.internalError }),
+      JSON.stringify({ error: t("toastError.user.internalErrorGetUser") }),
       { status: 500 }
     );
   }
@@ -79,40 +81,29 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const manageStaffIdDelteMessage = translateManageStaffIdDelete(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: manageStaffIdDelteMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: manageStaffIdDelteMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!params.managestaffId) {
       return new NextResponse(
-        JSON.stringify({ error: manageStaffIdDelteMessage.manageStaffIdRequired }),
+        JSON.stringify({ error: t("toastError.user.manageStaffIdRequired") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: manageStaffIdDelteMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -160,7 +151,7 @@ export async function DELETE(
     return NextResponse.json(managestaff);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: manageStaffIdDelteMessage.internalError }),
+      JSON.stringify({ error: t("toastError.user.internalErrorDeleteUser") }),
       { status: 500 }
     );
   }
@@ -172,8 +163,10 @@ export async function PATCH(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const manageStaffIdPatchMessage = translateManageStaffIdPatch(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
     const {
@@ -199,104 +192,91 @@ export async function PATCH(
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: manageStaffIdPatchMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: manageStaffIdPatchMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error:  manageStaffIdPatchMessage.nameRequired }), {
+      return new NextResponse(JSON.stringify({ error:  t("toastError.nameRequired") }), {
         status: 400,
       });
     }
 
     if (!numberCCCD) {
       return new NextResponse(
-        JSON.stringify({ error: manageStaffIdPatchMessage.cmndRequired }),
+        JSON.stringify({ error: t("toastError.user.cmndRequired") }),
         { status: 400 }
       );
     }
 
     if (!issued) {
       return new NextResponse(
-        JSON.stringify({ error: manageStaffIdPatchMessage.placeIssuedRequired }),
+        JSON.stringify({ error: t("toastError.user.placeIssuedRequired") }),
         { status: 400 }
       );
     }
 
     if (!gender) {
       return new NextResponse(
-        JSON.stringify({ error: manageStaffIdPatchMessage.genderRequired }),
+        JSON.stringify({ error: t("toastError.user.genderRequired") }),
         { status: 400 }
       );
     }
 
     if (!degree) {
       return new NextResponse(
-        JSON.stringify({ error: manageStaffIdPatchMessage.degreeRequired }),
+        JSON.stringify({ error: t("toastError.user.degreeRequired") }),
         { status: 400 }
       );
     }
 
     if (!phonenumber) {
       return new NextResponse(
-        JSON.stringify({ error: manageStaffIdPatchMessage.phoneRequired }),
+        JSON.stringify({ error: t("toastError.user.phoneRequired") }),
         { status: 400 }
       );
     }
 
     if (!workingTime) {
       return new NextResponse(
-        JSON.stringify({ error: manageStaffIdPatchMessage.workingTimeRequired }),
+        JSON.stringify({ error: t("toastError.user.workingTimeRequired") }),
         { status: 400 }
       );
     }
 
     if (!imageCredential) {
       return new NextResponse(
-        JSON.stringify({ error: manageStaffIdPatchMessage.imageRequired }),
+        JSON.stringify({ error: t("toastError.user.imageRequired") }),
         { status: 400 }
       );
     }
 
     if (!daywork) {
       return new NextResponse(
-        JSON.stringify({ error: manageStaffIdPatchMessage.choosePositionRequired }),
+        JSON.stringify({ error: t("toastError.user.choosePositionRequired") }),
         { status: 400 }
       );
     }
 
     if (!maritalStatus) {
       return new NextResponse(
-        JSON.stringify({ error: manageStaffIdPatchMessage.maritalStatusRequired }),
+        JSON.stringify({ error: t("toastError.user.maritalStatusRequired") }),
         { status: 400 }
       );
     }
 
     if (!params.managestaffId) {
       return new NextResponse(
-        JSON.stringify({ error: manageStaffIdPatchMessage.manageStaffIdRequired }),
+        JSON.stringify({ error: t("toastError.user.manageStaffIdRequired") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: manageStaffIdPatchMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -441,7 +421,7 @@ const isImageCredentialChanged = !existingImageCredentials.some((existingImage) 
     return NextResponse.json(managestaff);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: manageStaffIdPatchMessage.internalError }),
+      JSON.stringify({ error: t("toastError.user.internalErrorPatchUser") }),
       { status: 500 }
     );
   }

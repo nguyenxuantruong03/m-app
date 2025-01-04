@@ -1,32 +1,34 @@
 import { currentUser } from '@/lib/auth';
 import prismadb from '@/lib/prismadb';
-import { translateCartAddItem } from '@/translate/translate-api';
+import { createTranslator } from 'next-intl';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const cartAddItemMessage = translateCartAddItem(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
     const { productId, quantity, userId, warranty,size,color } = body;
 
     if (!userId) {
         return new NextResponse(
-          JSON.stringify({ error: cartAddItemMessage.userIdNotFound }),
+          JSON.stringify({ error: t("toastError.userNotFound") }),
           { status: 403 }
         );
       }
       if (!quantity) {
         return new NextResponse(
-          JSON.stringify({ error: cartAddItemMessage.quantityNotFound }),
+          JSON.stringify({ error: t("toastError.quantityNotFound") }),
           { status: 403 }
         );
       }
       if (!productId) {
         return new NextResponse(
-          JSON.stringify({ error: cartAddItemMessage.productIdNotFound }),
+          JSON.stringify({ error: t("toastError.productIdNotFound") }),
           { status: 403 }
         );
       }
@@ -56,7 +58,7 @@ export async function POST(req: Request) {
     }
   } catch(error) {
     return new NextResponse(
-        JSON.stringify({ error: cartAddItemMessage.internalError }),
+        JSON.stringify({ error: t("toastError.internalErrorCartAddItem") }),
         { status: 500 }
       );
   }

@@ -1,25 +1,16 @@
-import {
-  translateCorporateCustomer,
-  translateWarrantyPolicy,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 
-interface ServiceInfomationProps {
-  languageToUse: string;
-}
-
-const ServiceInfomation = ({ languageToUse }: ServiceInfomationProps) => {
-  //language
-  const corporateCustomerMessage = translateCorporateCustomer(languageToUse);
-  const warrantyPolicyMessage = translateWarrantyPolicy(languageToUse);
+const ServiceInfomation = () => {
+  const t = useTranslations()
 
   return (
     <>
       <Link href="/enterprise">
-        <div>{corporateCustomerMessage}</div>
+        <div>{t("footer.corporateCustomer")}</div>
       </Link>
       <Link href="/guarantee">
-        <div>{warrantyPolicyMessage}</div>
+        <div>{t("footer.warrantyPolicy")}</div>
       </Link>
     </>
   );

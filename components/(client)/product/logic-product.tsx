@@ -1,29 +1,11 @@
 "use client";
 import getAllProduct from "@/actions/client/product/get-all-product";
 import MainProduct from "./mainproduct";
-import { useCurrentUser } from "@/hooks/use-current-user";
 import { useEffect, useState } from "react";
-import LoadingPageComponent from "@/components/ui/loading";
 
 const LogicProduct = () => {
-  const user = useCurrentUser();
   const [products, setProducts] = useState<any[]>([]);
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
   const [loading,setLoading] = useState(false)
-
-  useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []);
-
-  //language
-  const languageToUse =
-    user?.id && user?.role !== "GUEST"
-      ? user?.language
-      : storedLanguage || "vi";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -172,7 +154,6 @@ const LogicProduct = () => {
           dothuongdung={dothuongdung}
           maxTimeSale={maxTimeSale}
           aggregatedProductTypes={aggregatedProductTypes}
-          languageToUse={languageToUse}
         />
     </>
   );

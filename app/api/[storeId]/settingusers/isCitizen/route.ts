@@ -1,28 +1,30 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
-import { translateSettingUserIsCitizen } from "@/translate/translate-api";
 import { UserRole } from "@prisma/client";
+import { createTranslator } from "next-intl";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const settingUserIsCitizenMessage = translateSettingUserIsCitizen(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
 
   const body = await req.json();
   const { userId } = body;
 
   if (!user) {
     return new NextResponse(
-      JSON.stringify({ error: settingUserIsCitizenMessage.userIdNotFound }),
+      JSON.stringify({ error: t("toastError.userNotFound") }),
       { status: 403 }
     );
   }
 
   if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
     return new NextResponse(
-      JSON.stringify({ error: settingUserIsCitizenMessage.permissionDenied }),
+      JSON.stringify({ error: t("toastError.permissionDenied") }),
       { status: 403 }
     );
   }
@@ -37,7 +39,7 @@ export async function POST(req: Request) {
     return NextResponse.json(banuser);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: settingUserIsCitizenMessage.internalError }),
+      JSON.stringify({ error: t("toastError.user.internalErrorCitizen") }),
       {
         status: 500,
       }
@@ -48,21 +50,23 @@ export async function POST(req: Request) {
 export async function PATCH(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const settingUserIsCitizenMessage = translateSettingUserIsCitizen(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   
   const body = await req.json();
   const { userId } = body;
 
   if (!user) {
-    return new NextResponse(JSON.stringify({ error: settingUserIsCitizenMessage.userIdNotFound }), {
+    return new NextResponse(JSON.stringify({ error: t("toastError.userNotFound") }), {
       status: 400,
     });
   }
 
   if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
     return new NextResponse(
-      JSON.stringify({ error: settingUserIsCitizenMessage.permissionDenied }),
+      JSON.stringify({ error: t("toastError.permissionDenied") }),
       { status: 403 }
     );
   }
@@ -77,7 +81,7 @@ export async function PATCH(req: Request) {
     return NextResponse.json(banuser);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: settingUserIsCitizenMessage.internalError }),
+      JSON.stringify({ error: t("toastError.user.internalErrorCitizen") }),
       {
         status: 500,
       }

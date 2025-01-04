@@ -1,41 +1,26 @@
 "use client";
 import CardWrapper from "@/components/auth/card-wrapper";
-import {
-  getErrorMessage,
-  translateBackToLogin,
-  translateErrorMessage,
-} from "@/translate/translate-client";
 import { AlertTriangle } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 const ErrorCard = () => {
+  const t = useTranslations()
   //language
   const [language, setLanguage] = useState("vi");
   const [isOpen, setOpen] = useState(false);
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  const languageToUse = language;
 
   useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []);
-
-  const languageToUse = storedLanguage || language;
-  const backToLoginMessage = translateBackToLogin(languageToUse);
-  const erorMessage = translateErrorMessage(languageToUse);
-  const errorTitleMessage = getErrorMessage(languageToUse);
-
-  useEffect(() => {
-    document.title = errorTitleMessage.error;
+    document.title = t("action.error");
   }, []);
 
   return (
     <CardWrapper
-      headerLabel={erorMessage}
+      headerLabel={t("auth.error")}
       backButtonHref="/auth/login"
-      backButtonLabel={backToLoginMessage}
+      backButtonLabel={t("auth.backToLogin")}
       setLanguage={setLanguage}
       languageToUse={languageToUse}
       setOpen={setOpen}

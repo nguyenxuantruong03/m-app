@@ -6,22 +6,7 @@ import {
   Tooltip,
 } from "recharts";
 import { Skeleton } from "../ui/skeleton";
-import {
-  translateCuttingStone,
-  translateElectricWire,
-  translateFan,
-  translateGlue,
-  translateLightBulb,
-  translateLock,
-  translatePaint,
-  translatePin,
-  translatePipe,
-  translateSocket,
-  translateBathroom,
-  translateCommonUse,
-  translateSelectDateMessage,
-  translateSalesData,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface ProductData {
   totalSold: number;
@@ -35,43 +20,27 @@ type RadialChartData = Record<string, ProductData>;
 interface RadialChartProps {
   radialChartData: RadialChartData | null | undefined; // Định nghĩa kiểu cho phép null hoặc undefined
   loading: boolean;
-  languageToUse: string;
 }
 
 const RadialChart = ({
   radialChartData,
   loading,
-  languageToUse,
 }: RadialChartProps) => {
-  //languages
-  const selectDataMessgae = translateSelectDateMessage(languageToUse);
-  const pinMesage = translatePin(languageToUse);
-  const fanMessage = translateFan(languageToUse);
-  const pipeMessage = translatePipe(languageToUse);
-  const electricWireMessage = translateElectricWire(languageToUse);
-  const cuttingStoneMessage = translateCuttingStone(languageToUse);
-  const lockMessage = translateLock(languageToUse);
-  const glueMessage = translateGlue(languageToUse);
-  const socketMessage = translateSocket(languageToUse);
-  const paintMessage = translatePaint(languageToUse);
-  const bathroomMessage = translateBathroom(languageToUse);
-  const lightBlubMessage = translateLightBulb(languageToUse);
-  const commonUseMessage = translateCommonUse(languageToUse);
-  const salesDataMessage = translateSalesData(languageToUse);
+  const t = useTranslations()
 
   const productTypeDisplayNames: Record<string, string> = {
-    PRODUCT: pinMesage,
-    PRODUCT1: fanMessage,
-    PRODUCT2: pipeMessage,
-    PRODUCT3: electricWireMessage,
-    PRODUCT4: cuttingStoneMessage,
-    PRODUCT5: lockMessage,
-    PRODUCT6: glueMessage,
-    PRODUCT7: socketMessage,
-    PRODUCT8: paintMessage,
-    PRODUCT9: bathroomMessage,
-    PRODUCT10: lightBlubMessage,
-    PRODUCT11: commonUseMessage,
+    PRODUCT: t("product.pin"),
+    PRODUCT1: t("product.fan"),
+    PRODUCT2: t("product.pipe"),
+    PRODUCT3: t("product.electricWire"),
+    PRODUCT4: t("product.cuttingStone"),
+    PRODUCT5: t("product.lock"),
+    PRODUCT6: t("product.glue"),
+    PRODUCT7: t("product.socket"),
+    PRODUCT8: t("product.paint"),
+    PRODUCT9: t("product.bathroom"),
+    PRODUCT10: t("product.lightBlub"),
+    PRODUCT11: t("product.commonItem"),
   };
   if (loading) {
     return (
@@ -87,7 +56,7 @@ const RadialChart = ({
     return (
       <div className="w-full h-[350px] flex items-center justify-center">
         <span className="text-center dark:text-slate-500 text-slate-900">
-          {selectDataMessgae}
+          {t("chart.selectDate")}
         </span>
       </div>
     );
@@ -135,7 +104,7 @@ const RadialChart = ({
     return (
       <div className="w-full h-[350px] flex items-center justify-center">
         <span className="text-center dark:text-slate-500 text-slate-900">
-          {selectDataMessgae}
+          {t("chart.selectDate")}
         </span>
       </div>
     );
@@ -176,7 +145,7 @@ const RadialChart = ({
           </RadialBarChart>
         </ResponsiveContainer>
         <h4 className="text-center font-semibold text-red-500">
-          {salesDataMessage.name1}
+          {t("chart.totalSold")}
         </h4>
       </div>
 
@@ -207,7 +176,7 @@ const RadialChart = ({
           </RadialBarChart>
         </ResponsiveContainer>
         <h4 className="text-center font-semibold text-green-500">
-          {salesDataMessage.name2}
+          {t("chart.totalOrderItems")}
         </h4>
       </div>
     </div>

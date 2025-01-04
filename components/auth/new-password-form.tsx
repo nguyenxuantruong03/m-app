@@ -20,15 +20,10 @@ import FormError from "@/components/form-error";
 import FormSuccess from "@/components/form-success";
 import { newPassword } from "@/actions/actions-signin-sign-up/new-password";
 import PasswordField from "./field/passwordfield";
-import {
-  getPasswordNewMessages,
-  translateBackToLogin,
-  translateEnterNewPasswordTitle,
-  translateNewPassword,
-  translateResetPassword,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 const NewPasswordForm = () => {
+  const t = useTranslations()
   const searchParam = useSearchParams();
   const token = searchParam.get("token");
 
@@ -41,29 +36,14 @@ const NewPasswordForm = () => {
   //language
   const [language, setLanguage] = useState("vi");
   const [isOpen, setOpen] = useState(false);
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
 
-  useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []);
-
-  const languageToUse = storedLanguage || language;
-  const enterNewPasswordTitleMessage =
-    translateEnterNewPasswordTitle(languageToUse);
-  const backToLoginMessage = translateBackToLogin(languageToUse);
-  const newPasswordMessage = translateNewPassword(languageToUse);
-  const resetPasswordMessage = translateResetPassword(languageToUse);
-  const passwordResetMessage = getPasswordNewMessages(languageToUse);
+  const languageToUse = language;
 
   useEffect(() => {
     if (isPending) {
-      document.title = passwordResetMessage.loading;
+      document.title = t("loading.loading");
     } else {
-      document.title = passwordResetMessage.newPassword;
+      document.title = t("formInfo.newPassword");
     }
   }, [isPending]);
 
@@ -93,9 +73,9 @@ const NewPasswordForm = () => {
   };
   return (
     <CardWrapper
-      headerLabel={enterNewPasswordTitleMessage}
+      headerLabel={t("auth.enterNewPasswordTitle")}
       backButtonHref="/auth/login"
-      backButtonLabel={backToLoginMessage}
+      backButtonLabel={t("auth.backToLogin")}
       setLanguage={setLanguage}
       languageToUse={languageToUse}
       isPending={isPending}
@@ -110,10 +90,9 @@ const NewPasswordForm = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{newPasswordMessage}</FormLabel>
+                  <FormLabel>{t("formInfo.newPassword")}</FormLabel>
                   <FormControl>
                     <PasswordField
-                      languageToUse={languageToUse}
                       field={field}
                       isPending={isPending}
                       validatePassword={setPasswordValid}
@@ -141,7 +120,7 @@ const NewPasswordForm = () => {
             type="submit"
             disabled={isPending || !isPasswordValid}
           >
-            {resetPasswordMessage}
+            {t("auth.resetPassword")}
           </Button>
         </form>
       </Form>

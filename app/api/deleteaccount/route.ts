@@ -1,19 +1,20 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
-import { translateUserDeleteAccount } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 import { NextResponse } from "next/server";
 
 export async function DELETE() {
   const userId = await currentUser();
-//language
-const LanguageToUse = userId?.language || "vi";
-const userDeleteAccountMessage = translateUserDeleteAccount(LanguageToUse)
+  //language
+  const languageToUse = userId?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
 
   try {
-
     if (!userId) {
       return new NextResponse(
-        JSON.stringify({ error: userDeleteAccountMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
@@ -49,7 +50,7 @@ const userDeleteAccountMessage = translateUserDeleteAccount(LanguageToUse)
     return NextResponse.json(user);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: userDeleteAccountMessage.internalError }),
+      JSON.stringify({ error: t("toastError.internalErrorDeleteUser") }),
       { status: 500 }
     );
   }

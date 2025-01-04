@@ -7,10 +7,7 @@ import {
   Sector,
 } from "recharts";
 import { Skeleton } from "../ui/skeleton";
-import {
-  translateDeliveryOptions,
-  translateSelectDateMessage,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface PieChartProps {
   pieChartData: {
@@ -20,7 +17,6 @@ interface PieChartProps {
     createdAt: string;
   };
   loading: boolean;
-  languageToUse: string;
 }
 
 const COLORS = [
@@ -95,10 +91,8 @@ const activeShape = (props: any) => {
   );
 };
 
-const PieChart = ({ pieChartData, loading, languageToUse }: PieChartProps) => {
-  //languages
-  const selectDataMessgae = translateSelectDateMessage(languageToUse);
-  const deliveryOptionMessage = translateDeliveryOptions(languageToUse);
+const PieChart = ({ pieChartData, loading }: PieChartProps) => {
+  const t = useTranslations()
 
   if (loading) {
     return (
@@ -114,7 +108,7 @@ const PieChart = ({ pieChartData, loading, languageToUse }: PieChartProps) => {
     return (
       <div className="w-full h-[350px] flex items-center justify-center">
         <span className="text-center dark:text-slate-500 text-slate-900">
-          {selectDataMessgae}
+          {t("chart.selectDate")}
         </span>
       </div>
     );
@@ -122,28 +116,28 @@ const PieChart = ({ pieChartData, loading, languageToUse }: PieChartProps) => {
 
   const data01 = [
     {
-      name: deliveryOptionMessage.name1,
+      name: t("chart.pickupDelivery"),
       value: pieChartData?.deliveryMethod?.pickup,
     },
     {
-      name: deliveryOptionMessage.name2,
+      name: t("chart.onlineDelivery"),
       value: pieChartData?.deliveryMethod?.online,
     },
   ];
 
   const data02 = [
-    { name: deliveryOptionMessage.name3, value: pieChartData?.gender?.male },
-    { name: deliveryOptionMessage.name4, value: pieChartData?.gender?.female },
-    { name: deliveryOptionMessage.name5, value: pieChartData?.gender?.other },
+    { name: t("chart.male"), value: pieChartData?.gender?.male },
+    { name: t("chart.female"), value: pieChartData?.gender?.female },
+    { name: t("chart.other"), value: pieChartData?.gender?.other },
   ];
 
   const data03 = [
     {
-      name: deliveryOptionMessage.name6,
+      name: t("chart.pickupReturn"),
       value: pieChartData?.returnProduct?.pickup,
     },
     {
-      name: deliveryOptionMessage.name7,
+      name: t("chart.onlineReturn"),
       value: pieChartData?.returnProduct?.online,
     },
   ];
@@ -229,29 +223,29 @@ const PieChart = ({ pieChartData, loading, languageToUse }: PieChartProps) => {
       >
         <div>
           <div style={{ color: COLORS[0][0] }}>
-            ● {deliveryOptionMessage.name1}
+            ● {t("chart.pickupDelivery")}
           </div>
           <div style={{ color: COLORS[0][1] }}>
-            ● {deliveryOptionMessage.name2}
+            ● {t("chart.onlineDelivery")}
           </div>
         </div>
         <div>
           <div style={{ color: COLORS[1][0] }}>
-            ● {deliveryOptionMessage.name3}
+            ● {t("chart.male")}
           </div>
           <div style={{ color: COLORS[1][1] }}>
-            ● {deliveryOptionMessage.name4}
+            ● {t("chart.female")}
           </div>
           <div style={{ color: COLORS[1][2] }}>
-            ● {deliveryOptionMessage.name5}
+            ● {t("chart.other")}
           </div>
         </div>
         <div>
           <div style={{ color: COLORS[2][0] }}>
-            ● {deliveryOptionMessage.name6}
+            ● {t("chart.pickupReturn")}
           </div>
           <div style={{ color: COLORS[2][1] }}>
-            ● {deliveryOptionMessage.name7}
+            ● {t("chart.onlineReturn")}
           </div>
         </div>
       </div>

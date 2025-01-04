@@ -1,13 +1,19 @@
-import { currentUser } from "@/lib/auth"
-import prismadb from "@/lib/prismadb"
-import { NextResponse } from "next/server"
+import { currentUser } from "@/lib/auth";
+import prismadb from "@/lib/prismadb";
+import { createTranslator } from "next-intl";
+import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
+  const user = await currentUser();
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
-    const user = await currentUser()
-
     if (!user?.id || !user?.email) {
-      return new Response("Unauthorized", { status: 401 })
+      return new NextResponse(JSON.stringify({ error: t("toastError.userNotFound") }), {
+        status: 403,
+      });
     }
 
     const unseenMessages = await prismadb.message.findMany({
@@ -26,9 +32,11 @@ export async function GET(request: Request) {
         ],
       },
     });
-    
-    return NextResponse.json(unseenMessages)
+
+    return NextResponse.json(unseenMessages);
   } catch (error: any) {
-    return new NextResponse("InternalError", { status: 500 })
+    return new NextResponse(JSON.stringify({ error: t("toastError.intternalErrorGetUnseen") }), {
+      status: 500,
+    });
   }
 }

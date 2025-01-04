@@ -8,36 +8,24 @@ import { updateStream } from "@/actions/stream/stream";
 import { toast } from "react-hot-toast";
 import ImageUpload from "../ui/image-upload";
 import { X } from "lucide-react";
-import { getToastError, translateCancel, translateEdit, translateEditInfoStream, translateName, translateSave, translateStreamName, translateStreamUpdated, translateThumbnail } from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface InfoModalProps {
   initialName: string;
   initialThumbnailUrl: string | null;
-  languageToUse: string;
 }
 
 export const InfoModal = ({
   initialName,
   initialThumbnailUrl,
-  languageToUse
 }: InfoModalProps) => {
+  const t = useTranslations()
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [name, setName] = useState(initialName);
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(
     initialThumbnailUrl
   );
-
-  //language
-  const toastErrorMessage = getToastError(languageToUse)
-  const streamUpdatedMessage = translateStreamUpdated(languageToUse)
-  const editMessage = translateEdit(languageToUse)
-  const editInfoStreamMessage = translateEditInfoStream(languageToUse)
-  const nameMessage = translateName(languageToUse)
-  const thumbnailMessage = translateThumbnail(languageToUse)
-  const cancelMessage = translateCancel(languageToUse)
-  const saveMessage = translateSave(languageToUse)
-  const streamNameMessage = translateStreamName(languageToUse)
 
   useEffect(() => {
     if (open) {
@@ -56,12 +44,12 @@ export const InfoModal = ({
     e.preventDefault();
 
     startTransition(() => {
-      updateStream({ name: name, thumbnailUrl: thumbnailUrl},languageToUse)
+      updateStream({ name: name, thumbnailUrl: thumbnailUrl})
         .then(() => {
-          toast.success(streamUpdatedMessage);
+          toast.success(t("profile.streamUpdated"));
           setOpen(false);
         })
-        .catch(() => toast.error(toastErrorMessage));
+        .catch(() => toast.error(t("toastError.somethingWentWrong")));
     });
   };
 
@@ -85,7 +73,7 @@ export const InfoModal = ({
         className="ml-auto"
         onClick={() => setOpen(true)}
       >
-        {editMessage}
+        {t("action.edit")}
       </Button>
       {open && (
         <>
@@ -93,7 +81,7 @@ export const InfoModal = ({
             <div className="h-max w-3/4 max-w-md border rounded-md gap-4 bg-slate-900 p-6 shadow-lg transition ease-in-out z-50">
               <div className="flex items-center justify-between">
                 <span className="text-lg font-semibold text-foreground break-all line-clamp-2 text-white">
-                  {editInfoStreamMessage}
+                  {t("profile.editInfoStream")}
                 </span>
                 <span
                   onClick={() => setOpen(false)}
@@ -104,16 +92,16 @@ export const InfoModal = ({
               </div>
               <form onSubmit={onSumbit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label className="text-gray-300">{nameMessage}</Label>
+                  <Label className="text-gray-300">{t("profile.name")}</Label>
                   <Input
                     disabled={isPending}
-                    placeholder={streamNameMessage}
+                    placeholder={t("profile.streamName")}
                     onChange={onChange}
                     value={name}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-gray-300">{thumbnailMessage}</Label>
+                  <Label className="text-gray-300">{t("profile.thumbnail")}</Label>
                   <div className="flex items-center justify-center">
                     <ImageUpload
                       value={thumbnailUrl ? [thumbnailUrl] : []} // Pass an array with the single string
@@ -121,7 +109,6 @@ export const InfoModal = ({
                       onChange={handleImageChange} // Handle the new image
                       onRemove={handleImageRemove} // Handle removing the image
                       maxFiles={1}
-                      language={languageToUse}
                     />
                   </div>
                 </div>
@@ -132,10 +119,10 @@ export const InfoModal = ({
                     variant="secondary"
                     onClick={() => setOpen(false)}
                   >
-                    {cancelMessage}
+                    {t("action.cancel")}
                   </Button>
                   <Button disabled={isPending} variant="primary" type="submit">
-                    {saveMessage}
+                    {t("action.save")}
                   </Button>
                 </div>
               </form>

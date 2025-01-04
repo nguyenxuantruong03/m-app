@@ -4,20 +4,21 @@ import { getSelf } from "@/lib/stream/auth-service";
 import prismadb from "@/lib/prismadb";
 import { Stream } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-import { translateChatLimitSuccess, translateStreamNotFound } from "@/translate/translate-client";
+import { createTranslator } from "next-intl";
 
-export const delaychat = async (values: Partial<Stream>,languageToUse: string) => {
+export const delaychat = async (values: Partial<Stream>) => {
   const self = await getSelf();
   const selfStream = await prismadb.stream.findUnique({
     where: { userId: self.id },
   });
-
-  //languages
-  const streamNotFoundMessage = translateStreamNotFound(languageToUse)
+  const languageToUse = self?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   if (!selfStream) {
     return {
-      error: streamNotFoundMessage,
+      error: t("profile.streamNotFound"),
     };
   }
 
@@ -38,10 +39,9 @@ export const delaychat = async (values: Partial<Stream>,languageToUse: string) =
   revalidatePath(`/me/${self.nameuser}/chat`);
 
   const delayInSeconds = stream.timeDelay / 1000
-  const chatLimitSuccessMessage = translateChatLimitSuccess(languageToUse,delayInSeconds)
 
   return {
-    success: chatLimitSuccessMessage,
+    success: t("profile.chatLimitSuccess",{delayInSeconds: delayInSeconds}),
     stream,
   };
 };

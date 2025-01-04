@@ -7,15 +7,14 @@ import {
   getSizePrice,
 } from "@/components/(client)/export-product-compare/size-color/match-color-size";
 import getFavoriteProduct from "@/actions/client/favoriteProduct";
-import { getToastError, translateLoginToAddToWishlist, translateProductRemovedFromWishlist, translateProductSaved, translateProductToWishlist } from "@/translate/translate-client";
 
 export type FavoriteUnion = FavoriteProduct;
 
 interface LikeStore {
   items: FavoriteUnion[];
   userId: string | null;
-  addItem: (data: FavoriteUnion, languageToUse: string) => void;
-  removeItem: (id: string, userId: string, languageToUse: string) => void;
+  addItem: (data: FavoriteUnion) => void;
+  removeItem: (id: string, userId: string) => void;
   sortType: string | null;
   setSortType: (sortType: string | null) => void; // Add a method to set the sorting preference
   getSortedItems: () => FavoriteUnion[];
@@ -42,30 +41,7 @@ const useFavorite = create<LikeStore>((set, get) => ({
   },
   
 
-  addItem: async (data: FavoriteUnion, languageToUse: string) => {
-    //languages
-    const loginToAddToWishlistMessage = translateLoginToAddToWishlist(languageToUse);
-    const productSaveMessage = translateProductSaved(languageToUse);
-    const productToWishlistMessage = translateProductToWishlist(languageToUse)
-    const toastErrorMessage = getToastError(languageToUse)
-
-    const existingItem = get().items.find(
-      (item) =>
-        item.productName === data.productName &&
-        item.productId === data.id &&
-        item.selectedSize === data.selectedSize &&
-        item.selectedColor === data.selectedColor
-    );
-    if (!data.userId) {
-      toast.error(loginToAddToWishlistMessage);
-      return;
-    }
-
-    if (existingItem) {
-      toast.error(productSaveMessage);
-      return;
-    }
-    
+  addItem: async (data: FavoriteUnion) => {
       try {
         await axios.post("/api/client/favoriteProduct", {
           id: data.id,
@@ -76,7 +52,6 @@ const useFavorite = create<LikeStore>((set, get) => ({
           selectedColor: data.selectedColor,
         });
         set({ items: [...get().items, { ...data }] });
-        toast.success(productToWishlistMessage);
       } catch (error: unknown) {
         if (
           (error as { response?: { data?: { error?: string } } }).response &&
@@ -89,23 +64,17 @@ const useFavorite = create<LikeStore>((set, get) => ({
             (error as { response: { data: { error: string } } }).response.data
               .error
           );
-        } else {
-          toast.error(toastErrorMessage);
         }
       }
   },
 
-  removeItem: async (id: string, userId: string, languageToUse: string) => {
-    //language
-    const productRemovedFromWishlistMessage = translateProductRemovedFromWishlist(languageToUse)
-    const toastErrorMessage = getToastError(languageToUse)
+  removeItem: async (id: string, userId: string) => {
 
     try {
       await axios.delete("/api/client/favoriteProduct", {
         data: { id: id, userId: userId },
       });
       set({ items: [...get().items.filter((item) => item.id !== id)] });
-      toast.success(productRemovedFromWishlistMessage);
     } catch (error: unknown) {
       if (
         (error as { response?: { data?: { error?: string } } }).response &&
@@ -118,8 +87,6 @@ const useFavorite = create<LikeStore>((set, get) => ({
           (error as { response: { data: { error: string } } }).response.data
             .error
         );
-      } else {
-        toast.error(toastErrorMessage);
       }
     }
   },

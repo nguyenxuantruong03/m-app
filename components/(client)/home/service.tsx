@@ -6,51 +6,10 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Container from "@/components/ui/container";
-import {
-  translateAlwaysProvideAccessories,
-  translateBestPricesForContractors,
-  translateCooperateWithBinhMinh,
-  translateElectricWire,
-  translateFurnitureServices,
-  translateHousing,
-  translatePlasticPipe,
-  translateProject,
-  translateSeeMore,
-  translateSpecializeInWires,
-} from "@/translate/translate-client";
-import { useCurrentUser } from "@/hooks/use-current-user";
-import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 const Service = () => {
-  const user = useCurrentUser();
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []);
-
-  //language
-  const languageToUse =
-    user?.id && user?.role !== "GUEST"
-      ? user?.language
-      : storedLanguage || "vi";
-  const furnitureServiceMessage = translateFurnitureServices(languageToUse);
-  const projectMessage = translateProject(languageToUse);
-  const bestPriceForContractorMessage =
-    translateBestPricesForContractors(languageToUse);
-  const housingMessage = translateHousing(languageToUse);
-  const alwayProvideAccessoriesMessage =
-    translateAlwaysProvideAccessories(languageToUse);
-  const electricWideMessage = translateElectricWire(languageToUse);
-  const specializeInWiresMessage = translateSpecializeInWires(languageToUse);
-  const plasticPipeMessage = translatePlasticPipe(languageToUse);
-  const cooperateWithBinhMinhMessage =
-    translateCooperateWithBinhMinh(languageToUse);
-  const seeMoreMessage = translateSeeMore(languageToUse);
+  const t = useTranslations()
 
   const router = useRouter();
   const handleClickProduct = () => {
@@ -61,7 +20,7 @@ const Service = () => {
       <Container>
         <div className="bg-service">
           <div className="w-full">
-            <HeadingEffect heading={furnitureServiceMessage} />
+            <HeadingEffect heading={t("home.furnitureService")} />
           </div>
           <div className=" md:flex md:space-x-5 mt-20 md:justify-between">
             <div className=" w-[300px] h-[285px] text-center rotate-on-hover relative mx-auto">
@@ -75,14 +34,14 @@ const Service = () => {
                 />
               </div>
               <p className="font-bold text-x text-slate-900">
-                {projectMessage}
+                {t("home.project")}
               </p>
-              <p className="text-slate-900">{bestPriceForContractorMessage}</p>
+              <p className="text-slate-900">{t("home.bestPriceForContractor")}</p>
               <Button
                 onClick={handleClickProduct}
                 className="absolute bottom-7 md:bottom-0 left-[30%]"
               >
-                {seeMoreMessage}
+                {t("action.seeMore")}
               </Button>
             </div>
             <div className=" w-[300px] h-[285px] text-center rotate-on-hover relative mx-auto">
@@ -96,14 +55,14 @@ const Service = () => {
                 />
               </div>
               <p className="font-bold text-xl text-slate-900">
-                {housingMessage}
+                {t("home.housing")}
               </p>
-              <p className="text-slate-900">{alwayProvideAccessoriesMessage}</p>
+              <p className="text-slate-900">{t("home.alwayProvideAccessories")}</p>
               <Button
                 onClick={handleClickProduct}
                 className="absolute bottom-7 md:bottom-0 left-[30%]"
               >
-                {seeMoreMessage}
+                {t("action.seeMore")}
               </Button>
             </div>
             <div className=" w-[300px] h-[285px] text-center rotate-on-hover relative mx-auto">
@@ -117,14 +76,14 @@ const Service = () => {
                 />
               </div>
               <p className="font-bold text-xl text-slate-900">
-                {electricWideMessage}
+                {t("home.electricWide")}
               </p>
-              <p className="text-slate-900">{specializeInWiresMessage}</p>
+              <p className="text-slate-900">{t("home.specializeInWires")}</p>
               <Button
                 onClick={handleClickProduct}
                 className="absolute bottom-7 md:bottom-0 left-[30%]"
               >
-                {seeMoreMessage}
+                {t("action.seeMore")}
               </Button>
             </div>
             <div className=" w-[300px] h-[285px] text-center rotate-on-hover relative mx-auto">
@@ -138,14 +97,14 @@ const Service = () => {
                 />
               </div>
               <p className="font-bold text-xl text-slate-900">
-                {plasticPipeMessage}
+                {t("home.plasticPipe")}
               </p>
-              <p className="text-slate-900">{cooperateWithBinhMinhMessage}</p>
+              <p className="text-slate-900">{t("home.cooperateWithBinhMinh")}</p>
               <Button
                 onClick={handleClickProduct}
                 className="absolute bottom-7 md:bottom-0 left-[30%]"
               >
-                {seeMoreMessage}
+                {t("action.seeMore")}
               </Button>
             </div>
           </div>

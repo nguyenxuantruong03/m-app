@@ -3,11 +3,7 @@ import { currentUser } from "@/lib/auth";
 
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
-import {
-  translateSentEmailDelete,
-  translateSentEmailGet,
-  translateSentEmailPost,
-} from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 export async function POST(
   req: Request,
@@ -15,8 +11,10 @@ export async function POST(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const sentEmailPostMessage = translateSentEmailPost(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     const body = await req.json();
@@ -24,56 +22,43 @@ export async function POST(
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailPostMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailPostMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!subject) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailPostMessage.subjectRequired }),
+        JSON.stringify({ error: t("toastError.sentemail.subjectRequired") }),
         { status: 400 }
       );
     }
 
     if (!description) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailPostMessage.descriptionRequired }),
+        JSON.stringify({ error: t("toastError.description") }),
         { status: 400 }
       );
     }
 
     if (!sentemailuser) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailPostMessage.userRequired }),
+        JSON.stringify({ error: t("toastError.sentemail.userRequired") }),
         { status: 400 }
       );
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailPostMessage.storeIdRequired }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: sentEmailPostMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -87,7 +72,7 @@ export async function POST(
 
     if (existingSubject) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailPostMessage.subjectAlreadyExists }),
+        JSON.stringify({ error: t("toastError.sentemail.subjectAlreadyExists") }),
         { status: 400 }
       );
     }
@@ -145,7 +130,7 @@ export async function POST(
     return NextResponse.json(sentEmailUser);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: sentEmailPostMessage.internalError }),
+      JSON.stringify({ error: t("toastError.sentemail.internalErrorPostSentEmail") }),
       { status: 500 }
     );
   }
@@ -157,27 +142,29 @@ export async function GET(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const sentEmailGetMessage = translateSentEmailGet(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailGetMessage.storeIdRequired }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 400 }
       );
     }
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailGetMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailGetMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -197,7 +184,7 @@ export async function GET(
     return NextResponse.json(sentEmailUsers);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: sentEmailGetMessage.internalError }),
+      JSON.stringify({ error: t("toastError.sentemail.internalErrorGetSentEmail") }),
       { status: 500 }
     );
   }
@@ -209,43 +196,32 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const sentEmailDeleteMessage = translateSentEmailDelete(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
     const { ids } = body;
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailDeleteMessage.userNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound")}),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailDeleteMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!ids || ids.length === 0) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailDeleteMessage.idsArrayNotEmpty }),
+        JSON.stringify({ error: t("toastError.idsArrayNotEmpty") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: sentEmailDeleteMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -287,10 +263,10 @@ export async function DELETE(
       },
     });
 
-    return NextResponse.json({ message: sentEmailDeleteMessage.deleteSuccess });
+    return NextResponse.json({ message: t("toastSuccess.deletionSuccess") });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: sentEmailDeleteMessage.internalError }),
+      JSON.stringify({ error: t("toastError.sentemail.internalErrorDeleteSentEmail") }),
       { status: 500 }
     );
   }

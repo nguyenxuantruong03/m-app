@@ -1,39 +1,42 @@
 import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { currentUser } from "@/lib/auth";
-import { translateEmojiDelete, translateEmojiGet, translateEmojiPost } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 export async function POST(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const emojiPostMessage = translateEmojiPost(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
+
   try {
     const body = await req.json();
     const { commentId, emoji, userId, productId, reviewId } = body;
     if (!userId) {
       return new NextResponse(
-        JSON.stringify({ error: emojiPostMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (!commentId && !reviewId) {
       return new NextResponse(
-        JSON.stringify({ error: emojiPostMessage.commentOrReviewIdNotFound }),
+        JSON.stringify({ error: t("toastError.commentOrReviewIdNotFound") }),
         { status: 400 }
       );
     }
 
     if (!emoji) {
-      return new NextResponse(JSON.stringify({ error: emojiPostMessage.emojiRequired }), {
+      return new NextResponse(JSON.stringify({ error: t("toastError.emojiRequired") }), {
         status: 400,
       });
     }
 
     if (!productId) {
       return new NextResponse(
-        JSON.stringify({ error: emojiPostMessage.productIdRequired }),
+        JSON.stringify({ error: t("toastError.productIdRequired") }),
         { status: 400 }
       );
     }
@@ -49,7 +52,7 @@ export async function POST(req: Request) {
 
       // Delete the existing emoji if found
       if (existingEmoji) {
-         await prismadb.emoji.delete({
+        await prismadb.emoji.delete({
           where: {
             id: existingEmoji.id,
           },
@@ -79,7 +82,7 @@ export async function POST(req: Request) {
           break;
         default:
           return new NextResponse(
-            JSON.stringify({ error: emojiPostMessage.invalidEmojiType }),
+            JSON.stringify({ error: t("toastError.invalidEmojiType") }),
             { status: 400 }
           );
       }
@@ -136,7 +139,7 @@ export async function POST(req: Request) {
           break;
         default:
           return new NextResponse(
-            JSON.stringify({ error: emojiPostMessage.invalidEmojiType }),
+            JSON.stringify({ error: t("toastError.invalidEmojiType") }),
             { status: 400 }
           );
       }
@@ -155,7 +158,7 @@ export async function POST(req: Request) {
     }
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: emojiPostMessage.internalError }),
+      JSON.stringify({ error: t("toastError.internalErrorEmojiPost") }),
       { status: 500 }
     );
   }
@@ -164,8 +167,10 @@ export async function POST(req: Request) {
 export async function DELETE(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const emojiDeleteMessage = translateEmojiDelete(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   const body = await req.json();
   const { commentId, emoji, userId, reviewId } = body;
@@ -180,7 +185,7 @@ export async function DELETE(req: Request) {
       });
 
       if (!emojiData) {
-        return new NextResponse(JSON.stringify({ error: emojiDeleteMessage.emojiNotFound }), {
+        return new NextResponse(JSON.stringify({ error: t("toastError.emojiNotFound") }), {
           status: 404,
         });
       }
@@ -202,7 +207,7 @@ export async function DELETE(req: Request) {
       });
 
       if (!emojiData) {
-        return new NextResponse(JSON.stringify({ error: emojiDeleteMessage.emojiNotFound }), {
+        return new NextResponse(JSON.stringify({ error: t("toastError.emojiNotFound") }), {
           status: 404,
         });
       }
@@ -217,7 +222,7 @@ export async function DELETE(req: Request) {
     }
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: emojiDeleteMessage.internalError }),
+      JSON.stringify({ error: t("toastError.internalErrorEmojiDelete") }),
       { status: 500 }
     );
   }
@@ -226,8 +231,10 @@ export async function DELETE(req: Request) {
 export async function GET(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const emojiGetMessage = translateEmojiGet(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     const emojidata = await prismadb.emoji.findMany({
       include: {
@@ -246,7 +253,7 @@ export async function GET(req: Request) {
     return NextResponse.json(emojidata);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: emojiGetMessage }),
+      JSON.stringify({ error: t("toastError.internalErrorEmojiGet") }),
       { status: 500 }
     );
   }

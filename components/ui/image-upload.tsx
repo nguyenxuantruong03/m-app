@@ -13,7 +13,7 @@ import viLocale from "date-fns/locale/vi";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 import { format } from "date-fns";
 import { ZoomImageModal } from "../modals/zoom-image-mutiple";
-import { getImageUpload } from "@/translate/translate-dashboard";
+import { useTranslations } from "next-intl";
 
 interface ImageUploadProps {
   disabled?: boolean;
@@ -23,7 +23,6 @@ interface ImageUploadProps {
   maxFiles?: number;
   showAvatar?: boolean;
   selectedAvatar?: string;
-  language: string
 }
 
 interface AccountItem {
@@ -49,15 +48,12 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   maxFiles = 10,
   showAvatar = false,
   selectedAvatar,
-  language
 }) => {
-  const [isMounted, setIsMounted] = useState(false);
+  const t = useTranslations()
   const userId = useCurrentUser();
+  const [isMounted, setIsMounted] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0); // New state variable for selected index
-
-  //language
-  const imageUploadMessage = getImageUpload(language)
 
   const openImageModal = (index: number) => {
     setSelectedIndex(index);
@@ -91,16 +87,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     setIsMounted(true);
   }, []);
   
-  const zonedSubtractedDate = utcToZonedTime(
-    new Date(new Date(userId?.createdAt).getTime() - 7 * 60 * 60 * 1000),
-    vietnamTimeZone
-  );
-  const formatcreatedAt = format(
-    zonedSubtractedDate,
-    "E '-' dd/MM/yyyy '-' HH:mm:ss a",
-    { locale: viLocale }
-  );
-
   if (!isMounted) {
     return null;
   }
@@ -129,7 +115,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                             open();
                           } else {
                             toast.error(
-                              imageUploadMessage.errorAddingImage
+                              t("uploadImage.errorAddingImage")
                             );
                           }
                         }}
@@ -147,7 +133,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                             open();
                           } else {
                             toast.error(
-                              imageUploadMessage.errorAddingImage
+                              t("uploadImage.errorAddingImage")
                             );
                           }
                         }}
@@ -162,7 +148,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                             open();
                           } else {
                             toast.error(
-                              imageUploadMessage.errorAddingImage
+                              t("uploadImage.errorAddingImage")
                             );
                           }
                         }}
@@ -203,7 +189,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                                 open();
                               } else {
                                 toast.error(
-                                  imageUploadMessage.errorAddingImage
+                                  t("uploadImage.errorAddingImage")
                                 );
                               }
                             } else {
@@ -225,7 +211,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                                 open();
                               } else {
                                 toast.error(
-                                  imageUploadMessage.errorAddingImage
+                                  t("uploadImage.errorAddingImage")
                                 );
                               }
                             }}
@@ -255,7 +241,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                         open();
                       } else {
                         toast.error(
-                          imageUploadMessage.errorAddingImage
+                          t("uploadImage.errorAddingImage")
                         );
                       }
                     }}
@@ -263,7 +249,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                     className="mt-3 text-slate-500 flex items-center justify-center w-full max-w-sm"
                   >
                     <ImagePlus className="w-4 h-4" />
-                    {imageUploadMessage.uploadImage}
+                    {t("uploadImage.uploadImage")}
                   </Button>
                 )}
             </>

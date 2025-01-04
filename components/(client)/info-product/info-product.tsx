@@ -36,59 +36,20 @@ import {
   getSizePrice,
 } from "../export-product-compare/size-color/match-color-size";
 import cuid from "cuid";
-import axios from "axios";
 import FlipClockCountdown from "@leenguyen/react-flip-clock-countdown";
 import "@leenguyen/react-flip-clock-countdown/dist/index.css";
-import {
-  getBuyNowTranslation,
-  getMaxProductsMessage,
-  getOutOfStockMessage,
-  getRemainingQuantityMessage,
-  getToastError,
-  translateAdditionalDiscount,
-  translateAddToCartError,
-  translateBigDiscountOver2Million,
-  translateBulkDiscount,
-  translateCannotRemoveSavedProduct,
-  translateCannotSaveProduct,
-  translateColor,
-  translateCountdownEnd,
-  translateHugeDiscountForBulkPurchase,
-  translateInsufficientStock,
-  translateLoading,
-  translateOutOfStock,
-  translatePaymentMethods,
-  translateProductAddedToCart,
-  translateProductLowerCase,
-  translateProductQuantityUpdated,
-  translateQuantity,
-  translateRandomDiscountCode,
-  translateSelectColor,
-  translateSelectColorToDelete,
-  translateSelectColorToSave,
-  translateSelectSize,
-  translateSelectSizeToDelete,
-  translateSelectSizeToSave,
-  translateSize,
-  translateSold,
-  translateStockQuantity,
-  translateTotalPrice,
-  translateTotalProductQuantity,
-  translateWarrantyInfoShort,
-} from "@/translate/translate-client";
 import getCart from "@/actions/client/cart";
+import { useTranslations } from "next-intl";
 
 interface InfoProductProps {
   data: Product;
-  languageToUse: string;
 }
-const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
+const InfoProduct: React.FC<InfoProductProps> = ({ data }) => {
   const cart = useCart();
   const cartdb = useCartdb();
   const router = useRouter();
   const user = useCurrentUser();
   const favorite = useFavorite();
-  const { addItem, removeItem, items } = useFavorite();
   const [quantity, setQuantity] = useState(1);
   const [isEditingQuantity, setIsEditingQuantity] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -101,50 +62,9 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
   const [loadingLimitQuantity, setLoadingLimitQuantity] = useState(false);
   const [loadingRetchdataFavorite, setLoadingFetchDataFavorite] =
     useState(false);
+  const t = useTranslations()
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  //language
-  const toastErrorMessage = getToastError(languageToUse);
-  const selectSizeToDeleteMessage = translateSelectSizeToDelete(languageToUse);
-  const selectColorToDeleteMessage =
-    translateSelectColorToDelete(languageToUse);
-  const selectSizeToSaveMessage = translateSelectSizeToSave(languageToUse);
-  const selectColorToSaveMessage = translateSelectColorToSave(languageToUse);
-  const cannotRemoveSavedProductMessage =
-    translateCannotRemoveSavedProduct(languageToUse);
-  const cannotSaveProductMessage = translateCannotSaveProduct(languageToUse);
-  const selectSizeMessage = translateSelectSize(languageToUse);
-  const selectColorMessage = translateSelectColor(languageToUse);
-  const outOfStockInventoryMessage = translateOutOfStock(languageToUse);
-  const loadingMessage = translateLoading(languageToUse);
-  const insufficientStockMessage = translateInsufficientStock(languageToUse);
-  const addtoCartErrorMessage = translateAddToCartError(languageToUse);
-  const productQuantityUpdatedMessage =
-    translateProductQuantityUpdated(languageToUse);
-  const productAddedToCartMessage = translateProductAddedToCart(languageToUse);
-  const maxProductMessage = getMaxProductsMessage(languageToUse);
-  const countdownEndMessage = translateCountdownEnd(languageToUse);
-  const sizeMessage = translateSize(languageToUse);
-  const colorMessage = translateColor(languageToUse);
-  const stockQuantityMessage = translateStockQuantity(languageToUse);
-  const totalProductQuantityMessage =
-    translateTotalProductQuantity(languageToUse);
-  const productLowerCaseMessage = translateProductLowerCase(languageToUse);
-  const soldMessage = translateSold(languageToUse);
-  const totalPriceMessage = translateTotalPrice(languageToUse);
-  const outOfStockMessage = getOutOfStockMessage(languageToUse);
-  const buyNowtranslationMessage = getBuyNowTranslation(languageToUse);
-  const additionalDiscountMessage = translateAdditionalDiscount(languageToUse);
-  const bulkDiscountMessage = translateBulkDiscount(languageToUse);
-  const bigDiscountOver2MillionMessage =
-    translateBigDiscountOver2Million(languageToUse);
-  const randomDiscountCodeMessage = translateRandomDiscountCode(languageToUse);
-  const paymentMethodMessage = translatePaymentMethods(languageToUse);
-  const hugeDiscountForBulkPurcharseMessage =
-    translateHugeDiscountForBulkPurchase(languageToUse);
-  const warrantyInfoShortMessage = translateWarrantyInfoShort(languageToUse);
-  const QuantityMessage = translateQuantity(languageToUse);
 
   useEffect(() => {
     if (user?.role !== "GUEST" && user?.id) {
@@ -153,7 +73,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
           setLoadingFetchDataFavorite(true);
           await favorite.fetchFavoriteItems(user?.id || "");
         } catch (error) {
-          toast.error(toastErrorMessage);
+          toast.error(t("toastError.somethingWentWrong"));
         } finally {
           setLoadingFetchDataFavorite(false);
         }
@@ -255,25 +175,26 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
         if (favoriteData && favoriteData.id) {
           //Khi remove đảm bảo phải có Selectedsize và Selectedcolor nếu không thì ko có select nào hết auto chọn cái đầu tiên
           if (!selectedSize && selectedColor) {
-            setErrorSize(selectSizeToDeleteMessage);
+            setErrorSize(t("product.selectSizeToDelete"));
             return;
           }
 
           if (selectedSize && !selectedColor) {
-            setErrorColor(selectColorToDeleteMessage);
+            setErrorColor(t("product.selectColorToDelete"));
             return;
           }
           //remove favoriteProduct
-          await removeItem(favoriteData.id, user?.id || "", languageToUse);
+          await favorite.removeItem(favoriteData.id, user?.id || "");
+          toast.success(t("product.productRemovedFromWishlist"));
         } else {
           //Khi add đảm bảo phải có Selectedsize và Selectedcolor nếu không thì ko có select nào hết auto chọn cái đầu tiên
           if (!selectedSize && selectedColor) {
-            setErrorSize(selectSizeToSaveMessage);
+            setErrorSize(t("product.selectSizeToSave"));
             return;
           }
 
           if (selectedSize && !selectedColor) {
-            setErrorColor(selectColorToSaveMessage);
+            setErrorColor(t("product.selectColorToSave"));
             return;
           }
 
@@ -289,14 +210,19 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
             selectedColor: selectedColor || data.productdetail.color1.value,
           };
 
+          if(!user){
+            toast.error(t("action.loginToAddToWishlist"))
+          }
+
           //add favoriteProduct
-          await addItem(favoriteProduct, languageToUse);
+          await favorite.addItem(favoriteProduct);
+          toast.success(t("product.productToWishlist"))
         }
       } catch (error) {
         toast.error(
           favoriteData
-            ? cannotRemoveSavedProductMessage
-            : cannotSaveProductMessage
+            ? t("product.cannotRemoveSavedProduct")
+            : t("product.cannotSaveProduct")
         );
       } finally {
         setLoadingFetchDataFavorite(false);
@@ -324,17 +250,17 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
     if (user?.role !== "GUEST" && user?.id) {
       // Check errors
       if (!selectedSize && !selectedColor) {
-        setErrorSize(selectSizeMessage);
-        setErrorColor(selectColorMessage);
+        setErrorSize(t("product.selectSize"));
+        setErrorColor(t("product.selectColor"));
         return;
       } else if (!selectedSize) {
-        setErrorSize(selectSizeMessage);
+        setErrorSize(t("product.selectSize"));
         return;
       } else if (!selectedColor) {
-        setErrorColor(selectColorMessage);
+        setErrorColor(t("product.selectColor"));
         return;
       } else if (quantityInventory) {
-        setErrorsetQuantityInventory(outOfStockInventoryMessage);
+        setErrorsetQuantityInventory(t("product.insufficientStock"));
         return;
       }
       // Stop event propagation to prevent multiple clicks
@@ -361,7 +287,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
             matchingQuantity >= maxQuantity && maxQuantity > 0;
 
           if (compareQuantityExistingAndAvailable) {
-            throw new Error(insufficientStockMessage);
+            throw new Error(t("product.insufficientStock"));
           }
 
           // Get selected warranty
@@ -390,7 +316,6 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
                 existingCartItem.quantity + quantity,
                 warranty,
                 user?.id || "",
-                languageToUse
               );
             } else {
               // Add the product to the cart
@@ -404,36 +329,36 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
               );
             }
           } catch (error) {
-            toast.error(addtoCartErrorMessage);
+            toast.error(t("product.addToCartError"));
           } finally {
             setLoading(false);
           }
 
           return existingCartItem
-            ? productQuantityUpdatedMessage
-            : productAddedToCartMessage;
+            ? t("product.productQuantityUpdated")
+            : t("product.productAddedToCart");
         })(),
         {
-          loading: loadingMessage,
+          loading: t("loading.loading"),
           success: (response) => response,
-          error: (error) => error.message || toastErrorMessage,
+          error: (error) => error.message || t("cart.productRemoved"),
         }
       );
     } else {
       // Handle the case for "GUEST" user
       // Check errors
       if (!selectedSize && !selectedColor) {
-        setErrorSize(selectSizeMessage);
-        setErrorColor(selectColorMessage);
+        setErrorSize(t("product.selectSize"));
+        setErrorColor(t("product.selectColor"));
         return;
       } else if (!selectedSize) {
-        setErrorSize(selectSizeMessage);
+        setErrorSize(t("product.selectSize"));
         return;
       } else if (!selectedColor) {
-        setErrorColor(selectColorMessage);
+        setErrorColor(t("product.selectColor"));
         return;
       } else if (quantityInventory) {
-        setErrorsetQuantityInventory(outOfStockInventoryMessage);
+        setErrorsetQuantityInventory(t("product.insufficientStock"));
         return;
       }
 
@@ -476,7 +401,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
             warranty,
             user?.id || ""
           );
-          toast.success(productQuantityUpdatedMessage);
+          toast.success(t("product.productQuantityUpdated"));
         } else {
           // Add the product to the cart
           await cart.addItem(
@@ -486,11 +411,10 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
             user?.id || "",
             selectedSize,
             selectedColor,
-            languageToUse
           );
         }
       } catch (error) {
-        toast.error(addtoCartErrorMessage);
+        toast.error(t("product.addToCartError"));
       } finally {
         setLoading(false);
       }
@@ -505,17 +429,17 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
     if (user?.role !== "GUEST" && user?.id) {
       // Check errors
       if (!selectedSize && !selectedColor) {
-        setErrorSize(selectSizeMessage);
-        setErrorColor(selectColorMessage);
+        setErrorSize(t("product.selectSize"));
+        setErrorColor(t("product.selectColor"));
         return;
       } else if (!selectedSize) {
-        setErrorSize(selectSizeMessage);
+        setErrorSize(t("product.selectSize"));
         return;
       } else if (!selectedColor) {
-        setErrorColor(selectColorMessage);
+        setErrorColor(t("product.selectColor"));
         return;
       } else if (quantityInventory) {
-        setErrorsetQuantityInventory(outOfStockInventoryMessage);
+        setErrorsetQuantityInventory(t("product.insufficientStock"));
         return;
       }
 
@@ -543,7 +467,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
             matchingQuantity >= maxQuantity && maxQuantity > 0;
 
           if (compareQuantityExistingAndAvailable) {
-            throw new Error(insufficientStockMessage);
+            throw new Error(t("product.insufficientStock"));
           }
 
           // Get selected warranty
@@ -572,7 +496,6 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
                 existingCartItem.quantity + quantity,
                 warranty,
                 user?.id || "",
-                languageToUse
               );
             } else {
               // If the item doesn't exist, add to the cart
@@ -586,37 +509,37 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
               );
             }
           } catch (error) {
-            toast.error(addtoCartErrorMessage);
+            toast.error(t("product.addToCartError"));
           } finally {
             setLoading(false);
             router.push("/cart");
           }
 
           return existingCartItem
-            ? productQuantityUpdatedMessage
-            : productAddedToCartMessage;
+            ? t("product.productQuantityUpdated")
+            : t("product.productAddedToCart");
         })(),
         {
-          loading: loadingMessage,
+          loading: t("loading.loading"),
           success: (response) => response,
-          error: (error) => error.message || toastErrorMessage,
+          error: (error) => error.message || t("cart.productRemoved"),
         }
       );
     } else {
       // Handle the case for "GUEST" user
       // Check errors
       if (!selectedSize && !selectedColor) {
-        setErrorSize(selectSizeMessage);
-        setErrorColor(selectColorMessage);
+        setErrorSize(t("product.selectSize"));
+        setErrorColor(t("product.selectColor"));
         return;
       } else if (!selectedSize) {
-        setErrorSize(selectSizeMessage);
+        setErrorSize(t("product.selectSize"));
         return;
       } else if (!selectedColor) {
-        setErrorColor(selectColorMessage);
+        setErrorColor(t("product.selectColor"));
         return;
       } else if (quantityInventory) {
-        setErrorsetQuantityInventory(outOfStockInventoryMessage);
+        setErrorsetQuantityInventory(t("product.insufficientStock"));
         return;
       }
 
@@ -656,7 +579,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
           warranty,
           user?.id || ""
         );
-        toast.success(productQuantityUpdatedMessage);
+        toast.success(t("product.productQuantityUpdated"));
       } else {
         // If the item doesn't exist, add it to the cart
         cart.addItem(
@@ -666,8 +589,8 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
           user?.id || "",
           selectedSize,
           selectedColor,
-          languageToUse
         );
+        toast.success(t("cart.productAdded"))
       }
       router.push("/cart");
     }
@@ -675,10 +598,6 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
 
   //Tìm kiếm quantity của sản phẩm
   const maxQuantity = getQuantityMatchColorandSize();
-  const remainingQuantityMessage = getRemainingQuantityMessage(
-    languageToUse,
-    maxQuantity
-  );
 
   const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLoadingLimitQuantity(false);
@@ -688,23 +607,23 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
       if (value <= 99) {
         setQuantity(value);
       } else {
-        toast.error(maxProductMessage);
+        toast.error(t("product.maxProduct"));
       }
     } else if (value > maxQuantity) {
-      toast.error(remainingQuantityMessage);
+      toast.error(t("product.remainingProduct", {maxQuantity: maxQuantity}));
     }
   };
 
   const incrementQuantity = () => {
     setQuantity((prevQuantity) => {
       if (prevQuantity >= maxQuantity) {
-        toast.error(remainingQuantityMessage);
+        toast.error(t("product.remainingProduct", {maxQuantity: maxQuantity}));
         setLoadingLimitQuantity(true);
         return prevQuantity;
       }
 
       if (prevQuantity >= 99) {
-        toast.error(maxProductMessage);
+        toast.error(t("product.maxProduct"));
         return prevQuantity;
       }
 
@@ -786,7 +705,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
               <div className="hidden xl:flex items-center space-x-1">
                 <Clock5 className="w-5 h-5 text-white" />
                 <span className="uppercase text-white">
-                  {countdownEndMessage}
+                  {t("product.countdownEnd")}:
                 </span>
               </div>
               <FlipClockCountdown
@@ -814,7 +733,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
       <div className="flex flex-col gap-y-3">
         <div className="flex items-center gap-x-4">
           <h3 className="font-semibold text-slate-900 dark:text-slate-200">
-            {sizeMessage}
+            {t("product.size")}:
           </h3>
           {availableSizes.map((size, index) => (
             <> 
@@ -860,7 +779,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
         {/* Color */}
         <div className="flex items-center gap-x-4 cursor-pointer">
           <h3 className="font-semibold text-slate-900 dark:text-slate-200">
-            {colorMessage}
+            {t("product.color")}:
           </h3>
           {availableColors.map((color, index) => (
             <>
@@ -907,7 +826,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
       <div className="my-6 flex items-center gap-x-3">
         {/* Quantity increment and decrement buttons */}
         <h3 className="font-semibold text-slate-900 dark:text-slate-200">
-          {QuantityMessage}:{" "}
+          {t("action.quantity")}:{" "}
         </h3>
         <Button
           disabled={loading || quantityInventory}
@@ -953,7 +872,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
 
       <div className="flex items-center gap-x-4">
         <h3 className="font-semibold text-slate-900 dark:text-slate-200">
-          {stockQuantityMessage}
+          {t("product.stockQuantity")}:
         </h3>
         <span className="text-slate-900 dark:text-slate-200">
           {getQuantityMatchColorandSize()}
@@ -962,25 +881,25 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
 
       <div className="flex items-center gap-x-4 mt-6">
         <h3 className="font-semibold text-slate-900 dark:text-slate-200">
-          {totalProductQuantityMessage}
+          {t("product.totalProductQuantity")}:
         </h3>
         <span className="text-slate-900 dark:text-slate-200">
-          {totalQuantity} {productLowerCaseMessage}
+          {totalQuantity} {t("product.productLowerCase")}
         </span>
       </div>
 
       <div className="flex items-center gap-x-4 mt-6">
         <h3 className="font-semibold text-slate-900 dark:text-slate-200">
-          {soldMessage}
+          {t("product.sold")}
         </h3>
         <span className="text-slate-900 dark:text-slate-200">
-          {data.sold || 0} {productLowerCaseMessage}
+          {data.sold || 0} {t("product.productLowerCase")}
         </span>
       </div>
 
       <div className="mt-8 flex items-center gap-x-4">
         <h3 className="font-semibold text-slate-900 dark:text-slate-200">
-          {totalPriceMessage}
+          {t("cart.totalPrice")}
         </h3>
         <p className="text-lg text-gray-900">
           <Currency
@@ -1086,7 +1005,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
             className="w-full bg-red-600 hover:bg-red-500"
           >
             <div className="flex text-lg items-center gap-x-2 pl-[2.25] md:w-full justify-center">
-              {outOfStockMessage}
+              {t("product.outOfStock")}
               <ShoppingCart
                 className={`${
                   user?.role !== "GUEST" && user?.id
@@ -1118,7 +1037,7 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
             className="w-full bg-gray-300 hover:bg-gray-200 group"
           >
             <div className="flex text-lg items-center gap-x-2 pl-[2.25] md:w-full justify-center group-hover:text-yellow-500">
-              {buyNowtranslationMessage}
+              {t("cart.buyNow")}
               <ShoppingCart
                 className={`${
                   user?.role !== "GUEST" && user?.id
@@ -1151,48 +1070,48 @@ const InfoProduct: React.FC<InfoProductProps> = ({ data, languageToUse }) => {
       <div className="w-full h-full shadow-lg mt-9 rounded-lg space-y-1 overflow-hidden border border-slate-900 dark:border-slate-200">
         <div className="h-10 bg-slate-900 dark:bg-slate-200 flex items-center ">
           <h1 className="ml-3 font-bold text-slate-200 dark:text-slate-900">
-            {additionalDiscountMessage}
+            {t("warranty.additionalDiscount")}
           </h1>
         </div>
         <div className="flex items-center">
           <BadgePercent className={Infoproductcolor.textcolor} />
           <h1 className="text-sm text-slate-900 dark:text-slate-200">
-            {bulkDiscountMessage}
+            {t("action.bulkDiscount")}
           </h1>
         </div>
 
         <div className="flex items-center">
           <Banknote className={Infoproductcolor.textcolor} />
           <h1 className="ml-1 text-sm text-slate-900 dark:text-slate-200">
-            {bigDiscountOver2MillionMessage}
+            {t("action.bigDiscountOver2Million")}
           </h1>
         </div>
 
         <div className="flex items-center">
           <Tag className={Infoproductcolor.textcolor} />
           <h1 className="ml-1 text-sm text-slate-900 dark:text-slate-200">
-            {randomDiscountCodeMessage}
+            {t("action.randomDiscountCode")}
           </h1>
         </div>
 
         <div className="flex items-center">
           <CreditCard className={Infoproductcolor.textcolor} />
           <h1 className="ml-1 text-sm text-slate-900 dark:text-slate-200">
-            {paymentMethodMessage}
+            {t("action.paymentMethod")}
           </h1>
         </div>
 
         <div className="flex items-center">
           <Award className={Infoproductcolor.textcolor} />
           <h1 className="ml-1 text-sm text-slate-900 dark:text-slate-200">
-            {hugeDiscountForBulkPurcharseMessage}
+            {t("action.hugeDiscountForBulkPurchase")}
           </h1>
         </div>
 
         <div className="flex items-center">
           <Shield className={Infoproductcolor.textcolor} />
           <h1 className="ml-1 text-sm text-slate-900 dark:text-slate-200">
-            {warrantyInfoShortMessage}
+            {t("action.warrantyInfoShort")}
           </h1>
         </div>
       </div>

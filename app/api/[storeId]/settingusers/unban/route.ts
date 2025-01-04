@@ -3,7 +3,7 @@ import prismadb from "@/lib/prismadb";
 import { NextResponse } from "next/server";
 import { currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
-import { translateSettingUserUnban } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 type SettingUserUnbanValue =
   | string
@@ -25,8 +25,10 @@ export async function POST(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const settingUserUnbanMessage = translateSettingUserUnban(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
 
   const body = await req.json();
   const { userId } = body;
@@ -34,14 +36,14 @@ export async function POST(
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: settingUserUnbanMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: settingUserUnbanMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -52,7 +54,7 @@ export async function POST(
 
     if (!existingUser?.ban && !existingUser?.isbanforever) {
       return new NextResponse(
-        JSON.stringify({ error: settingUserUnbanMessage.userNotBanned }),
+        JSON.stringify({ error: t("toastError.user.userNotBanned") }),
         {
           status: 404,
         }
@@ -62,7 +64,7 @@ export async function POST(
     if (user?.id === userId) {
       return new NextResponse(
         JSON.stringify({
-          error: settingUserUnbanMessage.cannotUnbanSelf,
+          error: t("toastError.user.cannotUnbanSelf")
         }),
         { status: 400 }
       );
@@ -83,7 +85,7 @@ export async function POST(
       },
     });
 
-    await sendUnBanUser(LanguageToUse, unbanUser.email, unbanUser.name);
+    await sendUnBanUser(languageToUse, unbanUser.email, unbanUser.name);
     // Danh sách các trường cần loại bỏ
     const ignoredFields = ["createdAt", "updatedAt"];
 
@@ -129,7 +131,7 @@ export async function POST(
   } catch (error) {
     return new NextResponse(
       JSON.stringify({
-        error: settingUserUnbanMessage.internalError,
+        error: t("toastError.user.internalErrorUnbanUser")
       }),
       { status: 500 }
     );

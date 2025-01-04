@@ -3,11 +3,7 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { CategoryType, UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
-import {
-  translateCategoriesIdDelete,
-  translateCategoriesIdGet,
-  translateCategoriesIdPatch,
-} from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 type CategoryValue = string | CategoryType | Date | undefined;
 
@@ -23,30 +19,33 @@ export async function GET(
   const categoryType = CategoryType.CATEGORY5;
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const categoriesIdGetMessage = translateCategoriesIdGet(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
+
   try {
     if (!params.category5Id) {
       return new NextResponse(
-        JSON.stringify({ error: categoriesIdGetMessage.name1 }),
+        JSON.stringify({ error: t("toastError.category.categoryId") }),
         { status: 400 }
       );
     }
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: categoriesIdGetMessage.name2 }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: categoriesIdGetMessage.name3 }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
-
+    
     const category = await prismadb.category.findUnique({
       where: {
         id: params.category5Id,
@@ -57,7 +56,7 @@ export async function GET(
     return NextResponse.json(category);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: `${categoriesIdGetMessage.name4} 5` }),
+      JSON.stringify({ error: t("toastError.category.intternalErrorGetCategory") }),
       { status: 500 }
     );
   }
@@ -70,40 +69,36 @@ export async function DELETE(
   const categoryType = CategoryType.CATEGORY5;
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const categoriesIdDeleteMessage = translateCategoriesIdDelete(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: categoriesIdDeleteMessage.name1 }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: categoriesIdDeleteMessage.name2 }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!params.category5Id) {
       return new NextResponse(
-        JSON.stringify({ error: categoriesIdDeleteMessage.name3 }),
+        JSON.stringify({ error: t("toastError.category.categoryId") }),
         { status: 400 }
       );
     }
 
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
+    if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: categoriesIdDeleteMessage.name4 }),
-        { status: 405 }
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
+        { status: 400 }
       );
     }
 
@@ -137,7 +132,7 @@ export async function DELETE(
     return NextResponse.json(category);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: `${categoriesIdDeleteMessage.name5} 5` }),
+      JSON.stringify({ error: t("toastError.category.intternalErrorDeleteCategory") }),
       { status: 500 }
     );
   }
@@ -150,29 +145,32 @@ export async function PATCH(
   const categoryType = CategoryType.CATEGORY5;
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const categoriesIdPatchMessage = translateCategoriesIdPatch(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
+
   try {
     const body = await req.json();
     const { name } = body;
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: categoriesIdPatchMessage.name1 }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: categoriesIdPatchMessage.name2 }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!name) {
       return new NextResponse(
-        JSON.stringify({ error: categoriesIdPatchMessage.name3 }),
+        JSON.stringify({ error: t("toastError.name") }),
         {
           status: 400,
         }
@@ -181,21 +179,15 @@ export async function PATCH(
 
     if (!params.category5Id) {
       return new NextResponse(
-        JSON.stringify({ error: categoriesIdPatchMessage.name4 }),
+        JSON.stringify({ error: t("toastError.category.categoryId") }),
         { status: 400 }
       );
     }
 
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
+    if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: categoriesIdPatchMessage.name5 }),
-        { status: 405 }
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
+        { status: 400 }
       );
     }
 
@@ -208,12 +200,9 @@ export async function PATCH(
 
     // Kiểm tra nếu không tìm thấy category
     if (!existingCategory) {
-      return new NextResponse(
-        JSON.stringify({ error: categoriesIdPatchMessage.name7 }),
-        {
-          status: 404,
-        }
-      );
+      return new NextResponse(JSON.stringify({ error: t("toastError.category.categoryNotFound") }), {
+        status: 404,
+      });
     }
 
     // Kiểm tra xem tên mới có trùng với tên của bất kỳ category nào ngoại trừ category hiện tại không
@@ -230,7 +219,8 @@ export async function PATCH(
     if (existingCategoryWithName) {
       return new NextResponse(
         JSON.stringify({
-          error: categoriesIdPatchMessage.name8,
+          error:
+          t("toastError.category.categoryNameAlready"),
         }),
         { status: 400 }
       );
@@ -293,7 +283,7 @@ export async function PATCH(
     return NextResponse.json(category);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: `${categoriesIdPatchMessage.name6} 5` }),
+      JSON.stringify({ error: t("toastError.category.intternalErrorPatchCategory") }),
       { status: 500 }
     );
   }

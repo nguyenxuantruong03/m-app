@@ -2,19 +2,18 @@ import { toast } from "react-hot-toast";
 import { useState, useEffect } from "react";
 import { JwtPayload, jwtDecode } from "jwt-decode";
 import { createViewerToken } from "@/actions/stream/token";
-import { getToastError } from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
-export const useViewerToken = (hostIdentity: string, languageToUse: string) => {
+export const useViewerToken = (hostIdentity: string) => {
+  const t = useTranslations()
   const [token, setToken] = useState("");
   const [name, setName] = useState("");
   const [identity, setIdentity] = useState("");
 
-  const toastErrorMessage = getToastError(languageToUse);
-
   useEffect(() => {
     const createToken = async () => {
       try {
-        const viewerToken = await createViewerToken(hostIdentity,languageToUse);
+        const viewerToken = await createViewerToken(hostIdentity);
         setToken(viewerToken);
 
         const decodedToken = jwtDecode(viewerToken) as JwtPayload & {
@@ -32,7 +31,7 @@ export const useViewerToken = (hostIdentity: string, languageToUse: string) => {
           setName(name);
         }
       } catch {
-        toast.error(toastErrorMessage);
+        toast.error(t("toastError.somethingWentWrong"));
       }
     };
 

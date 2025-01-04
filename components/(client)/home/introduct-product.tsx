@@ -3,33 +3,12 @@ import { root } from "@/components/(client)/color/color";
 import { useState, useEffect } from "react";
 import ReactPlayer from "react-player";
 import "./index.scss";
-import {
-  translateCoreValues,
-  translateUniquePerspective,
-} from "@/translate/translate-client";
-import { useCurrentUser } from "@/hooks/use-current-user";
+import { useTranslations } from "next-intl";
 
 const IntroductProduct = () => {
-  const user = useCurrentUser();
+  const t = useTranslations()
   const [isMounted, setIsMounted] = useState(false);
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []);
-
-  //language
-  const languageToUse =
-    user?.id && user?.role !== "GUEST"
-      ? user?.language
-      : storedLanguage || "vi";
-  const coreValuesMessage = translateCoreValues(languageToUse);
-  const uniquePerspectiveMessage = translateUniquePerspective(languageToUse);
-
+  
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -46,12 +25,12 @@ const IntroductProduct = () => {
             className={`w-full h-[320px] shadow-xl top-[120px] z-8 rounded-md md:w-[600px] md:absolute xl:w-[700px] 2xl:w-[900px] xl:h-[440px] bg-white dark:bg-slate-700`}
           >
             <div className="text-lg px-3 py-6 xl:py-10 font-bold text-gray-500 dark:text-white text-opacity-80 xl:mt-16 md:text-2xl md:px-10 xl:px-40">
-              {coreValuesMessage}
+              {t("home.coreValues")}
             </div>
             <div className="flex px-3 items-center md:px-10 xl:px-40">
               <span className="border-t-2 border-solid border-gray-800 w-12 " />
               <p className="pl-4 text-[#e53350] text-lg uppercase font-bold">
-                {uniquePerspectiveMessage}
+                {t("home.uniquePerspective")}
               </p>
             </div>
           </div>

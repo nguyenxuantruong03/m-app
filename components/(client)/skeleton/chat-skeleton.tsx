@@ -1,4 +1,4 @@
-import { ToggleCardSkeleton } from "@/app/(profile)/me/[username]/chat/_components/toggle-card";
+import { ToggleCardSkeleton } from "@/app/[locale]/(profile)/me/[username]/chat/_components/toggle-card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 

@@ -1,12 +1,7 @@
 // /api/comments/router.ts
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
-import {
-  translateCommentDelete,
-  translateCommentGet,
-  translateCommentPatch,
-  translateCommentPost,
-} from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -15,12 +10,14 @@ export async function POST(req: Request) {
 
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const commentPostMessage = translateCommentPost(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+ let messages;
+   messages = (await import(`@/messages/${languageToUse}.json`)).default;
+   const t = createTranslator({ locale: languageToUse, messages });
 
   if (!rating) {
     return new NextResponse(
-      JSON.stringify({ error: commentPostMessage.ratingRequired }),
+      JSON.stringify({ error: t("toastError.comment.ratingRequired") }),
       {
         status: 400,
       }
@@ -28,7 +25,7 @@ export async function POST(req: Request) {
   }
   if (!productId) {
     return new NextResponse(
-      JSON.stringify({ error: commentPostMessage.productRequired }),
+      JSON.stringify({ error: t("toastError.productRequired") }),
       {
         status: 400,
       }
@@ -36,7 +33,7 @@ export async function POST(req: Request) {
   }
   if (!comment) {
     return new NextResponse(
-      JSON.stringify({ error: commentPostMessage.commentRequired }),
+      JSON.stringify({ error: t("toastError.comment.commentRequired") }),
       {
         status: 400,
       }
@@ -45,7 +42,7 @@ export async function POST(req: Request) {
   try {
     if (!user?.id) {
       return new NextResponse(
-        JSON.stringify({ error: commentPostMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound")}),
         {
           status: 400,
         }
@@ -80,7 +77,7 @@ export async function POST(req: Request) {
     return NextResponse.json(newComment);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: commentPostMessage.internalError }),
+      JSON.stringify({ error: t("toastError.comment.internalErrorPostComment") }),
       { status: 500 }
     );
   }
@@ -92,8 +89,10 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const commentDeleteMessage = translateCommentDelete(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+ let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     const body = await req.json();
@@ -101,7 +100,7 @@ export async function DELETE(
 
     if (!user?.id) {
       return new NextResponse(
-        JSON.stringify({ error: commentDeleteMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         {
           status: 400,
         }
@@ -116,7 +115,7 @@ export async function DELETE(
 
     if (!commentById) {
       return new NextResponse(
-        JSON.stringify({ error: commentDeleteMessage.commentByIdNotFound }),
+        JSON.stringify({ error: t("toastError.comment.commentByIdNotFound") }),
         {
           status: 405,
         }
@@ -144,7 +143,7 @@ export async function DELETE(
     return NextResponse.json(comment);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: commentDeleteMessage.internalError }),
+      JSON.stringify({ error: t("toastError.comment.internalErrorDeleteComment") }),
       { status: 500 }
     );
   }
@@ -156,8 +155,10 @@ export async function PATCH(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const commentPatchMessage = translateCommentPatch(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+ let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     const body = await req.json();
@@ -165,7 +166,7 @@ export async function PATCH(
 
     if (!user?.id) {
       return new NextResponse(
-        JSON.stringify({ error: commentPatchMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         {
           status: 400,
         }
@@ -197,7 +198,7 @@ export async function PATCH(
     return NextResponse.json(updatedComment);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: commentPatchMessage.internalError }),
+      JSON.stringify({ error: t("toastError.comment.internalErrorPatchCommnet") }),
       { status: 500 }
     );
   }
@@ -206,8 +207,10 @@ export async function PATCH(
 export async function GET() {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const commentGetMessage = translateCommentGet(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+ let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     const responseComment = await prismadb.comment.findMany({
       orderBy: {
@@ -235,7 +238,7 @@ export async function GET() {
     return NextResponse.json(responseComment);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: commentGetMessage }),
+      JSON.stringify({ error: t("toastError.comment.internalErrorGetComment") }),
       { status: 500 }
     );
   }

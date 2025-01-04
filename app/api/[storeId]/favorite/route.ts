@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
-import { translateFavoriteDelete, translateFavoriteGet, translateFavoritePost } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 export async function POST(
   req: Request,
@@ -11,8 +11,10 @@ export async function POST(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const favoritePostMessage = translateFavoritePost(LanguageToUse);
+   const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     const body = await req.json();
@@ -20,41 +22,28 @@ export async function POST(
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: favoritePostMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: favoritePostMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: favoritePostMessage.nameRequired }), {
+      return new NextResponse(JSON.stringify({ error: t("toastError.nameRequired") }), {
         status: 400,
       });
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: favoritePostMessage.storeIdRequired }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: favoritePostMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -68,7 +57,7 @@ export async function POST(
 
     if (existingFavorite) {
       return new NextResponse(
-        JSON.stringify({ error: favoritePostMessage.favoriteExists }),
+        JSON.stringify({ error: t("toastError.favorite.favoriteExists") }),
         { status: 400 }
       );
     }
@@ -101,7 +90,7 @@ export async function POST(
     return NextResponse.json(favorite);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: favoritePostMessage.internalError }),
+      JSON.stringify({ error: t("toastError.favorite.internalErrorPostFavorite") }),
       { status: 500 }
     );
   }
@@ -113,27 +102,29 @@ export async function GET(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const favoriteGetMessage = translateFavoriteGet(LanguageToUse);
+   const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: favoriteGetMessage.storeIdRequired }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 400 }
       );
     }
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: favoriteGetMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: favoriteGetMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -147,7 +138,7 @@ export async function GET(
     return NextResponse.json(favorites);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: favoriteGetMessage.internalError }),
+      JSON.stringify({ error: t("toastError.favorite.internalErrorGetFavorite") }),
       { status: 500 }
     );
   }
@@ -159,43 +150,32 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const favoriteDeleteMessage = translateFavoriteDelete(LanguageToUse);
+   const languageToUse = user?.language || "vi";
+   let messages;
+   messages = (await import(`@/messages/${languageToUse}.json`)).default;
+   const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
     const { ids } = body;
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: favoriteDeleteMessage.userNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: favoriteDeleteMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!ids || ids.length === 0) {
       return new NextResponse(
-        JSON.stringify({ error: favoriteDeleteMessage.idsArrayEmpty }),
+        JSON.stringify({ error: t("toastError.idsArrayNotEmpty") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: favoriteDeleteMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -232,10 +212,10 @@ export async function DELETE(
       },
     });
 
-    return NextResponse.json({ message: favoriteDeleteMessage.deleteSuccess });
+    return NextResponse.json({ message: t("toastSuccess.deletionSuccess") });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: favoriteDeleteMessage.internalError }),
+      JSON.stringify({ error: t("toastError.favorite.internalErrorDeleteFavorite") }),
       { status: 500 }
     );
   }

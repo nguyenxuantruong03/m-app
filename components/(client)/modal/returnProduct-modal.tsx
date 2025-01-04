@@ -22,65 +22,24 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SendHorizontal, X } from "lucide-react";
 import Link from "next/link";
-import {
-  getToastError,
-  translateCancel,
-  translateCaptureProductImages,
-  translateCharCount,
-  translateEnterReturnDescription,
-  translateMinCharacters,
-  translateOrderReturnSuccess,
-  translateProductImage,
-  translateReturnProductDescription,
-  translateReturnProductInfo,
-  translateSelectClearProductImages,
-  translateShortReturnProductDescription,
-  translateSubmit,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface ReturnProductProps {
   order: Order | undefined;
   onClose: () => void;
-  user: any;
-  languageToUse: string;
 }
 
 export const ReturnProduct: React.FC<ReturnProductProps> = ({
   order,
   onClose,
-  user,
-  languageToUse,
 }) => {
+  const t = useTranslations()
   const [isMounted, setIsMounted] = useState(false);
   const [charCount, setCharCount] = useState(0); // State to track character count
   const [loading, setLoading] = useState(false);
 
-  //languages
-  const toastErrorMessage = getToastError(languageToUse);
-  const orderReturnSuccessMessage = translateOrderReturnSuccess(languageToUse);
-  const minCharacterMessage = translateMinCharacters(languageToUse, 2);
-  const returnProductInfoMessage = translateReturnProductInfo(languageToUse);
-  const productImageMessage = translateProductImage(languageToUse);
-  const captureProductImageMessage = translateCaptureProductImages(
-    languageToUse,
-    5
-  );
-  const selectClearProductImageMessage = translateSelectClearProductImages(
-    languageToUse,
-    5
-  );
-  const returnProductDescriptionMessage =
-    translateReturnProductDescription(languageToUse);
-  const shortReturnProductDescriptopnMessage =
-    translateShortReturnProductDescription(languageToUse);
-  const enterReturnDescriptionMessage =
-    translateEnterReturnDescription(languageToUse);
-  const charCountMessage = translateCharCount(languageToUse, 120);
-  const cancelMessage = translateCancel(languageToUse);
-  const submitMessage = translateSubmit(languageToUse);
-
   const formSchema = z.object({
-    description: z.string().min(2, { message: minCharacterMessage }),
+    description: z.string().min(2, { message: t("warehouse.min2Character") }),
     imagereturnProduct: z.object({ url: z.string() }).array(),
   });
 
@@ -118,7 +77,7 @@ export const ReturnProduct: React.FC<ReturnProductProps> = ({
         }
       );
 
-      toast.success(orderReturnSuccessMessage);
+      toast.success(t("warehouse.orderReturnSuccess"));
     } catch (error: unknown) {
       if (
         (error as { response?: { order?: { error?: string } } }).response &&
@@ -133,7 +92,7 @@ export const ReturnProduct: React.FC<ReturnProductProps> = ({
             .error
         );
       } else {
-        toast.error(toastErrorMessage);
+        toast.error(t("toastError.somethingWentWrong"));
       }
     } finally {
       setLoading(false);
@@ -152,7 +111,7 @@ export const ReturnProduct: React.FC<ReturnProductProps> = ({
             />
           </div>
           <span className="text-slate-200">
-            {returnProductInfoMessage}
+            {t("warehouse.returnProductInfo")}
             <Link href="tel:0352261103" className="underline">
               0352261103
             </Link>
@@ -179,10 +138,9 @@ export const ReturnProduct: React.FC<ReturnProductProps> = ({
                     <FormItem>
                       <FormLabel className="flex space-x-3 items-center w-full">
                         <span className="text-white">
-                          {productImageMessage}
                         </span>
                         <span className="text-red-600 pl-1">(*)</span>
-                        <Recommend message={captureProductImageMessage} />
+                        <Recommend message={t("warehouse.capture5Product")} />
                       </FormLabel>
                       <FormControl>
                         <ImageUpload
@@ -192,7 +150,7 @@ export const ReturnProduct: React.FC<ReturnProductProps> = ({
                             if (field.value.length < 5) {
                               field.onChange([...field.value, { url }]);
                             } else {
-                              toast.error(selectClearProductImageMessage);
+                              toast.error(t("warehouse.select5ClearProductImages"));
                             }
                           }}
                           onRemove={(url) =>
@@ -202,7 +160,6 @@ export const ReturnProduct: React.FC<ReturnProductProps> = ({
                               ),
                             ])
                           }
-                          language={languageToUse}
                         />
                       </FormControl>
                       <FormMessage />
@@ -229,24 +186,24 @@ export const ReturnProduct: React.FC<ReturnProductProps> = ({
                       <FormItem>
                         <FormLabel className="flex space-x-3 items-center w-full">
                           <span className="text-white">
-                            {returnProductDescriptionMessage}
+                            {t("warehouse.returnProductDescription")}
                           </span>
                           <span className="text-red-600 pl-1">(*)</span>
                           <Recommend
-                            message={`${shortReturnProductDescriptopnMessage}.`}
+                            message={`${t("warehouse.shortReturnProductDescriptopn")}.`}
                           />
                         </FormLabel>
                         <FormControl>
                           <Input
                             disabled={loading}
-                            placeholder={enterReturnDescriptionMessage}
+                            placeholder={t("warehouse.enterReturnDescription")}
                             className="text-white"
                             value={field.value}
                             onChange={handleInputChange} // Use the custom handler
                           />
                         </FormControl>
                         <div className="text-white mt-1 text-sm">
-                          {charCount} / {charCountMessage}
+                          {charCount} / {t("warehouse.120charCount")}
                         </div>{" "}
                         {/* Character count display */}
                         <FormMessage />
@@ -256,7 +213,6 @@ export const ReturnProduct: React.FC<ReturnProductProps> = ({
                 />
                 <div className="flex items-center justify-end space-x-3">
                   <Button disabled={loading} onClick={onClose}>
-                    {cancelMessage}
                   </Button>
 
                   <Button
@@ -265,7 +221,6 @@ export const ReturnProduct: React.FC<ReturnProductProps> = ({
                     variant="destructive"
                   >
                     <span className="flex items-center">
-                      {submitMessage}{" "}
                       <SendHorizontal className="w-5 h-5 ml-1" />
                     </span>
                   </Button>

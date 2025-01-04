@@ -1,13 +1,16 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
-import { translateDeviceDelete, translateDeviceLimitPost1, translateDeviceLimitPost2 } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 import { NextResponse } from "next/server";
 
 export async function PATCH(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const deviceLimitPost1Message = translateDeviceLimitPost1(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
+
   try {
 
     const body = await req.json();
@@ -16,13 +19,13 @@ export async function PATCH(req: Request) {
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: deviceLimitPost1Message.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
     if (!limitDevice) {
       return new NextResponse(
-        JSON.stringify({ error: deviceLimitPost1Message.limitDeviceRequired }),
+        JSON.stringify({ error: t("toastError.limitDeviceRequired") }),
         {
           status: 400,
         }
@@ -38,14 +41,14 @@ export async function PATCH(req: Request) {
       if (currentLimitDevices.includes(newLimitDevice)) {
         return new NextResponse(
           JSON.stringify({
-            error: translateDeviceLimitPost2(LanguageToUse, newLimitDevice ).changeLimitMessage,
+            error: t("toastError.changeLimitMessage",{newLimitDevice: newLimitDevice})
           }),
           { status: 400 }
         );
       } else {
         return new NextResponse(
           JSON.stringify({
-            error: translateDeviceLimitPost2(LanguageToUse, newLimitDevice ).addDeviceMessage,
+            error: t("toastError.addDeviceMessage",{newLimitDevice:newLimitDevice})
           }),
           { status: 400 }
         );
@@ -91,7 +94,7 @@ export async function PATCH(req: Request) {
     return NextResponse.json(updatedDeviceInfo);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: deviceLimitPost1Message.internalError }),
+      JSON.stringify({ error: t("toastError.internalErrorPostDeviceInfo") }),
       { status: 500 }
     );
   }
@@ -100,21 +103,24 @@ export async function PATCH(req: Request) {
 export async function DELETE(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const deviceDeleteMessage = translateDeviceDelete(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
+
   try {
     const body = await req.json();
     const { id } = body;
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: deviceDeleteMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
     if (!id) {
       return new NextResponse(
-        JSON.stringify({ error: deviceDeleteMessage.idNotFound }),
+        JSON.stringify({ error: t("toastError.idNotFound") }),
         { status: 400 }
       );
     }
@@ -128,7 +134,7 @@ export async function DELETE(req: Request) {
     // If there's only one device, do not allow deletion
     if (findDevice.length <= 1) {
       return new NextResponse(
-        JSON.stringify({ error: deviceDeleteMessage.cannotDeleteOnlyDevice }),
+        JSON.stringify({ error: t("toastError.cannotDeleteOnlyDevice") }),
         { status: 400 }
       );
     }
@@ -162,7 +168,7 @@ export async function DELETE(req: Request) {
     return NextResponse.json(device);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: deviceDeleteMessage.internalErrorDeleteDevice }),
+      JSON.stringify({ error: t("toastError.internalErrorDeleteDevice") }),
       { status: 500 }
     );
   }

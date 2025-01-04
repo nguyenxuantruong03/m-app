@@ -7,25 +7,23 @@ import { find } from "lodash"
 import { pusherClient } from "@/lib/pusher"
 import { Conversation, User } from "@prisma/client"
 import useOtherUser from "@/hooks/useOtherUser"
-import { translateBodyMessages } from "@/translate/translate-client"
+import { useTranslations } from "next-intl"
 
 interface BodyProps {
   initialMessages: FullMessageType[]
   conversation: Conversation & {
       users: User[];
     };
-  language: string
 }
 
-const Body: React.FC<BodyProps> = ({ initialMessages,conversation,language }) => {
+const Body: React.FC<BodyProps> = ({ initialMessages,conversation }) => {
+  const t = useTranslations()
   const otherUser = useOtherUser(conversation);
   const [messages, setMessages] = useState(initialMessages)
 
-  const bodyMessage = translateBodyMessages(language)
-
   const defaultMessage: FullMessageType = {
     id: otherUser.id,
-    body: bodyMessage.helpMessage,
+    body: t("message.helpMessage"),
     sender: {
       id: "system",
       phonenumber: "",
@@ -115,7 +113,7 @@ nó sẽ chạy lại bất cứ khi nào cuộc hội thoạiId thay đổi. */
     <MessageBox key={defaultMessage.id} data={defaultMessage} />
     <div className="flex justify-center ">
       <p className="text-xs text-gray-500 text-center max-w-[280px]">
-        {bodyMessage.privacyNotice}
+        {t('message.privacyNotice')}
       </p>
     </div>
 

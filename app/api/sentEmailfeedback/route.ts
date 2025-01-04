@@ -1,5 +1,5 @@
 import { currentUser } from "@/lib/auth";
-import { translateSentEmailFeedbackPost } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
@@ -7,28 +7,30 @@ const resend = new Resend(process.env.RESEND_EMAIL_API_KEY);
 export async function POST(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const sentEmailFeedBackPostMessage = translateSentEmailFeedbackPost(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
     const { email, subject, value } = body;
 
     if (!email) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailFeedBackPostMessage.emailNotFound }),
+        JSON.stringify({ error: t("toastError.emailNotFound") }),
         { status: 403 }
       );
     }
     if (!subject) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailFeedBackPostMessage.subjectNotFound }),
+        JSON.stringify({ error: t("toastError.subjectNotFound") }),
         { status: 403 }
       );
     }
 
     if (!value) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailFeedBackPostMessage.valueNotFound }),
+        JSON.stringify({ error: t("toastError.valueNotFound") }),
         { status: 403 }
       );
     }
@@ -43,7 +45,7 @@ export async function POST(req: Request) {
     return NextResponse.json(resendEmail);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: sentEmailFeedBackPostMessage.internalErrorPostSentEmailFeedback }),
+      JSON.stringify({ error: t("toastError.internalErrorPostSentEmailFeedback") }),
       { status: 500 }
     );
   }

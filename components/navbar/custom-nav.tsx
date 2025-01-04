@@ -12,14 +12,9 @@ import LogoutButton from "../auth/logout-button";
 import { FormUploadAvatarNavbar } from "./upload-image-navbar/form-upload-avatar-navbar";
 import { Button } from "../ui/button";
 import NavbarIcon from "./navbar-icon";
-import { useCurrentUser } from "@/hooks/use-current-user";
 import NavbarMultiple from "./navbar-multiple/navbar-multiple";
 import { useCurrentView } from "@/localStorage/useLocalStorage-currentView";
-import {
-  translateRole,
-  translateRolesCustomNav,
-  translateSettings,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface CustomNavProps {
   store: Store[];
@@ -39,17 +34,13 @@ const CustomNav: React.FC<CustomNavProps> = ({
   avatarImage,
   userId,
 }) => {
+  const languageToUse = userId?.language || "vi";
+  const t = useTranslations()
   const [isMounted, setIsMounted] = useState(false);
   const { currentView, setCurrentView } = useCurrentView() || {
     currentView: "",
     setCurrentView: () => {},
   };
-
-  //language
-  const languageToUse = userId?.language || "vi";
-  const settingsMessage = translateSettings(languageToUse);
-  const roleMessage = translateRole(languageToUse);
-  const rolesCustomNavMessage = translateRolesCustomNav(languageToUse);
 
   useEffect(() => {
     setIsMounted(true);
@@ -129,8 +120,8 @@ const CustomNav: React.FC<CustomNavProps> = ({
         <div className="bg-red-300 rounded-md bg-opacity-50 pt-1 w-[280px] ml-2">
           <div className="border-b relative">
             <div className="items-center px-4 my-4">
-              <StoreSwitcher items={store} languageToUse={languageToUse} />
-              <MainNav className="mx-6" languageToUse={languageToUse} />
+              <StoreSwitcher items={store} />
+              <MainNav />
 
               <div className="flex items-center space-x-4 mt-2 justify-center">
                 <div className="group relative">
@@ -149,13 +140,13 @@ const CustomNav: React.FC<CustomNavProps> = ({
                     classNamesUpload="opacity-0"
                   />
                   <span className="dark:text-black absolute top-11 left-0 bg-white rounded-lg p-1 text-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                    {settingsMessage.name1}
+                    {t("navbardashboard.image")}
                   </span>
                 </div>
                 <div className="group relative">
-                  <ThemeToggleDrakorLight dropdown={true} languageToUse={languageToUse}/>
+                  <ThemeToggleDrakorLight dropdown={true} />
                   <span className="dark:text-black absolute top-11 left-[-4px] bg-white rounded-lg p-1 text-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                    {settingsMessage.name2}
+                    {t("navbardashboard.mode")}
                   </span>
                 </div>
                 <Button
@@ -166,7 +157,7 @@ const CustomNav: React.FC<CustomNavProps> = ({
                   <Link href="/setting-profile">
                     <Settings className="dark:text-white w-5 h-5" />
                     <span className="dark:text-black flex absolute top-11 left-[-10px] right-[-8px] bg-white rounded-lg p-1 text-sm z-[999] opacity-0 group-hover:opacity-100 transition-opacity">
-                      {settingsMessage.name3}
+                      {t("navbardashboard.settings")}
                     </span>
                   </Link>
                 </Button>
@@ -178,14 +169,14 @@ const CustomNav: React.FC<CustomNavProps> = ({
                   >
                     <LogOut className="w-5 h-5 dark:text-white" />
                     <span className="dark:text-black absolute top-11 left-[-5px] bg-white rounded-lg p-1 text-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                      {settingsMessage.name4}
+                      {t("navbardashboard.logout")}
                     </span>
                   </Button>
                 </LogoutButton>
               </div>
             </div>
             <div className="flex justify-center mt-10 pb-2">
-              <span className="font-medium mr-1">{roleMessage}:</span>
+              <span className="font-medium mr-1">{t("navbardashboard.role")}:</span>
               <span
                 className={`relative group ${getRoleColorClass(userId?.role)}`}
               >
@@ -193,41 +184,41 @@ const CustomNav: React.FC<CustomNavProps> = ({
                 <span className="absolute invisible group-hover:visible bg-white text-gray-800 p-2 rounded-md shadow-md text-sm w-64 bottom-full left-1/2 transform -translate-x-1/2">
                   {userId?.role === UserRole.ADMIN && (
                     <p>
-                      {roleMessage}
+                      {t("navbardashboard.role")}
                       <span className="text-red-500 cursor-pointer font-bold">
-                        {rolesCustomNavMessage.name1}
+                        {t("navbardashboard.admin")}
                       </span>
-                      {rolesCustomNavMessage.name2}
+                      {t("navbardashboard.manageAllRoles")}
                       <span className="text-blue-500 cursor-pointer font-bold">
-                        {rolesCustomNavMessage.name3}
+                        {t("navbardashboard.staff")}
                       </span>
-                      {rolesCustomNavMessage.name4}
+                      {t("navbardashboard.and")}
                       <span className="text-black cursor-pointer font-bold">
-                        {rolesCustomNavMessage.name5}
+                        {t("navbardashboard.user")}
                       </span>
-                      {rolesCustomNavMessage.name6}
+                      {t("navbardashboard.highestRole")}
                     </p>
                   )}
                   {userId?.role === UserRole.STAFF && (
                     <p>
-                      {roleMessage}
+                      {t("navbardashboard.role")}
                       <span className="text-blue-500 cursor-pointer font-bold">
-                        {rolesCustomNavMessage.name3}
+                        {t("navbardashboard.staff")}
                       </span>
-                      {rolesCustomNavMessage.name7}
+                      {t("navbardashboard.manageOrders")}
                     </p>
                   )}
                   {userId?.role === UserRole.USER && (
                     <p>
-                      {roleMessage}
+                      {t("navbardashboard.role")}
                       <span className="text-black cursor-pointer font-bold">
-                        {rolesCustomNavMessage.name5}
+                        {t("navbardashboard.user")}
                       </span>
-                      {rolesCustomNavMessage.name8}
+                      {t("navbardashboard.cannotViewContent")}
                       <span className="text-red-500 cursor-pointer font-bold">
-                        {rolesCustomNavMessage.name1}
+                        {t("navbardashboard.admin")}
                       </span>
-                      {rolesCustomNavMessage.name9}
+                      {t("navbardashboard.interactOnProductPage")}
                     </p>
                   )}
                 </span>
@@ -240,13 +231,13 @@ const CustomNav: React.FC<CustomNavProps> = ({
         <div className="bg-red-300 rounded-md bg-opacity-50 pt-1 w-[70px] ml-2">
           <div className="border-b relative">
             <div className="items-center px-4 my-4">
-              <NavbarIcon languageToUse={languageToUse} />
+              <NavbarIcon />
             </div>
           </div>
         </div>
       )}
       {currentView === List.NAVBAR && (
-        <NavbarMultiple languageToUse={languageToUse} userId={userId} />
+        <NavbarMultiple userId={userId} />
       )}
     </>
   );

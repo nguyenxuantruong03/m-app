@@ -32,13 +32,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
-interface NavbarMultipleResponsiveProps {
-  languageToUse: string;
-}
-
-const NavbarMultipleResponsive = ({
-  languageToUse,
-}: NavbarMultipleResponsiveProps) => {
+const NavbarMultipleResponsive = () => {
   const [activeAccordionItem, setActiveAccordionItem] = useState<string | null>(
     null
   );
@@ -52,16 +46,26 @@ const NavbarMultipleResponsive = ({
     setActiveAccordionItem(activeAccordionItem === value ? null : value);
   };
 
-  const routes = route(storeId, pathname, languageToUse);
-  const staffs = staff(storeId, pathname, languageToUse);
-  const billboards = billboard(storeId, pathname, languageToUse);
-  const category = categories(storeId, pathname, languageToUse);
-  const parameters = parameter(storeId, pathname, languageToUse);
-  const products = product(storeId, pathname, languageToUse);
-  const orders = order(storeId, pathname, languageToUse);
-  const users = user(storeId, pathname, languageToUse);
-  const checkouts = checkout(storeId, pathname, languageToUse);
-  const settings = setting(storeId, pathname, languageToUse);
+  const routes = route(storeId, pathname);
+  const staffs = staff(storeId, pathname);
+  const billboards = billboard(storeId, pathname);
+  const category = categories(storeId, pathname);
+  const parameters = parameter(storeId, pathname);
+  const products = product(storeId, pathname);
+  const orders = order(storeId, pathname);
+  const users = user(storeId, pathname);
+  const checkouts = checkout(storeId, pathname);
+  const settings = setting(storeId, pathname);
+  const routerOnlyTitle = routeTitle()
+  const staffOnlyTitle = staffTitle()
+  const billboardOnlyTitle = billboardTitle()
+  const categoryOnlyTitle = categoryTitle()
+  const parameterOnlyTitle = parameterTitle()
+  const productOnlyTitle = productTitle()
+  const orderOnlyTitle = orderTitle()
+  const userOnlyTitle = userTitle()
+  const checkoutOnlyTitle = checkoutTitle()
+  const settingOnlyTitle = settingTitle()
 
   return (
     <>
@@ -72,7 +76,7 @@ const NavbarMultipleResponsive = ({
             className="text-gray-400"
             onClick={() => handleAccordionToggle("item-1")}
           >
-            {routeTitle(languageToUse).map((route, index) => (
+            {routerOnlyTitle.map((route, index) => (
               <div key={index}>{route.mainicon}</div>
             ))}
           </AccordionTrigger>
@@ -110,7 +114,7 @@ const NavbarMultipleResponsive = ({
         {/* Nhân viên */}
         <AccordionItem value="item-3">
           <AccordionTrigger className="text-gray-400">
-            {staffTitle(languageToUse).map((staff, index) => (
+            {staffOnlyTitle.map((staff, index) => (
               <div key={index}>{staff.mainicon}</div>
             ))}
           </AccordionTrigger>
@@ -148,7 +152,7 @@ const NavbarMultipleResponsive = ({
         {/* Quảng cáo */}
         <AccordionItem value="item-4">
           <AccordionTrigger className="text-gray-400">
-            {billboardTitle(languageToUse).map((billboard, index) => (
+            {billboardOnlyTitle.map((billboard, index) => (
               <div key={index}>{billboard.mainicon}</div>
             ))}
           </AccordionTrigger>
@@ -186,7 +190,7 @@ const NavbarMultipleResponsive = ({
         {/* Loại hàng */}
         <AccordionItem value="item-5">
           <AccordionTrigger className="text-gray-400">
-            {categoryTitle(languageToUse).map((categories, index) => (
+            {categoryOnlyTitle.map((categories, index) => (
               <div key={index}>{categories.mainicon}</div>
             ))}
           </AccordionTrigger>
@@ -224,7 +228,7 @@ const NavbarMultipleResponsive = ({
         {/* Thông số */}
         <AccordionItem value="item-6">
           <AccordionTrigger className="text-gray-400">
-            {parameterTitle(languageToUse).map((parameter, index) => (
+            {parameterOnlyTitle.map((parameter, index) => (
               <div key={index}>{parameter.mainicon}</div>
             ))}
           </AccordionTrigger>
@@ -262,7 +266,7 @@ const NavbarMultipleResponsive = ({
         {/* Sản phẩm */}
         <AccordionItem value="item-7">
           <AccordionTrigger className="text-gray-400">
-            {productTitle(languageToUse).map((product, index) => (
+            {productOnlyTitle.map((product, index) => (
               <div key={index}>{product.mainicon}</div>
             ))}
           </AccordionTrigger>
@@ -300,7 +304,7 @@ const NavbarMultipleResponsive = ({
         {/* Đơn hàng */}
         <AccordionItem value="item-8">
           <AccordionTrigger className="text-gray-400">
-            {orderTitle(languageToUse).map((order, index) => (
+            {orderOnlyTitle.map((order, index) => (
               <div key={index}>{order.mainicon}</div>
             ))}
           </AccordionTrigger>
@@ -338,7 +342,7 @@ const NavbarMultipleResponsive = ({
         {/* Người dùng */}
         <AccordionItem value="item-9">
           <AccordionTrigger className="text-gray-400">
-            {userTitle(languageToUse).map((user, index) => (
+            {userOnlyTitle.map((user, index) => (
               <div key={index}>{user.mainicon}</div>
             ))}
           </AccordionTrigger>
@@ -376,7 +380,7 @@ const NavbarMultipleResponsive = ({
         {/* Thanh toán */}
         <AccordionItem value="item-10">
           <AccordionTrigger className="text-gray-400">
-            {checkoutTitle(languageToUse).map((checkout, index) => (
+            {checkoutOnlyTitle.map((checkout, index) => (
               <div key={index}>{checkout.mainicon}</div>
             ))}
           </AccordionTrigger>
@@ -414,7 +418,7 @@ const NavbarMultipleResponsive = ({
         {/* Cài đặt */}
         <AccordionItem value="item-11">
           <AccordionTrigger className="text-gray-400">
-            {settingTitle(languageToUse).map((setting, index) => (
+            {settingOnlyTitle.map((setting, index) => (
               <div key={index}>{setting.mainicon}</div>
             ))}
           </AccordionTrigger>

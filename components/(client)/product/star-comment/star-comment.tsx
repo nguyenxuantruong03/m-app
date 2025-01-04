@@ -1,25 +1,22 @@
 "use client";
 import { commentcolor } from "@/components/(client)/color/color";
-import { translateRate } from "@/translate/translate-client";
 import { Comment } from "@/types/type";
 import { Star } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface CommentProps {
   data: string;
   comment?: Comment[];
-  languageToUse: string;
 }
 const CommentStar: React.FC<CommentProps> = ({
   data,
   comment,
-  languageToUse,
 }) => {
   if (!comment) {
     return null;
   }
 
-  //language
-  const rateMessage = translateRate(languageToUse);
+  const t = useTranslations()
 
   const calculateTotalReviews = () => {
     return comment.filter((comment) => comment.productId === data).length;
@@ -119,7 +116,7 @@ const CommentStar: React.FC<CommentProps> = ({
       {totalReviews > 0 ? (
         <>
           <span className="text-xs font-semibold md:text-sm md:mr-1">
-            {rateMessage}:{" "}
+            {t("action.rate")}:{" "}
           </span>
           {renderStars(
             Math.floor(calculateAverageRating(data)),

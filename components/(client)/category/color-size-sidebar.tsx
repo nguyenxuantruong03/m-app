@@ -3,14 +3,8 @@ import getProductDetail from "@/actions/client/get-productdetail";
 import Filter from "@/components/(client)/filter-category/filter";
 import MobileFilter from "@/components/(client)/filter-category/mobile-filter";
 import ColorSizeSkeleton from "@/components/(client)/skeleton/color-size-sidebar-category";
-import { useCurrentUser } from "@/hooks/use-current-user";
-import {
-  translateColors,
-  translateFilter,
-  translateNotFoundSizeAndColor,
-  translateSizes,
-} from "@/translate/translate-client";
 import { Size, Color, ProductDetail } from "@/types/type";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -23,28 +17,10 @@ type ProductDetailWithSizesColors = ProductDetail & {
 };
 
 const ColorSizeSideBar = ({ categoryId }: ColorSizeSideBarProps) => {
-  const user = useCurrentUser();
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+  const t = useTranslations()
   const [loading, setLoading] = useState(false);
   const [size, setSize] = useState<Size[]>([]);
   const [color, setColor] = useState<Color[]>([]);
-
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []);
-
-  const languageToUse =
-    user?.id && user?.role !== "GUEST" ? user?.language : storedLanguage || "vi";
-
-  const filterMessage = translateFilter(languageToUse);
-  const sizesMessage = translateSizes(languageToUse);
-  const colorsMessage = translateColors(languageToUse);
-
-  const notfoundSizeAndColorMessage = translateNotFoundSizeAndColor(languageToUse)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -94,25 +70,25 @@ const ColorSizeSideBar = ({ categoryId }: ColorSizeSideBarProps) => {
         setColor(colorsArray);
 
       } catch (error) {
-        toast.error(notfoundSizeAndColorMessage);
+        toast.error(t("product.notFoundSizeAndColor"));
       } finally {
         setLoading(false);
       }
     };
     fetchData();
-  }, [categoryId, languageToUse]);
+  }, [categoryId]);
 
   return (
     <>
     {
-      loading ? <ColorSizeSkeleton nameSize={sizesMessage} nameColor={colorsMessage}/> : (
+      loading ? <ColorSizeSkeleton nameSize={t("product.size")} nameColor={t("product.color")}/> : (
         <>
-      <MobileFilter size={size} name={filterMessage} color={color} />
+      <MobileFilter size={size} name={t("action.filter")} color={color} />
       {/* Desktop and laptop */}
       <div className="hidden lg:block">
         <div className="sticky top-20">
-              <Filter valueKey="sizeId" name={sizesMessage} data={size} />
-              <Filter valueKey="colorId" name={colorsMessage} data={color} />
+              <Filter valueKey="sizeId" name={t("product.size")} data={size} />
+              <Filter valueKey="colorId" name={t("product.color")} data={color} />
         </div>
       </div>
         </>

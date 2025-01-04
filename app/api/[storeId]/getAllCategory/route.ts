@@ -1,13 +1,15 @@
 import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { currentUser } from "@/lib/auth";
-import { translateCategoryGetAll } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 export async function GET(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const categoryGetAllMessage = translateCategoryGetAll(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     const categories = await prismadb.category.findMany();
@@ -15,7 +17,7 @@ export async function GET(req: Request) {
     return NextResponse.json(categories);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: categoryGetAllMessage }),
+      JSON.stringify({ error: t("toastError.category.intternalErrorGetCategory") }),
       { status: 500 }
     );
   }

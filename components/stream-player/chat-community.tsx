@@ -7,28 +7,23 @@ import { Input } from "../ui/input";
 import {ScrollArea} from '@/components/ui/scroll-area'
 import { CommunityItem } from "./community-item";
 import { LocalParticipant, RemoteParticipant } from "livekit-client";
-import { translateCommunityDisabled, translateNoResults } from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface ChatCommunityProps {
   hostName: string;
   viewerName: string;
   isHidden: boolean;
-  languageToUse: string
 }
 
 export const ChatCommunity = ({
   hostName,
   viewerName,
   isHidden,
-  languageToUse
 }: ChatCommunityProps) => {
+  const t = useTranslations()
   const [value, setValue] = useState("");
   const debounceValue = useDebounce<string>(value, 500);
   const participants = useParticipants();
-
-  //language
-  const communityDisabledMessage = translateCommunityDisabled(languageToUse);
-  const noResultMessage = translateNoResults(languageToUse)
 
   const onChange = (newValue: string) => {
     setValue(newValue);
@@ -53,7 +48,7 @@ export const ChatCommunity = ({
   if (isHidden) {
     return (
       <div className="flex flex-1 items-center justify-center">
-        <p className="text-sm text-muted-foreground">{communityDisabledMessage}</p>
+        <p className="text-sm text-muted-foreground">{t("profile.communityDisabled")}</p>
       </div>
     );
   }
@@ -67,7 +62,7 @@ export const ChatCommunity = ({
         />
         <ScrollArea className="gap-y-2 mt-4">
             <p className="text-center text-sm text-muted-foreground hidden last:block">
-                {noResultMessage}
+                {t("profile.noResult")}
             </p>
             {filteredParticipants.map((participant) =>(
                 <CommunityItem 
@@ -76,7 +71,6 @@ export const ChatCommunity = ({
                 viewerName={viewerName}
                 participantName={participant.name}
                 participantIdentity={participant.identity}
-                languageToUse={languageToUse}
                 />
             ))}
         </ScrollArea>

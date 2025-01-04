@@ -16,23 +16,21 @@ import {
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { translateImageUpload } from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 interface FormUploadAvatarNavbarItem {
-  languageToUse: string;
   classNamesForm?: string;
   classNamesUpload?: string;
+  languageToUse: string
 }
 
 export const FormUploadAvatarNavbar: React.FC<FormUploadAvatarNavbarItem> = ({
   classNamesForm,
   classNamesUpload,
-  languageToUse,
+  languageToUse
 }) => {
+  const t = useTranslations()
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-
-  //language
-  const translateImageUploadMessage = translateImageUpload(languageToUse);
 
   const form = useForm<z.infer<typeof UpdateImageSchema>>({
     resolver: zodResolver(UpdateImageSchema),
@@ -46,16 +44,16 @@ export const FormUploadAvatarNavbar: React.FC<FormUploadAvatarNavbarItem> = ({
     image(values,languageToUse)
       .then((data) => {
         if (data.error) {
-          toast.error(translateImageUploadMessage.uploadFail);
+          toast.error(t("navbardashboard.imageForm.uploadFail"));
         }
         if (data.success) {
           router.refresh();
-          toast.success(translateImageUploadMessage.uploadSuccess);
+          toast.success(t("navbardashboard.imageForm.uploadSuccess"));
           form.reset();
         }
       })
       .catch(() => {
-        toast.error(translateImageUploadMessage.uploadFail);
+        toast.error(t("navbardashboard.imageForm.uploadFail"));
       })
       .finally(() => setLoading(false));
   };
@@ -73,7 +71,6 @@ export const FormUploadAvatarNavbar: React.FC<FormUploadAvatarNavbarItem> = ({
               <FormItem>
                 <FormControl>
                   <UploadAvatarNavbar
-                    languageToUse={languageToUse}
                     value={field.value.map((image) => image.url)}
                     onChange={(url) =>
                       field.onChange([...field.value, { url }])

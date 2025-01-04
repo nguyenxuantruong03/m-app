@@ -5,34 +5,19 @@ import Image from "next/image";
 import { AvatarFallback, Avatar } from "@/components/ui/avatar";
 import { User } from "lucide-react";
 import Link from "next/link";
-import {
-  translateAngry,
-  translateFavorites,
-  translateHaha,
-  translateLike,
-  translateSad,
-  translateWow,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 interface PreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
   emojiUserIdModal: Emoji[];
-  languageToUse: string;
 }
 
 const ShowInfoEmojiModal: React.FC<PreviewModalProps> = ({
   isOpen,
   onClose,
   emojiUserIdModal,
-  languageToUse,
 }) => {
-  //languages
-  const likeMessage = translateLike(languageToUse);
-  const favoriteMessage = translateFavorites(languageToUse);
-  const hahaMessage = translateHaha(languageToUse);
-  const wowMessage = translateWow(languageToUse);
-  const sadMessage = translateSad(languageToUse);
-  const angryMessage = translateAngry(languageToUse);
+  const t = useTranslations("comment")
 
   const getEmojiChangeText = (emoji: string) => {
     let emojiInfo;
@@ -41,7 +26,7 @@ const ShowInfoEmojiModal: React.FC<PreviewModalProps> = ({
       case "like":
         emojiInfo = {
           imageSrc: "/icon-image/like-icon.png",
-          altText: likeMessage,
+          altText: t("like"),
           width: 27,
           height: 27,
           textColor: "#5890ff",
@@ -50,7 +35,7 @@ const ShowInfoEmojiModal: React.FC<PreviewModalProps> = ({
       case "love":
         emojiInfo = {
           imageSrc: "/icon-image/love.png",
-          altText: favoriteMessage,
+          altText: t("heart"),
           width: 25,
           height: 25,
           textColor: "#f25268",
@@ -59,7 +44,7 @@ const ShowInfoEmojiModal: React.FC<PreviewModalProps> = ({
       case "haha":
         emojiInfo = {
           imageSrc: "/icon-image/haha.png",
-          altText: hahaMessage,
+          altText: t("haha"),
           width: 26,
           height: 26,
           textColor: "#ffd972",
@@ -68,7 +53,7 @@ const ShowInfoEmojiModal: React.FC<PreviewModalProps> = ({
       case "wow":
         emojiInfo = {
           imageSrc: "/icon-image/wow-icon.png",
-          altText: wowMessage,
+          altText: t("wow"),
           width: 25,
           height: 25,
           textColor: "#ffd972",
@@ -77,7 +62,7 @@ const ShowInfoEmojiModal: React.FC<PreviewModalProps> = ({
       case "sad":
         emojiInfo = {
           imageSrc: "/icon-image/sad.png",
-          altText: sadMessage,
+          altText: t("sad"),
           width: 25,
           height: 25,
           textColor: "#ffd972",
@@ -86,7 +71,7 @@ const ShowInfoEmojiModal: React.FC<PreviewModalProps> = ({
       case "angry":
         emojiInfo = {
           imageSrc: "/icon-image/angry.png",
-          altText: angryMessage,
+          altText: t("angry"),
           width: 25,
           height: 25,
           textColor: "orange", // Màu văn bản

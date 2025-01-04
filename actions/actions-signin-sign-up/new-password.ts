@@ -9,62 +9,41 @@ import prismadb from "@/lib/prismadb";
 import { sendPasswordResetEmail } from "@/lib/mail";
 import { generatePasswordResetToken } from "@/lib/tokens";
 import { format } from "date-fns";
-import {
-  getNotFoundMessage,
-  translateAccountLocked,
-  translateEmailNotFound,
-  translateMissingTokens,
-  translatePasswordMismatch,
-  translatePasswordNotFound,
-  translatePasswordUpdated,
-  translateTokenExpired,
-  translateTokenNotFound,
-  translateTooManyAttempts,
-} from "@/translate/translate-client";
+import { createTranslator } from "next-intl";
 
 export const newPassword = async (
   values: z.infer<typeof NewPasswordSchema>,
   token?: string | null,
   languageToUse?: string
 ) => {
-  //languages
-  const notFoundMessage = getNotFoundMessage(languageToUse || "vi");
-  const missingTokensMessage = translateMissingTokens(languageToUse || "vi");
-  const tokenNotFoundMessage = translateTokenNotFound(languageToUse || "vi");
-  const emailNotFoundMessage = translateEmailNotFound(languageToUse || "vi");
-  const accountLockedMessage = translateAccountLocked(languageToUse || "vi");
-  const passwordNotFoundMessage = translatePasswordNotFound(
-    languageToUse || "vi"
-  );
-  const tokenExpiredMessage = translateTokenExpired(languageToUse || "vi");
-  const passwordUpdatedMessage = translatePasswordUpdated(
-    languageToUse || "vi"
-  );
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse || "vi", messages });
 
   const validatedFields = NewPasswordSchema.safeParse(values);
 
   if (!validatedFields.success) {
-    return { error: `${notFoundMessage}!` };
+    return { error: `${t("newPassword.notFound")}!` };
   }
 
   const { password } = validatedFields.data;
   if (!token) {
-    return { error: missingTokensMessage };
+    return { error: t("newPassword.missingTokens") };
   }
   const existingToken = await getPasswordResetTokenByToken(token);
   if (!existingToken) {
-    return { error: tokenNotFoundMessage };
+    return { error: t("newPassword.tokenNotFound") };
   }
 
   const existingUser = await getUserByEmail(existingToken.email);
   if (!existingUser) {
-    return { error: emailNotFoundMessage };
+    return { error: t("newPassword.emailNotFound") };
   }
 
   // Check ban status again after potential update
   if (existingUser.ban) {
     return {
-      error: accountLockedMessage,
+      error: t("newPassword.accountLocked"),
     };
   }
 
@@ -78,7 +57,7 @@ export const newPassword = async (
   });
 
   if (userPasswords.length === 0) {
-    return { error: passwordNotFoundMessage };
+    return { error: t("newPassword.passwordNotFound") };
   }
 
   let isSamePassword = false;
@@ -96,10 +75,7 @@ export const newPassword = async (
       );
 
       return {
-        error: translatePasswordMismatch(
-          languageToUse || "vi",
-          passwordSetDate
-        ),
+        error: t("newPassword.passwordMismatch", {passwordSetDate:passwordSetDate})
       };
     }
   }
@@ -124,7 +100,7 @@ export const newPassword = async (
       ? format(banUser.banExpires, "dd/MM/yyyy '-' HH:mm:ss a")
       : "";
     return {
-      error: translateTooManyAttempts(languageToUse || "vi", timeBan),
+      error: t("newPassword.tooManyAttempts", {timeBan:timeBan}),
     };
   }
 
@@ -151,7 +127,7 @@ export const newPassword = async (
       await sendPasswordResetEmail(languageToUse,existingToken.email, newToken.token);
     }
     return {
-      error: tokenExpiredMessage,
+      error: t("newPassword.tokenExpired"),
     };
   }
 
@@ -172,5 +148,5 @@ export const newPassword = async (
     where: { id: existingToken.id },
   });
 
-  return { success: passwordUpdatedMessage };
+  return { success: t("newPassword.passwordUpdated") };
 };

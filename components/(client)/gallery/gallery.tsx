@@ -5,19 +5,18 @@ import GalleryTab from "./gallery-tab";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import "./gallery.css";
-import { getOutOfStockMessage } from "@/translate/translate-client";
 import { Expand, ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface GalleryProps {
   images: ImageType[];
   data: Product;
-  languageToUse: string;
 }
 const Gallery: React.FC<GalleryProps> = ({
   images = [],
   data,
-  languageToUse,
 }) => {
+  const t = useTranslations()
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalImage, setModalImage] = useState<{ src: string; index: number }>({
     src: "",
@@ -30,9 +29,6 @@ const Gallery: React.FC<GalleryProps> = ({
   };
 
   const closeModal = () => setIsModalOpen(false);
-
-  // language
-  const outOfStockMessage = getOutOfStockMessage(languageToUse);
 
   // Kiểm tra tất cả sản phẩm có === 0 không
   const productQuantityAll = [1, 2, 3, 4, 5].every(
@@ -113,7 +109,7 @@ const Gallery: React.FC<GalleryProps> = ({
                 {productQuantityAll && (
                   <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center z-10">
                     <div className="w-full h-16 flex items-center justify-center text-white text-center font-bold text-2xl zigzag">
-                      {outOfStockMessage}
+                      {t("product.outOfStock")}
                     </div>
                   </div>
                 )}

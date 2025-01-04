@@ -4,14 +4,13 @@ import { Pencil } from "lucide-react";
 import { Separator } from "../ui/separator";
 import Image from "next/image";
 import { InfoModal } from "./info-modal";
-import { translateEditStreamInfo, translateMaximizeVisibility, translateName, translateThumbnail } from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface InfoCardProps {
   name: string;
   thumbnailUrl: string | null;
   hostIdentity: string;
   viewerIdentity: string;
-  languageToUse: string;
 }
 
 export const InfoCard = ({
@@ -19,16 +18,10 @@ export const InfoCard = ({
   thumbnailUrl,
   hostIdentity,
   viewerIdentity,
-  languageToUse
 }: InfoCardProps) => {
+  const t = useTranslations()
   const hostAsViewer = `host-${hostIdentity}`;
   const isHost = viewerIdentity === hostAsViewer;
-
-  //language
-  const editStreamInfoMessage = translateEditStreamInfo(languageToUse)
-  const maximizeVisibilityMessage = translateMaximizeVisibility(languageToUse)
-  const nameMessage = translateName(languageToUse)
-  const thumbnailMessage = translateThumbnail(languageToUse)
 
   if (!isHost) return null;
   return (
@@ -40,26 +33,25 @@ export const InfoCard = ({
           </div>
           <div>
             <h2 className="text-sm lg:text-lg font-semibold capitalize dark:text-slate-200">
-              {editStreamInfoMessage}
+              {t("profile.editStreamInfo")}
             </h2>
             <p className="text-muted-foreground text-xs lg:text-sm">
-              {maximizeVisibilityMessage}
+              {t("profile.maximizeVisibility")}
             </p>
           </div>
           <InfoModal 
           initialName={name}
           initialThumbnailUrl={thumbnailUrl}
-          languageToUse={languageToUse}
           />
         </div>
         <Separator />
         <div className="p-4 lg:p-6 space-y-4">
           <div>
-            <h3 className="text-sm text-muted-foreground mb-2">{nameMessage}</h3>
+            <h3 className="text-sm text-muted-foreground mb-2">{t("profile.name")}</h3>
             <p className="text-sm font-semibold dark:text-slate-200">{name}</p>
           </div>
           <div>
-            <h3 className="text-sm text-muted-foreground mb-2">{thumbnailMessage}</h3>
+            <h3 className="text-sm text-muted-foreground mb-2">{t("profile.thumbnail")}</h3>
             {thumbnailUrl && (
               <div className="relative aspect-video rounded-md overflow-hidden w-[200px] border border-white/10">
                 <Image fill src={thumbnailUrl} alt={name} className="object-cover"/>

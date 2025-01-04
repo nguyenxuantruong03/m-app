@@ -1,14 +1,16 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
-import { translateOrderPickupSuccess } from "@/translate/translate-api";
 import { StatusOrder } from "@prisma/client";
+import { createTranslator } from "next-intl";
 import { NextResponse } from "next/server";
 
 export async function PATCH(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const orderPickupStoreSuccessMessage = translateOrderPickupSuccess(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     const body = await req.json();
@@ -16,7 +18,7 @@ export async function PATCH(req: Request) {
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: orderPickupStoreSuccessMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
@@ -29,7 +31,7 @@ export async function PATCH(req: Request) {
 
     if (!existingOrder) {
       return new NextResponse(
-        JSON.stringify({ error: orderPickupStoreSuccessMessage.orderNotFound }),
+        JSON.stringify({ error: t("toastError.order.orderNotFound") }),
         { status: 404 }
       );
     }
@@ -50,7 +52,7 @@ export async function PATCH(req: Request) {
     return NextResponse.json(order);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: orderPickupStoreSuccessMessage.internalError }),
+      JSON.stringify({ error: t("toastError.order.internalErrorPatchPickupStoreSuccess") }),
       { status: 500 }
     );
   }

@@ -1,10 +1,7 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
-import {
-  translateStoreIdDelete,
-  translateStoreIdPatch,
-} from "@/translate/translate-api";
 import { UserRole } from "@prisma/client";
+import { createTranslator } from "next-intl";
 import { NextResponse } from "next/server";
 
 export async function PATCH(
@@ -13,8 +10,10 @@ export async function PATCH(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const storePatchMessage = translateStoreIdPatch(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     const body = await req.json();
@@ -22,7 +21,7 @@ export async function PATCH(
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: storePatchMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         {
           status: 403,
         }
@@ -31,14 +30,14 @@ export async function PATCH(
 
     if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: storePatchMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 405 }
       );
     }
 
     if (!name) {
       return new NextResponse(
-        JSON.stringify({ error: storePatchMessage.nameRequired }),
+        JSON.stringify({ error: t("toastError.nameRequired") }),
         {
           status: 400,
         }
@@ -47,7 +46,7 @@ export async function PATCH(
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: storePatchMessage.storeIdRequired }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 400 }
       );
     }
@@ -63,7 +62,7 @@ export async function PATCH(
     return NextResponse.json(store);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: storePatchMessage.internalErrorPatchStore }),
+      JSON.stringify({ error: t("toastError.internalErrorPatchStore") }),
       {
         status: 500,
       }
@@ -77,12 +76,14 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const storeIdDeleteMessage = translateStoreIdDelete(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: storeIdDeleteMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         {
           status: 403,
         }
@@ -91,14 +92,14 @@ export async function DELETE(
 
     if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: storeIdDeleteMessage.permissionDenied }),
+        JSON.stringify({ error: t('toastError.permissionDenied') }),
         { status: 405 }
       );
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: storeIdDeleteMessage.storeIdRequired }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 400 }
       );
     }
@@ -107,7 +108,7 @@ export async function DELETE(
     const totalStores = await prismadb.store.count();
     if (totalStores <= 1) {
       return new NextResponse(
-        JSON.stringify({ error: storeIdDeleteMessage.cannotDeleteStore }),
+        JSON.stringify({ error: t("toastError.cannotDeleteStore") }),
         { status: 400 }
       );
     }
@@ -120,7 +121,7 @@ export async function DELETE(
     return NextResponse.json(store);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: storeIdDeleteMessage.internalErrorDeleteStore }),
+      JSON.stringify({ error: t("toastError.internalErrorDeleteStore") }),
       {
         status: 500,
       }

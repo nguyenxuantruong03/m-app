@@ -7,51 +7,12 @@ import HeadingEffect from "../uis-home/HeadingEffect";
 import { ChevronsRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import {
-  translateCableOffer,
-  translateElectricWire,
-  translateFan,
-  translateFanOffer,
-  translateLightBulb,
-  translatePipe,
-  translatePipeOffer,
-  translateProductOffer,
-  translateSeeMore,
-  translateSocket,
-  translateSocketOffer,
-} from "@/translate/translate-client";
-import { useCurrentUser } from "@/hooks/use-current-user";
+import { useTranslations } from "next-intl";
 
 const SellingProduct = () => {
-  const user = useCurrentUser();
+  const t = useTranslations()
   const router = useRouter();
   const [activeIndex, setActiveIndex] = useState(0);
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []);
-
-  //language
-  const languageToUse =
-    user?.id && user?.role !== "GUEST"
-      ? user?.language
-      : storedLanguage || "vi";
-  const productOfferMessage = translateProductOffer(languageToUse);
-  const pipeOfferMessage = translatePipeOffer(languageToUse);
-  const cableOfferMessage = translateCableOffer(languageToUse);
-  const fanOfferMessage = translateFanOffer(languageToUse);
-  const socketOfferMessage = translateSocketOffer(languageToUse);
-  const seeMoreMessage = translateSeeMore(languageToUse);
-  const lightBlulbMessage = translateLightBulb(languageToUse);
-  const pipeMessage = translatePipe(languageToUse);
-  const electricWireMessage = translateElectricWire(languageToUse);
-  const fanMessage = translateFan(languageToUse);
-  const socketMessage = translateSocket(languageToUse);
 
   const handleSlideChange = (swiper: any) => {
     setActiveIndex(swiper.activeIndex);
@@ -97,15 +58,15 @@ const SellingProduct = () => {
                   : "bg-slate-200 dark:bg-slate-900"
               }`}
             >
-              <HeadingEffect heading={lightBlulbMessage} />
+              <HeadingEffect heading={t("home.lightBlulb")} />
               <p className="text-base px-2 xl:px-5 2xl:px-12 text-slate-900 dark:text-slate-200 font-semibold">
-                {productOfferMessage}
+                {t("home.productOffer")}
               </p>
               <p
                 onClick={handleClickProduct}
                 className="hover:text-gray-600 cursor-pointer text-lg text-[#e53350] font-bold mt-4 flex items-center justify-center"
               >
-                {seeMoreMessage} <ChevronsRight className="pl-1 w-8" />
+                {t("action.seeMore")} <ChevronsRight className="pl-1 w-8" />
               </p>
               <div className="float-right font-bold text-4xl md:text-7xl text-[#eaeaea] dark:text-slate-200">
                 01
@@ -119,16 +80,16 @@ const SellingProduct = () => {
                   : "bg-slate-200 dark:bg-slate-900"
               }`}
             >
-              <HeadingEffect heading={pipeMessage} />
+              <HeadingEffect heading={t("home.pipe")} />
               <p className="text-base px-2 xl:px-5 2xl:px-12 text-slate-900 dark:text-slate-200 font-semibold">
-                {pipeOfferMessage}
+                {t("home.pipeOffer")}
               </p>
 
               <p
                 onClick={handleClickProduct}
                 className="hover:text-gray-600 cursor-pointer text-lg text-[#e53350] font-bold mt-4 flex items-center justify-center"
               >
-                {seeMoreMessage} <ChevronsRight className="pl-1 w-8" />
+                {t("action.seeMore")} <ChevronsRight className="pl-1 w-8" />
               </p>
               <div className="float-right font-bold text-4xl md:text-7xl text-[#eaeaea] dark:text-slate-200">
                 02
@@ -142,16 +103,16 @@ const SellingProduct = () => {
                   : "bg-slate-200 dark:bg-slate-900"
               }`}
             >
-              <HeadingEffect heading={electricWireMessage} />
+              <HeadingEffect heading={t("home.electricWire")} />
               <p className="text-base px-2 xl:px-5 2xl:px-12 text-slate-900 dark:text-slate-200 font-semibold">
-                {cableOfferMessage}
+                {t("home.cableOffer")}
               </p>
 
               <p
                 onClick={handleClickProduct}
                 className="hover:text-gray-600 cursor-pointer text-lg text-[#e53350] font-bold mt-4 flex items-center justify-center"
               >
-                {seeMoreMessage} <ChevronsRight className="pl-1 w-8" />
+                {t("action.seeMore")} <ChevronsRight className="pl-1 w-8" />
               </p>
               <div className="float-right font-bold text-4xl md:text-7xl text-[#eaeaea] dark:text-slate-200">
                 03
@@ -165,16 +126,16 @@ const SellingProduct = () => {
                   : "bg-slate-200 dark:bg-slate-900"
               }`}
             >
-              <HeadingEffect heading={fanMessage} />
+              <HeadingEffect heading={t("home.fan")} />
               <p className="text-base px-2 xl:px-5 2xl:px-12 text-slate-900 dark:text-slate-200 font-semibold">
-                {fanOfferMessage}
+                {t("home.fanOffer")}
               </p>
 
               <p
                 onClick={handleClickProduct}
                 className="hover:text-gray-600 cursor-pointer text-lg text-[#e53350] font-bold mt-4 flex items-center justify-center"
               >
-                {seeMoreMessage} <ChevronsRight className="pl-1 w-8" />
+                {t("action.seeMore")} <ChevronsRight className="pl-1 w-8" />
               </p>
               <div className="float-right font-bold text-4xl md:text-7xl text-[#eaeaea] dark:text-slate-200">
                 04
@@ -188,16 +149,16 @@ const SellingProduct = () => {
                   : "bg-slate-200 dark:bg-slate-900"
               }`}
             >
-              <HeadingEffect heading={socketMessage} />
+              <HeadingEffect heading={t("home.socket")} />
               <p className="text-base px-2 xl:px-5 2xl:px-12 text-slate-900 dark:text-slate-200 font-semibold">
-                {socketOfferMessage}
+                {t("home.socketOffer")}
               </p>
 
               <p
                 onClick={handleClickProduct}
                 className="hover:text-gray-600 cursor-pointer text-lg text-[#e53350] font-bold mt-4 flex items-center justify-center"
               >
-                {seeMoreMessage} <ChevronsRight className="pl-1 w-8" />
+                {t("action.seeMore")} <ChevronsRight className="pl-1 w-8" />
               </p>
               <div className="float-right font-bold text-4xl md:text-7xl text-[#eaeaea] dark:text-slate-200">
                 05

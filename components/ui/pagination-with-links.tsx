@@ -11,7 +11,7 @@ import {
   PaginationPrevious,
 } from "./pagination";
 import { cn } from "@/lib/utils";
-import { translateProductPerPage } from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 export interface PaginationWithLinksProps {
   pageSizeSelectOptions?: {
@@ -21,7 +21,6 @@ export interface PaginationWithLinksProps {
   totalPages: number; // Đổi từ totalCount sang totalPages
   pageSize: number;
   page: number;
-  languageToUse: string;
   setCurrentPage: (page: number) => void;
 }
 
@@ -42,7 +41,6 @@ export function PaginationWithLinks({
   pageSize,
   totalPages,
   page,
-  languageToUse,
   setCurrentPage
 }: PaginationWithLinksProps) {
   const renderPageNumbers = () => {
@@ -79,7 +77,7 @@ export function PaginationWithLinks({
       if (page > 3) {
         items.push(
           <PaginationItem key="ellipsis-start">
-            <PaginationEllipsis languageToUse={languageToUse} />
+            <PaginationEllipsis />
           </PaginationItem>
         );
       }
@@ -104,7 +102,7 @@ export function PaginationWithLinks({
       if (page < totalPages - 2) {
         items.push(
           <PaginationItem key="ellipsis-end">
-            <PaginationEllipsis languageToUse={languageToUse} />
+            <PaginationEllipsis />
           </PaginationItem>
         );
       }
@@ -130,7 +128,6 @@ export function PaginationWithLinks({
       {pageSizeSelectOptions && (
         <div className="flex flex-col gap-4 flex-1">
           <SelectRowsPerPage
-            languageToUse={languageToUse}
             options={pageSizeSelectOptions.pageSizeOptions}
             pageSize={pageSize}
             onPageSizeChange={pageSizeSelectOptions.onPageSizeChange}
@@ -141,7 +138,6 @@ export function PaginationWithLinks({
         <PaginationContent className="max-sm:gap-0">
           <PaginationItem>
             <PaginationPrevious
-              languageToUse={languageToUse}
               onClick={() => setCurrentPage(Math.max(page - 1, 1))} // Cập nhật trang khi click
               aria-disabled={page === 1}
               tabIndex={page === 1 ? -1 : undefined}
@@ -151,7 +147,6 @@ export function PaginationWithLinks({
           {renderPageNumbers()}
           <PaginationItem>
             <PaginationNext
-              languageToUse={languageToUse}
               onClick={() => setCurrentPage(Math.min(page + 1, totalPages))} // Cập nhật trang khi click
               aria-disabled={page === totalPages}
               tabIndex={page === totalPages ? -1 : undefined}
@@ -169,17 +164,15 @@ function SelectRowsPerPage({
   options,
   pageSize,
   onPageSizeChange,
-  languageToUse
 }: {
   options: number[];
   pageSize: number;
   onPageSizeChange?: (newPageSize: number) => void;
-  languageToUse: string
 }) {
-  const productPerPageMessage = translateProductPerPage(languageToUse)
+  const t = useTranslations()
   return (
     <div className="flex items-center gap-4">
-      <span className="whitespace-nowrap text-sm dark:text-slate-200">{productPerPageMessage}</span>
+      <span className="whitespace-nowrap text-sm dark:text-slate-200">{t("action.productPerPage")}</span>
       <select
         className="border px-2 py-1 dark:text-slate-200"
         value={pageSize}

@@ -5,7 +5,7 @@ import Modal from "../ui/modal";
 import { format } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import viLocale from "date-fns/locale/vi";
-import { translateChooseAttendance } from "@/translate/translate-dashboard";
+import { useTranslations } from "next-intl";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh"; // Múi giờ Việt Nam
 
 interface ChooseAttendanceModalProps {
@@ -17,7 +17,6 @@ interface ChooseAttendanceModalProps {
   isCheckAttendanceTitle: string;
   isCheckAttendanceStart: string | Date;
   isCheckAttendanceEnd: string | Date;
-  languageToUse: string;
 }
 
 export const ChooseAttendanceModal: React.FC<ChooseAttendanceModalProps> = ({
@@ -29,8 +28,8 @@ export const ChooseAttendanceModal: React.FC<ChooseAttendanceModalProps> = ({
   isCheckAttendanceTitle,
   isCheckAttendanceStart,
   isCheckAttendanceEnd,
-  languageToUse,
 }) => {
+  const t = useTranslations()
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -71,19 +70,16 @@ export const ChooseAttendanceModal: React.FC<ChooseAttendanceModalProps> = ({
       )
     : null;
 
-  //language
-  const chooseAttendanceMessage = translateChooseAttendance(
-    languageToUse,
-    userId,
-    isCheckAttendanceTitle,
-    start,
-    end
-  );
+    const statusKey =
+    isCheckAttendanceTitle === "✅"
+        ? t("attendance.chooseAttendance.statusFinish")
+        : t("attendance.chooseAttendance.statusStart");
+    const endText = end ? t("attendance.chooseAttendance.timeEnd", { end }) : "";
 
   return (
     <Modal
-      title={chooseAttendanceMessage.baseMessage}
-      description={chooseAttendanceMessage.chooseMethod}
+      title={t("attendance.chooseAttendance.attendanceMessage",{userId:userId, eventTitle: isCheckAttendanceTitle, status: statusKey, start:start, end:endText })}
+      description={t("attendance.chooseAttendance.chooseMethod")}
       isOpen={isOpen}
       onClose={onClose}
       textCenter={true}
@@ -94,13 +90,13 @@ export const ChooseAttendanceModal: React.FC<ChooseAttendanceModalProps> = ({
           className="p-5 bg-white text-black hover:bg-slate-300 cursor-pointer"
           onClick={() => handleOpenNFCModal()}
         >
-          {chooseAttendanceMessage.nfc}
+          {t("attendance.chooseAttendance.nfc")}
         </div>
         <div
           className="p-5 bg-white text-black hover:bg-slate-300 cursor-pointer"
           onClick={() => handleOpenCameraModal()}
         >
-          {chooseAttendanceMessage.qrCode}
+          {t("attendance.chooseAttendance.qrCode")}
         </div>
       </div>
     </Modal>

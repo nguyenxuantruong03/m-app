@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "react-hot-toast";
 import { Skeleton } from "../ui/skeleton";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getToastError, translateFollow, translateFollowings, translateUnfollow, translateUnfollowed } from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface ActionsProps {
   hostIdentity: string;
@@ -25,17 +25,10 @@ export const Actions = ({
   isHost,
   languageToUse
 }: ActionsProps) => {
+  const t = useTranslations()
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const userId = useCurrentUser();
-
-  //language
-  const toastErrorMessage = getToastError(languageToUse)
-  const followingsMessage = translateFollowings(languageToUse)
-  const unFollowedMessage = translateUnfollowed(languageToUse)
-  const unFollowMessage = translateUnfollow(languageToUse)
-  const followMessage = translateFollow(languageToUse)
-
 
   if(!userId){
     notFound()
@@ -45,9 +38,9 @@ export const Actions = ({
     startTransition(() => {
       onFollow(hostIdentity,languageToUse)
         .then((data) =>
-          toast.success(`${followingsMessage} ${data.following.nameuser}`)
+          toast.success(`${t("profile.followings")} ${data.following.nameuser}`)
         )
-        .catch(() => toast.error(toastErrorMessage));
+        .catch(() => toast.error(t("toastError.somethingWentWrong")));
     });
   };
 
@@ -55,9 +48,9 @@ export const Actions = ({
     startTransition(() => {
       onUnfollow(hostIdentity,languageToUse)
         .then((data) =>
-          toast.success(`${unFollowedMessage} ${data.following.nameuser}`)
+          toast.success(`${t("profile.unFollowed")} ${data.following.nameuser}`)
         )
-        .catch(() => toast.error(toastErrorMessage));
+        .catch(() => toast.error(t("toastError.somethingWentWrong")));
     });
   };
 
@@ -91,7 +84,7 @@ export const Actions = ({
               isFollowing ? "fill-red-500 text-red-500" : "fill-none"
             )}
           />
-          {isFollowing ? unFollowMessage : followMessage}
+          {isFollowing ? t("profile.unFollow") : t("profile.follow")}
         </Button>
       )}
     </>

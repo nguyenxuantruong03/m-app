@@ -1,26 +1,23 @@
 import prismadb from "@/lib/prismadb";
 import { formatter } from "@/lib/utils";
 import LeafletMap from "./datastatistics_form";
-import { OrderColumn } from "@/app/(dashboard)/[storeId]/(routes)/orders/components/columns";
+import { OrderColumn } from "@/app/[locale]/(dashboard)/[storeId]/(routes)/orders/components/columns";
 import { Skeleton } from "../ui/skeleton";
-import {
-  translateProduct,
-  translateQuantity,
-} from "@/translate/translate-client";
+import { currentUser } from "@/lib/auth";
+import { createTranslator } from "next-intl";
 
 interface DatastatisticsProps {
   storeId: string;
-  languageToUse: string;
 }
 
 const Datastatistics = async ({
   storeId,
-  languageToUse,
 }: DatastatisticsProps) => {
-  //languages
-  const productMessage = translateProduct(languageToUse);
-  const quantityMessage = translateQuantity(languageToUse);
-
+  const user = await currentUser();
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   const datastatistics = await prismadb.order.findMany({
     where: {
       storeId: storeId,
@@ -68,7 +65,7 @@ const Datastatistics = async ({
     returnProduct: item.returnProduct,
     products: item.orderItem
       .map((orderItem) => {
-        return `${quantityMessage}: ${orderItem.quantity} - ${productMessage}: ${orderItem.product.heading}`;
+        return `"${t("action.quantity")}": ${orderItem.quantity} - ${t("product.product")}: ${orderItem.product.heading}`;
       })
       .join(", "),
     totalPrice: formatter.format(
@@ -102,7 +99,6 @@ const Datastatistics = async ({
         ) : (
           <LeafletMap
             data={formattedDatastatistics}
-            languageToUse={languageToUse}
           />
         )}
       </div>

@@ -1,13 +1,9 @@
 import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
-import { currentRole, currentUser } from "@/lib/auth";
+import { currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
-import {
-  translateColorDelete,
-  translateColorGet,
-  translateColorPost,
-} from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 export async function POST(
   req: Request,
@@ -15,29 +11,31 @@ export async function POST(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const colorPostMessage = translateColorPost(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
     const { name, value } = body;
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: colorPostMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: colorPostMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!name) {
       return new NextResponse(
-        JSON.stringify({ error: colorPostMessage.nameRequired }),
+        JSON.stringify({ error: t("toastError.nameRequired") }),
         {
           status: 400,
         }
@@ -46,7 +44,7 @@ export async function POST(
 
     if (!value) {
       return new NextResponse(
-        JSON.stringify({ error: colorPostMessage.colorRequired }),
+        JSON.stringify({ error: t("toastError.colorRequired") }),
         {
           status: 400,
         }
@@ -55,21 +53,8 @@ export async function POST(
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: colorPostMessage.storeIdRequired }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: colorPostMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -84,7 +69,7 @@ export async function POST(
 
     if (existingColor) {
       return new NextResponse(
-        JSON.stringify({ error: colorPostMessage.colorExists }),
+        JSON.stringify({ error: t("toastError.color.colorExists") }),
         { status: 400 }
       );
     }
@@ -118,7 +103,7 @@ export async function POST(
     return NextResponse.json(color);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: colorPostMessage.internalError }),
+      JSON.stringify({ error: t("toastError.color.internalErrorPostColor")}),
       { status: 500 }
     );
   }
@@ -130,13 +115,15 @@ export async function GET(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const colorGetMessage = translateColorGet(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: colorGetMessage.storeIdRequired }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 400 }
       );
     }
@@ -150,7 +137,7 @@ export async function GET(
     return NextResponse.json(colors);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: colorGetMessage.internalError }),
+      JSON.stringify({ error: t("toastError.color.internalErrorGetColor") }),
       { status: 500 }
     );
   }
@@ -162,29 +149,31 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const colorDeleteMessage = translateColorDelete(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
     const { ids } = body;
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: colorDeleteMessage.userNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound")}),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: colorDeleteMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!ids || ids.length === 0) {
       return new NextResponse(
-        JSON.stringify({ error: colorDeleteMessage.idsRequired }),
+        JSON.stringify({ error: t("toastError.idsArrayNotEmpty") }),
         { status: 400 }
       );
     }
@@ -197,7 +186,7 @@ export async function DELETE(
 
     if (!storeByUserId) {
       return new NextResponse(
-        JSON.stringify({ error: colorDeleteMessage.storeIdNotFound }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 405 }
       );
     }
@@ -238,10 +227,10 @@ export async function DELETE(
       },
     });
 
-    return NextResponse.json({ message: colorDeleteMessage.deleteSuccess });
+    return NextResponse.json({ message: t("toastSuccess.deletionSuccess") });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: colorDeleteMessage.internalError }),
+      JSON.stringify({ error: t("toastError.color.internalErrorDeleteColor") }),
       { status: 500 }
     );
   }

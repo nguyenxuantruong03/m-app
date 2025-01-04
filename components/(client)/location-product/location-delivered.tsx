@@ -7,7 +7,7 @@ import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getDeliveredLocation } from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -22,12 +22,12 @@ interface LocationproductProps {
 }
 
 const LocationDeliveredProduct = ({ locationLat, locationLng }: LocationproductProps) => {
+  const t = useTranslations()
   const [map, setMap] = useState<any>(null);
   const user = useCurrentUser();
 
   // Language setup
   const languageToUse = user?.language || "vi";
-  const locationShipperToUserMessage = getDeliveredLocation(languageToUse);
 
   // Default coordinates if no location provided
   const defaultLat = 10.77621;
@@ -60,8 +60,8 @@ const LocationDeliveredProduct = ({ locationLat, locationLng }: LocationproductP
 
     // Show a specific message based on whether both coordinates are provided
     const popupMessage = locationLat && locationLng 
-      ? locationShipperToUserMessage.delivered 
-      : locationShipperToUserMessage.addressNotFound; // Default message if no coordinates are provided
+      ? t("location.delivered")
+      : t('location.addressNotFound'); // Default message if no coordinates are provided
 
     DeliveredMarker.bindPopup(popupMessage).openPopup();
   }, [map, useLat, useLng, locationLat, locationLng]); // This effect runs after the map is set up

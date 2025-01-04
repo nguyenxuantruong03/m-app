@@ -1,16 +1,14 @@
 import { CartItemType, Product, User } from "@/types/type";
-import toast from "react-hot-toast";
 import { create } from "zustand";
 import axios from "axios";
 import getCart from "@/actions/client/cart";
-import { translateProductRemoved, translateUpdateQuantityError } from "@/translate/translate-client";
 interface CartStore {
   items: CartItemType[];
   userId: string | null;
   addItem: (data: Product, quantity: number, warranty: string | null, userId: string,selectedSize: string, selectedColor:string) => void;
-  removeItem: (id: string, userId: string, languageToUse: string) => void;
+  removeItem: (id: string, userId: string) => void;
   removeAll: (userId: string) => void;
-  updateQuantity: (id: string, quantity: number, warranty: string | null, userId: string, languageToUse: string) => void;
+  updateQuantity: (id: string, quantity: number, warranty: string | null, userId: string) => void;
   selectedItems: string[];
   selectAll: boolean;
   toggleSelectItem: (id: string,userId: string,nonSelectQuantitySold: string, noneSelectQuantityAvailable: string) => void;
@@ -196,9 +194,8 @@ const useCartdb = create<CartStore>((set, get) => ({
   },
 
 
-  updateQuantity: async (id: string, quantity: number, warranty: string | null, userId: string, languageToUse: string) => {
+  updateQuantity: async (id: string, quantity: number, warranty: string | null, userId: string) => {
     //language
-    const updatedQuantityErrorMessage = translateUpdateQuantityError(languageToUse)
 
     // Optimistically update the state first
     set((state) => ({
@@ -231,14 +228,10 @@ const useCartdb = create<CartStore>((set, get) => ({
           item.id === id ? { ...item, quantity: item.quantity - quantity } : item
         ),
       }));
-      toast.error(updatedQuantityErrorMessage);
     }
   },
 
-  removeItem: async (id: string, userId: string, languageToUse: string) => {
-    //language
-    const productRemoved = translateProductRemoved(languageToUse)
-
+  removeItem: async (id: string, userId: string) => {
     await axios.post("/api/client/cart/removeItem", { id, userId });
 
     set((state) => {
@@ -260,8 +253,6 @@ const useCartdb = create<CartStore>((set, get) => ({
         selectedItems: updatedSelectedItems,
       };
     });
-  
-    toast.success(productRemoved);
   },
 
   removeAll: async (userId: string) => {

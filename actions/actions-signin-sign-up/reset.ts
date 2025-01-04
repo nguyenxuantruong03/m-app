@@ -6,32 +6,20 @@ import { sendPasswordResetEmail } from "@/lib/mail";
 import { generatePasswordResetToken } from "@/lib/tokens";
 import prismadb from "@/lib/prismadb";
 import { format } from "date-fns";
-import {
-  getInvalidEmailMessage,
-  translateAccountLockedCannotChange,
-  translateEmailNotFound,
-  translateEmailSentCheck,
-  translateGuestAccountCannotResetPassword,
-  translateTooManyVerificationAttempts,
-} from "@/translate/translate-client";
+import { createTranslator } from "next-intl";
 
 export const reset = async (
   values: z.infer<typeof ResetSchema>,
   languageToUse: string
 ) => {
-  //language
-  const invalidEmailMessage = getInvalidEmailMessage(languageToUse);
-  const emailNotFoundMessage = translateEmailNotFound(languageToUse);
-  const guestAccountCannotResetPasswordMessage =
-    translateGuestAccountCannotResetPassword(languageToUse);
-  const accountLockedCannotChangeMessage =
-    translateAccountLockedCannotChange(languageToUse);
-  const emailSentCheckMessage = translateEmailSentCheck(languageToUse);
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   const validatedFields = ResetSchema.safeParse(values);
 
   if (!validatedFields.success) {
-    return { error: `${invalidEmailMessage}!` };
+    return { error: `${t("resetPassword.invalidEmail")}!` };
   }
 
   const { email } = validatedFields.data;
@@ -39,16 +27,16 @@ export const reset = async (
   const existingUser = await getUserByEmail(email);
 
   if (!existingUser) {
-    return { error: emailNotFoundMessage };
+    return { error: t("resetPassword.emailNotFound") };
   }
 
   if (existingUser.email === "guest@gmail.com") {
-    return { error: guestAccountCannotResetPasswordMessage };
+    return { error: t("resetPassword.guestAccountCannotResetPassword") };
   }
 
   // Check if the user is banned
   if (existingUser.ban) {
-    return { error: accountLockedCannotChangeMessage };
+    return { error: t("resetPassword.accountLockedCannotChange") };
   }
 
   let resendEmailResetPasswordCount =
@@ -71,7 +59,7 @@ export const reset = async (
       ? format(banUser.banExpires, "dd/MM/yyyy '-' HH:mm:ss a")
       : "";
     return {
-      error: translateTooManyVerificationAttempts(languageToUse, timeBan),
+      error: t("resetPassword.tooManyVerificationAttempts",{timeBan: timeBan}),
     };
   }
 
@@ -99,5 +87,5 @@ export const reset = async (
     );
   }
 
-  return { success: emailSentCheckMessage };
+  return { success: t("resetPassword.emailSentCheck") };
 };

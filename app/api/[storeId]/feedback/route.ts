@@ -1,41 +1,43 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
-import { translateFeedbackDelete, translateFeedbackGet, translateFeedbackPost } from "@/translate/translate-api";
 import { UserRole } from "@prisma/client";
+import { createTranslator } from "next-intl";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const feedbackPostMessage = translateFeedbackPost(LanguageToUse)
+   const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
     const { user, emotion, category, content } = body;
 
     if (!user) {
-      return new NextResponse(JSON.stringify({ error: feedbackPostMessage.userIdRequired}), {
+      return new NextResponse(JSON.stringify({ error: t("toastError.userNotFound")}), {
         status: 400,
       });
     }
 
     if (!emotion) {
       return new NextResponse(
-        JSON.stringify({ error: feedbackPostMessage.emotionRequired }),
+        JSON.stringify({ error: t("toastError.feedback.emotionRequired") }),
         { status: 400 }
       );
     }
 
     if (!category) {
       return new NextResponse(
-        JSON.stringify({ error: feedbackPostMessage.categoryRequired }),
+        JSON.stringify({ error: t("toastError.categoryId") }),
         { status: 400 }
       );
     }
 
     if (!content) {
       return new NextResponse(
-        JSON.stringify({ error: feedbackPostMessage.contentRequired }),
+        JSON.stringify({ error: t("toastError.feedback.contentRequired") }),
         { status: 400 }
       );
     }
@@ -71,7 +73,7 @@ export async function POST(req: Request) {
         return NextResponse.json(feedback);
       } else {
         return new NextResponse(
-          JSON.stringify({ error: feedbackPostMessage.feedbackLimit }),
+          JSON.stringify({ error: t("toastError.feedback.feedbackLimit") }),
           { status: 500 }
         );
       }
@@ -93,7 +95,7 @@ export async function POST(req: Request) {
 
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: feedbackPostMessage.internalError }),
+      JSON.stringify({ error: t("toastError.feedback.internalErrorPostFeedback") }),
       { status: 500 }
     );
   }
@@ -103,8 +105,10 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const feedbackGetMessage = translateFeedbackGet(LanguageToUse)
+   const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     const feedBack = await prismadb.feedBack.findMany({
       include: {
@@ -115,7 +119,7 @@ export async function GET(req: Request) {
     return NextResponse.json(feedBack);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: feedbackGetMessage }),
+      JSON.stringify({ error: t("toastError.feedback.internalErrorGetFeedback") }),
       { status: 500 }
     );
   }
@@ -127,43 +131,32 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const feedbackDeleteMessage = translateFeedbackDelete(LanguageToUse)
+   const languageToUse = user?.language || "vi";
+   let messages;
+   messages = (await import(`@/messages/${languageToUse}.json`)).default;
+   const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
     const { ids } = body;
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: feedbackDeleteMessage.userNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: feedbackDeleteMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!ids || ids.length === 0) {
       return new NextResponse(
-        JSON.stringify({ error: feedbackDeleteMessage.emptyIdsArray }),
+        JSON.stringify({ error: t("toastError.idsArrayNotEmpty") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: feedbackDeleteMessage.feedbackIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -222,10 +215,10 @@ export async function DELETE(
       },
     });
 
-    return NextResponse.json({ message: feedbackDeleteMessage.deleteSuccess });
+    return NextResponse.json({ message: t("toastSuccess.deletionSuccess") });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: feedbackDeleteMessage.internalError }),
+      JSON.stringify({ error: t("toastError.feedback.internalErrorDeleteFeedback") }),
       { status: 500 }
     );
   }

@@ -1,31 +1,28 @@
 import { Toggle } from "@/components/ui/toggle";
-import { translateTaskList } from "@/translate/translate-dashboard";
 import { Editor } from "@tiptap/react";
 import { Brackets, Columns2, Columns3 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface TaskItemAndTaskListProps {
   editor: Editor;
   disabled: boolean;
-  languageToUse: string;
 }
 
 const TaskItemandTasklist: React.FC<TaskItemAndTaskListProps> = ({
   editor,
   disabled,
-  languageToUse
 }) => {
-  //language
-  const taskListMessage = translateTaskList(languageToUse)
+  const t = useTranslations("tiptap.taskList")
   return (
     <div>
       <h2 className="text-lg font-bold text-indigo-600">
-        {taskListMessage.taskItemAndTaskList}
+        {t("taskItemAndTaskList")}
       </h2>
       <Toggle
         size="sm"
         pressed={editor.isActive("taskList")}
         onPressedChange={() => editor.chain().focus().toggleTaskList().run()}
-        title={taskListMessage.list}
+        title={t("list")}
         disabled={disabled}
       >
         <Brackets className="h-4 w-4" />
@@ -36,7 +33,7 @@ const TaskItemandTasklist: React.FC<TaskItemAndTaskListProps> = ({
         onPressedChange={() =>
           editor.chain().focus().splitListItem("taskItem").run()
         }
-        title={taskListMessage.addNewList}
+        title={t("addNewList")}
         disabled={!editor.can().splitListItem("taskItem") || disabled}
       >
         <Columns2 className="h-4 w-4" />
@@ -48,7 +45,7 @@ const TaskItemandTasklist: React.FC<TaskItemAndTaskListProps> = ({
           editor.chain().focus().sinkListItem("taskItem").run()
         }
         disabled={!editor.can().sinkListItem("taskItem") || disabled}
-        title={taskListMessage.nestedList}
+        title={t("nestedList")}
       >
         <Columns3 className="h-4 w-4" />
       </Toggle>
@@ -59,7 +56,7 @@ const TaskItemandTasklist: React.FC<TaskItemAndTaskListProps> = ({
           editor.chain().focus().liftListItem("taskItem").run()
         }
         disabled={!editor.can().liftListItem("taskItem") || disabled}
-        title={taskListMessage.deleteList}
+        title={t("deleteList")}
       >
         <Brackets className="h-4 w-4" />
       </Toggle>

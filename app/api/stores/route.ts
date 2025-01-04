@@ -3,26 +3,28 @@ import prismadb from "@/lib/prismadb";
 import { currentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { translateStoreDelete, translateStoreGet, translateStorePost } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 export async function GET(
   req: Request,
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const storeGetMessage = translateStoreGet(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
 
     if (!user) {
-      return new NextResponse(JSON.stringify({ error: storeGetMessage.userIdNotFound }), {
+      return new NextResponse(JSON.stringify({ error: t("toastError.userNotFound") }), {
         status: 403,
       });
     }
 
     if (user.role === UserRole.USER || user.role === UserRole.GUEST ) {
       return new NextResponse(
-        JSON.stringify({ error: storeGetMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 405 }
       );
     }
@@ -30,7 +32,7 @@ export async function GET(
     const store = await prismadb.store.findMany();
     return NextResponse.json(store);
   } catch (error) {
-    return new NextResponse(JSON.stringify({ error: storeGetMessage.internalErrorGetStore }), {
+    return new NextResponse(JSON.stringify({ error: t("toastError.internalErrorGetStore") }), {
       status: 500,
     });
   }
@@ -39,28 +41,31 @@ export async function GET(
 export async function POST(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const storePostMessage = translateStorePost(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
+
   try {
     const body = await req.json();
 
     const { name } = body;
 
     if (!user) {
-      return new NextResponse(JSON.stringify({ error: storePostMessage.userIdNotFound }), {
+      return new NextResponse(JSON.stringify({ error: t("toastError.userNotFound") }), {
         status: 403,
       });
     }
 
     if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: storePostMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: storePostMessage.nameRequired }), {
+      return new NextResponse(JSON.stringify({ error: t("toastError.nameRequired") }), {
         status: 400,
       });
     }
@@ -167,7 +172,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(store);
   } catch (error) {
-    return new NextResponse(JSON.stringify({ error: storePostMessage.internalErrorPostStore }), {
+    return new NextResponse(JSON.stringify({ error: t("toastError.internalErrorPostStore") }), {
       status: 500,
     });
   }
@@ -178,29 +183,32 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const storeDeleteMessage = translateStoreDelete(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
+
   try {
     const body = await req.json();
     const { ids } = body;
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: storeDeleteMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: storeDeleteMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!ids || ids.length === 0) {
       return new NextResponse(
-        JSON.stringify({ error: storeDeleteMessage.idsArrayNotEmpty }),
+        JSON.stringify({ error: t("toastError.idsArrayNotEmpty") }),
         { status: 400 }
       );
     }
@@ -238,10 +246,10 @@ export async function DELETE(
       },
     });
 
-    return NextResponse.json({ message: storeDeleteMessage.deletionSuccess });
+    return NextResponse.json({ message: t("toastSuccess.deletionSuccess") });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: storeDeleteMessage.internalErrorDeleteStore }),
+      JSON.stringify({ error: t("toastError.internalErrorDeleteStore") }),
       { status: 500 }
     );
   }

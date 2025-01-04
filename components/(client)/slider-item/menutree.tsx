@@ -6,22 +6,8 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { menutreecolor } from "@/components/(client)/color/color";
 import { Category } from "@/types/type";
-import {
-  getProductNotFoundMessage,
-  translateBathroomMaterials,
-  translateCommonItems,
-  translateCuttingStone,
-  translateElectricWire,
-  translateFan,
-  translateGlue,
-  translateLightBulb,
-  translateLock,
-  translatePaint,
-  translatePin,
-  translatePlasticPipe,
-  translateSocketAndFaceplate,
-} from "@/translate/translate-client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslations } from "next-intl";
 
 interface menuTreeProps {
   data: Category[];
@@ -36,7 +22,6 @@ interface menuTreeProps {
   categories9: Category[];
   categories10: Category[];
   categories11: Category[];
-  languageToUse: string;
   loadingBillboard: boolean | undefined;
   loadingCategory: boolean
 }
@@ -53,26 +38,11 @@ const MenuTree: React.FC<menuTreeProps> = ({
   categories9,
   categories10,
   categories11,
-  languageToUse,
   loadingBillboard,
   loadingCategory
 }) => {
+  const t = useTranslations()
   const pathname = usePathname();
-
-  //languages
-  const pinMesage = translatePin(languageToUse);
-  const fanMessage = translateFan(languageToUse);
-  const plasticPipeMessage = translatePlasticPipe(languageToUse);
-  const electricWireMessage = translateElectricWire(languageToUse);
-  const cuttingStoneMessage = translateCuttingStone(languageToUse);
-  const lockMessage = translateLock(languageToUse);
-  const glueMessage = translateGlue(languageToUse);
-  const socketAndFaceplateMessage = translateSocketAndFaceplate(languageToUse);
-  const paintMessage = translatePaint(languageToUse);
-  const bathroomMaterialsMessage = translateBathroomMaterials(languageToUse);
-  const lightBlubMessage = translateLightBulb(languageToUse);
-  const commonItemMessage = translateCommonItems(languageToUse);
-  const productNotFoundMessage = getProductNotFoundMessage(languageToUse);
 
   const routes = data.map((route) => ({
     href: `/category/${route.id}`,
@@ -249,7 +219,7 @@ const MenuTree: React.FC<menuTreeProps> = ({
       <div className=" md:w-[185px] lg:w-[205px] ">
         <div onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
           <div className={menutreecolor.flex_hover_bg}>
-            <p className={`${menutreecolor.texthover}`}>{pinMesage}</p>
+            <p className={`${menutreecolor.texthover}`}>{t("product.pin")}</p>
             <p>
               <ChevronRight className=" text-slate-900 dark:text-slate-200" />
             </p>
@@ -301,7 +271,7 @@ const MenuTree: React.FC<menuTreeProps> = ({
                   </div>
                 ) : (
                   <div className="flex items-center justify-center h-full w-full text-neutral-500">
-                    <p>{productNotFoundMessage}</p>
+                    <p>{t("product.productNotFound")}</p>
                   </div>
                 )}
               </div>
@@ -311,7 +281,7 @@ const MenuTree: React.FC<menuTreeProps> = ({
 
         <div onMouseOver={handleMouseOver1} onMouseOut={handleMouseOut1}>
           <div className={menutreecolor.flex_hover_bg}>
-            <p className={`${menutreecolor.texthover}`}>{fanMessage} </p>
+            <p className={`${menutreecolor.texthover}`}>{t("product.fan")} </p>
             <p>
               <ChevronRight className="text-slate-900 dark:text-slate-200" />
             </p>
@@ -363,7 +333,7 @@ const MenuTree: React.FC<menuTreeProps> = ({
                   </div>
                 ) : (
                   <div className="flex items-center justify-center h-full w-full text-neutral-500">
-                    <p>{productNotFoundMessage}</p>{" "}
+                    <p>{t("product.productNotFound")}</p>{" "}
                   </div>
                 )}
               </div>
@@ -373,7 +343,7 @@ const MenuTree: React.FC<menuTreeProps> = ({
 
         <div onMouseOver={handleMouseOver2} onMouseOut={handleMouseOut2}>
           <div className={menutreecolor.flex_hover_bg}>
-            <p className={`${menutreecolor.texthover}`}>{plasticPipeMessage}</p>
+            <p className={`${menutreecolor.texthover}`}>{t("product.plasticPipe")}</p>
             <p>
               <ChevronRight className="text-slate-900 dark:text-slate-200" />
             </p>
@@ -425,7 +395,7 @@ const MenuTree: React.FC<menuTreeProps> = ({
                   </div>
                 ) : (
                   <div className="flex items-center justify-center h-full w-full text-neutral-500">
-                    <p>{productNotFoundMessage}</p>{" "}
+                    <p>{t("product.productNotFound")}</p>{" "}
                   </div>
                 )}
               </div>
@@ -436,7 +406,7 @@ const MenuTree: React.FC<menuTreeProps> = ({
         <div onMouseOver={handleMouseOver3} onMouseOut={handleMouseOut3}>
           <div className={menutreecolor.flex_hover_bg}>
             <p className={`${menutreecolor.texthover}`}>
-              {electricWireMessage}
+              {t("product.electricWire")}
             </p>
             <p>
               <ChevronRight className="text-slate-900 dark:text-slate-200" />
@@ -489,7 +459,7 @@ const MenuTree: React.FC<menuTreeProps> = ({
                   </div>
                 ) : (
                   <div className="flex items-center justify-center h-full w-full text-neutral-500">
-                    <p>{productNotFoundMessage}</p>{" "}
+                    <p>{t("product.productNotFound")}</p>{" "}
                   </div>
                 )}
               </div>
@@ -500,7 +470,7 @@ const MenuTree: React.FC<menuTreeProps> = ({
         <div onMouseOver={handleMouseOver4} onMouseOut={handleMouseOut4}>
           <div className={menutreecolor.flex_hover_bg}>
             <p className={`${menutreecolor.texthover}`}>
-              {cuttingStoneMessage}
+              {t("product.cuttingStone")}
             </p>
             <p>
               <ChevronRight className="text-slate-900 dark:text-slate-200" />
@@ -553,7 +523,7 @@ const MenuTree: React.FC<menuTreeProps> = ({
                   </div>
                 ) : (
                   <div className="flex items-center justify-center h-full w-full text-neutral-500">
-                    <p>{productNotFoundMessage}</p>{" "}
+                    <p>{t("product.productNotFound")}</p>{" "}
                   </div>
                 )}
               </div>
@@ -563,7 +533,7 @@ const MenuTree: React.FC<menuTreeProps> = ({
 
         <div onMouseOver={handleMouseOver5} onMouseOut={handleMouseOut5}>
           <div className={menutreecolor.flex_hover_bg}>
-            <p className={`${menutreecolor.texthover}`}>{lockMessage}</p>
+            <p className={`${menutreecolor.texthover}`}>{t("product.lock")}</p>
             <p>
               <ChevronRight className="text-slate-900 dark:text-slate-200" />
             </p>
@@ -615,7 +585,7 @@ const MenuTree: React.FC<menuTreeProps> = ({
                   </div>
                 ) : (
                   <div className="flex items-center justify-center h-full w-full text-neutral-500">
-                    <p>{productNotFoundMessage}</p>{" "}
+                    <p>{t("product.productNotFound")}</p>{" "}
                   </div>
                 )}
               </div>
@@ -625,7 +595,7 @@ const MenuTree: React.FC<menuTreeProps> = ({
 
         <div onMouseOver={handleMouseOver6} onMouseOut={handleMouseOut6}>
           <div className={menutreecolor.flex_hover_bg}>
-            <p className={`${menutreecolor.texthover}`}>{glueMessage}</p>
+            <p className={`${menutreecolor.texthover}`}>{t("product.glue")}</p>
             <p>
               <ChevronRight className="text-slate-900 dark:text-slate-200" />
             </p>
@@ -677,7 +647,7 @@ const MenuTree: React.FC<menuTreeProps> = ({
                   </div>
                 ) : (
                   <div className="flex items-center justify-center h-full w-full text-neutral-500">
-                    <p>{productNotFoundMessage}</p>{" "}
+                    <p>{t("product.productNotFound")}</p>{" "}
                   </div>
                 )}
               </div>
@@ -688,7 +658,7 @@ const MenuTree: React.FC<menuTreeProps> = ({
         <div onMouseOver={handleMouseOver7} onMouseOut={handleMouseOut7}>
           <div className={menutreecolor.flex_hover_bg}>
             <p className={`${menutreecolor.texthover}`}>
-              {socketAndFaceplateMessage}
+              {t("product.socketAndFaceplate")}
             </p>
             <p>
               <ChevronRight className="text-slate-900 dark:text-slate-200" />
@@ -741,7 +711,7 @@ const MenuTree: React.FC<menuTreeProps> = ({
                   </div>
                 ) : (
                   <div className="flex items-center justify-center h-full w-full text-neutral-500">
-                    <p>{productNotFoundMessage}</p>{" "}
+                    <p>{t("product.productNotFound")}</p>{" "}
                   </div>
                 )}
               </div>
@@ -751,7 +721,7 @@ const MenuTree: React.FC<menuTreeProps> = ({
 
         <div onMouseOver={handleMouseOver8} onMouseOut={handleMouseOut8}>
           <div className={menutreecolor.flex_hover_bg}>
-            <p className={`${menutreecolor.texthover} `}>{paintMessage}</p>
+            <p className={`${menutreecolor.texthover} `}>{t("product.paint")}</p>
             <p>
               <ChevronRight className="text-slate-900 dark:text-slate-200" />
             </p>
@@ -803,7 +773,7 @@ const MenuTree: React.FC<menuTreeProps> = ({
                   </div>
                 ) : (
                   <div className="flex items-center justify-center h-full w-full text-neutral-500">
-                    <p>{productNotFoundMessage}</p>{" "}
+                    <p>{t("product.productNotFound")}</p>{" "}
                   </div>
                 )}
               </div>
@@ -814,7 +784,7 @@ const MenuTree: React.FC<menuTreeProps> = ({
         <div onMouseOver={handleMouseOver9} onMouseOut={handleMouseOut9}>
           <div className={menutreecolor.flex_hover_bg}>
             <p className={`${menutreecolor.texthover}`}>
-              {bathroomMaterialsMessage}
+              {t("product.bathroomMaterials")}
             </p>
             <p>
               <ChevronRight className="text-slate-900 dark:text-slate-200" />
@@ -867,7 +837,7 @@ const MenuTree: React.FC<menuTreeProps> = ({
                   </div>
                 ) : (
                   <div className="flex items-center justify-center h-full w-full text-neutral-500">
-                    <p>{productNotFoundMessage}</p>{" "}
+                    <p>{t("product.productNotFound")}</p>{" "}
                   </div>
                 )}
               </div>
@@ -877,7 +847,7 @@ const MenuTree: React.FC<menuTreeProps> = ({
 
         <div onMouseOver={handleMouseOver10} onMouseOut={handleMouseOut10}>
           <div className={menutreecolor.flex_hover_bg}>
-            <p className={`${menutreecolor.texthover}`}>{lightBlubMessage}</p>
+            <p className={`${menutreecolor.texthover}`}>{t("product.lightBlub")}</p>
             <p>
               <ChevronRight className="text-slate-900 dark:text-slate-200" />
             </p>
@@ -929,7 +899,7 @@ const MenuTree: React.FC<menuTreeProps> = ({
                   </div>
                 ) : (
                   <div className="flex items-center justify-center h-full w-full text-neutral-500">
-                    <p>{productNotFoundMessage}</p>{" "}
+                    <p>{t("product.productNotFound")}</p>{" "}
                   </div>
                 )}
               </div>
@@ -939,7 +909,7 @@ const MenuTree: React.FC<menuTreeProps> = ({
 
         <div onMouseOver={handleMouseOver11} onMouseOut={handleMouseOut11}>
           <div className={menutreecolor.flex_hover_bg}>
-            <p className={`${menutreecolor.texthover}`}>{commonItemMessage}</p>
+            <p className={`${menutreecolor.texthover}`}>{t("product.commonItem")}</p>
             <p>
               <ChevronRight className="text-slate-900 dark:text-slate-200" />
             </p>
@@ -991,7 +961,7 @@ const MenuTree: React.FC<menuTreeProps> = ({
                   </div>
                 ) : (
                   <div className="flex items-center justify-center h-full w-full text-neutral-500">
-                    <p>{productNotFoundMessage}</p>{" "}
+                    <p>{t("product.productNotFound")}</p>{" "}
                   </div>
                 )}
               </div>

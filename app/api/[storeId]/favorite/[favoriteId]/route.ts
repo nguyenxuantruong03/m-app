@@ -3,11 +3,7 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
-import {
-  translateFavoriteIdDelete,
-  translateFavoriteIdGet,
-  translateFavoritePatch,
-} from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 type FavoriteValue = string | Date | undefined | null;
 
@@ -22,26 +18,28 @@ export async function GET(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const favoriteIdGetMessage = translateFavoriteIdGet(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!params.favoriteId) {
       return new NextResponse(
-        JSON.stringify({ error: favoriteIdGetMessage.favoriteIdRequired }),
+        JSON.stringify({ error:t("toastError.favorite.favoriteIdRequired") }),
         { status: 400 }
       );
     }
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: favoriteIdGetMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: favoriteIdGetMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -55,7 +53,7 @@ export async function GET(
     return NextResponse.json(favorite);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: favoriteIdGetMessage.internalError }),
+      JSON.stringify({ error: t("toastError.favorite.internalErrorGetFavorite") }),
       { status: 500 }
     );
   }
@@ -67,40 +65,29 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const favoriteIdDeleteMessage = translateFavoriteIdDelete(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: favoriteIdDeleteMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: favoriteIdDeleteMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!params.favoriteId) {
       return new NextResponse(
-        JSON.stringify({ error: favoriteIdDeleteMessage.favoriteIdRequired }),
+        JSON.stringify({ error: t("toastError.favorite.favoriteIdRequired") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: favoriteIdDeleteMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -130,7 +117,7 @@ export async function DELETE(
     return NextResponse.json(favorite);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: favoriteIdDeleteMessage.internalError }),
+      JSON.stringify({ error: t("toastError.favorite.internalErrorDeleteFavorite") }),
       { status: 500 }
     );
   }
@@ -142,29 +129,31 @@ export async function PATCH(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const favoritePatchMessage = translateFavoritePatch(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
     const { name, value } = body;
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: favoritePatchMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: favoritePatchMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!name) {
       return new NextResponse(
-        JSON.stringify({ error: favoritePatchMessage.nameRequired }),
+        JSON.stringify({ error: t("toastError.nameRequired") }),
         {
           status: 400,
         }
@@ -173,23 +162,11 @@ export async function PATCH(
 
     if (!params.favoriteId) {
       return new NextResponse(
-        JSON.stringify({ error: favoritePatchMessage.favoriteIdRequired }),
+        JSON.stringify({ error: t("toastError.favorite.favoriteIdRequired") }),
         { status: 400 }
       );
     }
 
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: favoritePatchMessage.storeIdNotFound }),
-        { status: 405 }
-      );
-    }
 
      // Kiểm tra xem tên mới đã tồn tại trong cơ sở dữ liệu chưa (ngoại trừ favoriteId hiện tại)
      const existingFavorite = await prismadb.favorite.findFirst({
@@ -202,7 +179,7 @@ export async function PATCH(
 
     if (existingFavorite) {
       return new NextResponse(
-        JSON.stringify({ error: favoritePatchMessage.favoriteExists }),
+        JSON.stringify({ error: t("toastError.favorite.favoriteExists") }),
         { status: 400 }
       );
     }
@@ -215,7 +192,7 @@ export async function PATCH(
 
     if (!currentFavorite) {
       return new NextResponse(
-        JSON.stringify({ error: favoritePatchMessage.favoriteNotFound }),
+        JSON.stringify({ error: t("toastError.favorite.favoriteNotFound") }),
         { status: 404 }
       );
     }
@@ -277,7 +254,7 @@ export async function PATCH(
     return NextResponse.json(favorite);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: favoritePatchMessage.internalError }),
+      JSON.stringify({ error: t("toastError.favorite.internalErrorPatchFavorite") }),
       { status: 500 }
     );
   }

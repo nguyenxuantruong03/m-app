@@ -8,7 +8,7 @@ import {
   Legend,
 } from "recharts";
 import { Skeleton } from "../ui/skeleton";
-import { translateSelectDateMessage } from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface RoleData {
   role: string;
@@ -19,16 +19,13 @@ interface RoleData {
 interface FunnelChartProps {
   funnelChartData: RoleData[];
   loading: boolean;
-  languageToUse: string;
 }
 
 const FunnelChart: React.FC<FunnelChartProps> = ({
   funnelChartData,
   loading,
-  languageToUse,
 }) => {
-  //language
-  const selectDataMessgae = translateSelectDateMessage(languageToUse);
+  const t = useTranslations()
 
   // Hàm để lấy màu cho từng vai trò
   const getColor = (role: string) => {
@@ -103,7 +100,7 @@ const FunnelChart: React.FC<FunnelChartProps> = ({
     return (
       <div className="w-full h-[350px] flex items-center justify-center">
         <span className="text-center dark:text-slate-500 text-slate-900">
-          {selectDataMessgae}
+          {t("chart.selectDate")}
         </span>
       </div>
     );

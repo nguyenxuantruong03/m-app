@@ -1,25 +1,21 @@
 import { ReceivedChatMessage } from "@livekit/components-react";
 import { ChatMessage } from "./chat-message";
 import { Skeleton } from "../ui/skeleton";
-import { translateChatDisabled, translateWelcomeToChat } from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface ChatListProps{
     messages: ReceivedChatMessage[];
     isHidden: boolean
-    languageToUse: string;
 }
 
-export const ChatList = ({messages,isHidden,languageToUse} : ChatListProps) =>{
-
-    //languages
-    const chatDisabledMessage = translateChatDisabled(languageToUse)
-    const welcomeToChatMessage = translateWelcomeToChat(languageToUse)
+export const ChatList = ({messages,isHidden} : ChatListProps) =>{
+    const t = useTranslations()
 
     if(isHidden || !messages || messages.length === 0){
         return (
             <div className="flex flex-1 items-center justify-center">
                 <p className="text-sm text-muted-foreground">
-                    {isHidden ? chatDisabledMessage : welcomeToChatMessage}
+                    {isHidden ? t("profile.chatDisabled") : t("profile.welcomeToChat")}
                 </p>
             </div>
         )

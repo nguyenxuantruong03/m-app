@@ -20,19 +20,14 @@ import { DatePickerWithRangeChart } from "./date-picker-range-chart";
 import TreeMap from "./treemap";
 import RadarChart from "./radar";
 import toast from "react-hot-toast";
-import {
-  getToastError,
-  translateChartData,
-  translateChartTypes,
-  translateChooseChart,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface ChartProps {
   storeId: string;
-  languageToUse: string;
 }
 
-const Chart = ({ storeId, languageToUse }: ChartProps) => {
+const Chart = ({ storeId }: ChartProps) => {
+  const t = useTranslations()
   const [selectedBasicChart, setSelectedBasicChart] =
     useState<string>("barchart");
   const [selectedAdvancedChart, setSelectedAdvancedChart] =
@@ -81,12 +76,6 @@ const Chart = ({ storeId, languageToUse }: ChartProps) => {
     undefined
   );
 
-  //languages
-  const toastErrorMessage = getToastError(languageToUse);
-  const chartDataMessage = translateChartData(languageToUse);
-  const chooseChartMessage = translateChooseChart(languageToUse);
-  const chartTypesMessage = translateChartTypes(languageToUse);
-
   useEffect(() => {
     if (selectedBasicChart === "barchart") {
       const fetchBarChartData = async () => {
@@ -101,7 +90,7 @@ const Chart = ({ storeId, languageToUse }: ChartProps) => {
           );
           setBarChartData(response.data);
         } catch (error) {
-          toast.error(toastErrorMessage);
+          toast.error(t("toastError.somethingWentWrong"));
         } finally {
           setLoadingBarChart(false);
         }
@@ -124,7 +113,7 @@ const Chart = ({ storeId, languageToUse }: ChartProps) => {
           );
           setComposedChartData(response.data);
         } catch (error) {
-          toast.error(toastErrorMessage);
+          toast.error(t("toastError.somethingWentWrong"));
         } finally {
           setLoadingComposed(false);
         }
@@ -148,7 +137,7 @@ const Chart = ({ storeId, languageToUse }: ChartProps) => {
           );
           setLineChartData(response.data);
         } catch (error) {
-          toast.error(toastErrorMessage);
+          toast.error(t("toastError.somethingWentWrong"));
         } finally {
           setLoadingLine(false);
         }
@@ -171,7 +160,7 @@ const Chart = ({ storeId, languageToUse }: ChartProps) => {
           );
           setTreemapData(response.data);
         } catch (error) {
-          toast.error(toastErrorMessage);
+          toast.error(t("toastError.somethingWentWrong"));
         } finally {
           setLoadingTreeMap(false);
         }
@@ -195,7 +184,7 @@ const Chart = ({ storeId, languageToUse }: ChartProps) => {
           );
           setPieChartData(response.data);
         } catch (error) {
-          toast.error(toastErrorMessage);
+          toast.error(t("toastError.somethingWentWrong"));
         } finally {
           setLoadingPie(false);
         }
@@ -219,7 +208,7 @@ const Chart = ({ storeId, languageToUse }: ChartProps) => {
           );
           setRadialChartData(response.data);
         } catch (error) {
-          toast.error(toastErrorMessage);
+          toast.error(t("toastError.somethingWentWrong"));
         } finally {
           setLoadingRadial(false);
         }
@@ -242,7 +231,7 @@ const Chart = ({ storeId, languageToUse }: ChartProps) => {
           );
           setFunnelChartData(response.data);
         } catch (error) {
-          toast.error(toastErrorMessage);
+          toast.error(t("toastError.somethingWentWrong"));
         } finally {
           setLoadingFunnel(false);
         }
@@ -265,7 +254,7 @@ const Chart = ({ storeId, languageToUse }: ChartProps) => {
           );
           setRadarChartData(response.data);
         } catch (error) {
-          toast.error(toastErrorMessage);
+          toast.error(t("toastError.somethingWentWrong"));
         } finally {
           setLoadingRadar(false);
         }
@@ -286,18 +275,18 @@ const Chart = ({ storeId, languageToUse }: ChartProps) => {
               defaultValue="barchart"
             >
               <SelectTrigger className="md:w-[300px]">
-                <SelectValue placeholder={chooseChartMessage} />
+                <SelectValue placeholder={t("chart.chooseChart")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="barchart">
-                  {chartDataMessage.name1}
+                  {t("chart.monthlyTotalAmountColumnChart")}
                 </SelectItem>
                 <SelectItem value="composed">
-                  {chartDataMessage.name2}
+                  {t("chart.combinedChartOfWarrantyRevenueAndMonthlySales")}
                 </SelectItem>
-                <SelectItem value="line">{chartDataMessage.name3}</SelectItem>
+                <SelectItem value="line">{t("chart.dailyRevenueLineChart")}</SelectItem>
                 <SelectItem value="treemap">
-                  {chartDataMessage.name4}
+                  {t("chart.userMapChart")}
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -338,13 +327,12 @@ const Chart = ({ storeId, languageToUse }: ChartProps) => {
           {selectedBasicChart === "barchart" && (
             <Card className="mt-4">
               <CardHeader>
-                <CardTitle>{chartDataMessage.name1}</CardTitle>
+                <CardTitle>{t("chart.monthlyTotalAmountColumnChart")}</CardTitle>
               </CardHeader>
               <CardContent className="p-2 xl:p-6">
                 <BarChart
                   data={barChartData}
                   loading={loadingBarChart}
-                  languageToUse={languageToUse}
                 />
               </CardContent>
             </Card>
@@ -353,13 +341,12 @@ const Chart = ({ storeId, languageToUse }: ChartProps) => {
           {selectedBasicChart === "composed" && (
             <Card className="mt-4">
               <CardHeader>
-                <CardTitle>{chartDataMessage.name2}</CardTitle>
+                <CardTitle>{t("chart.combinedChartOfWarrantyRevenueAndMonthlySales")}</CardTitle>
               </CardHeader>
               <CardContent className="p-2 xl:p-6">
                 <ComposedChart
                   data={composedChartData}
                   loading={loadingComposed}
-                  languageToUse={languageToUse}
                 />
               </CardContent>
             </Card>
@@ -368,13 +355,12 @@ const Chart = ({ storeId, languageToUse }: ChartProps) => {
           {selectedBasicChart === "line" && (
             <Card className="mt-4">
               <CardHeader>
-                <CardTitle>{chartDataMessage.name3}</CardTitle>
+                <CardTitle>{t("chart.dailyRevenueLineChart")}</CardTitle>
               </CardHeader>
               <CardContent className="p-2 xl:p-6">
                 <LineChart
                   data={lineChartData}
                   loading={loadingLine}
-                  languageToUse={languageToUse}
                 />
               </CardContent>
             </Card>
@@ -383,13 +369,12 @@ const Chart = ({ storeId, languageToUse }: ChartProps) => {
           {selectedBasicChart === "treemap" && (
             <Card className="mt-4">
               <CardHeader>
-                <CardTitle>{chartDataMessage.name4}</CardTitle>
+                <CardTitle>{t("chart.userMapChart")}</CardTitle>
               </CardHeader>
               <CardContent className="p-2 xl:p-6">
                 <TreeMap
                   data={treemapData}
                   loading={loadingTreeMap}
-                  languageToUse={languageToUse}
                 />
               </CardContent>
             </Card>
@@ -404,17 +389,17 @@ const Chart = ({ storeId, languageToUse }: ChartProps) => {
               defaultValue="pie"
             >
               <SelectTrigger className="md:w-[300px]">
-                <SelectValue placeholder={chooseChartMessage} />
+                <SelectValue placeholder={t("chart.chooseChart")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="pie">{chartTypesMessage.name1}</SelectItem>
+                <SelectItem value="pie">{t("chart.pieChart")}</SelectItem>
                 <SelectItem value="radial">
-                  {chartTypesMessage.name2}
+                  {t("chart.radarChart")}
                 </SelectItem>
                 <SelectItem value="funnel">
-                  {chartTypesMessage.name3}
+                  {t("chart.funnelChart")}
                 </SelectItem>
-                <SelectItem value="radar">{chartTypesMessage.name4}</SelectItem>
+                <SelectItem value="radar">{t("chart.userPreferenceChart")}</SelectItem>
               </SelectContent>
             </Select>
 
@@ -456,13 +441,12 @@ const Chart = ({ storeId, languageToUse }: ChartProps) => {
           {selectedAdvancedChart === "pie" && (
             <Card className="mt-4">
               <CardHeader>
-                <CardTitle>{chartTypesMessage.name1}</CardTitle>
+                <CardTitle>{t("chart.pieChart")}</CardTitle>
               </CardHeader>
               <CardContent className="p-2 xl:p-6">
                 <PieChart
                   pieChartData={pieChartData}
                   loading={loadingPie}
-                  languageToUse={languageToUse}
                 />
               </CardContent>
             </Card>
@@ -471,13 +455,12 @@ const Chart = ({ storeId, languageToUse }: ChartProps) => {
           {selectedAdvancedChart === "radial" && (
             <Card className="mt-4">
               <CardHeader>
-                <CardTitle>{chartTypesMessage.name2}</CardTitle>
+                <CardTitle>{t("chart.radarChart")}</CardTitle>
               </CardHeader>
               <CardContent className="p-2 xl:p-6">
                 <RadialChart
                   radialChartData={radialChartData}
                   loading={loadingRadial}
-                  languageToUse={languageToUse}
                 />
               </CardContent>
             </Card>
@@ -486,13 +469,12 @@ const Chart = ({ storeId, languageToUse }: ChartProps) => {
           {selectedAdvancedChart === "funnel" && (
             <Card className="mt-4">
               <CardHeader>
-                <CardTitle>{chartTypesMessage.name3}</CardTitle>
+                <CardTitle>{t("chart.funnelChart")}</CardTitle>
               </CardHeader>
               <CardContent className="p-2 xl:p-6">
                 <FunnelChart
                   funnelChartData={funnelChartData}
                   loading={loadingFunnel}
-                  languageToUse={languageToUse}
                 />
               </CardContent>
             </Card>
@@ -501,13 +483,12 @@ const Chart = ({ storeId, languageToUse }: ChartProps) => {
           {selectedAdvancedChart === "radar" && (
             <Card className="mt-4">
               <CardHeader>
-                <CardTitle>{chartTypesMessage.name4}</CardTitle>
+                <CardTitle>{t("chart.userPreferenceChart")}</CardTitle>
               </CardHeader>
               <CardContent className="p-2 xl:p-6">
                 <RadarChart
                   radarChartData={radarChartData}
                   loading={loadingRadar}
-                  languageToUse={languageToUse}
                 />
               </CardContent>
             </Card>

@@ -36,37 +36,19 @@ import {
   getSizePrice,
 } from "../../export-product-compare/size-color/match-color-size";
 import PrevNextSwiper from "./prevnextswiper";
-import {
-  getOutOfStockMessage,
-  getToastError,
-  translateAddNew,
-  translateAddToCartError,
-  translateCannotRemoveSavedProduct,
-  translateCannotSaveProduct,
-  translateDecrease,
-  translateExpand,
-  translateHeart,
-  translateInsufficientStock,
-  translateLoading,
-  translateOutOfStock,
-  translateProductAddedToCart,
-  translateProductQuantityUpdated,
-  translateSaved,
-  translateSold,
-} from "@/translate/translate-client";
 import getCart from "@/actions/client/cart";
+import { useTranslations } from "next-intl";
 
 interface ProductListProps {
   data: Product[];
   route: string;
-  languageToUse: string;
 }
 
 const ProductListSuggest: React.FC<ProductListProps> = ({
   data,
   route,
-  languageToUse,
 }) => {
+  const t = useTranslations()
   const router = useRouter();
   const favorite = useFavorite();
   const cart = useCart();
@@ -81,26 +63,6 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
     useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
-  //languages
-  const toastErrorMessage = getToastError(languageToUse);
-  const outOfStockInventoryMessage = translateOutOfStock(languageToUse);
-  const productQuantityUpdatedMessage =
-    translateProductQuantityUpdated(languageToUse);
-  const loadingMessage = translateLoading(languageToUse);
-  const insufficientStockMessage = translateInsufficientStock(languageToUse);
-  const addtoCartErrorMessage = translateAddToCartError(languageToUse);
-  const productAddedToCartMessage = translateProductAddedToCart(languageToUse);
-  const cannotRemoveSavedProductMessage =
-    translateCannotRemoveSavedProduct(languageToUse);
-  const cannotSaveProductMessage = translateCannotSaveProduct(languageToUse);
-  const outOfStockMessage = getOutOfStockMessage(languageToUse);
-  const soldMessage = translateSold(languageToUse);
-  const decreaseMessage = translateDecrease(languageToUse);
-  const expandMessage = translateExpand(languageToUse);
-  const addNewMessage = translateAddNew(languageToUse);
-  const savedMessage = translateSaved(languageToUse);
-  const heartMessage = translateHeart(languageToUse);
-
   useEffect(() => {
     if (userId?.role !== "GUEST" && userId?.id) {
       const fetchData = async () => {
@@ -108,7 +70,7 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
           setLoadingFetchDataFavorite(true);
           await favorite.fetchFavoriteItems(userId?.id || "");
         } catch (error) {
-          toast.error(toastErrorMessage);
+          toast.error(t("toastError.somethingWentWrong"));
         } finally {
           setLoadingFetchDataFavorite(false);
         }
@@ -132,13 +94,11 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
           isOpen={openPreviewModal}
           onClose={() => setOpenPreviewModal(false)}
           product={currentProduct}
-          languageToUse={languageToUse}
         />
       )}
       <AlertGuestModal
         isOpen={alertGuestModal}
         onClose={() => setAlertGuestModal(false)}
-        languageToUse={languageToUse}
       />
       <Swiper
         slidesPerView={5}
@@ -305,7 +265,7 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
                   null,
                   userId?.id || ""
                 );
-                toast.success(productQuantityUpdatedMessage);
+                toast.success(t("product.productQuantityUpdated"));
               } else {
                 cart.addItem(
                   productWithQuantity,
@@ -314,8 +274,8 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
                   userId?.id || "",
                   size,
                   color,
-                  languageToUse
                 );
+                toast.success(t("cart.productAdded"))
               }
             },
             1000 // Adjust the debounce time (in milliseconds) based on your preference
@@ -353,7 +313,7 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
                     matchingQuantity >= maxQuantity && maxQuantity > 0;
 
                   if (compareQuantityExistingAndAvailable) {
-                    throw new Error(insufficientStockMessage);
+                    throw new Error(t("product.insufficientStock"));
                   }
 
                   const productWithQuantity = {
@@ -380,8 +340,7 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
                         existingCartItem.id,
                         existingCartItem.quantity + quantity,
                         null,
-                        userId?.id || "",
-                        languageToUse
+                        userId?.id || ""
                       );
                     } else {
                       // Add the new item to the cart
@@ -395,19 +354,19 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
                       );
                     }
                   } catch (error) {
-                    toast.error(addtoCartErrorMessage);
+                    toast.error(t("product.addToCartError"));
                   } finally {
                     setLoading(false);
                   }
 
                   return existingCartItem
-                    ? productQuantityUpdatedMessage
-                    : productAddedToCartMessage;
+                    ? t("product.productQuantityUpdated")
+                    : t("product.productAddedToCart");
                 })(),
                 {
-                  loading: loadingMessage,
+                  loading: t("loading.loading"),
                   success: (response) => response,
-                  error: (error) => error.message || toastErrorMessage,
+                  error: (error) => error.message || t("toastError.somethingWentWrong"),
                 }
               );
             },
@@ -466,16 +425,24 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
                     await favorite.removeItem(
                       favoriteData.id,
                       userId?.id || "",
-                      languageToUse
                     );
+                    toast.success(t("product.productRemovedFromWishlist"));
                   } else {
-                    await favorite.addItem(favoriteProduct, languageToUse);
+                    if(!userId){
+                      toast.error(t("action.loginToAddToWishlist"))
+                    }
+        
+                    if(favoriteData){
+                      toast.error(t("product.productSaved"))
+                    }
+                    await favorite.addItem(favoriteProduct);
+                    toast.success(t("product.productToWishlist"))
                   }
                 } catch (error) {
                   toast.error(
                     favoriteData
-                      ? cannotRemoveSavedProductMessage
-                      : cannotSaveProductMessage
+                      ? t("product.cannotRemoveSavedProduct")
+                      : t("product.cannotSaveProduct")
                   );
                 } finally {
                   setLoadingFetchDataFavorite(false);
@@ -514,13 +481,13 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
                           {/* Cũ */}
                           {/* <div className="absolute z-[9999] top-[3px] right-[-95px] bg-red-600 text-white py-[15px] w-[350px] text-center transform rotate-[45deg] font-bold text-lg tracking-[2px] overflow-hidden">
                             <span className="inline-block duration-500 ease-in-out transform transition-transform w-full absolute left-[13%] top-1/2 translate-y-[-50%]">
-                              {outOfStockMessage}
+                              {t("product.outOfStock")}
                             </span>
                           </div> */}
                           {/* Mới */}
                           <div className="tag-outstock">
                             <span className="tag-outstock-text">
-                              {outOfStockMessage}
+                              {t("product.outOfStock")}
                             </span>
                           </div>
                         </div>
@@ -557,7 +524,7 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
                         <Currency value={discountedPrice || 0} />
                         {product.sold > 0 && (
                           <div className="flex items-center text-sm font-medium">
-                            <span className="mr-1">{soldMessage}:</span>
+                            <span className="mr-1">{t("product.sold")}:</span>
                             <span>{formatSoldValue(product.sold) || 0}</span>
                           </div>
                         )}
@@ -566,13 +533,12 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
                     <CommentStar
                       data={product.id}
                       comment={product.comment}
-                      languageToUse={languageToUse}
                     />
                   </div>
                   {availablePercentPromotion > 0 && (
                     <div className="home-product-item__favorite">
                       <span className="ml-1">
-                        {decreaseMessage} {availablePercentPromotion}%
+                        {t("action.decrease")} {availablePercentPromotion}%
                       </span>
                     </div>
                   )}
@@ -583,7 +549,7 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
                       disabled={loading}
                       onClick={onPreview}
                       icon={<Expand size={20} className="text-gray-600" />}
-                      text={expandMessage}
+                      text={t("action.expand")}
                     />
                     <IconButton
                       disabled={productQuantityAll || loading}
@@ -613,7 +579,7 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
                         />
                       }
                       text={`${
-                        productQuantityAll ? outOfStockMessage : addNewMessage
+                        productQuantityAll ? t("product.outOfStock") : t("action.addNew")
                       }`}
                     />
                     <IconButton
@@ -653,8 +619,8 @@ const ProductListSuggest: React.FC<ProductListProps> = ({
                             item.selectedSize === availableSize &&
                             item.selectedColor === availableColor
                         )
-                          ? savedMessage
-                          : heartMessage
+                          ? t("action.saved")
+                          : t("action.heart")
                       }`}
                     />
                   </div>

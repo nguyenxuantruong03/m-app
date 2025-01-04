@@ -11,27 +11,13 @@ import SeeDetail4Modal from "@/components/(client)/modal/see-detail-model4";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import useCartdb from "@/hooks/client/db/use-cart-db";
 import Currency from "@/components/ui/currency";
-import {
-  translateCustomerRegistration,
-  translateDamagePolicy,
-  translateExchangeNewProduct,
-  translateExchangeNewProduct6Months,
-  translateProductProtection,
-  translateRepairSupportProduct,
-  translateS24Plus12Months,
-  translateView,
-  translateViewDetails,
-  translateVIPExchange,
-  translateVIPExchange6Months,
-  translateWarrantyExchange,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface InfoWarrantyProps {
   data: Product;
-  languageToUse: string;
 }
 
-const InfoWarranty: React.FC<InfoWarrantyProps> = ({ data, languageToUse }) => {
+const InfoWarranty: React.FC<InfoWarrantyProps> = ({ data }) => {
   const cart = useCart();
   const cartdb = useCartdb();
   const user = useCurrentUser();
@@ -41,23 +27,7 @@ const InfoWarranty: React.FC<InfoWarrantyProps> = ({ data, languageToUse }) => {
   const [openDetail2, setOpenDetail2] = useState(false);
   const [openDetail3, setOpenDetail3] = useState(false);
   const [openDetail4, setOpenDetail4] = useState(false);
-
-  //languages
-  const s24Plus12MonthMessage = translateS24Plus12Months(languageToUse);
-  const warrantyExchnageMessage = translateWarrantyExchange(languageToUse);
-  const VIPexchnageMessage = translateVIPExchange(languageToUse);
-  const ExchangeNewProductMessage = translateExchangeNewProduct(languageToUse);
-  const damagePolicyMessage = translateDamagePolicy(languageToUse);
-  const repairSupportProductMessage =
-    translateRepairSupportProduct(languageToUse);
-  const VIPExchange6MonthMessage = translateVIPExchange6Months(languageToUse);
-  const exchangeNewProduct6MonthMessage =
-    translateExchangeNewProduct6Months(languageToUse);
-  const productProtectionMessage = translateProductProtection(languageToUse);
-  const viewDetailMessage = translateViewDetails(languageToUse);
-  const customerRegistrationMessage =
-    translateCustomerRegistration(languageToUse);
-  const viewMessage = translateView(languageToUse);
+  const t = useTranslations()
 
   //Kiểm tra tất cả sản phẩm có === 0 không
   const productQuantityAll = [1, 2, 3, 4, 5].every(
@@ -122,29 +92,29 @@ const InfoWarranty: React.FC<InfoWarrantyProps> = ({ data, languageToUse }) => {
   const warrantyOptions = [
     {
       id: "1",
-      heading: s24Plus12MonthMessage,
-      description: warrantyExchnageMessage,
+      heading: t("warranty.S24Plus12Months"),
+      description: t("warranty.warrantyExchange"),
       value: String(data.productdetail.warranty1),
       onClick: onSeeDetail1,
     },
     {
       id: "2",
-      heading: VIPexchnageMessage,
-      description: ExchangeNewProductMessage,
+      heading: t("warranty.VIPExchange"),
+      description: t("warranty.exchangeNewProduct"),
       value: String(data.productdetail.warranty2),
       onClick: onSeeDetail2,
     },
     {
       id: "3",
-      heading: damagePolicyMessage,
-      description: repairSupportProductMessage,
+      heading: t("warranty.damagePolicy"),
+      description: t("warranty.repairSupportProduct"),
       value: String(data.productdetail.warranty3),
       onClick: onSeeDetail3,
     },
     {
       id: "4",
-      heading: VIPExchange6MonthMessage,
-      description: exchangeNewProduct6MonthMessage,
+      heading: t('warranty.VIPExchange6Months'),
+      description: t("warranty.exchangeNewProduct6Months"),
       value: String(data.productdetail.warranty4),
       onClick: onSeeDetail4,
     },
@@ -155,45 +125,40 @@ const InfoWarranty: React.FC<InfoWarrantyProps> = ({ data, languageToUse }) => {
       <SeeDetailModal
         isOpen={openDetail}
         onClose={() => setOpenDetail(false)}
-        languageToUse={languageToUse}
       />
       <SeeDetail1Modal
         isOpen={openDetail1}
         onClose={() => setOpenDetail1(false)}
-        languageToUse={languageToUse}
       />
       <SeeDetail2Modal
         isOpen={openDetail2}
         onClose={() => setOpenDetail2(false)}
-        languageToUse={languageToUse}
       />
       <SeeDetail3Modal
         isOpen={openDetail3}
         onClose={() => setOpenDetail3(false)}
-        languageToUse={languageToUse}
       />
       <SeeDetail4Modal
         isOpen={openDetail4}
         onClose={() => setOpenDetail4(false)}
-        languageToUse={languageToUse}
       />
       <div className="my-1 ">
         <div className="flex bg-gradient-to-r from-[#C00000] to-[#FF3334] rounded-md p-5">
           <ShieldCheck className="text-white" />
           <div className="flex ml-2 ">
             <h1 className="text-sm md:text-base ml-2 text-white font-bold ">
-              {productProtectionMessage}
+              {t("warranty.productProtection")}
             </h1>
             <span
               onClick={onSeeDetail}
               className=" ml-2 underline decoration-slate-900 font-bold cursor-pointer hover:underline hover:decoration-white hover:text-white"
             >
-              {viewDetailMessage}
+              {t("action.view")}
             </span>
           </div>
         </div>
         <p className="text-sm mx-4 my-2 text-slate-900 dark:text-slate-200">
-          ({customerRegistrationMessage})
+          ({t("warranty.customerRegistration")})
         </p>
       </div>
       <div>
@@ -263,7 +228,7 @@ const InfoWarranty: React.FC<InfoWarrantyProps> = ({ data, languageToUse }) => {
                     onClick={option.onClick}
                     className="text-red-600 cursor-pointer text-sm font-bold my-auto hover:underline hover:decoration-slate-900 underline decoration-red-600 hover:text-slate-900"
                   >
-                    {viewMessage}
+                    {t("action.view")}
                   </span>
                 </div>
               </>

@@ -8,7 +8,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { translateSentEmailUserModal } from "@/translate/translate-dashboard";
+import { useTranslations } from "next-intl";
 
 interface SentEmailModalProps {
   isOpen: boolean;
@@ -19,7 +19,6 @@ interface SentEmailModalProps {
   email: string | null;
   setLoading: Dispatch<SetStateAction<boolean>>;
   setOpenSentEmail: Dispatch<SetStateAction<boolean>>;
-  languageToUse: string
 }
 
 
@@ -32,15 +31,12 @@ export const SentEmailUserModal: React.FC<SentEmailModalProps> = ({
   email,
   setLoading,
   setOpenSentEmail,
-  languageToUse
 }) => {
+  const t = useTranslations()
   const [isMounted, setIsMounted] = useState(false);
   const [value, setValue] = useState(""); // State for Tiptap content
   const [subject, setSubject] = useState("");
   const [error, setError] = useState<{ subject?: string; value?: string }>({});
-
-  //language
-  const emailUserModalMessage = translateSentEmailUserModal(languageToUse)
 
   useEffect(() => {
     setIsMounted(true);
@@ -63,8 +59,8 @@ export const SentEmailUserModal: React.FC<SentEmailModalProps> = ({
 
   const sendEmail = async () => {
     const newError: { subject?: string; value?: string } = {};
-    if (!subject.trim()) newError.subject = `${emailUserModalMessage.subjectRequired}`;
-    if (!value.trim()) newError.value = `${emailUserModalMessage.emailContentRequired}`;
+    if (!subject.trim()) newError.subject = `${t("sentemail.modal.subjectRequired")}`;
+    if (!value.trim()) newError.value = `${t("sentemail.modal.emailContentRequired")}`;
 
     if (Object.keys(newError).length > 0) {
       setError(newError);
@@ -78,10 +74,10 @@ export const SentEmailUserModal: React.FC<SentEmailModalProps> = ({
         email: email,
       });
     } catch (err) {
-      toast.error(emailUserModalMessage.somethingWentWrong);
+      toast.error(t("toastError.somethingWentWrong"));
     } finally {
       setError({}); // Clear errors if no issues
-      toast.success(`${emailUserModalMessage.emailSentToUser}: ${email}.`);
+      toast.success(`${t("sentemail.modal.emailSentToUser")}: ${email}.`);
       setLoading(false);
       setOpenSentEmail(false)
     }
@@ -89,27 +85,27 @@ export const SentEmailUserModal: React.FC<SentEmailModalProps> = ({
 
   return (
     <Modal
-      title={title || `${emailUserModalMessage.sendEmailToUser}: ${email}`}
-      description={message || emailUserModalMessage.chooseEmailDesign}
+      title={title || `${t("sentemail.modal.sendEmailToUser")}: ${email}`}
+      description={message || t("sentemail.modal.chooseEmailDesign")}
       isOpen={isOpen}
       onClose={onClose}
     >
       <div className="space-y-4">
         <div>
           <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="email">{emailUserModalMessage.sentFrom}</Label>
+            <Label htmlFor="email">{t("sentemail.modal.sentFrom")}</Label>
             <Input
               disabled
               value="mail@vlxdxuantruong.email"
-              placeholder={emailUserModalMessage.sendFromPlaceholder}
+              placeholder={t("sentemail.modal.sendFromPlaceholder")}
             />
           </div>
           <div className="grid w-full max-w-sm items-center gap-1.5 mt-2">
-            <Label htmlFor="email">{emailUserModalMessage.emailTo}</Label>
-            <Input disabled value={email || ""} placeholder={emailUserModalMessage.emailPlaceholder}/>
+            <Label htmlFor="email">{t("sentemail.modal.emailTo")}</Label>
+            <Input disabled value={email || ""} placeholder={t("sentemail.modal.emailPlaceholder")}/>
           </div>
           <div className="grid w-full max-w-sm items-center gap-1.5 mt-2">
-            <Label htmlFor="subject">{emailUserModalMessage.subject}</Label>
+            <Label htmlFor="subject">{t("sentemail.modal.subject")}</Label>
             <Input
               id="subject"
               disabled={loading}
@@ -118,7 +114,7 @@ export const SentEmailUserModal: React.FC<SentEmailModalProps> = ({
                 setSubject(e.target.value);
                 setError((prevError) => ({ ...prevError, subject: undefined })); // Xóa lỗi subject
               }}
-              placeholder={emailUserModalMessage.subjectPlaceholder}
+              placeholder={t("sentemail.modal.subjectPlaceholder")}
             />
             {error.subject && (
               <p className="text-red-500 text-sm">{error.subject}</p>
@@ -133,7 +129,6 @@ export const SentEmailUserModal: React.FC<SentEmailModalProps> = ({
                 setError((prevError) => ({ ...prevError, value: undefined })); // Xóa lỗi value
               }}
               isCustom={true}
-              languageToUse={languageToUse}
             />
             {error.value && (
               <p className="text-red-500 text-sm">{error.value}</p>
@@ -141,7 +136,7 @@ export const SentEmailUserModal: React.FC<SentEmailModalProps> = ({
           </div>
         </div>
         <Button onClick={sendEmail} disabled={loading}>
-          {emailUserModalMessage.sendEmail}
+          {t("sentemail.modal.sendEmail")}
         </Button>
       </div>
     </Modal>

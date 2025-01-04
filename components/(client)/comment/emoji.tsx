@@ -13,27 +13,7 @@ import FaceBookSVG from "@/public/svg/facebook";
 import InstagramSVG from "@/public/svg/instagram";
 import TiktokSVG from "@/public/svg/tiktok";
 import ZaloSVG from "@/public/svg/zalo";
-import {
-  getToastError,
-  translateAngry,
-  translateCopyLink,
-  translateFavorites,
-  translateHaha,
-  translateHideResponseLowercase,
-  translateLike,
-  translateLinkCopied,
-  translateProduct,
-  translateResponse,
-  translateResponseLowercase,
-  translateSad,
-  translateSendToFacebook,
-  translateSendToInstagram,
-  translateSendToTikTok,
-  translateSendToZalo,
-  translateShare,
-  translateViewResponseLowercase,
-  translateWow,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface EmojiProps {
   commentId: string;
@@ -51,7 +31,6 @@ interface EmojiProps {
   userId: string | undefined;
   productId: string;
   loading: boolean;
-  languageToUse: string;
 }
 const EmojiPage: React.FC<EmojiProps> = ({
   commentId,
@@ -69,8 +48,8 @@ const EmojiPage: React.FC<EmojiProps> = ({
   productId,
   userId,
   role,
-  languageToUse,
 }) => {
+  const t = useTranslations()
   const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
   const [selectedEmojiLength, setSelectedEmojiLength] = useState<number>(0);
   const [aggregatedEmojiArray, setAggregatedEmojiArray] = useState<any[]>([]);
@@ -78,29 +57,6 @@ const EmojiPage: React.FC<EmojiProps> = ({
   const [open, setOpen] = useState(false);
   const [emojiUserIdModal, setEmojiUserIdModal] = useState<[]>([]); // New state for emoji user ID
   const shareOptionsRef = useRef<HTMLDivElement | null>(null);
-
-  //language
-  const toastErrorMessage = getToastError(languageToUse);
-  const linkCopiedMessage = translateLinkCopied(languageToUse);
-  const productMessage = translateProduct(languageToUse);
-  const likeMessage = translateLike(languageToUse);
-  const favoriteMessage = translateFavorites(languageToUse);
-  const hahaMessage = translateHaha(languageToUse);
-  const wowMessage = translateWow(languageToUse);
-  const sadMessage = translateSad(languageToUse);
-  const angryMessage = translateAngry(languageToUse);
-  const reponseMessage = translateResponse(languageToUse);
-  const responseLowercaseMessage = translateResponseLowercase(languageToUse);
-  const hideResponseLowercaseMessage =
-    translateHideResponseLowercase(languageToUse);
-  const viewResponseLowercaseMessage =
-    translateViewResponseLowercase(languageToUse);
-  const sendToFacebookMessage = translateSendToFacebook(languageToUse);
-  const sendToInstagramMessage = translateSendToInstagram(languageToUse);
-  const sendToTiktokMessage = translateSendToTikTok(languageToUse);
-  const sendToZaloMessage = translateSendToZalo(languageToUse);
-  const copyLinkMessage = translateCopyLink(languageToUse);
-  const shareMessage = translateShare(languageToUse);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -217,7 +173,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
         response.data.filter((emoji: any) => emoji.commentId === commentId)
       );
     } catch (error) {
-      toast.error(toastErrorMessage);
+      toast.error(t("toastError.somethingWentWrong"));
     }
   };
 
@@ -244,7 +200,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
         setAlertGuestModal(true);
       }
     } catch (error) {
-      toast.error(toastErrorMessage);
+      toast.error(t("toastError.somethingWentWrong"));
     }
   };
 
@@ -269,7 +225,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
         setAlertGuestModal(true);
       }
     } catch (error) {
-      toast.error(toastErrorMessage);
+      toast.error(t("toastError.somethingWentWrong"));
     }
   };
 
@@ -345,7 +301,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
           response.data.filter((emoji: any) => emoji.commentId === commentId)
         );
       } catch (error) {
-        toast.error(toastErrorMessage);
+        toast.error(t("toastError.somethingWentWrong"));
       }
     };
     updateEmojis();
@@ -356,14 +312,14 @@ const EmojiPage: React.FC<EmojiProps> = ({
   };
 
   const handleCopy = (url: string, product: string) => {
-    const productUrl = `${url} - ${productMessage}: ${product}`;
+    const productUrl = `${url} - ${t("product.product")}: ${product}`;
     navigator.clipboard.writeText(productUrl).then(() => {});
   };
 
   const handleCopyLinkToast = (url: string, product: string) => {
-    const productUrl = `${url} - ${productMessage}: ${product}`;
+    const productUrl = `${url} - ${t("product.product")}: ${product}`;
     navigator.clipboard.writeText(productUrl).then(() => {
-      toast.success(linkCopiedMessage);
+      toast.success(t("comment.linkCopied"));
     });
   };
 
@@ -484,7 +440,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
       >
         <ThumbsUp className="w-5 h-5 text-slate-900 dark:text-slate-200" />
         <kbd className="mx-1 text-slate-900 dark:text-slate-200">
-          {likeMessage}
+          {t("comment.like")}
         </kbd>
       </div>
     );
@@ -497,7 +453,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
       case "like":
         emojiInfo = {
           imageSrc: "/icon-image/like-icon.png",
-          altText: likeMessage,
+          altText: t("comment.like"),
           width: 27,
           height: 27,
           textColor: "#5890ff",
@@ -506,7 +462,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
       case "love":
         emojiInfo = {
           imageSrc: "/icon-image/love.png",
-          altText: favoriteMessage,
+          altText: t("comment.heart"),
           width: 25,
           height: 25,
           textColor: "#f25268",
@@ -515,7 +471,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
       case "haha":
         emojiInfo = {
           imageSrc: "/icon-image/haha.png",
-          altText: hahaMessage,
+          altText: t("comment.haha"),
           width: 26,
           height: 26,
           textColor: "#ffd972",
@@ -524,7 +480,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
       case "wow":
         emojiInfo = {
           imageSrc: "/icon-image/wow-icon.png",
-          altText: wowMessage,
+          altText: t("comment.wow"),
           width: 25,
           height: 25,
           textColor: "#ffd972",
@@ -533,7 +489,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
       case "sad":
         emojiInfo = {
           imageSrc: "/icon-image/sad.png",
-          altText: sadMessage,
+          altText: t("comment.sad"),
           width: 25,
           height: 25,
           textColor: "#ffd972",
@@ -542,7 +498,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
       case "angry":
         emojiInfo = {
           imageSrc: "/icon-image/angry.png",
-          altText: angryMessage,
+          altText: t("comment.angry"),
           width: 25,
           height: 25,
           textColor: "orange", // Màu văn bản
@@ -575,7 +531,6 @@ const EmojiPage: React.FC<EmojiProps> = ({
         isOpen={open}
         onClose={() => setOpen(false)}
         emojiUserIdModal={emojiUserIdModal}
-        languageToUse={languageToUse}
       />
       <div className="flex ml-12 items-center mb-2 border-b-2">
         <div
@@ -586,7 +541,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
           <p className="ml-1 text-[#7f8286]"> {selectedEmojiLength}</p>
         </div>
         <div className="ml-3 flex item-center text-[#7f8286]">
-          {responsesLength} {responseLowercaseMessage}
+          {responsesLength} {t("comment.responseLowercase")}
         </div>
       </div>
       <div className="flex items-center max-w-7xl flex-wrap justify-center space-y-3 md:justify-start md:space-y-0">
@@ -638,7 +593,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
           className="flex items-center whitespace-nowrap text-slate-900 dark:text-slate-200 text-opacity-60 mx-1 hover:text-gray-900 hover:bg-[#a9a9a94d] hover:rounded-md hover:py-2 px-8 "
         >
           <MessageCircle className="w-5 h-5 mr-1 text-slate-900 dark:text-slate-200" />{" "}
-          {reponseMessage}
+          {t("comment.response")}
         </button>
 
         {responseComment > 0 && (
@@ -657,12 +612,12 @@ const EmojiPage: React.FC<EmojiProps> = ({
               {showResponseComments === commentId ? (
                 <span className="flex items-center text-slate-900 dark:text-slate-200 whitespace-nowrap">
                   <EyeOff className="w-5 h-5 mr-1 text-slate-900 dark:text-slate-200" />
-                  {hideResponseLowercaseMessage}
+                  {t("comment.hideResponse")}
                 </span>
               ) : (
                 <span className="flex items-center text-slate-900 dark:text-slate-200 whitespace-nowrap">
                   <Eye className="w-5 h-5 mr-1 text-slate-900 dark:text-slate-200" />
-                  {viewResponseLowercaseMessage}
+                  {t("comment.viewResponse")}
                 </span>
               )}
             </button>
@@ -679,7 +634,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
             className="flex items-center cursor-pointer whitespace-nowrap text-slate-900 dark:text-slate-200 text-opacity-60 mx-1 hover:text-gray-900 hover:bg-[#a9a9a94d] hover:rounded-md hover:py-2 px-8"
           >
             <Share className="w-5 h-5 mr-1 text-slate-900 dark:text-slate-200" />{" "}
-            {shareMessage}
+            {t("comment.share")}
           </button>
 
           {showShareOptions && (
@@ -705,7 +660,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
                 }}
               >
                 <FaceBookSVG />
-                {sendToFacebookMessage}
+                {t("comment.sendToFacebook")}
               </Link>
               <Link
                 href="#"
@@ -723,7 +678,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
                 }}
               >
                 <InstagramSVG />
-                {sendToInstagramMessage}
+                {t("comment.sendToInstagram")}
               </Link>
               <Link
                 href="#"
@@ -741,7 +696,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
                 }}
               >
                 <TiktokSVG />
-                {sendToTiktokMessage}
+                {t("comment.sendToTiktok")}
               </Link>
               <Link
                 href="#"
@@ -759,7 +714,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
                 }}
               >
                 <ZaloSVG />
-                {sendToZaloMessage}
+                {t("comment.sendToZalo")}
               </Link>
               <button
                 disabled={loading}
@@ -768,7 +723,7 @@ const EmojiPage: React.FC<EmojiProps> = ({
                 }
                 className="flex items-center whitespace-nowrap gap-1 p-2 text-gray-800 hover:bg-gray-100 rounded-md w-full"
               >
-                <LinkIcon className="h-3 w-3" /> {copyLinkMessage}
+                <LinkIcon className="h-3 w-3" /> {t("comment.copyLink")}
               </button>
             </div>
           )}

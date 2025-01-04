@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { ProductType, UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
-import { translateProductDelete, translateProductGet, translateProductPost } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 export async function POST(
   req: Request,
@@ -11,8 +11,11 @@ export async function POST(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const productPostMessage = translateProductPost(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
+
   try {
     const body = await req.json();
     const {
@@ -28,57 +31,62 @@ export async function POST(
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: productPostMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: productPostMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: productPostMessage.nameRequired }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: t("toastError.nameRequired") }),
+        {
+          status: 400,
+        }
+      );
     }
     if (!heading) {
       return new NextResponse(
-        JSON.stringify({ error: productPostMessage.headingRequired }),
+        JSON.stringify({ error: t("toastError.headingRequired") }),
         { status: 400 }
       );
     }
     if (!description) {
       return new NextResponse(
-        JSON.stringify({ error: productPostMessage.descriptionRequired }),
+        JSON.stringify({ error: t("toastError.description") }),
         { status: 400 }
       );
     }
     if (!images || !images.length) {
       return new NextResponse(
-        JSON.stringify({ error: productPostMessage.imagesRequired }),
+        JSON.stringify({ error: t("toastError.imageNotfound") }),
         { status: 400 }
       );
     }
     if (!productdetailId) {
       return new NextResponse(
-        JSON.stringify({ error: productPostMessage.productDetailRequired }),
+        JSON.stringify({ error: t("toastError.productDetailRequired") }),
         { status: 400 }
       );
     }
     if (!imagesalientfeatures || !imagesalientfeatures.length) {
       return new NextResponse(
-        JSON.stringify({ error: productPostMessage.imagesAlientFeaturesRequired }),
+        JSON.stringify({
+          error: t("toastError.product.imageSalientFeaturesRequired"),
+        }),
         { status: 400 }
       );
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: productPostMessage.storeIdRequired }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 400 }
       );
     }
@@ -92,21 +100,8 @@ export async function POST(
     // Nếu productDetail không tồn tại, trả về thông báo lỗi
     if (!productDetail) {
       return new NextResponse(
-        JSON.stringify({ error: productPostMessage.chooseProductDetail }),
+        JSON.stringify({ error: t("toastError.product.chooseProductDetail") }),
         { status: 404 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: productPostMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -123,11 +118,11 @@ export async function POST(
 
     if (existingProduct) {
       return new NextResponse(
-        JSON.stringify({ error: productPostMessage.headingExists }),
+        JSON.stringify({ error: t("toastError.product.headingExists") }),
         { status: 400 }
       );
     }
-    
+
     const product = await prismadb.product.create({
       data: {
         name,
@@ -184,7 +179,7 @@ export async function POST(
     return NextResponse.json(product);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: `${productPostMessage.internalError}7` }),
+      JSON.stringify({ error: t("toastError.product.internalErrorPostProduct") }),
       { status: 500 }
     );
   }
@@ -196,15 +191,17 @@ export async function GET(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const productGetMessage = translateProductGet(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     const { searchParams } = new URL(req.url);
     const isFeaturedParam = searchParams.get("isFeatured");
     const isFeatured =
       isFeaturedParam === null ? undefined : isFeaturedParam === "true";
     const productdetailId = searchParams.get("productdetailId") || undefined;
-
+    
     const categoryIds = searchParams.get("categoryId")?.split(",") || undefined;
     const colorId = searchParams.get("colorId") || undefined;
     const sizeId = searchParams.get("sizeId") || undefined;
@@ -217,10 +214,9 @@ export async function GET(
 
     const productType = ProductType.PRODUCT7;
     const productType9 = ProductType.PRODUCT9;
-
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: productGetMessage.storeIdRequired }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 400 }
       );
     }
@@ -262,8 +258,8 @@ export async function GET(
       },
       include: {
         images: true,
-        comment: true,
         imagesalientfeatures: true,
+        comment: true,
         productdetail: {
           include: {
             category: true,
@@ -357,7 +353,7 @@ export async function GET(
     });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: `${productGetMessage.internalError}7` }),
+      JSON.stringify({ error: t("toastError.product.internalErrorGetProduct") }),
       { status: 500 }
     );
   }
@@ -369,8 +365,10 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const productDeleteMessage = translateProductDelete(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
     const productType = ProductType.PRODUCT7;
@@ -378,35 +376,22 @@ export async function DELETE(
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: productDeleteMessage.userNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: productDeleteMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!ids || ids.length === 0) {
       return new NextResponse(
-        JSON.stringify({ error: productDeleteMessage.emptyIdsArray }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: productDeleteMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -462,10 +447,10 @@ export async function DELETE(
       },
     });
 
-    return NextResponse.json({ message: productDeleteMessage.deleteSuccess });
+    return NextResponse.json({ message: t("toastSuccess.deletionSuccess") });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: `${productDeleteMessage.internalError}7` }),
+      JSON.stringify({ error: t("toastError.product.internalErrorDeleteProduct") }),
       { status: 500 }
     );
   }

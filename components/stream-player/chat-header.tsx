@@ -1,25 +1,20 @@
 "use client";
 
-import { translateStreamChat } from "@/translate/translate-client";
 import { Skeleton } from "../ui/skeleton";
 import { ChatToggle } from "./chat-toggle";
 import { VariantToggle } from "./variant-toggle";
+import { useTranslations } from "next-intl";
 
-interface ChatHeaderProps{
-  languageToUse: string;
-}
-
-export const ChatHeader = ({languageToUse}:ChatHeaderProps) => {
-  //language
-  const streamChatMessage = translateStreamChat(languageToUse)
+export const ChatHeader = () => {
+  const t = useTranslations()
   return (
     <div className="relative p-3 border-b">
       <div className="absolute left-2 top-2 hidden lg:block">
-        <ChatToggle languageToUse={languageToUse}/>
+        <ChatToggle />
       </div>
-      <p className="font-semibold text-primary text-center">{streamChatMessage}</p>
+      <p className="font-semibold text-primary text-center">{t("profile.streamChat")}</p>
       <div className="absolute right-2 top-2">
-        <VariantToggle languageToUse={languageToUse}/>
+        <VariantToggle />
       </div>
     </div>
   );

@@ -29,27 +29,7 @@ import { X } from "lucide-react";
 import { Label } from "../ui/label";
 import { useDevice } from "@/providers/device-info-provider";
 import { LoginGuestModal } from "../modals/login-guest-modal";
-import {
-  getLoadingMessage,
-  getToastError,
-  translateBackToLogin,
-  translateConfirmLogin,
-  translateDontHaveAccount,
-  translateExceededAttempts,
-  translateForgotPassword,
-  translateGuestLogin,
-  translateLogin,
-  translatePassword,
-  translateResendError,
-  translateResendSuccess,
-  translateRetryLimit,
-  translateTwoFactorAuth,
-  translateTwoFactorExpired,
-  translateTwoFactorExpiry,
-  translateVerifyNotRobot,
-  translateVerifyRobot,
-  translateWelcomeBack,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 const getTheme = () => {
   if (
@@ -64,6 +44,7 @@ const getTheme = () => {
 };
 
 const LoginForm = () => {
+  const t = useTranslations()
   const searchParams = useSearchParams();
   const deviceInfo = useDevice();
   const callbackUrl = searchParams.get("callbackUrl");
@@ -97,45 +78,17 @@ const LoginForm = () => {
   //language
   const [language, setLanguage] = useState("vi");
   const [isOpen, setOpen] = useState(false);
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []);
-
+ 
   const MAX_RESEND_ATTEMPTS = 5;
 
   //language
-  const languageToUse = storedLanguage || language;
-  const toastErrorMessage = getToastError(languageToUse);
-  const exceededAttemptMessage = translateExceededAttempts(languageToUse);
-  const resendSuccessMessage = translateResendSuccess(languageToUse);
-  const resendErrorMessage = translateResendError(languageToUse);
-  const verifyRobotMessage = translateVerifyRobot(languageToUse);
-  const welcomeBackMessage = translateWelcomeBack(languageToUse);
-  const dontHaveAccountMessage = translateDontHaveAccount(languageToUse);
-  const twoFactorAuthMessage = translateTwoFactorAuth(languageToUse);
-  const passwordMessage = translatePassword(languageToUse);
-  const forgotPasswordMessage = translateForgotPassword(languageToUse);
-  const twoFactorExpiryMessage = translateTwoFactorExpiry(languageToUse);
-  const twoFactorExpiredMessage = translateTwoFactorExpired(languageToUse);
-  const retryLimitMessage = translateRetryLimit(languageToUse);
-  const confirmLoginMessage = translateConfirmLogin(languageToUse);
-  const guestLoginMessage = translateGuestLogin(languageToUse);
-  const verifyNotRobotMessage = translateVerifyNotRobot(languageToUse);
-  const backToLoginMessage = translateBackToLogin(languageToUse);
-  const loginMessage = translateLogin(languageToUse);
-  const loadingMessage = getLoadingMessage(languageToUse);
+  const languageToUse = language;
 
   useEffect(() => {
     if (isPending) {
-      document.title = loadingMessage.loading;
+      document.title = t("loading.loading");
     } else {
-      document.title = loginMessage;
+      document.title = t("auth.login");
     }
   }, [isPending]);
 
@@ -187,7 +140,7 @@ const LoginForm = () => {
     if (resendCount >= MAX_RESEND_ATTEMPTS) {
       setShowTwoFactor(false); // Tắt chế độ xác thực hai yếu tố
       setLoadingResent(true);
-      setError(`${exceededAttemptMessage}.`);
+      setError(`${t("auth.exceededAttempt")}.`);
       return;
     }
 
@@ -206,14 +159,14 @@ const LoginForm = () => {
         setSuccess(data.success); // Hiển thị thông báo thành công nếu có
         setLoadingResent(false);
       } else {
-        setSuccess(resendSuccessMessage);
+        setSuccess(t("auth.resendSuccess"));
       }
 
       setCountdown(120); // Đặt lại đếm ngược
       await axios.patch(`/api/resendCount`, resendCount);
       setResendCount((prevCount) => prevCount + 1); // Tăng số lần thử lại lên 1
     } catch (error) {
-      setError(resendErrorMessage); // Xử lý lỗi nếu có
+      setError(t("auth.resendError")); // Xử lý lỗi nếu có
     }
   };
 
@@ -228,7 +181,7 @@ const LoginForm = () => {
 
   // Proceed only if captcha is verified (for non-guest logins)
   if (showCaptcha && !isCaptchaVerified && !(values.email === "guest@gmail.com")) {
-    return setError(verifyRobotMessage);
+    return setError(t("auth.verifyRobot"));
   } else {
       startTransition(() => {
         login(values, callbackUrl, deviceInfo, languageToUse)
@@ -262,7 +215,7 @@ const LoginForm = () => {
             //   setCountdown(0); // Đặt lại đếm ngược
             // }
           })
-          .catch(() => setError(toastErrorMessage));
+          .catch(() => setError(t("toastError.somethingWentWrong")));
       });
     }
   };
@@ -285,16 +238,15 @@ const LoginForm = () => {
   return (
     <>
       <LoginGuestModal
-        languageToUse={languageToUse}
         isOpen={openGuestModal}
         onClose={() => setOpenGuestModal(false)}
         onConfirm={handleGuestLogin}
         loading={isPending}
       />
       <CardWrapper
-        headerLabel={welcomeBackMessage}
+        headerLabel={t("auth.welcomeBack")}
         backButtonHref="/auth/register"
-        backButtonLabel={dontHaveAccountMessage}
+        backButtonLabel={t("auth.dontHaveAccount")}
         showSocial
         setLanguage={setLanguage}
         languageToUse={languageToUse}
@@ -311,7 +263,7 @@ const LoginForm = () => {
                   name="code"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{twoFactorAuthMessage}</FormLabel>
+                      <FormLabel>{t("auth.twoFactorAuth")}</FormLabel>
                       <FormControl>
                         <MultiInputField
                           length={6} // Số lượng ô input
@@ -334,7 +286,6 @@ const LoginForm = () => {
                         <FormLabel>Email</FormLabel>
                         <FormControl>
                           <EmailField
-                            languageToUse={languageToUse}
                             field={field}
                             isPending={isPending}
                             setEmail={setEmail}
@@ -354,10 +305,9 @@ const LoginForm = () => {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{passwordMessage}</FormLabel>
+                        <FormLabel>{t("auth.password")}</FormLabel>
                         <FormControl>
                           <PasswordField
-                            languageToUse={languageToUse}
                             field={field}
                             isPending={isPending}
                             validatePassword={setPasswordValid}
@@ -376,7 +326,7 @@ const LoginForm = () => {
                           className="px-0 font-normal"
                         >
                           <Link href="/auth/reset">
-                            {forgotPasswordMessage}
+                            {t("auth.forgotPassword")}
                           </Link>
                         </Button>
                       </FormItem>
@@ -389,14 +339,14 @@ const LoginForm = () => {
               <div className="mt-2 mb-6">
                 {countdown > 0 ? (
                   <p className="text-sm">
-                    {twoFactorExpiryMessage.name1}
+                    {t("auth.twoFactorExpiry")}
                     <span className="font-bold">{countdown}</span>{" "}
-                    {twoFactorExpiryMessage.name2}.
+                    {t("auth.second")}.
                   </p>
                 ) : (
                   <>
                     <p className="text-sm">
-                      {twoFactorExpiredMessage.name1}
+                      {t("auth.twoFactorExpired")}
                       {countdown === 0 && (
                         <Label
                           className={`text-sm cursor-pointer ${
@@ -406,7 +356,7 @@ const LoginForm = () => {
                           }`}
                           onClick={loadingResent ? () => {} : handleResendCode}
                         >
-                          {twoFactorExpiredMessage.name2}
+                          {t("auth.try")}
                         </Label>
                       )}
                       .
@@ -414,17 +364,17 @@ const LoginForm = () => {
                     {resendCount >= 1 && (
                       <>
                         <p className="text-xs text-red-500">
-                          {retryLimitMessage.name1}
+                          {t("auth.sentAgain")}
                           <span className="font-bold text-xs text-red-500">
                             {resendCount}
                           </span>
-                          {retryLimitMessage.name2}
+                          {t("auth.times")}
                         </p>
                         <p className="text-xs  text-red-500">
                           <span className="text-sm text-red-500 font-bold">
-                            {retryLimitMessage.name3}
+                            {t("auth.note")}:
                           </span>
-                          {retryLimitMessage.name4}
+                          {t("auth.retryLimit")}
                         </p>
                       </>
                     )}
@@ -459,8 +409,8 @@ const LoginForm = () => {
               }
             >
               {showTwoFacTor
-                ? confirmLoginMessage.name1
-                : confirmLoginMessage.name2}
+                ? t("auth.confirmLogin")
+                : t("auth.login")}
             </Button>
 
             <Button
@@ -469,7 +419,7 @@ const LoginForm = () => {
               variant="link"
               onClick={() => setOpenGuestModal(true)}
             >
-              {guestLoginMessage}
+              {t("auth.guestLogin")}
             </Button>
 
             {/* Hiển thị lỗi nếu như chưa ghi password và robot */}
@@ -478,7 +428,7 @@ const LoginForm = () => {
                 <div className="flex items-center space-x-1">
                   <X className="w-5 h-5 mr-1 text-red-500" />
                   <span className="text-red-500 text-xs">
-                    {verifyNotRobotMessage}
+                    {t("auth.verifyNotRobot")}
                   </span>
                 </div>
               )}
@@ -489,7 +439,7 @@ const LoginForm = () => {
           <div className="mt-2 text-center">
             <span onClick={() => window.location.reload()}>
               <span className="hover:underline cursor-pointer text-sky-600 text-sm">
-                {backToLoginMessage}
+                {t("auth.backToLogin")}
               </span>
             </span>
           </div>

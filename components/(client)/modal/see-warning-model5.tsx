@@ -1,19 +1,12 @@
 import { AlertTriangle } from "lucide-react";
 import Modal from "@/components/ui/modal";
-import {
-  translateAmountNotSufficient,
-  translateAmountTooLow,
-  translateDirectPaymentConsultation,
-  translateNote,
-  translateOnlinePaymentNotification,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface SeePaymentWarningProps {
   isOpen: boolean;
   onClose: () => void;
   message?: string;
   title?: string;
-  languageToUse: string;
 }
 
 const SeePaymentWarningModal: React.FC<SeePaymentWarningProps> = ({
@@ -21,21 +14,13 @@ const SeePaymentWarningModal: React.FC<SeePaymentWarningProps> = ({
   onClose,
   message,
   title,
-  languageToUse,
 }) => {
-  const onlinePaymentNotificationMessage =
-    translateOnlinePaymentNotification(languageToUse);
-  const amountNotSufficientMessage =
-    translateAmountNotSufficient(languageToUse);
-  const noteMessage = translateNote(languageToUse);
-  const amountTooLowMessage = translateAmountTooLow(languageToUse);
-  const directPaymentConsultationMessage =
-    translateDirectPaymentConsultation(languageToUse);
+  const t = useTranslations()
 
   return (
     <Modal
-      title={title || onlinePaymentNotificationMessage}
-      description={message || `${amountNotSufficientMessage}.`}
+      title={title || t("cart.onlinePaymentNotification")}
+      description={message || `${t("cart.amountNotSufficient")}.`}
       isOpen={isOpen}
       onClose={onClose}
       classNameCustom="max-h-[36rem] md:max-h-[55rem] xl:max-h-[40rem] overflow-y-auto"
@@ -43,14 +28,14 @@ const SeePaymentWarningModal: React.FC<SeePaymentWarningProps> = ({
       <div className="w-full">
         <div className=" bg-yellow-400 rounded-md font-bold p-2  ">
           <h1 className="flex items-center justify-center font-bold">
-            {noteMessage} <AlertTriangle className="w-5 h-5 ml-1" />
+            {t("action.note")} <AlertTriangle className="w-5 h-5 ml-1" />
           </h1>
         </div>
 
         <p className="mt-4">
-          {amountTooLowMessage}
+          {t("cart.amountTooLowContact")}
           <span className="text-red-400 font-semibold">0352261103</span>{" "}
-          {directPaymentConsultationMessage}.
+          {t("cart.directPaymentConsulation")}.
         </p>
       </div>
     </Modal>

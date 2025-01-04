@@ -5,10 +5,7 @@ import Modal from "../ui/modal";
 import { Button } from "../ui/button";
 import { ZoomIn, ZoomOut } from "lucide-react";
 import Image from "next/image";
-import {
-  translateAccountCreatedMessage,
-  translateUserAndEmailMessage,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface ZoomModalProps {
   isOpen: boolean;
@@ -18,7 +15,6 @@ interface ZoomModalProps {
   email?: string | null | undefined;
   isClient?: boolean;
   customClassFeedBack?: string;
-  languageToUse: string;
 }
 
 export const ZoomImageAttendanceModal: React.FC<ZoomModalProps> = ({
@@ -29,8 +25,8 @@ export const ZoomImageAttendanceModal: React.FC<ZoomModalProps> = ({
   email,
   isClient,
   customClassFeedBack,
-  languageToUse,
 }) => {
+  const t = useTranslations()
   const [isMounted, setIsMounted] = useState(false);
   const [scale, setScale] = useState(1);
   // State for image position
@@ -158,11 +154,11 @@ export const ZoomImageAttendanceModal: React.FC<ZoomModalProps> = ({
   return (
     <Modal
       title={
-        email ? translateUserAndEmailMessage(languageToUse, email) : undefined
+        email ? t("profile.userAndEmail", {email: email})  : undefined
       }
       description={
         createdAt
-          ? translateAccountCreatedMessage(languageToUse, createdAt)
+          ? t("profile.accountCreated", {createdAt: createdAt})
           : undefined
       }
       isOpen={isOpen}

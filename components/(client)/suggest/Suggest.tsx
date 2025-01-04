@@ -1,48 +1,29 @@
 "use client";
 import Container from "@/components/ui/container";
 import Accessory from "./accessory";
-import ComputerComponentSmall from "./accessory2";
-import Secondhand from "./accessory3";
+import Accessory2 from "./accessory2";
+import Accessory3 from "./accessory3";
 import { suggestcolor } from "@/components/(client)/color/color";
-import { useCurrentUser } from "@/hooks/use-current-user";
-import { useEffect, useState } from "react";
-import { translateSuggest } from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 const Suggest = () => {
-  const user = useCurrentUser();
-
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []);
-
-  const languageToUse =
-    user?.id && user?.role !== "GUEST"
-      ? user?.language
-      : storedLanguage || "vi";
-
-  const suggestMessage = translateSuggest(languageToUse);
+  const t = useTranslations()
 
   return (
     <Container>
       <div className=" mt-3 md:mt-10">
-        <p className={suggestcolor.textcolor}>{suggestMessage.name}</p>
-        <Accessory languageToUse={languageToUse} />
+        <p className={suggestcolor.textcolor}>{t("suggest.homegoods")}</p>
+        <Accessory />
       </div>
 
       <div className="mt-3 md:mt-10">
-        <p className={suggestcolor.textcolor}>{suggestMessage.name2}</p>
-        <ComputerComponentSmall languageToUse={languageToUse} />
+        <p className={suggestcolor.textcolor}>{t("suggest.interior")}</p>
+        <Accessory2 />
       </div>
 
       <div className="mt-3 md:mt-10">
-        <p className={suggestcolor.textcolor}>{suggestMessage.name3}</p>
-        <Secondhand languageToUse={languageToUse} />
+        <p className={suggestcolor.textcolor}>{t("suggest.construction")}</p>
+        <Accessory3 />
       </div>
     </Container>
   );

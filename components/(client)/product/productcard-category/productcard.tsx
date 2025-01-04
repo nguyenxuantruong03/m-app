@@ -27,36 +27,17 @@ import {
   getColorPrice,
   getSizePrice,
 } from "../../export-product-compare/size-color/match-color-size";
-import {
-  getOutOfStockMessage,
-  getToastError,
-  translateAddNew,
-  translateAddToCartError,
-  translateCannotRemoveSavedProduct,
-  translateCannotSaveProduct,
-  translateDecrease,
-  translateExpand,
-  translateHeart,
-  translateInsufficientStock,
-  translateLoading,
-  translateOutOfStock,
-  translateProductAddedToCart,
-  translateProductQuantityUpdated,
-  translateSaved,
-  translateSold,
-} from "@/translate/translate-client";
 import getCart from "@/actions/client/cart";
+import { useTranslations } from "next-intl";
 
 interface ProductCardProps {
   data: Product;
   route: string;
-  languageToUse: string;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
   data,
   route,
-  languageToUse,
 }) => {
   const router = useRouter();
   const cart = useCart();
@@ -69,27 +50,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const [alertGuestModal, setAlertGuestModal] = useState(false);
   const [loadingRetchdataFavorite, setLoadingFetchDataFavorite] =
     useState(false);
-  const { addItem, removeItem } = useFavorite();
-
-  //languages
-  const toastErrorMessage = getToastError(languageToUse);
-  const outOfStockInventoryMessage = translateOutOfStock(languageToUse);
-  const productQuantityUpdatedMessage =
-    translateProductQuantityUpdated(languageToUse);
-  const loadingMessage = translateLoading(languageToUse);
-  const insufficientStockMessage = translateInsufficientStock(languageToUse);
-  const addtoCartErrorMessage = translateAddToCartError(languageToUse);
-  const productAddedToCartMessage = translateProductAddedToCart(languageToUse);
-  const cannotRemoveSavedProductMessage =
-    translateCannotRemoveSavedProduct(languageToUse);
-  const cannotSaveProductMessage = translateCannotSaveProduct(languageToUse);
-  const outOfStockMessage = getOutOfStockMessage(languageToUse);
-  const soldMessage = translateSold(languageToUse);
-  const decreaseMessage = translateDecrease(languageToUse);
-  const expandMessage = translateExpand(languageToUse);
-  const addNewMessage = translateAddNew(languageToUse);
-  const savedMessage = translateSaved(languageToUse);
-  const heartMessage = translateHeart(languageToUse);
+  const t = useTranslations()
 
   useEffect(() => {
     if (userId?.role !== "GUEST" && userId?.id) {
@@ -98,7 +59,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           setLoadingFetchDataFavorite(true);
           await favorite.fetchFavoriteItems(userId?.id || "");
         } catch (error) {
-          toast.error(toastErrorMessage);
+          toast.error(t("toastError.somethingWentWrong"));
         } finally {
           setLoadingFetchDataFavorite(false);
         }
@@ -140,15 +101,24 @@ const ProductCard: React.FC<ProductCardProps> = ({
         try {
           setLoadingFetchDataFavorite(true);
           if (favoriteData && favoriteData.id) {
-            await removeItem(favoriteData.id, userId?.id || "", languageToUse);
+            await favorite.removeItem(favoriteData.id, userId?.id || "");
+            toast.success(t("product.productRemovedFromWishlist"));
           } else {
-            await addItem(favoriteProduct, languageToUse);
+            if(!userId){
+              toast.error(t("action.loginToAddToWishlist"))
+            }
+
+            if(favoriteData){
+              toast.error(t("product.productSaved"))
+            }
+            await favorite.addItem(favoriteProduct);
+            toast.success(t("product.productToWishlist"))
           }
         } catch (error) {
           toast.error(
             favoriteData
-              ? cannotRemoveSavedProductMessage
-              : cannotSaveProductMessage
+              ? t("product.cannotRemoveSavedProduct")
+              : t("product.cannotSaveProduct")
           );
         } finally {
           setLoadingFetchDataFavorite(false);
@@ -300,7 +270,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             matchingQuantity >= maxQuantity && maxQuantity > 0;
 
           if (compareQuantityExistingAndAvailable) {
-            throw new Error(insufficientStockMessage);
+            throw new Error(t("product.insufficientStock"));
           }
 
           const productWithQuantity = {
@@ -324,7 +294,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
               existingCartItem.quantity + quantity,
               null,
               userId?.id || "",
-              languageToUse
             );
           } else {
             cartdb.addItem(
@@ -338,13 +307,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
           }
 
           return existingCartItem
-            ? productQuantityUpdatedMessage
-            : productAddedToCartMessage;
+            ? t("product.productQuantityUpdated")
+            : t("product.productAddedToCart");
         })(),
         {
-          loading: loadingMessage,
+          loading: t("loading.loading"),
           success: (message) => message,
-          error: (error) => error.message || toastErrorMessage,
+          error: (error) => error.message || t("toastError.somethingWentWrong"),
         }
       );
     } else {
@@ -379,7 +348,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             null,
             userId?.id || ""
           );
-          toast.success(productQuantityUpdatedMessage);
+          toast.success(t("product.productQuantityUpdated"));
         } else {
           await cart.addItem(
             productWithQuantity,
@@ -388,11 +357,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
             userId?.id || "",
             size,
             color,
-            languageToUse
           );
+          toast.success(t("cart.productAdded"))
         }
       } catch (error) {
-        toast.error(addtoCartErrorMessage);
+        toast.error(t("product.addToCartError"));
       } finally {
         setLoading(false);
       }
@@ -413,13 +382,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
       <AlertGuestModal
         isOpen={alertGuestModal}
         onClose={() => setAlertGuestModal(false)}
-        languageToUse={languageToUse}
       />
       <PreviewModal
         isOpen={openPreviewModal}
         onClose={() => setOpenPreviewModal(false)}
         product={data}
-        languageToUse={languageToUse}
       />
         <div className="bg-white group cursor-pointer rounded-xl border p-3 relative">
           <div className="space-y-2">
@@ -433,12 +400,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 {/* Cũ */}
                   {/* <div className="absolute z-[9999] top-[3px] right-[-95px] bg-red-500 text-white py-[15px] w-[350px] text-center transform rotate-[45deg] font-bold text-lg tracking-[2px] overflow-hidden">
                     <span className="inline-block duration-500 ease-in-out transform transition-transform w-full absolute left-[13%] top-1/2 translate-y-[-50%]">
-                      {outOfStockMessage}
+                      {t("product.outOfStock")}
                     </span>
                   </div> */}
                 {/* Mới */}
                     <div className="tag-outstock">
-                      <span className="tag-outstock-text">{outOfStockMessage}</span>
+                      <span className="tag-outstock-text">{t("product.outOfStock")}</span>
                     </div>
                 </div>
               </>
@@ -463,7 +430,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     disabled={loading}
                     onClick={onPreview}
                     icon={<Expand size={20} className="text-gray-600" />}
-                    text={expandMessage}
+                    text={t("action.expand")}
                   />
                   <IconButton
                     disabled={productQuantityAll || loading}
@@ -493,7 +460,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                       />
                     }
                     text={`${
-                      productQuantityAll ? outOfStockMessage : addNewMessage
+                      productQuantityAll ? t("product.outOfStock") : t("action.addNew")
                     }`}
                   />
 
@@ -534,8 +501,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
                           item.selectedSize === availableSize &&
                           item.selectedColor === availableColor
                       )
-                        ? savedMessage
-                        : heartMessage
+                        ? t("action.saved")
+                        : t("action.heart")
                     }`}
                   />
                 </div>
@@ -563,7 +530,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 <Currency value={discountedPrice || 0} />
                 {data.sold > 0 && (
                   <div className="flex items-center text-sm font-medium">
-                    <span className="mr-1">{soldMessage}:</span>
+                    <span className="mr-1">{t("product.sold")}:</span>
                     <span>{formatSoldValue(data.sold) || 0}</span>
                   </div>
                 )}
@@ -572,14 +539,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <CommentStar
               data={data.id}
               comment={data.comment}
-              languageToUse={languageToUse}
             />
           </div>
 
           {availablePercentPromotion > 0 && (
             <div className="home-product-item__favorite">
               <span className="ml-1">
-                {decreaseMessage} {availablePercentPromotion}%
+                {t("action.decrease")} {availablePercentPromotion}%
               </span>
             </div>
           )}

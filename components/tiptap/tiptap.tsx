@@ -29,19 +29,17 @@ import "./styles.scss";
 import MentionPlugin from "./mention/suggestion";
 import Recommend from "../ui/recommend";
 import Underline from '@tiptap/extension-underline';
-import { translateContentTiptap } from "@/translate/translate-dashboard";
+import { useTranslations } from "next-intl";
 
 interface Tiptap {
   value: string;
   onChange: (richText: string) => void;
   disabled: boolean;
   isCustom?: boolean;
-  languageToUse: string;
 }
 
-const Tiptap: React.FC<Tiptap> = ({ value, onChange, disabled, isCustom,languageToUse }) => {
-  //language
-  const contentTiptapMessage= translateContentTiptap(languageToUse)
+const Tiptap: React.FC<Tiptap> = ({ value, onChange, disabled, isCustom }) => {
+  const t = useTranslations()
 
   const editor = useEditor({
     extensions: [
@@ -120,10 +118,10 @@ const Tiptap: React.FC<Tiptap> = ({ value, onChange, disabled, isCustom,language
 
   return (
     <div className="flex flex-col justify-stretch min-h-[250px] overflow-y-auto">
-      <Toolbar disabled={disabled} editor={editor} isCustom={isCustom} languageToUse={languageToUse}/>
+      <Toolbar disabled={disabled} editor={editor} isCustom={isCustom} />
       <div className="text-sm flex items-center space-x-3 mt-3">
-        {contentTiptapMessage.title} <span className="text-red-600 pl-1">(*)</span>{" "}
-        <Recommend message={contentTiptapMessage.message} />
+        {t("tiptap.content")} <span className="text-red-600 pl-1">(*)</span>{" "}
+        <Recommend message={t("tiptap.message")} />
       </div>
       <EditorContent disabled={disabled} editor={editor} />
     </div>

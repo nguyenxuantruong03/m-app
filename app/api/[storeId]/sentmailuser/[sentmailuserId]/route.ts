@@ -4,12 +4,7 @@ import prismadb from "@/lib/prismadb";
 import { currentRole, currentUser } from "@/lib/auth";
 import { User, UserRole } from "@prisma/client";
 import { sendSpamEmail } from "@/lib/mail";
-import {
-  translateSentEmailIdGet,
-  translateSentEmailIdDelete,
-  translateSentEmailIdPatch,
-  translateSentEmailIdPost,
-} from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 type SentEmailUserValue =
   | string
@@ -31,13 +26,15 @@ export async function GET(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const sentEmailUserIdGetMessage = translateSentEmailIdGet(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!params.sentmailuserId) {
       return new NextResponse(
         JSON.stringify({
-          error: sentEmailUserIdGetMessage.sentMailUserIdRequired,
+          error: t("toastError.sentemail.sentMailUserIdRequired")
         }),
         { status: 400 }
       );
@@ -45,14 +42,14 @@ export async function GET(
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailUserIdGetMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailUserIdGetMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -69,7 +66,7 @@ export async function GET(
     return NextResponse.json(sentEmailUser);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: sentEmailUserIdGetMessage.internalError }),
+      JSON.stringify({ error: t("toastError.sentemail.internalErrorGetSentEmail") }),
       { status: 500 }
     );
   }
@@ -81,15 +78,16 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const sentEmailUserIdDeleteMessage =
-    translateSentEmailIdDelete(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     const role = await currentRole();
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailUserIdDeleteMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
@@ -97,7 +95,7 @@ export async function DELETE(
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
         JSON.stringify({
-          error: sentEmailUserIdDeleteMessage.permissionDenied,
+          error: t("toastError.permissionDenied"),
         }),
         { status: 403 }
       );
@@ -106,31 +104,9 @@ export async function DELETE(
     if (!params.sentmailuserId) {
       return new NextResponse(
         JSON.stringify({
-          error: sentEmailUserIdDeleteMessage.sentMailUserIdRequired,
+          error: t("toastError.sentemail.sentMailUserIdRequired")
         }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: sentEmailUserIdDeleteMessage.storeIdNotFound }),
-        { status: 405 }
-      );
-    }
-
-    if (role !== UserRole.ADMIN) {
-      return new NextResponse(
-        JSON.stringify({
-          error: sentEmailUserIdDeleteMessage.rolePermissionDenied,
-        }),
-        { status: 403 }
       );
     }
 
@@ -163,7 +139,7 @@ export async function DELETE(
     return NextResponse.json(sentEmailUser);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: sentEmailUserIdDeleteMessage.internalError }),
+      JSON.stringify({ error: t("toastError.sentemail.internalErrorDeleteSentEmail") }),
       { status: 500 }
     );
   }
@@ -175,29 +151,31 @@ export async function PATCH(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const sentEmailUserIdPatchMessage = translateSentEmailIdPatch(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
     const { subject, description, sentemailuser } = body;
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailUserIdPatchMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailUserIdPatchMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!subject) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailUserIdPatchMessage.subjectRequired }),
+        JSON.stringify({ error: t("toastError.sentemail.subjectRequired") }),
         { status: 400 }
       );
     }
@@ -205,7 +183,7 @@ export async function PATCH(
     if (!description) {
       return new NextResponse(
         JSON.stringify({
-          error: sentEmailUserIdPatchMessage.descriptionRequired,
+          error: t("toastError.description")
         }),
         { status: 400 }
       );
@@ -213,7 +191,7 @@ export async function PATCH(
 
     if (!sentemailuser) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailUserIdPatchMessage.userRequired }),
+        JSON.stringify({ error: t("toastError.sentemail.userRequired") }),
         { status: 400 }
       );
     }
@@ -221,22 +199,9 @@ export async function PATCH(
     if (!params.sentmailuserId) {
       return new NextResponse(
         JSON.stringify({
-          error: sentEmailUserIdPatchMessage.sentMailUserIdRequired,
+          error: t("toastError.sentemail.sentMailUserIdRequired")
         }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: sentEmailUserIdPatchMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -253,7 +218,7 @@ export async function PATCH(
     if (duplicateSubject) {
       return new NextResponse(
         JSON.stringify({
-          error: sentEmailUserIdPatchMessage.subjectAlreadyExists,
+          error: t("toastError.sentemail.subjectAlreadyExists")
         }),
         { status: 400 }
       );
@@ -271,7 +236,7 @@ export async function PATCH(
     if (!existingSentEmailUser) {
       return new NextResponse(
         JSON.stringify({
-          error: sentEmailUserIdPatchMessage.sentEmailUserNotFound,
+          error: t("toastError.sentemail.sentEmailUserNotFound")
         }),
         { status: 404 }
       );
@@ -338,7 +303,7 @@ export async function PATCH(
     return NextResponse.json(sentEmailUser);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: sentEmailUserIdPatchMessage.internalError }),
+      JSON.stringify({ error: t("toastError.sentemail.internalErrorPatchSentEmail") }),
       { status: 500 }
     );
   }
@@ -350,22 +315,24 @@ export async function POST(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const sentEmailUserIdPostMessage = translateSentEmailIdPost(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
     const { sentuser } = body;
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailUserIdPostMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 404 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailUserIdPostMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -376,7 +343,7 @@ export async function POST(
 
     if (!sentuser || !cleanedStrsentuser) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailUserIdPostMessage.userNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 404 }
       );
     }
@@ -384,24 +351,9 @@ export async function POST(
     if (!params.sentmailuserId) {
       return new NextResponse(
         JSON.stringify({
-          error: sentEmailUserIdPostMessage.sentMailUserIdRequired,
+          error: t("toastError.sentemail.sentMailUserIdRequired")
         }),
         { status: 404 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: sentEmailUserIdPostMessage.storeIdNotFound }),
-        {
-          status: 405,
-        }
       );
     }
 
@@ -417,7 +369,7 @@ export async function POST(
     // Check if the sentEmailUser update was successful before proceeding
     if (!sentEmailUser) {
       return new NextResponse(
-        JSON.stringify({ error: sentEmailUserIdPostMessage.errorUpdating }),
+        JSON.stringify({ error: t("toastError.sentemail.errorUpdating") }),
         { status: 405 }
       );
     }
@@ -557,7 +509,7 @@ export async function POST(
     return NextResponse.json(sentEmailUser);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: sentEmailUserIdPostMessage.internalError }),
+      JSON.stringify({ error: t("toastError.sentemail.internalErrorPostSentEmail") }),
       { status: 500 }
     );
   }

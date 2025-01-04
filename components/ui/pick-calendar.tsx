@@ -9,22 +9,19 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { getPickCalendar } from "@/translate/translate-dashboard"
+import { useTranslations } from "next-intl"
 
 interface DatePickerWithRangeProps extends React.HTMLAttributes<HTMLDivElement> {
   onDateChange: (dateRange: DateRange | undefined) => void;
   data: any;
-  languageToUse: string
 }
 
 export function DatePickerWithRange({
   className,
   data,
   onDateChange,
-  languageToUse
 }: DatePickerWithRangeProps) {
-  //language
-  const pickCalendarMessage = getPickCalendar(languageToUse)
+  const t = useTranslations()
 
   const minDate = React.useMemo(() => {
     if (data.length === 0) return new Date();
@@ -114,7 +111,7 @@ export function DatePickerWithRange({
                 format(date.from, "dd/MM/yyyy HH:mm")
               )
             ) : (
-              <span>{pickCalendarMessage.pickDateTime}</span>
+              <span>{t("dataTable.pickDateTime")}</span>
             )}
           </Button>
         </PopoverTrigger>
@@ -129,7 +126,7 @@ export function DatePickerWithRange({
           />
           <div className="mt-4 grid grid-cols-2 gap-4">
             <div>
-              <label>{pickCalendarMessage.fromTime}</label>
+              <label>{t("dataTable.fromTime")}</label>
               <input
                 type="time"
                 value={`${fromTime.hours.toString().padStart(2, "0")}:${fromTime.minutes.toString().padStart(2, "0")}`}
@@ -141,7 +138,7 @@ export function DatePickerWithRange({
               />
             </div>
             <div>
-              <label>{pickCalendarMessage.toTime}</label>
+              <label>{t("dataTable.toTime")}</label>
               <input
                 type="time"
                 value={`${toTime.hours.toString().padStart(2, "0")}:${toTime.minutes.toString().padStart(2, "0")}`}

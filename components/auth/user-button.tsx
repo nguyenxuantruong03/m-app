@@ -20,11 +20,7 @@ import { utcToZonedTime } from "date-fns-tz";
 import { format } from "date-fns";
 import CircleAvatar from "../ui/circle-avatar";
 import viLocale from "date-fns/locale/vi";
-import {
-  translateMenuItems,
-  translateName,
-  translateNameuser,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 const vietnamTimeZone = "Asia/Ho_Chi_Minh";
 
 export interface AccountItem {
@@ -43,6 +39,7 @@ export interface AccountItem {
 }
 
 export const UserButton = () => {
+  const t = useTranslations()
   const userId = useCurrentUser();
 
   //Logic dưới đây dùng để kéo phải kéo trái userId.name nếu tên quá dài
@@ -50,24 +47,9 @@ export const UserButton = () => {
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
   const [isGrabbing, setIsGrabbing] = useState(false);
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []);
 
   //language
-  const languageToUse =
-    userId?.id && userId?.role !== "GUEST"
-      ? userId?.language
-      : storedLanguage || "vi";
-  const menuItemMessage = translateMenuItems(languageToUse);
-  const nameMessage = translateName(languageToUse);
-  const nameUserMessage = translateNameuser(languageToUse);
+  const languageToUse = userId?.language || "vi";
 
   const handleMouseDown = (e: React.MouseEvent<HTMLParagraphElement>) => {
     setIsDragging(true);
@@ -164,11 +146,11 @@ export const UserButton = () => {
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
             >
-              {userId?.name || nameMessage}
+              {userId?.name || t("auth.name")}
             </p>
 
             <p className="text-xs text-gray-300 ">
-              {userId?.nameuser || `@${nameUserMessage}`}
+              {userId?.nameuser || `@${t("auth.userName")}`}
             </p>
           </div>
         </div>
@@ -176,20 +158,20 @@ export const UserButton = () => {
         {userId?.role !== "GUEST" && (
           <Link href={`/me/${userId?.nameuser}`}>
             <DropdownMenuItem className="mt-4 mb-2 flex items-center">
-              <User className="h-5 w-5 mr-2" /> {menuItemMessage.name1}
+              <User className="h-5 w-5 mr-2" /> {t("auth.menuItem.name1")}
             </DropdownMenuItem>
           </Link>
         )}
 
         <Link href={`/listlive`}>
           <DropdownMenuItem className="mt-4 my-2 flex items-center">
-            <Radio className="h-5 w-5 mr-2" /> {menuItemMessage.name7}
+            <Radio className="h-5 w-5 mr-2" /> {t("auth.menuItem.name7")}
           </DropdownMenuItem>
         </Link>
 
         <Link href={`/explore`}>
           <DropdownMenuItem className="mt-4 my-2 flex items-center">
-            <Newspaper  className="h-5 w-5 mr-2" /> {menuItemMessage.name8}
+            <Newspaper  className="h-5 w-5 mr-2" /> {t("auth.menuItem.name8")}
           </DropdownMenuItem>
         </Link>
         <Separator />
@@ -197,7 +179,6 @@ export const UserButton = () => {
         <DropdownMenuItem className="flex items-center cursor-pointer">
           <ThemeToggleDrakorLight
             dropdown={false}
-            languageToUse={languageToUse}
           />
         </DropdownMenuItem>
 
@@ -205,19 +186,19 @@ export const UserButton = () => {
 
         <Link href="/warehouse/package-product/delivered-product">
           <DropdownMenuItem className="my-2 flex items-center">
-            <Package className="h-5 w-5 mr-2" /> {menuItemMessage.name2}
+            <Package className="h-5 w-5 mr-2" /> {t("auth.menuItem.name2")}
           </DropdownMenuItem>
         </Link>
 
         <Link href="/warehouse/package-product">
           <DropdownMenuItem className="my-2 flex items-center">
-            <Package className="h-5 w-5 mr-2" /> {menuItemMessage.name3}
+            <Package className="h-5 w-5 mr-2" /> {t("auth.menuItem.name3")}
           </DropdownMenuItem>
         </Link>
 
         <Link href="/warehouse">
           <DropdownMenuItem className="my-2 flex items-center">
-            <Package className="h-5 w-5 mr-2" /> {menuItemMessage.name4}
+            <Package className="h-5 w-5 mr-2" /> {t("auth.menuItem.name4")}
           </DropdownMenuItem>
           <Separator />
         </Link>
@@ -227,7 +208,7 @@ export const UserButton = () => {
             <Separator />
             <Link href="/setting-profile">
               <DropdownMenuItem className="flex items-center cursor-pointer">
-                <Settings className="h-5 w-5 mr-2" /> {menuItemMessage.name5}
+                <Settings className="h-5 w-5 mr-2" /> {t("auth.menuItem.name5")}
               </DropdownMenuItem>
             </Link>
           </>
@@ -237,7 +218,7 @@ export const UserButton = () => {
         <LogoutButton>
           <DropdownMenuItem className="cursor-pointer mt-2">
             <LogOut className="h-5 w-5 mr-2" />
-            {menuItemMessage.name6}
+            {t("auth.menuItem.name6")}
           </DropdownMenuItem>
         </LogoutButton>
       </DropdownMenuContent>

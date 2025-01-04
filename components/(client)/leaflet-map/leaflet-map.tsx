@@ -12,12 +12,8 @@ import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { MousePointerClick } from "lucide-react";
 import "./style.css";
 import { root } from "../color/color";
-import {
-  translateClickHere,
-  translateStore,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { localizationData } from "@/translate/translate-dashboard";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -26,29 +22,12 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow.src,
 });
 
-interface LeafletMapProps {}
-
 const LeafletMap = () => {
-  const user = useCurrentUser();
+  const t = useTranslations("map")
+  const user = useCurrentUser()
+  const languageToUse = user?.language || "vi"
   const mapRef = useRef<null>(null);
   const [isVisible, setIsVisible] = useState(true);
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []);
-
-  //language
-  const languageToUse =
-    user?.id && user?.role !== "GUEST"
-      ? user?.language
-      : storedLanguage || "vi";
-  const clickHereMessage = translateClickHere(languageToUse);
-  const storeMessage = translateStore(languageToUse);
 
   const handleMouseEnter = () => {
     setIsVisible(false);
@@ -66,10 +45,61 @@ const LeafletMap = () => {
     }
 
     if (languageToUse === "vi") {
-      L.Routing.Localization["vi"] = localizationData["vi"];
-    } else {
-      delete L.Routing.Localization["vi"]; // Remove any custom localization for non-Vietnamese languages
-    }
+          L.Routing.Localization["vi"] = {
+            directions: {
+              north: t("directions.north"),
+              northeast: t("directions.northeast"),
+              east: t("directions.east"),
+              southeast: t("directions.southeast"),
+              south: t("directions.south"),
+              southwest: t("directions.southwest"),
+              west: t("directions.west"),
+              northwest: t("directions.northwest"),
+            },
+            instructions: {
+              straight: t("instructions.straight"),
+              slightLeft: t("instructions.slightLeft"),
+              left: t("instructions.left"),
+              sharpLeft: t("instructions.sharpLeft"),
+              slightRight: t("instructions.slightRight"),
+              right: t("instructions.right"),
+              sharpRight: t("instructions.sharpRight"),
+              uturn: t("instructions.uturn"),
+            },
+            maneuvers: {
+              merge: t("maneuvers.merge"),
+              depart: t("maneuvers.depart"),
+              arrive: t("maneuvers.arrive"),
+              fork: t("maneuvers.fork"),
+              endOfRoad: t("maneuvers.endOfRoad"),
+              passRoundabout: t("maneuvers.passRoundabout"),
+              accessRoundabout: t("maneuvers.accessRoundabout"),
+              stayOnRoundabout: t("maneuvers.stayOnRoundabout"),
+              startAtEndOfStreet: t("maneuvers.startAtEndOfStreet"),
+              start: t("maneuvers.start"),
+              turn: t("maneuvers.turn"),
+              turnLeft: t("maneuvers.turnLeft"),
+              turnRight: t("maneuvers.turnRight"),
+              multiple: t("maneuvers.multiple"),
+            },
+            errors: {
+              locationNotFound: t("errors.locationNotFound"),
+              cantProjectRouteOnSatellite: t("errors.cantProjectRouteOnSatellite"),
+              routeNotFound: t("errors.routeNotFound"),
+              cantFindRoute: t("errors.cantFindRoute"),
+              requestFailed: t("errors.requestFailed"),
+              tooManyStops: t("errors.tooManyStops"),
+              unableToSync: t("errors.unableToSync"),
+            },
+            other: {
+              useRouteAnyway: t("other.useRouteAnyway"),
+              isCurrently: t("other.isCurrently"),
+              poweredBy: t("other.poweredBy"),
+            },
+          };
+        } else {
+          delete L.Routing.Localization["vi"]; // Remove any custom localization for non-Vietnamese languages
+        }
 
     if (!mapRef.current) {
       // Map initialization
@@ -140,7 +170,7 @@ const LeafletMap = () => {
         draggable: true,
       });
       // Popup
-      const popupContent = `${storeMessage} Trường Đạt - 457 Lê Văn Quới,Quận Bình Tân, Phường Bình Trị Đông A, TPHCM `;
+      const popupContent = `${t("form.store")} Trường Đạt - 457 Lê Văn Quới,Quận Bình Tân, Phường Bình Trị Đông A, TPHCM `;
       const popup = singleMarker.bindPopup(popupContent);
       // Add Marker and Popup to the map
       singleMarker.addTo(map);
@@ -178,7 +208,7 @@ const LeafletMap = () => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <div className="arrow-click flex font-bold">{clickHereMessage}</div>
+        <div className="arrow-click flex font-bold">{t("form.clickHere")}</div>
         <div className="flex justify-center">
           <MousePointerClick className="w-8 transform rotate-90 arrow-click" />
         </div>

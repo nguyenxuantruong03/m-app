@@ -16,25 +16,25 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useEffect, useState } from "react";
 import { myfont } from "./../../times new roman-normal";
-import { BillboardColumn } from "@/app/(dashboard)/[storeId]/(routes)/billboards/components/columns";
-import { CategoriesColumn } from "@/app/(dashboard)/[storeId]/(routes)/categories/components/columns";
-import { ProductColumn } from "@/app/(dashboard)/[storeId]/(routes)/product/components/columns";
-import { OrderColumn } from "@/app/(dashboard)/[storeId]/(routes)/orders/components/columns";
-import { ProductDetailColumn } from "@/app/(dashboard)/[storeId]/(routes)/productdetail/components/columns";
-import { SalaryStaffsColumn } from "@/app/(dashboard)/[storeId]/(routes)/salarystaff/components/column";
-import { SentEmailUserColumn } from "@/app/(dashboard)/[storeId]/(routes)/sentmailuser/components/columns";
-import { SettingUsersColumn } from "@/app/(dashboard)/[storeId]/(routes)/settingusers/components/column";
-import { ShippingRatesColumn } from "@/app/(dashboard)/[storeId]/(routes)/shippingrates/components/columns";
-import { TaxRateColumn } from "@/app/(dashboard)/[storeId]/(routes)/taxrate/components/columns";
-import { CouponColumn } from "@/app/(dashboard)/[storeId]/(routes)/coupon/components/columns";
-import { ManageAttendancesColumn } from "@/app/(dashboard)/[storeId]/(routes)/manageattendance/components/column";
-import { ManageStaffsColumn } from "@/app/(dashboard)/[storeId]/(routes)/managestaff/components/column";
-import { WheelSpinColumn } from "@/app/(dashboard)/[storeId]/(routes)/wheelSpin/components/column";
-import { CommentColumn } from "@/app/(dashboard)/[storeId]/(routes)/comment/components/column";
-import { SystemsColumn } from "@/app/(dashboard)/[storeId]/(routes)/system/components/column";
-import { StoreColumn } from "@/app/(dashboard)/store/components/columns";
-import { FeedBackColumn } from "@/app/(dashboard)/[storeId]/(routes)/feedback/components/columns";
-import { translateDownloadFile } from "@/translate/translate-dashboard";
+import { BillboardColumn } from "@/app/[locale]/(dashboard)/[storeId]/(routes)/billboards/components/columns";
+import { CategoriesColumn } from "@/app/[locale]/(dashboard)/[storeId]/(routes)/categories/components/columns";
+import { ProductColumn } from "@/app/[locale]/(dashboard)/[storeId]/(routes)/product/components/columns";
+import { OrderColumn } from "@/app/[locale]/(dashboard)/[storeId]/(routes)/orders/components/columns";
+import { ProductDetailColumn } from "@/app/[locale]/(dashboard)/[storeId]/(routes)/productdetail/components/columns";
+import { SalaryStaffsColumn } from "@/app/[locale]/(dashboard)/[storeId]/(routes)/salarystaff/components/column";
+import { SentEmailUserColumn } from "@/app/[locale]/(dashboard)/[storeId]/(routes)/sentmailuser/components/columns";
+import { SettingUsersColumn } from "@/app/[locale]/(dashboard)/[storeId]/(routes)/settingusers/components/column";
+import { ShippingRatesColumn } from "@/app/[locale]/(dashboard)/[storeId]/(routes)/shippingrates/components/columns";
+import { TaxRateColumn } from "@/app/[locale]/(dashboard)/[storeId]/(routes)/taxrate/components/columns";
+import { CouponColumn } from "@/app/[locale]/(dashboard)/[storeId]/(routes)/coupon/components/columns";
+import { ManageAttendancesColumn } from "@/app/[locale]/(dashboard)/[storeId]/(routes)/manageattendance/components/column";
+import { ManageStaffsColumn } from "@/app/[locale]/(dashboard)/[storeId]/(routes)/managestaff/components/column";
+import { WheelSpinColumn } from "@/app/[locale]/(dashboard)/[storeId]/(routes)/wheelSpin/components/column";
+import { CommentColumn } from "@/app/[locale]/(dashboard)/[storeId]/(routes)/comment/components/column";
+import { SystemsColumn } from "@/app/[locale]/(dashboard)/[storeId]/(routes)/system/components/column";
+import { StoreColumn } from "@/app/[locale]/(dashboard)/store/components/columns";
+import { FeedBackColumn } from "@/app/[locale]/(dashboard)/[storeId]/(routes)/feedback/components/columns";
+import { useTranslations } from "next-intl";
 
 interface DownloadfileProps {
   data:
@@ -57,14 +57,11 @@ interface DownloadfileProps {
     | StoreColumn[]
     | FeedBackColumn[]
   filename: string;
-  languageToUse: string;
 }
 
-const Downloadfile: React.FC<DownloadfileProps> = ({ data, filename,languageToUse }) => {
+const Downloadfile: React.FC<DownloadfileProps> = ({ data, filename }) => {
+  const t = useTranslations()
   const [isMounted, setIsMounted] = useState(false);
-
-  //language 
-  const downloadFileMessage = translateDownloadFile(languageToUse)
 
   useEffect(() => {
     setIsMounted(true);
@@ -123,22 +120,22 @@ const Downloadfile: React.FC<DownloadfileProps> = ({ data, filename,languageToUs
         <DropdownMenuTrigger>
           <Button>
             <FolderDown className="md:mr-2 h-4 w-4" />
-            <span className="hidden md:block">{downloadFileMessage.downloadFile}</span>
+            <span className="hidden md:block">{t("downloadFile.downloadFile")}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuLabel>{downloadFileMessage.statisticalDocuments}</DropdownMenuLabel>
+          <DropdownMenuLabel>{t("downloadFile.statisticalDocuments")}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
             <Button onClick={handlePdfDownload}>
               <FileDown className="mr-2 h-4 w-4" />
-              {downloadFileMessage.downloadPdf}
+              {t("downloadFile.downloadPdf")}
             </Button>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Button onClick={handleDownload}>
               <FileDown className="mr-2 h-4 w-4" />
-              {downloadFileMessage.downloadExcel}
+              {t("downloadFile.downloadExcel")}
             </Button>
           </DropdownMenuItem>
         </DropdownMenuContent>

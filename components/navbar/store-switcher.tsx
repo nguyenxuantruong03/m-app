@@ -17,12 +17,7 @@ import {
   CommandItem,
   CommandList,
 } from "../ui/command";
-import {
-  translateCreateStore,
-  translateSearchStore,
-  translateSelectStore,
-  translateStoreNotFound,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 type PopoverTrigger = React.ComponentPropsWithoutRef<typeof PopoverTrigger>;
 
@@ -32,25 +27,18 @@ interface Item {
 }
 interface StoreSwitcherProps extends PopoverTrigger {
   items: Item[];
-  languageToUse: string;
 }
 
 export default function StoreSwitcher({
   className,
   items = [],
-  languageToUse,
 }: StoreSwitcherProps) {
+  const t = useTranslations()
   const chooseModal = usechoosestoreModal();
   const params = useParams();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [isRotating, setIsRotating] = useState(false);
-
-  //language
-  const selectStoreMessage = translateSelectStore(languageToUse);
-  const searchStoreMessage = translateSearchStore(languageToUse);
-  const storeNotFoundMessage = translateStoreNotFound(languageToUse);
-  const createStoremessgae = translateCreateStore(languageToUse);
 
   const handleClick = () => {
     router.refresh();
@@ -83,7 +71,7 @@ export default function StoreSwitcher({
             size="sm"
             role="combobox"
             aria-expanded={open}
-            aria-label={selectStoreMessage}
+            aria-label={t("navbardashboard.storeSwitcher.selectStore")}
             className={cn("w-[200px] justify-between", className)}
           >
             <Store className="mr-2 h-4 w-4" />
@@ -95,8 +83,8 @@ export default function StoreSwitcher({
         <PopoverContent className="w-[200px] p-0">
           <Command>
             <CommandList>
-              <CommandInput placeholder={searchStoreMessage} />
-              <CommandEmpty>{storeNotFoundMessage}</CommandEmpty>
+              <CommandInput placeholder={t("navbardashboard.storeSwitcher.searchStore")} />
+              <CommandEmpty>{t("navbardashboard.storeSwitcher.storeNotFound")}</CommandEmpty>
               <CommandGroup heading="Stores">
                 {fomattedItems.map((store) => (
                   <CommandItem
@@ -126,7 +114,7 @@ export default function StoreSwitcher({
                       }}
                     >
                       <PlusCircle className="mr-2 h-5 w-5" />
-                      {createStoremessgae}
+                      {t("navbardashboard.storeSwitcher.createStore")}
                     </CommandItem>
                   </CommandGroup>
                 </CommandList>

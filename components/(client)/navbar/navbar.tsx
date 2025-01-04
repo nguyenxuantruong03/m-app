@@ -14,64 +14,19 @@ import {
   Blocks,
 } from "lucide-react";
 import Link from "next/link";
-import axios from "axios";
-import { useParams } from "next/navigation";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import {
-  translateHeart,
-  translateHomepage,
-  translateList,
-  translateOrder,
-  translatePackageProduct,
-  translateProduct,
-  translateUtility,
-  translateVoucher,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 const Navbar = () => {
-  const param = useParams();
+  const t = useTranslations()
   const user = useCurrentUser();
   const [activeIndex, setActiveIndex] = useState(0);
-  const [totalCoins, setTotalCoins] = useState<number>(0);
-  const [rotation, setRotation] = useState<number>(0);
   const [isHidden, setIsHidden] = useState(false);
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []);
-
-  //languages
-  const languageToUse =
-    user?.id && user?.role !== "GUEST"
-      ? user?.language
-      : storedLanguage || "vi";
-  const homepageMessage = translateHomepage(languageToUse);
-  const productMessage = translateProduct(languageToUse);
-  const listMessage = translateList(languageToUse);
-  const heartMessage = translateHeart(languageToUse);
-  const voucherMessage = translateVoucher(languageToUse);
-  const ubilityMessage = translateUtility(languageToUse);
-  const orderMessage = translateOrder(languageToUse);
 
   useEffect(() => {
     const savedActiveIndex = localStorage.getItem("activeIndex");
     if (savedActiveIndex) {
       setActiveIndex(Number(savedActiveIndex));
-    }
-  }, []);
-
-  useEffect(() => {
-    //TODO: Gắn tổng số lượng coin hoặc rotation lên icon
-    if (user?.role !== "GUEST" && user?.id) {
-      axios.get(`/api/${param.storeId}/wheelSpin`).then((response) => {
-        setTotalCoins(response.data.totalCoins);
-        setRotation(response.data.latestRotation);
-      });
     }
   }, []);
 
@@ -116,7 +71,7 @@ const Navbar = () => {
     <>
       <div className=" fixed z-[99999] w-full top-0">
         <div className={`${isHidden ? "hidden" : "max-w-full p-1 lg:p-0 h-[50px] lg:h-[40px] bg-[#e9efff] animate-fade-down animate-once animate-duration-[400ms] animate-delay-100 animate-ease-linear"}`}>
-            <ImageDelivery languageToUse={languageToUse} />
+            <ImageDelivery />
         </div>
         <div className={navbarcolor.bg}>
           <div className="xl:mx-auto xl:max-w-[85rem]">
@@ -125,7 +80,6 @@ const Navbar = () => {
                 role={user?.role || ""}
                 userId={user?.id || ""}
                 isLive={user?.isLive}
-                languageToUse={languageToUse}
               />
             </div>
           </div>
@@ -144,7 +98,7 @@ const Navbar = () => {
                 <span className="icon">
                   <Home />
                 </span>
-                <span className="text">{homepageMessage}</span>
+                <span className="text">{t("navbar.homepage")}</span>
               </Link>
             </li>
             <li
@@ -155,7 +109,7 @@ const Navbar = () => {
                 <span className="icon">
                   <ShoppingCart />
                 </span>
-                <span className="text">{productMessage}</span>
+                <span className="text">{t("product.product")}</span>
               </Link>
             </li>
             <li
@@ -166,7 +120,7 @@ const Navbar = () => {
                 <span className="icon">
                   <AlignLeft />
                 </span>
-                <span className="text">{listMessage}</span>
+                <span className="text">{t("navbar.list")}</span>
               </Link>
             </li>
             {user?.role !== "GUEST" && user?.id ? (
@@ -178,7 +132,7 @@ const Navbar = () => {
                   <span className="icon">
                     <Heart />
                   </span>
-                  <span className="text">{heartMessage}</span>
+                  <span className="text">{t("navbar.heart")}</span>
                 </Link>
               </li>
             ) : (
@@ -190,7 +144,7 @@ const Navbar = () => {
                   <span className="icon">
                     <TicketPercent />
                   </span>
-                  <span className="text">{voucherMessage}</span>
+                  <span className="text">{t("navbar.voucher")}</span>
                 </Link>
               </li>
             )}
@@ -204,7 +158,7 @@ const Navbar = () => {
                   <span className="icon">
                     <Blocks />
                   </span>
-                  <span className="text">{ubilityMessage}</span>
+                  <span className="text">{t("utility.utility")}</span>
                 </Link>
               </li>
             ) : (
@@ -216,7 +170,7 @@ const Navbar = () => {
                   <span className="icon">
                     <PackageSearch />
                   </span>
-                  <span className="text">{orderMessage}</span>
+                  <span className="text">{t("order.order")}</span>
                 </Link>
               </li>
             )}

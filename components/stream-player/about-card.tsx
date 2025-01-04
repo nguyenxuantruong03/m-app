@@ -1,8 +1,8 @@
 "use client";
 
-import { translateAbout, translateFollower, translateFollowers, translateMystery } from "@/translate/translate-client";
 import { VerifiedMark } from "../verified-mark";
 import { BioModal } from "./bio-modal";
+import { useTranslations } from "next-intl";
 
 interface AboutCardProps {
   hostName: string;
@@ -12,7 +12,6 @@ interface AboutCardProps {
   followedByCount: number;
   role: string;
   isCitizen: boolean;
-  languageToUse: string;
 }
 
 export const AboutCard = ({
@@ -23,34 +22,28 @@ export const AboutCard = ({
   followedByCount,
   role,
   isCitizen,
-  languageToUse
 }: AboutCardProps) => {
+  const t = useTranslations()
   const hostAsView = `host-${hostIdentity}`;
   const isHost = viewerIdentity === hostAsView;
 
-  //languages
-  const followerMessage = translateFollower(languageToUse)
-  const followersMessage = translateFollowers(languageToUse)
-  const aboutMessage = translateAbout(languageToUse)
-  const mysteryMessage = translateMystery(languageToUse)
-
-  const followedByLabel = followedByCount === 1 ? followerMessage : followersMessage;
+  const followedByLabel = followedByCount === 1 ? t("profile.follower") : t("profile.followers");
   return (
     <div className="px-4">
       <div className="group rounded-xl bg-background p-6 lg:p-10 flex flex-col gap-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-x-2 font-semibold text-lg lg:text-2xl dark:text-slate-200">
-            {aboutMessage} {hostName}
+            {t("profile.about")} {hostName}
             <VerifiedMark role={role} isCitizen={isCitizen}/>
           </div>
-          {isHost && (<BioModal initialValue={bio} languageToUse={languageToUse}/>)}
+          {isHost && (<BioModal initialValue={bio}/>)}
         </div>
         <div className="text-sm text-muted-foreground">
           <span className="font-semibold text-primary">{followedByCount}</span>
           {followedByLabel}
         </div>
         <p className="w-full text-sm break-words max-w-xs md:max-w-7xl dark:text-slate-200">
-          {bio || mysteryMessage}
+          {bio || t("profile.mystery")}
         </p>
       </div>
     </div>

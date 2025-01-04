@@ -2,10 +2,10 @@ import { currentUser } from "@/lib/auth";
 import { sendBonus, sendunBonus } from "@/lib/mail";
 import prismadb from "@/lib/prismadb";
 import { formatter } from "@/lib/utils";
-import { translateSalaryStaffGet, translateSalaryStaffPatch, translateSalaryStaffPost } from "@/translate/translate-api";
 import { EventCalendar, User, UserRole } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/library";
 import { format } from "date-fns";
+import { createTranslator } from "next-intl";
 import { NextResponse } from "next/server";
 
 type SalaryStaffValue = string | number |EventCalendar | User |  boolean | Decimal | Date | undefined | null;
@@ -18,20 +18,22 @@ interface ChangeRecord {
 export async function GET(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const salaryStaffGetMessage = translateSalaryStaffGet(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: salaryStaffGetMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: salaryStaffGetMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -40,7 +42,7 @@ export async function GET(req: Request) {
     return NextResponse.json(salarystaff);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: salaryStaffGetMessage.internalError }),
+      JSON.stringify({ error: t("toastError.salarystaff.internalErrorGetSalaryStaff") }),
       { status: 500 }
     );
   }
@@ -52,8 +54,10 @@ export async function PATCH(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const salaryStaffPatchMessage = translateSalaryStaffPatch(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   const body = await req.json();
   const { bonusAmount, bonusTitle, bonus } = body;
@@ -61,27 +65,27 @@ export async function PATCH(
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: salaryStaffPatchMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: salaryStaffPatchMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!bonus) {
-      return new NextResponse(JSON.stringify({ error: salaryStaffPatchMessage.bonusRequired }), {
+      return new NextResponse(JSON.stringify({ error: t("toastError.salarystaff.bonusRequired") }), {
         status: 400,
       });
     }
 
     if (!bonusTitle) {
       return new NextResponse(
-        JSON.stringify({ error: salaryStaffPatchMessage.bonusTitleRequired }),
+        JSON.stringify({ error: t("toastError.salarystaff.bonusTitleRequired") }),
         { status: 400 }
       );
     }
@@ -183,7 +187,7 @@ export async function PATCH(
     return NextResponse.json(caculateSalary);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: salaryStaffPatchMessage.internalError }),
+      JSON.stringify({ error: t("toastError.salarystaff.internalErrorPatchSalaryStaff") }),
       { status: 500 }
     );
   }
@@ -195,8 +199,10 @@ export async function POST(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const salaryStaffPostMessage = translateSalaryStaffPost(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   const body = await req.json();
   const { unbonusAmount, unbonusTitle, unbonus } = body;
@@ -204,28 +210,28 @@ export async function POST(
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: salaryStaffPostMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: salaryStaffPostMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!unbonus) {
       return new NextResponse(
-        JSON.stringify({ error: salaryStaffPostMessage.unbonusRequired }),
+        JSON.stringify({ error: t("toastError.salarystaff.unbonusRequired") }),
         { status: 400 }
       );
     }
 
     if (!unbonusTitle) {
       return new NextResponse(
-        JSON.stringify({ error: salaryStaffPostMessage.unbonusTitleRequired }),
+        JSON.stringify({ error: t("toastError.salarystaff.unbonusTitleRequired") }),
         { status: 400 }
       );
     }
@@ -327,7 +333,7 @@ export async function POST(
     return NextResponse.json(caculateSalary);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: salaryStaffPostMessage.internalError }),
+      JSON.stringify({ error: t("toastError.salarystaff.internalErrorPostSalaryStaff") }),
       { status: 500 }
     );
   }

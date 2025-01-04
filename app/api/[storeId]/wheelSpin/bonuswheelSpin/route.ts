@@ -1,20 +1,22 @@
 import { currentUser } from "@/lib/auth";
 import { sendSpin, sendUnSpin } from "@/lib/mail";
 import prismadb from "@/lib/prismadb";
-import { translateBonusWheelSpinGet, translateBonusWheelSpinPatch, translateUnbonusWheelSpinPost } from "@/translate/translate-api";
 import { UserRole } from "@prisma/client";
 import { format } from "date-fns";
+import { createTranslator } from "next-intl";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const bonusWheelSpinGetMessage = translateBonusWheelSpinGet(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: bonusWheelSpinGetMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
@@ -27,7 +29,7 @@ export async function GET(req: Request) {
     return NextResponse.json(WheelSpin);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: bonusWheelSpinGetMessage.internalError }),
+      JSON.stringify({ error: t("toastError.wheelspin.internalErrorGetWheelSpin") }),
       { status: 500 }
     );
   }
@@ -39,8 +41,10 @@ export async function PATCH(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const bonusWheelSpinPatchMessage = translateBonusWheelSpinPatch(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   const body = await req.json();
   const { bonusAmount, bonusTitle, bonus, coinAmount, coinbonus, data } = body;
@@ -48,21 +52,21 @@ export async function PATCH(
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: bonusWheelSpinPatchMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: bonusWheelSpinPatchMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!bonusTitle) {
       return new NextResponse(
-        JSON.stringify({ error: bonusWheelSpinPatchMessage.bonusTitleRequired }),
+        JSON.stringify({ error: t("toastError.wheelspin.bonusTitleRequired") }),
         { status: 400 }
       );
     }
@@ -90,7 +94,7 @@ export async function PATCH(
 
     if (!existingWheelSpin) {
       return new NextResponse(
-        JSON.stringify({ error: bonusWheelSpinPatchMessage.recordNotFound }),
+        JSON.stringify({ error: t("toastError.wheelspin.recordNotFound") }),
         { status: 404 }
       );
     }
@@ -184,7 +188,7 @@ export async function PATCH(
     }
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: bonusWheelSpinPatchMessage.internalError }),
+      JSON.stringify({ error: t("toastError.wheelspin.internalErrorPatchBonus") }),
       { status: 500 }
     );
   }
@@ -196,8 +200,10 @@ export async function POST(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const unBonusWheelSpinPostMessage = translateUnbonusWheelSpinPost(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   const body = await req.json();
   const {
@@ -212,21 +218,21 @@ export async function POST(
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: unBonusWheelSpinPostMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: unBonusWheelSpinPostMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!unbonusTitle) {
       return new NextResponse(
-        JSON.stringify({ error: unBonusWheelSpinPostMessage.unbonusTitleRequired }),
+        JSON.stringify({ error: t("toastError.wheelspin.unbonusTitleRequired") }),
         { status: 400 }
       );
     }
@@ -254,7 +260,7 @@ export async function POST(
 
     if (!existingWheelSpin) {
       return new NextResponse(
-        JSON.stringify({ error: unBonusWheelSpinPostMessage.recordNotFound }),
+        JSON.stringify({ error: t("toastError.wheelspin.recordNotFound") }),
         { status: 404 }
       );
     }
@@ -348,7 +354,7 @@ export async function POST(
     }
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: unBonusWheelSpinPostMessage.internalError }),
+      JSON.stringify({ error: t("toastError.wheelspin.internalErrorPatchUnbonus") }),
       { status: 500 }
     );
   }

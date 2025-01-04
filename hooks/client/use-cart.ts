@@ -1,6 +1,4 @@
-import { translateProductAddedToCart, translateProductRemoved } from "@/translate/translate-client";
 import { ProductCartLocal } from "@/types/type";
-import toast from "react-hot-toast";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
@@ -16,9 +14,8 @@ interface CartStore {
     userId: string,
     selectedSize: string,
     selectedColor: string,
-    languageToUse: string,
   ) => void;
-  removeItem: (id: string, userId: string,languageToUse: string,) => void;
+  removeItem: (id: string) => void;
   removeAll: (userId: string) => void;
   updateQuantity: (
     cartId: string,
@@ -131,11 +128,7 @@ const useCart = create(
         userId: string,
         size: string,
         color: string,
-        languageToUse: string
       ) => {
-        //language
-        const productAddedToCartMessage = translateProductAddedToCart(languageToUse)
-        
         const validWarranty = warranty ?? ""; // Fallback to an empty string if null+
           // Add the new item to the cart
           set({
@@ -150,7 +143,6 @@ const useCart = create(
               },
             ],
           });
-          toast.success(productAddedToCartMessage);
       },
       removeSelectedItems: () => {
         set((state) => ({
@@ -174,10 +166,7 @@ const useCart = create(
           ),
         }));
       },
-      removeItem: (cartId: string, userId: string,languageToUse: string) => {
-        //language
-        const productRemovedMessage = translateProductRemoved(languageToUse)
-
+      removeItem: (cartId: string) => {
         set((state) => {
           const newItems = state.items.filter((item) => item.cartId !== cartId);
           const newSelectedWarranties = { ...state.selectedWarranties };
@@ -194,7 +183,6 @@ const useCart = create(
             ), // Remove the item from selectedItems
           };
         });
-        toast.success(productRemovedMessage);
       },
       removeAll: (userId: string) => {
         set({ items: [] });

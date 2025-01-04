@@ -1,37 +1,30 @@
 import { useMemo } from "react";
 import { Info } from "lucide-react";
 import { Hint } from "../ui/hint";
-import { translateFollowersAndSlowMode, translateFollowersOnly, translateFollowersOnlyChat, translateMessageDelay, translateSlowMode } from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 
 interface ChatInfoProps {
   isDelayed: boolean;
   isFollowersOnly: boolean;
   timeDelay: number;
-  languageToUse: string
 }
 
-export const ChatInfo = ({ isDelayed, isFollowersOnly,timeDelay,languageToUse }: ChatInfoProps) => {
+export const ChatInfo = ({ isDelayed, isFollowersOnly,timeDelay }: ChatInfoProps) => {
+  const t = useTranslations()
   const delayInSeconds = timeDelay / 1000;
-
-  //languages
-  const followersOnlyChatMessage = translateFollowersOnlyChat(languageToUse)
-  const chatDelayMessage = translateMessageDelay(languageToUse, delayInSeconds)
-  const followerOnlyMessage = translateFollowersOnly(languageToUse)
-  const slowModeMessage = translateSlowMode(languageToUse)
-  const followerAndSlowModeMessage = translateFollowersAndSlowMode(languageToUse)
 
   const hint = useMemo(() => {
     if (isFollowersOnly && !isDelayed) {
-      return followersOnlyChatMessage;
+      return t("profile.followersOnlyChat");
     }
 
     if (isDelayed && !isFollowersOnly) {
-      return chatDelayMessage;
+      return t("profile.chatDelay",{delayInSeconds: delayInSeconds});
     }
 
     if (isDelayed && isFollowersOnly) {
-      return `${followersOnlyChatMessage}. ${chatDelayMessage}`;
+      return `${t("profile.followersOnlyChat")}. ${t("profile.chatDelay",{delayInSeconds: delayInSeconds})}`;
     }
 
     return "";
@@ -39,15 +32,15 @@ export const ChatInfo = ({ isDelayed, isFollowersOnly,timeDelay,languageToUse }:
 
   const label = useMemo(() => {
     if (isFollowersOnly && !isDelayed) {
-      return followerOnlyMessage;
+      return t("profile.followerOnly");
     }
 
     if (isDelayed && !isFollowersOnly) {
-      return slowModeMessage;
+      return t("profile.slowMode");
     }
 
     if (isDelayed && isFollowersOnly) {
-      return followerAndSlowModeMessage;
+      return t("profile.followerAndSlowMode");
     }
 
     return "";

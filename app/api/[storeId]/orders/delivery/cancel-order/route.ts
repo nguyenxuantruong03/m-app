@@ -1,14 +1,16 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
-import { translateDeliveryOrderCancel } from "@/translate/translate-api";
 import { StatusOrder } from "@prisma/client";
+import { createTranslator } from "next-intl";
 import { NextResponse } from "next/server";
 
 export async function PATCH(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const deliveryOrderCancelMessage = translateDeliveryOrderCancel(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
     try {
       const body = await req.json();
   
@@ -16,14 +18,14 @@ export async function PATCH(req: Request) {
   
       if (!user) {
         return new NextResponse(
-          JSON.stringify({ error: deliveryOrderCancelMessage.userIdNotFound }),
+          JSON.stringify({ error: t("toastError.userNotFound") }),
           { status: 403 }
         );
       }
 
       if(!value){
         return new NextResponse(
-            JSON.stringify({ error: deliveryOrderCancelMessage.cancelContentNotFound }),
+            JSON.stringify({ error: t("toastError.order.delivery.cancelContentNotFound") }),
             { status: 403 }
           );
       }
@@ -42,7 +44,7 @@ export async function PATCH(req: Request) {
       return NextResponse.json(order);
     } catch (error) {
       return new NextResponse(
-        JSON.stringify({ error: deliveryOrderCancelMessage.internalError }),
+        JSON.stringify({ error: t("toastError.order.delivery.internalErrorPatchDeliveryOrderCancel") }),
         { status: 500 }
       );
     }

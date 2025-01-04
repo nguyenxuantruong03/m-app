@@ -1,33 +1,11 @@
 import Modal from "@/components/ui/modal";
-import {
-  translateApplicableProducts,
-  translateEquivalentProductExchange,
-  translateExchangeForDefect,
-  translateExtendedServiceDetails,
-  translateExtendedWarranty,
-  translateFallDamageUpperCase,
-  translateNoWarranty,
-  translateOfficialWarrantyFeeUpperCase,
-  translateOneToOneCheck,
-  translateProcessingTimes,
-  translateProductProtection,
-  translateServiceSummary,
-  translateTradeInDiscount,
-  translateVIPWarrantyUpperCase,
-  translateWarrantyApplicable,
-  translateWarrantyBenefitsAndServices,
-  translateWarrantyCondition,
-  translateWarrantyNotice,
-  translateWarrantyPeriods,
-  translateWarrantyTime,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface SeeDetailProps {
   isOpen: boolean;
   onClose: () => void;
   message?: string;
   title?: string;
-  languageToUse: string;
 }
 
 const SeeDetailModal: React.FC<SeeDetailProps> = ({
@@ -35,77 +13,50 @@ const SeeDetailModal: React.FC<SeeDetailProps> = ({
   onClose,
   message,
   title,
-  languageToUse,
 }) => {
-  //language
-  const productProtectionMessage = translateProductProtection(languageToUse);
-  const serviceSummaryMessage = translateServiceSummary(languageToUse);
-  const extendedServiceDetailMessage =
-    translateExtendedServiceDetails(languageToUse);
-  const VIPWarranty = translateVIPWarrantyUpperCase(languageToUse);
-  const applicableProductMessage = translateApplicableProducts(languageToUse);
-  const warrantyPeriodMessage = translateWarrantyPeriods(languageToUse);
-  const warrantyBenefitAndServiceMessage =
-    translateWarrantyBenefitsAndServices(languageToUse);
-  const onetoOneCheckMessage = translateOneToOneCheck(languageToUse);
-  const EquivalentProductExchangeMessage =
-    translateEquivalentProductExchange(languageToUse);
-  const warrantyConditionMessage = translateWarrantyCondition(languageToUse);
-  const warrantyNoticeMessage = translateWarrantyNotice(languageToUse);
-  const processingTimeMessage = translateProcessingTimes(languageToUse);
-  const fallDamegeUpperCaseMessage =
-    translateFallDamageUpperCase(languageToUse);
-  const noWarrantyMessage = translateNoWarranty(languageToUse);
-  const officiaWarrantyFeedUpperCaseMessage =
-    translateOfficialWarrantyFeeUpperCase(languageToUse);
-  const translateWarrantyApplicableMessage =
-    translateWarrantyApplicable(languageToUse);
-  const warrantyTimeMessage = translateWarrantyTime(languageToUse);
-  const ExtendedWarrantyMessage = translateExtendedWarranty(languageToUse);
-  const ExchangeForDefectMessage = translateExchangeForDefect(languageToUse);
-  const tradeInDiscountMessage = translateTradeInDiscount(languageToUse);
+  const t = useTranslations()
 
   return (
     <Modal
-      title={title || productProtectionMessage}
-      description={message || serviceSummaryMessage}
+      title={title || t("warranty.productProtection")}
+      description={message || t("action.serviceSummary")}
       isOpen={isOpen}
       onClose={onClose}
       classNameCustom="max-h-[36rem] md:max-h-[55rem] xl:max-h-[40rem] overflow-y-auto"
     >
       <div>
         <h1 className="text-center font-bold text-2xl">
-          {extendedServiceDetailMessage}
+          {t("warranty.extendedServiceDetails")}
         </h1>
 
-        <h2 className="font-bold">I. {VIPWarranty}:</h2>
+        <h2 className="font-bold">I. {t("warranty.VIPWarrantyUpperCase")}:</h2>
         <ul>
-          <li>- {applicableProductMessage}. </li>
-          <li>- {warrantyPeriodMessage}.</li>
-          <li>- {warrantyBenefitAndServiceMessage}: </li>
+          <li>- {t("warranty.applicableProducts")}. </li>
+          <li>- {t("warranty.warrantyPeriods")}.</li>
+          <li>- {t("warranty.warrantyBenefitsAndServices")}: </li>
         </ul>
 
-        <p>+ {onetoOneCheckMessage}.</p>
-        <p>+ {EquivalentProductExchangeMessage}.</p>
+        <p>+ {t("warranty.oneToOneCheck")}.</p>
+        <p>+ {t("warranty.equivalentProductExchange")}.</p>
         <ul>
-          <li>- {warrantyConditionMessage}.</li>
-          <li>- {warrantyNoticeMessage}.</li>
-          <li>- {processingTimeMessage} </li>
+          <li>- {t("warranty.warrantyCondition")}.</li>
+          <li>- {t('warranty.warrantyNotice')}.</li>
+          <li>- {t("warranty.processingTimes")} </li>
         </ul>
 
-        <h2 className="font-bold">II {fallDamegeUpperCaseMessage}:</h2>
+        <h2 className="font-bold">II {t("warranty.fallDamageUpperCase")}:</h2>
         <ul>
-          <li>- {noWarrantyMessage}.</li>
+          <li>- {t("warranty.noWarranty")}.</li>
         </ul>
 
-        <h2 className="font-bold">III {officiaWarrantyFeedUpperCaseMessage}</h2>
+        <h2 className="font-bold">III {t("warranty.officialWarrantyFeeUpperCase")}</h2>
         <ul>
-          <li>- {translateWarrantyApplicableMessage}.</li>
-          <li>- {warrantyTimeMessage}</li>
+          <li>- {t("warranty.warrantyApplicable")}.</li>
+          <li>- {t("warranty.warrantyTime")}</li>
         </ul>
-        <p>+ {ExtendedWarrantyMessage}.</p>
-        <p>+ {ExchangeForDefectMessage}.</p>
-        <p>+ {tradeInDiscountMessage}.</p>
+        <p>+ {t("warranty.extendedWarranty")}.</p>
+        <p>+ {t("warranty.exchangeForDefect")}.</p>
+        <p>+ {t("warranty.tradeInDiscount")}.</p>
       </div>
     </Modal>
   );

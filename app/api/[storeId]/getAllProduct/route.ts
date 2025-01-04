@@ -1,13 +1,15 @@
 import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { currentUser } from "@/lib/auth";
-import { translateProductGetAll } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 export async function GET(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const productGetAllMessage = translateProductGetAll(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     const { searchParams } = new URL(req.url);
@@ -48,7 +50,7 @@ export async function GET(req: Request) {
   } catch (error) {
     console.error(error);
     return new NextResponse(
-      JSON.stringify({ error: productGetAllMessage }),
+      JSON.stringify({ error: t("toastError.product.internalErrorGetProduct") }),
       { status: 500 }
     );
   }

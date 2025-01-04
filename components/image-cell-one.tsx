@@ -5,10 +5,10 @@ import { useState, useEffect, useRef } from "react";
 import { ZoomImageAttendanceModal } from "./modals/zoom-image-one-modal";
 import { cn } from "@/lib/utils";
 import { Camera, Image as ImageIcon, ImageUp, X, Radio } from "lucide-react";
-import FormImageCredential from "@/app/(setting-user)/components/form/form-infomation/form-imageCredential";
 import { LiveBadge } from "./live-badge";
 import Link from "next/link";
-import { translateImageCellOne } from "@/translate/translate-client";
+import FormImageCredential from "@/app/[locale]/(setting-user)/components/form/form-infomation/form-imageCredential";
+import { useTranslations } from "next-intl";
 
 const ImageCellOne: React.FC<{
   imageUrl: string;
@@ -39,13 +39,11 @@ const ImageCellOne: React.FC<{
   customClassFeedBack,
   languageToUse,
 }) => {
+  const t = useTranslations()
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [openUpdateImage, setOpenupdateImage] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null); // Khai báo ref cho dropdown
-
-  //language
-  const imagecellOneMessage = translateImageCellOne(languageToUse);
 
   const openImageModal = () => setIsImageModalOpen(true);
   const closeImageModal = () => setIsImageModalOpen(false);
@@ -102,7 +100,7 @@ const ImageCellOne: React.FC<{
                 <Link href={`/live/${self.nameuser}`}>
                   <div className="mb-2 flex items-center text-white hover:bg-white hover:bg-opacity-10 p-1 cursor-pointer rounded-md">
                     <Radio className="h-5 w-5 mr-2" />{" "}
-                    {imagecellOneMessage.name1}
+                    {t("image.viewLive")}
                   </div>
                 </Link>
               )}
@@ -111,7 +109,7 @@ const ImageCellOne: React.FC<{
                 onClick={openImageModal}
               >
                 <ImageIcon className="h-5 w-5 mr-2" />{" "}
-                {imagecellOneMessage.name2}
+                {t("image.viewAvatar")}
               </div>
 
               {user?.id === self?.id && (
@@ -120,7 +118,7 @@ const ImageCellOne: React.FC<{
                   className="flex items-center text-white hover:bg-white hover:bg-opacity-10 p-1 cursor-pointer rounded-md"
                 >
                   <ImageUp className="h-5 w-5 mr-2" />{" "}
-                  {imagecellOneMessage.name3}
+                  {t("image.changeAvatar")}
                 </div>
               )}
             </div>
@@ -132,7 +130,7 @@ const ImageCellOne: React.FC<{
                 <div className="h-max w-3/4 max-w-md border rounded-md gap-4 bg-slate-900 p-6 shadow-lg transition ease-in-out z-50">
                   <div className="flex items-center justify-between">
                     <span className="text-lg font-semibold text-foreground break-all line-clamp-2 text-white">
-                      {imagecellOneMessage.name4}
+                      {t("image.editAvatar")}
                     </span>
                     <span
                       onClick={() => setOpenupdateImage(false)}
@@ -142,7 +140,7 @@ const ImageCellOne: React.FC<{
                     </span>
                   </div>
                   <div className="text-sm text-muted-foreground break-all line-clamp-3">
-                    {imagecellOneMessage.name5}
+                    {t("image.descriptionAvatar")}
                   </div>
                   <FormImageCredential
                     setOpen={setOpenupdateImage}
@@ -178,7 +176,6 @@ const ImageCellOne: React.FC<{
           isOpen={true}
           isClient={isClient}
           customClassFeedBack={customClassFeedBack}
-          languageToUse={languageToUse}
         />
       )}
     </div>

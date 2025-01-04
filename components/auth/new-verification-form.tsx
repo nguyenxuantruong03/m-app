@@ -8,15 +8,10 @@ import CardWrapper from "@/components/auth/card-wrapper";
 import { newVerification } from "@/actions/actions-signin-sign-up/new-verification";
 import FormError from "@/components/form-error";
 import FormSuccess from "@/components/form-success";
-import {
-  getToastError,
-  getVerificationMessage,
-  translateBackToLogin,
-  translateConfirmingVerification,
-  translateMissingToken,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 const NewVerificationForm = () => {
+  const t = useTranslations()
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
   const searchParams = useSearchParams();
@@ -26,33 +21,18 @@ const NewVerificationForm = () => {
   //language
   const [language, setLanguage] = useState("vi");
   const [isOpen, setOpen] = useState(false);
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
+
+  const languageToUse = language;
 
   useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []);
-
-  const languageToUse = storedLanguage || language;
-  const toastErrorMessage = getToastError(languageToUse);
-  const missingTokenMessage = translateMissingToken(languageToUse);
-  const confirmingVerificationMessage =
-    translateConfirmingVerification(languageToUse);
-  const backToLoginMessage = translateBackToLogin(languageToUse);
-  const verificationMessage = getVerificationMessage(languageToUse);
-
-  useEffect(() => {
-    document.title = verificationMessage.newVerification;
+    document.title = t("auth.newVerification");
   }, []);
 
   const onSubmit = useCallback(() => {
     if (success || error) return;
 
     if (!token) {
-      setError(missingTokenMessage);
+      setError(t("auth.missingToken"));
       return;
     }
     newVerification(token, languageToUse)
@@ -64,7 +44,7 @@ const NewVerificationForm = () => {
         }
       })
       .catch(() => {
-        setError(toastErrorMessage);
+        setError(t("toastError.somethingWentWrong"));
       });
   }, [token, success, error]);
 
@@ -74,9 +54,9 @@ const NewVerificationForm = () => {
 
   return (
     <CardWrapper
-      headerLabel={confirmingVerificationMessage}
+      headerLabel={t("auth.confirmingVerification")}
       backButtonHref="/auth/login"
-      backButtonLabel={backToLoginMessage}
+      backButtonLabel={t("auth.backToLogin")}
       setLanguage={setLanguage}
       languageToUse={languageToUse}
       setOpen={setOpen}

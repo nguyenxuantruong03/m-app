@@ -11,16 +11,10 @@ import {
   Percent,
 } from "lucide-react";
 import { Dispatch, SetStateAction, useMemo } from "react";
-import {
-  translateHotDeals,
-  translateSortHighToLow,
-  translateSortLowToHigh,
-  translateSortNameAToZ,
-  translateSortNameZToA,
-} from "@/translate/translate-client";
 import NoResults from "@/components/ui/no-result";
 import CategorySkeleton from "../skeleton/category-skeleton";
 import { PaginationWithLinks } from "@/components/ui/pagination-with-links";
+import { useTranslations } from "next-intl";
 
 interface DetailCategoryProps {
   product: Product[];
@@ -31,7 +25,6 @@ interface DetailCategoryProps {
   handleSortChange: (value: string) => void;
   sortOrder: string;
   route: string;
-  languageToUse: string;
   loading: boolean;
   pagination: {
     currentPage: number;
@@ -51,7 +44,6 @@ const DetailCategory: React.FC<DetailCategoryProps> = ({
   handleSortChange,
   sortOrder,
   route,
-  languageToUse,
   loading,
   pagination,
   setCurrentPage,
@@ -59,35 +51,31 @@ const DetailCategory: React.FC<DetailCategoryProps> = ({
   setPageSize,
 }) => {
   //language
-  const sortHighToLowMessage = translateSortHighToLow(languageToUse);
-  const sortLowtoHighMessage = translateSortLowToHigh(languageToUse);
-  const sortNameAToZMessage = translateSortNameAToZ(languageToUse);
-  const sortNameZToAMessage = translateSortNameZToA(languageToUse);
-  const hotDealsMessage = translateHotDeals(languageToUse);
+  const t = useTranslations()
 
   const sortButtons = [
     {
-      label: sortHighToLowMessage,
+      label: t("action.sortHighToLow"),
       sortType: "priceHighToLow",
       icon: <ArrowDownWideNarrow className="w-5 h-5" />,
     },
     {
-      label: sortLowtoHighMessage,
+      label: t("action.sortLowToHigh"),
       sortType: "priceLowToHigh",
       icon: <ArrowUpNarrowWide className="w-5 h-5 " />,
     },
     {
-      label: sortNameAToZMessage,
+      label: t("action.sortNameAToZ"),
       sortType: "nameAToZ",
       icon: <ArrowDownAZ className="w-5 h-5 " />,
     },
     {
-      label: sortNameZToAMessage,
+      label: t("action.sortNameZToA"),
       sortType: "nameZToA",
       icon: <ArrowDownZA className="w-5 h-5" />,
     },
     {
-      label: hotDealsMessage,
+      label: t("action.hotDeal"),
       sortType: "percentPromotionHighToLow",
       icon: <Percent className="w-5 h-5" />,
     },
@@ -146,7 +134,6 @@ const DetailCategory: React.FC<DetailCategoryProps> = ({
           maxPrice={maxPrice}
           maxPriceInDatas={maxPriceInDatas}
           onPriceChange={handlePriceChange}
-          languageToUse={languageToUse}
         />
       </div>
       <div className="flex justify-start items-center mb-4 w-full overflow-x-auto ">
@@ -167,7 +154,6 @@ const DetailCategory: React.FC<DetailCategoryProps> = ({
           page={pagination.currentPage}
           pageSize={pageSize}
           totalPages={pagination.totalPages}
-          languageToUse={languageToUse}
           setCurrentPage={setCurrentPage}
           pageSizeSelectOptions={{
             pageSizeOptions: [3, 6, 9, 12, 15, 18, 21, 24, 30, 36, 42],
@@ -187,7 +173,6 @@ const DetailCategory: React.FC<DetailCategoryProps> = ({
                   key={item.id}
                   data={item}
                   route={route}
-                  languageToUse={languageToUse}
                 />
               ))}
             </div>
@@ -200,7 +185,6 @@ const DetailCategory: React.FC<DetailCategoryProps> = ({
           page={pagination.currentPage}
           pageSize={pageSize}
           totalPages={pagination.totalPages}
-          languageToUse={languageToUse}
           setCurrentPage={setCurrentPage}
           pageSizeSelectOptions={{
             pageSizeOptions: [3, 6, 9, 12, 24, 36, 42],

@@ -4,26 +4,16 @@ import { Separator } from "@/components/ui/separator";
 import CountUp from "react-countup";
 import { useState, useEffect } from "react";
 import { getAllProductNotQuery } from "@/actions/client/products/get-products";
-import { Product, User } from "@/types/type";
+import { Product } from "@/types/type";
 import { getAllUser } from "@/actions/client/get-user";
 import ShowInfoUserModal from "./show-user-modal";
 import { root } from "@/components/(client)/color/color";
-import { useCurrentUser } from "@/hooks/use-current-user";
 import toast from "react-hot-toast";
-import {
-  getToastError,
-  translateEmployees,
-  translateExplore,
-  translateOverviewStore,
-  translateQuantitySold,
-  translateStoreDescriptionShort,
-  translateTotalCustomers,
-  translateTotalProduct,
-} from "@/translate/translate-client";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 const OverViewStore = () => {
-  const user = useCurrentUser();
+  const t = useTranslations()
   const router = useRouter();
   const [allProduct, setDataAllProduct] = useState<Product[]>([]);
   const [allUser, setDataAllUser] = useState<any[]>([]);
@@ -33,31 +23,7 @@ const OverViewStore = () => {
   const [totalStaff, setTotlaStaff] = useState<number>(0);
   const [totalUser, setTotlaUser] = useState<number>(0);
   const [isopen, setOpen] = useState(false);
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
-
-  //languages
-  const languageToUse =
-    user?.id && user?.role !== "GUEST"
-      ? user?.language
-      : storedLanguage || "vi";
-  const toastErrorMessage = getToastError(languageToUse);
-  const overviewStoreMessage = translateOverviewStore(languageToUse);
-  const storeDescriptionShortMessage =
-    translateStoreDescriptionShort(languageToUse);
-  const exploreMessage = translateExplore(languageToUse);
-  const totalProductMessage = translateTotalProduct(languageToUse);
-  const quantitySoldMessage = translateQuantitySold(languageToUse);
-  const employeeMessage = translateEmployees(languageToUse);
-  const totalCustomerMessage = translateTotalCustomers(languageToUse);
-
-  useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []);
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -66,7 +32,7 @@ const OverViewStore = () => {
         setDataAllProduct(allProducts);
         setDataAllUser(allUser);
       } catch (error) {
-        toast.error(toastErrorMessage);
+        toast.error(t("toastError.somethingWentWrong"));
       }
     };
 
@@ -108,16 +74,16 @@ const OverViewStore = () => {
                 <div className="flex flex-col lg:flex-row items-center justify-center space-y-10 lg:space-y-0 lg:space-x-16">
                   <div className="space-y-5 mb-8">
                     <p className="font-semibold text-white text-xl">
-                      {overviewStoreMessage}
+                      {t("home.overviewStore")}
                     </p>
                     <p className="max-h-80 max-w-xs text-white">
-                      {storeDescriptionShortMessage}
+                      {t("home.storeDescriptionShort")}
                     </p>
                     <Button
                       className="bg-[#372f6a] hover:bg-[#372f6a] hover:bg-opacity-50 text-white"
                       onClick={() => router.push("/home-product")}
                     >
-                      {exploreMessage}
+                      {t("home.explore")}
                     </Button>
                   </div>
                   <div className="relative flex items-center justify-center">
@@ -135,7 +101,7 @@ const OverViewStore = () => {
                         <CountUp start={0} end={totalProducts} />
                       </p>
                       <p className="text-xs text-gray-400">
-                        {totalProductMessage}
+                        {t("home.totalProduct")}
                       </p>
                     </div>
                     <div className="absolute top-0 right-20 transform translate-x-10 -translate-y-10 text-center">
@@ -144,7 +110,7 @@ const OverViewStore = () => {
                         <CountUp start={0} end={totalSold} />
                       </p>
                       <p className="text-xs text-gray-400">
-                        {quantitySoldMessage}
+                        {t("home.quantitySold")}
                       </p>
                     </div>
                     <div
@@ -155,7 +121,7 @@ const OverViewStore = () => {
                         {totalStaff > 0 && <span>+</span>}
                         <CountUp start={0} end={totalStaff} />
                       </p>
-                      <p className="text-xs text-gray-400">{employeeMessage}</p>
+                      <p className="text-xs text-gray-400">{t("home.employee")}</p>
                     </div>
                     <div className="absolute bottom-0 right-20 transform translate-x-10 translate-y-10 text-center">
                       <p className="font-semibold text-4xl text-white">
@@ -163,7 +129,7 @@ const OverViewStore = () => {
                         <CountUp start={0} end={totalUser} />
                       </p>
                       <p className="text-xs text-gray-400">
-                        {totalCustomerMessage}
+                        {t("home.totalCustomer")}
                       </p>
                     </div>
                   </div>

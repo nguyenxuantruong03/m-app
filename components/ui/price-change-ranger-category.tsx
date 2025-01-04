@@ -1,14 +1,13 @@
 "use client";
-import { translatePriceChangeRanger } from "@/translate/translate-client";
 import Currency from "./currency";
 import "./style.css";
 import React, { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 interface PriceRangeCategoryProps {
   minPrice: number;
   maxPrice: number;
   onPriceChange: (min: number, max: number) => void;
   maxPriceInDatas: any
-  languageToUse: string;
 }
 
 const PriceRangeCategory: React.FC<PriceRangeCategoryProps> = ({
@@ -16,9 +15,8 @@ const PriceRangeCategory: React.FC<PriceRangeCategoryProps> = ({
   maxPrice,
   onPriceChange,
   maxPriceInDatas,
-  languageToUse
 }) => {
-  const priceChangeRangerMessage = translatePriceChangeRanger(languageToUse)
+  const t  = useTranslations()
   const [priceGap, setPriceGap] = useState<number>(1000);
   // --------------maxPrice-------------: Biến này được sử dụng để theo dõi giá cao nhất của sản phẩm sau khi đã áp dụng khuyến mãi (percentpromotion). 
   // Nó được cập nhật trong quá trình lấy dữ liệu sản phẩm từ server.
@@ -51,12 +49,12 @@ const PriceRangeCategory: React.FC<PriceRangeCategoryProps> = ({
     <div className="wrapper w-full md:w-[500px]">
       <div className="price-input">
         <div className="field">
-          <span className="font-semibold mr-1">{priceChangeRangerMessage.minimum}: </span>
+          <span className="font-semibold mr-1">{t("action.minimum")}: </span>
           <Currency value={minPrice} />
         </div>
         <div className="seperator text-red-500">-</div>
         <div className="field">
-          <span className="font-semibold mr-1">{priceChangeRangerMessage.maximum}: </span>
+          <span className="font-semibold mr-1">{t("action.maximum")}: </span>
           <Currency value={maxPrice} />
         </div>
         {/* Thanh trướt slider và progress để kéo */}

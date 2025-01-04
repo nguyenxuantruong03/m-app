@@ -1,7 +1,7 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
-import { translateRadialChart } from "@/translate/translate-api";
 import { ProductType, UserRole } from "@prisma/client";
+import { createTranslator } from "next-intl";
 import { NextResponse } from "next/server";
 
 interface ProductData {
@@ -17,20 +17,22 @@ export async function POST(req: Request) {
   const { storeId, dateRange } = body;
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const radiaChartMessage = translateRadialChart(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: radiaChartMessage.name1 }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: radiaChartMessage.name2 }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -120,7 +122,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error(error);
     return new NextResponse(
-      JSON.stringify({ error: radiaChartMessage.name3 }),
+      JSON.stringify({ error: t("toastError.chart.intternalErrorRadial") }),
       { status: 500 }
     );
   }

@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import ReactMarkdown, { Components } from "react-markdown";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { User, BotMessageSquare, Check, Copy } from "lucide-react";
+import { BotMessageSquare, Check, Copy } from "lucide-react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { Button } from "@/components/ui/button";
 import rehypeHighlight from "rehype-highlight";
@@ -11,23 +11,17 @@ import "highlight.js/styles/github.css";
 import { ChatMessage } from "@/types/type";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import ImageCellOne from "@/components/image-cell-one";
-import {
-  translateCopied,
-  translateCopyCode,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface ChatHistoryProps {
   chatHistory: ChatMessage[];
   languageToUse: string;
 }
 
-const ChatHistory = ({ chatHistory, languageToUse }: ChatHistoryProps) => {
+const ChatHistory = ({ chatHistory,languageToUse }: ChatHistoryProps) => {
+  const t = useTranslations()
   const user = useCurrentUser();
   const [copiedKeys, setCopiedKeys] = useState<{ [key: string]: boolean }>({});
-
-  //language
-  const copiedMessage = translateCopied(languageToUse);
-  const copyMessage = translateCopyCode(languageToUse);
 
   const handleCopy = (key: string) => {
     setCopiedKeys((prevState) => ({
@@ -83,11 +77,11 @@ const ChatHistory = ({ chatHistory, languageToUse }: ChatHistoryProps) => {
                   >
                     {copiedKeys[value] ? (
                       <>
-                        <Check /> {copiedMessage}
+                        <Check /> {t("action.copied")}
                       </>
                     ) : (
                       <>
-                        <Copy /> {copyMessage}
+                        <Copy /> {t("action.copy")}
                       </>
                     )}
                   </Button>

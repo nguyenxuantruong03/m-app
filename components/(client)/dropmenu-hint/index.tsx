@@ -39,39 +39,20 @@ import CategoryFeedBack from "./feedback/category-feedback";
 import { ChatMessage } from "@/types/type";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import ImageCellOne from "@/components/image-cell-one";
-import { useParams } from "next/navigation";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import Translation from "./translate/translation";
 import { AlertModal } from "@/components/modals/alert-modal";
-import {
-  getLanguageToastSuccess,
-  getMessageTranslate,
-  getReloadPageDropMenuHint,
-  getTitleTranslate,
-  getToastError,
-  translateFeedback,
-  translateFeedbackContent,
-  translateHelloVLXDXuanTruongAI,
-  translateInformation,
-  translateLeaveFeedbackBelow,
-  translateLoading,
-  translateMaxCharacters,
-  translateMinCharacters,
-  translateMyVirtualAssistantWillHelpYou,
-  translateNewChat,
-  translatePleaseFillYourAnswer,
-  translateRequired,
-  translateSelectExperienceFeedback,
-  translateSelectFeedbackCategory,
-  translateSubmit,
-  translateThankYouForFeedback,
-  translateUpdatingFeedback,
-} from "@/translate/translate-client";
 import { PolicyViolationModal } from "../modal/policy-violation-modal";
 import { offensiveWords } from "@/vn_offensive_words";
+import { useTranslations } from "next-intl";
 
 export default function DropMenuHint() {
+  const t = useTranslations()
   const user = useCurrentUser();
   const param = useParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [isMounted, setIsMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenReloadm, setIsOpenReload] = useState(false);
@@ -87,51 +68,13 @@ export default function DropMenuHint() {
   const [loadingLanguage, setLoadingLanguage] = useState(false);
   const [language, setLanguage] = useState("vi");
   const [isOpenConfirmLanguage, setIsConfirmLanguage] = useState(false);
-  const [storedLanguage, setStoredLanguage] = useState<string | null>(null);
-
   const [userInputAI, setUserInputAI] = useState<string>("");
-
   const [content, setContent] = useState("");
   const [policiViolationModal, setPoliciViolationModal] = useState(false);
 
-
-  useEffect(() => {
-    // Check if we're running on the client side
-    if (typeof window !== "undefined") {
-      const language = localStorage.getItem("language");
-      setStoredLanguage(language);
-    }
-  }, []);
-
   //language
-  const languageToUse =
-    user?.id && user?.role !== "GUEST"
-      ? user?.language
-      : storedLanguage || "vi";
-  const toastErrorMessage = getToastError(languageToUse);
-  const updatingFeedBackMessage = translateUpdatingFeedback(languageToUse);
-  const infomationMessage = translateInformation(languageToUse);
-  const helloVLXDXuanTruongAIMessage =
-    translateHelloVLXDXuanTruongAI(languageToUse);
-  const myVirtualAssistantWillHelpYouMessage =
-    translateMyVirtualAssistantWillHelpYou(languageToUse);
-  const newChatMessage = translateNewChat(languageToUse);
-  const feedBackMessage = translateFeedback(languageToUse);
-  const feedBackContentMessage = translateFeedbackContent(languageToUse);
-  const requiredMessage = translateRequired(languageToUse);
-  const selectExperienceFeedBackMessage =
-    translateSelectExperienceFeedback(languageToUse);
-  const selectFeedbackCategoryMessage =
-    translateSelectFeedbackCategory(languageToUse);
-  const leaveFeedbackBelowMessage = translateLeaveFeedbackBelow(languageToUse);
-  const pleaseFillYourAnswerMessage =
-    translatePleaseFillYourAnswer(languageToUse);
-  const submitMessage = translateSubmit(languageToUse);
-  const loadingMessage = translateLoading(languageToUse);
-  const minCharactersMessage = translateMinCharacters(languageToUse, 4);
-  const maxCharacterMessage = translateMaxCharacters(languageToUse, 250);
-  const reloadPageDropMenuHintMessage =
-    getReloadPageDropMenuHint(languageToUse);
+  const languageToUse = user?.language || "vi";
+
 
   const feedbackDate = user?.feedbackTimeNextResonse
     ? new Date(user.feedbackTimeNextResonse)
@@ -163,8 +106,8 @@ export default function DropMenuHint() {
   const formSchema = z.object({
     content: z
       .string()
-      .min(4, { message: minCharactersMessage })
-      .max(250, { message: maxCharacterMessage }),
+      .min(4, { message: t("dropmenuHint.minCharacters") })
+      .max(250, { message: t("dropmenuHint.maxCharacter") }),
   });
 
   type FeedBackFormValues = z.infer<typeof formSchema>;
@@ -206,15 +149,12 @@ export default function DropMenuHint() {
         promise.then((response) => {
           return (
             <p>
-              {translateThankYouForFeedback(
-                languageToUse,
-                response.data.user.email
-              )}
+              {t("dropmenuHint.thankYouForFeedback", {email: response.data.user.email})}
             </p>
           );
         }),
         {
-          loading: updatingFeedBackMessage,
+          loading: t("dropmenuHint.updatingFeedback"),
           success: (message) => {
             setIndexEmotion(null);
             setIndexCategory(null);
@@ -234,13 +174,13 @@ export default function DropMenuHint() {
               return (error as { response: { data: { error: string } } })
                 .response.data.error;
             } else {
-              return toastErrorMessage;
+              return t("toastError.somethingWentWrong");
             }
           },
         }
       );
     } catch (error) {
-      toast.error(toastErrorMessage);
+      toast.error(t("toastError.somethingWentWrong"));
     } finally {
       setLoading(false);
     }
@@ -249,9 +189,6 @@ export default function DropMenuHint() {
   const onCreatlanguage = async () => {
     setLoadingLanguage(true);
     try {
-      // Lấy thông báo từ getLanguageToastSuccess
-      const toastMessage = getLanguageToastSuccess(language);
-
       let apiResponse;
 
       if (user?.role !== "GUEST" && user?.id) {
@@ -262,7 +199,7 @@ export default function DropMenuHint() {
 
         // Kiểm tra nếu API trả về dữ liệu thành công
         if (apiResponse.status === 200) {
-          toast.success(toastMessage);
+          toast.success(t("dropmenuHint.languageToastSuccess"));
 
           // Thực hiện setIsConfirmLanguage và setLoadingLanguage trước
           setIsConfirmLanguage(false);
@@ -274,9 +211,8 @@ export default function DropMenuHint() {
           }, 2000);
         }
       } else {
-        // Nếu không có user, lưu vào localStorage
-        localStorage.setItem("language", language);
-        toast.success(toastMessage);
+        // Nếu không có user
+        toast.success(t("dropmenuHint.languageToastSuccess"));
 
         // Thực hiện setIsConfirmLanguage và setLoadingLanguage trước
         setIsConfirmLanguage(false);
@@ -289,7 +225,7 @@ export default function DropMenuHint() {
       }
     } catch (error) {
       // Lấy thông báo từ getLanguageToastError
-      toast.error(toastErrorMessage);
+      toast.error(t("toastError.somethingWentWrong"));
       // Dù có lỗi hay không, vẫn đảm bảo set loading thành false
       setIsConfirmLanguage(false);
       setLoadingLanguage(false);
@@ -297,8 +233,26 @@ export default function DropMenuHint() {
   };
 
   const handleReloadPage = () => {
-    window.location.reload();
+    // Tách các phần của URL
+    const params = new URLSearchParams(searchParams.toString());
+    const currentPathArray = pathname.split('/').filter((segment) => segment);
+  
+    // Xác định index ngôn ngữ trong URL hiện tại
+    const isLanguageInPath = ['en', 'vi'].includes(currentPathArray[0]);
+    if (isLanguageInPath) {
+      currentPathArray[0] = language; // Thay thế ngôn ngữ nếu đã có
+    } else {
+      currentPathArray.unshift(language); // Thêm ngôn ngữ nếu chưa có
+    }
+  
+    // Tạo URL mới với ngôn ngữ chính xác
+    const newUrl = `/${currentPathArray.join('/')}?${params.toString()}`;
+  
+    // Reload toàn bộ trang
+    window.location.href = newUrl;
   };
+  
+  
 
   //Bỏ pointer-event:none khi không có isAISheetOpen
   useEffect(() => {
@@ -334,27 +288,24 @@ export default function DropMenuHint() {
   return (
     <>
       <AlertModal
-        title={getTitleTranslate(language)}
-        language={getMessageTranslate(language)}
+        title={t("dropmenuHint.title")}
+        message={t("dropmenuHint.message")}
         isOpen={isOpenConfirmLanguage}
         loading={loadingLanguage}
         onClose={() => setIsConfirmLanguage(false)}
         onConfirm={onCreatlanguage}
-        languageToUse={language}
       />
       <AlertModal
-        title={reloadPageDropMenuHintMessage.confirm}
-        message={reloadPageDropMenuHintMessage.info}
+        title={t("dropmenuHint.confirm")}
+        message={t("dropmenuHint.info")}
         isOpen={isOpenReloadm}
         onClose={() => setIsOpenReload(false)}
         onConfirm={handleReloadPage}
         loading={loading}
-        languageToUse={languageToUse}
       />
       <PolicyViolationModal
         isOpen={policiViolationModal}
         onClose={() => setPoliciViolationModal(false)}
-        languageToUse={languageToUse}
         value={content || userInputAI}
         setUserInputAI={setUserInputAI}
       />
@@ -368,7 +319,7 @@ export default function DropMenuHint() {
                 isScrolled ? "bottom-32" : "bottom-28 md:bottom-8"
               } transition-all duration-300`}
             >
-              <Hint label={infomationMessage}>
+              <Hint label={t("dropmenuHint.information")}>
                 {isOpen ? (
                   <X className="dark:text-white" />
                 ) : (
@@ -386,7 +337,6 @@ export default function DropMenuHint() {
               <SocialHint
                 loadingLanguage={loadingLanguage}
                 loading={loading}
-                languageToUse={languageToUse}
               />
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -410,9 +360,8 @@ export default function DropMenuHint() {
                   setIsAISheetOpen={setIsAISheetOpen}
                   setIsFeedbackSheetOpen={setIsFeedbackSheetOpen}
                   compareTime={compareTime}
-                  loadingLanguage={loadingLanguage}
                   loading={loading}
-                  languageToUse={languageToUse}
+                  loadingLanguage={loadingLanguage}
                 />
               </DropdownMenuItem>
             )}
@@ -439,13 +388,13 @@ export default function DropMenuHint() {
                       languageToUse={languageToUse}
                     />
                     <div>
-                      <SheetTitle>{helloVLXDXuanTruongAIMessage}</SheetTitle>
+                      <SheetTitle>{t("dropmenuHint.helloVLXDXuanTruongAI")}</SheetTitle>
                       <SheetDescription>
-                        {myVirtualAssistantWillHelpYouMessage}
+                        {t("dropmenuHint.myVirtualAssistantWillHelpYou")}
                       </SheetDescription>
                     </div>
                   </div>
-                  <Hint label={newChatMessage}>
+                  <Hint label={t("dropmenuHint.newChat")}>
                     <Button variant="secondary" size="icon" onClick={newChat}>
                       <SquarePen />
                     </Button>
@@ -455,10 +404,10 @@ export default function DropMenuHint() {
                 <ChatGemini
                   setChatHistory={setChatHistory}
                   chatHistory={chatHistory}
-                  languageToUse={languageToUse}
                   setUserInputAI={setUserInputAI}
                   userInputAI={userInputAI}
                   setPoliciViolationModal={setPoliciViolationModal}
+                  languageToUse={languageToUse}
                 />
               </SheetContent>
             </Sheet>
@@ -472,18 +421,18 @@ export default function DropMenuHint() {
                 <SheetOverlay className="z-[999998]" />
                 <SheetContent className="z-[999999]">
                   <SheetHeader>
-                    <SheetTitle>{feedBackMessage}</SheetTitle>
+                    <SheetTitle>{t("dropmenuHint.feedback")}</SheetTitle>
                     <SheetDescription>
-                      {feedBackContentMessage}
+                      {t("dropmenuHint.feedbackContent")}
                     </SheetDescription>
                   </SheetHeader>
                   {/* Add any additional content for the Feedback Sheet */}
                   <div className="space-y-6">
                     <div className="space-y-2">
                       <span className="text-sm">
-                        {selectExperienceFeedBackMessage}
+                        {t("dropmenuHint.selectExperienceFeedback")}
                       </span>
-                      <Hint label={requiredMessage}>
+                      <Hint label={t("dropmenuHint.required")}>
                         <span className="text-red-600">(*)</span>
                       </Hint>
                       <EmotionFeedBack
@@ -491,15 +440,14 @@ export default function DropMenuHint() {
                         indexEmotion={indexEmotion}
                         setErrorEmotion={setErrorEmotion}
                         errorEmotion={errorEmotion}
-                        languageToUse={languageToUse}
                       />
                     </div>
 
                     <div className="space-y-2">
                       <span className="text-sm">
-                        {selectFeedbackCategoryMessage}
+                        {t("dropmenuHint.selectFeedbackCategory")}
                       </span>
-                      <Hint label={requiredMessage}>
+                      <Hint label={t("dropmenuHint.required")}>
                         <span className="text-red-600">(*)</span>
                       </Hint>
                       <CategoryFeedBack
@@ -507,7 +455,6 @@ export default function DropMenuHint() {
                         indexCategory={indexCategory}
                         setErrorCategory={setErrorCategory}
                         errorCategory={errorCategory}
-                        languageToUse={languageToUse}
                       />
                     </div>
 
@@ -524,16 +471,16 @@ export default function DropMenuHint() {
                               <FormItem>
                                 <FormLabel>
                                   <span className="text-sm">
-                                    {leaveFeedbackBelowMessage}
+                                    {t("dropmenuHint.leaveFeedbackBelow")}
                                   </span>
-                                  <Hint label={requiredMessage}>
+                                  <Hint label={t("dropmenuHint.required")}>
                                     <span className="text-red-600">(*)</span>
                                   </Hint>
                                 </FormLabel>
                                 <FormControl>
                                   <Textarea
                                     disabled={loading}
-                                    placeholder={pleaseFillYourAnswerMessage}
+                                    placeholder={t("dropmenuHint.pleaseFillYourAnswer")}
                                     {...field}
                                   />
                                 </FormControl>
@@ -548,7 +495,7 @@ export default function DropMenuHint() {
                           className="ml-auto"
                           type="submit"
                         >
-                          {loading ? loadingMessage : submitMessage}
+                          {loading ? t("loading.loading") : t("action.submit")}
                         </Button>
                       </form>
                     </Form>

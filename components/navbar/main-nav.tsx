@@ -21,38 +21,33 @@ import {
   checkout,
   setting,
 } from "./export-name-navbar";
-import { translateMainNav } from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
-interface MainNavProps extends React.HTMLAttributes<HTMLElement> {
-  languageToUse: string;
-}
-
-const MainNav = ({ className, languageToUse, ...props }: MainNavProps) => {
+const MainNav = () => {
+  const t = useTranslations()
   const pathname = usePathname();
   const params = useParams();
   const storeId = Array.isArray(params.storeId)
     ? params.storeId[0]
     : params.storeId;
 
-  const routes = route(storeId, pathname, languageToUse);
-  const staffs = staff(storeId, pathname, languageToUse);
-  const billboards = billboard(storeId, pathname, languageToUse);
-  const category = categories(storeId, pathname, languageToUse);
-  const parameters = parameter(storeId, pathname, languageToUse);
-  const products = product(storeId, pathname, languageToUse);
-  const orders = order(storeId, pathname, languageToUse);
-  const users = user(storeId, pathname, languageToUse);
-  const checkouts = checkout(storeId, pathname, languageToUse);
-  const settings = setting(storeId, pathname, languageToUse);
+  const routes = route(storeId, pathname);
+  const staffs = staff(storeId, pathname);
+  const billboards = billboard(storeId, pathname);
+  const category = categories(storeId, pathname);
+  const parameters = parameter(storeId, pathname);
+  const products = product(storeId, pathname);
+  const orders = order(storeId, pathname);
+  const users = user(storeId, pathname);
+  const checkouts = checkout(storeId, pathname);
+  const settings = setting(storeId, pathname);
 
-  //language
-  const mainNavMessage = translateMainNav(languageToUse);
   return (
     <>
       {/* Overview */}
       <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="item-1">
-          <AccordionTrigger>{mainNavMessage.name1}</AccordionTrigger>
+          <AccordionTrigger>{t("navbardashboard.overview")}</AccordionTrigger>
           <AccordionContent>
             {routes.map((route) => (
               <Link
@@ -72,7 +67,7 @@ const MainNav = ({ className, languageToUse, ...props }: MainNavProps) => {
         </AccordionItem>
         {/* Staff Attendance */}
         <AccordionItem value="item-3">
-          <AccordionTrigger>{mainNavMessage.name2}</AccordionTrigger>
+          <AccordionTrigger>{t("navbardashboard.employees")}</AccordionTrigger>
           <AccordionContent>
             {staffs.map((route) => (
               <Link
@@ -92,7 +87,7 @@ const MainNav = ({ className, languageToUse, ...props }: MainNavProps) => {
         </AccordionItem>
         {/* Billboard */}
         <AccordionItem value="item-4">
-          <AccordionTrigger>{mainNavMessage.name3}</AccordionTrigger>
+          <AccordionTrigger>{t("navbardashboard.billboard")}</AccordionTrigger>
           <AccordionContent>
             {billboards.map((billboard) => (
               <Link
@@ -112,7 +107,7 @@ const MainNav = ({ className, languageToUse, ...props }: MainNavProps) => {
         </AccordionItem>
         {/* Category */}
         <AccordionItem value="item-5">
-          <AccordionTrigger>{mainNavMessage.name4}</AccordionTrigger>
+          <AccordionTrigger>{t("navbardashboard.productCategory")}</AccordionTrigger>
           <AccordionContent>
             {category.map((category) => (
               <Link
@@ -132,7 +127,7 @@ const MainNav = ({ className, languageToUse, ...props }: MainNavProps) => {
         </AccordionItem>
         {/* Parameter */}
         <AccordionItem value="item-6">
-          <AccordionTrigger>{mainNavMessage.name5}</AccordionTrigger>
+          <AccordionTrigger>{t("navbardashboard.specifications")}</AccordionTrigger>
           <AccordionContent>
             {parameters.map((parameter) => (
               <Link
@@ -152,7 +147,7 @@ const MainNav = ({ className, languageToUse, ...props }: MainNavProps) => {
         </AccordionItem>
         {/* Product */}
         <AccordionItem value="item-7">
-          <AccordionTrigger>{mainNavMessage.name6}</AccordionTrigger>
+          <AccordionTrigger>{t("navbardashboard.products")}</AccordionTrigger>
           <AccordionContent>
             {products.map((product) => (
               <Link
@@ -172,7 +167,7 @@ const MainNav = ({ className, languageToUse, ...props }: MainNavProps) => {
         </AccordionItem>
         {/* Order */}
         <AccordionItem value="item-8">
-          <AccordionTrigger>{mainNavMessage.name7}</AccordionTrigger>
+          <AccordionTrigger>{t("navbardashboard.orders")}</AccordionTrigger>
           <AccordionContent>
             {orders.map((order) => (
               <Link
@@ -192,7 +187,7 @@ const MainNav = ({ className, languageToUse, ...props }: MainNavProps) => {
         </AccordionItem>
         {/* Người dùng */}
         <AccordionItem value="item-9">
-          <AccordionTrigger>{mainNavMessage.name8}</AccordionTrigger>
+          <AccordionTrigger>{t("navbardashboard.users")}</AccordionTrigger>
           <AccordionContent>
             {users.map((order) => (
               <Link
@@ -212,7 +207,7 @@ const MainNav = ({ className, languageToUse, ...props }: MainNavProps) => {
         </AccordionItem>
         {/*Thanh toán online */}
         <AccordionItem value="item-10">
-          <AccordionTrigger>{mainNavMessage.name9}</AccordionTrigger>
+          <AccordionTrigger>{t("navbardashboard.payments")}</AccordionTrigger>
           <AccordionContent>
             {checkouts.map((order) => (
               <Link
@@ -232,7 +227,7 @@ const MainNav = ({ className, languageToUse, ...props }: MainNavProps) => {
         </AccordionItem>
         {/* Setting */}
         <AccordionItem value="item-11">
-          <AccordionTrigger>{mainNavMessage.name10}</AccordionTrigger>
+          <AccordionTrigger>{t("navbardashboard.settings")}</AccordionTrigger>
           <AccordionContent>
             {settings.map((setting) => (
               <Link

@@ -1,13 +1,15 @@
 import prismadb from "@/lib/prismadb";
 import { NextResponse } from "next/server";
 import { currentUser } from "@/lib/auth";
-import { translateFavoriteProductDeleteMany, translateFavoriteProductGet, translateFavoriteProductPost } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 export async function POST(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const favoriteProductPostMessage = translateFavoriteProductPost(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
 
   const body = await req.json();
   const { id, productId, userId, selectedSize, selectedColor, productName } =
@@ -15,40 +17,40 @@ export async function POST(req: Request) {
 
   if (!userId) {
     return new NextResponse(
-      JSON.stringify({ error: favoriteProductPostMessage.userIdNotFound }),
+      JSON.stringify({ error: t("toastError.userNotFound") }),
       { status: 403 }
     );
   }
 
   if (!id) {
     return new NextResponse(
-      JSON.stringify({ error: favoriteProductPostMessage.favoriteIdNotFound }),
+      JSON.stringify({ error: t("toastError.favoriteIdNotFound") }),
       { status: 403 }
     );
   }
 
   if (!productId) {
     return new NextResponse(
-      JSON.stringify({ error: favoriteProductPostMessage.productIdRequired }),
+      JSON.stringify({ error: t("toastError.productIdRequired") }),
       { status: 400 }
     );
   }
 
   if (!productName) {
     return new NextResponse(
-      JSON.stringify({ error: favoriteProductPostMessage.productNameRequired }),
+      JSON.stringify({ error: t("toastError.productNameRequired") }),
       { status: 400 }
     );
   }
 
   if (!selectedSize) {
-    return new NextResponse(JSON.stringify({ error: favoriteProductPostMessage.sizeRequired }), {
+    return new NextResponse(JSON.stringify({ error: t("toastError.sizeRequired") }), {
       status: 400,
     });
   }
 
   if (!selectedColor) {
-    return new NextResponse(JSON.stringify({ error: favoriteProductPostMessage.colorRequired }), {
+    return new NextResponse(JSON.stringify({ error: t("toastError.colorRequired") }), {
       status: 400,
     });
   }
@@ -68,7 +70,7 @@ export async function POST(req: Request) {
     return NextResponse.json(favoriteProduct);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: favoriteProductPostMessage.internalError }),
+      JSON.stringify({ error: t("toastError.internalErrorFavoriteProductPost") }),
       { status: 500 }
     );
   }
@@ -77,21 +79,23 @@ export async function POST(req: Request) {
 export async function DELETE(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const favoriteProductDeleteManyMessage = translateFavoriteProductDeleteMany(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   const body = await req.json();
   const { id, userId } = body;
 
   if (!userId) {
     return new NextResponse(
-      JSON.stringify({ error: favoriteProductDeleteManyMessage.userIdNotFound }),
+      JSON.stringify({ error: t("toastError.userNotFound") }),
       { status: 403 }
     );
   }
 
   if (!id) {
-    return new NextResponse(JSON.stringify({ error: favoriteProductDeleteManyMessage.idNotFound }), {
+    return new NextResponse(JSON.stringify({ error: t("toastError.idNotFound") }), {
       status: 403,
     });
   }
@@ -107,7 +111,7 @@ export async function DELETE(req: Request) {
     return NextResponse.json(favoriteProduct);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: favoriteProductDeleteManyMessage.internalError }),
+      JSON.stringify({ error: t("toastError.internalErrorFavoriteProductDeleteMany") }),
       { status: 500 }
     );
   }
@@ -116,8 +120,10 @@ export async function DELETE(req: Request) {
 export async function GET(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const favoriteProductGetMessage = translateFavoriteProductGet(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get("userId") || ""; // Mặc định là "vi" nếu không có language
@@ -155,7 +161,7 @@ export async function GET(req: Request) {
     return NextResponse.json(favoriteProducts);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: favoriteProductGetMessage }),
+      JSON.stringify({ error: t("toastError.internalErrorFavoriteProductGet") }),
       { status: 500 }
     );
   }

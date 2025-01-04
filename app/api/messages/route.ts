@@ -1,16 +1,23 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
 import { pusherServer } from "@/lib/pusher";
+import { createTranslator } from "next-intl";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-  try {
-    const users = await currentUser();
-    const body = await request.json();
-    const { message, image, conversationId } = body;
+  const users = await currentUser();
+  const body = await request.json();
+  const { message, image, conversationId } = body;
+  const languageToUse = users?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
 
+  try {
     if (!users?.id || !users?.email) {
-      return new Response("Unauthorized", { status: 401 });
+      return new NextResponse(JSON.stringify({ error: t("toastError.userNotFound") }), {
+        status: 403,
+      });
     }
 
     // Tạo một tin nhắn mới
@@ -57,7 +64,9 @@ export async function POST(request: Request) {
     });
 
     if (!conversation) {
-      return new NextResponse('Invalid ID', { status: 400 });
+      return new NextResponse(JSON.stringify({ error: t("toastError.conversationIdRequired") }), {
+        status: 400,
+      });
     }
 
     // Lọc các tin nhắn chưa được xem
@@ -161,21 +170,28 @@ export async function POST(request: Request) {
 
     return NextResponse.json(newMessage);
   } catch (error: any) {
-    return new NextResponse("InternalError", { status: 500 });
+    return new NextResponse(JSON.stringify({ error: t("toastError.internalErrorGetMessage") }), {
+      status: 500,
+    });
   }
 }
 
 
 
 export async function PATCH(request: Request) {
+  const users = await currentUser()
+  const languageToUse = users?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
+  const body = await request.json()
+  const { conversationId } = body
+  
   try {
-    const users = await currentUser()
-
-    const body = await request.json()
-    const { conversationId } = body
-
-    if (!users?.id || !users?.email) {
-      return new Response("Unauthorized", { status: 401 })
+    if (!users) {
+      return new NextResponse(JSON.stringify({ error: t("toastError.userNotFound") }), {
+        status: 403,
+      });
     }
 
     const messages = await prismadb.message.findMany({
@@ -194,7 +210,9 @@ export async function PATCH(request: Request) {
 
     return NextResponse.json(messages)
   } catch (error: any) {
-    return new NextResponse("InternalError", { status: 500 })
+    return new NextResponse(JSON.stringify({ error: t("toastError.internalErrorGetMessage") }), {
+      status: 500,
+    });
   }
 }
 

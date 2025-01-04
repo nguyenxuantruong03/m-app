@@ -1,7 +1,7 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
-import { translateFunnelChart } from "@/translate/translate-api";
 import { UserRole } from "@prisma/client";
+import { createTranslator } from "next-intl";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -9,20 +9,22 @@ export async function POST(req: Request) {
   const { dateRange } = body;
   const user = await currentUser();
     //language
-    const LanguageToUse = user?.language || "vi";
-    const funnelChartMessage = translateFunnelChart(LanguageToUse)
+    const languageToUse = user?.language || "vi";
+    let messages;
+      messages = (await import(`@/messages/${languageToUse}.json`)).default;
+      const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: funnelChartMessage.name1 }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: funnelChartMessage.name2 }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -59,7 +61,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error(error);
     return new NextResponse(
-      JSON.stringify({ error: funnelChartMessage.name3 }),
+      JSON.stringify({ error: t("toastError.chart.intternalErrorFunnel") }),
       { status: 500 }
     );
   }

@@ -1,30 +1,28 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
-import {
-  translateCheckAttendanceGet,
-  translateCheckAttendancePatch,
-  translateCheckAttendancePost,
-} from "@/translate/translate-api";
 import { Degree, UserRole } from "@prisma/client";
+import { createTranslator } from "next-intl";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   const userId = await currentUser();
   //language
-  const LanguageToUse = userId?.language || "vi";
-  const checkAttendanceGetMessage = translateCheckAttendanceGet(LanguageToUse);
+  const languageToUse = userId?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     if (!userId) {
       return new NextResponse(
-        JSON.stringify({ error: checkAttendanceGetMessage.name1 }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (userId.role === UserRole.GUEST || userId.role === UserRole.USER) {
       return new NextResponse(
-        JSON.stringify({ error: checkAttendanceGetMessage.name2 }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -37,7 +35,7 @@ export async function GET(req: Request) {
     return NextResponse.json(eventCalendar);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: checkAttendanceGetMessage.name3 }),
+      JSON.stringify({ error: t("toastError.attendance.intternalErrorGetAttendance") }),
       { status: 500 }
     );
   }
@@ -49,71 +47,60 @@ export async function POST(
 ) {
   const userId = await currentUser();
   //language
-  const LanguageToUse = userId?.language || "vi";
-  const checkAttendancePostMessage =
-    translateCheckAttendancePost(LanguageToUse);
+  const languageToUse = userId?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
+
   try {
     const body = await req.json();
     const { photo, qrResult, datacamera } = body;
 
     if (!userId) {
       return new NextResponse(
-        JSON.stringify({ error: checkAttendancePostMessage.name1 }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (userId.role === UserRole.GUEST || userId.role === UserRole.USER) {
       return new NextResponse(
-        JSON.stringify({ error: checkAttendancePostMessage.name2 }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: checkAttendancePostMessage.name3 }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 400 }
       );
     }
 
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
     if (!qrResult) {
       return new NextResponse(
-        JSON.stringify({ error: checkAttendancePostMessage.name4 }),
+        JSON.stringify({ error: t("toastError.attendance.imageBlurry") }),
         { status: 405 }
       );
     }
 
     if (!photo) {
       return new NextResponse(
-        JSON.stringify({ error: checkAttendancePostMessage.name5 }),
+        JSON.stringify({ error: t("toastError.imageNotfound") }),
         { status: 405 }
       );
     }
 
     if (!datacamera) {
       return new NextResponse(
-        JSON.stringify({ error: checkAttendancePostMessage.name6 }),
-        { status: 405 }
-      );
-    }
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: checkAttendancePostMessage.name7 }),
+        JSON.stringify({ error: t("toastError.attendance.eventcalendarIdRequired") }),
         { status: 405 }
       );
     }
 
     if (qrResult !== userId?.urlimageCheckAttendance) {
       return new NextResponse(
-        JSON.stringify({ error: checkAttendancePostMessage.name8 }),
+        JSON.stringify({ error: t("toastError.attendance.qrCodeInCorrect") }),
         {
           status: 405,
         }
@@ -134,14 +121,14 @@ export async function POST(
 
     if (isCheckAttendanceImage[0] === true) {
       return new NextResponse(
-        JSON.stringify({ error: checkAttendancePostMessage.name9 }),
+        JSON.stringify({ error: t("toastError.attendance.updatedImage") }),
         { status: 405 }
       );
     }
 
     if (isCheckAttendanceNFC[0] === true) {
       return new NextResponse(
-        JSON.stringify({ error: checkAttendancePostMessage.name10 }),
+        JSON.stringify({ error: t("toastError.attendance.updatedNFC") }),
         { status: 405 }
       );
     }
@@ -267,7 +254,7 @@ export async function POST(
     return NextResponse.json(eventCalendar);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: checkAttendancePostMessage.name11 }),
+      JSON.stringify({ error: t("toastError.attendance.intternalErrorPostAttendance") }),
       { status: 500 }
     );
   }
@@ -279,8 +266,10 @@ export async function PATCH(
 ) {
   const userId = await currentUser();
   //language
-  const LanguageToUse = userId?.language || "vi";
-  const checkAttendancePatchMessage = translateCheckAttendancePatch(LanguageToUse)
+  const languageToUse = userId?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     const body = await req.json();
@@ -288,13 +277,14 @@ export async function PATCH(
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: checkAttendancePatchMessage.name1 }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 400 }
       );
     }
-    if (!userId) {
+
+     if (!userId) {
       return new NextResponse(
-        JSON.stringify({ error: checkAttendancePatchMessage.name2 }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
@@ -302,40 +292,27 @@ export async function PATCH(
     if (userId.role === UserRole.GUEST || userId.role === UserRole.USER) {
       return new NextResponse(
         JSON.stringify({
-          error: checkAttendancePatchMessage.name3,
+          error: t("toastError.permissionDenied"),
         }),
         { status: 403 }
       );
     }
 
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
     if (!serialNumber) {
-      return new NextResponse(JSON.stringify({ error: checkAttendancePatchMessage.name4 }), {
+      return new NextResponse(JSON.stringify({ error: t("toastError.attendance.cardCodeNotfound") }), {
         status: 405,
       });
     }
 
     if (!dataEventNFC) {
       return new NextResponse(
-        JSON.stringify({ error: checkAttendancePatchMessage.name5 }),
-        { status: 405 }
-      );
-    }
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: checkAttendancePatchMessage.name6 }),
+        JSON.stringify({ error: t("toastError.attendance.eventcalendarIdRequired") }),
         { status: 405 }
       );
     }
 
     if (serialNumber !== userId?.codeNFC) {
-      return new NextResponse(JSON.stringify({ error: checkAttendancePatchMessage.name7 }), {
+      return new NextResponse(JSON.stringify({ error: t("toastError.attendance.nfcCodeInCorrect") }), {
         status: 405,
       });
     }
@@ -355,14 +332,14 @@ export async function PATCH(
 
     if (isCheckAttendanceImage[0] === true) {
       return new NextResponse(
-        JSON.stringify({ error: checkAttendancePatchMessage.name8 }),
+        JSON.stringify({ error: t("toastError.attendance.updatedImage") }),
         { status: 405 }
       );
     }
 
     if (isCheckAttendanceNFC[0] === true) {
       return new NextResponse(
-        JSON.stringify({ error: checkAttendancePatchMessage.name9 }),
+        JSON.stringify({ error: t("toastError.attendance.updatedNFC") }),
         { status: 405 }
       );
     }
@@ -485,7 +462,7 @@ export async function PATCH(
     return NextResponse.json(eventCalendar);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: checkAttendancePatchMessage.name10 }),
+      JSON.stringify({ error: t("toastError.attendance.intternalErrorPostAttendance") }),
       { status: 500 }
     );
   }

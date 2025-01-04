@@ -1,28 +1,30 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
-import { translateDeleteManySelectItem } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const deleteManySelectItemMessage =
-    translateDeleteManySelectItem(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
+
   try {
     const body = await req.json();
     const { userId, ids } = body;
 
     if (!ids) {
       return new NextResponse(
-        JSON.stringify({ error: deleteManySelectItemMessage.idsNotFound }),
+        JSON.stringify({ error: t("toastError.idsArrayNotEmpty") }),
         { status: 400 }
       );
     }
 
     if (!userId) {
       return new NextResponse(
-        JSON.stringify({ error: deleteManySelectItemMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 400 }
       );
     }
@@ -38,7 +40,7 @@ export async function POST(req: Request) {
   } catch (error) {
     return new NextResponse(
       JSON.stringify({
-        error: deleteManySelectItemMessage.internalErrorDelete,
+        error: t("toastError.internalErrorDeleteManySelectItem"),
       }),
       { status: 500 }
     );

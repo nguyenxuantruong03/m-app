@@ -1,6 +1,6 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
-import { translateWheelSpinGet, translateWheelSpinPost } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 import { NextResponse } from "next/server";
 
 export async function POST(
@@ -12,13 +12,15 @@ export async function POST(
 
   const user = await currentUser();
   // language
-  const LanguageToUse = user?.language || "vi";
-  const wheelSpinPostMessage = translateWheelSpinPost(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     if (!userId) {
       return new NextResponse(
-        JSON.stringify({ error: wheelSpinPostMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
@@ -89,7 +91,7 @@ export async function POST(
     return NextResponse.json(result);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: wheelSpinPostMessage.internalError }),
+      JSON.stringify({ error: t("toastError.wheelspin.internalErrorPostWheelSpin") }),
       { status: 500 }
     );
   }
@@ -97,13 +99,14 @@ export async function POST(
 
 export async function GET() {
   const user = await currentUser();
-  //language
-  const LanguageToUse = user?.language || "vi";
-  const wheelSpinGetMessage = translateWheelSpinGet(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: wheelSpinGetMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
@@ -128,7 +131,7 @@ export async function GET() {
     return NextResponse.json({ totalCoins, latestRotation });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: wheelSpinGetMessage.internalError }),
+      JSON.stringify({ error: t("toastError.wheelspin.internalErrorGetWheelSpin") }),
       { status: 500 }
     );
   }

@@ -14,11 +14,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { Hint } from "@/components/ui/hint";
-import {
-  translateAIAssistant,
-  translateFeedback,
-  translateRating,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface FeedBackProps {
   setIsAISheetOpen: Dispatch<SetStateAction<boolean>>;
@@ -26,7 +22,6 @@ interface FeedBackProps {
   compareTime: boolean;
   loadingLanguage: boolean;
   loading: boolean;
-  languageToUse: string;
 }
 
 export default function FeedBack({
@@ -35,21 +30,16 @@ export default function FeedBack({
   compareTime,
   loadingLanguage,
   loading,
-  languageToUse,
 }: FeedBackProps) {
+  const t = useTranslations()
   const [isOpen, setIsOpen] = useState(false);
-
-  //language
-  const feedbackMessage = translateFeedback(languageToUse);
-  const aiAssistantMessage = translateAIAssistant(languageToUse);
-  const ratingMessage = translateRating(languageToUse);
 
   return (
     <div>
       <DropdownMenu onOpenChange={(open) => setIsOpen(open)}>
         <DropdownMenuTrigger asChild>
           <Button variant="destructive" disabled={loading || loadingLanguage}>
-            <Hint label={feedbackMessage}>
+            <Hint label={t("feedback.feedback")}>
               {isOpen ? <ArrowRight /> : <MessageSquare />}
             </Hint>
           </Button>
@@ -61,14 +51,14 @@ export default function FeedBack({
         >
           <DropdownMenuItem onClick={() => setIsAISheetOpen(true)}>
             {/* Open AI Assistant Sheet */}
-            <Hint label={aiAssistantMessage}>
+            <Hint label={t("feedback.aiAssistant")}>
               <BotMessageSquare />
             </Hint>
           </DropdownMenuItem>
           {compareTime && (
             <DropdownMenuItem onClick={() => setIsFeedbackSheetOpen(true)}>
               {/* Open Feedback Sheet */}
-              <Hint label={ratingMessage}>
+              <Hint label={t("feedback.rating")}>
                 <MessageSquareReply />
               </Hint>
             </DropdownMenuItem>

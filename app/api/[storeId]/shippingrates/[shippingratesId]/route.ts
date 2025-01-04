@@ -4,7 +4,7 @@ import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
 import { stripe } from "@/lib/stripe";
-import { translateShippingRateIdDelete, translateShippingRateIdGet, translateShippingRateIdPatch } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 type ShippingRateValue = string | number |  Date | boolean | undefined | null;
 
@@ -19,27 +19,29 @@ export async function GET(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const shippingRateIdGetMessage = translateShippingRateIdGet(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     if (!params.shippingratesId) {
       return new NextResponse(
-        JSON.stringify({ error: shippingRateIdGetMessage.shippingRateIdRequired }),
+        JSON.stringify({ error: t("toastError.shippingrate.shippingRateIdRequired") }),
         { status: 400 }
       );
     }
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: shippingRateIdGetMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: shippingRateIdGetMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -53,7 +55,7 @@ export async function GET(
     return NextResponse.json(shippingRates);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: shippingRateIdGetMessage.internalError }),
+      JSON.stringify({ error: t("toastError.shippingrate.internalErrorGetShippingRate") }),
       { status: 500 }
     );
   }
@@ -65,40 +67,29 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const shippingRateIdDeleteMessage = translateShippingRateIdDelete(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: shippingRateIdDeleteMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: shippingRateIdDeleteMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!params.shippingratesId) {
       return new NextResponse(
-        JSON.stringify({ error: shippingRateIdDeleteMessage.shippingRateIdRequired }),
+        JSON.stringify({ error: t("toastError.shippingrate.shippingRateIdRequired") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: shippingRateIdDeleteMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -137,7 +128,7 @@ export async function DELETE(
     return NextResponse.json(shippingRates);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: shippingRateIdDeleteMessage.internalError }),
+      JSON.stringify({ error: t("toastError.shippingrate.internalErrorDeleteShippingRate") }),
       { status: 500 }
     );
   }
@@ -149,8 +140,10 @@ export async function PATCH(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const shippingRateIdPatchMessage = translateShippingRateIdPatch(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
     const {
@@ -166,84 +159,71 @@ export async function PATCH(
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: shippingRateIdPatchMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: shippingRateIdPatchMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if(!name){
       return new NextResponse(
-        JSON.stringify({ error: shippingRateIdPatchMessage.nameRequired }),
+        JSON.stringify({ error: t("toastError.name") }),
         { status: 400 }
       );
     }
 
     if(!taxbehavior){
       return new NextResponse(
-        JSON.stringify({ error: shippingRateIdPatchMessage.taxBehaviorRequired }),
+        JSON.stringify({ error: t("toastError.shippingrate.taxBehaviorRequired") }),
         { status: 400 }
       );
     }
 
     if(!amount){
       return new NextResponse(
-        JSON.stringify({ error: shippingRateIdPatchMessage.amountRequired }),
+        JSON.stringify({ error: t("toastError.shippingrate.amountRequired") }),
         { status: 400 }
       );
     }
 
     if(!unitmin){
       return new NextResponse(
-        JSON.stringify({ error: shippingRateIdPatchMessage.unitMinRequired }),
+        JSON.stringify({ error: t("toastError.shippingrate.unitMinRequired") }),
         { status: 400 }
       );
     }
 
     if(!valuemin){
       return new NextResponse(
-        JSON.stringify({ error: shippingRateIdPatchMessage.valueMinRequired }),
+        JSON.stringify({ error: t("toastError.shippingrate.valueMinRequired") }),
         { status: 400 }
       );
     }
 
     if(!unitmax){
       return new NextResponse(
-        JSON.stringify({ error: shippingRateIdPatchMessage.unitMaxRequired }),
+        JSON.stringify({ error: t("toastError.shippingrate.unitMaxRequired") }),
         { status: 400 }
       );
     }
 
     if(!valuemax){
       return new NextResponse(
-        JSON.stringify({ error: shippingRateIdPatchMessage.valueMaxRequired }),
+        JSON.stringify({ error: t("toastError.shippingrate.valueMaxRequired") }),
         { status: 400 }
       );
     }
 
     if (!params.shippingratesId) {
       return new NextResponse(
-        JSON.stringify({ error: shippingRateIdPatchMessage.shippingRateIdRequired }),
+        JSON.stringify({ error: t("toastError.shippingrate.shippingRateIdRequired") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: shippingRateIdPatchMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -255,7 +235,7 @@ export async function PATCH(
 
     if (!existingShippingRates) {
       return new NextResponse(
-        JSON.stringify({ error: shippingRateIdPatchMessage.shippingRateNotFound }),
+        JSON.stringify({ error: t("toastError.shippingrate.shippingRateNotFound") }),
         { status: 404 }
       );
     }
@@ -274,7 +254,7 @@ export async function PATCH(
         if (shippingRateWithSameName) {
           return new NextResponse(
             JSON.stringify({
-              error: shippingRateIdPatchMessage.shippingRateAlreadyExists
+              error: t("toastError.shippingrate.shippingRateAlreadyExists")
             }),
             { status: 400 }
           );
@@ -352,7 +332,7 @@ export async function PATCH(
     return NextResponse.json(shippingRateupdate);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: shippingRateIdPatchMessage.internalError }),
+      JSON.stringify({ error: t("toastError.shippingrate.internalErrorPatchShippingRate") }),
       { status: 500 }
     );
   }

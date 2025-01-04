@@ -42,38 +42,20 @@ import { cn } from "@/lib/utils";
 import { AlertGuestModal } from "@/components/modals/alert-guest-login-modal";
 import useCartdb from "@/hooks/client/db/use-cart-db";
 import { SearchPage } from "./search";
-import {
-  translateBasketAndGoods,
-  translateCoinsLowerCase,
-  translateConvenience,
-  translateDiscountAndSuperShocking,
-  translateGamesAndEntertainment,
-  translateList,
-  translateLogin,
-  translatePackageProduct,
-  translateRegister,
-  translateShopping,
-  translateShoppingDiscount,
-  translateSpin,
-  translateSpinAndLuck,
-  translateThrowAndHeart,
-  translateTotalCoins,
-  translateUseful,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface mainNavProps {
   role: string;
   userId: string;
   isLive: boolean | undefined;
-  languageToUse: string;
 }
 
 const MainNav: React.FC<mainNavProps> = ({
   role,
   userId,
   isLive,
-  languageToUse,
 }) => {
+  const t = useTranslations()
   const pathname = usePathname();
   const param = useParams();
   const router = useRouter();
@@ -85,24 +67,6 @@ const MainNav: React.FC<mainNavProps> = ({
   //List-onClick-onBlur click mở blur ra ngoài thì tắt đi
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-
-  //languages
-  const listMessage = translateList(languageToUse);
-  const totalCoinMessage = translateTotalCoins(languageToUse);
-  const coninLowerCase = translateCoinsLowerCase(languageToUse);
-  const convenienceMessage = translateConvenience(languageToUse);
-  const shoppingMessage = translateShopping(languageToUse);
-  const shoppingDiscountMessage = translateShoppingDiscount(languageToUse);
-  const spinAndLuckyMessage = translateSpinAndLuck(languageToUse);
-  const discountAndSuperShockingMessage =
-    translateDiscountAndSuperShocking(languageToUse);
-  const packageProductMessage = translatePackageProduct(languageToUse);
-  const gameAndEntertaimentMessage =
-    translateGamesAndEntertainment(languageToUse);
-  const throwAndHeartMessage = translateThrowAndHeart(languageToUse);
-  const basketAndGoodsMessage = translateBasketAndGoods(languageToUse);
-  const loginMessage = translateLogin(languageToUse);
-  const registerMessage = translateRegister(languageToUse);
 
   const toggleOpen = useCallback(() => {
     setIsOpen((value) => !value);
@@ -173,7 +137,6 @@ const MainNav: React.FC<mainNavProps> = ({
       <AlertGuestModal
         isOpen={alertGuestModal}
         onClose={() => setAlertGuestModal(false)}
-        languageToUse={languageToUse}
       />
 
       <Link href="/home-product">
@@ -203,7 +166,7 @@ const MainNav: React.FC<mainNavProps> = ({
             <div className="px-1 py-1">
               <AlignJustify className="w-5 h-5" />
             </div>
-            {listMessage}
+            {t("navbar.list")}
           </div>
         </div>
       </div>
@@ -217,7 +180,7 @@ const MainNav: React.FC<mainNavProps> = ({
       {/* Menu */}
       {isOpen && (
         <div className="absolute top-[-40px] z-40" ref={menuRef}>
-          <Menu showCategories={true} languageToUse={languageToUse} />
+          <Menu showCategories={true} />
         </div>
       )}
 
@@ -229,11 +192,11 @@ const MainNav: React.FC<mainNavProps> = ({
             </div>
             <div className="basis-2/3 ">
               <div className="text-sm flex gap-3 text-white">
-                {totalCoinMessage}
+                {t("navbar.totalCoin")}
               </div>
               <div className="text-sm w-24 text-white">
                 {" "}
-                {totalCoins} {coninLowerCase}
+                {totalCoins} {t("navbar.coin")}
               </div>
             </div>
           </div>
@@ -241,7 +204,7 @@ const MainNav: React.FC<mainNavProps> = ({
       </div>
 
       <div className="ml-1.5 md:ml-0">
-        <SearchPage languageToUse={languageToUse} />
+        <SearchPage />
       </div>
 
       <NavigationMenu className="hidden md:block">
@@ -256,10 +219,10 @@ const MainNav: React.FC<mainNavProps> = ({
                     </div>
                     <div className="basis-2/3 hidden md:block w-12 xl:w-20">
                       <div className="text-xs text-white">
-                        {convenienceMessage.name}
+                        {t("navbar.convenience.name")}
                       </div>
                       <div className="text-xs text-white">
-                        {convenienceMessage.name2}
+                        {t("navbar.convenience.name2")}
                       </div>
                     </div>
                   </div>
@@ -276,10 +239,10 @@ const MainNav: React.FC<mainNavProps> = ({
                     >
                       <ShoppingCart className="h-6 w-6" />
                       <div className="mb-2 mt-4 text-lg font-medium">
-                        {shoppingMessage}
+                        {t("navbar.shopping")}
                       </div>
                       <p className="text-sm leading-tight text-muted-foreground">
-                        {shoppingDiscountMessage}
+                        {t("navbar.shoppingDiscount")}
                       </p>
                     </a>
                   </NavigationMenuLink>
@@ -316,7 +279,7 @@ const MainNav: React.FC<mainNavProps> = ({
                                   : "dark:text-white text-slate-900"
                               )}
                             >
-                              {spinAndLuckyMessage.name}
+                              {t("navbar.spinAndLuck.name")}
                             </div>
                             <div
                               className={cn(
@@ -326,7 +289,7 @@ const MainNav: React.FC<mainNavProps> = ({
                                   : "dark:text-white text-slate-900"
                               )}
                             >
-                              {spinAndLuckyMessage.name1}
+                              {t("navbar.spinAndLuck.name1")}
                             </div>
                           </div>
                         </div>
@@ -355,7 +318,7 @@ const MainNav: React.FC<mainNavProps> = ({
                                   : "dark:text-white text-slate-900"
                               )}
                             >
-                              {discountAndSuperShockingMessage.name}
+                              {t("navbar.discountAndSuperShocking.name")}
                             </div>
                             <div
                               className={cn(
@@ -365,7 +328,7 @@ const MainNav: React.FC<mainNavProps> = ({
                                   : "dark:text-white text-slate-900"
                               )}
                             >
-                              {discountAndSuperShockingMessage.name2}
+                              {t("navbar.discountAndSuperShocking.name2")}
                             </div>
                           </div>
                         </div>
@@ -392,7 +355,7 @@ const MainNav: React.FC<mainNavProps> = ({
                                   : "dark:text-white text-slate-900"
                               )}
                             >
-                              {packageProductMessage.name}
+                              {t("navbar.packageProduct.name")}
                             </div>
                             <div
                               className={cn(
@@ -402,7 +365,7 @@ const MainNav: React.FC<mainNavProps> = ({
                                   : "dark:text-white text-slate-900"
                               )}
                             >
-                              {packageProductMessage.name2}
+                              {t("navbar.packageProduct.name2")}
                             </div>
                           </div>
                         </div>
@@ -434,10 +397,10 @@ const MainNav: React.FC<mainNavProps> = ({
               </div>
               <div className="basis-2/3">
                 <div className="text-xs  text-white">
-                  {gameAndEntertaimentMessage.name}
+                  {t("navbar.gamesAndEntertainment.name")}
                 </div>
                 <div className="text-xs w-14  text-white">
-                  {gameAndEntertaimentMessage.name2}
+                  {t("navbar.gamesAndEntertainment.name2")}
                 </div>
               </div>
             </div>
@@ -471,10 +434,10 @@ const MainNav: React.FC<mainNavProps> = ({
                 </div>
                 <div className="basis-2/3 hidden md:block w-12 xl:w-20">
                   <div className="text-xs text-white">
-                    {throwAndHeartMessage.name}
+                    {t("navbar.favorite")}
                   </div>
-                  <div className="text-xs text-white">
-                    {throwAndHeartMessage.name2}
+                  <div className="text-xs  text-white">
+                    {t("product.product")}
                   </div>
                 </div>
               </div>
@@ -502,10 +465,10 @@ const MainNav: React.FC<mainNavProps> = ({
                 </div>
                 <div className="basis-2/3 hidden md:block w-12 xl:w-20">
                   <div className="text-xs  text-white">
-                    {basketAndGoodsMessage.name}
+                    {t("navbar.basketAndGoods.name")}
                   </div>
                   <div className="text-xs  text-white">
-                    {basketAndGoodsMessage.name2}
+                    {t("navbar.basketAndGoods.name2")}
                   </div>
                 </div>
               </div>
@@ -530,12 +493,12 @@ const MainNav: React.FC<mainNavProps> = ({
                     <div className="whitespace-nowrap p-1 lg:p-2 border-slate-300 shadow-sm rounded-md border-2 2xl:text-base lg:text-sm font-medium text-white hover:border-slate-900 dark:hover:text-slate-900">
                       <span className="flex items-center 2xl:text-base lg:text-sm">
                         <CircleUser className="size-3 lg:h-5 lg:w-5 2xl:size-4 md:mr-1" />
-                        <span className="hidden md:block">{loginMessage}</span>
+                        <span className="hidden md:block">{t("auth.login")}</span>
                       </span>
                     </div>
                   </TooltipTrigger>
                   <TooltipContent side="bottom">
-                    <p>{loginMessage}</p>
+                    <p>{t("auth.login")}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -549,13 +512,13 @@ const MainNav: React.FC<mainNavProps> = ({
                         <UserRoundPlus className="size-3 lg:h-5 lg:w-5 2xl:size-4 md:mr-1" />
                         <span className="hidden md:block">
                           {" "}
-                          {registerMessage}
+                          {t("auth.register")}
                         </span>
                       </span>
                     </div>
                   </TooltipTrigger>
                   <TooltipContent side="bottom">
-                    <p>{registerMessage}</p>
+                    <p>{t("auth.register")}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>

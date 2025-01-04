@@ -6,45 +6,31 @@ import prismadb from "@/lib/prismadb";
 import { getUserByEmail } from "@/data/user";
 import { sendVerificationEmail } from "@/lib/mail";
 import { generateVerificationToken } from "@/lib/tokens";
-import {
-  translateAccountPermanentlyBannedPolicyViolation,
-  translateEmailAlreadyUsed,
-  translateInvalid,
-  translatePasswordRequirements,
-  translatePleaseFillOutAllFields,
-  translateSuccessCheckEmail,
-} from "@/translate/translate-client";
+import { createTranslator } from "next-intl";
 
 export const register = async (
   values: z.infer<typeof RegisterSchema>,
   languageToUse: string
 ) => {
-  //languages
-  const invalidMessage = translateInvalid(languageToUse);
-  const accountPermanentlyBannedPolicyViolationMessage =
-    translateAccountPermanentlyBannedPolicyViolation(languageToUse);
-  const passwordRequirementMessage =
-    translatePasswordRequirements(languageToUse);
-  const pleaseFillOutAllFieldMessage =
-    translatePleaseFillOutAllFields(languageToUse);
-  const emailAlreadyUsedMessage = translateEmailAlreadyUsed(languageToUse);
-  const successCheckEmailMessage = translateSuccessCheckEmail(languageToUse);
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   //safeParse: Phân tích an toàn
   const validatedFields = RegisterSchema.safeParse(values);
   if (!validatedFields.success) {
-    return { error: invalidMessage };
+    return { error: t("register.invalid") };
   }
   const { email, password, name } = validatedFields.data;
   // Add password regex check
   const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[0-9]).{6,20}$/;
   if (!passwordRegex.test(password)) {
-    return { error: passwordRequirementMessage };
+    return { error: t("register.passwordRequirement") };
   }
 
   // Check if field of the required fields are empty
   if (!name || !email || !password) {
-    return { error: pleaseFillOutAllFieldMessage };
+    return { error: t("register.pleaseFillOutAllField") };
   }
 
   const hashPassword = await bcrypt.hash(password, 10);
@@ -53,12 +39,12 @@ export const register = async (
 
   if (existingUser?.isbanforever) {
     return {
-      error: accountPermanentlyBannedPolicyViolationMessage,
+      error: t("register.accountPermanentlyBannedPolicyViolation"),
     };
   }
 
   if (existingUser) {
-    return { error: emailAlreadyUsedMessage };
+    return { error: t("register.emailAlreadyUsed") };
   }
 
   // Xử lý tạo nameuser từ email
@@ -116,7 +102,7 @@ export const register = async (
   const sanitizedValues = { name: "", email: "", password: "" };
 
   return {
-    success: successCheckEmailMessage,
+    success: t("register.successCheckEmail"),
     sanitizedValues,
   };
 };

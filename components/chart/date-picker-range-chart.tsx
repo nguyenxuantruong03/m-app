@@ -11,6 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useTranslations } from "next-intl";
 
 interface ProductData {
   totalSold: number;
@@ -37,6 +38,7 @@ export function DatePickerWithRangeChart({
   onDateChange,
   loading
 }: DatePickerWithRangeProps) {
+  const t = useTranslations()
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: new Date(),
     to: new Date(),
@@ -124,7 +126,7 @@ export function DatePickerWithRangeChart({
                 format(date.from, "LLL dd, y")
               )
             ) : (
-              <span>Pick a date</span>
+              <span>{t("chart.pickadate")}</span>
             )}
           </Button>
         </PopoverTrigger>

@@ -37,43 +37,44 @@ import {
   checkoutTitle,
   settingTitle,
 } from "./export-name-navbar";
-import { translateMainNav } from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
-interface NavbarIconProps extends React.HTMLAttributes<HTMLElement> {
-  languageToUse: string;
-}
-
-const NavbarIcon = ({
-  className,
-  languageToUse,
-  ...props
-}: NavbarIconProps) => {
+const NavbarIcon = () => {
+  const t = useTranslations()
   const pathname = usePathname();
   const params = useParams();
   const storeId = Array.isArray(params.storeId)
     ? params.storeId[0]
     : params.storeId;
 
-  const routes = route(storeId, pathname, languageToUse);
-  const staffs = staff(storeId, pathname, languageToUse);
-  const billboards = billboard(storeId, pathname, languageToUse);
-  const category = categories(storeId, pathname, languageToUse);
-  const parameters = parameter(storeId, pathname, languageToUse);
-  const products = product(storeId, pathname, languageToUse);
-  const orders = order(storeId, pathname, languageToUse);
-  const users = user(storeId, pathname, languageToUse);
-  const checkouts = checkout(storeId, pathname, languageToUse);
-  const settings = setting(storeId, pathname, languageToUse);
+  const routes = route(storeId, pathname);
+  const staffs = staff(storeId, pathname);
+  const billboards = billboard(storeId, pathname);
+  const category = categories(storeId, pathname);
+  const parameters = parameter(storeId, pathname);
+  const products = product(storeId, pathname);
+  const orders = order(storeId, pathname);
+  const users = user(storeId, pathname);
+  const checkouts = checkout(storeId, pathname);
+  const settings = setting(storeId, pathname);
+  const routerOnlyTitle = routeTitle()
+  const staffOnlyTitle = staffTitle()
+  const billboardOnlyTitle = billboardTitle()
+  const categoryOnlyTitle = categoryTitle()
+  const parameterOnlyTitle = parameterTitle()
+  const productOnlyTitle = productTitle()
+  const orderOnlyTitle = orderTitle()
+  const userOnlyTitle = userTitle()
+  const checkoutOnlyTitle = checkoutTitle()
+  const settingOnlyTitle = settingTitle()
 
-  //language
-  const mainNavMessage = translateMainNav(languageToUse);
   return (
     <>
       {/* Overview */}
       <nav
         className={cn(
-          "flex items-center space-x-4 lg:space-x-6 space-y-4",
-          className
+          "flex items-center space-x-4 lg:space-x-6 space-y-4"
+          
         )}
       >
         <Accordion type="single" collapsible className="w-full">
@@ -81,9 +82,9 @@ const NavbarIcon = ({
             <AccordionTrigger className="accordion-trigger">
               <HoverCard>
                 <HoverCardTrigger>
-                  {routeTitle(languageToUse).map((route) => route.icon)}
+                  {routerOnlyTitle.map((route) => route.icon)}
                 </HoverCardTrigger>
-                <HoverCardContent>{mainNavMessage.name1}</HoverCardContent>
+                <HoverCardContent>{t("navbardashboard.overview")}</HoverCardContent>
               </HoverCard>
             </AccordionTrigger>
             <AccordionContent>
@@ -109,8 +110,7 @@ const NavbarIcon = ({
       {/* Staff Attendance */}
       <nav
         className={cn(
-          "flex items-center space-x-4 lg:space-x-6 space-y-4",
-          className
+          "flex items-center space-x-4 lg:space-x-6 space-y-4"
         )}
       >
         <Accordion type="single" collapsible className="w-full">
@@ -118,11 +118,11 @@ const NavbarIcon = ({
             <AccordionTrigger className="accordion-trigger">
               <HoverCard>
                 <HoverCardTrigger>
-                  {staffTitle(languageToUse).map((staff, index) => (
+                  {staffOnlyTitle.map((staff, index) => (
                     <div key={index}>{staff.icon}</div>
                   ))}
                 </HoverCardTrigger>
-                <HoverCardContent>{mainNavMessage.name2}</HoverCardContent>
+                <HoverCardContent>{t("navbardashboard.employees")}</HoverCardContent>
               </HoverCard>
             </AccordionTrigger>
             <AccordionContent>
@@ -147,18 +147,18 @@ const NavbarIcon = ({
       </nav>
       {/* Billboard */}
       <nav
-        className={cn("flex items-center space-x-4 lg:space-x-6", className)}
+        className={cn("flex items-center space-x-4 lg:space-x-6")}
       >
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-1">
             <AccordionTrigger className="accordion-trigger">
               <HoverCard>
                 <HoverCardTrigger>
-                  {billboardTitle(languageToUse).map((billboard, index) => (
+                  {billboardOnlyTitle.map((billboard, index) => (
                     <div key={index}>{billboard.icon}</div>
                   ))}
                 </HoverCardTrigger>
-                <HoverCardContent>{mainNavMessage.name3}</HoverCardContent>
+                <HoverCardContent>{t("navbardashboard.billboard")}</HoverCardContent>
               </HoverCard>
             </AccordionTrigger>
             <AccordionContent>
@@ -183,18 +183,18 @@ const NavbarIcon = ({
       </nav>
       {/* Category */}
       <nav
-        className={cn("flex items-center space-x-4 lg:space-x-6", className)}
+        className={cn("flex items-center space-x-4 lg:space-x-6")}
       >
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-1">
             <AccordionTrigger className="accordion-trigger">
               <HoverCard>
                 <HoverCardTrigger>
-                  {categoryTitle(languageToUse).map((category, index) => (
+                  {categoryOnlyTitle.map((category, index) => (
                     <div key={index}>{category.icon}</div>
                   ))}
                 </HoverCardTrigger>
-                <HoverCardContent>{mainNavMessage.name4}</HoverCardContent>
+                <HoverCardContent>{t("navbardashboard.productCategory")}</HoverCardContent>
               </HoverCard>
             </AccordionTrigger>
             <AccordionContent>
@@ -219,18 +219,18 @@ const NavbarIcon = ({
       </nav>
       {/* Parameter */}
       <nav
-        className={cn("flex items-center space-x-4 lg:space-x-6", className)}
+        className={cn("flex items-center space-x-4 lg:space-x-6")}
       >
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-1">
             <AccordionTrigger className="accordion-trigger">
               <HoverCard>
                 <HoverCardTrigger>
-                  {parameterTitle(languageToUse).map((parameter, index) => (
+                  {parameterOnlyTitle.map((parameter, index) => (
                     <div key={index}>{parameter.icon}</div>
                   ))}
                 </HoverCardTrigger>
-                <HoverCardContent>{mainNavMessage.name5}</HoverCardContent>
+                <HoverCardContent>{t("navbardashboard.specifications")}</HoverCardContent>
               </HoverCard>
             </AccordionTrigger>
             <AccordionContent>
@@ -255,7 +255,7 @@ const NavbarIcon = ({
       </nav>
       {/* Product */}
       <nav
-        className={cn("flex items-center space-x-4 lg:space-x-6", className)}
+        className={cn("flex items-center space-x-4 lg:space-x-6")}
       >
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-1">
@@ -263,11 +263,11 @@ const NavbarIcon = ({
               {" "}
               <HoverCard>
                 <HoverCardTrigger>
-                  {productTitle(languageToUse).map((product, index) => (
+                  {productOnlyTitle.map((product, index) => (
                     <div key={index}>{product.icon}</div>
                   ))}
                 </HoverCardTrigger>
-                <HoverCardContent>{mainNavMessage.name6}</HoverCardContent>
+                <HoverCardContent>{t("navbardashboard.products")}</HoverCardContent>
               </HoverCard>
             </AccordionTrigger>
             <AccordionContent>
@@ -292,18 +292,18 @@ const NavbarIcon = ({
       </nav>
       {/* Order */}
       <nav
-        className={cn("flex items-center space-x-4 lg:space-x-6", className)}
+        className={cn("flex items-center space-x-4 lg:space-x-6")}
       >
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-1">
             <AccordionTrigger className="accordion-trigger">
               <HoverCard>
                 <HoverCardTrigger>
-                  {orderTitle(languageToUse).map((order, index) => (
+                  {orderOnlyTitle.map((order, index) => (
                     <div key={index}>{order.icon}</div>
                   ))}
                 </HoverCardTrigger>
-                <HoverCardContent>{mainNavMessage.name7}</HoverCardContent>
+                <HoverCardContent>{t("navbardashboard.orders")}</HoverCardContent>
               </HoverCard>
             </AccordionTrigger>
             <AccordionContent>
@@ -328,18 +328,18 @@ const NavbarIcon = ({
       </nav>
       {/* Người dùng */}
       <nav
-        className={cn("flex items-center space-x-4 lg:space-x-6", className)}
+        className={cn("flex items-center space-x-4 lg:space-x-6")}
       >
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-1">
             <AccordionTrigger className="accordion-trigger">
               <HoverCard>
                 <HoverCardTrigger>
-                  {userTitle(languageToUse).map((user, index) => (
+                  {userOnlyTitle.map((user, index) => (
                     <div key={index}>{user.icon}</div>
                   ))}
                 </HoverCardTrigger>
-                <HoverCardContent>{mainNavMessage.name8}</HoverCardContent>
+                <HoverCardContent>{t("navbardashboard.users")}</HoverCardContent>
               </HoverCard>
             </AccordionTrigger>
             <AccordionContent>
@@ -364,18 +364,18 @@ const NavbarIcon = ({
       </nav>
       {/*Thanh toán online */}
       <nav
-        className={cn("flex items-center space-x-4 lg:space-x-6", className)}
+        className={cn("flex items-center space-x-4 lg:space-x-6")}
       >
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-1">
             <AccordionTrigger className="accordion-trigger">
               <HoverCard>
                 <HoverCardTrigger>
-                  {checkoutTitle(languageToUse).map((checkout, index) => (
+                  {checkoutOnlyTitle.map((checkout, index) => (
                     <div key={index}>{checkout.icon}</div>
                   ))}
                 </HoverCardTrigger>
-                <HoverCardContent>{mainNavMessage.name9}</HoverCardContent>
+                <HoverCardContent>{t("navbardashboard.payments")}</HoverCardContent>
               </HoverCard>
             </AccordionTrigger>
             <AccordionContent>
@@ -400,18 +400,18 @@ const NavbarIcon = ({
       </nav>
       {/* Setting */}
       <nav
-        className={cn("flex items-center space-x-4 lg:space-x-6", className)}
+        className={cn("flex items-center space-x-4 lg:space-x-6")}
       >
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-1">
             <AccordionTrigger className="accordion-trigger">
               <HoverCard>
                 <HoverCardTrigger>
-                  {settingTitle(languageToUse).map((setting, index) => (
+                  {settingOnlyTitle.map((setting, index) => (
                     <div key={index}>{setting.icon}</div>
                   ))}
                 </HoverCardTrigger>
-                <HoverCardContent>{mainNavMessage.name10}</HoverCardContent>
+                <HoverCardContent>{t("navbardashboard.settings")}</HoverCardContent>
               </HoverCard>
             </AccordionTrigger>
             <AccordionContent>

@@ -5,21 +5,13 @@ import Modal from "../ui/modal";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { TriangleAlert } from "lucide-react";
-import {
-  translateCancel,
-  translateContinue,
-  translateGuestAccountMessage,
-  translateNote,
-  translateQuickLoginMessage,
-  translateTerms,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface LoginGuestModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
   loading?: boolean;
-  languageToUse: string;
 }
 
 export const LoginGuestModal: React.FC<LoginGuestModalProps> = ({
@@ -27,17 +19,10 @@ export const LoginGuestModal: React.FC<LoginGuestModalProps> = ({
   onClose,
   onConfirm,
   loading,
-  languageToUse,
 }) => {
+  const t = useTranslations()
   const [isMounted, setIsMounted] = useState(false);
   const [agree, setAgree] = useState(false);
-  //languages
-  const termMessage = translateTerms(languageToUse);
-  const quickLoginMessage = translateQuickLoginMessage(languageToUse);
-  const guestAccountMessage = translateGuestAccountMessage(languageToUse);
-  const noteMessage = translateNote(languageToUse);
-  const cancelMessage = translateCancel(languageToUse);
-  const continuteMessage = translateContinue(languageToUse);
 
   const handleRadioChange = () => {
     setAgree(!agree);
@@ -62,19 +47,19 @@ export const LoginGuestModal: React.FC<LoginGuestModalProps> = ({
 
   return (
     <Modal
-      title={termMessage}
-      description={quickLoginMessage}
+      title={t("auth.term")}
+      description={t("auth.quickLogin")}
       isOpen={isOpen}
       onClose={onClose}
     >
       <div>
-        <p>{guestAccountMessage.name}</p>
-        <p>{guestAccountMessage.name2}</p>
+        <p>{t("auth.guestAccount.name")}</p>
+        <p>{t("auth.guestAccount.name2")}</p>
         <p>
           <span className="text-yellow-500 flex items-center font-bold mt-2">
-            <TriangleAlert className="h-5 w-5 mr-1" /> {noteMessage}:
+            <TriangleAlert className="h-5 w-5 mr-1" /> {t("auth.note")}:
           </span>{" "}
-          {guestAccountMessage.name3}
+          {t("auth.guestAccount.name3")}
         </p>
 
         <div className="flex items-center space-x-1 space-y-1 mt-4">
@@ -86,16 +71,16 @@ export const LoginGuestModal: React.FC<LoginGuestModalProps> = ({
               disabled={loading}
               className="w-4 h-4 mr-1"
             />
-            <span className="font-bold">{guestAccountMessage.name4}</span>
+            <span className="font-bold">{t("auth.guestAccount.name4")}</span>
           </label>
         </div>
 
         <div className="flex items-center space-x-3 justify-end">
           <Button variant="secondary" disabled={loading} onClick={handleClose}>
-            {cancelMessage}
+            {t("action.cancel")}
           </Button>
           <Button onClick={handleConfirm} disabled={loading || !agree}>
-            {continuteMessage}
+            {t("action.continue")}
           </Button>
         </div>
       </div>

@@ -3,7 +3,7 @@ import { currentUser } from "@/lib/auth";
 
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
-import { translateBillboardDelete, translatebillboardGet, translateBillboardPost } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 export async function POST(
   req: Request,
@@ -12,34 +12,36 @@ export async function POST(
   const user = await currentUser();
   const body = await req.json();
   const { label, imagebillboard, description } = body;
-
+  
   //language
-  const LanguageToUse = user?.language || "vi";
-  const billboardPostMessage = translateBillboardPost(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: billboardPostMessage.name1 }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: billboardPostMessage.name2 }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!label) {
-      return new NextResponse(JSON.stringify({ error: billboardPostMessage.name3 }), {
+      return new NextResponse(JSON.stringify({ error: t("toastError.label") }), {
         status: 400,
       });
     }
 
     if (!description) {
       return new NextResponse(
-        JSON.stringify({ error: billboardPostMessage.name4 }),
+        JSON.stringify({ error: t("toastError.description") }),
         {
           status: 400,
         }
@@ -48,28 +50,15 @@ export async function POST(
 
     if (!imagebillboard || !imagebillboard.length) {
       return new NextResponse(
-        JSON.stringify({ error: billboardPostMessage.name5 }),
+        JSON.stringify({ error: t("toastError.billboard.imageBillboard")}),
         { status: 400 }
       );
     }
 
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: billboardPostMessage.name6 }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: billboardPostMessage.name7 }),
-        { status: 405 }
       );
     }
 
@@ -83,7 +72,7 @@ export async function POST(
 
     if (existingBillboard) {
       return new NextResponse(
-        JSON.stringify({ error: billboardPostMessage.name9 }),
+        JSON.stringify({ error: t("toastError.labelAlreadyExists") }),
         { status: 400 }
       );
     }
@@ -125,7 +114,7 @@ export async function POST(
     return NextResponse.json(billboard);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: billboardPostMessage.name8 }),
+      JSON.stringify({ error: t("toastError.billboard.intternalErrorPostBillboard") }),
       { status: 500 }
     );
   }
@@ -138,13 +127,15 @@ export async function GET(
   const user = await currentUser();
   
   //language
-  const LanguageToUse = user?.language || "vi";
-  const billboardGetMessage = translatebillboardGet(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: billboardGetMessage.name1 }),
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
         { status: 400 }
       );
     }
@@ -164,7 +155,7 @@ export async function GET(
     return NextResponse.json(billboards);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: billboardGetMessage.name2 }),
+      JSON.stringify({ error: t("toastError.billboard.intternalErrorGetBillboard") }),
       { status: 500 }
     );
   }
@@ -176,8 +167,10 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const billboardDeleteMessage = translateBillboardDelete(LanguageToUse) 
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     const body = await req.json();
@@ -186,35 +179,29 @@ export async function DELETE(
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: billboardDeleteMessage.name1 }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN) {
       return new NextResponse(
-        JSON.stringify({ error: billboardDeleteMessage.name2 }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!ids || ids.length === 0) {
       return new NextResponse(
-        JSON.stringify({ error: billboardDeleteMessage.name3 }),
+        JSON.stringify({ error: t("toastError.idsArrayNotEmpty") }),
         { status: 400 }
       );
     }
 
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
+    if (!params.storeId) {
       return new NextResponse(
-        JSON.stringify({ error: billboardDeleteMessage.name4 }),
-        { status: 405 }
+        JSON.stringify({ error: t("toastError.storeIdRequired") }),
+        { status: 400 }
       );
     }
 
@@ -259,10 +246,10 @@ export async function DELETE(
       },
     });
 
-    return NextResponse.json({ message: billboardDeleteMessage.name5 });
+    return NextResponse.json({ message: t("toastSuccess.deletionSuccess") });
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: billboardDeleteMessage.name6 }),
+      JSON.stringify({ error: t("toastError.billboard.intternalErrorDeleteBillboard") }),
       { status: 500 }
     );
   }

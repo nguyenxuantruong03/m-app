@@ -10,7 +10,7 @@ import {
   YAxis,
 } from "recharts";
 import { Skeleton } from "../ui/skeleton";
-import { translateSelectDateMessage } from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface GraphData {
   name: string;
@@ -19,16 +19,13 @@ interface GraphData {
 interface OverViewProps {
   data: GraphData[];
   loading: boolean;
-  languageToUse: string;
 }
 
 export const BarChart: React.FC<OverViewProps> = ({
   data,
   loading,
-  languageToUse,
 }) => {
-  //language
-  const selectDataMessgae = translateSelectDateMessage(languageToUse);
+  const t = useTranslations()
 
   if (loading) {
     return (
@@ -44,7 +41,7 @@ export const BarChart: React.FC<OverViewProps> = ({
     return (
       <div className="w-full h-[350px] flex items-center justify-center">
         <span className="text-center dark:text-slate-500 text-slate-900">
-          {selectDataMessgae}
+          {t("chart.selectDate")}
         </span>
       </div>
     );

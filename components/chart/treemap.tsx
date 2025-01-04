@@ -6,12 +6,7 @@ import {
 } from "recharts";
 import { Skeleton } from "../ui/skeleton";
 import { format } from "date-fns";
-import {
-  translateCreatedAt,
-  translateName,
-  translateRole,
-  translateSelectDateMessage,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface User {
   name: string;
@@ -27,7 +22,6 @@ interface RoleData {
 interface TreeMapProps {
   data: RoleData[];
   loading: boolean;
-  languageToUse: string;
 }
 
 const sizeMapping: { [key in UserRole]: number } = {
@@ -42,12 +36,8 @@ const sizeMapping: { [key in UserRole]: number } = {
 // Tạo một hệ số để điều chỉnh kích thước của user
 const userSizeFactor = 0.2; // Kích thước của user sẽ là 20% của kích thước role
 
-const TreeMap = ({ data, loading, languageToUse }: TreeMapProps) => {
-  //language
-  const selectDataMessgae = translateSelectDateMessage(languageToUse);
-  const nameMessage = translateName(languageToUse);
-  const roleMessgae = translateRole(languageToUse);
-  const createdAtMessgae = translateCreatedAt(languageToUse);
+const TreeMap = ({ data, loading }: TreeMapProps) => {
+  const t = useTranslations()
 
   if (loading) {
     return (
@@ -63,7 +53,7 @@ const TreeMap = ({ data, loading, languageToUse }: TreeMapProps) => {
     return (
       <div className="w-full h-[350px] flex items-center justify-center">
         <span className="text-center dark:text-slate-500 text-slate-900">
-          {selectDataMessgae}
+          {t("chart.selectDate")}
         </span>
       </div>
     );
@@ -102,7 +92,7 @@ const TreeMap = ({ data, loading, languageToUse }: TreeMapProps) => {
       >
         <p className="dark:text-slate-500 text-slate-900">
           <strong className="dark:text-slate-500 text-slate-900">
-            {nameMessage}:
+            {t("chart.name")}:
           </strong>{" "}
           {name}
         </p>
@@ -112,13 +102,13 @@ const TreeMap = ({ data, loading, languageToUse }: TreeMapProps) => {
         </p>
         <p className="dark:text-slate-500 text-slate-900">
           <strong className="dark:text-slate-500 text-slate-900">
-            {roleMessgae}:
+            {t("chart.role")}:
           </strong>{" "}
           {role}
         </p>
         <p className="dark:text-slate-500 text-slate-900">
           <strong className="dark:text-slate-500 text-slate-900">
-            {createdAtMessgae}:
+            {t("chart.createdAt")}:
           </strong>{" "}
           {createdAt
             ? format(new Date(createdAt), "E '-' dd/MM/yyyy '-' HH:mm:ss a")

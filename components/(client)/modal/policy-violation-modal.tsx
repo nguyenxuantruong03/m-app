@@ -3,13 +3,12 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { offensiveWords } from "@/vn_offensive_words";
 import Modal from "@/components/ui/modal";
-import { getViolationComment } from "@/translate/translate-client";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 interface PolicyViolationProps {
   isOpen: boolean;
   onClose: () => void;
-  languageToUse: string;
   value: string;
   setResponseDescriptions?: Dispatch<SetStateAction<string>>;
   setComment?: Dispatch<SetStateAction<string>>;
@@ -19,16 +18,13 @@ interface PolicyViolationProps {
 export const PolicyViolationModal: React.FC<PolicyViolationProps> = ({
   isOpen,
   onClose,
-  languageToUse,
   value,
   setComment,
   setResponseDescriptions,
   setUserInputAI,
 }) => {
+  const t = useTranslations("violation")
   const [isMounted, setIsMounted] = useState(false);
-
-  //language
-  const violationCommentMessage = getViolationComment(languageToUse);
 
   useEffect(() => {
     setIsMounted(true);
@@ -70,8 +66,8 @@ export const PolicyViolationModal: React.FC<PolicyViolationProps> = ({
   return (
     <Modal
       customClass="z-[99999999]"
-      title={violationCommentMessage.violationMessage}
-      description={violationCommentMessage.offensiveMessage}
+      title={t("violationMessage")}
+      description={t("offensiveMessage")}
       isOpen={isOpen}
       onClose={handleClose}
     >
@@ -79,11 +75,11 @@ export const PolicyViolationModal: React.FC<PolicyViolationProps> = ({
         <p>{renderText(value)}</p>
       </div>
       <span className="break-word text-xs text-amber-500">
-        {violationCommentMessage.violationPart1}{" "}
+        {t("violationPart1")}{" "}
         <Link href="/policy" className="underline">
-          {violationCommentMessage.violationPart2}
+          {t("violationPart2")}
         </Link>{" "}
-        {violationCommentMessage.violationPart3}.
+        {t("violationPart3")}.
       </span>
     </Modal>
   );

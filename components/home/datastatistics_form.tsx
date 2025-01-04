@@ -7,16 +7,11 @@ import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import "leaflet.locatecontrol";
 import "leaflet.locatecontrol/dist/L.Control.Locate.min.css";
-import { OrderColumn } from "@/app/(dashboard)/[storeId]/(routes)/orders/components/columns";
-import {
-  getAddressMessage,
-  getPhoneNumberMessage,
-  translateProduct,
-} from "@/translate/translate-client";
+import { OrderColumn } from "@/app/[locale]/(dashboard)/[storeId]/(routes)/orders/components/columns";
+import { useTranslations } from "next-intl";
 
 interface OrderProps {
   data: OrderColumn[];
-  languageToUse: string;
 }
 
 delete L.Icon.Default.prototype._getIconUrl;
@@ -26,11 +21,8 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow.src,
 });
 
-const LeafletMap: React.FC<OrderProps> = ({ data, languageToUse }) => {
-  //languages
-  const addressMessage = getAddressMessage(languageToUse);
-  const numberMessage = getPhoneNumberMessage(languageToUse);
-  const productMessage = translateProduct(languageToUse);
+const LeafletMap: React.FC<OrderProps> = ({ data }) => {
+  const t = useTranslations()
 
   useEffect(() => {
     const map = L.map("map").setView([10.77621, 106.60444], 16);
@@ -64,7 +56,7 @@ const LeafletMap: React.FC<OrderProps> = ({ data, languageToUse }) => {
             const { lat, lon } = data[0];
             const marker = L.marker([lat, lon]).addTo(map);
             const popupContent = `
-                <p>${addressMessage}: ${location.address} - Email: ${location.email} - ${numberMessage}: ${location.phone} - ${productMessage}: ${location.products} </p> 
+                <p>${t("info.address")}: ${location.address} - Email: ${location.email} - ${t("info.phoneNumber")}: ${location.phone} - ${t("product.product")}: ${location.products} </p> 
               `;
             marker.bindPopup(popupContent);
           }

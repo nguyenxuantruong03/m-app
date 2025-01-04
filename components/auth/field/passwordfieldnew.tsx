@@ -2,19 +2,7 @@
 import React, { useState, useRef, ChangeEvent, useEffect } from "react";
 import { Check, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import {
-  translateCharacterLength,
-  translateCompletedNumbers,
-  translateCompletedPassword,
-  translateCompletedPasswordUpperCase,
-  translateHasDigit,
-  translateHasLowercase,
-  translateHasUppercaseLetter,
-  translateNoAccentedCharactersInPassword,
-  translateNoSpacesInPassword,
-  translateNoValidAccent,
-  translateNoValidSpace,
-} from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface PasswordFieldProps {
   field: {
@@ -28,7 +16,6 @@ interface PasswordFieldProps {
   setError: (value: string) => void;
   setSuccess: (value: string) => void;
   setIsSubmittedPasswordnew: (value: boolean) => void;
-  languageToUse: string;
 }
 
 const PasswordNewField: React.FC<PasswordFieldProps> = ({
@@ -41,8 +28,8 @@ const PasswordNewField: React.FC<PasswordFieldProps> = ({
   setError,
   setSuccess,
   setIsSubmittedPasswordnew,
-  languageToUse,
 }) => {
+  const t = useTranslations()
   const [validations, setValidations] = useState({
     hasUpperCase: false,
     hasLowerCase: false,
@@ -214,14 +201,14 @@ const PasswordNewField: React.FC<PasswordFieldProps> = ({
             <>
               <Check className="w-5 h-5 text-green-400" />
               <span className="text-xs text-green-400">
-                {translateCompletedPasswordUpperCase(languageToUse)}
+                {t("formInfo.completedPasswordUpperCase")}
               </span>
             </>
           ) : (
             <>
               <X className="w-5 h-5 text-red-500" />
               <span className="text-xs text-red-500">
-                {translateHasUppercaseLetter(languageToUse)}
+                {t("formInfo.hasUppercaseLetter")}
               </span>
             </>
           )}
@@ -231,14 +218,14 @@ const PasswordNewField: React.FC<PasswordFieldProps> = ({
             <>
               <Check className="w-5 h-5 text-green-400" />
               <span className="text-xs text-green-400">
-                {translateCompletedPassword(languageToUse)}
+                {t("formInfo.completedPassword")}
               </span>
             </>
           ) : (
             <>
               <X className="w-5 h-5 text-red-500" />
               <span className="text-xs text-red-500">
-                {translateHasLowercase(languageToUse)}
+                {t("formInfo.hasLowercase")}
               </span>
             </>
           )}
@@ -248,14 +235,14 @@ const PasswordNewField: React.FC<PasswordFieldProps> = ({
             <>
               <Check className="w-5 h-5 text-green-400" />
               <span className="text-xs text-green-400">
-                {translateCompletedNumbers(languageToUse, 0, 9)}
+                {t("formInfo.completedNumbers0to9")}
               </span>
             </>
           ) : (
             <>
               <X className="w-5 h-5 text-red-500" />
               <span className="text-xs text-red-500">
-                {translateHasDigit(languageToUse)}
+                {t("formInfo.hasDigit")}
               </span>
             </>
           )}
@@ -265,14 +252,14 @@ const PasswordNewField: React.FC<PasswordFieldProps> = ({
             <>
               <Check className="w-5 h-5 text-green-400" />
               <span className="text-xs text-green-400">
-                {translateCompletedNumbers(languageToUse, 6, 20)}
+              {t("formInfo.completedNumbers6tp20")}
               </span>
             </>
           ) : (
             <>
               <X className="w-5 h-5 text-red-500" />
               <span className="text-xs text-red-500">
-                {translateCharacterLength(languageToUse)}
+                {t("formInfo.characterLength")}
               </span>
             </>
           )}
@@ -300,14 +287,14 @@ const PasswordNewField: React.FC<PasswordFieldProps> = ({
           <div className="flex items-center space-x-1">
             <X className="w-5 h-5 text-red-500" />
             <span className="text-xs text-red-500">
-              {translateNoSpacesInPassword(languageToUse)}
+              {t("formInfo.noSpacesInPassword")}
             </span>
           </div>
         ) : (
           <div className="flex items-center space-x-1">
             <Check className="w-5 h-5 text-green-400" />
             <span className="text-xs text-green-400">
-              {translateNoValidSpace(languageToUse)}
+              {t("formInfo.noValidSpace")}
             </span>
           </div>
         )}
@@ -315,14 +302,14 @@ const PasswordNewField: React.FC<PasswordFieldProps> = ({
           <div className="flex items-center space-x-1">
             <X className="w-5 h-5 text-red-500" />
             <span className="text-xs text-red-500">
-              {translateNoAccentedCharactersInPassword(languageToUse)}
+              {t("formInfo.noAccentedCharactersInPassword")}
             </span>
           </div>
         ) : (
           <div className="flex items-center space-x-1">
             <Check className="w-5 h-5 text-green-400" />
             <span className="text-xs text-green-400">
-              {translateNoValidAccent(languageToUse)}
+              {t("formInfo.noValidAccent")}
             </span>
           </div>
         )}

@@ -6,7 +6,7 @@ import prismadb from "@/lib/prismadb";
 import { formatter } from "@/lib/utils";
 import { StatusOrder } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
-import { translateCheckout } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -35,12 +35,14 @@ export async function POST(
 
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const checkOutMessage = translateCheckout(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
 
   if (!productIds || productIds.length === 0) {
     return new NextResponse(
-      JSON.stringify({ error: checkOutMessage.productIdsRequired }),
+      JSON.stringify({ error: t("toastError.checkout.productIdsRequired") }),
       { status: 400 }
     );
   }
@@ -257,7 +259,7 @@ export async function POST(
     if (outOfStockProducts.length > 0) {
       return new NextResponse(
         JSON.stringify({
-          error: `${checkOutMessage.insufficientQuantity}: ${outOfStockProducts.join(
+          error: `${t("toastError.checkout.insufficientQuantity")}: ${outOfStockProducts.join(
             ", "
           )}`,
         }),
@@ -271,7 +273,7 @@ export async function POST(
   const productQuantities: string[] = [];
   // Assume products is an array of product objects
   products.map((product) => {
-    productQuantities.push(`${checkOutMessage.product}:${product.heading}`);
+    productQuantities.push(`${t("toastError.checkout.product")}:${product.heading}`);
   });
   line_items.push({
     quantity: 1,
@@ -279,9 +281,9 @@ export async function POST(
       currency: "VND",
       product_data: {
         name: productQuantities.toString(),
-        description: `${checkOutMessage.insuranceAmount}: ${formatter.format(
+        description: `${t("toastError.checkout.insuranceAmount")}: ${formatter.format(
           warranty
-        )}, ${checkOutMessage.amountNotOnSale}: ${formatter.format(priceold)}`,
+        )}, ${t("toastError.checkout.amountNotOnSale")}: ${formatter.format(priceold)}`,
       },
       unit_amount: pricesales,
     },

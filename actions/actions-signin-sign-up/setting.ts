@@ -11,50 +11,33 @@ import { sendVerificationEmail } from "@/lib/mail";
 import bcrypt from "bcryptjs";
 import { format } from "date-fns";
 import { Gender } from "@prisma/client";
-import {
-  translateAccountLockedCannotChange,
-  translateChangeSuccessful,
-  translateEmailAlreadyInUse,
-  translateEmailVerifiedSuccess,
-  translateIncorrectPassword,
-  translateNewPasswordCannotBeSameAsOld,
-  translateNotAllowed,
-  translateUsernameAlreadyTaken,
-} from "@/translate/translate-client";
+import { createTranslator } from "next-intl";
 
 export const setting = async (
   values: z.infer<typeof SettingSchema>,
   languageToUse: string
 ) => {
-  //language
-  const accountLockedCannotChangeMessage =
-    translateAccountLockedCannotChange(languageToUse);
-  const notAllowedMessage = translateNotAllowed(languageToUse);
-  const emailAlreadyInUseMessage = translateEmailAlreadyInUse(languageToUse);
-  const emailVerifiedSuccessMessage =
-    translateEmailVerifiedSuccess(languageToUse);
-  const incirrectPasswordMessage = translateIncorrectPassword(languageToUse);
-  const usernameAlreadyTakenMessage =
-    translateUsernameAlreadyTaken(languageToUse);
-  const changeSuccessfulMessage = translateChangeSuccessful(languageToUse);
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   const user = await currentUser();
 
   if (!user) {
-    return { error: notAllowedMessage };
+    return { error: t("setting.notAllowed") };
   }
 
   // Check ban status again after potential update
   if (user.ban) {
     return {
-      error: accountLockedCannotChangeMessage,
+      error: t("setting.accountLockedCannotChange"),
     };
   }
 
   const dbUser = await getUserById(user.id);
 
   if (!dbUser) {
-    return { error: notAllowedMessage };
+    return { error: t("setting.notAllowed") };
   }
 
   if (user.isOAuth) {
@@ -68,7 +51,7 @@ export const setting = async (
     const existingUser = await getUserByEmail(values.email);
 
     if (existingUser && existingUser.id !== user.id) {
-      return { error: emailAlreadyInUseMessage };
+      return { error: t("setting.emailAlreadyInUse") };
     }
 
     const verificationToken = await generateVerificationToken(values.email);
@@ -77,14 +60,14 @@ export const setting = async (
       verificationToken.email,
       verificationToken.token
     );
-    return { success: emailVerifiedSuccessMessage };
+    return { success: t("setting.emailVerifiedSuccess") };
   }
 
   const FindNameUser = await prismadb.user.findMany();
 
   for (const user of FindNameUser) {
     if (user.nameuser === values.nameuser) {
-      return { error: usernameAlreadyTakenMessage };
+      return { error: t("setting.usernameAlreadyTaken") };
     }
   }
 
@@ -104,7 +87,7 @@ export const setting = async (
     );
 
     if (!passwordMatch) {
-      return { error: incirrectPasswordMessage };
+      return { error: t("setting.incirrectPassword") };
     }
 
     let isSamePassword = false;
@@ -122,10 +105,7 @@ export const setting = async (
         );
 
         return {
-          error: translateNewPasswordCannotBeSameAsOld(
-            languageToUse,
-            passwordSetDate
-          ),
+          error: t("setting.newPasswordCannotBeSameAsOld", {passwordSetDate:passwordSetDate})
         };
       }
     }
@@ -207,5 +187,5 @@ export const setting = async (
     },
   });
 
-  return { success: changeSuccessfulMessage };
+  return { success: t("setting.changeSuccessful") };
 };

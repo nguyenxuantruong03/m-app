@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import prismadb from "@/lib/prismadb";
+import { currentUser } from "@/lib/auth";
 import {
   Image,
   Imagesalientfeatures,
@@ -8,12 +9,7 @@ import {
   ProductType,
   UserRole,
 } from "@prisma/client";
-import { currentUser } from "@/lib/auth";
-import {
-  translateProductIdDelete,
-  translateProductIdGet,
-  translateProductIdPatch,
-} from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 type ProductValue =
   | string
@@ -26,7 +22,6 @@ type ProductValue =
   | ProductDetail
   | null
   | undefined;
-
 interface ChangeRecord {
   oldValue: ProductValue;
   newValue: ProductValue;
@@ -39,12 +34,14 @@ export async function GET(
   const productType = ProductType.PRODUCT8;
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const productIdGetMessage = translateProductIdGet(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!params.product8Id) {
       return new NextResponse(
-        JSON.stringify({ error: productIdGetMessage.productIdRequired }),
+        JSON.stringify({ error: t("toastError.productIdRequired") }),
         { status: 400 }
       );
     }
@@ -106,7 +103,7 @@ export async function GET(
     return NextResponse.json(product);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: `${productIdGetMessage.internalError}8` }),
+      JSON.stringify({ error: t("toastError.product.internalErrorGetProduct") }),
       { status: 500 }
     );
   }
@@ -119,41 +116,29 @@ export async function DELETE(
   const productType = ProductType.PRODUCT8;
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const productIdDeleteMessage = translateProductIdDelete(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
-
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: productIdDeleteMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: productIdDeleteMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!params.product8Id) {
       return new NextResponse(
-        JSON.stringify({ error: productIdDeleteMessage.productIdRequired }),
+        JSON.stringify({ error: t("toastError.productIdRequired") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: productIdDeleteMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -208,7 +193,7 @@ export async function DELETE(
     return NextResponse.json(product);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: `${productIdDeleteMessage.internalError}8` }),
+      JSON.stringify({ error: t("toastError.product.internalErrorDeleteProduct") }),
       { status: 500 }
     );
   }
@@ -220,8 +205,10 @@ export async function PATCH(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const productIdPatchMessage = translateProductIdPatch(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     const productType = ProductType.PRODUCT8;
     const body = await req.json();
@@ -239,69 +226,61 @@ export async function PATCH(
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error:productIdPatchMessage.userIdNotFound}),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: productIdPatchMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!name) {
-      return new NextResponse(JSON.stringify({ error: productIdPatchMessage.nameRequired }), {
-        status: 400,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: t("toastError.name") }),
+        {
+          status: 400,
+        }
+      );
     }
     if (!heading) {
       return new NextResponse(
-        JSON.stringify({ error: productIdPatchMessage.headingRequired }),
+        JSON.stringify({ error: t("toastError.headingRequired") }),
         { status: 400 }
       );
     }
     if (!description) {
       return new NextResponse(
-        JSON.stringify({ error: productIdPatchMessage.descriptionRequired }),
+        JSON.stringify({ error: t("toastError.description") }),
         { status: 400 }
       );
     }
     if (!images || !images.length) {
       return new NextResponse(
-        JSON.stringify({ error: productIdPatchMessage.imagesRequired }),
+        JSON.stringify({ error: t("toastError.imageNotfound") }),
         { status: 400 }
       );
     }
     if (!productdetailId) {
       return new NextResponse(
-        JSON.stringify({ error: productIdPatchMessage.productDetailRequired }),
+        JSON.stringify({ error: t("toastError.productDetailRequired") }),
         { status: 400 }
       );
     }
     if (!imagesalientfeatures || !imagesalientfeatures.length) {
       return new NextResponse(
-        JSON.stringify({ error: productIdPatchMessage.imagesAlientFeaturesRequired }),
+        JSON.stringify({
+          error: t("toastError.product.imageSalientFeaturesRequired"),
+        }),
         { status: 400 }
       );
     }
     if (!params.product8Id) {
       return new NextResponse(
-        JSON.stringify({ error: productIdPatchMessage.productIdRequired }),
-        { status: 405 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: productIdPatchMessage.storeIdNotFound }),
+        JSON.stringify({ error: t("toastError.productIdRequired") }),
         { status: 405 }
       );
     }
@@ -321,9 +300,12 @@ export async function PATCH(
 
     // Nếu sản phẩm không tồn tại, trả về lỗi 404
     if (!existingProduct) {
-      return new NextResponse(JSON.stringify({ error: productIdPatchMessage.productNotFound }), {
-        status: 404,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: t("toastError.productIdNotFound") }),
+        {
+          status: 404,
+        }
+      );
     }
 
     // Kiểm tra nếu heading mới trùng với heading của sản phẩm khác trong cùng cửa hàng (ngoại trừ sản phẩm hiện tại)
@@ -340,7 +322,7 @@ export async function PATCH(
     if (existingProductWithSameHeading) {
       return new NextResponse(
         JSON.stringify({
-          error: productIdPatchMessage.headingExists,
+          error: t("toastError.product.headingExists"),
         }),
         { status: 400 }
       );
@@ -454,7 +436,7 @@ export async function PATCH(
     return NextResponse.json(product);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: `${productIdPatchMessage.internalError}8` }),
+      JSON.stringify({ error: t("toastError.product.internalErrorPatchProduct") }),
       { status: 500 }
     );
   }

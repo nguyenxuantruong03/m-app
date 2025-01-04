@@ -2,8 +2,8 @@ import * as React from "react"
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { ButtonProps, buttonVariants } from "@/components/ui/button"
-import { translateMorePages, translateNext, translatePrevious } from "@/translate/translate-client"
+import { buttonVariants } from "@/components/ui/button"
+import { useTranslations } from "next-intl"
 
 // Pagination component
 const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
@@ -38,11 +38,9 @@ const PaginationItem = React.forwardRef<
 ))
 PaginationItem.displayName = "PaginationItem"
 
-// PaginationLinkProps with languageToUse
 type PaginationLinkProps = {
   isActive?: boolean
   size?: "default" | "icon" | "lg" | "sm" // Thêm kiểu kích thước phù hợp
-  languageToUse?: string // Thêm prop này vào
 } & React.ComponentProps<"a">
 
 // PaginationLink component
@@ -50,7 +48,6 @@ const PaginationLink = ({
   className,
   isActive,
   size = "icon",
-  languageToUse,
   ...props
 }: PaginationLinkProps) => (
   <a
@@ -70,11 +67,10 @@ PaginationLink.displayName = "PaginationLink"
 // PaginationPrevious component
 const PaginationPrevious = ({
   className,
-  languageToUse, // Thêm prop này vào
   ...props
 }: PaginationLinkProps) => {
   // Xác định nội dung của preMessage dựa trên ngôn ngữ
-  const preMessage = translatePrevious(languageToUse || "vi")
+  const t = useTranslations()
 
   return (
     <PaginationLink
@@ -84,7 +80,7 @@ const PaginationPrevious = ({
       {...props}
     >
       <ChevronLeft className="h-4 w-4" />
-      <span>{preMessage}</span> {/* Điều chỉnh ngôn ngữ */}
+      <span>{t("action.previousPage")}</span> {/* Điều chỉnh ngôn ngữ */}
     </PaginationLink>
   );
 }
@@ -94,11 +90,9 @@ PaginationPrevious.displayName = "PaginationPrevious";
 // PaginationNext component
 const PaginationNext = ({
   className,
-  languageToUse, // Thêm prop này vào
   ...props
 }: PaginationLinkProps) => {
-  // Xác định nội dung của nextMessage dựa trên ngôn ngữ
-  const nextMessage = translateNext(languageToUse || "vi")
+  const t = useTranslations()
 
   return (
     <PaginationLink
@@ -107,7 +101,7 @@ const PaginationNext = ({
       className={cn("gap-1 pr-2.5", className)}
       {...props}
     >
-      <span>{nextMessage}</span> {/* Điều chỉnh ngôn ngữ */}
+      <span>{t("action.nextPage")}</span> {/* Điều chỉnh ngôn ngữ */}
       <ChevronRight className="h-4 w-4" />
     </PaginationLink>
   );
@@ -118,11 +112,9 @@ PaginationNext.displayName = "PaginationNext";
 // PaginationEllipsis component
 const PaginationEllipsis = ({
   className,
-  languageToUse, // Thêm prop này vào
   ...props
-}: React.ComponentProps<"span"> & { languageToUse?: string }) => {
-  // Xác định nội dung của MorePage dựa trên ngôn ngữ
-  const MorePage = translateMorePages(languageToUse || "vi")
+}: React.ComponentProps<"span">) => {
+  const t = useTranslations()
 
   return (
     <span
@@ -131,7 +123,7 @@ const PaginationEllipsis = ({
       {...props}
     >
       <MoreHorizontal className="h-4 w-4" />
-      <span className="sr-only">{MorePage}</span> {/* Điều chỉnh ngôn ngữ */}
+      <span className="sr-only">{t("action.morePage")}</span> {/* Điều chỉnh ngôn ngữ */}
     </span>
   );
 }

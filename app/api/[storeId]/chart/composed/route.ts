@@ -1,16 +1,13 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
-import { translateComposedChart } from "@/translate/translate-api";
 import { UserRole } from "@prisma/client";
+import { createTranslator } from "next-intl";
 import { NextResponse } from "next/server";
 
 // Define month names in multiple languages
 const monthNames: { [key: string]: string[] } = {
   vi: ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"],
   en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-  fr: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
-  zh: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
-  ja: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
 };
 
 interface GraphData {
@@ -26,19 +23,21 @@ export async function POST(req: Request) {
   const { storeId, dateRange } = body;
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const composedChartMessage = translateComposedChart(LanguageToUse)
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: composedChartMessage.name1 }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: composedChartMessage.name2 }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -124,7 +123,7 @@ export async function POST(req: Request) {
     return NextResponse.json(graphData);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: composedChartMessage.name3 }),
+      JSON.stringify({ error: t("toastError.chart.intternalErrorComposed") }),
       { status: 500 }
     );
   }

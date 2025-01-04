@@ -14,26 +14,17 @@ import { useState, useTransition, useRef, ElementRef } from "react";
 
 import { updateUser } from "@/actions/stream/user";
 import { toast } from "react-hot-toast";
-import { getToastError, translateCancel, translateEdit, translateEditUserBio, translateSave, translateUserBio, translateUserBioUpdated } from "@/translate/translate-client";
+import { useTranslations } from "next-intl";
 
 interface BioModalProps {
   initialValue: string | null;
-  languageToUse: string;
 }
 
-export const BioModal = ({ initialValue, languageToUse }: BioModalProps) => {
+export const BioModal = ({ initialValue }: BioModalProps) => {
+  const t = useTranslations()
   const closeRef = useRef<ElementRef<"button">>(null);
   const [isPending, startTransition] = useTransition();
   const [value, setValue] = useState(initialValue || "");
-
-  //languages
-  const toastErrorMessage = getToastError(languageToUse)
-  const userBioUpdatedMessage = translateUserBioUpdated(languageToUse)
-  const editMessage = translateEdit(languageToUse)
-  const editUserBioMessage = translateEditUserBio(languageToUse)
-  const userBioMessage = translateUserBio(languageToUse)
-  const cancelMessage = translateCancel(languageToUse)
-  const saveMessage = translateSave(languageToUse)
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -41,10 +32,10 @@ export const BioModal = ({ initialValue, languageToUse }: BioModalProps) => {
     startTransition(() => {
       updateUser({ bio: value })
         .then(() => {
-          toast.success(userBioUpdatedMessage);
+          toast.success(t("profile.userBioUpdated"));
           closeRef.current?.click();
         })
-        .catch(() => toast.error(toastErrorMessage));
+        .catch(() => toast.error(t("toastError.somethingWentWrong")));
     });
   };
 
@@ -52,16 +43,16 @@ export const BioModal = ({ initialValue, languageToUse }: BioModalProps) => {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="link" size="sm" className="ml-auto">
-          {editMessage}
+          {t("action.edit")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{editUserBioMessage}</DialogTitle>
+          <DialogTitle>{t("profile.editUserBio")}</DialogTitle>
         </DialogHeader>
         <form onSubmit={onSubmit} className="space-y-4">
           <Textarea
-            placeholder={`${userBioMessage}...`}
+            placeholder={`${t("profile.userBio")}...`}
             onChange={(e) => {
               setValue(e.target.value);
             }}
@@ -72,11 +63,11 @@ export const BioModal = ({ initialValue, languageToUse }: BioModalProps) => {
           <div className="flex justify-between">
             <DialogClose ref={closeRef} asChild>
               <Button type="button" variant="ghost">
-                {cancelMessage}
+                {t("action.cancel")}
               </Button>
             </DialogClose>
             <Button disabled={isPending} type="submit" variant="primary">
-              {saveMessage}
+              {t("action.save")}
             </Button>
           </div>
         </form>

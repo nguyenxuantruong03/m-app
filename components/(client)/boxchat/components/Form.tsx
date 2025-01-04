@@ -6,17 +6,15 @@ import { useState } from "react"
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react"
 import MessageInput from "./MessageInput"
 import { SmilePlus, SendHorizontal } from "lucide-react"
-import { translateFormMessages } from "@/translate/translate-client"
+import { useTranslations } from "next-intl"
 
 interface FormProps {
   loading: boolean
   conversationId: string | undefined
-  language: string
 }
-const Form = ({ loading, conversationId, language }: FormProps) => {
+const Form = ({ loading, conversationId }: FormProps) => {
+  const t  = useTranslations()
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
-
-  const formMessage = translateFormMessages(language)
 
   const {
     register,
@@ -71,7 +69,7 @@ const Form = ({ loading, conversationId, language }: FormProps) => {
           register={register}
           errors={errors}
           required
-          placeholder={formMessage.writeMessage}
+          placeholder={t("message.writeMessage")}
           loading={loading}
           onSendMessage={handleSendMessage} // Truyền hàm gửi tin nhắn vào đây
         />

@@ -12,15 +12,9 @@ import { Check, ChevronDown, ChevronUp } from "lucide-react";
 import { Hint } from "@/components/ui/hint";
 import VietNamSVG from "@/public/svg/vietnam";
 import EnglishSVG from "@/public/svg/english";
-import ChineseSVG from "@/public/svg/chinese";
-import FrenchSVG from "@/public/svg/french";
-import JapaneseSVG from "@/public/svg/japan";
 import { Dispatch, SetStateAction } from "react";
-import {
-  getLanguageToastError,
-  translateAuth,
-} from "@/translate/translate-client";
 import toast from "react-hot-toast";
+import { useTranslations } from "next-intl";
 
 const font = Poppins({
   subsets: ["latin"],
@@ -44,19 +38,12 @@ const Header: React.FC<HeaderProps> = ({
   setOpen,
   isOpen,
 }) => {
-  //language
-  const authMessage = translateAuth(languageToUse);
-
+  const t = useTranslations()
+  
   const handleLanguageClick = (language: string) => {
-    if (language) {
-      setLanguage(language);
-      // Lưu giá trị ngôn ngữ vào localStorage
-      localStorage.setItem("language", language);
-    } else {
-      // Lấy thông báo từ getLanguageToastError
-      const toastMessage = getLanguageToastError(language);
-      toast.error(toastMessage);
-    }
+    // Lấy thông báo từ getLanguageToastError
+    setLanguage(language);
+    toast.error(t("toastError.somethingWentWrong"));
   };
 
   return (
@@ -64,7 +51,7 @@ const Header: React.FC<HeaderProps> = ({
       {/* Phần giữa */}
       <div className="flex flex-col gap-y-4 items-center justify-center grow">
         <h1 className={cn("text-3xl font-semibold", font.className)}>
-          {authMessage}
+          {t("auth.auth")}
         </h1>
         <p className="text-muted-foreground text-sm">{label}</p>
       </div>
@@ -87,36 +74,6 @@ const Header: React.FC<HeaderProps> = ({
               {languageToUse == "en" && (
                 <div className="flex items-center space-x-1">
                   <EnglishSVG /> <span>EN</span>{" "}
-                  {isOpen ? (
-                    <ChevronUp className="h-4 w-4" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4" />
-                  )}
-                </div>
-              )}
-              {languageToUse == "zh" && (
-                <div className="flex items-center space-x-1">
-                  <span>ZH</span> <ChineseSVG />{" "}
-                  {isOpen ? (
-                    <ChevronUp className="h-4 w-4" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4" />
-                  )}
-                </div>
-              )}
-              {languageToUse == "fr" && (
-                <div className="flex items-center space-x-1">
-                  <FrenchSVG /> <span>FR</span>{" "}
-                  {isOpen ? (
-                    <ChevronUp className="h-4 w-4" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4" />
-                  )}
-                </div>
-              )}
-              {languageToUse == "ja" && (
-                <div className="flex items-center space-x-1">
-                  <JapaneseSVG /> <span>JA</span>{" "}
                   {isOpen ? (
                     <ChevronUp className="h-4 w-4" />
                   ) : (
@@ -147,36 +104,6 @@ const Header: React.FC<HeaderProps> = ({
               <EnglishSVG /> <span>EN</span>
             </div>
             {languageToUse === "en" && <Check className="h-4 w-4" />}
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            disabled={languageToUse === "zh"}
-            onClick={() => handleLanguageClick("zh")}
-            className="flex items-center justify-between"
-          >
-            <div className="flex items-center space-x-2">
-              <ChineseSVG /> <span>ZH</span>
-            </div>
-            {languageToUse === "zh" && <Check className="h-4 w-4" />}
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            disabled={languageToUse === "fr"}
-            onClick={() => handleLanguageClick("fr")}
-            className="flex items-center justify-between"
-          >
-            <div className="flex items-center space-x-2">
-              <FrenchSVG /> <span>FR</span>
-            </div>
-            {languageToUse === "fr" && <Check className="h-4 w-4" />}
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            disabled={languageToUse === "ja"}
-            onClick={() => handleLanguageClick("ja")}
-            className="flex items-center justify-between"
-          >
-            <div className="flex items-center space-x-2">
-              <JapaneseSVG /> <span>JA</span>
-            </div>
-            {languageToUse === "ja" && <Check className="h-4 w-4" />}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

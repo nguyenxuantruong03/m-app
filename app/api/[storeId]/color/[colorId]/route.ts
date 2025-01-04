@@ -3,11 +3,7 @@ import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import { UserRole } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
-import {
-  translateColorIdDelete,
-  translateColorIdGet,
-  translateColorPatch,
-} from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 type ColorValue = string | Date | undefined;
 
@@ -22,27 +18,29 @@ export async function GET(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const colorIdGetMessage = translateColorIdGet(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     if (!params.colorId) {
       return new NextResponse(
-        JSON.stringify({ error: colorIdGetMessage.colorIdRequired }),
+        JSON.stringify({ error: t("toastError.colorRequired") }),
         { status: 400 }
       );
     }
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: colorIdGetMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: colorIdGetMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
@@ -56,7 +54,7 @@ export async function GET(
     return NextResponse.json(color);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: colorIdGetMessage.internalError }),
+      JSON.stringify({ error: t("toastError.color.internalErrorGetColor") }),
       { status: 500 }
     );
   }
@@ -68,40 +66,29 @@ export async function DELETE(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const colorDeleteIdMessage = translateColorIdDelete(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
   try {
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: colorDeleteIdMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: colorDeleteIdMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!params.colorId) {
       return new NextResponse(
-        JSON.stringify({ error: colorDeleteIdMessage.colorIdRequired }),
+        JSON.stringify({ error: t("toastError.color.colorIdRequired") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: colorDeleteIdMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -134,7 +121,7 @@ export async function DELETE(
     return NextResponse.json(color);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: colorDeleteIdMessage.internalError }),
+      JSON.stringify({ error: t("toastError.color.internalErrorDeleteColor") }),
       { status: 500 }
     );
   }
@@ -146,8 +133,10 @@ export async function PATCH(
 ) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const colorPatchMessage = translateColorPatch(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+  messages = (await import(`@/messages/${languageToUse}.json`)).default;
+  const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     const body = await req.json();
@@ -155,21 +144,21 @@ export async function PATCH(
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify({ error: colorPatchMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound")}),
         { status: 403 }
       );
     }
 
     if (user.role !== UserRole.ADMIN && user.role !== UserRole.STAFF) {
       return new NextResponse(
-        JSON.stringify({ error: colorPatchMessage.permissionDenied }),
+        JSON.stringify({ error: t("toastError.permissionDenied") }),
         { status: 403 }
       );
     }
 
     if (!name) {
       return new NextResponse(
-        JSON.stringify({ error: colorPatchMessage.nameRequired }),
+        JSON.stringify({ error: t("toastError.name") }),
         {
           status: 400,
         }
@@ -178,7 +167,7 @@ export async function PATCH(
 
     if (!value) {
       return new NextResponse(
-        JSON.stringify({ error: colorPatchMessage.colorRequired }),
+        JSON.stringify({ error: t("toastError.colorRequired") }),
         {
           status: 400,
         }
@@ -187,21 +176,8 @@ export async function PATCH(
 
     if (!params.colorId) {
       return new NextResponse(
-        JSON.stringify({ error: colorPatchMessage.colorIdRequired }),
+        JSON.stringify({ error: t("toastError.color.colorIdRequired") }),
         { status: 400 }
-      );
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse(
-        JSON.stringify({ error: colorPatchMessage.storeIdNotFound }),
-        { status: 405 }
       );
     }
 
@@ -216,7 +192,7 @@ export async function PATCH(
 
     if (existingColorWithSameName) {
       return new NextResponse(
-        JSON.stringify({ error: colorPatchMessage.colorExists }),
+        JSON.stringify({ error: t("toastError.color.colorExists") }),
         { status: 400 }
       );
     }
@@ -229,7 +205,7 @@ export async function PATCH(
 
     // Kiểm tra nếu không tìm thấy color
     if (!existingColor) {
-      return new NextResponse(JSON.stringify({ error: colorPatchMessage.colorNotFound }), {
+      return new NextResponse(JSON.stringify({ error: t("toastError.color.colorNotFound") }), {
         status: 404,
       });
     }
@@ -288,7 +264,7 @@ export async function PATCH(
     return NextResponse.json(color);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: colorPatchMessage.internalError }),
+      JSON.stringify({ error: t("toastError.color.internalErrorPatchColor") }),
       { status: 500 }
     );
   }

@@ -1,21 +1,23 @@
 import { currentUser } from "@/lib/auth";
 import prismadb from "@/lib/prismadb";
-import { translateOrderGet } from "@/translate/translate-api";
+import { createTranslator } from "next-intl";
 
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const user = await currentUser();
   //language
-  const LanguageToUse = user?.language || "vi";
-  const orderGetMessage = translateOrderGet(LanguageToUse);
+  const languageToUse = user?.language || "vi";
+  let messages;
+    messages = (await import(`@/messages/${languageToUse}.json`)).default;
+    const t = createTranslator({ locale: languageToUse, messages });
 
   try {
     const { userId } = await req.json();
 
     if (!userId) {
       return new NextResponse(
-        JSON.stringify({ error: orderGetMessage.userIdNotFound }),
+        JSON.stringify({ error: t("toastError.userNotFound") }),
         { status: 403 }
       );
     }
@@ -42,7 +44,7 @@ export async function POST(req: Request) {
     return NextResponse.json(order);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: orderGetMessage.internalError }),
+      JSON.stringify({ error: t("toastError.order.internalErrorGetOrder") }),
       { status: 403 }
     );
   }

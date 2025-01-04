@@ -2,7 +2,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { UAParser } from "ua-parser-js";
 import DeviceDetector from "device-detector-js";
-import { appleDeviceLookup, samsungDeviceLookup } from "@/app/(setting-user)/export-device";
+import { appleDeviceLookup, samsungDeviceLookup } from "@/app/[locale]/(setting-user)/export-device";
 
 
 interface DeviceInfo {

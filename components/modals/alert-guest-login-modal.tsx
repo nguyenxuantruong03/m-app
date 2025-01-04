@@ -4,23 +4,19 @@ import { useEffect, useState } from "react";
 import Modal from "../ui/modal";
 import { Button } from "../ui/button";
 import LogoutButton from "../auth/logout-button";
-import { translateGuestAccountModal } from "@/translate/translate-dashboard";
+import { useTranslations } from "next-intl";
 
 interface AlertGuestModalProps {
   isOpen: boolean;
   onClose: () => void;
-  languageToUse: string;
 }
 
 export const AlertGuestModal: React.FC<AlertGuestModalProps> = ({
   isOpen,
   onClose,
-  languageToUse,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
-
-  //language
-  const guestAccountModalMessage = translateGuestAccountModal(languageToUse);
+  const t = useTranslations()
 
   useEffect(() => {
     setIsMounted(true);
@@ -32,23 +28,23 @@ export const AlertGuestModal: React.FC<AlertGuestModalProps> = ({
 
   return (
     <Modal
-      title={guestAccountModalMessage.guestAccountRule}
-      description={guestAccountModalMessage.cannotEditAsGuest}
+      title={t("auth.guestAccountRule")}
+      description={t("auth.cannotEditAsGuest")}
       isOpen={isOpen}
       onClose={onClose}
     >
       <div>
         <p>
-          <p>- {guestAccountModalMessage.limitedFunctionalityAsGuest}</p>
-          <p>- {guestAccountModalMessage.cannotEditOrComment}</p>
+          <p>- {t("auth.limitedFunctionalityAsGuest")}</p>
+          <p>- {t("auth.cannotEditOrComment")}</p>
         </p>
         <div className="flex items-center space-x-3 justify-end">
           <Button variant="secondary" onClick={onClose}>
-            {guestAccountModalMessage.cancel}
+            {t("auth.cancel")}
           </Button>
 
           <LogoutButton>
-            <Button>{guestAccountModalMessage.login}</Button>
+            <Button>{t("auth.login")}</Button>
           </LogoutButton>
         </div>
       </div>

@@ -1,26 +1,25 @@
 import { Toggle } from "@/components/ui/toggle";
-import { translateTextAlign } from "@/translate/translate-dashboard";
 import { Editor } from "@tiptap/react";
 import { AlignCenter, AlignJustify, AlignLeft, AlignRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface TextAlignProps {
   editor: Editor;
   disabled: boolean;
-  languageToUse: string;
 }
-const TextAlignPage: React.FC<TextAlignProps> = ({ editor,disabled,languageToUse }) => {
-  //language
-  const textAlignMessage = translateTextAlign(languageToUse)
+const TextAlignPage: React.FC<TextAlignProps> = ({ editor,disabled }) => {
+  const t = useTranslations("tiptap.textAlign")
+
   return (
     <div>
-      <h2 className="text-lg font-bold text-fuchsia-600">{textAlignMessage.textAlign}</h2>
+      <h2 className="text-lg font-bold text-fuchsia-600">{t("textAlign")}</h2>
       <Toggle
         size="sm"
         pressed={editor.isActive("left")}
         onPressedChange={() =>
           editor.chain().focus().setTextAlign("left").run()
         }
-        title={textAlignMessage.textLeft}
+        title={t("textLeft")}
         disabled={disabled}
       >
         <AlignLeft className="h-4 w-4" />
@@ -31,7 +30,7 @@ const TextAlignPage: React.FC<TextAlignProps> = ({ editor,disabled,languageToUse
         onPressedChange={() =>
           editor.chain().focus().setTextAlign("right").run()
         }
-        title={textAlignMessage.textRight}
+        title={t("textRight")}
         disabled={disabled}
       >
         <AlignRight className="h-4 w-4" />
@@ -42,7 +41,7 @@ const TextAlignPage: React.FC<TextAlignProps> = ({ editor,disabled,languageToUse
         onPressedChange={() =>
           editor.chain().focus().setTextAlign("center").run()
         }
-        title={textAlignMessage.textCenter}
+        title={t("textCenter")}
         disabled={disabled}
       >
         <AlignCenter className="h-4 w-4" />
@@ -53,7 +52,7 @@ const TextAlignPage: React.FC<TextAlignProps> = ({ editor,disabled,languageToUse
         onPressedChange={() =>
           editor.chain().focus().setTextAlign("justify").run()
         }
-        title={textAlignMessage.textJustify}
+        title={t("textJustify")}
         disabled={disabled}
       >
         <AlignJustify className="h-4 w-4" />
