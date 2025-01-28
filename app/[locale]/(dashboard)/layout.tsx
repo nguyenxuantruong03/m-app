@@ -16,14 +16,13 @@ export default async function SetupLayout({
   params: { storeId: string };
 }) {
   const user = await currentUser();
-  const locale = user?.language || "vi";
 
   if (!user) {
-    redirect(`${process.env.NEXT_PUBLIC_DOMAIN_URL}/${locale}/auth/login`);
+    redirect("/auth/login");
   }
 
   if (user?.ban === true) {
-    redirect(`${process.env.NEXT_PUBLIC_DOMAIN_URL}/${locale}/auth/login`);
+    redirect("/auth/login");
   }
 
   const store = await prismadb.store.findFirst({
@@ -47,7 +46,7 @@ export default async function SetupLayout({
   const checkRole = allowedRoles.includes(user.role as UserRole);
 
   if(!checkRole){
-    redirect(`${process.env.NEXT_PUBLIC_DOMAIN_URL}/${locale}/home-product`);
+    redirect("/home-product");
   }
 
   return (
