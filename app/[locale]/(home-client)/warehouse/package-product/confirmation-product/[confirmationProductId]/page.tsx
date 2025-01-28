@@ -9,7 +9,6 @@ import { Separator } from "@/components/ui/separator";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { formatter } from "@/lib/utils";
 import { CartItemType, Order, OrderItem, ProductType } from "@/types/type";
-import axios from "axios";
 import {
   PackageCheck,
   PackageMinus,

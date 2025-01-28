@@ -9,7 +9,6 @@ import { Separator } from "@/components/ui/separator";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { formatter } from "@/lib/utils";
 import { CartItemType, Order, OrderItem } from "@/types/type";
-import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

@@ -34,11 +34,11 @@ export default function SetupLayout({
   const locale = user?.language;
 
   if (!user) {
-    redirect(`/${locale}/auth/login`);
+    redirect(`${process.env.NEXT_PUBLIC_DOMAIN_URL}/${locale}/auth/login`);
   }
 
   if (user.role === UserRole.USER || user.role === UserRole.GUEST) {
-    redirect(`/${locale}/home-product`);
+    redirect(`${process.env.NEXT_PUBLIC_DOMAIN_URL}/${locale}/home-product`);
   }
 
   if (error) {

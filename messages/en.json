@@ -1371,7 +1371,7 @@
     "voucher": "Voucher",
     "emptyOrder": "Your order is empty",
     "waitingforConfirmation": "Waiting",
-    " processing": "PROCESSING",
+    "processing": "PROCESSING",
     "preparingGoods": "Preparing goods",
     "packingGoods": "PACKING GOODS",
     "shippedToShipper": "Shipped to shipper",
