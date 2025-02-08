@@ -10,10 +10,11 @@ export default function SetupPage() {
   const onOpen = usechoosestoreModal((state) => state.onOpen);
   const isOpen = usechoosestoreModal((state) => state.isOpen);
 
+  const locale = user?.language || "vi";
   useEffect(() => {
     // Kiểm tra nếu không có user, điều hướng đến trang login
     if (!user) {
-      router.push("/auth/login");
+      router.push(`/${locale}/auth/login`);
       return; // Ngăn mã phía dưới chạy khi không có user
     }
 

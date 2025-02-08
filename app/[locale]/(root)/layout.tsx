@@ -31,14 +31,14 @@ export default function SetupLayout({
     setIsClient(true); // Only enable client-side behavior after the component has mounted
   }, []);
 
-  const locale = user?.language;
+  const locale = user?.language || "vi";
 
   if (!user) {
-    redirect(`/${locale}/auth/login`);
+    return redirect(`/${locale}/auth/login`);
   }
 
   if (user.role === UserRole.USER || user.role === UserRole.GUEST) {
-    redirect(`/${locale}/home-product`);
+  return redirect(`/${locale}/home-product`);
   }
 
   if (error) {
