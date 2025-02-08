@@ -12,8 +12,7 @@ import { Check, ChevronDown, ChevronUp } from "lucide-react";
 import { Hint } from "@/components/ui/hint";
 import VietNamSVG from "@/public/svg/vietnam";
 import EnglishSVG from "@/public/svg/english";
-import { Dispatch, SetStateAction } from "react";
-import toast from "react-hot-toast";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { useTranslations } from "next-intl";
 
 const font = Poppins({
@@ -38,13 +37,34 @@ const Header: React.FC<HeaderProps> = ({
   setOpen,
   isOpen,
 }) => {
-  const t = useTranslations()
+  const t = useTranslations();
   
-  const handleLanguageClick = (language: string) => {
-    // Lấy thông báo từ getLanguageToastError
-    setLanguage(language);
-    toast.error(t("toastError.somethingWentWrong"));
-  };
+  useEffect(() => {
+    // Lấy language từ URL (vi/en)
+    const pathSegments = window.location.pathname.split("/").filter(Boolean);
+    const langFromPath = pathSegments[0]; // Lấy phần đầu tiên của path
+
+    // Nếu là vi hoặc en, cập nhật state
+    if (langFromPath === "vi" || langFromPath === "en") {
+      setLanguage(langFromPath);
+    }
+  }, [setLanguage]); // Chạy 1 lần khi component mount
+
+const handleLanguageClick = (language: string) => {
+  const currentPath = window.location.pathname; // Lấy đường dẫn hiện tại
+  const pathSegments = currentPath.split("/").filter(Boolean); // Cắt thành mảng và loại bỏ khoảng trắng
+
+  // Kiểm tra nếu path bắt đầu bằng "vi" hoặc "en" thì thay thế
+  if (pathSegments[0] === "vi" || pathSegments[0] === "en") {
+    pathSegments[0] = language; // Thay đổi ngôn ngữ
+  } else {
+    pathSegments.unshift(language); // Nếu không có thì thêm vào đầu
+  }
+
+  const newPath = "/" + pathSegments.join("/"); // Gộp lại thành đường dẫn mới
+  window.location.href = newPath; // Chuyển hướng trang
+};
+
 
   return (
     <div className="flex flex-row justify-between items-center w-full">
