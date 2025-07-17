@@ -522,7 +522,7 @@ export const categoryTitle = () => {
       mainicon: (
         <span className="flex items-center 2xl:text-base lg:text-sm">
           <Layers3 className="size-3 lg:h-5 lg:w-5 2xl:size-4 mr-1" />
-          {t("products")}
+          {t("productCategory")}
         </span>
       ),
       icon: <Layers3 className="size-5" />,

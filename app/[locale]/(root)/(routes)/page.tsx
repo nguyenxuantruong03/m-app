@@ -9,20 +9,19 @@ export default function SetupPage() {
   const router = useRouter(); // Router để điều hướng
   const onOpen = usechoosestoreModal((state) => state.onOpen);
   const isOpen = usechoosestoreModal((state) => state.isOpen);
-
   const locale = user?.language || "vi";
+
   useEffect(() => {
-    // Kiểm tra nếu không có user, điều hướng đến trang login
     if (!user) {
-      router.push(`/${locale}/auth/login`);
-      return; // Ngăn mã phía dưới chạy khi không có user
+      router.replace(`/${locale}/auth/login`);
     }
 
     // Mở modal nếu nó chưa được mở
-    if (!isOpen) {
+    if (isOpen) {
       onOpen();
     }
   }, [user, isOpen, onOpen, router]);
+
 
   return null;
 }

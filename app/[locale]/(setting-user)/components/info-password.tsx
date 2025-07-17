@@ -47,7 +47,7 @@ const InfoPassword: React.FC<InfoPasswordProp> = ({
       ),
       state: (
         <Badge variant={user?.isTwoFactorEnabled ? "success" : "destructive"}>
-          {user?.isTwoFactorEnabled ? "ON" : "OFF"}
+          {user?.isTwoFactorEnabled ? t("info.on") : t("info.off")}
         </Badge>
       ),
       separator: <Separator className="border-[1px] border-gray-400" />,

@@ -12,11 +12,8 @@ interface GalleryProps {
   images: ImageType[];
   data: Product;
 }
-const Gallery: React.FC<GalleryProps> = ({
-  images = [],
-  data,
-}) => {
-  const t = useTranslations()
+const Gallery: React.FC<GalleryProps> = ({ images = [], data }) => {
+  const t = useTranslations();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalImage, setModalImage] = useState<{ src: string; index: number }>({
     src: "",

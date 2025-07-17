@@ -32,12 +32,20 @@ const Currency: React.FC<CurrencyProps> = ({ value, valueold, textSize }) => {
 
   return (
     <div className="flex space-x-4">
-      <div className={`font-bold text-red-500 text-xs ${textSize ? `${textSize}` : " md:text-base"}`}>
+      <div
+        className={`font-bold text-red-500 text-xs ${
+          textSize ? `${textSize}` : " md:text-base"
+        }`}
+      >
         {formatter.format(numericValue)}
       </div>
 
       {shouldDisplayOldValue && (
-        <div className={`font-bold text-gray-500 line-through text-xs ${textSize ? `${textSize}` : " md:text-base"}`}>
+        <div
+          className={`font-bold text-gray-500 line-through text-xs ${
+            textSize ? `${textSize}` : " md:text-base"
+          }`}
+        >
           {formatter.format(numericValueOld)}
         </div>
       )}

@@ -1,15 +1,14 @@
 "use client";
 
-import ErrorComponent from "@/components/ui/error";
 import LoadingPageComponent from "@/components/ui/loading";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { useRouter, usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { usechoosestoreModal } from "@/hooks/usechoosestoreModal";
 import { Store, UserRole } from "@prisma/client";
-import axios from "axios";
-import { redirect, usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-
 import useSWR from "swr";
+import axios from "axios";
+import ErrorComponent from "@/components/ui/error";
 
 const fetchStores = async (): Promise<Store[]> => {
   const response = await axios.get("/api/stores");
@@ -21,70 +20,78 @@ export default function SetupLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { data: stores, error } = useSWR("/api/stores", fetchStores);
-  const user = useCurrentUser();
-  const storeModal = usechoosestoreModal();
+  const { data: stores, error, isLoading } = useSWR("/api/stores", fetchStores);
+  const user = useCurrentUser(); // Hook lấy thông tin người dùng
+  const router = useRouter(); // Router để điều hướng
+  const onOpen = usechoosestoreModal((state) => state.onOpen);
   const pathname = usePathname();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true); // Only enable client-side behavior after the component has mounted
+    setIsClient(true);
   }, []);
 
   const locale = user?.language || "vi";
 
-  if (!user) {
-    return redirect(`/${locale}/auth/login`);
+  useEffect(() => {
+    if (!user && isClient) {
+      router.replace(`/${locale}/auth/login`);
+    }
+  }, [user, locale, isClient, router]);
+
+  // Redirect nếu user là GUEST hoặc USER
+  useEffect(() => {
+    if (user && (user.role === UserRole.USER || user.role === UserRole.GUEST)) {
+      router.replace(`/${locale}/home-product`);
+    }
+  }, [user, locale, router]);
+
+  // Xử lý khi stores đã được fetch xong
+  useEffect(() => {
+    if (stores && stores.length > 0) {
+      const storeIdFromUrl = pathname.split("/")[2]; // Ex: /vi/storeId/...
+
+      if (!storeIdFromUrl) {
+        router.replace(`/${locale}/${stores[0].id}`);
+        return;
+      }
+
+      const storeExists = stores.some(
+        (store: Store) => store.id === storeIdFromUrl
+      );
+      if (!storeExists) {
+        router.replace(`/${locale}/${stores[0].id}`);
+      }
+    }
+  }, [stores, pathname, locale, router]);
+
+  useEffect(() => {
+    // Mở modal nếu nó chưa được mở
+    if (!isLoading && !stores) {
+      onOpen();
+    }
+  }, [user, onOpen, router]);
+
+  if (isLoading) {
+    return <LoadingPageComponent />;
   }
 
-  if (user.role === UserRole.USER || user.role === UserRole.GUEST) {
-  return redirect(`/${locale}/home-product`);
-  }
-
+  // Hiển thị lỗi
   if (error) {
     return (
       <div>
         <ErrorComponent
           reset={() => {
-            if (isClient) {
-              window.location.reload(); // Reload the window, only on the client side
-            }
+            window.location.reload();
           }}
         />
       </div>
     );
   }
 
-  if (!stores) {
-    return (
-      <div>
-        <LoadingPageComponent />
-      </div>
-    );
-  }
-
-  // Lấy đường dẫn hiện tại và tách storeId từ URL
-  const storeIdFromUrl = pathname.split("/")[2]; // Adjusted for locale part in the path
-
-  // Nếu không có storeId trong URL, redirect tới store đầu tiên
-  if (!storeIdFromUrl && stores.length > 0) {
-    storeModal.isOpen;
-    redirect(`/${locale}/${stores[0].id}`);
-  }
-
-  // Kiểm tra nếu storeId trong URL không tồn tại trong danh sách cửa hàng
-  const storeExists = stores.some(
-    (store: Store) => store.id === storeIdFromUrl
-  );
-  if (!storeExists && stores.length > 0) {
-    redirect(`/${locale}/${stores[0].id}`);
-  }
-
-  const matchedStore = stores.find(
-    (store: Store) => store.id === storeIdFromUrl
-  );
-  if (matchedStore) {
-    redirect(`/${locale}/${matchedStore.id}`);
+  // Loading UI
+  if (!user) {
+    return <LoadingPageComponent />;
   }
 
   return <>{children}</>;

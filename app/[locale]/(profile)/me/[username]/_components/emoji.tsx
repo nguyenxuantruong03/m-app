@@ -409,7 +409,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
         onClick={() => handleEmojiClick("like")}
       >
         <ThumbsUp className="w-5 h-5" />
-        <kbd className="mx-1">{t("commnet.like")}</kbd>
+        <kbd className="mx-1">{t("comment.like")}</kbd>
       </div>
     );
   };
@@ -421,7 +421,7 @@ const EmojiReview: React.FC<EmojiProps> = ({
       case "like":
         emojiInfo = {
           imageSrc: "/icon-image/like-icon.png",
-          altText: t("commnet.like"),
+          altText: t("comment.like"),
           width: 27,
           height: 27,
           textColor: "#5890ff",

@@ -75,15 +75,16 @@ export function DataTable<TData, TValue>({
   const [filteredData, setFilteredData] = useState<TData[]>(data);
   const prevRowSelection = useRef(rowSelection);
 
-  // Add the index column to the columns
-  const indexedColumns = [
-    {
-      id: "index",
-      header: "STT",
-      cell: (info: { row: { index: number } }) => info.row.index + 1,
-    },
-    ...columns,
-  ];
+  // Chèn STT vào vị trí thứ 2
+const indexedColumns = [
+  columns[0], // Giữ cột đầu tiên
+  {
+    id: "index",
+    header: "STT",
+    cell: (info: { row: { index: number } }) => info.row.index + 1,
+  },
+  ...columns.slice(1), // Thêm phần còn lại sau STT
+];
 
   const table = useReactTable({
     data: filteredData,
