@@ -3,7 +3,7 @@ import { createTranslator } from "next-intl";
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
-const resend = new Resend("re_RCTEzcfc_3Eo7RyscVyHChCuzhtukuVkB");
+const resend = new Resend(process.env.RESEND_EMAIL_API_KEY);
 export async function POST(req: Request) {
   const user = await currentUser();
   //language

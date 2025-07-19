@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { Resend } from "resend";
-const resend = new Resend("re_RCTEzcfc_3Eo7RyscVyHChCuzhtukuVkB");
+const resend = new Resend(process.env.RESEND_EMAIL_API_KEY);
 
 type FieldValue =
   | string
