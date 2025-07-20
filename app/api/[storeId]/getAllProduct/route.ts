@@ -24,7 +24,12 @@ export async function GET(req: Request) {
       include: {
         images: true,
         imagesalientfeatures: true,
-        comment: true,
+        comment: {
+          include:{
+            user: true
+          }
+        },
+        responsecomment: true,
         productdetail: {
           include: {
             category: true,

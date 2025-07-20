@@ -19,6 +19,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
   onClose,
   product,
 }) => {
+  console.log("product", product)
   return (
     <Modal isOpen={isOpen} onClose={onClose} customClass="h-[680px] overflow-y-auto" customWidth="md:w-4/5" maxWidth="7xl">
       <div className="grid w-full grid-cols-1 items-start gap-x-6 gap-y-8 sm:grid-cols-12 lg:gap-x-8">
@@ -36,7 +37,12 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
         </div>
       </div>
       <hr className="my-8" />
-      <Comment data={product.id} nameProduct={product.heading}/>
+      <Comment 
+        data={product.id} 
+        nameProduct={product.heading} 
+        commentData={product.comment}
+        responsecommentData={product.responsecomment}
+      />
     </Modal>
   );
 };
