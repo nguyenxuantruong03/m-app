@@ -16,7 +16,7 @@ import { NextIntlClientProvider } from "next-intl"
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Dashboard Xuân Trường",
+  title: "VLXD Xuân Trường",
   description: "Quản lý và theo dõi các hoạt động bán hàng vật liệu xây dựng, thống kê đơn hàng, và hiệu suất kinh doanh vật liệu xây dựng.",
 };
 

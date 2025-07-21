@@ -42,7 +42,7 @@ const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
     <RoleGate allowedRole={[UserRole.ADMIN]}>
       <div className="flex-col">
         <div className="flex-1 space-y-4 p-8 pt-6">
-          <Heading title="Bảng điều khiển" description="Tổng quan cửa hàng" />
+          <Heading title={t("dashboard.dashboard")} description={t("dashboard.overviewStore")} />
           <Separator />
           <div className="grid gap-4 grid-cols-1 md:grid-cols-3 xl:grid-cols-6">
             <Card>

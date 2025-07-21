@@ -3178,6 +3178,10 @@
     "role": "Vai trò",
     "createdAt": "Ngày tạo"
   },
+  "dashboard": {
+    "dashboard": "Bảng điều khiển",
+    "overviewStore": "Tổng quan cửa hàng"
+  },
   "navbardashboard": {
     "overview": "Tổng quan",
     "employees": "Nhân viên",

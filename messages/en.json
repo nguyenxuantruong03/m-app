@@ -3178,6 +3178,10 @@
     "role": "Role",
     "createdAt": "CreatedAt"
   },
+  "dashboard": {
+    "dashboard": "Dashboard",
+    "overviewStore": "Overview Store"
+  },
   "navbardashboard": {
     "overview": "Overview",
     "employees": "Employees",
