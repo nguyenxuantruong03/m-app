@@ -1,16 +1,15 @@
 "use client";
-import { Check, Home, Package, PackageCheck, Truck, Undo2 } from "lucide-react";
+import { Home, Package, PackageCheck, Truck, Undo2 } from "lucide-react";
 import { usePathname, useRouter, useParams } from "next/navigation";
-
-import "./style.css";
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import "./style.css";
+
 const NabarOrder = () => {
-  const t = useTranslations()
+  const t = useTranslations();
   const params = useParams();
   const pathname = usePathname();
   const router = useRouter();
-
   const [currentStep, setCurrentStep] = useState(1);
 
   const navbarOrder = [
@@ -18,56 +17,63 @@ const NabarOrder = () => {
       href: `/${params.storeId}/orders/order-confirmation`,
       label: t("order.navbar.confirmOrder"),
       icon: <Package className="w-4 h-4" />,
-      active: pathname === `/${params.storeId}/orders/order-confirmation`,
+      match: pathname.includes(`/${params.storeId}/orders/order-confirmation`),
     },
     {
       href: `/${params.storeId}/orders/pickup-store`,
       label: t("order.navbar.pickUpAtStore"),
       icon: <Home className="w-4 h-4" />,
-      active: pathname === `/${params.storeId}/orders/pickup-store`,
+      match: pathname.includes(`/${params.storeId}/orders/pickup-store`),
     },
     {
       href: `/${params.storeId}/orders/order-process-prepare`,
       label: t("order.navbar.prepareGoods"),
       icon: <Truck className="w-4 h-4" />,
-      active: pathname === `/${params.storeId}/orders/order-process-prepare`,
+      match: pathname.includes(
+        `/${params.storeId}/orders/order-process-prepare`
+      ),
     },
     {
       href: `/${params.storeId}/orders`,
       label: t("order.navbar.orderOverview"),
       icon: <PackageCheck className="w-4 h-4" />,
-      active: pathname === `/${params.storeId}/orders`,
+      match: pathname === `/${params.locale}/${params.storeId}/orders`, // exact match cho trang chính
     },
     {
       href: `/${params.storeId}/orders/return-product`,
       label: t("order.navbar.returnGoods"),
       icon: <Undo2 className="w-4 h-4" />,
-      active: pathname === `/${params.storeId}/orders/return-product`,
+      match: pathname.includes(`/${params.storeId}/orders/return-product`),
     },
   ];
 
-  // Update currentStep based on the active item in navbarOrder
   useEffect(() => {
-    const activeItem = navbarOrder.findIndex((item) => item.active);
-    if (activeItem !== -1) {
-      setCurrentStep(activeItem + 1); // Set current step to active item's index + 1
+    const activeIndex = navbarOrder.findIndex((item) => item.match);
+    if (activeIndex !== -1) {
+      setCurrentStep(activeIndex + 1);
     }
-  }, [pathname]); // Trigger when pathname changes
+  }, [pathname]);
 
   return (
-    <>
-      <div className="flex flex-col items-center justify-center">
-        <div className="flex justify-between">
-          {navbarOrder?.map((item, i) => (
+    <div className="flex flex-col items-center justify-center">
+      <div className="flex justify-between">
+        {navbarOrder.map((item, i) => {
+          const isActive = item.match;
+          const isReturnPage = pathname.includes(
+            `/${params.storeId}/orders/return-product`
+          );
+          const isComplete = !isReturnPage && i + 1 < currentStep;
+
+          return (
             <div
               key={i}
-              className={`step-item ${currentStep === i + 1 && "active"} ${
-                i + 1 < currentStep && "complete"
-              } `}
+              className={`step-item ${isActive ? "active" : ""} ${
+                isComplete && !isReturnPage ? "complete" : ""
+              } ${isReturnPage ? "return-page" : ""}`} // 👈 thêm class phụ trợ
             >
               <div
                 className="step cursor-pointer"
-                onClick={() => router.push(`${item.href}`)}
+                onClick={() => router.push(item.href)}
               >
                 {item.icon}
               </div>
@@ -75,10 +81,10 @@ const NabarOrder = () => {
                 {item.label}
               </p>
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
-    </>
+    </div>
   );
 };
 

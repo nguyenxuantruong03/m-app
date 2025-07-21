@@ -1,13 +1,12 @@
 "use client";
-import { Check, Package, PackageCheck, Truck } from "lucide-react";
+import { Package, PackageCheck, Truck } from "lucide-react";
 import { usePathname, useRouter, useParams } from "next/navigation";
-
-import "./style.css";
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import "./style.css";
+
 const NabarOrder = () => {
-  const t = useTranslations()
-  //language
+  const t = useTranslations();
   const params = useParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -18,25 +17,32 @@ const NabarOrder = () => {
       href: `/${params.storeId}/delivery`,
       label: t("delivery.navbar.receiveOrder"),
       icon: <Package className="w-4 h-4" />,
-      active: pathname === `/${params.storeId}/delivery`,
+      match:
+        pathname.includes(`/${params.storeId}/delivery`) &&
+        !pathname.includes("delivery-confirmation") &&
+        !pathname.includes("my-order-delivered"),
     },
     {
       href: `/${params.storeId}/delivery/delivery-confirmation`,
       label: t("delivery.delivery"),
       icon: <Truck className="w-4 h-4" />,
-      active: pathname === `/${params.storeId}/delivery/delivery-confirmation`,
+      match: pathname.includes(
+        `/${params.storeId}/delivery/delivery-confirmation`
+      ),
     },
     {
       href: `/${params.storeId}/delivery/my-order-delivered`,
       label: t("delivery.navbar.deliveredOrders"),
       icon: <PackageCheck className="w-4 h-4" />,
-      active: pathname === `/${params.storeId}/delivery/my-order-delivered`,
+      match: pathname.includes(
+        `/${params.storeId}/delivery/my-order-delivered`
+      ),
     },
   ];
 
   // Update currentStep based on the active item in navbarOrder
   useEffect(() => {
-    const activeItem = navbarOrder.findIndex((item) => item.active);
+    const activeItem = navbarOrder.findIndex((item) => item.match);
     if (activeItem !== -1) {
       setCurrentStep(activeItem + 1); // Set current step to active item's index + 1
     }
@@ -59,7 +65,9 @@ const NabarOrder = () => {
               >
                 {item.icon}
               </div>
-              <p className="text-white text-sm">{item.label}</p>
+              <p className="dark:text-white text-slate-900 text-sm">
+                {item.label}
+              </p>
             </div>
           ))}
         </div>

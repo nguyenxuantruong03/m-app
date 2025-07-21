@@ -56,7 +56,7 @@ const SortItem = ({
               variant="secondary"
               onClick={() => setSortCriteria("oldest")}
             >
-              {t("action. oldest")}
+              {t("action.oldest")}
             </Button>
             <Button
               variant="secondary"
