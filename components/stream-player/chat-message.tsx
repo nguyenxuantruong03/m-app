@@ -22,7 +22,7 @@ export const ChatMessage = ({data}:ChatMessageProps) =>{
                         {data.from?.name}
                     </span>
                 </p>
-                <p className="text-sm break-all dark:text-slate-200">
+                <p className="text-sm break-all text-slate-200">
                     {data.message}
                 </p>
             </div>
