@@ -32,15 +32,15 @@ const CategoryFeedBack = ({
   const TypeCategory = [
     { index: 1, label: t("feedback.categoryfeedback.unprofessionalService") },
     { index: 2, label: t("feedback.categoryfeedback.delayedResponse") },
-    { index: 3, label: t("feedback.categoryfeedback.complicatedPayment") },
-    { index: 4, label: t("feedback.categoryfeedback.noResponseToCall") },
+    { index: 3, label: t("feedback.categoryfeedback.noResponseToCall") },
+    { index: 4, label: t("feedback.categoryfeedback.complicatedPayment") },
     { index: 5, label: t("feedback.categoryfeedback.websitePerformanceIssues") },
     { index: 6, label: t("feedback.categoryfeedback.other") },
   ];
 
   return (
     <div className="space-y-2">
-      <div className="flex flex-wrap space-x-1 space-y-2">
+      <div className="flex flex-wrap gap-1">
         {TypeCategory.map((item) => (
           <Button
             key={item.index}
@@ -48,8 +48,8 @@ const CategoryFeedBack = ({
             onClick={() => handleClick(item.index)}
             className={`${
               indexCategory === item.index
-                ? "bg-slate-900 text-slate-200 hover:bg-slate-800 hover:text-slate-300 dark:bg-slate-200 dark:text-slate-900 dark:hover:bg-slate-300 hover:dark:text-slate-800"
-                : ""
+                ? "text-slate-900 bg-green-400 hover:bg-green-500 hover:text-slate-900"
+                : "text-slate-900 bg-slate-300 dark:bg-slate-200 dark:text-slate-900"
             }`}
           >
             {item.label}

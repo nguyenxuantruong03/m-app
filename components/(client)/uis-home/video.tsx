@@ -1,57 +1,59 @@
 "use client";
 import "./index.scss";
-import HeadingDescription from "./Head-Deas";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
+import { useState } from "react";
 
 type Props = {
   url: string;
 };
 
 const Video: React.FC<Props> = ({ url }) => {
-  const t = useTranslations()
+  const t = useTranslations();
   const router = useRouter();
+
+  const texts = [t("home.beautifyingWorld"), t("home.buildingMaterialStore")];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const handleAnimationIteration = () => {
+    setCurrentIndex((prev) => (prev + 1) % texts.length);
+  };
 
   const handleClickProduct = () => {
     router.push("/home-product");
   };
-  const handleScroll = () => {
-    const targetElement = document.getElementById("cuahangtruongdat");
-    if (targetElement) {
-      targetElement.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+
   return (
     <div className="parallax">
       <video loop muted autoPlay>
         <source src={url} type="video/mp4" />
       </video>
-      <div className="content-slider">
-        <HeadingDescription
-          fontSizeheading="33px"
-          fontSizedescription="25px"
-          heading={t("home.buildingMaterialStore")}
-          description="Trường Đạt"
-          colordes="#fff"
-          color="#fff"
-          fontweightdes={900}
-        />
-        <div className="video-button" onClick={handleClickProduct}>
-          <Button className="video-button-text">
-            {" "}
-            {
-              t("home.viewProduct")
-            } <ArrowRight className="video-button-icon" />{" "}
-          </Button>
+      <div className="content-slider space-y-2 md:space-y-3">
+        <div className="flex items-center justify-center">
+          <div className="logo-container">
+            <h1
+              id="page-logo"
+              className="text-sm md:text-xl xl:text-6xl font-semibold text-white py-3"
+              onAnimationIteration={handleAnimationIteration}
+            >
+              {texts[currentIndex]}
+            </h1>
+          </div>
         </div>
-        <div className="cursor-pointer" onClick={handleScroll}>
-          <svg className="arrows">
-            <path className="a1" d="M0 0 L15 16 L30 0"></path>
-            <path className="a2" d="M0 10 L15 26 L30 10"></path>
-            <path className="a3" d="M0 20 L15 36 L30 20"></path>
-          </svg>
+        <div className="mx-auto w-fit">
+          <button
+            onClick={handleClickProduct}
+            className="group flex items-center justify-start w-11 h-11 bg-red-600 rounded-full cursor-pointer relative overflow-hidden transition-all duration-200 shadow-lg hover:w-44 hover:rounded-lg active:translate-x-1 active:translate-y-1"
+          >
+            <div className="absolute left-5 transform translate-x-full opacity-0 text-white text-lg font-semibold transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 group-hover:py-2">
+              {t("home.viewProduct")}
+            </div>
+            <div className="flex items-center justify-center w-full transition-all duration-300 group-hover:justify-end group-hover:px-1">
+              <ArrowRight className="w-4 h-4 text-white" />
+            </div>
+          </button>
         </div>
       </div>
     </div>

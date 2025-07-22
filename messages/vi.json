@@ -169,12 +169,12 @@
       "colorNotFound": "Không tìm thấy màu!"
     },
     "comment": {
-      "like":"Thích",
-      "heart":"Thả tim",
-      "haha":"Haha",
-      "wow":"Wow",
-      "sad":"Buồn",
-      "angry":"Tức giận",
+      "like": "Thích",
+      "heart": "Thả tim",
+      "haha": "Haha",
+      "wow": "Wow",
+      "sad": "Buồn",
+      "angry": "Tức giận",
       "ratingRequired": "Rating là bắt buộc!",
       "commentRequired": "Comment là bắt buộc!",
       "commentByIdNotFound": "Không tìm thấy comment theo ID!",
@@ -1261,7 +1261,8 @@
   },
   "home": {
     "home": "Trang chủ",
-    "buildingMaterialStore": "Cửa hàng vật liệu xây dựng",
+    "buildingMaterialStore": "Cửa hàng vật liệu xây dựng Trường Đạt",
+    "beautifyingWorld": "Tô điểm thế giới bên trong ngôi nhà của bạn",
     "viewProduct": "Xem sản phẩm",
     "store": "Cửa hàng",
     "infoStore": "Thông tin cửa hàng",
@@ -3418,7 +3419,23 @@
     "languageToastSuccess": "Thay đổi ngôn ngữ thành công!",
     "message": "Tất cả dữ liệu của bạn sẽ thay đổi theo ngôn ngữ",
     "title": "Bạn có chắc chắn thay đổi ngôn ngữ English 🇺🇸",
-    "thankYouForFeedback": "Cảm ơn {email} đã gửi feedback cho cửa hàng!"
+    "thankYouForFeedback": "Cảm ơn {email} đã gửi feedback cho cửa hàng!",
+    "TitleAboutTruongDat": "Trường Đạt – Giải pháp vật liệu xây dựng toàn diện",
+    "DescriptionAboutTruongDat": "Trường Đạt tự hào là đơn vị chuyên cung cấp vật liệu xây dựng uy tín tại địa phương, phục vụ đa dạng khách hàng từ công trình nhà ở dân dụng đến các dự án công nghiệp, nhà xưởng, cơ sở hạ tầng.\nChúng tôi không chỉ đơn thuần bán vật tư – mà còn cung cấp giải pháp trọn gói và tối ưu chi phí cho chủ đầu tư, nhà thầu và cá nhân.",
+    "TitleProductCategories": "Danh mục sản phẩm phong phú",
+    "DescriptionProductCategoriesCementSteel": "Xi măng, gạch, cát, đá và thép xây dựng tiêu chuẩn",
+    "DescriptionProductCategoriesPaints": "Bột trét tường cao cấp, sơn chống thấm và sơn ngoại thất chất lượng",
+    "DescriptionProductCategoriesFixtures": "Thiết bị điện, nước và dụng cụ hoàn thiện công trình",
+    "DescriptionProductCategoriesEco": "Vật liệu thân thiện môi trường và phụ kiện xây dựng hiện đại",
+    "TitleLogisticsService": "🚚 Dịch vụ hậu cần chuyên nghiệp",
+    "DescriptionLogisticsServiceDelivery": "Giao hàng đúng hẹn, hỗ trợ bốc xếp tận công trình",
+    "DescriptionLogisticsServiceConsulting": "Đội ngũ tư vấn kỹ thuật nhiệt tình và am hiểu chuyên môn",
+    "DescriptionLogisticsServicePriceUpdate": "Cập nhật giá cả thường xuyên, minh bạch, không phát sinh chi phí",
+    "DescriptionLogisticsServiceQuote": "Báo giá nhanh qua điện thoại, Zalo hoặc email",
+    "TitlePartnerPolicy": "🤝 Ưu đãi cho đối tác & công trình lớn",
+    "DescriptionPartnerPolicyDiscounts": "Chiết khấu hấp dẫn theo số lượng đơn hàng",
+    "DescriptionPartnerPolicyCredit": "Chính sách công nợ linh hoạt dành cho khách hàng lâu dài",
+    "DescriptionPartnerPolicyBulkSupport": "Hỗ trợ gộp đơn hàng và gom vật tư theo tiến độ thi công"
   },
   "email": {
     "2FA": {

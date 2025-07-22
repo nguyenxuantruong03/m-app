@@ -169,12 +169,12 @@
       "colorNotFound": "Color not found!"
     },
     "comment": {
-      "like":"Like",
-      "heart":"Heart",
-      "haha":"Haha",
-      "wow":"Wow",
-      "sad":"Sad",
-      "angry":"Angry",
+      "like": "Like",
+      "heart": "Heart",
+      "haha": "Haha",
+      "wow": "Wow",
+      "sad": "Sad",
+      "angry": "Angry",
       "ratingRequired": "Rating is required!",
       "commentRequired": "Comment is required!",
       "commentByIdNotFound": "Comment by ID not found!",
@@ -1261,7 +1261,8 @@
   },
   "home": {
     "home": "Home",
-    "buildingMaterialStore": "Building materials store",
+    "buildingMaterialStore": "Truong Dat Construction Materials Store",
+    "beautifyingWorld": "Beautifying the World Inside Your Home",
     "viewProduct": "View Product",
     "store": "Store",
     "infoStore": "Store Information",
@@ -3375,7 +3376,7 @@
       "storeDeleted": "Store deleted."
     },
     "form": {
-      "minCharacters":"Enter at least {chart} characters.",
+      "minCharacters": "Enter at least {chart} characters.",
       "editStore": "Edit store",
       "createStore": "Create store",
       "editAStore": "Edit a store.",
@@ -3418,7 +3419,23 @@
     "languageToastSuccess": "Language changed successfully!",
     "message": "All your data will change according to the language",
     "title": "Are you sure you want to change the language to Vietnamese? 🇻🇳",
-    "thankYouForFeedback": "Thank you {email} for sending feedback to the store!"
+    "thankYouForFeedback": "Thank you {email} for sending feedback to the store!",
+    "TitleAboutTruongDat": "Truong Dat – Comprehensive Construction Material Solutions",
+    "DescriptionAboutTruongDat": "Truong Dat proudly stands as a trusted supplier of construction materials in the local market, serving a wide range of customers from residential buildings to industrial projects, factories, and infrastructure.\nWe don’t just sell materials – we offer complete and cost-effective solutions for investors, contractors, and individuals.",
+    "TitleProductCategories": "Diverse Product Categories",
+    "DescriptionProductCategoriesCementSteel": "Cement, bricks, sand, gravel, and standard-grade construction steel",
+    "DescriptionProductCategoriesPaints": "High-quality wall putty, waterproof paints, and premium exterior coatings",
+    "DescriptionProductCategoriesFixtures": "Electrical and plumbing fixtures, construction finishing tools",
+    "DescriptionProductCategoriesEco": "Eco-friendly materials and modern construction accessories",
+    "TitleLogisticsService": "🚚 Professional Logistics Service",
+    "DescriptionLogisticsServiceDelivery": "On-time delivery with loading support at the construction site",
+    "DescriptionLogisticsServiceConsulting": "Enthusiastic and knowledgeable technical consulting team",
+    "DescriptionLogisticsServicePriceUpdate": "Regular price updates, transparent and with no hidden costs",
+    "DescriptionLogisticsServiceQuote": "Quick quotations via phone, Zalo, or email",
+    "TitlePartnerPolicy": "🤝 Special Offers for Partners & Large-Scale Projects",
+    "DescriptionPartnerPolicyDiscounts": "Attractive discounts based on order quantity",
+    "DescriptionPartnerPolicyCredit": "Flexible credit policies for long-term customers",
+    "DescriptionPartnerPolicyBulkSupport": "Support for bulk orders and material consolidation by construction phases"
   },
   "email": {
     "2FA": {

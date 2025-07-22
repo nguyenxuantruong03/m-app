@@ -32,11 +32,11 @@ const EmotionFeedBack = ({
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center space-x-2 justify-center">
+      <div className="flex items-center space-x-2">
         <Hint label={t("feedback.emotion.good")}>
           <Smile
             onClick={() => handleClick(1)}
-            className={`w-14 h-14 stroke-current  ${
+            className={`w-10 h-10 text-slate-900 dark:text-slate-200 stroke-current  ${
               indexEmotion === 1 ? "fill-[#22c55e]" : "hover:stroke-[#22c55e]"
             }`}
             strokeWidth="0.75"
@@ -45,7 +45,7 @@ const EmotionFeedBack = ({
         <Hint label={t("feedback.emotion.temporary")}>
           <Meh
             onClick={() => handleClick(2)}
-            className={`w-14 h-14 stroke-current  ${
+            className={`w-10 h-10 text-slate-900 dark:text-slate-200 stroke-current  ${
               indexEmotion === 2 ? "fill-[#2563eb]" : "hover:stroke-[#2563eb]"
             }`}
             strokeWidth="0.75"
@@ -54,7 +54,7 @@ const EmotionFeedBack = ({
         <Hint label={t("feedback.emotion.bad")}>
           <Frown
             onClick={() => handleClick(3)}
-            className={`w-14 h-14 stroke-current  ${
+            className={`w-10 h-10 text-slate-900 dark:text-slate-200 stroke-current  ${
               indexEmotion === 3 ? "fill-[#facc15]" : "hover:stroke-[#facc15]"
             }`}
             strokeWidth="0.75"
@@ -63,7 +63,7 @@ const EmotionFeedBack = ({
         <Hint label={t("feedback.emotion.poor")}>
           <Annoyed
             onClick={() => handleClick(4)}
-            className={`w-14 h-14 stroke-current  ${
+            className={`w-10 h-10 text-slate-900 dark:text-slate-200 stroke-current  ${
               indexEmotion === 4 ? "fill-[#dc2626]" : "hover:stroke-[#dc2626]"
             }`}
             strokeWidth="0.75"
@@ -72,7 +72,7 @@ const EmotionFeedBack = ({
         <Hint label={t("feedback.emotion.toobad")}>
           <Angry
             onClick={() => handleClick(5)}
-            className={`w-14 h-14 stroke-current  ${
+            className={`w-10 h-10 text-slate-900 dark:text-slate-200 stroke-current  ${
               indexEmotion === 5 ? "fill-[#f97316]" : "hover:stroke-[#f97316]"
             }`}
             strokeWidth="0.75"

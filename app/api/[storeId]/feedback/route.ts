@@ -13,9 +13,9 @@ export async function POST(req: Request) {
     const t = createTranslator({ locale: languageToUse, messages });
   try {
     const body = await req.json();
-    const { user, emotion, category, content } = body;
+    const { userId, emotion, category, content } = body;
 
-    if (!user) {
+    if (!user || !userId) {
       return new NextResponse(JSON.stringify({ error: t("toastError.userNotFound")}), {
         status: 400,
       });
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
 
     const existingFeedBack = await prismadb.feedBack.findFirst({
       where: {
-        user: user
+        userId: userId
       },
       orderBy: {
         createdAt: 'desc',
@@ -54,13 +54,13 @@ export async function POST(req: Request) {
     // Cộng thêm 1 ngày khi create
     const timeNextResponse = new Date();
     timeNextResponse.setDate(timeNextResponse.getDate() + 1);
+    const now = new Date();
 
     if (existingFeedBack) {
-      const now = new Date();
       if (new Date(existingFeedBack.timeNextResponse) < now) {
         const feedback = await prismadb.feedBack.create({
           data: {
-            user: user,
+            userId: userId,
             emotion: emotion,
             category: category,
             content: content,
@@ -80,7 +80,7 @@ export async function POST(req: Request) {
     } else {
       const feedback = await prismadb.feedBack.create({
         data: {
-          user: user,
+          userId: userId,
           emotion: emotion,
           category: category,
           content: content,
