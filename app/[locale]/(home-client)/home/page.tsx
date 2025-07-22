@@ -15,8 +15,8 @@ import { root } from "@/components/(client)/color/color";
 import NewsPage from "@/components/(client)/news/news";
 import { getTranslations } from "next-intl/server";
 
-const MapAPI = dynamic(
-  () => import("@/components/(client)/leaflet-map/leaflet-map"),
+const GoogleMapTruongDat = dynamic(
+  () => import("@/components/(client)/googlemapTruongDat/index"),
   {
     ssr: false,
   }
@@ -38,7 +38,7 @@ const HomePage = () => {
       <div className={`pt-5 ${root.bgwhite}`}>
         <NewsPage />
       </div>
-      <MapAPI />
+      <GoogleMapTruongDat />
       <Marquees />
     </>
   );

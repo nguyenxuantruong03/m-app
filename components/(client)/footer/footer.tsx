@@ -15,7 +15,7 @@ const Footer = () => {
   return (
     <>
       <div
-        className={`border-t border-gray-500 pb-0.5 ${root.bgwhite}`}
+        className={`border-t border-gray-500 mt-4 ${root.bgwhite}`}
       >
         <div className="max-w-7xl mx-auto">
           <div className="md:grid md:grid-cols-4 md:mt-4">

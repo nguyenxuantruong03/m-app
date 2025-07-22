@@ -14,8 +14,8 @@ const SlideItem = dynamic(
 const Suggest = dynamic(() => import("@/components/(client)/suggest/Suggest"), {
   ssr: false,
 });
-const MapAPI = dynamic(
-  () => import("@/components/(client)/leaflet-map/leaflet-map"),
+const GoogleMapTruongDat = dynamic(
+  () => import("@/components/(client)/googlemapTruongDat/index"),
   {
     ssr: false,
   }
@@ -31,7 +31,7 @@ const HomePage = () => {
       <LogicProduct />
       <Suggest />
       <NewsPage />
-      <MapAPI />
+      <GoogleMapTruongDat />
     </>
   );
 };
